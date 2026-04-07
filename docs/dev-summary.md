@@ -90,6 +90,112 @@ Added 19 native G-Mount third-party lenses:
 
 ---
 
+## Session 5 — Analysis, Design & Scoring System *(~2026-04-06–07)*
+**Tool:** Claude Code (imbra-spikes repo)
+
+This session completed the full analysis and design phase, preparing for implementation.
+
+### Product Brief (FUJI-ME.md)
+- 15 numbered sections, rated 9/10 by shark assessment
+- Target audience with Jobs-to-Be-Done, market sizing (300k-1M Fuji, 1.5-5M multi-system)
+- Competitive landscape with Ken Rockwell analysis and Moore positioning statement
+- Moat assessment (honest: weak, speed-based)
+- 5 revenue streams: affiliate, merch (6 card deck types), sponsored, high-commission, newsletter
+- Industry benchmarks sourced (Hostinger, wecantrack, Affilimate)
+- Revenue timeline: €0-15 months 1-3, €200-450 months 10-12, €500-1000 months 18-24
+- High-ticket insight: B&H at 8% on €1,500 lens = €120 per sale
+- Success criteria with kill criteria and feedback channel
+- Budget: €17/year phases 1-3, €300-500/year phases 4-5
+- Mobile-first section added
+
+### Architecture (FUJI-ME-ARCHITECTURE.md)
+- Stack: Vite + React 18 + TypeScript + CSS Modules + GitHub Pages
+- Lens interface: 40+ fields across identity, optical specs, build, price, scoring inputs
+  - Renamed all fields from prototype (ap→maxAperture, lm→afMotor, etc.)
+  - Added: afMotor (DC/STM/LM), circularAperture, rotatingFront, tripodMount, distanceScale, focusByWire, apertureClickless, smoothFocusRing, tiltShift, shiftRange, tiltAngle, imageCircle, dimensions
+  - Removed opticalScore as stored field — now computed from individual MTF readings
+  - Split caRating → locaRating (not fixable in post) + lateralCA (fixable)
+  - Split centerSharpness → sweetSpotSharpness + wideOpenSharpness
+- Camera interface: 32 fields (added series, bodyStyle, afType, faceDetectAF, subjectDetectAF, bufferDepth, electronicShutterFps, screenType, usbType, micInput, headphoneJack)
+- Individual lens pages (phase 2) — auto-generated from data, one URL per lens for SEO
+
+### Scoring System — 9 Genres
+Universal formula: `mark = round(total / maxTotal * 8 + 2) / 2` (range 1-5, step 0.5)
+All optics/physics only — features are UI filter badges.
+
+| Genre | Criteria | maxTotal | Validated |
+|---|---|---|---|
+| Astro | light (Lonely Speck formula) + coma; disqualifier wideOpenSharpness ≤ 1 | 4 | ✅ 10 lenses, real coma data |
+| Portrait | blur (entrance pupil, 50mm benchmark) + bokeh + wideOpenSharpness | 6 | ✅ Web consensus, Lenstip |
+| Landscape | sweetSpotSharpness + cornerSharpness | 4 | ✅ 10 lenses, real Lenstip data |
+| Sport | light (entrance pupil, 50mm benchmark) + wideOpenSharpness | 4 | ✅ Multiple sources |
+| Wildlife | light (entrance pupil, 100mm benchmark) + wideOpenSharpness | 4 | ✅ Multiple sources |
+| Street | wideOpenSharpness + locaRating | 4 | ✅ XF 35mm f/1.4 LoCA confirmed |
+| Travel | sweetSpotSharpness + wideOpenSharpness + locaRating | 6 | ✅ Web consensus |
+| Architecture | distortionRating + cornerSharpness + sweetSpotSharpness | 6 | ✅ Lenstip + T/S research |
+| Macro | maxMagnification + sweetSpotSharpness + cornerSharpness (field curvature proxy) | 6 | ✅ Lenstip |
+
+Key scoring decisions:
+- Entrance pupil benchmarks per mount (portrait 50mm, sport 50mm, wildlife 100mm)
+- Separated sport and wildlife (different benchmarks)
+- Street uses LoCA (night shooting fringing — confirmed from personal XF 35mm f/1.4 experience)
+- Field curvature uses cornerSharpness as proxy (direct data not available from reviews)
+- Flare resistance is display attribute, not scored (mitigable, sometimes creative)
+- All features (WR, OIS, AF, filter thread, etc.) moved to UI filter badges
+
+### Lenstip Validation
+Real MTF data sourced for 10+ lenses:
+- XF 18mm f/1.4: 93.5 lp/mm center (record on X-T2)
+- XF 56mm f/1.2 WR: 92.8 lp/mm center, 75.3 wide open
+- XF 90mm f/2.0: 78.5 lp/mm (record on X-E1)
+- XF 50mm f/1.0: 48 lp/mm wide open (barely above decency — confirmed soft)
+- XF 10-24mm f/4: 69-70 lp/mm center, weak edges at 24mm
+- XF 50-140mm f/2.8: 51-59 lp/mm at f/2.8, 72 lp/mm at sweet spot
+- XF 100-400mm: 50 lp/mm at 400mm
+- Viltrox 75mm f/1.2: 85 lp/mm at f/1.2
+- XF 23mm f/2.8 WR: 81+ lp/mm at f/4.0
+- Sensor ceiling awareness: X-E1 ~75 lp/mm, X-T2 ~93 lp/mm (cross-sensor comparison invalid)
+
+### Tilt-Shift Lens Research
+Discovered 7 native X-Mount T/S lenses (most missing from database):
+- Laowa 12-24mm f/5.6 Zoom Shift CF, TTArtisan 100mm f/2.8 T/S, TTArtisan 35mm f/1.4 Tilt, 7Artisans 50mm f/1.4 T/S, AstrHori 50mm f/1.4 Tilt, AstrHori 18mm f/5.6 T/S, AstrHori 85mm f/2.8 Tilt
+- Canon TS-E via Fringer adapter is gold standard for X-Mount architecture
+- GFX has world-class native T/S: GF 30mm f/5.6 T/S and GF 110mm f/5.6 T/S Macro
+- Fixed incorrect Laowa 15mm f/4.5 Shift listed as X-Mount (doesn't exist — GFX only)
+
+### CLAUDE.md — 20 Sections
+Compared against solid-ai-templates and added 6 missing sections:
+State management, API integration, Quality attributes, Debug code, Security, Documentation
+
+### Traffic Playbook
+Step-by-step guide: Reddit/Facebook engagement, monthly content calendar, backlink outreach, example replies, what-not-to-do list. ~1.5 hrs/week traffic + ~1 hr/week maintenance.
+
+### Bookmarks
+Added 16 scoring methodology references, T/S lens reviews, Fringer adapter, community consensus sources, DXOmark, Dustin Abbott, Phillip Reeve.
+
+### Excel Audit
+Audited photography.xlsx against prototype. Found:
+- XF 16-80mm f/4 (major missing travel zoom), Samyang 24mm f/3.5 T/S, MKX cinema lenses
+- 3 wiki topics from Excel not in prototype (aspect ratios, focus modes, filter types)
+- Removed xlsx — all data superseded by prototype
+
+### Repo & Project Structure
+- All 8 product briefs standardised to 14-section structure
+- Consolidated products/ → projects/ folder
+- Created Imbra-Ltd/me-fuji repo, scaffolded Vite + React + TypeScript
+- Copied CLAUDE.md + docs (architecture, prototype, dev-summary, bookmarks)
+- Created 54 tickets in 6 epics across 4 milestone phases
+- Labels: migration, lens-data, wiki, ui, scoring, tooling, phase-2, fix, epic
+
+### PRs Merged This Session
+- #29: ImContext spike, me-fuji resources, AI strategy fix
+- #30: Products → projects consolidation, me-fuji briefs, scoring system
+- #31: Standardise all product briefs, xlsx removal, CLAUDE.md sections
+- #32: Remove --- separators from CLAUDE.md
+- #33: IDE lens template snippet TODO
+
+---
+
 ## Current State
 
 | Tab | Status |
