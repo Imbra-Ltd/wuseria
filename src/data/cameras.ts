@@ -48,7 +48,7 @@ const cameras: Camera[] = [
     width: 140,
     height: 82,
     depth: 43,
-    price: 250,
+    price: 500,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-pro1/",
   },
   {
@@ -97,7 +97,7 @@ const cameras: Camera[] = [
     width: 141,
     height: 83,
     depth: 46,
-    price: 750,
+    price: 1000,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-pro2/",
   },
   {
@@ -146,7 +146,7 @@ const cameras: Camera[] = [
     width: 140,
     height: 83,
     depth: 46,
-    price: 2000,
+    price: 1500,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-pro3/",
   },
 
@@ -198,7 +198,7 @@ const cameras: Camera[] = [
     width: 129,
     height: 90,
     depth: 47,
-    price: 250,
+    price: 500,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-t1/",
   },
   {
@@ -348,7 +348,7 @@ const cameras: Camera[] = [
     width: 135,
     height: 93,
     depth: 84,
-    price: 1000,
+    price: 1250,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-t4/",
   },
   {
@@ -400,7 +400,7 @@ const cameras: Camera[] = [
     width: 130,
     height: 91,
     depth: 64,
-    price: 2250,
+    price: 2000,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-t5/",
   },
 
@@ -453,7 +453,7 @@ const cameras: Camera[] = [
     width: 118,
     height: 83,
     depth: 41,
-    price: 250,
+    price: 500,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-t10/",
   },
   {
@@ -553,7 +553,7 @@ const cameras: Camera[] = [
     width: 118,
     height: 83,
     depth: 47,
-    price: 500,
+    price: 750,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-t30/",
   },
   {
@@ -603,7 +603,7 @@ const cameras: Camera[] = [
     width: 118,
     height: 83,
     depth: 47,
-    price: 750,
+    price: 1000,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-t30-ii/",
   },
   {
@@ -655,7 +655,7 @@ const cameras: Camera[] = [
     width: 124,
     height: 84,
     depth: 49,
-    price: 1500,
+    price: 1750,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-t50/",
   },
 
@@ -761,7 +761,7 @@ const cameras: Camera[] = [
     width: 136,
     height: 93,
     depth: 84,
-    price: 2750,
+    price: 2500,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-h2/",
   },
   {
@@ -812,7 +812,7 @@ const cameras: Camera[] = [
     width: 136,
     height: 93,
     depth: 84,
-    price: 3250,
+    price: 3000,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-h2s/",
   },
 
@@ -872,7 +872,7 @@ const cameras: Camera[] = [
   {
     model: "X-S20",
     mount: "X",
-    year: 2023,akk
+    year: 2023,
     discontinued: false,
     series: "X-S",
     evfPosition: "center",
@@ -1017,7 +1017,7 @@ const cameras: Camera[] = [
     width: 129,
     height: 75,
     depth: 37,
-    price: 250,
+    price: 500,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-e2/",
   },
   {
@@ -1065,7 +1065,7 @@ const cameras: Camera[] = [
     width: 129,
     height: 75,
     depth: 37,
-    price: 250,
+    price: 500,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-e2s/",
   },
   {
@@ -1162,7 +1162,7 @@ const cameras: Camera[] = [
     width: 121,
     height: 73,
     depth: 33,
-    price: 750,
+    price: 1000,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-e4/",
   },
   {
@@ -1212,7 +1212,7 @@ const cameras: Camera[] = [
     width: 122,
     height: 73,
     depth: 37,
-    price: 1000,
+    price: 1750,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-e5/",
   },
 
@@ -1505,7 +1505,7 @@ const cameras: Camera[] = [
     width: 117,
     height: 68,
     depth: 40,
-    price: 250,
+    price: 500,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/x-a5/",
   },
   {
@@ -1605,7 +1605,7 @@ const cameras: Camera[] = [
     width: 148,
     height: 94,
     depth: 91,
-    price: 2250,
+    price: 2000,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/gfx-50s/",
   },
   {
@@ -1653,7 +1653,7 @@ const cameras: Camera[] = [
     width: 161,
     height: 97,
     depth: 66,
-    price: 1750,
+    price: 2250,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/gfx-50r/",
   },
   {
@@ -1703,7 +1703,7 @@ const cameras: Camera[] = [
     width: 156,
     height: 144,
     depth: 76,
-    price: 4000,
+    price: 3000,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/gfx100/",
   },
   {
@@ -1753,7 +1753,7 @@ const cameras: Camera[] = [
     width: 150,
     height: 104,
     depth: 87,
-    price: 4000,
+    price: 3500,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/gfx100s/",
   },
   {
@@ -1855,7 +1855,7 @@ const cameras: Camera[] = [
     width: 153,
     height: 103,
     depth: 84,
-    price: 8250,
+    price: 8500,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/gfx100-ii/",
   },
   {
@@ -1906,7 +1906,7 @@ const cameras: Camera[] = [
     width: 150,
     height: 104,
     depth: 84,
-    price: 5500,
+    price: 5750,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/gfx100s-ii/",
   },
   {
@@ -1956,7 +1956,7 @@ const cameras: Camera[] = [
     width: 161,
     height: 97,
     depth: 66,
-    price: 5500,
+    price: 5750,
     officialUrl: "https://fujifilm-x.com/global/products/cameras/gfx100rf/",
   },
 ];
