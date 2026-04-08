@@ -172,8 +172,9 @@ tsc --noEmit      # type check without emitting files
 - All editable content in `src/data/*.ts` — never hardcode data in components
 - TypeScript files, not JSON — gives type checking at build time and IDE autocomplete on the data itself; a missing field is a compile error, not a runtime surprise
 - Astro imports `.ts` data at build time; data never ships as JS to the browser
-- Prices in EUR; data stores `price: number` and `priceEstimated: boolean`
-- UI renders estimated prices as `~€900`; confirmed prices as `€900`
+- Prices in USD by default (configurable in `src/data/config.ts`), rounded up to nearest $250
+- All prices are estimates (`priceEstimated: true`) — exact retail prices change frequently
+- UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`)
 - Affiliate URLs in `src/data/affiliates.ts` — never inline in components
 - Review links in `src/data/reviews.ts` — keyed by product
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
