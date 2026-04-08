@@ -78,10 +78,11 @@ const lenses: Lens[] = [
   },
   {
     brand: "7Artisans",
-    model: "35mm f2",
+    model: "35mm f/2",
     type: "prime",
     mount: "X",
-    year: 2020,
+    year: 2018,
+    discontinued: true,
     focalLengthMin: 35,
     focalLengthMax: 35,
     maxAperture: 2.0,
