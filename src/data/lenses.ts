@@ -1602,7 +1602,7 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 200,
     tiltShift: false,
-    officialUrl: "https://www.sainsonic.com/collections/vendors?q=kamlan",
+    officialUrl: "https://www.kamlan.com.tw/page/product/show.aspx?num=59&lang=TW",
   },
   {
     brand: "Kamlan",
@@ -1627,7 +1627,7 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 500,
     tiltShift: false,
-    officialUrl: "https://www.sainsonic.com/collections/vendors?q=kamlan",
+    officialUrl: "https://www.kamlan.com.tw/page/product/show.aspx?num=61&lang=TW",
   },
   // Meike
   {
