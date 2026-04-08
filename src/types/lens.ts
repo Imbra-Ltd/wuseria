@@ -45,7 +45,6 @@ interface Lens {
 
   // Price
   price: number;
-  priceEstimated: boolean;
 
   // Optical quality — from MTF chart readings
   sweetSpotSharpness?: number;
