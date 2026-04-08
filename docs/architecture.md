@@ -2,15 +2,16 @@
 
 ## 01. Abstract
 
-This document covers the technical architecture decisions for Fuji.me! — a static React app deployed to fujime.app. It explains what was chosen, what was rejected, and why. For coding conventions and agent instructions, see `CLAUDE.md`.
+This document covers the technical architecture decisions for Fuji.me! — an Astro static site with React islands, deployed to fujime.app. It explains what was chosen, what was rejected, and why. For coding conventions and agent instructions, see `CLAUDE.md`.
 
 
 ## 02. Architecture Overview
 
 ```
 Phase 1 — Launch:
-  Static site (Vite + React)
-  → Data embedded in JS bundles
+  Static site (Astro + React islands)
+  → Data compiled to static HTML at build time
+  → Interactive tables hydrated as React islands
   → Deployed to GitHub Pages
   → Affiliate links are plain <a> tags with tracking params
 
@@ -35,11 +36,12 @@ Phase 4 — Multi-system (if phase 3 gate passes):
 |---|---|---|---|
 | Data storage | Embedded TypeScript files | JSON files, REST API, CMS, database | Data changes monthly; no API or CMS needed. TypeScript over JSON because: compile-time type checking catches missing fields, IDE autocomplete on data arrays, and scoring functions import data directly without a parsing step. JSON (as used on braboj.me) works but loses type safety at the data layer. |
 | Hosting | GitHub Pages | Vercel, Cloudflare Pages, Netlify | Already using GitHub; €0; no second account. Migrate to Vercel if bandwidth exceeds 100GB/month or SSR needed |
-| Styling | CSS Modules | Tailwind, inline styles, styled-components | Co-located with components; no utility class overhead; prototype inline styles need replacing |
-| State management | Local state only | Zustand, Redux, React Query | No server state (all data embedded); no shared state across unrelated components; `useState` + `useMemo` is sufficient |
-| Routing | React Router v6 | TanStack Router, file-based | Most established; URL structure is simple (`/lenses`, `/genre/landscape`, `/wiki/aperture`) |
+| Framework | Astro + React islands | Vite + React SPA, Next.js, plain Hugo | 80% static data display, 20% interactive. Astro ships zero JS by default, hydrates only sort/filter tables. Better SEO (pre-rendered HTML), better Core Web Vitals. solid-ai-templates recommends static-site-astro for this pattern. |
+| Styling | Astro scoped styles + CSS Modules | Tailwind, inline styles, styled-components | Scoped styles for .astro pages, CSS Modules for React islands; no utility class overhead |
+| State management | Local state only | Zustand, Redux, React Query | No server state (all data embedded); no shared state across unrelated components; `useState` + `useMemo` in React islands is sufficient |
+| Routing | Astro file-based routing | React Router v6, TanStack Router | Built-in with Astro; `getStaticPaths()` generates 236 lens pages at build time |
 | Scoring engine | Code-defined functions | ML model, database-driven rules | Scoring formulas are simple arithmetic; keeping them in code makes them testable and transparent |
-| SEO | Client-side SPA + react-helmet | SSR, SSG | Tool sites rank fine as SPAs; add Vite SSG plugin later if SEO demands it |
+| SEO | Astro native head + @astrojs/sitemap | react-helmet, manual sitemap | Pre-rendered HTML by default; per-page meta without a library; sitemap auto-generated |
 | Newsletter | Buttondown | Substack, ConvertKit, Mailchimp | Free under 100 subscribers; €9/month after; minimal UI; no lock-in |
 | Merch storefront | Gumroad | Shopify, custom checkout | Zero setup; handles payments; no full e-commerce build needed for 10-15 orders/month |
 
@@ -368,15 +370,16 @@ Zero-downtime. No database. No server. No containers. Cost: €0.
 
 The prototype is a single 3400-line JSX file with inline styles and embedded data.
 
-| Step | What | Effort |
+| Step | What | Status |
 |---|---|---|
-| 1 | Scaffold Vite + React + TypeScript project | Low |
-| 2 | Extract data arrays into `src/data/*.ts` files | Low |
-| 3 | Split monolith into components (one per tab) | Medium |
-| 4 | Replace inline styles with CSS Modules | Medium |
-| 5 | Add TypeScript interfaces for all data types | Low |
-| 6 | Add affiliate link data and Trade Deals integration | Low |
-| 7 | Deploy to GitHub Pages with custom domain (CNAME) | Low |
+| 1 | TypeScript interfaces for all data types | Done — Lens (40+ fields), Camera (32), Genre, Affiliate, Review |
+| 2 | Extract lens data into `src/data/lenses.ts` | Done — 236 lenses with full specs + officialUrl |
+| 3 | Scaffold Astro + React islands (replaces Vite + React SPA) | Next |
+| 4 | Extract camera, wiki, accessories data | Pending |
+| 5 | Split into Astro pages + React islands for interactive parts | Pending |
+| 6 | Replace inline styles with Astro scoped styles + CSS Modules | Pending |
+| 7 | Add affiliate link data and Trade Deals integration | Pending |
+| 8 | Deploy to GitHub Pages with custom domain (CNAME) | Pending |
 
 The prototype is the spec. Every feature in it is confirmed working — migration is restructuring, not redesign.
 
@@ -385,7 +388,7 @@ The prototype is the spec. Every feature in it is confirmed working — migratio
 
 | Item | Why deferred |
 |---|---|
-| Server-side rendering | SPA is fine for a tool site; SSG if SEO demands it |
+| Server-side rendering | Astro generates static HTML; SSR not needed |
 | CMS for lens data | Frequency of updates doesn't justify CMS complexity |
 | REST API | Data changes monthly; embedded data is faster and simpler |
 | Mobile app | PWA via Vite plugin if mobile usage is high |

@@ -4,21 +4,29 @@
 - https://alikgriffin.com/a-complete-list-of-fujifilm-x-mount-lenses/
 - https://fujifilm-x.com/global/products/x-mount-lens-roadmap/
 
-## Reviews and comparisons
-- https://www.lenstip.com/
-- https://www.opticallimits.com/
-- https://www.ephotozine.com/
-- https://www.photozone.de/
-- https://www.dpreview.com/
-- https://www.digitalcameraworld.com/
-- https://www.photographyblog.com/
+## Reviews and comparisons — trusted sources (matches ReviewSource type)
+- https://www.lensrentals.com/blog/ — Roger Cicala; optical bench MTF testing (most rigorous)
+- https://www.lenstip.com/ — lab MTF charts, resolution measurements
+- https://www.opticallimits.com/ — lab MTF, formerly photozone.de
+- https://www.dxomark.com/ — sensor + lens measurements (limited Fuji X coverage)
+- https://www.the-digital-picture.com/ — Bryan Carnathan; ISO chart comparisons, MTF
+- https://dustinabbott.net/ — thorough field + lab; CA, flare, bokeh analysis
+- https://www.imaging-resource.com/ — lab-based resolution and noise testing
+- https://www.ephotozine.com/ — lab-tested MTF + resolution charts
+- https://www.dpreview.com/ — comprehensive (archived, still referenced)
+- https://phillipreeve.net/blog/photography/ — manual focus and adapted lens specialist
+- https://www.cameralabs.com/ — Gordon Laing; thorough video + stills
+- https://www.fujivsfuji.com/ — Fuji-specific head-to-head comparisons
+- https://www.photographyblog.com/ — decent hands-on reviews
+- https://www.digitalcameraworld.com/ — buyer's guide oriented
+
+## Other photography resources
+- https://www.photozone.de/ — redirects to opticallimits.com
 - https://www.neocamera.com/
 - https://cameradecision.com/
 - https://petapixel.com/
 - https://fstoppers.com/
-- https://phillipreeve.net/blog/photography/
 - https://lensvid.com/
-- https://www.lensrentals.com/blog/
 - https://petapixel.com/science-of-lens-coatings/
 - https://lenspire.zeiss.com/photo/en/article/making-sense-of-sensors-full-frame-vs-aps-c
 
@@ -115,19 +123,19 @@
 
 ## Scoring methodology references
 - https://www.lonelyspeck.com/lenses-for-milky-way-photography/ — Lonely Speck; astro lens scoring formula (aperture area × FOV × max shutter)
-- https://www.kenrockwell.com/fuji/ — Ken Rockwell; competitor, per-lens reviews
-- https://www.lenstip.com/ — Lenstip; MTF chart source for optical scoring
-- https://www.opticallimits.com/ — Opticallimits; MTF chart source (fallback)
-- https://www.dxomark.com/ — DXOmark; lens and sensor measurements (note: limited Fuji X-Mount coverage)
+- https://www.kenrockwell.com/fuji/ — Ken Rockwell; competitor reference only (NOT a trusted data source)
+- https://www.lenstip.com/ — (see Reviews section) primary MTF chart source
+- https://www.opticallimits.com/ — (see Reviews section) MTF fallback
+- https://www.dxomark.com/ — (see Reviews section) sensor + lens measurements
 - https://lightpollutionmap.app/ — Light pollution map; Bortle scale reference for astro
-- https://www.photographyblog.com/ — Photography Blog; sharpness tests, used for XF 200mm f/2.0 validation
-- https://dustinabbott.net/ — Dustin Abbott; detailed lens reviews with MTF and CA analysis
+- https://www.photographyblog.com/ — (see Reviews section) used for XF 200mm f/2.0 validation
+- https://dustinabbott.net/ — (see Reviews section) detailed MTF and CA analysis
 - https://luminous-landscape.com/understanding-lens-contrast/ — Luminous Landscape; lens contrast methodology reference
 - https://erickimphotography.com/blog/what-is-the-best-lens-for-street-photography/ — Eric Kim; street photography lens philosophy
 - https://jamesmaherphotography.com/best-lens-street-photography/ — James Maher; street photography FL guide
 - https://thecotswoldphotographer.com/best-fujifilm-portrait-lenses/ — Cotswold Photographer; Fuji portrait lens rankings
 - https://thecotswoldphotographer.com/best-fujifilm-lenses/ — Cotswold Photographer; overall Fuji lens rankings 2026
-- https://www.fujivsfuji.com/ — Fuji vs Fuji; head-to-head Fuji lens comparisons
+- https://www.fujivsfuji.com/ — (see Reviews section) head-to-head Fuji lens comparisons
 - https://lesdeuxpiedsdehors.com/en/fujifilm-x-mount-lenses-list/ — Full X-Mount lens list 2026
 - https://phillipreeve.net/blog/review-ttartisan-35mm-f-1-4-tilt-aps-c/ — Phillip Reeve; TTArtisan 35mm tilt review
 - https://www.venuslens.net/product-category/tilt-shift/ — Laowa; complete tilt-shift lens catalogue

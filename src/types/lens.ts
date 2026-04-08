@@ -70,6 +70,9 @@ interface Lens {
   tiltAngle?: number;
   imageCircle?: number;
   tiltShiftIndependent?: boolean;
+
+  // Links
+  officialUrl?: string;
 }
 
 export type { Lens, LensType, Mount, AfMotor };
