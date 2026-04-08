@@ -1,7 +1,10 @@
 import type { Mount } from "./lens";
 
-/** Camera body style based on viewfinder position */
-type BodyStyle = "center-evf" | "corner-evf" | "no-evf";
+/** EVF position on the body */
+type EvfPosition = "center" | "corner" | "none";
+
+/** Ergonomic form factor */
+type FormFactor = "slr" | "dslr-grip" | "rangefinder" | "compact";
 
 /** EVF type */
 type EvfType = "electronic" | "hybrid" | "none";
@@ -42,7 +45,8 @@ interface Camera {
   year: number;
   discontinued?: boolean;
   series: CameraSeries;
-  bodyStyle: BodyStyle;
+  evfPosition: EvfPosition;
+  formFactor: FormFactor;
 
   // Sensor
   sensor: string;
@@ -108,7 +112,8 @@ interface Camera {
 
 export type {
   Camera,
-  BodyStyle,
+  EvfPosition,
+  FormFactor,
   EvfType,
   ScreenType,
   ShutterType,
