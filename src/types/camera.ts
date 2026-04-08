@@ -1,7 +1,10 @@
 import type { Mount } from "./lens";
 
-/** Camera body style based on viewfinder position */
-type BodyStyle = "center-evf" | "corner-evf" | "no-evf";
+/** EVF position on the body */
+type EvfPosition = "center" | "corner" | "none";
+
+/** Ergonomic form factor */
+type FormFactor = "slr" | "dslr-grip" | "rangefinder" | "compact";
 
 /** EVF type */
 type EvfType = "electronic" | "hybrid" | "none";
@@ -42,11 +45,17 @@ interface Camera {
   year: number;
   discontinued?: boolean;
   series: CameraSeries;
-  bodyStyle: BodyStyle;
+  evfPosition: EvfPosition;
+  formFactor: FormFactor;
 
   // Sensor
   sensor: string;
   megapixels: number;
+  sensorWidth?: number;
+  sensorHeight?: number;
+  bsi?: boolean;
+  isoMin?: number;
+  isoMax?: number;
 
   // Stabilisation & weather
   ibis: boolean;
@@ -56,20 +65,29 @@ interface Camera {
   evfType?: EvfType;
   evfResolution?: number;
   screenType?: ScreenType;
+  screenResolution?: number;
+  touchscreen?: boolean;
 
   // Performance
   burstFps?: number;
   shutterType?: ShutterType;
   afType?: CameraAfType;
   afPoints?: number;
+  pdafCoverage?: number;
   faceDetectAF: boolean;
   subjectDetectAF?: SubjectDetect[];
   bufferDepth?: number;
   electronicShutterFps?: number;
+  pixelShift?: boolean;
   batteryLife?: number;
+  batteryType?: string;
 
   // Video
   videoSpec: string;
+
+  // Film simulations
+  filmSimulations?: number;
+  filmSimulationList?: string[];
 
   // Storage
   cardSlots?: number;
@@ -77,7 +95,11 @@ interface Camera {
 
   // Connectivity
   flashHotShoe: boolean;
+  builtInFlash?: boolean;
   usbType?: UsbType;
+  tethering?: boolean;
+  wifi?: boolean;
+  bluetooth?: boolean;
   micInput: boolean;
   headphoneJack: boolean;
 
@@ -96,7 +118,8 @@ interface Camera {
 
 export type {
   Camera,
-  BodyStyle,
+  EvfPosition,
+  FormFactor,
   EvfType,
   ScreenType,
   ShutterType,
