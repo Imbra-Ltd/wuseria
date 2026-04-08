@@ -47,6 +47,11 @@ interface Camera {
   // Sensor
   sensor: string;
   megapixels: number;
+  sensorWidth?: number;
+  sensorHeight?: number;
+  bsi?: boolean;
+  isoMin?: number;
+  isoMax?: number;
 
   // Stabilisation & weather
   ibis: boolean;
@@ -62,6 +67,7 @@ interface Camera {
   shutterType?: ShutterType;
   afType?: CameraAfType;
   afPoints?: number;
+  afCoverage?: number;
   faceDetectAF: boolean;
   subjectDetectAF?: SubjectDetect[];
   bufferDepth?: number;
@@ -71,6 +77,10 @@ interface Camera {
   // Video
   videoSpec: string;
 
+  // Film simulations
+  filmSimulations?: number;
+  filmSimulationList?: string[];
+
   // Storage
   cardSlots?: number;
   cardType?: CardType;
@@ -78,6 +88,8 @@ interface Camera {
   // Connectivity
   flashHotShoe: boolean;
   usbType?: UsbType;
+  wifi?: boolean;
+  bluetooth?: boolean;
   micInput: boolean;
   headphoneJack: boolean;
 
