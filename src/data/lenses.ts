@@ -4491,7 +4491,31 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 120,
     tiltShift: false,
-    officialUrl: "https://www.nisioptics.com/9mm-f28",
+    officialUrl: "https://www.nisi-lens.com/product/nisi-9mm-f28",
+  },
+  {
+    brand: "NiSi",
+    model: "15mm f/4 Sunstar",
+    type: "prime",
+    mount: "X",
+    year: 2024,
+    focalLengthMin: 15,
+    focalLengthMax: 15,
+    maxAperture: 4.0,
+    apertureBlades: 10,
+    ois: false,
+    weatherSealed: false,
+    autofocus: false,
+    apertureRing: true,
+    focusRing: true,
+    focusByWire: false,
+    weight: 400,
+    filterThread: 72,
+    rotatingFront: false,
+    tripodMount: false,
+    price: 500,
+    tiltShift: false,
+    officialUrl: "https://www.nisi-lens.com/product/nisi-15mm-f4",
   },
   // Mitakon / Zhongyi Optics
   {
@@ -6591,7 +6615,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 1250,
     tiltShift: false,
-    officialUrl: "https://www.nisi-lens.com/product/nisi-athena-prime",
+    officialUrl: "https://www.nisi-lens.com/athena",
   },
   {
     brand: "NiSi",
@@ -6615,7 +6639,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 1250,
     tiltShift: false,
-    officialUrl: "https://www.nisi-lens.com/product/nisi-athena-prime",
+    officialUrl: "https://www.nisi-lens.com/athena",
   },
   {
     brand: "NiSi",
@@ -6639,7 +6663,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 1250,
     tiltShift: false,
-    officialUrl: "https://www.nisi-lens.com/product/nisi-athena-prime",
+    officialUrl: "https://www.nisi-lens.com/athena",
   },
   {
     brand: "NiSi",
@@ -6663,7 +6687,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 1250,
     tiltShift: false,
-    officialUrl: "https://www.nisi-lens.com/product/nisi-athena-prime",
+    officialUrl: "https://www.nisi-lens.com/athena",
   },
   {
     brand: "NiSi",
@@ -6687,7 +6711,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 1250,
     tiltShift: false,
-    officialUrl: "https://www.nisi-lens.com/product/nisi-athena-prime",
+    officialUrl: "https://www.nisi-lens.com/athena",
   },
   {
     brand: "NiSi",
@@ -6711,7 +6735,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 1250,
     tiltShift: false,
-    officialUrl: "https://www.nisi-lens.com/product/nisi-athena-prime",
+    officialUrl: "https://www.nisi-lens.com/athena",
   },
   {
     brand: "NiSi",
@@ -6735,7 +6759,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 1250,
     tiltShift: false,
-    officialUrl: "https://www.nisi-lens.com/product/nisi-athena-prime",
+    officialUrl: "https://www.nisi-lens.com/athena",
   },
   {
     brand: "NiSi",
@@ -6759,7 +6783,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 1250,
     tiltShift: false,
-    officialUrl: "https://www.nisi-lens.com/product/nisi-athena-prime",
+    officialUrl: "https://www.nisi-lens.com/athena",
   },
 ];
 
