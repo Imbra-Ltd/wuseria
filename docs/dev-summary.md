@@ -196,16 +196,64 @@ Audited photography.xlsx against prototype. Found:
 
 ---
 
+## Session 6 — Data Migration & Astro Switch *(2026-04-08)*
+**Tool:** Claude Code (me-fuji repo)
+
+### TypeScript Interfaces (#1)
+- Lens (40+ fields), Camera (32 fields), Genre/ScoreResult, AffiliateLink, ReviewLink
+- All types match ARCHITECTURE.md spec with field renames from prototype
+
+### Lens Data Migration (#2) — 236 lenses
+- Migrated 164 lenses from prototype.jsx with full field mapping
+- Added 13 missing lenses from dev-summary TODOs (#17-#21)
+- Added 58 lenses from database audit (lens-db.com, alikgriffin.com, manufacturer sites)
+- Added XF 23mm f/1.4 R LM WR (Mark II) — last missing Fujifilm lens
+- Closed #2, #17, #18, #19, #20, #21, #22, #23
+
+### Spec Expansion — all 236 lenses
+- Fujifilm (68 lenses): year, apertureBlades, circularAperture, maxMagnification, minFocusDistance, diameter, length, afMotor, focusByWire, distanceScale, discontinued, officialUrl
+- Sigma/Tamron/Tokina (20): full specs from manufacturer sites
+- Viltrox/Sirui/Samyang (35): full specs
+- All MF third-party (96): year, apertureBlades, focusByWire, minFocusDistance
+- All 236 lenses have officialUrl pointing to specific product pages
+
+### Framework Switch Decision
+- Switched from Vite + React SPA to **Astro + React islands**
+- Rationale: 80% static data display, SEO critical, solid-ai-templates recommends static-site-astro
+- Updated CLAUDE.md, architecture.md, all GitHub issues/epics
+- Removed Vite scaffold (App.tsx, main.tsx, vite.config.ts, tsconfigs, eslint.config.js, index.html)
+
+### Type System Additions
+- ReviewLink + ReviewSource (15 trusted sources, ordered by rigour)
+- AffiliateLink generalized (lens → product, typed retailer/region)
+- officialUrl added to Lens and Camera interfaces
+- Ken Rockwell removed from ReviewSource (competitor reference only)
+
+### GitHub Issues
+- Created #56 EPIC: Automation & Growth (8 sections: data freshness, link validation, community, content, SEO, data quality, CI/CD, dependency management)
+- Created #57: Switch to Astro + React islands
+- Updated #42, #6, #7, #8, #38, #46, #47, #48 for Astro architecture
+- Closed 8 lens-data issues (all completed)
+
+### Documentation
+- CLAUDE.md rewritten for Astro (structure, commands, components, styling, SEO)
+- Bookmarks reorganized to match ReviewSource type
+- .gitattributes added for LF line endings
+- Fujifilm model names normalized to official uppercase (XF/XC/GF/MKX)
+
+---
+
 ## Current State
 
-| Tab | Status |
+| Area | Status |
 |---|---|
-| Lens Explorer | ✅ 200+ lenses, X + GFX, all third-party |
-| Camera Explorer | ✅ 39 bodies, click-to-sort |
-| Accessories | ✅ ~45 items |
-| Trade Deals | ✅ |
-| Genre Guide | ✅ 8 genres, EV matrix, equipment lists |
-| Wiki | ✅ 104+ entries |
+| Lens data | ✅ 236 lenses, full specs, all brands, officialUrl |
+| Camera data | ❌ In prototype only — migration pending (#3) |
+| Accessories | ❌ In prototype only — migration pending (#5) |
+| Wiki | ❌ In prototype only — migration pending (#4) |
+| Genre scoring | ❌ Types defined, functions pending (#9) |
+| Framework | Astro scaffold pending (#57) — Vite removed |
+| UI | No components yet — pending Astro scaffold |
 
 ---
 
@@ -247,32 +295,10 @@ See `FUJI-ME.md` for the full roadmap and revenue model.
 - **Wiki: Aspect ratios** — from Excel. Social media (1:1, 4:5), print (3:2, 5:4), fine art (16:9, panoramic). Orientation guide.
 - **Wiki: Focus modes** — from Excel. AF-S (single), AF-C (continuous), zone, wide/tracking. PDAF vs CDAF behaviour per mode. Detailed.
 - **Wiki: Filter types** — from Excel. CPL, ND (fixed/variable), graduated, UV/protective, IR, color, effect (diffusion). When to use each.
-- **Lens data: add XF 16-80mm f/4 R OIS WR** — missing from prototype. Popular travel zoom.
-- **Lens data: add XC 35mm f/2** — missing from prototype. Budget prime.
-- **Lens data: add Samyang 24mm f/3.5 Tilt/Shift** — missing. Another T/S option for X-Mount.
-- **Lens data: add Samyang 20mm f/1.8, 21mm f/1.4, 50mm f/1.2, 50mm f/1.4, 135mm f/2, 300mm f/6.3** — missing Samyang lenses from Excel.
-- **Lens data: add MKX 18-55mm T2.9, MKX 50-135mm T2.9** — Fuji cinema zooms, niche but complete database.
-- **Lens data: add XF 70-300mm f/4-5.6 R LM OIS WR** — missing from prototype database. Popular tele landscape/wildlife lens. Find Lenstip/DXOmark MTF data for scoring.
-- **MTF review: GFX lenses** — all GFX optical scores are placeholders. Find Lenstip/DXOmark data for GF 20-35mm, GF 32-64mm, GF 23mm, GF 45-100mm, GF 100-200mm and all other GFX lenses.
-- **Lens data: add XF 18-120mm f/4 LM PZ WR** — missing from prototype database. Power zoom, video-oriented.
-- **Lens data: add XF 500mm f/5.6 R LM OIS WR** — missing from prototype database. Super-tele for wildlife.
-- **Lens data: add XF 150-600mm f/5.6-8 R LM OIS WR** — missing from prototype database. Super-tele zoom for wildlife.
-- **Lens data: add XC 13-33mm f/3.5-6.3 OIS** — missing from prototype database. Budget kit zoom.
-- **Lens data: add Laowa 12-24mm f/5.6 Zoom Shift CF** — missing from prototype database. Native X-Mount shift zoom for architecture.
-- **Lens data: add TTArtisan 100mm f/2.8 Macro 2x Tilt-Shift (X-Mount)** — missing. Native X-Mount tilt-shift macro, ~$389. GFX version already in database.
-- **Lens data: add TTArtisan 35mm f/1.4 Tilt (X-Mount)** — missing. Tilt only, ~$169.
-- **Lens data: add 7Artisans 50mm f/1.4 Tilt-Shift (X-Mount)** — missing. Tilt + shift, ~$226.
-- **Lens data: add AstrHori 50mm f/1.4 Tilt (X-Mount)** — missing. Tilt only, 15°, ~$200.
-- **Lens data: add AstrHori 18mm f/5.6 Tilt-Shift (X-Mount)** — missing. Tilt + shift, architecture lens, ~$200.
-- **Lens data: add AstrHori 85mm f/2.8 Macro Tilt (X-Mount)** — missing. Tilt macro, ~$250.
-- **Lens data: add Lensbaby Composer Pro II + Sweet 35 (X-Mount)** — missing. Creative tilt 0-15°, ~$350.
-- **Genre guide: Architecture T/S options** — page should cover three paths: (1) native T/S lenses (Laowa, TTArtisan, budget tilt), (2) Canon TS-E via Fringer adapter (gold standard for X-Mount), (3) regular lens + Lightroom perspective correction (practical for 90% of cases). For GFX: Fuji GF 30mm f/5.6 T/S and GF 110mm f/5.6 T/S Macro are world-class native options.
-- **Lens data: add GF 30mm f/5.6 T/S** — missing. Native GFX tilt-shift, 24mm equiv, ±15mm shift, ~€4,000.
-- **Lens data: add GF 110mm f/5.6 T/S Macro** — missing. Native GFX tilt-shift macro, 87mm equiv, ~€3,500.
-- **Lens data: add Laowa 65mm f/2.8 2x Ultra Macro (X-Mount)** — missing. 2:1 magnification, native X-Mount.
-- **Lens data: add TTArtisan 40mm f/2.8 Macro (X-Mount)** — missing. Budget 1:1 macro.
-- **Lens data: add 7Artisans 60mm f/2.8 Macro (X-Mount)** — missing. Budget 1:1 macro.
-- **Lens data: add Laowa 35mm f/2.8 Zero-D T/S 0.5x Macro (GFX)** — missing. Tilt-shift macro for GFX, announced Nov 2025.
-- **Lens data: fix Laowa 15mm f/4.5 Zero-D Shift** — currently listed as X-Mount in prototype but NO native X-Mount version exists. Change to GFX or remove. Only available in Canon EF/RF, Nikon Z/F, Sony FE, Pentax K, L-mount, and GFX.
-- **Wiki: Sunstars** — explain how aperture blade count determines sunstar points (odd × 2, even = same). Display computed sunstar count on lens detail pages.
-- **UI: Sunstar display** — show computed sunstar points on lens detail page as display attribute (not scored).
+- ~~**Lens data: add XF 16-80mm, XC 35mm, Samyang T/S, MKX, etc.**~~ — **Done** (Session 6: all 236 lenses migrated)
+- ~~**Lens data: add tilt-shift, macro, GFX lenses**~~ — **Done** (Session 6)
+- **Lens data: fix Laowa 15mm f/4.5 Zero-D Shift** — currently listed as X-Mount but NO native X-Mount version exists. Change to GFX or remove. (#16)
+- **MTF review: GFX lenses** — all GFX optical scores are placeholders. (#24)
+- **Genre guide: Architecture T/S options** — cover native T/S, Canon TS-E via Fringer, Lightroom correction. (#39)
+- **Wiki: Sunstars** — aperture blade count → sunstar points. (#32)
+- **UI: Sunstar display** — computed sunstar points on lens detail page. (#37)

@@ -3,18 +3,17 @@
 Lightweight Fuji lens and camera explorer with genre-based scoring.
 Domain: fujime.app. Part of the me! series by braboj.me.
 
-For architecture decisions and rationale, see `FUJI-ME-ARCHITECTURE.md`.
-For product context, see `FUJI-ME.md`.
+For architecture decisions and rationale, see `docs/architecture.md`.
 
 
 ## Stack
 
 - Language: TypeScript (strict mode)
-- Framework: React 18+
-- Bundler: Vite
-- Routing: React Router v6
-- State: local state (`useState`, `useMemo`) — no global store
-- Styling: CSS Modules
+- Framework: Astro (static output, zero JS by default)
+- Interactive components: React islands via `@astrojs/react` (hydrated only where needed)
+- Routing: Astro file-based routing
+- State: local state (`useState`, `useMemo`) in React islands — no global store
+- Styling: Astro scoped styles + CSS Modules for React islands
 - Test runner: Vitest + React Testing Library
 - Package manager: npm
 - Deployment: GitHub Pages via GitHub Actions
@@ -24,39 +23,78 @@ For product context, see `FUJI-ME.md`.
 
 ```
 src/
+  pages/
+    index.astro                   // Homepage
+    lenses/
+      index.astro                 // /lenses — lens explorer
+      [slug].astro                // /lenses/xf-23mm-f1-4 — per-lens page
+    cameras/
+      index.astro                 // /cameras — camera explorer
+    genre/
+      [genre].astro               // /genre/landscape — per-genre page
+    wiki/
+      index.astro                 // /wiki — A-Z index
+      [slug].astro                // /wiki/aperture — per-entry page
+    trade-deals.astro             // /trade-deals
+    accessories.astro             // /accessories
+    404.astro                     // Custom error page
+  layouts/
+    Base.astro                    // HTML shell, nav, footer, global meta
+    LensDetail.astro              // Layout for individual lens pages
   components/
-    LensExplorer/
-      LensExplorer.tsx
-      LensExplorer.test.tsx
-      LensExplorer.module.css
-    CameraExplorer/
-    GenreGuide/
-    TradeDeals/
-    Wiki/
-    Accessories/
+    static/                       // .astro — zero JS shipped
+      Header.astro
+      Footer.astro
+      LensCard.astro
+      LensSpecTable.astro
+      GenreScoreBadge.astro
+      WikiEntry.astro
+      PriceTag.astro
+    interactive/                  // React — hydrated as islands
+      LensExplorer/
+        LensExplorer.tsx          // Sort/filter table (client:load)
+        LensExplorer.test.tsx
+        LensExplorer.module.css
+      CameraExplorer/
+        CameraExplorer.tsx        // Sort/filter table (client:load)
+        CameraExplorer.test.tsx
+        CameraExplorer.module.css
+      GenreGuide/
+        GenreGuide.tsx            // Genre selector + scoring (client:load)
+        GenreGuide.test.tsx
+        GenreGuide.module.css
+      TradeDealsFilter/
+        TradeDealsFilter.tsx      // Filter deals (client:visible)
+        TradeDealsFilter.module.css
   data/
-    lenses.ts          // Lens[]
-    cameras.ts         // Camera[]
-    accessories.ts     // Accessory[]
-    wiki.ts            // WikiEntry[]
-    genres.ts          // Genre configs + scoring functions
-    affiliates.ts      // AffiliateLink[]
+    lenses.ts                     // Lens[]
+    cameras.ts                    // Camera[]
+    accessories.ts                // Accessory[]
+    wiki.ts                       // WikiEntry[]
+    genres.ts                     // Genre configs + scoring functions
+    affiliates.ts                 // AffiliateLink[]
+    reviews.ts                    // ReviewLink[] keyed by product
   hooks/
     useSort.ts
     useFilter.ts
   types/
     lens.ts
+    camera.ts
     genre.ts
     affiliate.ts
+    review.ts
   utils/
     scoring.ts
     formatting.ts
-  App.tsx
-  main.tsx
+  styles/
+    global.css                    // CSS custom properties, base styles, dark theme
 public/
-  CNAME               // fujime.app
+  favicon.svg
+  icons.svg
+  CNAME                           // fujime.app
+  robots.txt
+astro.config.mjs
 tsconfig.json
-vite.config.ts
 package.json
 ```
 
@@ -64,10 +102,11 @@ package.json
 ## Commands
 
 ```
-npm run dev       # develop — hot reload
-npm run build     # production build
+npm run dev       # develop — hot reload at localhost:4321
+npm run build     # production build to dist/
 npm run preview   # preview production build locally
 npm test          # run tests (watch mode)
+astro check       # validate .astro files
 tsc --noEmit      # type check without emitting files
 ```
 
@@ -80,7 +119,7 @@ tsc --noEmit      # type check without emitting files
 - Branch naming: `feat/description`, `fix/description`, `chore/description`
 - Do not commit `node_modules/`, `dist/`, `.env`, `.env.local`
 - Lock file (`package-lock.json`) is committed
-- Run `npm test && tsc --noEmit` before committing
+- Run `npm test && astro check && tsc --noEmit` before committing
 
 
 ## TypeScript
@@ -93,24 +132,37 @@ tsc --noEmit      # type check without emitting files
 - No enums — use `as const` objects or string literal unions
 - Follow `@typescript-eslint/recommended`
 - Prettier owns all formatting
+- `.astro` files formatted with the official Prettier Astro plugin
 
 
 ## Components
 
+### Astro components (static)
+- Default to `.astro` — they ship zero JS
+- Only reach for React when client-side state is genuinely required
+- Static components live in `src/components/static/`
+- One component per file — PascalCase filename
+
+### React islands (interactive)
+- Interactive components live in `src/components/interactive/`
+- Use `client:load` for above-the-fold interactive components
+- Use `client:visible` for below-the-fold interactive components
+- Do not use `client:only` unless SSR is enabled — it skips server rendering
+- Never hydrate a component that does not need interactivity
 - One component per file — PascalCase filename matching component name
 - Functional components only
 - Props typed with an explicit `interface` in the same file
-- No prop drilling beyond two levels — lift state or use context
 - Reusable logic goes in `hooks/use[Name].ts`
 - Keep components under ~150 lines — split if larger
 
 
 ## Styling
 
-- CSS Modules — co-located with the component
+- Astro scoped `<style>` blocks for .astro page components
+- CSS Modules — co-located with React island components
 - No inline styles except dynamic/computed values
 - No hardcoded colours or spacing — use CSS custom properties in `:root`
-- Global styles in `src/index.css` only
+- Global styles in `src/styles/global.css` only
 - Mobile-first: design for 640px, enhance for larger
 - Dark theme
 
@@ -119,39 +171,45 @@ tsc --noEmit      # type check without emitting files
 
 - All editable content in `src/data/*.ts` — never hardcode data in components
 - TypeScript files, not JSON — gives type checking at build time and IDE autocomplete on the data itself; a missing field is a compile error, not a runtime surprise
-- Prices in EUR, prefixed with `~`
-- All prices must have `est: boolean` flag
+- Astro imports `.ts` data at build time; data never ships as JS to the browser
+- Prices in EUR; data stores `price: number` and `priceEstimated: boolean`
+- UI renders estimated prices as `~€900`; confirmed prices as `€900`
 - Affiliate URLs in `src/data/affiliates.ts` — never inline in components
+- Review links in `src/data/reviews.ts` — keyed by product
+- Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
 - Affiliate links use `rel="nofollow sponsored"` and `target="_blank"`
 
 
 ## Testing
 
 - Vitest for unit tests on utils, hooks, and scoring formulas
-- React Testing Library for component tests — test behaviour, not implementation
+- React Testing Library for interactive component tests — test behaviour, not implementation
 - Prefer accessible queries (`getByRole`, `getByText`) over `getByTestId`
 - Genre scoring functions MUST have unit tests
 - Data files MUST have validation tests (no duplicates, no missing required fields)
-- Run before every commit: `npm test && tsc --noEmit`
+- Run before every commit: `npm test && astro check && tsc --noEmit`
 
 
 ## SEO
 
-- react-helmet for per-page titles and descriptions
-- Sitemap generated at build time
+- Astro native head management for per-page titles and descriptions
+- @astrojs/sitemap integration for auto-generated sitemap
 - JSON-LD structured data for Product (lenses) and FAQPage (wiki)
-- URL structure: `/lenses`, `/cameras`, `/genre/landscape`, `/wiki/aperture`
+- Individual lens pages auto-generated via `getStaticPaths()` from data
+- URL slugs are always lowercase: model `XF 23mm f/1.4` → slug `xf-23mm-f1-4`
+- URL structure: `/lenses`, `/lenses/xf-23mm-f1-4`, `/cameras`, `/genre/landscape`, `/wiki/aperture`
 - Canonical URLs on all pages
 - `robots.txt` and Open Graph meta tags required
 
 
 ## Performance
 
-- Bundle size < 200KB gzipped
+- Bundle size < 200KB gzipped (JS only — most pages ship zero JS)
 - LCP < 1.5s
 - No external API calls on page load
 - Mobile breakpoint: 640px (card layout below, table above)
 - Core Web Vitals regressions are bugs
+- Static HTML by default — JS only for interactive islands
 
 
 ## Accessibility

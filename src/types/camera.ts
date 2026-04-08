@@ -90,6 +90,9 @@ interface Camera {
   // Price
   price: number;
   priceEstimated: boolean;
+
+  // Links
+  officialUrl?: string;
 }
 
 export type {
