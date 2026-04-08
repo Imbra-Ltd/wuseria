@@ -67,7 +67,7 @@ interface Camera {
   shutterType?: ShutterType;
   afType?: CameraAfType;
   afPoints?: number;
-  afCoverage?: number;
+  pdafCoverage?: number;
   faceDetectAF: boolean;
   subjectDetectAF?: SubjectDetect[];
   bufferDepth?: number;
