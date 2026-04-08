@@ -27,6 +27,7 @@
 - https://petapixel.com/
 - https://fstoppers.com/
 - https://lensvid.com/
+- https://www.pcmag.com/categories/lenses — PCMag; lens reviews and buyer's guides
 - https://petapixel.com/science-of-lens-coatings/
 - https://lenspire.zeiss.com/photo/en/article/making-sense-of-sensors-full-frame-vs-aps-c
 
