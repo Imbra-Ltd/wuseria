@@ -1678,7 +1678,7 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 100,
     tiltShift: false,
-    officialUrl: "https://meikeglobal.com/collections/fujifilm",
+    officialUrl: "https://meikeglobal.com/en-gb/products/meike-6-5mm-f-2-0-ultra-wide-circular-fisheye-lens-for-fujifilm-x-mount-mirrorless-aps-c-camera-x-pro2-x-e3-x-t1-x-t2-x-t10-x-t20-x-a2-x-e2-x-e2s-x-e1-x30-x70-x-m1-x-a1-xpro1-etc",
   },
   {
     brand: "Meike",
@@ -1778,7 +1778,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 350,
     tiltShift: false,
-    officialUrl: "https://meikeglobal.com/collections/fujifilm",
+    officialUrl: "https://meikeglobal.com/products/meike-85mm-f-2-8-manual-focus-macro-portrait-aspherical-medium-telephoto-prime-lens-for-panasonic-olympus-micro-4-3-mirrorless-camera-with-aps-c",
   },
   // Meyer Optik
   {
