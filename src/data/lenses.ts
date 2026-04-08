@@ -435,7 +435,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 180,
     tiltShift: false,
-    officialUrl: "https://www.zeiss.com/camera-lenses/int/photography/products/touit-lenses/touit-2812.html",
+    officialUrl: "https://www.zeiss.com/content/dam/pno/downloads/photo-lenses/datasheets/touit-lenses/datasheet-zeiss-touit-2812.pdf",
   },
   {
     brand: "Carl Zeiss",
@@ -465,7 +465,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 370,
     tiltShift: false,
-    officialUrl: "https://www.zeiss.com/camera-lenses/int/photography/products/touit-lenses/touit-1832.html",
+    officialUrl: "https://www.zeiss.com/content/dam/pno/downloads/photo-lenses/datasheets/touit-lenses/datasheet-zeiss-touit-1832.pdf",
   },
   {
     brand: "Carl Zeiss",
@@ -496,7 +496,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 150,
     tiltShift: false,
-    officialUrl: "https://www.zeiss.com/camera-lenses/int/photography/products/touit-lenses/touit-2850m.html",
+    officialUrl: "https://www.zeiss.com/content/dam/pno/downloads/photo-lenses/datasheets/touit-lenses/datasheet-zeiss-touit-2850m.pdf",
   },
   // Fujifilm primes
   {
