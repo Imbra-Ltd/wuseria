@@ -378,7 +378,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 500,
     tiltShift: false,
-    officialUrl: "https://7artisans.store/products/7artisans-50mm-f0-95-lens",
+    officialUrl: "https://7artisans.store/products/7artisans-50mm-f0-95-large-aperture-manual-focus-prime-fixed-lens-aps-c-for-sony-e-nikon-z-fuji-fx-canon-eos-m-olympus-m43",
   },
   {
     brand: "7Artisans",
@@ -899,7 +899,7 @@ const lenses: Lens[] = [
     sweetSpot: "f/4",
     price: 1750,
     tiltShift: false,
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf50mmf10-r-wr/",
+    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf50mmf1-r-wr/",
   },
   {
     brand: "Fujifilm",
@@ -1419,7 +1419,7 @@ const lenses: Lens[] = [
     minFocusDistance: 300,
     price: 500,
     tiltShift: false,
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xc16-50mmf35-56-ois-ii/",
+    officialUrl: "https://fujifilm-x.com/global/products/discontinued-lenses/xc16-50mmf35-56-ois-2/",
   },
   {
     brand: "Fujifilm",
