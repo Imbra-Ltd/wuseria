@@ -353,7 +353,7 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 350,
     tiltShift: false,
-    officialUrl: "https://7artisans.store/collections/aps-c-fx-mount",
+    officialUrl: "https://7artisans.store/products/7artisans-35mm-f1-4-apsc",
   },
   {
     brand: "7Artisans",
@@ -379,7 +379,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 500,
     tiltShift: false,
-    officialUrl: "https://7artisans.store/collections/aps-c-fx-mount",
+    officialUrl: "https://7artisans.store/products/50mm-t-1-05-aps-c-lens-for-e-fx-m43-eos-r-l",
   },
   {
     brand: "7Artisans",
@@ -405,7 +405,7 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 500,
     tiltShift: false,
-    officialUrl: "https://7artisans.store/collections/aps-c-fx-mount",
+    officialUrl: "https://7artisans.store/products/mf-50mm-f-1-2-aps-c-lens-for-sony-e-fuji-x-eos-r-nikon-z-panasonic-olympus-m43",
   },
   {
     brand: "7Artisans",
@@ -3411,7 +3411,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 300,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/viltrox-23mm-f14-xf-mount",
   },
   {
     brand: "Viltrox",
@@ -3441,7 +3441,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 400,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/viltrox-af-33mm-f14-xf-aps-c-lens",
   },
   {
     brand: "Viltrox",
@@ -3471,7 +3471,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 600,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/viltrox-af-56mm-f14-x-mount-lens",
   },
   {
     brand: "Viltrox",
@@ -3501,7 +3501,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 280,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/viltrox-af-27mm-f-1-2-pro-xf-mount",
   },
   {
     brand: "Viltrox",
@@ -3531,7 +3531,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 840,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/75mm-f12-xf-lens",
   },
   // Additional Viltrox AF
   {
@@ -3558,7 +3558,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 500,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/af-9mm-f2-8-xf",
   },
   {
     brand: "Viltrox",
@@ -3584,7 +3584,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 500,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/af-15mm-f1-7-xf",
   },
   {
     brand: "Viltrox",
@@ -3610,7 +3610,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 250,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/af-25mm-f1-7-x",
   },
   {
     brand: "Viltrox",
@@ -3636,7 +3636,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 250,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/af-28mm-f4-5-x",
   },
   {
     brand: "Viltrox",
@@ -3662,7 +3662,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 250,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/viltrox-af-35mm-f1-7-aps-c-lens-for-fujifilm-x-mount",
   },
   {
     brand: "Viltrox",
@@ -3688,7 +3688,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 250,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/viltrox-af-56mm-f1-7-xf-z",
   },
   {
     brand: "Viltrox",
@@ -3718,7 +3718,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 800,
     tiltShift: false,
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    officialUrl: "https://viltrox.com/products/viltrox-85mm-f1-8-lens-of-lighter-weight-for-fuji-x-mount",
   },
   // Sirui Sniper (AF)
   {
@@ -3749,7 +3749,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 280,
     tiltShift: false,
-    officialUrl: "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set",
+    officialUrl: "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set?variant=44732249571554",
   },
   {
     brand: "Sirui",
@@ -3779,7 +3779,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 350,
     tiltShift: false,
-    officialUrl: "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set",
+    officialUrl: "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set?variant=44732249866466",
   },
   {
     brand: "Sirui",
@@ -3809,7 +3809,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 500,
     tiltShift: false,
-    officialUrl: "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set",
+    officialUrl: "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set?variant=44732250161378",
   },
   // Tokina atx-m (AF)
   {
@@ -4239,7 +4239,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 200,
     tiltShift: false,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/23-mm-11-2-nokton/?lang=en",
+    officialUrl: "https://www.voigtlaender.de/z-mount/d23-mm-11-2-nokton/?lang=en",
   },
   // NiSi
   {
