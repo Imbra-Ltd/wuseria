@@ -65,6 +65,8 @@ interface Camera {
   evfType?: EvfType;
   evfResolution?: number;
   screenType?: ScreenType;
+  screenResolution?: number;
+  touchscreen?: boolean;
 
   // Performance
   burstFps?: number;
@@ -76,7 +78,9 @@ interface Camera {
   subjectDetectAF?: SubjectDetect[];
   bufferDepth?: number;
   electronicShutterFps?: number;
+  pixelShift?: boolean;
   batteryLife?: number;
+  batteryType?: string;
 
   // Video
   videoSpec: string;
@@ -91,7 +95,9 @@ interface Camera {
 
   // Connectivity
   flashHotShoe: boolean;
+  builtInFlash?: boolean;
   usbType?: UsbType;
+  tethering?: boolean;
   wifi?: boolean;
   bluetooth?: boolean;
   micInput: boolean;
