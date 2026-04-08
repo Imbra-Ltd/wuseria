@@ -460,7 +460,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 180,
     tiltShift: false,
-    officialUrl: "https://www.zeiss.com/consumer-products/en/photography/lenses/touit/touit-2812-for-fujifilm-x-mount.html",
+    officialUrl: "https://www.zeiss.com/consumer-products/int/photography/touit/touit-2812.html",
   },
   {
     brand: "Carl Zeiss",
@@ -489,7 +489,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 370,
     tiltShift: false,
-    officialUrl: "https://www.zeiss.com/consumer-products/en/photography/lenses/touit/touit-1832-for-fujifilm-x-mount.html",
+    officialUrl: "https://www.zeiss.com/consumer-products/int/photography/touit/touit-1832.html",
   },
   {
     brand: "Carl Zeiss",
@@ -519,7 +519,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 150,
     tiltShift: false,
-    officialUrl: "https://www.zeiss.com/consumer-products/en/photography/lenses/touit/touit-2850m-for-fujifilm-x-mount.html",
+    officialUrl: "https://www.zeiss.com/consumer-products/int/photography/touit/touit-2850m.html",
   },
   // Fujifilm primes
   {
@@ -1628,7 +1628,7 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 200,
     tiltShift: false,
-    officialUrl: "https://www.kamlan.shop/products/kamlan-28mm-f-1-1",
+    officialUrl: "https://www.sainsonic.com/collections/vendors?q=kamlan",
   },
   {
     brand: "Kamlan",
@@ -1653,7 +1653,7 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 500,
     tiltShift: false,
-    officialUrl: "https://www.kamlan.shop/products/50mm-f-1-1-mk2",
+    officialUrl: "https://www.sainsonic.com/collections/vendors?q=kamlan",
   },
   // Meike
   {
@@ -1678,7 +1678,7 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 100,
     tiltShift: false,
-    officialUrl: "https://meikeglobal.com/en-gb/products/meike-6-5mm-f-2-0-ultra-wide-circular-fisheye-lens-for-fujifilm-x-mount-mirrorless-aps-c-camera-x-pro2-x-e3-x-t1-x-t2-x-t10-x-t20-x-a2-x-e2-x-e2s-x-e1-x30-x70-x-m1-x-a1-xpro1-etc",
+    officialUrl: "https://meikeglobal.com/collections/fujifilm",
   },
   {
     brand: "Meike",
@@ -3018,7 +3018,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 240,
     tiltShift: false,
-    officialUrl: "https://www.sigma-global.com/en/lenses/c024_12_14/",
+    officialUrl: "https://www.sigma-global.com/en/lenses/c025_12_14/",
   },
   {
     brand: "Sigma",
@@ -3048,7 +3048,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 250,
     tiltShift: false,
-    officialUrl: "https://www.sigma-global.com/en/lenses/c024_15_14/",
+    officialUrl: "https://www.sigma-global.com/en/lenses/c026_15_14/",
   },
   {
     brand: "Sigma",
@@ -3078,7 +3078,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 250,
     tiltShift: false,
-    officialUrl: "https://www.sigma-global.com/en/lenses/c022_23_14/",
+    officialUrl: "https://www.sigma-global.com/en/lenses/c023_23_14/",
   },
   {
     brand: "Sigma",
@@ -3108,7 +3108,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 192,
     tiltShift: false,
-    officialUrl: "https://www.sigma-global.com/en/lenses/c024_10_18_28/",
+    officialUrl: "https://www.sigma-global.com/en/lenses/c023_10_18_28/",
   },
   {
     brand: "Sigma",
@@ -3168,7 +3168,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 270,
     tiltShift: false,
-    officialUrl: "https://www.sigma-global.com/en/lenses/c024_16_300_35_67/",
+    officialUrl: "https://www.sigma-global.com/en/lenses/c025_16_300_35_67/",
   },
   {
     brand: "Sigma",
@@ -3229,7 +3229,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 150,
     tiltShift: false,
-    officialUrl: "https://www.tamron.com/lenses/camera_lenses/b060.html",
+    officialUrl: "https://www.tamron.com/global/consumer/lenses/b060/",
   },
   {
     brand: "Tamron",
@@ -3259,7 +3259,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 190,
     tiltShift: false,
-    officialUrl: "https://www.tamron.com/lenses/camera_lenses/b070.html",
+    officialUrl: "https://www.tamron.com/global/consumer/lenses/b070/",
   },
   {
     brand: "Tamron",
@@ -3289,7 +3289,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 150,
     tiltShift: false,
-    officialUrl: "https://www.tamron.com/lenses/camera_lenses/b061.html",
+    officialUrl: "https://www.tamron.com/global/consumer/lenses/b061/",
   },
   // Additional Tamron
   {
@@ -3320,7 +3320,7 @@ const lenses: Lens[] = [
     price: 1750,
     minFocusDistance: 600,
     tiltShift: false,
-    officialUrl: "https://www.tamron.com/lenses/camera_lenses/a057.html",
+    officialUrl: "https://www.tamron.com/global/consumer/lenses/a057/",
   },
   {
     brand: "Tamron",
@@ -3350,7 +3350,7 @@ const lenses: Lens[] = [
     price: 1500,
     minFocusDistance: 250,
     tiltShift: false,
-    officialUrl: "https://www.tamron.com/lenses/camera_lenses/a067.html",
+    officialUrl: "https://www.tamron.com/global/consumer/lenses/a067/",
   },
   // Viltrox AF
   {
@@ -3381,7 +3381,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 250,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3411,7 +3411,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 300,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3441,7 +3441,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 400,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3471,7 +3471,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 600,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3501,7 +3501,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 280,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3531,7 +3531,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 840,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   // Additional Viltrox AF
   {
@@ -3558,7 +3558,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 500,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3584,7 +3584,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 500,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3610,7 +3610,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 250,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3636,7 +3636,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 250,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3662,7 +3662,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 250,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3688,7 +3688,7 @@ const lenses: Lens[] = [
     tripodMount: false,
     price: 250,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3718,7 +3718,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 800,
     tiltShift: false,
-    officialUrl: "https://www.viltrox.com/AF-13mm-F1.4-STM.html",
+    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   // Sirui Sniper (AF)
   {
@@ -4062,7 +4062,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 200,
     tiltShift: false,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/nokton-23-mm-11.2-aspherical-x-mount/",
+    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/23-mm-11-2-nokton/?lang=en",
   },
   {
     brand: "Voigtlander",
@@ -4087,7 +4087,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 300,
     tiltShift: false,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/nokton-35-mm-11.2-x-mount/",
+    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/35-mm-11-2-nokton/?lang=en",
   },
   {
     brand: "Voigtlander",
@@ -4112,7 +4112,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 450,
     tiltShift: false,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/nokton-50-mm-11.2-aspherical-x-mount/",
+    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/50mm-11-2-nokton/?lang=en",
   },
   {
     brand: "Voigtlander",
@@ -4137,7 +4137,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 250,
     tiltShift: false,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/ultron-27-mm-12-x-mount/",
+    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/27-mm-12-0-nokton/?lang=en",
   },
   // Additional Voigtlander
   {
@@ -4163,7 +4163,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 170,
     tiltShift: false,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/color-skopar-18-mm-12.8/",
+    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/18-mm-128-color-skopar/?lang=en",
   },
   {
     brand: "Voigtlander",
@@ -4214,7 +4214,7 @@ const lenses: Lens[] = [
     price: 750,
     minFocusDistance: 155,
     tiltShift: false,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/macro-apo-ultron-35-mm-12-x-mount/",
+    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/35-mm-12-macro-apo-ultron/?lang=en",
   },
   {
     brand: "Voigtlander",
@@ -4239,7 +4239,7 @@ const lenses: Lens[] = [
     price: 1000,
     minFocusDistance: 200,
     tiltShift: false,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/nokton-d23mm-f1.2-aspherical/",
+    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/23-mm-11-2-nokton/?lang=en",
   },
   // NiSi
   {
@@ -4520,7 +4520,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 170,
     tiltShift: false,
-    officialUrl: "https://lensbaby.com/products/composer-pro-ii-with-sweet-35-optic",
+    officialUrl: "https://lensbaby.com/collections/composer-pro-ii",
   },
   {
     brand: "Lensbaby",
@@ -4543,7 +4543,7 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 10,
     tiltShift: false,
-    officialUrl: "https://lensbaby.com/product/circular-fisheye/",
+    officialUrl: "https://lensbaby.com/collections/optic-swap",
   },
   // Thingyfy
   {
@@ -5198,7 +5198,7 @@ const lenses: Lens[] = [
     minFocusDistance: 200,
     price: 500,
     tiltShift: false,
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xc23mmf28/",
+    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf23mmf28-r-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5509,7 +5509,7 @@ const lenses: Lens[] = [
     price: 4500,
     minFocusDistance: 1800,
     tiltShift: false,
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf200mmf2-r-lm-ois-wr/",
+    officialUrl: "https://fujifilm-x.com/global/products/lenses/gf200mmf2-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
