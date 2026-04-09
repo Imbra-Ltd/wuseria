@@ -1,0 +1,25 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import type { Genre } from "../../types/genre";
+import Base from "../../layouts/Base.astro";
+
+export const getStaticPaths = (() => {
+  const genres: Genre[] = [
+    "astro", "portrait", "landscape", "sport",
+    "wildlife", "street", "travel", "architecture", "macro",
+  ];
+  return genres.map((genre) => ({
+    params: { genre },
+    props: { genre },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { genre } = Astro.props as Props;
+const title = genre.charAt(0).toUpperCase() + genre.slice(1);
+---
+
+<Base title={`${title} — Genre Guide — Fuji.me!`} description={`Best Fujifilm lenses for ${genre} photography, scored by optical performance.`}>
+  <h1>{title}</h1>
+  <p>Genre guide for {genre} photography.</p>
+</Base>
