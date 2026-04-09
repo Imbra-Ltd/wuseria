@@ -33,7 +33,9 @@ Before quality work, read the relevant templates above. Two distinct scopes:
 Project-specific overrides and additions follow below.
 
 
-## 1. Stack
+## 1. Project
+
+### 1.1 Stack
 
 - Language: TypeScript (strict mode)
 - Framework: Astro (static output, zero JS by default)
@@ -45,8 +47,7 @@ Project-specific overrides and additions follow below.
 - Package manager: npm
 - Deployment: GitHub Pages via GitHub Actions
 
-
-## 2. Project structure
+### 1.2 Project structure
 
 ```
 src/
@@ -125,8 +126,7 @@ tsconfig.json
 package.json
 ```
 
-
-## 3. Commands
+### 1.3 Commands
 
 ```
 npm run dev       # develop — hot reload at localhost:4321
@@ -139,7 +139,9 @@ tsc --noEmit      # type check without emitting files
 ```
 
 
-## 4. Git conventions
+## 2. Code conventions
+
+### 2.1 Git
 
 - Conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`
 - Subject line under 80 characters, imperative mood
@@ -149,8 +151,7 @@ tsc --noEmit      # type check without emitting files
 - Lock file (`package-lock.json`) is committed
 - Run `npm run lint && npm test && astro check && tsc --noEmit` before committing
 
-
-## 5. TypeScript
+### 2.2 TypeScript
 
 - `strict: true` — no exceptions
 - No `any` — use `unknown` and narrow, or define a proper type
@@ -162,24 +163,23 @@ tsc --noEmit      # type check without emitting files
 - Prettier owns all formatting
 - `.astro` files formatted with the official Prettier Astro plugin
 
-### 5.1 Type design
+### 2.3 Type design
 
 - Use discriminated unions for type families with a shared base and distinct variants
 - Compose sub-interfaces when a domain has multiple categories with different fields
 - Keep single-purpose types flat — do not compose for composition's sake
 - Self-documenting names over comments — comment only intent that code cannot express
 
+### 2.4 Components
 
-## 6. Components
-
-### 6.1 Astro components (static)
+#### Astro components (static)
 
 - Default to `.astro` — they ship zero JS
 - Only reach for React when client-side state is genuinely required
 - Static components live in `src/components/static/`
 - One component per file — PascalCase filename
 
-### 6.2 React islands (interactive)
+#### React islands (interactive)
 
 - Interactive components live in `src/components/interactive/`
 - Use `client:load` for above-the-fold interactive components
@@ -192,8 +192,7 @@ tsc --noEmit      # type check without emitting files
 - Reusable logic goes in `hooks/use[Name].ts`
 - Keep components under ~150 lines — split if larger
 
-
-## 7. Styling
+### 2.5 Styling
 
 - Astro scoped `<style>` blocks for .astro page components
 - CSS Modules — co-located with React island components
@@ -203,8 +202,7 @@ tsc --noEmit      # type check without emitting files
 - Mobile-first: design for 640px, enhance for larger
 - Dark theme
 
-
-## 8. Data rules
+### 2.6 Data rules
 
 - All editable content in `src/data/*.ts` — never hardcode data in components
 - TypeScript files, not JSON — gives type checking at build time and IDE autocomplete on the data itself; a missing field is a compile error, not a runtime surprise
@@ -219,7 +217,9 @@ tsc --noEmit      # type check without emitting files
 - Affiliate links use `rel="nofollow sponsored"` and `target="_blank"`
 
 
-## 9. Testing
+## 3. Quality
+
+### 3.1 Testing
 
 - Vitest for unit tests on utils, hooks, and scoring formulas
 - React Testing Library for interactive component tests — test behaviour, not implementation
@@ -228,8 +228,7 @@ tsc --noEmit      # type check without emitting files
 - Data files MUST have validation tests (no duplicates, no missing required fields)
 - Run before every commit: `npm run lint && npm test && astro check && tsc --noEmit`
 
-
-## 10. SEO
+### 3.2 SEO
 
 - Astro native head management for per-page titles and descriptions
 - @astrojs/sitemap integration for auto-generated sitemap
@@ -240,8 +239,7 @@ tsc --noEmit      # type check without emitting files
 - Canonical URLs on all pages
 - `robots.txt` and Open Graph meta tags required
 
-
-## 11. Performance
+### 3.3 Performance
 
 - Bundle size < 200KB gzipped (JS only — most pages ship zero JS)
 - LCP < 1.5s
@@ -250,8 +248,7 @@ tsc --noEmit      # type check without emitting files
 - Core Web Vitals regressions are bugs
 - Static HTML by default — JS only for interactive islands
 
-
-## 12. Accessibility
+### 3.4 Accessibility
 
 - WCAG 2.1 AA target
 - All interactive elements keyboard-accessible
@@ -262,7 +259,9 @@ tsc --noEmit      # type check without emitting files
 - axe-core in CI — zero violations before merge
 
 
-## 13. Design
+## 4. Identity
+
+### 4.1 Design
 
 - Dark background — data-dense layout
 - Data tables with sortable column headers (click-to-sort)
@@ -272,8 +271,7 @@ tsc --noEmit      # type check without emitting files
 - No stock photography
 - No emojis in UI text
 
-
-## 14. Brand voice
+### 4.2 Brand voice
 
 - Direct and concise — no marketing fluff
 - Opinionated — recommend, don't just list
