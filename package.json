@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",
-    "check": "astro check"
+    "check": "astro check",
+    "check:all": "npm run lint && npm run check && npm run build"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.3",
@@ -18,6 +19,7 @@
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.8",
     "@eslint/js": "^9.39.4",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
