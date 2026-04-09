@@ -1,8 +1,9 @@
 import type { Mount } from "./lens";
 import type { Genre } from "./genre";
 
-/** Accessory category — Fujifilm-specific */
-type FujiAccessoryCategory =
+/** Accessory category */
+type AccessoryCategory =
+  // Fuji-specific
   | "flash"
   | "battery-grip"
   | "hand-grip"
@@ -12,33 +13,15 @@ type FujiAccessoryCategory =
   | "remote"
   | "audio"
   | "body-accessory"
-  | "cooling";
-
-/** Accessory category — genre gear (universal, affiliate-driven) */
-type GenreGearCategory =
-  | "tripod"
-  | "tripod-head"
-  | "monopod"
+  | "cooling"
+  // Genre gear (universal, affiliate-driven)
+  | "support"
   | "bag"
-  | "strap"
   | "filter"
   | "lighting"
-  | "light-modifier"
-  | "reflector"
-  | "memory-card"
-  | "external-storage"
-  | "tethering"
-  | "monitor"
-  | "color-checker"
-  | "star-tracker"
-  | "lens-heater"
-  | "rain-cover"
-  | "cleaning";
-
-type AccessoryCategory = FujiAccessoryCategory | GenreGearCategory;
-
-/** Compatibility target — camera model, lens model, mount, or battery type */
-type CompatTarget = string;
+  | "storage"
+  | "astro-gear"
+  | "protection";
 
 interface Accessory {
   // Identity
@@ -53,7 +36,7 @@ interface Accessory {
   genres?: Genre[];
 
   // Compatibility
-  compatibleWith?: CompatTarget[];
+  compatibleWith?: string[];
   mount?: Mount;
   universal?: boolean;
 
@@ -80,7 +63,7 @@ interface Accessory {
   filterSize?: number;
   filterType?: string;
 
-  // Tripod-specific
+  // Support-specific (tripod, monopod)
   maxLoad?: number;
   foldedLength?: number;
 
@@ -91,10 +74,4 @@ interface Accessory {
   officialUrl?: string;
 }
 
-export type {
-  Accessory,
-  AccessoryCategory,
-  FujiAccessoryCategory,
-  GenreGearCategory,
-  CompatTarget,
-};
+export type { Accessory, AccessoryCategory };
