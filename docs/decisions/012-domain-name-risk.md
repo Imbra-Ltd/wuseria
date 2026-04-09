@@ -40,15 +40,16 @@ for the X Series.
 |--------|------|------|
 | fujime.app | Memorable, direct | Trademark risk (contains "fuji") |
 | **lenspip.me** | Zero risk, unique, short, "pip" nods to scoring visualization, multi-system ready, fits me! series | Needs brand awareness from scratch |
+| **lensing.me** | Zero risk, short, elegant, real cinematography term, fits me! series | Lens-specific — cameras/accessories are secondary |
 | wisteria.me | Zero risk, elegant, "fuji" = wisteria in Japanese | Subtle, doesn't scale to multi-system |
 | lensgrade.me | Clear, describes scoring, multi-system ready | Generic |
 | xmount.me | Recognizable to Fuji shooters | "X" prefix associations, Fuji-specific |
 
 ## Decision
 
-Under review. **lenspip.me** is the top candidate — zero trademark risk,
-unique, descriptive (lens scoring with pips), multi-system ready for Phase 4
-expansion, and fits the me! series (.me TLD).
+Under review. Top candidates: **lenspip.me** (unique, scoring-focused) and
+**lensing.me** (elegant, cinematography term). Both zero trademark risk,
+multi-system ready, and fit the me! series (.me TLD).
 
 ## References
 

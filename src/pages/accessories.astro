@@ -1,9 +1,9 @@
 ---
 import Base from "../layouts/Base.astro";
 import accessories from "../data/accessories";
+import AccessoriesExplorer from "../components/interactive/AccessoriesExplorer/AccessoriesExplorer";
 ---
 
 <Base title="Accessories — Fuji.me!" description="Fujifilm accessories: flashes, grips, batteries, adapters, and more.">
-  <h1>Accessories</h1>
-  <p>{accessories.length} accessories in the database.</p>
+  <AccessoriesExplorer client:load accessories={accessories} />
 </Base>
