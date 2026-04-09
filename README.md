@@ -41,8 +41,8 @@ me-fuji/
 ├── src/
 │   ├── data/           # Static data files (lenses, cameras, config)
 │   ├── types/          # TypeScript interfaces for all domain entities
-│   ├── hooks/          # Reusable React hooks (planned)
-│   └── utils/          # Scoring and formatting utilities (planned)
+│   ├── hooks/          # Reusable React hooks
+│   └── utils/          # Scoring and formatting utilities
 ├── docs/
 │   ├── decisions/      # Architecture Decision Records (ADR-001 to ADR-011)
 │   ├── dev-journal.md  # Development history and migration tracking

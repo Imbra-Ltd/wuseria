@@ -35,11 +35,61 @@ const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
 
 const APERTURE_OPTIONS = ["0.95", "1.0", "1.2", "1.4", "1.8", "2.0", "2.8", "3.5", "4.0", "4.5", "5.6", "6.3", "8.0"];
 
+const FL_RANGES: Record<string, [number, number]> = {
+  "0-14": [0, 14],
+  "15-23": [15, 23],
+  "24-35": [24, 35],
+  "36-100": [36, 100],
+  "101-300": [101, 300],
+  "300+": [300, Infinity],
+};
+
+const PRICE_RANGES: Record<string, [number, number]> = {
+  "0-250": [0, 250],
+  "250-500": [250, 500],
+  "500-1000": [500, 1000],
+  "1000-2000": [1000, 2000],
+  "2000+": [2000, Infinity],
+};
+
+const RESET_VALUE = "__all__";
+
+const ALIGN_CLASSES: Record<ColumnAlign, string | undefined> = {
+  left: undefined,
+  right: styles.cellRight,
+  center: styles.cellCenter,
+};
+
 function formatFL(lens: Lens): string {
   if (lens.focalLengthMin === lens.focalLengthMax) {
     return `${lens.focalLengthMin}mm`;
   }
   return `${lens.focalLengthMin}-${lens.focalLengthMax}mm`;
+}
+
+interface ChipGroupProps {
+  label: string;
+  value: string;
+  options: { label: string; value: string }[];
+  onChange: (value: string) => void;
+}
+
+function ChipGroup({ label, value, options, onChange }: ChipGroupProps) {
+  return (
+    <div className={styles.chipGroup}>
+      <span className={styles.chipLabel}>{label}</span>
+      {options.map((opt) => (
+        <button
+          key={opt.value}
+          type="button"
+          className={`${styles.chip} ${value === opt.value ? styles.chipOn : ""}`}
+          onClick={() => onChange(opt.value)}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  );
 }
 
 function LensExplorer({ lenses }: LensExplorerProps) {
@@ -54,6 +104,11 @@ function LensExplorer({ lenses }: LensExplorerProps) {
   const [fl, setFl] = useState("");
   const [maxAp, setMaxAp] = useState("");
   const [priceRange, setPriceRange] = useState("");
+
+  const slugMap = useMemo(
+    () => new Map(lenses.map((l) => [`${l.brand}-${l.model}`, toSlug(`${l.brand} ${l.model}`)])),
+    [lenses],
+  );
 
   const brands = useMemo(() => {
     const pool = mount ? lenses.filter((l) => l.mount === mount) : lenses;
@@ -75,27 +130,12 @@ function LensExplorer({ lenses }: LensExplorerProps) {
       if (discontinued === "available" && lens.isDiscontinued) return false;
       if (discontinued === "discontinued" && !lens.isDiscontinued) return false;
       if (fl) {
-        const ranges: Record<string, [number, number]> = {
-          "0-14": [0, 14],
-          "15-23": [15, 23],
-          "24-35": [24, 35],
-          "36-100": [36, 100],
-          "101-300": [101, 300],
-          "300+": [300, Infinity],
-        };
-        const [min, max] = ranges[fl];
+        const [min, max] = FL_RANGES[fl];
         if (lens.focalLengthMax < min || lens.focalLengthMin > max) return false;
       }
       if (maxAp && lens.maxAperture > parseFloat(maxAp)) return false;
       if (priceRange) {
-        const ranges: Record<string, [number, number]> = {
-          "0-250": [0, 250],
-          "250-500": [250, 500],
-          "500-1000": [500, 1000],
-          "1000-2000": [1000, 2000],
-          "2000+": [2000, Infinity],
-        };
-        const [min, max] = ranges[priceRange];
+        const [min, max] = PRICE_RANGES[priceRange];
         if (lens.price < min || lens.price > max) return false;
       }
       if (q && !`${lens.brand} ${lens.model}`.toLowerCase().includes(q)) return false;
@@ -106,7 +146,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
   const { sorted, sortKey, sortDirection, toggleSort } = useSort<Lens, LensSortKey>(filtered, "focalLengthMin");
 
   function resetValue(value: string): string {
-    return value === "__all__" ? "" : value;
+    return value === RESET_VALUE ? "" : value;
   }
 
   function handleMountChange(value: string): void {
@@ -166,7 +206,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         <div className={styles.filterRow}>
           <select className={`${styles.filterSelect} ${brand ? styles.filterActive : ""}`} value={brand} onChange={(e) => setBrand(resetValue(e.target.value))} aria-label="Filter by brand">
             <option value="" hidden>Brand</option>
-            <option value="__all__">All brands</option>
+            <option value={RESET_VALUE}>All brands</option>
             {brands.includes("Fujifilm") && <option value="Fujifilm">Fujifilm</option>}
             {brands.includes("Fujifilm") && <option disabled>───</option>}
             {brands.filter((b) => b !== "Fujifilm").map((b) => (
@@ -176,7 +216,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
 
           <select className={`${styles.filterSelect} ${fl ? styles.filterActive : ""}`} value={fl} onChange={(e) => setFl(resetValue(e.target.value))} aria-label="Filter by focal length">
             <option value="" hidden>Focal Length</option>
-            <option value="__all__">All</option>
+            <option value={RESET_VALUE}>All</option>
             <option value="0-14">&le; 14mm</option>
             <option value="15-23">15-23mm</option>
             <option value="24-35">24-35mm</option>
@@ -187,7 +227,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
 
           <select className={`${styles.filterSelect} ${maxAp ? styles.filterActive : ""}`} value={maxAp} onChange={(e) => setMaxAp(resetValue(e.target.value))} aria-label="Filter by aperture">
             <option value="" hidden>Aperture</option>
-            <option value="__all__">All</option>
+            <option value={RESET_VALUE}>All</option>
             {APERTURE_OPTIONS.map((ap) => (
               <option key={ap} value={ap}>f/{ap} or faster</option>
             ))}
@@ -195,7 +235,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
 
           <select className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
             <option value="" hidden>Price</option>
-            <option value="__all__">All</option>
+            <option value={RESET_VALUE}>All</option>
             <option value="0-250">Under $250</option>
             <option value="250-500">$250 - $500</option>
             <option value="500-1000">$500 - $1,000</option>
@@ -206,47 +246,24 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         </div>
 
         <div className={styles.chipRow}>
-          <div className={styles.chipGroup}>
-            <span className={styles.chipLabel}>Mount</span>
-            <button type="button" className={`${styles.chip} ${mount === "" ? styles.chipOn : ""}`} onClick={() => handleMountChange("")}>All</button>
-            <button type="button" className={`${styles.chip} ${mount === "X" ? styles.chipOn : ""}`} onClick={() => handleMountChange("X")}>X</button>
-            <button type="button" className={`${styles.chip} ${mount === "GFX" ? styles.chipOn : ""}`} onClick={() => handleMountChange("GFX")}>GFX</button>
-          </div>
-
-          <div className={styles.chipGroup}>
-            <span className={styles.chipLabel}>Type</span>
-            <button type="button" className={`${styles.chip} ${type === "" ? styles.chipOn : ""}`} onClick={() => setType("")}>All</button>
-            <button type="button" className={`${styles.chip} ${type === "prime" ? styles.chipOn : ""}`} onClick={() => setType("prime")}>Prime</button>
-            <button type="button" className={`${styles.chip} ${type === "zoom" ? styles.chipOn : ""}`} onClick={() => setType("zoom")}>Zoom</button>
-          </div>
-
-          <div className={styles.chipGroup}>
-            <span className={styles.chipLabel}>AF</span>
-            <button type="button" className={`${styles.chip} ${af === "" ? styles.chipOn : ""}`} onClick={() => setAf("")}>All</button>
-            <button type="button" className={`${styles.chip} ${af === "yes" ? styles.chipOn : ""}`} onClick={() => setAf("yes")}>AF</button>
-            <button type="button" className={`${styles.chip} ${af === "no" ? styles.chipOn : ""}`} onClick={() => setAf("no")}>MF</button>
-          </div>
-
-          <div className={styles.chipGroup}>
-            <span className={styles.chipLabel}>OIS</span>
-            <button type="button" className={`${styles.chip} ${ois === "" ? styles.chipOn : ""}`} onClick={() => setOis("")}>All</button>
-            <button type="button" className={`${styles.chip} ${ois === "yes" ? styles.chipOn : ""}`} onClick={() => setOis("yes")}>Yes</button>
-            <button type="button" className={`${styles.chip} ${ois === "no" ? styles.chipOn : ""}`} onClick={() => setOis("no")}>No</button>
-          </div>
-
-          <div className={styles.chipGroup}>
-            <span className={styles.chipLabel}>WR</span>
-            <button type="button" className={`${styles.chip} ${wr === "" ? styles.chipOn : ""}`} onClick={() => setWr("")}>All</button>
-            <button type="button" className={`${styles.chip} ${wr === "yes" ? styles.chipOn : ""}`} onClick={() => setWr("yes")}>Yes</button>
-            <button type="button" className={`${styles.chip} ${wr === "no" ? styles.chipOn : ""}`} onClick={() => setWr("no")}>No</button>
-          </div>
-
-          <div className={styles.chipGroup}>
-            <span className={styles.chipLabel}>Status</span>
-            <button type="button" className={`${styles.chip} ${discontinued === "" ? styles.chipOn : ""}`} onClick={() => setDiscontinued("")}>All</button>
-            <button type="button" className={`${styles.chip} ${discontinued === "available" ? styles.chipOn : ""}`} onClick={() => setDiscontinued("available")}>Available</button>
-            <button type="button" className={`${styles.chip} ${discontinued === "discontinued" ? styles.chipOn : ""}`} onClick={() => setDiscontinued("discontinued")}>Discontinued</button>
-          </div>
+          <ChipGroup label="Mount" value={mount} onChange={handleMountChange} options={[
+            { label: "All", value: "" }, { label: "X", value: "X" }, { label: "GFX", value: "GFX" },
+          ]} />
+          <ChipGroup label="Type" value={type} onChange={setType} options={[
+            { label: "All", value: "" }, { label: "Prime", value: "prime" }, { label: "Zoom", value: "zoom" },
+          ]} />
+          <ChipGroup label="AF" value={af} onChange={setAf} options={[
+            { label: "All", value: "" }, { label: "AF", value: "yes" }, { label: "MF", value: "no" },
+          ]} />
+          <ChipGroup label="OIS" value={ois} onChange={setOis} options={[
+            { label: "All", value: "" }, { label: "Yes", value: "yes" }, { label: "No", value: "no" },
+          ]} />
+          <ChipGroup label="WR" value={wr} onChange={setWr} options={[
+            { label: "All", value: "" }, { label: "Yes", value: "yes" }, { label: "No", value: "no" },
+          ]} />
+          <ChipGroup label="Status" value={discontinued} onChange={setDiscontinued} options={[
+            { label: "All", value: "" }, { label: "Available", value: "available" }, { label: "Discontinued", value: "discontinued" },
+          ]} />
         </div>
 
       </div>
@@ -263,7 +280,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                   {COLUMNS.map((col) => (
                     <th
                       key={col.key}
-                      className={col.align === "right" ? styles.cellRight : col.align === "center" ? styles.cellCenter : undefined}
+                      className={ALIGN_CLASSES[col.align]}
                       onClick={() => toggleSort(col.key)}
                       aria-sort={
                         sortKey === col.key
@@ -287,7 +304,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                     <td>{lens.brand}</td>
                     <td>
                       <span className={styles.typeBadge}>{lens.type === "prime" ? "P" : "Z"}</span>
-                      <a className={styles.lensLink} href={`/lenses/${toSlug(`${lens.brand} ${lens.model}`)}`}>
+                      <a className={styles.lensLink} href={`/lenses/${slugMap.get(`${lens.brand}-${lens.model}`)}`}>
                         {lens.model}
                       </a>
                     </td>
@@ -309,7 +326,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             {sorted.map((lens) => (
               <div key={`${lens.brand}-${lens.model}`} className={`${styles.card} ${lens.isDiscontinued ? styles.cardDiscontinued : ""}`}>
                 <div className={styles.cardHeader}>
-                  <a className={styles.lensLink} href={`/lenses/${toSlug(`${lens.brand} ${lens.model}`)}`}>
+                  <a className={styles.lensLink} href={`/lenses/${slugMap.get(`${lens.brand}-${lens.model}`)}`}>
                     {lens.brand} {lens.model}
                   </a>
                   <span className={styles.cardPrice}>~${lens.price}</span>

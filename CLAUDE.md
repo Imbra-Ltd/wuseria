@@ -90,7 +90,6 @@ src/
     reviews.ts                    // ReviewLink[] keyed by product
   hooks/
     useSort.ts
-    useFilter.ts
   types/
     lens.ts
     camera.ts
