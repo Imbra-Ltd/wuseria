@@ -148,3 +148,27 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - Upstream solid-ai-templates PRs #20-29
 - Accessory data refactored to use explicit sub-interface types per category
 - ADRs extracted from architecture.md into `docs/decisions/` (this session)
+
+### Session 8 — Astro Migration & Screeners (2026-04-09)
+**Tool:** Claude Code (me-fuji repo)
+
+- Astro migration complete (#57 closed):
+  - Scaffold with React integration, Base layout, dark theme
+  - All page routes — 258 pages (lenses, cameras, genre, wiki, accessories, trade deals, 404)
+  - tsconfig.json, astro.config.mjs, check:all script
+- Lens Explorer MVP (PRs #101, #103, #104):
+  - 9 sortable columns, chip + dropdown filters, text search
+  - Mobile card layout, hero with dynamic count, filter panel
+  - Warm golden accent (#e8a045) on cool dark theme
+  - Code review: extracted ChipGroup, constants, memoized slugs
+- Camera Explorer (PR #107):
+  - 11 sortable columns, 11 filters
+  - Series, year, sensor, video, body style, burst FPS, battery life
+  - Shared components with Lens Explorer
+- Accessories Explorer (PR #111):
+  - 5 columns, category/price/mount/status filters
+  - Compatibility search and badges (compatible camera/lens models)
+- Docs restructured: 12 ADRs in docs/decisions/, dev-journal.md
+- Upstream solid-ai-templates PRs #30-31 (typed arrays, dev journal, ADR format)
+- ADR-012: domain name trademark risk — lenspip.me and lensing.me as candidates
+- Issues created: #95 (hasAutofocus), #98 (field audit), #99 (coating), #100 (ghost lens), #102 (screener profiles epic), #105 (migration epic), #106 (FormFactor rename), #109 (domain decision), #110 (accessory prices)
