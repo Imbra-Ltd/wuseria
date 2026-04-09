@@ -265,9 +265,9 @@ tsc --noEmit      # type check without emitting files
 - Honest about limitations — "scoring is subjective, here's our methodology"
 
 
-## 5. Quality work
+## 5. Review process
 
-Before quality work, read the relevant templates listed in the header.
+Before reviews, read the relevant templates listed in the header.
 Two distinct scopes:
 
 ### 5.1 Code review
