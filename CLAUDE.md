@@ -65,6 +65,9 @@ src/
       WikiEntry.astro
       PriceTag.astro
     interactive/                  // React — hydrated as islands
+      shared/
+        ChipGroup.tsx             // Reusable chip filter group
+        constants.ts              // Shared filter constants (RESET_VALUE)
       LensExplorer/
         LensExplorer.tsx          // Sort/filter table (client:load)
         LensExplorer.test.tsx

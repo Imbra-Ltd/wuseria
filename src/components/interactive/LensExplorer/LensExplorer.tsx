@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import type { Lens } from "../../../types/lens";
 import { useSort } from "../../../hooks/useSort";
 import { toSlug } from "../../../utils/slug";
+import { ChipGroup } from "../shared/ChipGroup";
+import { RESET_VALUE, resetValue } from "../shared/constants";
 import styles from "./LensExplorer.module.css";
 
 interface LensExplorerProps {
@@ -52,8 +54,6 @@ const PRICE_RANGES: Record<string, [number, number]> = {
   "2000+": [2000, Infinity],
 };
 
-const RESET_VALUE = "__all__";
-
 const ALIGN_CLASSES: Record<ColumnAlign, string | undefined> = {
   left: undefined,
   right: styles.cellRight,
@@ -65,31 +65,6 @@ function formatFL(lens: Lens): string {
     return `${lens.focalLengthMin}mm`;
   }
   return `${lens.focalLengthMin}-${lens.focalLengthMax}mm`;
-}
-
-interface ChipGroupProps {
-  label: string;
-  value: string;
-  options: { label: string; value: string }[];
-  onChange: (value: string) => void;
-}
-
-function ChipGroup({ label, value, options, onChange }: ChipGroupProps) {
-  return (
-    <div className={styles.chipGroup}>
-      <span className={styles.chipLabel}>{label}</span>
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          className={`${styles.chip} ${value === opt.value ? styles.chipOn : ""}`}
-          onClick={() => onChange(opt.value)}
-        >
-          {opt.label}
-        </button>
-      ))}
-    </div>
-  );
 }
 
 function LensExplorer({ lenses }: LensExplorerProps) {
@@ -144,10 +119,6 @@ function LensExplorer({ lenses }: LensExplorerProps) {
   }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, priceRange]);
 
   const { sorted, sortKey, sortDirection, toggleSort } = useSort<Lens, LensSortKey>(filtered, "focalLengthMin");
-
-  function resetValue(value: string): string {
-    return value === RESET_VALUE ? "" : value;
-  }
 
   function handleMountChange(value: string): void {
     setMount(value);
@@ -246,22 +217,22 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         </div>
 
         <div className={styles.chipRow}>
-          <ChipGroup label="Mount" value={mount} onChange={handleMountChange} options={[
+          <ChipGroup label="Mount" value={mount} onChange={handleMountChange} styles={styles} options={[
             { label: "All", value: "" }, { label: "X", value: "X" }, { label: "GFX", value: "GFX" },
           ]} />
-          <ChipGroup label="Type" value={type} onChange={setType} options={[
+          <ChipGroup label="Type" value={type} onChange={setType} styles={styles} options={[
             { label: "All", value: "" }, { label: "Prime", value: "prime" }, { label: "Zoom", value: "zoom" },
           ]} />
-          <ChipGroup label="AF" value={af} onChange={setAf} options={[
+          <ChipGroup label="AF" value={af} onChange={setAf} styles={styles} options={[
             { label: "All", value: "" }, { label: "AF", value: "yes" }, { label: "MF", value: "no" },
           ]} />
-          <ChipGroup label="OIS" value={ois} onChange={setOis} options={[
+          <ChipGroup label="OIS" value={ois} onChange={setOis} styles={styles} options={[
             { label: "All", value: "" }, { label: "Yes", value: "yes" }, { label: "No", value: "no" },
           ]} />
-          <ChipGroup label="WR" value={wr} onChange={setWr} options={[
+          <ChipGroup label="WR" value={wr} onChange={setWr} styles={styles} options={[
             { label: "All", value: "" }, { label: "Yes", value: "yes" }, { label: "No", value: "no" },
           ]} />
-          <ChipGroup label="Status" value={discontinued} onChange={setDiscontinued} options={[
+          <ChipGroup label="Status" value={discontinued} onChange={setDiscontinued} styles={styles} options={[
             { label: "All", value: "" }, { label: "Available", value: "available" }, { label: "Discontinued", value: "discontinued" },
           ]} />
         </div>

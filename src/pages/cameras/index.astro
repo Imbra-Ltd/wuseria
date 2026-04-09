@@ -1,9 +1,9 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { cameras } from "../../data/cameras";
+import CameraExplorer from "../../components/interactive/CameraExplorer/CameraExplorer";
 ---
 
 <Base title="Cameras — Fuji.me!" description="Browse all Fujifilm camera bodies with specs and features.">
-  <h1>Cameras</h1>
-  <p>{cameras.length} cameras in the database.</p>
+  <CameraExplorer client:load cameras={cameras} />
 </Base>
