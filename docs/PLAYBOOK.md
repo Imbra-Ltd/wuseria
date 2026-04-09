@@ -31,6 +31,19 @@ Operational reference for common tasks.
 1. Create an ADR in `docs/decisions/` using the format: context, decision, alternatives, consequences
 2. Reference the ADR from `docs/architecture.md` if relevant
 
+## Run the prototype
+
+The original single-file prototype lives at `docs/prototype.jsx`. To run it,
+copy it into `src/App.jsx` and start the Vite dev server:
+
+```bash
+cp docs/prototype.jsx src/App.jsx
+npm run dev
+```
+
+Open [http://localhost:5173](http://localhost:5173). The prototype uses old
+field names (pre-migration) and is kept for reference only.
+
 ## Deploy
 
 Deployment is automated via GitHub Actions on push to `main`. No manual steps required.
