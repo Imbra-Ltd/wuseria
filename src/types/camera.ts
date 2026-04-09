@@ -1,24 +1,22 @@
-import type { Mount } from "./lens";
+import type { Mount, BatteryType, CardType, CardSpeedClass } from "./common";
 
-/** EVF position on the body */
+// =============================================================================
+// TYPES
+// =============================================================================
+
 type EvfPosition = "center" | "corner" | "none";
 
-/** Ergonomic form factor */
 type FormFactor = "slr" | "dslr-grip" | "rangefinder" | "compact";
 
-/** EVF type */
 type EvfType = "electronic" | "hybrid" | "none";
 
-/** Screen articulation type */
 type ScreenType = "tilting" | "articulating" | "fixed";
 
-/** Shutter mechanism */
 type ShutterType = "mechanical" | "electronic" | "both";
 
-/** Autofocus system type */
-type CameraAfType = "CDAF" | "hybrid-PDAF";
+// Camera-level AF system, not lens motor (see AfMotor in lens.ts)
+type AfSystemType = "CDAF" | "hybrid-PDAF";
 
-/** Camera series within Fujifilm lineup */
 type CameraSeries =
   | "X-Pro"
   | "X-T"
@@ -29,92 +27,165 @@ type CameraSeries =
   | "X-A"
   | "GFX";
 
-/** SD/CFexpress card type */
-type CardType = "SD" | "UHS-II" | "CFexpress";
+type SensorType =
+  | "X-Trans I"
+  | "X-Trans II"
+  | "X-Trans III"
+  | "X-Trans IV"
+  | "X-Trans V"
+  | "X-Trans V Stacked"
+  | "Bayer"
+  | "GFX CMOS"
+  | "GFX CMOS II"
+  | "GFX CMOS II HS";
 
-/** USB connector type */
 type UsbType = "micro-USB" | "USB-C";
 
-/** Subject detection categories */
 type SubjectDetect = "animal" | "bird" | "car" | "motorcycle" | "bicycle" | "airplane" | "train";
 
+type VideoSpec = "1080p" | "4K" | "6.2K" | "8K";
+
+type FilmSimulation =
+  | "Provia"
+  | "Velvia"
+  | "Astia"
+  | "Classic Chrome"
+  | "Pro Neg Hi"
+  | "Pro Neg Std"
+  | "Monochrome"
+  | "Sepia"
+  | "ACROS"
+  | "ACROS+Ye"
+  | "ACROS+R"
+  | "ACROS+G"
+  | "Eterna"
+  | "Eterna Bleach Bypass"
+  | "Classic Neg"
+  | "Nostalgic Neg"
+  | "Reala ACE";
+
+// =============================================================================
+// CAMERA
+// =============================================================================
+
 interface Camera {
-  // Identity
+
+  // ===========================================================================
+  // IDENTITY — all cameras are Fujifilm
+  // ===========================================================================
+
   model: string;
   mount: Mount;
   year: number;
-  discontinued?: boolean;
+  isDiscontinued?: boolean;
   series: CameraSeries;
   evfPosition: EvfPosition;
   formFactor: FormFactor;
 
-  // Sensor
-  sensor: string;
+  // ===========================================================================
+  // SENSOR
+  // ===========================================================================
+
+  sensor: SensorType;
   megapixels: number;
-  sensorWidth?: number;
-  sensorHeight?: number;
-  bsi?: boolean;
+  sensorWidth?: number;              // mm
+  sensorHeight?: number;             // mm
+  isBsi?: boolean;                    // back-side illuminated
   isoMin?: number;
   isoMax?: number;
 
-  // Stabilisation & weather
-  ibis: boolean;
-  weatherSealed: boolean;
+  // ===========================================================================
+  // STABILISATION & WEATHER
+  // ===========================================================================
 
-  // Viewfinder & screen
+  hasIbis: boolean;
+  isWeatherSealed: boolean;
+
+  // ===========================================================================
+  // VIEWFINDER & SCREEN
+  // ===========================================================================
+
   evfType?: EvfType;
-  evfResolution?: number;
+  evfResolution?: number;             // dots
   screenType?: ScreenType;
-  screenResolution?: number;
-  touchscreen?: boolean;
+  screenResolution?: number;          // dots
+  hasTouchscreen?: boolean;
 
-  // Performance
+  // ===========================================================================
+  // PERFORMANCE
+  // ===========================================================================
+
   burstFps?: number;
   shutterType?: ShutterType;
-  afType?: CameraAfType;
+  afType?: AfSystemType;
   afPoints?: number;
-  pdafCoverage?: number;
-  faceDetectAF: boolean;
+  pdafCoverage?: number;              // % of sensor area
+  hasFaceDetectAF: boolean;
   subjectDetectAF?: SubjectDetect[];
-  bufferDepth?: number;
+  bufferDepth?: number;               // frames
   electronicShutterFps?: number;
-  pixelShift?: boolean;
-  batteryLife?: number;
-  batteryType?: string;
+  hasPixelShift?: boolean;
+  batteryLife?: number;               // CIPA shots per charge
+  batteryType?: BatteryType;
 
-  // Video
-  videoSpec: string;
+  // ===========================================================================
+  // VIDEO
+  // ===========================================================================
 
-  // Film simulations
+  videoSpec: VideoSpec;
+
+  // ===========================================================================
+  // FILM SIMULATIONS
+  // ===========================================================================
+
   filmSimulations?: number;
-  filmSimulationList?: string[];
 
-  // Storage
+  // ===========================================================================
+  // STORAGE
+  // ===========================================================================
+
   cardSlots?: number;
   cardType?: CardType;
+  cardSpeedClass?: CardSpeedClass;
 
-  // Connectivity
-  flashHotShoe: boolean;
-  builtInFlash?: boolean;
+  // ===========================================================================
+  // CONNECTIVITY
+  // ===========================================================================
+
+  hasFlashHotShoe: boolean;
+  hasBuiltInFlash?: boolean;
   usbType?: UsbType;
-  tethering?: boolean;
-  wifi?: boolean;
-  bluetooth?: boolean;
-  micInput: boolean;
-  headphoneJack: boolean;
+  hasTethering?: boolean;
+  hasWifi?: boolean;
+  hasBluetooth?: boolean;
+  hasMicInput: boolean;
+  hasHeadphoneJack: boolean;
 
-  // Physical
-  weight: number;
-  width?: number;
-  height?: number;
-  depth?: number;
+  // ===========================================================================
+  // PHYSICAL
+  // ===========================================================================
 
-  // Price
-  price: number;
+  weight: number;                     // grams, body only
+  width?: number;                     // mm
+  height?: number;                    // mm
+  depth?: number;                     // mm
 
-  // Links
+  // ===========================================================================
+  // PRICE
+  // ===========================================================================
+
+  price: number;                      // USD, rounded to nearest $250
+
+  // ===========================================================================
+  // LINKS
+  // ===========================================================================
+
   officialUrl?: string;
 }
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
 
 export type {
   Camera,
@@ -123,9 +194,11 @@ export type {
   EvfType,
   ScreenType,
   ShutterType,
-  CameraAfType,
+  AfSystemType,
   CameraSeries,
-  CardType,
+  SensorType,
   UsbType,
   SubjectDetect,
+  VideoSpec,
+  FilmSimulation,
 };

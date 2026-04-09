@@ -59,7 +59,7 @@ interface Lens {
   type: "prime" | "zoom";       // prime or zoom lens
   mount: "X" | "GFX";           // mount system
   year?: number;                // release year
-  discontinued?: boolean;       // no longer in production
+  isDiscontinued?: boolean;     // no longer in production
 
   // Optical — specs
   focalLengthMin: number;       // min focal length, mm
@@ -67,26 +67,26 @@ interface Lens {
   maxAperture: number;          // widest f-number
   sweetSpot?: string;           // sharpest aperture
   apertureBlades?: number;      // blade count, bokeh shape
-  circularAperture?: boolean;   // rounded blades, rounder bokeh stopped down
+  hasCircularAperture?: boolean; // rounded blades, rounder bokeh stopped down
   maxMagnification?: number;    // reproduction ratio as decimal
 
   // Build
-  ois: boolean;                 // optical stabilisation
-  weatherSealed: boolean;       // weather resistant body
-  autofocus: boolean;           // has autofocus motor
+  hasOis: boolean;              // optical stabilisation
+  isWeatherSealed: boolean;     // weather resistant body
+  hasAutofocus: boolean;        // has autofocus motor
   afMotor?: string;             // "DC" | "STM" | "LM" — speed tier
-  apertureRing: boolean;        // physical aperture ring
-  apertureClickless?: boolean;  // declicked aperture ring
-  focusRing: boolean;           // physical focus ring
-  focusByWire?: boolean;        // electronic focus ring
-  distanceScale?: boolean;      // distance markings on barrel
-  smoothFocusRing?: boolean;    // smooth/declicked focus ring
+  hasApertureRing: boolean;     // physical aperture ring
+  isApertureClickless?: boolean; // declicked aperture ring
+  hasFocusRing: boolean;        // physical focus ring
+  isFocusByWire?: boolean;      // electronic focus ring
+  hasDistanceScale?: boolean;   // distance markings on barrel
+  hasSmoothFocusRing?: boolean; // smooth/declicked focus ring
   weight: number;               // weight in grams
   diameter?: number;            // max outer diameter, mm
   length?: number;              // mount to front element, mm
   filterThread?: number;        // filter thread diameter, mm
-  rotatingFront: boolean;       // front element rotates on focus
-  tripodMount: boolean;         // built-in tripod collar
+  hasRotatingFront: boolean;    // front element rotates on focus
+  hasTripodMount: boolean;      // built-in tripod collar
 
   // Price
   price: number;                // approximate price, EUR
@@ -110,11 +110,11 @@ interface Lens {
 
   // Other scoring inputs
   minFocusDistance?: number;    // closest focus distance, mm
-  tiltShift: boolean;           // tilt-shift lens
+  isTiltShift: boolean;         // tilt-shift lens
   shiftRange?: number;          // max shift, mm (e.g. 7, 12, 15)
   tiltAngle?: number;           // max tilt, degrees (e.g. 8.5)
   imageCircle?: number;         // image circle diameter, mm
-  tiltShiftIndependent?: boolean; // can tilt and shift independently
+  isTiltShiftIndependent?: boolean; // can tilt and shift independently
 }
 ```
 
@@ -128,19 +128,19 @@ interface Lens {
 | `ap` | `maxAperture` | Unambiguous |
 | `mtf` | Split into `sweetSpotSharpness`, `wideOpenSharpness`, `cornerSharpness`, `astigmatism`, `fieldCurvature`, `comaRating` | Single number replaced by individual MTF-sourced readings; `opticalScore` is now computed from these |
 | `lm` | `afMotor` | Three tiers: DC, STM, LM instead of boolean |
-| `wr` | `weatherSealed` | Standard industry term |
+| `wr` | `isWeatherSealed` | Standard industry term |
 | `kg` | `weight` | Grams for both Lens and Camera; no unit in name |
 | `thread` | `filterThread` | Distinguishes from mechanical threads |
 | `price` | `price` | Unchanged; unit in comment only |
 | `est` | `priceEstimated` | Readable as boolean |
-| `af` (optional) | `autofocus` (required) | Default false for MF lenses |
+| `af` (optional) | `hasAutofocus` (required) | Default false for MF lenses |
 
 **New fields:**
 
 | Field | Why added |
 |---|---|
 | `year` | Filter current vs legacy; "released after 2020" |
-| `discontinued` | Prevent recommending unavailable lenses |
+| `isDiscontinued` | Prevent recommending unavailable lenses |
 | `macro` | Genre scoring — was fragile string match on model name |
 | `comaRating` | Astro scoring — was hardcoded in scoring function |
 | `bokehQuality` | Portrait scoring — was planned but missing from data |

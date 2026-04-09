@@ -5,6 +5,33 @@ Domain: fujime.app. Part of the me! series by braboj.me.
 
 For architecture decisions and rationale, see `docs/architecture.md`.
 
+Quality conventions (SOLID, readability, code style, testing) are defined in
+`docs/solid-ai-templates/` — a git submodule from
+[Imbra-Ltd/solid-ai-templates](https://github.com/Imbra-Ltd/solid-ai-templates).
+Key references:
+- `docs/solid-ai-templates/base/quality.md` — SOLID, readability, maintainability
+- `docs/solid-ai-templates/base/typescript.md` — type design, naming, strictness
+- `docs/solid-ai-templates/base/review.md` — peer review checklist
+- `docs/solid-ai-templates/base/git.md` — git workflow
+- `docs/solid-ai-templates/frontend/quality.md` — frontend design patterns
+- `docs/solid-ai-templates/frontend/ux.md` — UX and accessibility
+
+Before quality work, read the relevant templates above. Two distinct scopes:
+- **Code review** (PR/branch changes): follow the priority order in
+  `base/review.md` (security, correctness, clarity, conventions). Apply
+  `base/quality.md` rules (SOLID, readability, naming, code style) and
+  `base/typescript.md` rules (type design, boolean prefixes, strictness)
+  as the standard for correctness, clarity, and convention checks. Run
+  both MUST and SHOULD checklists from `base/review.md` against the diff.
+- **Structure audit** (project completeness): verify every MUST from
+  `base/docs.md` (standard documents, ADRs), `base/readme.md` (9 required
+  sections), `base/git.md` (README, .gitignore), `frontend/static-site.md`
+  (assets, robots.txt, SEO), and `stack/static-site-astro.md` (.prettierrc,
+  eslint config, Astro conventions). Run after: new project setup, framework
+  migration, adding a major layer (backend, CI/CD), or before a release.
+
+Project-specific overrides and additions follow below.
+
 
 ## Stack
 
@@ -133,6 +160,14 @@ tsc --noEmit      # type check without emitting files
 - Follow `@typescript-eslint/recommended`
 - Prettier owns all formatting
 - `.astro` files formatted with the official Prettier Astro plugin
+
+
+## Type design
+
+- Use discriminated unions for type families with a shared base and distinct variants
+- Compose sub-interfaces when a domain has multiple categories with different fields
+- Keep single-purpose types flat — do not compose for composition's sake
+- Self-documenting names over comments — comment only intent that code cannot express
 
 
 ## Components

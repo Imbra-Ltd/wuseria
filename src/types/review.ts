@@ -1,25 +1,52 @@
-/** Source of a review — ordered by measurement rigour */
+// =============================================================================
+// REVIEW SOURCE — ordered by measurement rigour
+// =============================================================================
+//
+//  1. lensrentals         — optical bench MTF
+//  2. lenstip             — lab MTF charts
+//  3. opticallimits       — lab MTF
+//  4. dxomark             — sensor + lens measurements
+//  5. the-digital-picture — ISO chart comparisons
+//  6. dustinabbott        — field + lab
+//  7. imaging-resource    — lab resolution/noise
+//  8. ephotozine          — lab MTF
+//  9. dpreview            — comprehensive (archived)
+// 10. phillipreeve        — manual focus specialist
+// 11. cameralabs          — video + stills
+// 12. fujivsfuji          — Fuji head-to-head
+// 13. photographyblog     — hands-on
+// 14. digitalcameraworld  — buyer's guide
+
 type ReviewSource =
-  | "lensrentals"          // Roger Cicala; optical bench MTF — most rigorous
-  | "lenstip"              // lab MTF charts, resolution measurements
-  | "opticallimits"        // lab MTF, formerly photozone.de
-  | "dxomark"              // sensor + lens measurements (limited Fuji X)
-  | "the-digital-picture"  // Bryan Carnathan; ISO chart comparisons, MTF
-  | "dustinabbott"         // thorough field + lab; CA, flare, bokeh analysis
-  | "imaging-resource"     // lab-based resolution and noise testing
-  | "ephotozine"           // lab-tested MTF + resolution charts
-  | "dpreview"             // comprehensive (archived, still referenced)
-  | "phillipreeve"         // manual focus and adapted lens specialist
-  | "cameralabs"           // Gordon Laing; thorough video + stills
-  | "fujivsfuji"           // Fuji-specific head-to-head comparisons
-  | "photographyblog"      // decent hands-on reviews
-  | "digitalcameraworld"   // buyer's guide oriented
+  | "lensrentals"
+  | "lenstip"
+  | "opticallimits"
+  | "dxomark"
+  | "the-digital-picture"
+  | "dustinabbott"
+  | "imaging-resource"
+  | "ephotozine"
+  | "dpreview"
+  | "phillipreeve"
+  | "cameralabs"
+  | "fujivsfuji"
+  | "photographyblog"
+  | "digitalcameraworld"
   | "other";
 
+// =============================================================================
+// REVIEW LINK
+// =============================================================================
+
 interface ReviewLink {
+  product: string;
   source: ReviewSource;
   url: string;
   title?: string;
 }
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
 
 export type { ReviewLink, ReviewSource };

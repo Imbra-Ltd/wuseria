@@ -1,77 +1,136 @@
-/** Lens mount system */
-type Mount = "X" | "GFX";
+import type { Mount, Brand } from "./common";
 
-/** Lens type — prime or zoom */
+// =============================================================================
+// TYPES
+// =============================================================================
+
 type LensType = "prime" | "zoom";
 
-/** Autofocus motor type — speed tier */
+// DC = coreless, STM = stepping, LM = linear motor
 type AfMotor = "DC" | "STM" | "LM";
 
+// =============================================================================
+// LENS
+// =============================================================================
+
 interface Lens {
-  // Identity
-  brand: string;
+
+  // ===========================================================================
+  // IDENTITY
+  // ===========================================================================
+
+  brand: Brand;
   model: string;
   type: LensType;
   mount: Mount;
   year?: number;
-  discontinued?: boolean;
+  isDiscontinued?: boolean;
 
-  // Optical — specs
+  // ===========================================================================
+  // OPTICAL SPECS
+  // ===========================================================================
+
   focalLengthMin: number;
   focalLengthMax: number;
   maxAperture: number;
-  sweetSpot?: string;
+
+  // f-number where the lens is sharpest (e.g. 2.8, 4, 8)
+  sweetSpotAperture?: number;
+
   apertureBlades?: number;
-  circularAperture?: boolean;
+  hasCircularAperture?: boolean;
+
+  // Reproduction ratio as decimal (1.0 = life-size, 0.5 = half)
   maxMagnification?: number;
 
-  // Build
-  ois: boolean;
-  weatherSealed: boolean;
-  autofocus: boolean;
-  afMotor?: AfMotor;
-  apertureRing: boolean;
-  apertureClickless?: boolean;
-  focusRing: boolean;
-  focusByWire?: boolean;
-  distanceScale?: boolean;
-  smoothFocusRing?: boolean;
-  weight: number;
-  diameter?: number;
-  length?: number;
-  filterThread?: number;
-  rotatingFront: boolean;
-  tripodMount: boolean;
+  // ===========================================================================
+  // BUILD — absent = false for all booleans
+  // ===========================================================================
 
-  // Price
+  hasOis?: boolean;
+  isWeatherSealed?: boolean;
+  hasAutofocus?: boolean;
+  afMotor?: AfMotor;
+  hasApertureRing?: boolean;
+  isApertureClickless?: boolean;
+  hasFocusRing?: boolean;
+  isFocusByWire?: boolean;
+  hasDistanceScale?: boolean;
+  hasSmoothFocusRing?: boolean;
+
+  // Grams
+  weight: number;
+
+  // Outer diameter, mm
+  diameter?: number;
+
+  // Mount to front element, mm
+  length?: number;
+
+  // Filter thread diameter, mm
+  filterThread?: number;
+
+  hasRotatingFront?: boolean;
+  hasTripodMount?: boolean;
+
+  // ===========================================================================
+  // PRICE
+  // ===========================================================================
+
+  // USD, rounded to nearest $250
   price: number;
 
-  // Optical quality — from MTF chart readings
+  // ===========================================================================
+  // OPTICAL QUALITY — MTF chart readings (0–2 scale)
+  // ===========================================================================
+
   sweetSpotSharpness?: number;
   cornerSharpness?: number;
   wideOpenSharpness?: number;
   astigmatism?: number;
   fieldCurvature?: number;
-  comaRating?: number;
+  coma?: number;
 
-  // Optical quality — NOT from MTF charts
-  locaRating?: number;
+  // ===========================================================================
+  // OPTICAL QUALITY — NOT from MTF charts (0–2 scale)
+  // ===========================================================================
+
+  longitudinalCA?: number;
   lateralCA?: number;
-  distortionRating?: number;
+  distortion?: number;
   vignetting?: number;
-  bokehQuality?: number;
+  bokeh?: number;
   flareResistance?: number;
 
-  // Other scoring inputs
-  minFocusDistance?: number;
-  tiltShift: boolean;
-  shiftRange?: number;
-  tiltAngle?: number;
-  imageCircle?: number;
-  tiltShiftIndependent?: boolean;
+  // ===========================================================================
+  // SCORING INPUTS
+  // ===========================================================================
 
-  // Links
+  // mm
+  minFocusDistance?: number;
+
+  isTiltShift?: boolean;
+
+  // mm
+  shiftRange?: number;
+
+  // Degrees
+  tiltAngle?: number;
+
+  // mm
+  imageCircle?: number;
+
+  isTiltShiftIndependent?: boolean;
+
+  // ===========================================================================
+  // LINKS
+  // ===========================================================================
+
   officialUrl?: string;
 }
 
-export type { Lens, LensType, Mount, AfMotor };
+// =============================================================================
+// EXPORTS
+// =============================================================================
+
+export type { Lens, LensType, AfMotor };

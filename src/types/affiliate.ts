@@ -1,8 +1,14 @@
-/** Affiliate retailer */
+// =============================================================================
+// TYPES
+// =============================================================================
+
 type AffiliateRetailer = "amazon" | "bhphoto" | "adorama" | "mpb" | "keh";
 
-/** Region for pricing and availability */
 type AffiliateRegion = "eu" | "us" | "uk";
+
+// =============================================================================
+// AFFILIATE LINK
+// =============================================================================
 
 interface AffiliateLink {
   retailer: AffiliateRetailer;
@@ -10,5 +16,9 @@ interface AffiliateLink {
   product: string;
   region: AffiliateRegion;
 }
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
 
 export type { AffiliateLink, AffiliateRetailer, AffiliateRegion };
