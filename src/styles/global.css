@@ -10,8 +10,8 @@
   --color-border: #2e3345;
   --color-text: #e1e4ed;
   --color-text-muted: #8a8fa8;
-  --color-accent: #6c9bff;
-  --color-accent-hover: #8db3ff;
+  --color-accent: #e8a045;
+  --color-accent-hover: #f0b560;
   --color-link: #6c9bff;
   --color-link-hover: #8db3ff;
 
@@ -61,6 +61,7 @@ html {
   line-height: var(--line-height);
   color: var(--color-text);
   background-color: var(--color-bg);
+  color-scheme: dark;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -69,6 +70,30 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-text-muted) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-text-muted);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
 }
 
 a {

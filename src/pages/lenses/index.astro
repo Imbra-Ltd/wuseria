@@ -1,9 +1,10 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { lenses } from "../../data/lenses";
+import LensExplorer from "../../components/interactive/LensExplorer/LensExplorer";
 ---
 
 <Base title="Lenses — Fuji.me!" description="Browse all Fujifilm-compatible lenses with specs and genre scores.">
-  <h1>Lenses</h1>
-  <p>{lenses.length} lenses in the database.</p>
+  <LensExplorer client:load lenses={lenses} />
 </Base>
+
