@@ -16,7 +16,12 @@ Key references:
 - `docs/solid-ai-templates/frontend/quality.md` — frontend design patterns
 - `docs/solid-ai-templates/frontend/ux.md` — UX and accessibility
 
-Before code reviews or quality assessments, read the relevant templates above.
+Before quality work, read the relevant templates above. Two distinct scopes:
+- **Code review** (PR/branch changes): `base/review.md`, `base/quality.md`,
+  `base/typescript.md`
+- **Structure audit** (project completeness): `base/docs.md`, `base/readme.md`,
+  `base/git.md`, `frontend/static-site.md`, `stack/static-site-astro.md`
+
 Project-specific overrides and additions follow below.
 
 
