@@ -54,10 +54,20 @@ interface ChargerAccessory extends AccessoryBase {
   usbInput?: boolean;
 }
 
-interface SupportAccessory extends AccessoryBase {
-  category: "support";
+interface TripodAccessory extends AccessoryBase {
+  category: "tripod" | "monopod";
   maxLoad?: number;
+  maxHeight?: number;
   foldedLength?: number;
+  legSections?: number;
+  material?: string;
+}
+
+interface HeadAccessory extends AccessoryBase {
+  category: "tripod-head";
+  headType: string;
+  maxLoad?: number;
+  plateType?: string;
 }
 
 interface FilterAccessory extends AccessoryBase {
@@ -101,7 +111,8 @@ type Accessory =
   | LensAccessory
   | BatteryAccessory
   | ChargerAccessory
-  | SupportAccessory
+  | TripodAccessory
+  | HeadAccessory
   | FilterAccessory
   | LightingAccessory
   | GenericAccessory;
@@ -116,7 +127,8 @@ export type {
   LensAccessory,
   BatteryAccessory,
   ChargerAccessory,
-  SupportAccessory,
+  TripodAccessory,
+  HeadAccessory,
   FilterAccessory,
   LightingAccessory,
   GenericAccessory,
