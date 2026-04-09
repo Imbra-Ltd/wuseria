@@ -54,6 +54,21 @@ interface ChargerAccessory extends AccessoryBase {
   usbInput?: boolean;
 }
 
+interface BatteryGripAccessory extends AccessoryBase {
+  category: "battery-grip";
+  batteryType: string;
+  batteryCount?: number;
+  verticalControls?: boolean;
+}
+
+interface AdapterAccessory extends AccessoryBase {
+  category: "adapter";
+  sourceMount: string;
+  targetMount: string;
+  afSupported?: boolean;
+  apertureControl?: boolean;
+}
+
 interface TripodAccessory extends AccessoryBase {
   category: "tripod" | "monopod";
   maxLoad?: number;
@@ -83,21 +98,40 @@ interface LightingAccessory extends AccessoryBase {
   lumens?: number;
 }
 
+interface BagAccessory extends AccessoryBase {
+  category: "bag";
+  capacity?: number;
+  bagType?: string;
+}
+
+interface StorageAccessory extends AccessoryBase {
+  category: "storage";
+  storageType: string;
+  speed?: number;
+  capacityGB?: number;
+}
+
+interface RemoteAccessory extends AccessoryBase {
+  category: "remote";
+  connectionType: string;
+  intervalometer?: boolean;
+}
+
+interface AudioAccessory extends AccessoryBase {
+  category: "audio";
+  micPattern?: string;
+  connectionType?: string;
+}
+
 // ---------------------------------------------------------------------------
 // Generic — categories with no extra fields
 // ---------------------------------------------------------------------------
 
 interface GenericAccessory extends AccessoryBase {
   category:
-    | "battery-grip"
     | "hand-grip"
-    | "adapter"
-    | "remote"
-    | "audio"
     | "body-accessory"
     | "cooling"
-    | "bag"
-    | "storage"
     | "astro-gear"
     | "protection";
 }
@@ -111,10 +145,16 @@ type Accessory =
   | LensAccessory
   | BatteryAccessory
   | ChargerAccessory
+  | BatteryGripAccessory
+  | AdapterAccessory
   | TripodAccessory
   | HeadAccessory
   | FilterAccessory
   | LightingAccessory
+  | BagAccessory
+  | StorageAccessory
+  | RemoteAccessory
+  | AudioAccessory
   | GenericAccessory;
 
 type AccessoryCategory = Accessory["category"];
@@ -127,9 +167,15 @@ export type {
   LensAccessory,
   BatteryAccessory,
   ChargerAccessory,
+  BatteryGripAccessory,
+  AdapterAccessory,
   TripodAccessory,
   HeadAccessory,
   FilterAccessory,
   LightingAccessory,
+  BagAccessory,
+  StorageAccessory,
+  RemoteAccessory,
+  AudioAccessory,
   GenericAccessory,
 };
