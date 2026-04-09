@@ -98,6 +98,7 @@ src/
     affiliate.ts
     review.ts
   utils/
+    slug.ts
     scoring.ts
     formatting.ts
   styles/
@@ -119,9 +120,9 @@ npm run dev       # develop — hot reload at localhost:4321
 npm run build     # production build to dist/
 npm run preview   # preview production build locally
 npm run lint      # ESLint
-npm test          # run tests (watch mode)
-astro check       # validate .astro files
-tsc --noEmit      # type check without emitting files
+npm run check     # astro check — validate .astro files and type check
+npm run check:all # lint + check + build — full CI suite
+npm test          # run tests (watch mode, when configured)
 ```
 
 
@@ -135,7 +136,7 @@ tsc --noEmit      # type check without emitting files
 - Branch naming: `feat/description`, `fix/description`, `chore/description`
 - Do not commit `node_modules/`, `dist/`, `.env`, `.env.local`
 - Lock file (`package-lock.json`) is committed
-- Run `npm run lint && npm test && astro check && tsc --noEmit` before committing
+- Run `npm run check:all` before committing
 
 ### 2.2 TypeScript
 
@@ -212,7 +213,7 @@ tsc --noEmit      # type check without emitting files
 - Prefer accessible queries (`getByRole`, `getByText`) over `getByTestId`
 - Genre scoring functions MUST have unit tests
 - Data files MUST have validation tests (no duplicates, no missing required fields)
-- Run before every commit: `npm run lint && npm test && astro check && tsc --noEmit`
+- Run before every commit: `npm run check:all`
 
 ### 3.2 SEO
 
