@@ -148,64 +148,16 @@ interface Lens {
 
 ### Camera
 
-```typescript
-interface Camera {
+See `src/types/camera.ts` for the canonical interface (46 fields). Key changes from original spec:
 
-  // Identity
-  model: string;              // "X-T5"
-  mount: "X" | "GFX";         // mount system
-  year: number;               // release year
-  discontinued?: boolean;     // no longer in production
-  series: string;             // X-Pro, X-T, X-H, X-E, X-S, X-M, X-A, GFX
-  bodyStyle: string;          // "center-evf" | "corner-evf" | "no-evf"
-
-  // Sensor
-  sensor: string;             // "X-Trans CMOS 5 HR"
-  megapixels: number;         // effective megapixels
-
-  // Stabilisation & weather
-  ibis: boolean;              // in-body image stabilisation
-  weatherSealed: boolean;     // weather resistant body
-
-  // Viewfinder & screen
-  evfType?: string;           // "electronic" | "hybrid" | "none"
-  evfResolution?: number;     // dots, e.g. 3 690 000
-  screenType?: string;        // "tilting" | "articulating" | "fixed"
-
-  // Performance
-  burstFps?: number;          // max burst, mechanical shutter
-  shutterType?: string;       // "mechanical" | "electronic" | "both"
-  afType?: string;            // "CDAF" | "hybrid-PDAF"
-  afPoints?: number;          // AF point count
-  faceDetectAF: boolean;      // eye/face detection AF
-  subjectDetectAF?: string[]; // e.g. ["animal","bird","car"]
-  bufferDepth?: number;       // RAW shots before buffer full
-  electronicShutterFps?: number; // e-shutter max burst fps
-  batteryLife?: number;       // shots per charge (CIPA)
-
-  // Video
-  videoSpec: string;          // e.g. "6.2K 30p"
-
-  // Storage
-  cardSlots?: number;         // 1 or 2
-  cardType?: string;          // "SD" | "UHS-II" | "CFexpress"
-
-  // Connectivity
-  flashHotShoe: boolean;      // has hot shoe
-  usbType?: string;           // "micro-USB" | "USB-C"
-  micInput: boolean;          // external microphone jack
-  headphoneJack: boolean;     // audio monitoring output
-
-  // Physical
-  weight: number;             // weight in grams
-  width?: number;             // body width, mm
-  height?: number;            // body height, mm
-  depth?: number;             // body depth, mm
-
-  // Price
-  price: number;              // approximate price, EUR
-  priceEstimated: boolean;    // true if not retailer-confirmed
-}
+- `bodyStyle` → split into `evfPosition` ("center" | "corner" | "none") + `formFactor` ("slr" | "dslr-grip" | "rangefinder" | "compact")
+- `priceEstimated` → removed (all prices are estimates, $250 steps, USD)
+- Added sensor fields: `sensorWidth`, `sensorHeight`, `bsi`, `isoMin`, `isoMax`
+- Added performance fields: `pdafCoverage`, `pixelShift`
+- Added film simulations: `filmSimulations`, `filmSimulationList`
+- Added connectivity: `wifi`, `bluetooth`, `tethering`, `builtInFlash`
+- Added display: `screenResolution`, `touchscreen`
+- Added: `batteryType`, `officialUrl`
 ```
 
 ### Optical Score (computed)
@@ -372,10 +324,11 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 
 | Step | What | Status |
 |---|---|---|
-| 1 | TypeScript interfaces for all data types | Done — Lens (40+ fields), Camera (32), Genre, Affiliate, Review |
-| 2 | Extract lens data into `src/data/lenses.ts` | Done — 236 lenses with full specs + officialUrl |
-| 3 | Scaffold Astro + React islands (replaces Vite + React SPA) | Next |
-| 4 | Extract camera, wiki, accessories data | Pending |
+| 1 | TypeScript interfaces for all data types | Done — Lens (40+ fields), Camera (46), Genre, Affiliate, Review |
+| 2 | Extract lens data into `src/data/lenses.ts` | Done — 242 lenses, full specs, verified URLs, mount audit |
+| 3 | Extract camera data into `src/data/cameras.ts` | Done — 39 bodies, 46 fields, 2026 prices |
+| 4 | Scaffold Astro + React islands (replaces Vite + React SPA) | Next |
+| 5 | Extract wiki, accessories data | Pending |
 | 5 | Split into Astro pages + React islands for interactive parts | Pending |
 | 6 | Replace inline styles with Astro scoped styles + CSS Modules | Pending |
 | 7 | Add affiliate link data and Trade Deals integration | Pending |
