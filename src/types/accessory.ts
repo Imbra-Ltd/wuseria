@@ -2,7 +2,7 @@ import type { Mount } from "./lens";
 import type { Genre } from "./genre";
 
 // ---------------------------------------------------------------------------
-// Base — shared fields on every accessory
+// Base — truly universal fields that apply to every accessory
 // ---------------------------------------------------------------------------
 
 interface AccessoryBase {
@@ -12,11 +12,7 @@ interface AccessoryBase {
   discontinued?: boolean;
   description: string;
   genres?: Genre[];
-  compatibleWith?: string[];
-  mount?: Mount;
-  universal?: boolean;
   weight?: number;
-  weatherSealed?: boolean;
   price: number;
   officialUrl?: string;
 }
@@ -27,6 +23,9 @@ interface AccessoryBase {
 
 interface FlashAccessory extends AccessoryBase {
   category: "flash";
+  mount?: Mount;
+  compatibleWith?: string[];
+  weatherSealed?: boolean;
   guideNumber: number;
   ttl: boolean;
   hss: boolean;
@@ -36,12 +35,16 @@ interface FlashAccessory extends AccessoryBase {
 
 interface LensAccessory extends AccessoryBase {
   category: "lens-accessory";
+  mount?: Mount;
+  compatibleWith?: string[];
+  weatherSealed?: boolean;
   magnificationFactor?: number;
   afRetained?: boolean;
 }
 
 interface BatteryAccessory extends AccessoryBase {
   category: "battery";
+  compatibleWith?: string[];
   batteryType: string;
   capacity?: number;
   voltage?: number;
@@ -49,6 +52,7 @@ interface BatteryAccessory extends AccessoryBase {
 
 interface ChargerAccessory extends AccessoryBase {
   category: "charger";
+  compatibleWith?: string[];
   batteryType: string;
   slots?: number;
   usbInput?: boolean;
@@ -56,6 +60,9 @@ interface ChargerAccessory extends AccessoryBase {
 
 interface BatteryGripAccessory extends AccessoryBase {
   category: "battery-grip";
+  mount?: Mount;
+  compatibleWith?: string[];
+  weatherSealed?: boolean;
   batteryType: string;
   batteryCount?: number;
   verticalControls?: boolean;
@@ -63,6 +70,7 @@ interface BatteryGripAccessory extends AccessoryBase {
 
 interface AdapterAccessory extends AccessoryBase {
   category: "adapter";
+  compatibleWith?: string[];
   sourceMount: string;
   targetMount: string;
   afSupported?: boolean;
@@ -113,12 +121,14 @@ interface StorageAccessory extends AccessoryBase {
 
 interface RemoteAccessory extends AccessoryBase {
   category: "remote";
+  compatibleWith?: string[];
   connectionType: string;
   intervalometer?: boolean;
 }
 
 interface AudioAccessory extends AccessoryBase {
   category: "audio";
+  compatibleWith?: string[];
   micPattern?: string;
   connectionType?: string;
 }
@@ -154,6 +164,7 @@ interface GenericAccessory extends AccessoryBase {
     | "cooling"
     | "astro-gear"
     | "protection";
+  compatibleWith?: string[];
 }
 
 // ---------------------------------------------------------------------------
