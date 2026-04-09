@@ -41,7 +41,8 @@ npm run lint
 | File | Purpose |
 |------|---------|
 | `CLAUDE.md` | AI agent context and project conventions |
-| `docs/architecture.md` | Architecture decisions, data model, scoring methodology |
+| `docs/decisions/` | Architecture Decision Records |
+| `docs/dev-journal.md` | Development history and migration tracking |
 | `docs/PLAYBOOK.md` | Operational reference — git workflow, data ops, release |
 | `docs/solid-ai-templates/` | Quality convention templates (submodule) |
 | `src/types/` | TypeScript interfaces for all domain entities |
@@ -52,8 +53,8 @@ npm run lint
 
 Fuji.me! scores Fujifilm lenses against shooting genres (landscape, portrait,
 street, astro, etc.) using MTF chart data from trusted review sources. See
-[docs/architecture.md](architecture.md) for the data model and scoring
-methodology.
+[docs/decisions/](decisions/) for architecture decisions and
+`src/types/` for the data model.
 
 Key domain concepts:
 - **Lens Explorer** — shows all lenses, filterable by specs

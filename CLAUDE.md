@@ -3,7 +3,7 @@
 Lightweight Fuji lens and camera explorer with genre-based scoring.
 Domain: fujime.app. Part of the me! series by braboj.me.
 
-For architecture decisions and rationale, see `docs/architecture.md`.
+For architecture decisions, see `docs/decisions/`. For development history, see `docs/dev-journal.md`.
 
 Quality conventions (SOLID, readability, code style, testing) are defined in
 `docs/solid-ai-templates/` — a git submodule from

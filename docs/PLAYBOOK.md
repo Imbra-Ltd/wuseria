@@ -117,7 +117,7 @@ git commit -m "chore: bump solid-ai-templates submodule"
 ### 3.2 Update architecture decisions
 
 1. Create an ADR in `docs/decisions/` using the format: context, decision, alternatives, consequences
-2. Reference the ADR from `docs/architecture.md` if relevant
+2. ADRs are immutable once merged — create a new ADR to supersede an old one
 
 ### 3.3 Run the prototype
 
