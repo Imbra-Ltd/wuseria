@@ -17,10 +17,17 @@ Key references:
 - `docs/solid-ai-templates/frontend/ux.md` — UX and accessibility
 
 Before quality work, read the relevant templates above. Two distinct scopes:
-- **Code review** (PR/branch changes): `base/review.md`, `base/quality.md`,
-  `base/typescript.md`
-- **Structure audit** (project completeness): `base/docs.md`, `base/readme.md`,
-  `base/git.md`, `frontend/static-site.md`, `stack/static-site-astro.md`
+- **Code review** (PR/branch changes): follow the priority order in
+  `base/review.md` (security, correctness, clarity, conventions). Apply
+  `base/quality.md` rules (SOLID, readability, naming, code style) and
+  `base/typescript.md` rules (type design, boolean prefixes, strictness)
+  as the standard for correctness, clarity, and convention checks. Run
+  both MUST and SHOULD checklists from `base/review.md` against the diff.
+- **Structure audit** (project completeness): verify every MUST from
+  `base/docs.md` (standard documents, ADRs), `base/readme.md` (9 required
+  sections), `base/git.md` (README, .gitignore), `frontend/static-site.md`
+  (assets, robots.txt, SEO), and `stack/static-site-astro.md` (.prettierrc,
+  eslint config, Astro conventions).
 
 Project-specific overrides and additions follow below.
 
