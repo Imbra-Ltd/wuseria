@@ -1,12 +1,15 @@
 # Onboarding
 
-## Prerequisites
+New contributor guide for Fuji.me!
+
+## 1. Prerequisites
 
 - Node.js 20+
 - npm 10+
 - Git
+- [GitHub CLI](https://cli.github.com/) (`gh`) — used for PRs and issues
 
-## First-time setup
+## 2. First-time setup
 
 ```bash
 git clone --recursive https://github.com/Imbra-Ltd/me-fuji.git
@@ -14,36 +17,54 @@ cd me-fuji
 npm install
 ```
 
-The `--recursive` flag pulls the `docs/solid-ai-templates` submodule.
+The `--recursive` flag pulls the `docs/solid-ai-templates` submodule. If you
+already cloned without it, run `git submodule update --init`.
 
-## Running locally
-
-```bash
-npm run dev       # hot reload at localhost:4321
-npm run build     # production build to dist/
-npm run preview   # preview production build
-```
-
-## Checks before committing
+## 3. Verify the setup
 
 ```bash
-npm run lint      # ESLint
-npm test          # Vitest (when configured)
+npm run dev
 ```
 
-## Key files
+Open [http://localhost:5173](http://localhost:5173). You should see a blank
+page (no UI yet — the project is in data migration phase). Confirm the dev
+server starts without errors.
+
+To verify linting:
+
+```bash
+npm run lint
+```
+
+## 4. Key files
 
 | File | Purpose |
 |------|---------|
 | `CLAUDE.md` | AI agent context and project conventions |
-| `docs/architecture.md` | Architecture decisions and data model |
+| `docs/architecture.md` | Architecture decisions, data model, scoring methodology |
+| `docs/PLAYBOOK.md` | Operational reference — git workflow, data ops, release |
 | `docs/solid-ai-templates/` | Quality convention templates (submodule) |
 | `src/types/` | TypeScript interfaces for all domain entities |
 | `src/data/` | Static data files imported at build time |
+| `docs/prototype/` | Original single-file prototype (reference only) |
 
-## Branch workflow
+## 5. Project context
 
-1. Create a branch: `feat/description`, `fix/description`, or `chore/description`
-2. Make changes, run checks
-3. Push and open a PR against `main`
-4. After merge, delete branch and pull main
+Fuji.me! scores Fujifilm lenses against shooting genres (landscape, portrait,
+street, astro, etc.) using MTF chart data from trusted review sources. See
+[docs/architecture.md](architecture.md) for the data model and scoring
+methodology.
+
+Key domain concepts:
+- **Lens Explorer** — shows all lenses, filterable by specs
+- **Genre Guide** — shows only lenses with optical data, scored per genre
+- **Scoring** — computed from measurable optical properties, not subjective reviews
+- **Trusted sources** — ranked list in [PLAYBOOK section 2.5](PLAYBOOK.md)
+
+## 6. Daily workflow
+
+See [PLAYBOOK.md](PLAYBOOK.md) for all operations:
+- Section 1 — Git workflow (branch, commit, PR, merge)
+- Section 2 — Data operations (add lenses, cameras, accessories)
+- Section 3 — Maintenance (quality conventions, ADRs, prototype)
+- Section 4 — Release and deploy
