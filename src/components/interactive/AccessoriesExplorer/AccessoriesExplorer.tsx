@@ -60,6 +60,7 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [mount, setMount] = useState("");
+  const [compatible, setCompatible] = useState("");
   const [discontinued, setDiscontinued] = useState("");
   const [priceRange, setPriceRange] = useState("");
 
@@ -73,6 +74,13 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
     return accessories.filter((acc) => {
       if (category && acc.category !== category) return false;
       if (mount && (!("mount" in acc) || acc.mount !== mount)) return false;
+      if (compatible) {
+        const cq = compatible.toLowerCase();
+        const compat = "compatibleWith" in acc && Array.isArray(acc.compatibleWith)
+          ? acc.compatibleWith as string[]
+          : [];
+        if (!compat.some((c) => c.toLowerCase().includes(cq))) return false;
+      }
       if (discontinued === "available" && acc.isDiscontinued) return false;
       if (discontinued === "discontinued" && !acc.isDiscontinued) return false;
       if (priceRange) {
@@ -82,16 +90,17 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
       if (q && !`${acc.brand} ${acc.model} ${acc.description}`.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [accessories, search, category, mount, discontinued, priceRange]);
+  }, [accessories, search, category, mount, compatible, discontinued, priceRange]);
 
   const { sorted, sortKey, sortDirection, toggleSort } = useSort<Accessory, AccessorySortKey>(filtered, "category");
 
-  const hasFilters = search || category || mount || discontinued || priceRange;
+  const hasFilters = search || category || mount || compatible || discontinued || priceRange;
 
   function clearFilters(): void {
     setSearch("");
     setCategory("");
     setMount("");
+    setCompatible("");
     setDiscontinued("");
     setPriceRange("");
   }
@@ -125,6 +134,15 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
         </div>
 
         <div className={styles.filterRow}>
+          <input
+            className={`${styles.searchInput} ${compatible ? styles.filterActive : ""}`}
+            type="text"
+            placeholder="Compatible with... (e.g. X-T5)"
+            value={compatible}
+            onChange={(e) => setCompatible(e.target.value)}
+            aria-label="Filter by compatible model"
+          />
+
           <select className={`${styles.filterSelect} ${category ? styles.filterActive : ""}`} value={category} onChange={(e) => setCategory(resetValue(e.target.value))} aria-label="Filter by category">
             <option value="" hidden>Category</option>
             <option value={RESET_VALUE}>All categories</option>
@@ -189,7 +207,16 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
                     <td><span className={styles.categoryBadge}>{formatCategory(acc.category)}</span></td>
                     <td>{acc.brand}</td>
                     <td className={styles.modelCell}>{acc.model}</td>
-                    <td className={styles.descriptionCell}>{acc.description}</td>
+                    <td className={styles.descriptionCell}>
+                      {acc.description}
+                      {"compatibleWith" in acc && Array.isArray(acc.compatibleWith) && (
+                        <div className={styles.compatBadges}>
+                          {(acc.compatibleWith as string[]).map((c) => (
+                            <span key={c} className={styles.compatBadge}>{c}</span>
+                          ))}
+                        </div>
+                      )}
+                    </td>
                     <td className={styles.cellRight}>~${acc.price}</td>
                   </tr>
                 ))}
@@ -211,6 +238,13 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
                   {"mount" in acc && acc.mount && <span className={styles.badge}>{acc.mount}</span>}
                   {acc.isDiscontinued && <span className={styles.badge}>Discontinued</span>}
                 </div>
+                {"compatibleWith" in acc && Array.isArray(acc.compatibleWith) && (
+                  <div className={styles.compatBadges}>
+                    {(acc.compatibleWith as string[]).map((c) => (
+                      <span key={c} className={styles.compatBadge}>{c}</span>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
