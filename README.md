@@ -29,7 +29,7 @@ Open [http://localhost:4321](http://localhost:4321) to see the site.
 
 Browse lenses, cameras, and accessories. Filter by genre to see how each lens
 scores for your shooting style. Scores are computed from optical data — see
-[docs/architecture.md](docs/architecture.md) for the scoring methodology.
+[docs/decisions/](docs/decisions/) for architecture decisions.
 
 > Note: The site is in data migration phase. UI pages are planned for the
 > Astro migration (see issue #57).
@@ -44,8 +44,8 @@ me-fuji/
 │   ├── hooks/          # Reusable React hooks (planned)
 │   └── utils/          # Scoring and formatting utilities (planned)
 ├── docs/
-│   ├── architecture.md # Architecture decisions and data model
-│   ├── decisions/      # Architecture Decision Records
+│   ├── decisions/      # Architecture Decision Records (ADR-001 to ADR-011)
+│   ├── dev-journal.md  # Development history and migration tracking
 │   ├── prototype/      # Original single-file prototype (reference only)
 │   ├── ONBOARDING.md   # New contributor guide
 │   ├── PLAYBOOK.md     # Operational reference
@@ -91,7 +91,8 @@ npm run lint
 
 ## Links
 
-- [Architecture and data model](docs/architecture.md)
+- [Architecture decisions](docs/decisions/)
+- [Development journal](docs/dev-journal.md)
 - [Onboarding guide](docs/ONBOARDING.md)
 - [Operational playbook](docs/PLAYBOOK.md)
 - [Quality conventions](docs/solid-ai-templates/)
