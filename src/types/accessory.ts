@@ -1,9 +1,11 @@
 import type { Mount, Brand, BatteryType, StorageType } from "./common";
 import type { Genre } from "./genre";
 
-// String literal unions
+// =============================================================================
+// STRING LITERAL UNIONS
+// =============================================================================
 
-/** Mount systems beyond Fujifilm (for adapter sourceMount) */
+// Mount systems beyond Fujifilm (for adapter sourceMount)
 type AdapterMount =
   | Mount
   | "Leica M"
@@ -34,7 +36,9 @@ type MicPattern = "stereo" | "shotgun" | "omni" | "cardioid";
 
 type TripodMaterial = "carbon-fiber" | "aluminum" | "basalt";
 
-// Mixin for Fuji-specific compatibility
+// =============================================================================
+// FUJI COMPATIBLE MIXIN
+// =============================================================================
 
 interface FujiCompatible {
   mount?: Mount;
@@ -42,7 +46,9 @@ interface FujiCompatible {
   weatherSealed?: boolean;
 }
 
-// Base — fields that apply to every accessory
+// =============================================================================
+// BASE — fields that apply to every accessory
+// =============================================================================
 
 interface AccessoryBase {
   brand: Brand;
@@ -56,7 +62,9 @@ interface AccessoryBase {
   officialUrl?: string;
 }
 
-// Category-specific extensions
+// =============================================================================
+// CATEGORY-SPECIFIC EXTENSIONS
+// =============================================================================
 
 interface FlashAccessory extends AccessoryBase, FujiCompatible {
   category: "flash";
@@ -70,7 +78,7 @@ interface FlashAccessory extends AccessoryBase, FujiCompatible {
 interface LensAccessory extends AccessoryBase, FujiCompatible {
   category: "lens-accessory";
 
-  /** e.g. 1.4 for a 1.4x teleconverter */
+  // e.g. 1.4 for a 1.4x teleconverter
   magnificationFactor?: number;
 
   afRetained?: boolean;
@@ -81,10 +89,10 @@ interface BatteryAccessory extends AccessoryBase {
   compatibleWith?: string[];
   batteryType: BatteryType;
 
-  /** mAh */
+  // mAh
   capacityMah?: number;
 
-  /** Volts */
+  // Volts
   voltage?: number;
 }
 
@@ -115,13 +123,13 @@ interface AdapterAccessory extends AccessoryBase {
 interface TripodAccessory extends AccessoryBase {
   category: "tripod" | "monopod";
 
-  /** kg */
+  // kg
   maxLoad?: number;
 
-  /** mm */
+  // mm
   maxHeight?: number;
 
-  /** mm */
+  // mm
   foldedLength?: number;
 
   legSections?: number;
@@ -132,7 +140,7 @@ interface HeadAccessory extends AccessoryBase {
   category: "tripod-head";
   headType: HeadType;
 
-  /** kg */
+  // kg
   maxLoad?: number;
 
   plateType?: PlateType;
@@ -141,7 +149,7 @@ interface HeadAccessory extends AccessoryBase {
 interface FilterAccessory extends AccessoryBase {
   category: "filter";
 
-  /** mm, matches lens filterThread */
+  // mm, matches lens filterThread
   filterThread?: number;
 
   filterType: FilterType;
@@ -150,10 +158,10 @@ interface FilterAccessory extends AccessoryBase {
 interface LightingAccessory extends AccessoryBase {
   category: "lighting";
 
-  /** Kelvin */
+  // Kelvin
   colorTemp?: number;
 
-  /** Color Rendering Index, 0–100 */
+  // Color Rendering Index, 0–100
   cri?: number;
 
   lumens?: number;
@@ -162,7 +170,7 @@ interface LightingAccessory extends AccessoryBase {
 interface BagAccessory extends AccessoryBase {
   category: "bag";
 
-  /** Liters */
+  // Liters
   capacityLiters?: number;
 
   bagType?: BagType;
@@ -172,7 +180,7 @@ interface StorageAccessory extends AccessoryBase {
   category: "storage";
   storageType: StorageType;
 
-  /** MB/s write speed */
+  // MB/s write speed
   speedMBps?: number;
 
   capacityGB?: number;
@@ -196,7 +204,7 @@ interface StrapAccessory extends AccessoryBase {
   category: "strap";
   strapType: StrapType;
 
-  /** mm */
+  // mm
   length?: number;
 
   material?: StrapMaterial;
@@ -212,13 +220,15 @@ interface PowerBankAccessory extends AccessoryBase {
   category: "power-bank";
   capacityMah: number;
 
-  /** Watts */
+  // Watts
   outputWatts?: number;
 
   usbPD?: boolean;
 }
 
-// Generic — categories with no extra fields
+// =============================================================================
+// GENERIC — categories with no extra fields
+// =============================================================================
 
 interface GenericAccessory extends AccessoryBase {
   category:
@@ -230,7 +240,9 @@ interface GenericAccessory extends AccessoryBase {
   compatibleWith?: string[];
 }
 
-// Discriminated union
+// =============================================================================
+// DISCRIMINATED UNION
+// =============================================================================
 
 type Accessory =
   | FlashAccessory
@@ -253,6 +265,10 @@ type Accessory =
   | GenericAccessory;
 
 type AccessoryCategory = Accessory["category"];
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
 
 export type {
   Accessory,

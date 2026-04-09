@@ -1,7 +1,13 @@
-/** Fujifilm lens/camera mount system */
+// =============================================================================
+// MOUNT
+// =============================================================================
+
 type Mount = "X" | "GFX";
 
-/** Known brands across lenses, cameras, and accessories */
+// =============================================================================
+// BRAND
+// =============================================================================
+
 type Brand =
   | "Fujifilm"
   | "7Artisans"
@@ -29,13 +35,25 @@ type Brand =
   | "Viltrox"
   | "Voigtlander";
 
+// =============================================================================
+// STORAGE
+// =============================================================================
+
 type CardType = "SD" | "CFexpress";
 
 type CardSpeedClass = "UHS-I" | "UHS-II" | "UHS-III";
 
-/** Extends CardType with external storage media */
+// Extends CardType with external storage media
 type StorageType = CardType | "SSD" | "HDD";
 
+// =============================================================================
+// BATTERY
+// =============================================================================
+
 type BatteryType = "NP-W126" | "NP-W126S" | "NP-W235" | "NP-T125";
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
 
 export type { Mount, Brand, CardType, CardSpeedClass, StorageType, BatteryType };

@@ -1,5 +1,9 @@
 import type { Mount, BatteryType, CardType, CardSpeedClass } from "./common";
 
+// =============================================================================
+// TYPES
+// =============================================================================
+
 type EvfPosition = "center" | "corner" | "none";
 
 type FormFactor = "slr" | "dslr-grip" | "rangefinder" | "compact";
@@ -10,7 +14,7 @@ type ScreenType = "tilting" | "articulating" | "fixed";
 
 type ShutterType = "mechanical" | "electronic" | "both";
 
-/** Camera-level AF system, not lens motor (see AfMotor in lens.ts) */
+// Camera-level AF system, not lens motor (see AfMotor in lens.ts)
 type AfSystemType = "CDAF" | "hybrid-PDAF";
 
 type CameraSeries =
@@ -60,9 +64,15 @@ type FilmSimulation =
   | "Nostalgic Neg"
   | "Reala ACE";
 
+// =============================================================================
+// CAMERA
+// =============================================================================
+
 interface Camera {
 
-  // Identity — all cameras are Fujifilm
+  // ===========================================================================
+  // IDENTITY — all cameras are Fujifilm
+  // ===========================================================================
 
   model: string;
   mount: Mount;
@@ -72,50 +82,58 @@ interface Camera {
   evfPosition: EvfPosition;
   formFactor: FormFactor;
 
-  // Sensor
+  // ===========================================================================
+  // SENSOR
+  // ===========================================================================
 
   sensor: SensorType;
   megapixels: number;
 
-  /** mm */
+  // mm
   sensorWidth?: number;
 
-  /** mm */
+  // mm
   sensorHeight?: number;
 
-  /** Back-side illuminated */
+  // Back-side illuminated
   bsi?: boolean;
 
   isoMin?: number;
   isoMax?: number;
 
-  // Stabilisation & weather
+  // ===========================================================================
+  // STABILISATION & WEATHER
+  // ===========================================================================
 
   ibis: boolean;
   weatherSealed: boolean;
 
-  // Viewfinder & screen
+  // ===========================================================================
+  // VIEWFINDER & SCREEN
+  // ===========================================================================
 
   evfType?: EvfType;
 
-  /** Dots */
+  // Dots
   evfResolution?: number;
 
   screenType?: ScreenType;
 
-  /** Dots */
+  // Dots
   screenResolution?: number;
 
   touchscreen?: boolean;
 
-  // Performance
+  // ===========================================================================
+  // PERFORMANCE
+  // ===========================================================================
 
   burstFps?: number;
   shutterType?: ShutterType;
   afType?: AfSystemType;
   afPoints?: number;
 
-  /** Percentage of sensor area with phase-detection pixels */
+  // Percentage of sensor area with phase-detection pixels
   pdafCoverage?: number;
 
   faceDetectAF: boolean;
@@ -123,29 +141,37 @@ interface Camera {
   bufferDepth?: number;
   electronicShutterFps?: number;
 
-  /** Multi-shot sensor shift for higher resolution output */
+  // Multi-shot sensor shift for higher resolution output
   pixelShift?: boolean;
 
-  /** CIPA shots per charge */
+  // CIPA shots per charge
   batteryLife?: number;
 
   batteryType?: BatteryType;
 
-  // Video
+  // ===========================================================================
+  // VIDEO
+  // ===========================================================================
 
   videoSpec: VideoSpec;
 
-  // Film simulations
+  // ===========================================================================
+  // FILM SIMULATIONS
+  // ===========================================================================
 
   filmSimulations?: number;
 
-  // Storage
+  // ===========================================================================
+  // STORAGE
+  // ===========================================================================
 
   cardSlots?: number;
   cardType?: CardType;
   cardSpeedClass?: CardSpeedClass;
 
-  // Connectivity
+  // ===========================================================================
+  // CONNECTIVITY
+  // ===========================================================================
 
   flashHotShoe: boolean;
   builtInFlash?: boolean;
@@ -156,29 +182,39 @@ interface Camera {
   micInput: boolean;
   headphoneJack: boolean;
 
-  // Physical
+  // ===========================================================================
+  // PHYSICAL
+  // ===========================================================================
 
-  /** Grams, body only */
+  // Grams, body only
   weight: number;
 
-  /** mm */
+  // mm
   width?: number;
 
-  /** mm */
+  // mm
   height?: number;
 
-  /** mm */
+  // mm
   depth?: number;
 
-  // Price
+  // ===========================================================================
+  // PRICE
+  // ===========================================================================
 
-  /** USD, rounded to nearest $250 */
+  // USD, rounded to nearest $250
   price: number;
 
-  // Links
+  // ===========================================================================
+  // LINKS
+  // ===========================================================================
 
   officialUrl?: string;
 }
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
 
 export type {
   Camera,

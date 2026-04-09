@@ -1,13 +1,23 @@
 import type { Mount, Brand } from "./common";
 
+// =============================================================================
+// TYPES
+// =============================================================================
+
 type LensType = "prime" | "zoom";
 
-/** DC = coreless, STM = stepping, LM = linear motor */
+// DC = coreless, STM = stepping, LM = linear motor
 type AfMotor = "DC" | "STM" | "LM";
+
+// =============================================================================
+// LENS
+// =============================================================================
 
 interface Lens {
 
-  // Identity
+  // ===========================================================================
+  // IDENTITY
+  // ===========================================================================
 
   brand: Brand;
   model: string;
@@ -16,22 +26,26 @@ interface Lens {
   year?: number;
   discontinued?: boolean;
 
-  // Optical specs
+  // ===========================================================================
+  // OPTICAL SPECS
+  // ===========================================================================
 
   focalLengthMin: number;
   focalLengthMax: number;
   maxAperture: number;
 
-  /** f-number where the lens is sharpest (e.g. 2.8, 4, 8) */
+  // f-number where the lens is sharpest (e.g. 2.8, 4, 8)
   sweetSpotAperture?: number;
 
   apertureBlades?: number;
   circularAperture?: boolean;
 
-  /** Reproduction ratio as decimal (1.0 = life-size, 0.5 = half) */
+  // Reproduction ratio as decimal (1.0 = life-size, 0.5 = half)
   maxMagnification?: number;
 
-  // Build — absent = false for all booleans
+  // ===========================================================================
+  // BUILD — absent = false for all booleans
+  // ===========================================================================
 
   ois?: boolean;
   weatherSealed?: boolean;
@@ -44,27 +58,31 @@ interface Lens {
   distanceScale?: boolean;
   smoothFocusRing?: boolean;
 
-  /** Grams */
+  // Grams
   weight: number;
 
-  /** Outer diameter, mm */
+  // Outer diameter, mm
   diameter?: number;
 
-  /** Mount to front element, mm */
+  // Mount to front element, mm
   length?: number;
 
-  /** Filter thread diameter, mm */
+  // Filter thread diameter, mm
   filterThread?: number;
 
   rotatingFront?: boolean;
   tripodMount?: boolean;
 
-  // Price
+  // ===========================================================================
+  // PRICE
+  // ===========================================================================
 
-  /** USD, rounded to nearest $250 */
+  // USD, rounded to nearest $250
   price: number;
 
-  // Optical quality — from MTF chart readings (0–2 scale)
+  // ===========================================================================
+  // OPTICAL QUALITY — MTF chart readings (0–2 scale)
+  // ===========================================================================
 
   sweetSpotSharpness?: number;
   cornerSharpness?: number;
@@ -73,7 +91,9 @@ interface Lens {
   fieldCurvature?: number;
   coma?: number;
 
-  // Optical quality — NOT from MTF charts (0–2 scale)
+  // ===========================================================================
+  // OPTICAL QUALITY — NOT from MTF charts (0–2 scale)
+  // ===========================================================================
 
   longitudinalCA?: number;
   lateralCA?: number;
@@ -82,27 +102,35 @@ interface Lens {
   bokeh?: number;
   flareResistance?: number;
 
-  // Scoring inputs
+  // ===========================================================================
+  // SCORING INPUTS
+  // ===========================================================================
 
-  /** mm */
+  // mm
   minFocusDistance?: number;
 
   tiltShift?: boolean;
 
-  /** mm */
+  // mm
   shiftRange?: number;
 
-  /** Degrees */
+  // Degrees
   tiltAngle?: number;
 
-  /** mm */
+  // mm
   imageCircle?: number;
 
   tiltShiftIndependent?: boolean;
 
-  // Links
+  // ===========================================================================
+  // LINKS
+  // ===========================================================================
 
   officialUrl?: string;
 }
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
 
 export type { Lens, LensType, AfMotor };

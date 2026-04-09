@@ -1,3 +1,7 @@
+// =============================================================================
+// GENRE
+// =============================================================================
+
 type Genre =
   | "astro"
   | "portrait"
@@ -9,18 +13,26 @@ type Genre =
   | "architecture"
   | "macro";
 
+// =============================================================================
+// SCORE RESULT
+// =============================================================================
+
 type ScoreBreakdown = Record<string, number>;
 
 interface ScoreResult {
 
-  /** 1–5 in 0.5 steps */
+  // 1–5 in 0.5 steps
   mark: number;
 
-  /** Per-criterion scores for transparency */
+  // Per-criterion scores for transparency
   breakdown: ScoreBreakdown;
 
   disqualified: boolean;
   reason?: string;
 }
+
+// =============================================================================
+// EXPORTS
+// =============================================================================
 
 export type { Genre, ScoreResult, ScoreBreakdown };
