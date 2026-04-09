@@ -2,6 +2,43 @@ import type { Mount } from "./lens";
 import type { Genre } from "./genre";
 
 // ---------------------------------------------------------------------------
+// Shared string literal unions — no magic strings
+// ---------------------------------------------------------------------------
+
+/** Mount systems beyond Fujifilm (for adapter sourceMount) */
+type AdapterMount =
+  | Mount
+  | "Leica M"
+  | "Canon EF"
+  | "Canon RF"
+  | "Nikon F"
+  | "Nikon Z"
+  | "Sony E"
+  | "Pentax K"
+  | "Hasselblad XCD"
+  | "Fuji H";
+
+type HeadType = "ball" | "geared" | "gimbal" | "pan-tilt" | "video";
+type PlateType = "arca-swiss" | "manfrotto-rc2" | "proprietary";
+type FilterType = "CPL" | "ND" | "GND" | "UV" | "black-mist" | "IR" | "light-pollution";
+type StorageType = "SD" | "CFexpress" | "SSD" | "HDD";
+type BagType = "backpack" | "sling" | "shoulder" | "holster" | "rolling";
+type StrapType = "neck" | "sling" | "wrist" | "harness";
+type ConnectionType = "wired-2.5mm" | "wired-usb" | "bluetooth" | "radio" | "wifi";
+type MicPattern = "stereo" | "shotgun" | "omni" | "cardioid";
+type TripodMaterial = "carbon-fiber" | "aluminum" | "basalt";
+
+// ---------------------------------------------------------------------------
+// Mixin — Fuji-specific compatibility fields
+// ---------------------------------------------------------------------------
+
+interface FujiCompatible {
+  mount?: Mount;
+  compatibleWith?: string[];
+  weatherSealed?: boolean;
+}
+
+// ---------------------------------------------------------------------------
 // Base — truly universal fields that apply to every accessory
 // ---------------------------------------------------------------------------
 
@@ -21,11 +58,8 @@ interface AccessoryBase {
 // Category-specific extensions
 // ---------------------------------------------------------------------------
 
-interface FlashAccessory extends AccessoryBase {
+interface FlashAccessory extends AccessoryBase, FujiCompatible {
   category: "flash";
-  mount?: Mount;
-  compatibleWith?: string[];
-  weatherSealed?: boolean;
   guideNumber: number;
   ttl: boolean;
   hss: boolean;
@@ -33,11 +67,8 @@ interface FlashAccessory extends AccessoryBase {
   wirelessReceiver?: boolean;
 }
 
-interface LensAccessory extends AccessoryBase {
+interface LensAccessory extends AccessoryBase, FujiCompatible {
   category: "lens-accessory";
-  mount?: Mount;
-  compatibleWith?: string[];
-  weatherSealed?: boolean;
   magnificationFactor?: number;
   afRetained?: boolean;
 }
@@ -46,7 +77,7 @@ interface BatteryAccessory extends AccessoryBase {
   category: "battery";
   compatibleWith?: string[];
   batteryType: string;
-  capacity?: number;
+  capacityMah?: number;
   voltage?: number;
 }
 
@@ -58,11 +89,8 @@ interface ChargerAccessory extends AccessoryBase {
   usbInput?: boolean;
 }
 
-interface BatteryGripAccessory extends AccessoryBase {
+interface BatteryGripAccessory extends AccessoryBase, FujiCompatible {
   category: "battery-grip";
-  mount?: Mount;
-  compatibleWith?: string[];
-  weatherSealed?: boolean;
   batteryType: string;
   batteryCount?: number;
   verticalControls?: boolean;
@@ -71,8 +99,8 @@ interface BatteryGripAccessory extends AccessoryBase {
 interface AdapterAccessory extends AccessoryBase {
   category: "adapter";
   compatibleWith?: string[];
-  sourceMount: string;
-  targetMount: string;
+  sourceMount: AdapterMount;
+  targetMount: Mount;
   afSupported?: boolean;
   apertureControl?: boolean;
 }
@@ -83,20 +111,20 @@ interface TripodAccessory extends AccessoryBase {
   maxHeight?: number;
   foldedLength?: number;
   legSections?: number;
-  material?: string;
+  material?: TripodMaterial;
 }
 
 interface HeadAccessory extends AccessoryBase {
   category: "tripod-head";
-  headType: string;
+  headType: HeadType;
   maxLoad?: number;
-  plateType?: string;
+  plateType?: PlateType;
 }
 
 interface FilterAccessory extends AccessoryBase {
   category: "filter";
-  filterSize?: number;
-  filterType: string;
+  filterThread?: number;
+  filterType: FilterType;
 }
 
 interface LightingAccessory extends AccessoryBase {
@@ -108,41 +136,41 @@ interface LightingAccessory extends AccessoryBase {
 
 interface BagAccessory extends AccessoryBase {
   category: "bag";
-  capacity?: number;
-  bagType?: string;
+  capacityLiters?: number;
+  bagType?: BagType;
 }
 
 interface StorageAccessory extends AccessoryBase {
   category: "storage";
-  storageType: string;
-  speed?: number;
+  storageType: StorageType;
+  speedMBps?: number;
   capacityGB?: number;
 }
 
 interface RemoteAccessory extends AccessoryBase {
   category: "remote";
   compatibleWith?: string[];
-  connectionType: string;
+  connectionType: ConnectionType;
   intervalometer?: boolean;
 }
 
 interface AudioAccessory extends AccessoryBase {
   category: "audio";
   compatibleWith?: string[];
-  micPattern?: string;
-  connectionType?: string;
+  micPattern?: MicPattern;
+  connectionType?: ConnectionType;
 }
 
 interface StrapAccessory extends AccessoryBase {
   category: "strap";
-  strapType: string;
+  strapType: StrapType;
   length?: number;
   material?: string;
 }
 
 interface PlateAccessory extends AccessoryBase {
   category: "plate";
-  plateType?: string;
+  plateType?: PlateType;
   arcaCompatible?: boolean;
 }
 
@@ -197,6 +225,7 @@ export type {
   Accessory,
   AccessoryCategory,
   AccessoryBase,
+  FujiCompatible,
   FlashAccessory,
   LensAccessory,
   BatteryAccessory,
@@ -215,4 +244,14 @@ export type {
   PlateAccessory,
   PowerBankAccessory,
   GenericAccessory,
+  AdapterMount,
+  HeadType,
+  PlateType,
+  FilterType,
+  StorageType,
+  BagType,
+  StrapType,
+  ConnectionType,
+  MicPattern,
+  TripodMaterial,
 };
