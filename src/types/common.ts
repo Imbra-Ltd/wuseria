@@ -35,4 +35,10 @@ type CardType = "SD" | "CFexpress";
 /** SD card speed class */
 type CardSpeedClass = "UHS-I" | "UHS-II" | "UHS-III";
 
-export type { Mount, Brand, CardType, CardSpeedClass };
+/** Storage media type — extends CardType with external storage */
+type StorageType = CardType | "SSD" | "HDD";
+
+/** Battery model — Fujifilm X and GFX systems */
+type BatteryType = "NP-W126" | "NP-W126S" | "NP-W235" | "NP-T125";
+
+export type { Mount, Brand, CardType, CardSpeedClass, StorageType, BatteryType };

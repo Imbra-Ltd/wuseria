@@ -1,4 +1,4 @@
-import type { Mount } from "./common";
+import type { Mount, BatteryType, CardType, CardSpeedClass } from "./common";
 
 /** EVF position on the body */
 type EvfPosition = "center" | "corner" | "none";
@@ -48,9 +48,6 @@ type UsbType = "micro-USB" | "USB-C";
 /** Subject detection categories */
 type SubjectDetect = "animal" | "bird" | "car" | "motorcycle" | "bicycle" | "airplane" | "train";
 
-/** Battery model */
-type BatteryType = "NP-W126" | "NP-W126S" | "NP-W235" | "NP-T125";
-
 /** Video resolution tier */
 type VideoSpec = "1080p" | "4K" | "6.2K" | "8K";
 
@@ -75,7 +72,7 @@ type FilmSimulation =
   | "Reala ACE";
 
 interface Camera {
-  // Identity
+  // Identity — all cameras are Fujifilm, no brand field needed
   model: string;
   mount: Mount;
   year: number;
@@ -129,12 +126,11 @@ interface Camera {
 
   // Film simulations
   filmSimulations?: number;
-  filmSimulationList?: FilmSimulation[];
 
   // Storage
   cardSlots?: number;
-  cardType?: import("./common").CardType;
-  cardSpeedClass?: import("./common").CardSpeedClass;
+  cardType?: CardType;
+  cardSpeedClass?: CardSpeedClass;
 
   // Connectivity
   flashHotShoe: boolean;
@@ -176,7 +172,6 @@ export type {
   SensorType,
   UsbType,
   SubjectDetect,
-  BatteryType,
   VideoSpec,
   FilmSimulation,
 };

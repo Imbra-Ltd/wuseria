@@ -1,4 +1,4 @@
-import type { Mount } from "./common";
+import type { Mount, Brand, BatteryType, StorageType } from "./common";
 import type { Genre } from "./genre";
 
 // ---------------------------------------------------------------------------
@@ -21,7 +21,7 @@ type AdapterMount =
 type HeadType = "ball" | "geared" | "gimbal" | "pan-tilt" | "video";
 type PlateType = "arca-swiss" | "manfrotto-rc2" | "proprietary";
 type FilterType = "CPL" | "ND" | "GND" | "UV" | "black-mist" | "IR" | "light-pollution";
-type StorageType = "SD" | "CFexpress" | "SSD" | "HDD";
+// StorageType imported from common.ts
 type BagType = "backpack" | "sling" | "shoulder" | "holster" | "rolling";
 type StrapType = "neck" | "sling" | "wrist" | "harness";
 type ConnectionType = "wired-2.5mm" | "wired-usb" | "bluetooth" | "radio" | "wifi";
@@ -43,7 +43,7 @@ interface FujiCompatible {
 // ---------------------------------------------------------------------------
 
 interface AccessoryBase {
-  brand: string;
+  brand: Brand;
   model: string;
   year?: number;
   discontinued?: boolean;
@@ -76,7 +76,7 @@ interface LensAccessory extends AccessoryBase, FujiCompatible {
 interface BatteryAccessory extends AccessoryBase {
   category: "battery";
   compatibleWith?: string[];
-  batteryType: string;
+  batteryType: BatteryType;
   capacityMah?: number;
   voltage?: number;
 }
@@ -84,14 +84,14 @@ interface BatteryAccessory extends AccessoryBase {
 interface ChargerAccessory extends AccessoryBase {
   category: "charger";
   compatibleWith?: string[];
-  batteryType: string;
+  batteryType: BatteryType;
   slots?: number;
   usbInput?: boolean;
 }
 
 interface BatteryGripAccessory extends AccessoryBase, FujiCompatible {
   category: "battery-grip";
-  batteryType: string;
+  batteryType: BatteryType;
   batteryCount?: number;
   verticalControls?: boolean;
 }
@@ -161,11 +161,14 @@ interface AudioAccessory extends AccessoryBase {
   connectionType?: ConnectionType;
 }
 
+/** Strap material */
+type StrapMaterial = "nylon" | "leather" | "neoprene" | "paracord" | "silk";
+
 interface StrapAccessory extends AccessoryBase {
   category: "strap";
   strapType: StrapType;
   length?: number;
-  material?: string;
+  material?: StrapMaterial;
 }
 
 interface PlateAccessory extends AccessoryBase {
@@ -248,10 +251,10 @@ export type {
   HeadType,
   PlateType,
   FilterType,
-  StorageType,
   BagType,
   StrapType,
   ConnectionType,
   MicPattern,
   TripodMaterial,
+  StrapMaterial,
 };

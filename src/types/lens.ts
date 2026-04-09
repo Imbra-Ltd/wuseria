@@ -8,7 +8,7 @@ type AfMotor = "DC" | "STM" | "LM";
 
 interface Lens {
   // Identity
-  brand: Brand | string;
+  brand: Brand;
   model: string;
   type: LensType;
   mount: Mount;
@@ -27,12 +27,12 @@ interface Lens {
   circularAperture?: boolean;
   maxMagnification?: number;
 
-  // Build
-  ois: boolean;
-  weatherSealed: boolean;
-  autofocus: boolean;
+  // Build — absent = false for all booleans
+  ois?: boolean;
+  weatherSealed?: boolean;
+  autofocus?: boolean;
   afMotor?: AfMotor;
-  apertureRing: boolean;
+  apertureRing?: boolean;
   apertureClickless?: boolean;
   focusRing?: boolean;
   focusByWire?: boolean;
