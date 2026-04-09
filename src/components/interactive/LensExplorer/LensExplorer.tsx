@@ -30,8 +30,10 @@ const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
   { key: "isWeatherSealed", label: "WR", align: "center" },
   { key: "afMotor", label: "AF", align: "center" },
   { key: "weight", label: "Weight", align: "right" },
-  { key: "price", label: "~USD", align: "right" },
+  { key: "price", label: "Price", align: "right" },
 ];
+
+const APERTURE_OPTIONS = ["0.95", "1.0", "1.2", "1.4", "1.8", "2.0", "2.8", "3.5", "4.0", "4.5", "5.6", "6.3", "8.0"];
 
 function formatFL(lens: Lens): string {
   if (lens.focalLengthMin === lens.focalLengthMax) {
@@ -50,6 +52,8 @@ function LensExplorer({ lenses }: LensExplorerProps) {
   const [af, setAf] = useState("");
   const [discontinued, setDiscontinued] = useState("");
   const [fl, setFl] = useState("");
+  const [maxAp, setMaxAp] = useState("");
+  const [priceRange, setPriceRange] = useState("");
 
   const brands = useMemo(() => {
     const pool = mount ? lenses.filter((l) => l.mount === mount) : lenses;
@@ -82,10 +86,22 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         const [min, max] = ranges[fl];
         if (lens.focalLengthMax < min || lens.focalLengthMin > max) return false;
       }
+      if (maxAp && lens.maxAperture > parseFloat(maxAp)) return false;
+      if (priceRange) {
+        const ranges: Record<string, [number, number]> = {
+          "0-250": [0, 250],
+          "250-500": [250, 500],
+          "500-1000": [500, 1000],
+          "1000-2000": [1000, 2000],
+          "2000+": [2000, Infinity],
+        };
+        const [min, max] = ranges[priceRange];
+        if (lens.price < min || lens.price > max) return false;
+      }
       if (q && !`${lens.brand} ${lens.model}`.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl]);
+  }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, priceRange]);
 
   const { sorted, sortKey, sortDirection, toggleSort } = useSort<Lens, LensSortKey>(filtered, "focalLengthMin");
 
@@ -103,7 +119,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     }
   }
 
-  const hasFilters = search || mount || type || brand || ois || wr || af || discontinued || fl;
+  const hasFilters = search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || priceRange;
 
   function clearFilters(): void {
     setSearch("");
@@ -115,6 +131,8 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     setAf("");
     setDiscontinued("");
     setFl("");
+    setMaxAp("");
+    setPriceRange("");
   }
 
   return (
@@ -167,12 +185,24 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             <option value="300+">300mm+</option>
           </select>
 
-          <select className={`${styles.filterSelect} ${discontinued ? styles.filterActive : ""}`} value={discontinued} onChange={(e) => setDiscontinued(resetValue(e.target.value))} aria-label="Filter by status">
-            <option value="" hidden>Status</option>
+          <select className={`${styles.filterSelect} ${maxAp ? styles.filterActive : ""}`} value={maxAp} onChange={(e) => setMaxAp(resetValue(e.target.value))} aria-label="Filter by aperture">
+            <option value="" hidden>Aperture</option>
             <option value="__all__">All</option>
-            <option value="available">Available</option>
-            <option value="discontinued">Discontinued</option>
+            {APERTURE_OPTIONS.map((ap) => (
+              <option key={ap} value={ap}>f/{ap} or faster</option>
+            ))}
           </select>
+
+          <select className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
+            <option value="" hidden>Price</option>
+            <option value="__all__">All</option>
+            <option value="0-250">Under $250</option>
+            <option value="250-500">$250 - $500</option>
+            <option value="500-1000">$500 - $1,000</option>
+            <option value="1000-2000">$1,000 - $2,000</option>
+            <option value="2000+">$2,000+</option>
+          </select>
+
         </div>
 
         <div className={styles.chipRow}>
@@ -210,7 +240,15 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             <button type="button" className={`${styles.chip} ${wr === "yes" ? styles.chipOn : ""}`} onClick={() => setWr("yes")}>Yes</button>
             <button type="button" className={`${styles.chip} ${wr === "no" ? styles.chipOn : ""}`} onClick={() => setWr("no")}>No</button>
           </div>
+
+          <div className={styles.chipGroup}>
+            <span className={styles.chipLabel}>Status</span>
+            <button type="button" className={`${styles.chip} ${discontinued === "" ? styles.chipOn : ""}`} onClick={() => setDiscontinued("")}>All</button>
+            <button type="button" className={`${styles.chip} ${discontinued === "available" ? styles.chipOn : ""}`} onClick={() => setDiscontinued("available")}>Available</button>
+            <button type="button" className={`${styles.chip} ${discontinued === "discontinued" ? styles.chipOn : ""}`} onClick={() => setDiscontinued("discontinued")}>Discontinued</button>
+          </div>
         </div>
+
       </div>
 
       {sorted.length === 0 ? (
