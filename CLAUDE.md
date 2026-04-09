@@ -10,10 +10,13 @@ Quality conventions (SOLID, readability, code style, testing) are defined in
 [Imbra-Ltd/solid-ai-templates](https://github.com/Imbra-Ltd/solid-ai-templates).
 Key references:
 - `docs/solid-ai-templates/base/quality.md` — SOLID, readability, maintainability
+- `docs/solid-ai-templates/base/typescript.md` — type design, naming, strictness
+- `docs/solid-ai-templates/base/review.md` — peer review checklist
 - `docs/solid-ai-templates/base/git.md` — git workflow
 - `docs/solid-ai-templates/frontend/quality.md` — frontend design patterns
 - `docs/solid-ai-templates/frontend/ux.md` — UX and accessibility
 
+Before code reviews or quality assessments, read the relevant templates above.
 Project-specific overrides and additions follow below.
 
 
