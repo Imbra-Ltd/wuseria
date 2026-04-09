@@ -1,13 +1,14 @@
 import type { Mount, Brand } from "./common";
 
-/** Lens type — prime or zoom */
 type LensType = "prime" | "zoom";
 
-/** Autofocus motor type — speed tier */
+/** DC = coreless, STM = stepping, LM = linear motor */
 type AfMotor = "DC" | "STM" | "LM";
 
 interface Lens {
+
   // Identity
+
   brand: Brand;
   model: string;
   type: LensType;
@@ -15,19 +16,23 @@ interface Lens {
   year?: number;
   discontinued?: boolean;
 
-  // Optical — specs
-  /** Minimum focal length, mm */
+  // Optical specs
+
   focalLengthMin: number;
-  /** Maximum focal length, mm (same as min for primes) */
   focalLengthMax: number;
   maxAperture: number;
-  /** Sharpest aperture as f-number (e.g. 2.8, 4, 8) */
+
+  /** f-number where the lens is sharpest (e.g. 2.8, 4, 8) */
   sweetSpotAperture?: number;
+
   apertureBlades?: number;
   circularAperture?: boolean;
+
+  /** Reproduction ratio as decimal (1.0 = life-size, 0.5 = half) */
   maxMagnification?: number;
 
   // Build — absent = false for all booleans
+
   ois?: boolean;
   weatherSealed?: boolean;
   autofocus?: boolean;
@@ -38,22 +43,29 @@ interface Lens {
   focusByWire?: boolean;
   distanceScale?: boolean;
   smoothFocusRing?: boolean;
-  /** Weight in grams, body only */
+
+  /** Grams */
   weight: number;
-  /** Maximum outer diameter, mm */
+
+  /** Outer diameter, mm */
   diameter?: number;
+
   /** Mount to front element, mm */
   length?: number;
+
   /** Filter thread diameter, mm */
   filterThread?: number;
+
   rotatingFront?: boolean;
   tripodMount?: boolean;
 
   // Price
-  /** Approximate price in USD, rounded to $250 */
+
+  /** USD, rounded to nearest $250 */
   price: number;
 
   // Optical quality — from MTF chart readings (0–2 scale)
+
   sweetSpotSharpness?: number;
   cornerSharpness?: number;
   wideOpenSharpness?: number;
@@ -62,6 +74,7 @@ interface Lens {
   coma?: number;
 
   // Optical quality — NOT from MTF charts (0–2 scale)
+
   longitudinalCA?: number;
   lateralCA?: number;
   distortion?: number;
@@ -69,19 +82,26 @@ interface Lens {
   bokeh?: number;
   flareResistance?: number;
 
-  // Other scoring inputs
-  /** Minimum focus distance, mm */
+  // Scoring inputs
+
+  /** mm */
   minFocusDistance?: number;
+
   tiltShift?: boolean;
-  /** Maximum shift range, mm */
+
+  /** mm */
   shiftRange?: number;
-  /** Maximum tilt angle, degrees */
+
+  /** Degrees */
   tiltAngle?: number;
-  /** Image circle diameter, mm */
+
+  /** mm */
   imageCircle?: number;
+
   tiltShiftIndependent?: boolean;
 
   // Links
+
   officialUrl?: string;
 }
 

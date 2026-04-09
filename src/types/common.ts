@@ -29,16 +29,13 @@ type Brand =
   | "Viltrox"
   | "Voigtlander";
 
-/** Memory card type — used by Camera and StorageAccessory */
 type CardType = "SD" | "CFexpress";
 
-/** SD card speed class */
 type CardSpeedClass = "UHS-I" | "UHS-II" | "UHS-III";
 
-/** Storage media type — extends CardType with external storage */
+/** Extends CardType with external storage media */
 type StorageType = CardType | "SSD" | "HDD";
 
-/** Battery model — Fujifilm X and GFX systems */
 type BatteryType = "NP-W126" | "NP-W126S" | "NP-W235" | "NP-T125";
 
 export type { Mount, Brand, CardType, CardSpeedClass, StorageType, BatteryType };

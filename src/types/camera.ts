@@ -1,24 +1,18 @@
 import type { Mount, BatteryType, CardType, CardSpeedClass } from "./common";
 
-/** EVF position on the body */
 type EvfPosition = "center" | "corner" | "none";
 
-/** Ergonomic form factor */
 type FormFactor = "slr" | "dslr-grip" | "rangefinder" | "compact";
 
-/** EVF type */
 type EvfType = "electronic" | "hybrid" | "none";
 
-/** Screen articulation type */
 type ScreenType = "tilting" | "articulating" | "fixed";
 
-/** Shutter mechanism */
 type ShutterType = "mechanical" | "electronic" | "both";
 
-/** Autofocus system type (camera-level, not lens motor) */
+/** Camera-level AF system, not lens motor (see AfMotor in lens.ts) */
 type AfSystemType = "CDAF" | "hybrid-PDAF";
 
-/** Camera series within Fujifilm lineup */
 type CameraSeries =
   | "X-Pro"
   | "X-T"
@@ -29,7 +23,6 @@ type CameraSeries =
   | "X-A"
   | "GFX";
 
-/** Sensor generation */
 type SensorType =
   | "X-Trans I"
   | "X-Trans II"
@@ -42,16 +35,12 @@ type SensorType =
   | "GFX CMOS II"
   | "GFX CMOS II HS";
 
-/** USB connector type */
 type UsbType = "micro-USB" | "USB-C";
 
-/** Subject detection categories */
 type SubjectDetect = "animal" | "bird" | "car" | "motorcycle" | "bicycle" | "airplane" | "train";
 
-/** Video resolution tier */
 type VideoSpec = "1080p" | "4K" | "6.2K" | "8K";
 
-/** Film simulation name */
 type FilmSimulation =
   | "Provia"
   | "Velvia"
@@ -72,7 +61,9 @@ type FilmSimulation =
   | "Reala ACE";
 
 interface Camera {
-  // Identity — all cameras are Fujifilm, no brand field needed
+
+  // Identity — all cameras are Fujifilm
+
   model: string;
   mount: Mount;
   year: number;
@@ -82,57 +73,80 @@ interface Camera {
   formFactor: FormFactor;
 
   // Sensor
+
   sensor: SensorType;
   megapixels: number;
-  /** Sensor width, mm */
+
+  /** mm */
   sensorWidth?: number;
-  /** Sensor height, mm */
+
+  /** mm */
   sensorHeight?: number;
+
+  /** Back-side illuminated */
   bsi?: boolean;
+
   isoMin?: number;
   isoMax?: number;
 
   // Stabilisation & weather
+
   ibis: boolean;
   weatherSealed: boolean;
 
   // Viewfinder & screen
+
   evfType?: EvfType;
-  /** EVF resolution, dots */
+
+  /** Dots */
   evfResolution?: number;
+
   screenType?: ScreenType;
-  /** Screen resolution, dots */
+
+  /** Dots */
   screenResolution?: number;
+
   touchscreen?: boolean;
 
   // Performance
+
   burstFps?: number;
   shutterType?: ShutterType;
   afType?: AfSystemType;
   afPoints?: number;
-  /** Phase-detection AF coverage, percentage of sensor area */
+
+  /** Percentage of sensor area with phase-detection pixels */
   pdafCoverage?: number;
+
   faceDetectAF: boolean;
   subjectDetectAF?: SubjectDetect[];
   bufferDepth?: number;
   electronicShutterFps?: number;
+
+  /** Multi-shot sensor shift for higher resolution output */
   pixelShift?: boolean;
+
   /** CIPA shots per charge */
   batteryLife?: number;
+
   batteryType?: BatteryType;
 
   // Video
+
   videoSpec: VideoSpec;
 
   // Film simulations
+
   filmSimulations?: number;
 
   // Storage
+
   cardSlots?: number;
   cardType?: CardType;
   cardSpeedClass?: CardSpeedClass;
 
   // Connectivity
+
   flashHotShoe: boolean;
   builtInFlash?: boolean;
   usbType?: UsbType;
@@ -143,20 +157,26 @@ interface Camera {
   headphoneJack: boolean;
 
   // Physical
-  /** Weight in grams, body only */
+
+  /** Grams, body only */
   weight: number;
-  /** Body width, mm */
+
+  /** mm */
   width?: number;
-  /** Body height, mm */
+
+  /** mm */
   height?: number;
-  /** Body depth, mm */
+
+  /** mm */
   depth?: number;
 
   // Price
-  /** Approximate price in USD, rounded to $250 */
+
+  /** USD, rounded to nearest $250 */
   price: number;
 
   // Links
+
   officialUrl?: string;
 }
 

@@ -1,9 +1,7 @@
 import type { Mount, Brand, BatteryType, StorageType } from "./common";
 import type { Genre } from "./genre";
 
-// ---------------------------------------------------------------------------
-// Shared string literal unions — no magic strings
-// ---------------------------------------------------------------------------
+// String literal unions
 
 /** Mount systems beyond Fujifilm (for adapter sourceMount) */
 type AdapterMount =
@@ -19,18 +17,24 @@ type AdapterMount =
   | "Fuji H";
 
 type HeadType = "ball" | "geared" | "gimbal" | "pan-tilt" | "video";
+
 type PlateType = "arca-swiss" | "manfrotto-rc2" | "proprietary";
+
 type FilterType = "CPL" | "ND" | "GND" | "UV" | "black-mist" | "IR" | "light-pollution";
-// StorageType imported from common.ts
+
 type BagType = "backpack" | "sling" | "shoulder" | "holster" | "rolling";
+
 type StrapType = "neck" | "sling" | "wrist" | "harness";
+
+type StrapMaterial = "nylon" | "leather" | "neoprene" | "paracord" | "silk";
+
 type ConnectionType = "wired-2.5mm" | "wired-usb" | "bluetooth" | "radio" | "wifi";
+
 type MicPattern = "stereo" | "shotgun" | "omni" | "cardioid";
+
 type TripodMaterial = "carbon-fiber" | "aluminum" | "basalt";
 
-// ---------------------------------------------------------------------------
-// Mixin — Fuji-specific compatibility fields
-// ---------------------------------------------------------------------------
+// Mixin for Fuji-specific compatibility
 
 interface FujiCompatible {
   mount?: Mount;
@@ -38,9 +42,7 @@ interface FujiCompatible {
   weatherSealed?: boolean;
 }
 
-// ---------------------------------------------------------------------------
-// Base — truly universal fields that apply to every accessory
-// ---------------------------------------------------------------------------
+// Base — fields that apply to every accessory
 
 interface AccessoryBase {
   brand: Brand;
@@ -54,9 +56,7 @@ interface AccessoryBase {
   officialUrl?: string;
 }
 
-// ---------------------------------------------------------------------------
 // Category-specific extensions
-// ---------------------------------------------------------------------------
 
 interface FlashAccessory extends AccessoryBase, FujiCompatible {
   category: "flash";
@@ -69,7 +69,10 @@ interface FlashAccessory extends AccessoryBase, FujiCompatible {
 
 interface LensAccessory extends AccessoryBase, FujiCompatible {
   category: "lens-accessory";
+
+  /** e.g. 1.4 for a 1.4x teleconverter */
   magnificationFactor?: number;
+
   afRetained?: boolean;
 }
 
@@ -77,7 +80,11 @@ interface BatteryAccessory extends AccessoryBase {
   category: "battery";
   compatibleWith?: string[];
   batteryType: BatteryType;
+
+  /** mAh */
   capacityMah?: number;
+
+  /** Volts */
   voltage?: number;
 }
 
@@ -107,9 +114,16 @@ interface AdapterAccessory extends AccessoryBase {
 
 interface TripodAccessory extends AccessoryBase {
   category: "tripod" | "monopod";
+
+  /** kg */
   maxLoad?: number;
+
+  /** mm */
   maxHeight?: number;
+
+  /** mm */
   foldedLength?: number;
+
   legSections?: number;
   material?: TripodMaterial;
 }
@@ -117,33 +131,50 @@ interface TripodAccessory extends AccessoryBase {
 interface HeadAccessory extends AccessoryBase {
   category: "tripod-head";
   headType: HeadType;
+
+  /** kg */
   maxLoad?: number;
+
   plateType?: PlateType;
 }
 
 interface FilterAccessory extends AccessoryBase {
   category: "filter";
+
+  /** mm, matches lens filterThread */
   filterThread?: number;
+
   filterType: FilterType;
 }
 
 interface LightingAccessory extends AccessoryBase {
   category: "lighting";
+
+  /** Kelvin */
   colorTemp?: number;
+
+  /** Color Rendering Index, 0–100 */
   cri?: number;
+
   lumens?: number;
 }
 
 interface BagAccessory extends AccessoryBase {
   category: "bag";
+
+  /** Liters */
   capacityLiters?: number;
+
   bagType?: BagType;
 }
 
 interface StorageAccessory extends AccessoryBase {
   category: "storage";
   storageType: StorageType;
+
+  /** MB/s write speed */
   speedMBps?: number;
+
   capacityGB?: number;
 }
 
@@ -161,13 +192,13 @@ interface AudioAccessory extends AccessoryBase {
   connectionType?: ConnectionType;
 }
 
-/** Strap material */
-type StrapMaterial = "nylon" | "leather" | "neoprene" | "paracord" | "silk";
-
 interface StrapAccessory extends AccessoryBase {
   category: "strap";
   strapType: StrapType;
+
+  /** mm */
   length?: number;
+
   material?: StrapMaterial;
 }
 
@@ -180,13 +211,14 @@ interface PlateAccessory extends AccessoryBase {
 interface PowerBankAccessory extends AccessoryBase {
   category: "power-bank";
   capacityMah: number;
+
+  /** Watts */
   outputWatts?: number;
+
   usbPD?: boolean;
 }
 
-// ---------------------------------------------------------------------------
 // Generic — categories with no extra fields
-// ---------------------------------------------------------------------------
 
 interface GenericAccessory extends AccessoryBase {
   category:
@@ -198,9 +230,7 @@ interface GenericAccessory extends AccessoryBase {
   compatibleWith?: string[];
 }
 
-// ---------------------------------------------------------------------------
-// Discriminated union — narrows by category
-// ---------------------------------------------------------------------------
+// Discriminated union
 
 type Accessory =
   | FlashAccessory
@@ -253,8 +283,8 @@ export type {
   FilterType,
   BagType,
   StrapType,
+  StrapMaterial,
   ConnectionType,
   MicPattern,
   TripodMaterial,
-  StrapMaterial,
 };
