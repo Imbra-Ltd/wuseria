@@ -46,6 +46,7 @@ me-fuji/
 ├── docs/
 │   ├── architecture.md # Architecture decisions and data model
 │   ├── decisions/      # Architecture Decision Records
+│   ├── prototype/      # Original single-file prototype (reference only)
 │   ├── ONBOARDING.md   # New contributor guide
 │   ├── PLAYBOOK.md     # Operational reference
 │   └── solid-ai-templates/ # Quality convention templates (submodule)

@@ -33,22 +33,23 @@ Operational reference for common tasks.
 
 ## Run the prototype
 
-The original single-file prototype lives at `docs/prototype.jsx`. The Vite
-scaffolding (`index.html`, `src/main.jsx`) is committed and ready. To run:
+All prototype resources live in `docs/prototype/`. To run:
 
 ```bash
-cp docs/prototype.jsx src/App.jsx
+cp docs/prototype/index.html index.html
+cp docs/prototype/main.jsx src/main.jsx
+cp docs/prototype/App.jsx src/App.jsx
 npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173). Clean up after:
 
 ```bash
-rm src/App.jsx
+rm index.html src/main.jsx src/App.jsx
 ```
 
 The prototype uses old field names (pre-migration) and is kept for reference
-only. Do not commit `src/App.jsx`.
+only. Do not commit the copied files.
 
 ## Deploy
 
