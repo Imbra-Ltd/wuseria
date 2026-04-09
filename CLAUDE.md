@@ -33,7 +33,7 @@ Before quality work, read the relevant templates above. Two distinct scopes:
 Project-specific overrides and additions follow below.
 
 
-## Stack
+## 1. Stack
 
 - Language: TypeScript (strict mode)
 - Framework: Astro (static output, zero JS by default)
@@ -46,7 +46,7 @@ Project-specific overrides and additions follow below.
 - Deployment: GitHub Pages via GitHub Actions
 
 
-## Project structure
+## 2. Project structure
 
 ```
 src/
@@ -126,19 +126,20 @@ package.json
 ```
 
 
-## Commands
+## 3. Commands
 
 ```
 npm run dev       # develop — hot reload at localhost:4321
 npm run build     # production build to dist/
 npm run preview   # preview production build locally
+npm run lint      # ESLint
 npm test          # run tests (watch mode)
 astro check       # validate .astro files
 tsc --noEmit      # type check without emitting files
 ```
 
 
-## Git conventions
+## 4. Git conventions
 
 - Conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`
 - Subject line under 80 characters, imperative mood
@@ -146,10 +147,10 @@ tsc --noEmit      # type check without emitting files
 - Branch naming: `feat/description`, `fix/description`, `chore/description`
 - Do not commit `node_modules/`, `dist/`, `.env`, `.env.local`
 - Lock file (`package-lock.json`) is committed
-- Run `npm test && astro check && tsc --noEmit` before committing
+- Run `npm run lint && npm test && astro check && tsc --noEmit` before committing
 
 
-## TypeScript
+## 5. TypeScript
 
 - `strict: true` — no exceptions
 - No `any` — use `unknown` and narrow, or define a proper type
@@ -161,8 +162,7 @@ tsc --noEmit      # type check without emitting files
 - Prettier owns all formatting
 - `.astro` files formatted with the official Prettier Astro plugin
 
-
-## Type design
+### 5.1 Type design
 
 - Use discriminated unions for type families with a shared base and distinct variants
 - Compose sub-interfaces when a domain has multiple categories with different fields
@@ -170,15 +170,17 @@ tsc --noEmit      # type check without emitting files
 - Self-documenting names over comments — comment only intent that code cannot express
 
 
-## Components
+## 6. Components
 
-### Astro components (static)
+### 6.1 Astro components (static)
+
 - Default to `.astro` — they ship zero JS
 - Only reach for React when client-side state is genuinely required
 - Static components live in `src/components/static/`
 - One component per file — PascalCase filename
 
-### React islands (interactive)
+### 6.2 React islands (interactive)
+
 - Interactive components live in `src/components/interactive/`
 - Use `client:load` for above-the-fold interactive components
 - Use `client:visible` for below-the-fold interactive components
@@ -191,7 +193,7 @@ tsc --noEmit      # type check without emitting files
 - Keep components under ~150 lines — split if larger
 
 
-## Styling
+## 7. Styling
 
 - Astro scoped `<style>` blocks for .astro page components
 - CSS Modules — co-located with React island components
@@ -202,7 +204,7 @@ tsc --noEmit      # type check without emitting files
 - Dark theme
 
 
-## Data rules
+## 8. Data rules
 
 - All editable content in `src/data/*.ts` — never hardcode data in components
 - TypeScript files, not JSON — gives type checking at build time and IDE autocomplete on the data itself; a missing field is a compile error, not a runtime surprise
@@ -217,17 +219,17 @@ tsc --noEmit      # type check without emitting files
 - Affiliate links use `rel="nofollow sponsored"` and `target="_blank"`
 
 
-## Testing
+## 9. Testing
 
 - Vitest for unit tests on utils, hooks, and scoring formulas
 - React Testing Library for interactive component tests — test behaviour, not implementation
 - Prefer accessible queries (`getByRole`, `getByText`) over `getByTestId`
 - Genre scoring functions MUST have unit tests
 - Data files MUST have validation tests (no duplicates, no missing required fields)
-- Run before every commit: `npm test && astro check && tsc --noEmit`
+- Run before every commit: `npm run lint && npm test && astro check && tsc --noEmit`
 
 
-## SEO
+## 10. SEO
 
 - Astro native head management for per-page titles and descriptions
 - @astrojs/sitemap integration for auto-generated sitemap
@@ -239,7 +241,7 @@ tsc --noEmit      # type check without emitting files
 - `robots.txt` and Open Graph meta tags required
 
 
-## Performance
+## 11. Performance
 
 - Bundle size < 200KB gzipped (JS only — most pages ship zero JS)
 - LCP < 1.5s
@@ -249,7 +251,7 @@ tsc --noEmit      # type check without emitting files
 - Static HTML by default — JS only for interactive islands
 
 
-## Accessibility
+## 12. Accessibility
 
 - WCAG 2.1 AA target
 - All interactive elements keyboard-accessible
@@ -260,7 +262,7 @@ tsc --noEmit      # type check without emitting files
 - axe-core in CI — zero violations before merge
 
 
-## Design
+## 13. Design
 
 - Dark background — data-dense layout
 - Data tables with sortable column headers (click-to-sort)
@@ -271,7 +273,7 @@ tsc --noEmit      # type check without emitting files
 - No emojis in UI text
 
 
-## Brand voice
+## 14. Brand voice
 
 - Direct and concise — no marketing fluff
 - Opinionated — recommend, don't just list
