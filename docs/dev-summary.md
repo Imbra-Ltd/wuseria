@@ -241,14 +241,45 @@ Audited photography.xlsx against prototype. Found:
 - .gitattributes added for LF line endings
 - Fujifilm model names normalized to official uppercase (XF/XC/GF/MKX)
 
+### Camera Data Migration (#3) — 39 bodies, 46 fields
+- Migrated all 39 Fujifilm camera bodies from prototype.jsx
+- 46 fields per camera (vs 32 in architecture doc)
+- Refactored `bodyStyle` → `evfPosition` + `formFactor` (cleaner separation)
+- New fields beyond spec: sensorWidth/Height, bsi, isoMin/Max, pdafCoverage,
+  filmSimulations, wifi, bluetooth, screenResolution, touchscreen, batteryType,
+  pixelShift, builtInFlash, tethering, officialUrl
+- Prices refreshed to 2026 USD (new retail + used market)
+
+### Lens Data Refinements
+- Prices normalized to USD, $250 steps; removed `priceEstimated` (all estimates)
+- Currency config: `src/data/config.ts` with DEFAULT_CURRENCY
+- All 242 lens officialUrl links verified; 28 broken URLs fixed
+- Meike lineup refreshed: 5 discontinued, 9 current lenses added
+- NiSi 15mm f/4 Sunstar added; Kamlan 32mm f/1.1 added
+- Removed 3 ghost lenses (Tamron 50-400mm, Voigtlander Nokton D, Laowa 15mm Shift X)
+- Systematic mount audit: all 174 third-party lenses verified for X/GFX availability
+- Zeiss Touit: marked discontinued, URLs → PDF datasheets
+- 7Artisans 35mm f/2 marked discontinued; 50mm f/1.05 → f/0.95 corrected
+- Total: 242 lenses (down from 245 after removing ghosts + discontinued corrections)
+
+### Scoring Strategy Decision
+- Genre Guide shows only lenses with optical review data (scored lenses)
+- Lens Explorer shows all 242 lenses (specs only, no scoring needed)
+- No camera genre scoring — feature checklists per genre instead (#68)
+
+### New GitHub Issues
+- #61-66: Wiki entries for BSI, pixel shift, ISO range, film simulations, PDAF coverage, battery types
+- #67: Camera price refresh (merged)
+- #68: Discussion — camera genre scoring vs feature checklists
+
 ---
 
 ## Current State
 
 | Area | Status |
 |---|---|
-| Lens data | ✅ 236 lenses, full specs, all brands, officialUrl |
-| Camera data | ❌ In prototype only — migration pending (#3) |
+| Lens data | ✅ 242 lenses, full specs, all brands, officialUrl, verified |
+| Camera data | ✅ 39 bodies, 46 fields, prices refreshed |
 | Accessories | ❌ In prototype only — migration pending (#5) |
 | Wiki | ❌ In prototype only — migration pending (#4) |
 | Genre scoring | ❌ Types defined, functions pending (#9) |
