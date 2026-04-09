@@ -27,7 +27,8 @@ Before quality work, read the relevant templates above. Two distinct scopes:
   `base/docs.md` (standard documents, ADRs), `base/readme.md` (9 required
   sections), `base/git.md` (README, .gitignore), `frontend/static-site.md`
   (assets, robots.txt, SEO), and `stack/static-site-astro.md` (.prettierrc,
-  eslint config, Astro conventions).
+  eslint config, Astro conventions). Run after: new project setup, framework
+  migration, adding a major layer (backend, CI/CD), or before a release.
 
 Project-specific overrides and additions follow below.
 
