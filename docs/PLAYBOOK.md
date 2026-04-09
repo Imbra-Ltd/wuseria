@@ -41,7 +41,40 @@ git push origin --delete feat/description
 1. Add an entry to `src/data/lenses.ts` following the `Lens` interface
 2. All boolean fields use `is`/`has` prefix (e.g. `hasAutofocus`, `isWeatherSealed`)
 3. Price in USD, rounded to nearest $250
-4. Run `npm run lint` to verify
+4. Only fill optical quality fields if data comes from a trusted source (see below)
+5. Leave optical fields empty for lenses without trusted data — they will
+   appear in the Lens Explorer but be excluded from the Genre Guide
+6. Run `npm run lint` to verify
+
+## Scoring data policy
+
+Only score lenses that have optical data from trusted review sources. Do not
+guess or estimate optical quality — showing nothing is better than showing
+wrong data.
+
+- **Lens Explorer** — shows all lenses, sortable by specs. No scoring needed.
+- **Genre Guide** — shows only lenses with optical data. Lenses with empty
+  optical fields are excluded entirely.
+- Scoring functions return `null` when optical fields are missing.
+
+## Trusted review sources
+
+Ordered by measurement rigour (see `src/types/review.ts`):
+
+1. LensRentals — optical bench MTF
+2. Lenstip — lab MTF charts
+3. Opticallimits — lab MTF
+4. DxOMark — sensor + lens measurements
+5. The Digital Picture — ISO chart comparisons
+6. Dustin Abbott — field + lab
+7. Imaging Resource — lab resolution/noise
+8. ePHOTOzine — lab MTF
+9. DPReview — comprehensive (archived)
+10. Phillip Reeve — manual focus specialist
+
+**Do not use:** Ken Rockwell — not a trusted data source. Listed in
+`docs/bookmarks.md` as a competitor reference only (he ranks for per-lens
+queries we want to target).
 
 ## Add a new camera
 
