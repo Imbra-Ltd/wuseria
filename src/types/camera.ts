@@ -88,16 +88,9 @@ interface Camera {
 
   sensor: SensorType;
   megapixels: number;
-
-  // mm
-  sensorWidth?: number;
-
-  // mm
-  sensorHeight?: number;
-
-  // Back-side illuminated
-  bsi?: boolean;
-
+  sensorWidth?: number;              // mm
+  sensorHeight?: number;             // mm
+  bsi?: boolean;                     // back-side illuminated
   isoMin?: number;
   isoMax?: number;
 
@@ -113,15 +106,9 @@ interface Camera {
   // ===========================================================================
 
   evfType?: EvfType;
-
-  // Dots
-  evfResolution?: number;
-
+  evfResolution?: number;             // dots
   screenType?: ScreenType;
-
-  // Dots
-  screenResolution?: number;
-
+  screenResolution?: number;          // dots
   touchscreen?: boolean;
 
   // ===========================================================================
@@ -132,21 +119,13 @@ interface Camera {
   shutterType?: ShutterType;
   afType?: AfSystemType;
   afPoints?: number;
-
-  // Percentage of sensor area with phase-detection pixels
-  pdafCoverage?: number;
-
+  pdafCoverage?: number;              // % of sensor area
   faceDetectAF: boolean;
   subjectDetectAF?: SubjectDetect[];
-  bufferDepth?: number;
+  bufferDepth?: number;               // frames
   electronicShutterFps?: number;
-
-  // Multi-shot sensor shift for higher resolution output
   pixelShift?: boolean;
-
-  // CIPA shots per charge
-  batteryLife?: number;
-
+  batteryLife?: number;               // CIPA shots per charge
   batteryType?: BatteryType;
 
   // ===========================================================================
@@ -186,24 +165,16 @@ interface Camera {
   // PHYSICAL
   // ===========================================================================
 
-  // Grams, body only
-  weight: number;
-
-  // mm
-  width?: number;
-
-  // mm
-  height?: number;
-
-  // mm
-  depth?: number;
+  weight: number;                     // grams, body only
+  width?: number;                     // mm
+  height?: number;                    // mm
+  depth?: number;                     // mm
 
   // ===========================================================================
   // PRICE
   // ===========================================================================
 
-  // USD, rounded to nearest $250
-  price: number;
+  price: number;                      // USD, rounded to nearest $250
 
   // ===========================================================================
   // LINKS
