@@ -123,6 +123,26 @@ interface AudioAccessory extends AccessoryBase {
   connectionType?: string;
 }
 
+interface StrapAccessory extends AccessoryBase {
+  category: "strap";
+  strapType: string;
+  length?: number;
+  material?: string;
+}
+
+interface PlateAccessory extends AccessoryBase {
+  category: "plate";
+  plateType?: string;
+  arcaCompatible?: boolean;
+}
+
+interface PowerBankAccessory extends AccessoryBase {
+  category: "power-bank";
+  capacityMah: number;
+  outputWatts?: number;
+  usbPD?: boolean;
+}
+
 // ---------------------------------------------------------------------------
 // Generic — categories with no extra fields
 // ---------------------------------------------------------------------------
@@ -155,6 +175,9 @@ type Accessory =
   | StorageAccessory
   | RemoteAccessory
   | AudioAccessory
+  | StrapAccessory
+  | PlateAccessory
+  | PowerBankAccessory
   | GenericAccessory;
 
 type AccessoryCategory = Accessory["category"];
@@ -177,5 +200,8 @@ export type {
   StorageAccessory,
   RemoteAccessory,
   AudioAccessory,
+  StrapAccessory,
+  PlateAccessory,
+  PowerBankAccessory,
   GenericAccessory,
 };
