@@ -16,20 +16,6 @@ Key references:
 - `docs/solid-ai-templates/frontend/quality.md` — frontend design patterns
 - `docs/solid-ai-templates/frontend/ux.md` — UX and accessibility
 
-Before quality work, read the relevant templates above. Two distinct scopes:
-- **Code review** (PR/branch changes): follow the priority order in
-  `base/review.md` (security, correctness, clarity, conventions). Apply
-  `base/quality.md` rules (SOLID, readability, naming, code style) and
-  `base/typescript.md` rules (type design, boolean prefixes, strictness)
-  as the standard for correctness, clarity, and convention checks. Run
-  both MUST and SHOULD checklists from `base/review.md` against the diff.
-- **Structure audit** (project completeness): verify every MUST from
-  `base/docs.md` (standard documents, ADRs), `base/readme.md` (9 required
-  sections), `base/git.md` (README, .gitignore), `frontend/static-site.md`
-  (assets, robots.txt, SEO), and `stack/static-site-astro.md` (.prettierrc,
-  eslint config, Astro conventions). Run after: new project setup, framework
-  migration, adding a major layer (backend, CI/CD), or before a release.
-
 Project-specific overrides and additions follow below.
 
 
@@ -277,3 +263,27 @@ tsc --noEmit      # type check without emitting files
 - Opinionated — recommend, don't just list
 - Technical but accessible — beginners should understand the genre guide
 - Honest about limitations — "scoring is subjective, here's our methodology"
+
+
+## 5. Quality work
+
+Before quality work, read the relevant templates listed in the header.
+Two distinct scopes:
+
+### 5.1 Code review
+
+Follow the priority order in `base/review.md` (security, correctness,
+clarity, conventions). Apply `base/quality.md` rules (SOLID, readability,
+naming, code style) and `base/typescript.md` rules (type design, boolean
+prefixes, strictness) as the standard for correctness, clarity, and
+convention checks. Run both MUST and SHOULD checklists from
+`base/review.md` against the diff.
+
+### 5.2 Structure audit
+
+Verify every MUST from `base/docs.md` (standard documents, ADRs),
+`base/readme.md` (9 required sections), `base/git.md` (README, .gitignore),
+`frontend/static-site.md` (assets, robots.txt, SEO), and
+`stack/static-site-astro.md` (.prettierrc, eslint config, Astro conventions).
+Run after: new project setup, framework migration, adding a major layer
+(backend, CI/CD), or before a release.
