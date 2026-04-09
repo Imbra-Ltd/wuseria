@@ -40,10 +40,18 @@ interface LensAccessory extends AccessoryBase {
   afRetained?: boolean;
 }
 
-interface PowerAccessory extends AccessoryBase {
-  category: "power";
+interface BatteryAccessory extends AccessoryBase {
+  category: "battery";
   batteryType: string;
-  batteryCount?: number;
+  capacity?: number;
+  voltage?: number;
+}
+
+interface ChargerAccessory extends AccessoryBase {
+  category: "charger";
+  batteryType: string;
+  slots?: number;
+  usbInput?: boolean;
 }
 
 interface SupportAccessory extends AccessoryBase {
@@ -91,7 +99,8 @@ interface GenericAccessory extends AccessoryBase {
 type Accessory =
   | FlashAccessory
   | LensAccessory
-  | PowerAccessory
+  | BatteryAccessory
+  | ChargerAccessory
   | SupportAccessory
   | FilterAccessory
   | LightingAccessory
@@ -105,7 +114,8 @@ export type {
   AccessoryBase,
   FlashAccessory,
   LensAccessory,
-  PowerAccessory,
+  BatteryAccessory,
+  ChargerAccessory,
   SupportAccessory,
   FilterAccessory,
   LightingAccessory,
