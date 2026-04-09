@@ -2,16 +2,16 @@
 
 Operational reference for common tasks.
 
-## Git workflow
+## 1. Git workflow
 
-### Start a new feature
+### 1.1 Start a new feature
 
 ```bash
 git checkout main && git pull
 git checkout -b feat/description
 ```
 
-### Commit changes
+### 1.2 Commit changes
 
 ```bash
 npm run lint
@@ -22,14 +22,14 @@ git commit -m "feat: description"
 Commit prefixes: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `style:`,
 `test:`. Subject line under 80 characters, imperative mood.
 
-### Create a pull request
+### 1.3 Create a pull request
 
 ```bash
 git push -u origin feat/description
 gh pr create --title "feat: description" --body "## Summary\n- ..."
 ```
 
-### Merge and clean up
+### 1.4 Merge and clean up
 
 ```bash
 gh pr merge <number> --merge
@@ -38,43 +38,43 @@ git branch -d feat/description
 git push origin --delete feat/description
 ```
 
-### List open issues
+### 1.5 List open issues
 
 ```bash
 gh issue list --state open
 gh issue list --label epic --state open
 ```
 
-### Close an issue from a PR
+### 1.6 Close an issue from a PR
 
 Reference the issue in the PR body with `Closes #<number>`. GitHub closes it
 automatically on merge.
 
-## Data operations
+## 2. Data operations
 
-### Add a new lens
+### 2.1 Add a new lens
 
 1. Add an entry to `src/data/lenses.ts` following the `Lens` interface
 2. All boolean fields use `is`/`has` prefix (e.g. `hasAutofocus`, `isWeatherSealed`)
 3. Price in USD, rounded to nearest $250
-4. Only fill optical quality fields if data comes from a trusted source (see below)
+4. Only fill optical quality fields if data comes from a trusted source (see 2.4)
 5. Leave optical fields empty for lenses without trusted data — they will
    appear in the Lens Explorer but be excluded from the Genre Guide
 6. Run `npm run lint` to verify
 
-### Add a new camera
+### 2.2 Add a new camera
 
 1. Add an entry to `src/data/cameras.ts` following the `Camera` interface
 2. Same boolean naming and price conventions as lenses
 3. Run `npm run lint` to verify
 
-### Add a new accessory
+### 2.3 Add a new accessory
 
 1. Choose the correct sub-interface in `src/types/accessory.ts` by `category`
 2. Add an entry to `src/data/accessories.ts` (when created)
 3. If no existing category fits, add a `GenericAccessory` entry
 
-### Scoring data policy
+### 2.4 Scoring data policy
 
 Only score lenses that have optical data from trusted review sources. Do not
 guess or estimate optical quality — showing nothing is better than showing
@@ -85,7 +85,7 @@ wrong data.
   optical fields are excluded entirely.
 - Scoring functions return `null` when optical fields are missing.
 
-### Trusted review sources
+### 2.5 Trusted review sources
 
 Ordered by measurement rigour (see `src/types/review.ts`):
 
@@ -104,9 +104,9 @@ Ordered by measurement rigour (see `src/types/review.ts`):
 `docs/bookmarks.md` as a competitor reference only (he ranks for per-lens
 queries we want to target).
 
-## Maintenance
+## 3. Maintenance
 
-### Update quality conventions
+### 3.1 Update quality conventions
 
 ```bash
 git submodule update --remote docs/solid-ai-templates
@@ -114,12 +114,12 @@ git add docs/solid-ai-templates
 git commit -m "chore: bump solid-ai-templates submodule"
 ```
 
-### Update architecture decisions
+### 3.2 Update architecture decisions
 
 1. Create an ADR in `docs/decisions/` using the format: context, decision, alternatives, consequences
 2. Reference the ADR from `docs/architecture.md` if relevant
 
-### Run the prototype
+### 3.3 Run the prototype
 
 All prototype resources live in `docs/prototype/`. To run:
 
@@ -139,9 +139,9 @@ rm index.html src/main.jsx src/App.jsx
 The prototype uses old field names (pre-migration) and is kept for reference
 only. Do not commit the copied files.
 
-## Release and deploy
+## 4. Release and deploy
 
-### Release
+### 4.1 Release
 
 ```bash
 git checkout -b chore/release-vA.B.C
@@ -155,7 +155,7 @@ git branch -d chore/release-vA.B.C
 git push origin --delete chore/release-vA.B.C
 ```
 
-### Deploy
+### 4.2 Deploy
 
 Deployment is automated via GitHub Actions on push to `main`. No manual steps
 required.
