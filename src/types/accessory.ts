@@ -43,7 +43,7 @@ type TripodMaterial = "carbon-fiber" | "aluminum" | "basalt";
 interface FujiCompatible {
   mount?: Mount;
   compatibleWith?: string[];
-  weatherSealed?: boolean;
+  isWeatherSealed?: boolean;
 }
 
 // =============================================================================
@@ -54,7 +54,7 @@ interface AccessoryBase {
   brand: Brand;
   model: string;
   year?: number;
-  discontinued?: boolean;
+  isDiscontinued?: boolean;
   description: string;
   genres?: Genre[];
   weight?: number;
@@ -69,10 +69,10 @@ interface AccessoryBase {
 interface FlashAccessory extends AccessoryBase, FujiCompatible {
   category: "flash";
   guideNumber: number;
-  ttl: boolean;
-  hss: boolean;
-  wirelessCommander?: boolean;
-  wirelessReceiver?: boolean;
+  hasTtl: boolean;
+  hasHss: boolean;
+  isWirelessCommander?: boolean;
+  isWirelessReceiver?: boolean;
 }
 
 interface LensAccessory extends AccessoryBase, FujiCompatible {
@@ -81,7 +81,7 @@ interface LensAccessory extends AccessoryBase, FujiCompatible {
   // e.g. 1.4 for a 1.4x teleconverter
   magnificationFactor?: number;
 
-  afRetained?: boolean;
+  isAfRetained?: boolean;
 }
 
 interface BatteryAccessory extends AccessoryBase {
@@ -101,14 +101,14 @@ interface ChargerAccessory extends AccessoryBase {
   compatibleWith?: string[];
   batteryType: BatteryType;
   slots?: number;
-  usbInput?: boolean;
+  hasUsbInput?: boolean;
 }
 
 interface BatteryGripAccessory extends AccessoryBase, FujiCompatible {
   category: "battery-grip";
   batteryType: BatteryType;
   batteryCount?: number;
-  verticalControls?: boolean;
+  hasVerticalControls?: boolean;
 }
 
 interface AdapterAccessory extends AccessoryBase {
@@ -116,8 +116,8 @@ interface AdapterAccessory extends AccessoryBase {
   compatibleWith?: string[];
   sourceMount: AdapterMount;
   targetMount: Mount;
-  afSupported?: boolean;
-  apertureControl?: boolean;
+  isAfSupported?: boolean;
+  hasApertureControl?: boolean;
 }
 
 interface TripodAccessory extends AccessoryBase {
@@ -190,7 +190,7 @@ interface RemoteAccessory extends AccessoryBase {
   category: "remote";
   compatibleWith?: string[];
   connectionType: ConnectionType;
-  intervalometer?: boolean;
+  hasIntervalometer?: boolean;
 }
 
 interface AudioAccessory extends AccessoryBase {
@@ -213,7 +213,7 @@ interface StrapAccessory extends AccessoryBase {
 interface PlateAccessory extends AccessoryBase {
   category: "plate";
   plateType?: PlateType;
-  arcaCompatible?: boolean;
+  isArcaCompatible?: boolean;
 }
 
 interface PowerBankAccessory extends AccessoryBase {
@@ -223,7 +223,7 @@ interface PowerBankAccessory extends AccessoryBase {
   // Watts
   outputWatts?: number;
 
-  usbPD?: boolean;
+  hasUsbPD?: boolean;
 }
 
 // =============================================================================

@@ -77,7 +77,7 @@ interface Camera {
   model: string;
   mount: Mount;
   year: number;
-  discontinued?: boolean;
+  isDiscontinued?: boolean;
   series: CameraSeries;
   evfPosition: EvfPosition;
   formFactor: FormFactor;
@@ -90,7 +90,7 @@ interface Camera {
   megapixels: number;
   sensorWidth?: number;              // mm
   sensorHeight?: number;             // mm
-  bsi?: boolean;                     // back-side illuminated
+  isBsi?: boolean;                    // back-side illuminated
   isoMin?: number;
   isoMax?: number;
 
@@ -98,8 +98,8 @@ interface Camera {
   // STABILISATION & WEATHER
   // ===========================================================================
 
-  ibis: boolean;
-  weatherSealed: boolean;
+  hasIbis: boolean;
+  isWeatherSealed: boolean;
 
   // ===========================================================================
   // VIEWFINDER & SCREEN
@@ -109,7 +109,7 @@ interface Camera {
   evfResolution?: number;             // dots
   screenType?: ScreenType;
   screenResolution?: number;          // dots
-  touchscreen?: boolean;
+  hasTouchscreen?: boolean;
 
   // ===========================================================================
   // PERFORMANCE
@@ -120,11 +120,11 @@ interface Camera {
   afType?: AfSystemType;
   afPoints?: number;
   pdafCoverage?: number;              // % of sensor area
-  faceDetectAF: boolean;
+  hasFaceDetectAF: boolean;
   subjectDetectAF?: SubjectDetect[];
   bufferDepth?: number;               // frames
   electronicShutterFps?: number;
-  pixelShift?: boolean;
+  hasPixelShift?: boolean;
   batteryLife?: number;               // CIPA shots per charge
   batteryType?: BatteryType;
 
@@ -152,14 +152,14 @@ interface Camera {
   // CONNECTIVITY
   // ===========================================================================
 
-  flashHotShoe: boolean;
-  builtInFlash?: boolean;
+  hasFlashHotShoe: boolean;
+  hasBuiltInFlash?: boolean;
   usbType?: UsbType;
-  tethering?: boolean;
-  wifi?: boolean;
-  bluetooth?: boolean;
-  micInput: boolean;
-  headphoneJack: boolean;
+  hasTethering?: boolean;
+  hasWifi?: boolean;
+  hasBluetooth?: boolean;
+  hasMicInput: boolean;
+  hasHeadphoneJack: boolean;
 
   // ===========================================================================
   // PHYSICAL

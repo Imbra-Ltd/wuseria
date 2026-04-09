@@ -24,7 +24,7 @@ interface Lens {
   type: LensType;
   mount: Mount;
   year?: number;
-  discontinued?: boolean;
+  isDiscontinued?: boolean;
 
   // ===========================================================================
   // OPTICAL SPECS
@@ -38,7 +38,7 @@ interface Lens {
   sweetSpotAperture?: number;
 
   apertureBlades?: number;
-  circularAperture?: boolean;
+  hasCircularAperture?: boolean;
 
   // Reproduction ratio as decimal (1.0 = life-size, 0.5 = half)
   maxMagnification?: number;
@@ -47,16 +47,16 @@ interface Lens {
   // BUILD — absent = false for all booleans
   // ===========================================================================
 
-  ois?: boolean;
-  weatherSealed?: boolean;
-  autofocus?: boolean;
+  hasOis?: boolean;
+  isWeatherSealed?: boolean;
+  hasAutofocus?: boolean;
   afMotor?: AfMotor;
-  apertureRing?: boolean;
-  apertureClickless?: boolean;
-  focusRing?: boolean;
-  focusByWire?: boolean;
-  distanceScale?: boolean;
-  smoothFocusRing?: boolean;
+  hasApertureRing?: boolean;
+  isApertureClickless?: boolean;
+  hasFocusRing?: boolean;
+  isFocusByWire?: boolean;
+  hasDistanceScale?: boolean;
+  hasSmoothFocusRing?: boolean;
 
   // Grams
   weight: number;
@@ -70,8 +70,8 @@ interface Lens {
   // Filter thread diameter, mm
   filterThread?: number;
 
-  rotatingFront?: boolean;
-  tripodMount?: boolean;
+  hasRotatingFront?: boolean;
+  hasTripodMount?: boolean;
 
   // ===========================================================================
   // PRICE
@@ -109,7 +109,7 @@ interface Lens {
   // mm
   minFocusDistance?: number;
 
-  tiltShift?: boolean;
+  isTiltShift?: boolean;
 
   // mm
   shiftRange?: number;
@@ -120,7 +120,7 @@ interface Lens {
   // mm
   imageCircle?: number;
 
-  tiltShiftIndependent?: boolean;
+  isTiltShiftIndependent?: boolean;
 
   // ===========================================================================
   // LINKS

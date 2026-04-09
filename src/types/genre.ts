@@ -27,7 +27,7 @@ interface ScoreResult {
   // Per-criterion scores for transparency
   breakdown: ScoreBreakdown;
 
-  disqualified: boolean;
+  isDisqualified: boolean;
   reason?: string;
 }
 
