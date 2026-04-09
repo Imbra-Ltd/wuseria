@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fujime.app/sitemap-index.xml
