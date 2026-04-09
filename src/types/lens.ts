@@ -1,5 +1,4 @@
-/** Lens mount system */
-type Mount = "X" | "GFX";
+import type { Mount, Brand } from "./common";
 
 /** Lens type — prime or zoom */
 type LensType = "prime" | "zoom";
@@ -9,7 +8,7 @@ type AfMotor = "DC" | "STM" | "LM";
 
 interface Lens {
   // Identity
-  brand: string;
+  brand: Brand | string;
   model: string;
   type: LensType;
   mount: Mount;
@@ -17,10 +16,13 @@ interface Lens {
   discontinued?: boolean;
 
   // Optical — specs
+  /** Minimum focal length, mm */
   focalLengthMin: number;
+  /** Maximum focal length, mm (same as min for primes) */
   focalLengthMax: number;
   maxAperture: number;
-  sweetSpot?: string;
+  /** Sharpest aperture as f-number (e.g. 2.8, 4, 8) */
+  sweetSpotAperture?: number;
   apertureBlades?: number;
   circularAperture?: boolean;
   maxMagnification?: number;
@@ -32,41 +34,50 @@ interface Lens {
   afMotor?: AfMotor;
   apertureRing: boolean;
   apertureClickless?: boolean;
-  focusRing: boolean;
+  focusRing?: boolean;
   focusByWire?: boolean;
   distanceScale?: boolean;
   smoothFocusRing?: boolean;
+  /** Weight in grams, body only */
   weight: number;
+  /** Maximum outer diameter, mm */
   diameter?: number;
+  /** Mount to front element, mm */
   length?: number;
+  /** Filter thread diameter, mm */
   filterThread?: number;
-  rotatingFront: boolean;
-  tripodMount: boolean;
+  rotatingFront?: boolean;
+  tripodMount?: boolean;
 
   // Price
+  /** Approximate price in USD, rounded to $250 */
   price: number;
 
-  // Optical quality — from MTF chart readings
+  // Optical quality — from MTF chart readings (0–2 scale)
   sweetSpotSharpness?: number;
   cornerSharpness?: number;
   wideOpenSharpness?: number;
   astigmatism?: number;
   fieldCurvature?: number;
-  comaRating?: number;
+  coma?: number;
 
-  // Optical quality — NOT from MTF charts
-  locaRating?: number;
+  // Optical quality — NOT from MTF charts (0–2 scale)
+  longitudinalCA?: number;
   lateralCA?: number;
-  distortionRating?: number;
+  distortion?: number;
   vignetting?: number;
-  bokehQuality?: number;
+  bokeh?: number;
   flareResistance?: number;
 
   // Other scoring inputs
+  /** Minimum focus distance, mm */
   minFocusDistance?: number;
-  tiltShift: boolean;
+  tiltShift?: boolean;
+  /** Maximum shift range, mm */
   shiftRange?: number;
+  /** Maximum tilt angle, degrees */
   tiltAngle?: number;
+  /** Image circle diameter, mm */
   imageCircle?: number;
   tiltShiftIndependent?: boolean;
 
@@ -74,4 +85,4 @@ interface Lens {
   officialUrl?: string;
 }
 
-export type { Lens, LensType, Mount, AfMotor };
+export type { Lens, LensType, AfMotor };

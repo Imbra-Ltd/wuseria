@@ -1,4 +1,4 @@
-import type { Mount } from "./lens";
+import type { Mount } from "./common";
 import type { Genre } from "./genre";
 
 // ---------------------------------------------------------------------------
