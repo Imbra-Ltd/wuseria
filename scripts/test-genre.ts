@@ -19,6 +19,10 @@ const genres: Record<string, { primary: string[]; secondary: string[] }> = {
     primary: ["bokeh", "centerWideOpen"],
     secondary: ["longitudinalCA", "sphericalAberration", "vignettingWideOpen"],
   },
+  sport: {
+    primary: ["centerWideOpen"],
+    secondary: ["_apertureScore", "longitudinalCA", "lateralCA"],
+  },
   architecture: {
     primary: ["cornerStopped", "centerStopped", "distortion"],
     secondary: ["lateralCA", "vignettingStopped", "flareResistance"],
