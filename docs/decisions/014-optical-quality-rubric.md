@@ -121,6 +121,16 @@ When multiple sources disagree, use the highest-trust source per the
 `reviewSourceDirectory`. When the highest-trust source uses ambiguous
 language, round toward the conservative (lower) score.
 
+**Bokeh scoring rule:** Lab tests (diode/point-source imaging) are
+the authority for bokeh. LensTip's diode test is the primary source.
+Field reviews describing bokeh as "creamy" or "smooth" are not
+sufficient — only controlled point-source tests that show disc
+evenness, rim intensity, and onion ring presence count. If two lab
+sources disagree, prefer LensTip (standardized diode methodology).
+Bokeh cannot be inferred from lens specs (blade count, aspherical
+elements, entrance pupil) — these affect disc shape, not rendering
+quality.
+
 ### Fallback sources
 
 Independent lab data (LensTip, OpticalLimits) is the primary source.

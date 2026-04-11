@@ -4060,7 +4060,7 @@ const lenses: Lens[] = [
     distortion: 2.0,
     vignettingWideOpen: 0.5,
     vignettingStopped: 2.0,
-    bokeh: 1.5,
+    bokeh: 2.0,
     flareResistance: 1.5,
     reviewSources: {
       lenstip: "https://www.lenstip.com/647.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R_WR.html",
