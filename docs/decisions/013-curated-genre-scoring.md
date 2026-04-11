@@ -106,6 +106,11 @@ interpolation, no guessing from related fields. If a source did not test a
 property, the field stays `undefined`. Genre formulas work with available
 fields and require a minimum threshold before producing a mark.
 
+For LensTip reviews, always cross-check against the **summary page**
+(final chapter). The summary is LensTip's considered final opinion and
+overrides individual test pages on contradiction. See ADR-014 for the
+full rule.
+
 ### Mark scale
 
 | Mark | Meaning |

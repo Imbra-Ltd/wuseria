@@ -121,6 +121,14 @@ When multiple sources disagree, use the highest-trust source per the
 `reviewSourceDirectory`. When the highest-trust source uses ambiguous
 language, round toward the conservative (lower) score.
 
+**Summary page authority rule:** For LensTip reviews, always verify
+scores against the summary page (final chapter). The summary is
+LensTip's considered final opinion and may soften or strengthen
+assessments from individual test pages. If the summary contradicts
+a test page, the summary wins. Example: a coma test page may say
+"visible but not highly intense" (sounds like 1.0), but the summary
+adding "no serious reservations" shifts it to 1.5.
+
 **Bokeh scoring rule:** Lab tests (diode/point-source imaging) are
 the authority for bokeh. LensTip's diode test is the primary source.
 Field reviews describing bokeh as "creamy" or "smooth" are not
@@ -216,7 +224,7 @@ Sensor: X-Trans III, max ~78 lpmm. Scored at 12mm mid-range.
 | astigmatism | 1.5 | 7.6%. "Moderate." | 5-10% |
 | coma | 1.0 | "Noticeable", most at 8mm, slight at 12-16mm. | "noticeable" |
 | longitudinalCA | 1.5 | "Slight", "out-of-focus images a bit tinted." Minor. | "low" |
-| lateralCA | 1.5 | <0.05% at 12-16mm, approaches medium at 8mm. | 0.04-0.08% |
+| lateralCA | 2.0 | Summary PRO: "low lateral chromatic aberration." <0.05% at 12-16mm (mid-range). Correction described as "very high." | PRO: "low"; < 0.04% at mid-FL |
 | distortion | 1.5 | RAW: -0.56% at 12mm. (-8.41% at 8mm extreme.) | 0.3-1.0% |
 | vignettingWideOpen | 0.5 | RAW: -1.96 EV at 12mm f/2.8. | 1.5-2.5 EV |
 | vignettingStopped | 1.0 | RAW: -1.33 EV at 12mm f/11. Resistant to stopping down. | 1.0-1.5 EV |
@@ -254,10 +262,10 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 | Field | Score | Source data | Rubric rule |
 |-------|-------|-------------|-------------|
 | centerStopped | 2.0 | ~74 lpmm at f/2.8-4.0 center (112% of max). | >= 90% |
-| cornerStopped | 0.5 | Edge "below decency level" at f/2. No lpmm at sweet spot. | "poor" (conservative) |
+| cornerStopped | 1.0 | Summary PRO: "acceptable image quality on the edge of the frame." Edges "good" at f/5.6. "Significant difference from centre" (CON). | PRO: "acceptable" |
 | centerWideOpen | 2.0 | ~60 lpmm at f/2 center (91% of max). | >= 90% |
 | astigmatism | 2.0 | 3.7%. "Corrected in a flawless way." | < 5% |
-| coma | 1.0 | "Visible but not highly intense." Reduces to insignificant at f/2.8. | "noticeable" |
+| coma | 1.5 | LensTip: "visible but intensity isn't high", "no serious reservations." Lonely Speck: "very low comatic aberration" at f/2. Dustin Abbott: "really well controlled." Consensus across sources: minor, well-controlled. | "minor" (multi-source) |
 | sphericalAberration | 2.0 | "No focus shift, no problems with correction." | "negligible" |
 | longitudinalCA | 0.5 | "didn't manage to deal with that problem well", "photo shows it clearly." | "poor" |
 | lateralCA | 0.5 | ~0.15%. "Noticeable factor deteriorating edge image quality." | 0.15-0.20% |
@@ -295,7 +303,7 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 
 | Field | Score | Source data | Rubric rule |
 |-------|-------|-------------|-------------|
-| centerStopped | 1.5 | Stopped down performance good but "wanted 72-73, got less." | "very good" (conservative) |
+| centerStopped | 2.0 | ~70 lpmm at f/4 (106% of max). Summary PRO: "excellent image quality in the frame centre." | PRO: "excellent" |
 | cornerStopped | 1.0 | Edge "exceeds utility threshold at f/2.0." Below decency wide open. | "average" |
 | centerWideOpen | 1.0 | 44 lpmm at f/1.4 (67% of max). Barely above decency. | 60-74% |
 | astigmatism | 2.0 | 3.0%. "Very low level." | < 5% |
@@ -303,11 +311,11 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 | sphericalAberration | 0.5 | "Textbook example of spherical aberration influence", "far from perfect." | "poor" |
 | longitudinalCA | 0.5 | "A lot of problems", "even at f/2.0 still quite bothersome." | "poor" |
 | lateralCA | 1.5 | 0.07%. "Low level." | 0.04-0.08% |
-| distortion | 1.5 | RAW: -0.87%. "Excellent result." | 0.3-1.0% |
+| distortion | 2.0 | RAW: -0.87%. Summary PRO: "low distortion — noticeably lower than rivals." "Excellent result." | PRO: "low/excellent" |
 | vignettingWideOpen | 0.5 | RAW: -1.94 EV at f/1.4. | 1.5-2.5 EV |
 | vignettingStopped | 1.5 | RAW: -0.56 EV at f/4-5.6. "Further stopping down doesn't help much." | 0.5-1.0 EV |
 | bokeh | 0.5 | "Lighter rim on edge and noticeable onion ring", "not exactly pleasant." | "poor" |
-| flareResistance | 1.5 | "Good" overall, no problems wide open, issues stopped down with sun outside frame. | "very good" → conservative 1.5 |
+| flareResistance | 1.0 | Summary: "good; it wasn't very good." Artifacts when stopped down with sun near edge. | "good" (not "very good") |
 
 ### XF 16mm f/2.8 R WR
 
@@ -340,10 +348,10 @@ Sensor: X-Trans I (X-E1), per-review max ~71 lpmm. Scored at 35mm mid-range.
 | cornerStopped | 1.0 | 50 lpmm at edge. Conservative. | "average" |
 | centerWideOpen | 1.5 | ~58 lpmm at 35mm f/2.8. | 75-89% |
 | astigmatism | 1.5 | 5.6%. "Low value." | 5-10% |
-| coma | 1.0 | "Moderate coma." | "noticeable" |
+| coma | 1.5 | Summary PRO: "no noticeable coma correction problems." Outperforms Canon, Nikkor, Sigma, Tokina competitors. | PRO: "no noticeable problems" |
 | sphericalAberration | 2.0 | "Corrected in a perfect way." | "negligible" |
 | longitudinalCA | 1.5 | "Slight colouring, nothing to worry about." | "low" |
-| lateralCA | 1.0 | 0.11-0.12% at 55mm. "Medium" at long end. | 0.09-0.14% |
+| lateralCA | 1.5 | Summary PRO: "at no combination reaches high values, achievement worth praise." 0.09-0.12% at mid-range. | PRO: never high |
 | distortion | 0.5 | RAW: significant across range. "Relied on software." | 2.0-4.0% |
 | vignettingWideOpen | 1.5 | RAW: -0.89 EV at 35mm f/2.8. | 0.5-1.0 EV |
 | vignettingStopped | 2.0 | RAW: -0.38 EV at 35mm f/5.6. | < 0.5 EV |
@@ -445,7 +453,7 @@ Sensor: X-Trans IV, max ~85 lpmm.
 | astigmatism | 2.0 | 4.7%. "Borderline between very low and low." | < 5% |
 | coma | 1.0 | "Coma makes itself felt at f/1.4", "stop down 1 EV and all problems disappear." | "noticeable" |
 | sphericalAberration | 1.0 | "Slight focus shift", "defocused circles not identical before/behind." | "noticeable" |
-| longitudinalCA | 1.5 | "Corrects longitudinal CA properly well." | "well corrected" |
+| longitudinalCA | 2.0 | Summary PRO: "negligible longitudinal chromatic aberration." Ch5: "difficult to notice any colouring." | PRO: "negligible" |
 | lateralCA | 2.0 | "Very low, you won't have any problems." | negligible |
 | distortion | 1.0 | RAW: +1.08% pincushion. | 1.0-2.0% |
 | vignettingWideOpen | 0.5 | RAW: -1.84 EV at f/1.4. "A lot but doesn't fare weaker than rivals." | 1.5-2.5 EV |
@@ -485,7 +493,8 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 |-------|-------|-------------|-------------|
 | centerStopped | 2.0 | 82+ lpmm at f/4 (124% of max). "Revelation." | >= 90% |
 | cornerStopped | 0.5 | "Huge discrepancy between centre and edge." | "poor" |
-| centerWideOpen | 2.0 | 76 lpmm at f/2.8 (115% of max). | >= 90% |
+| centerWideOpen | 2.0 | 76 lpmm at f/2.8 (115% of max). "Sensational." | >= 90% |
+| cornerWideOpen | 1.0 | Summary PRO: "good image quality on the edge of the frame." Ch4: "hard to have serious reservations." | PRO: "good" |
 | astigmatism | 2.0 | 2.5%. "Negligible", "very low." | < 5% |
 | coma | 2.0 | "Practically ideal", "even at max aperture in the corner, diode images aren't distorted." | "negligible" |
 | sphericalAberration | 2.0 | "Shouldn't be a big problem", 0.03-0.04%. | "negligible" |
@@ -510,7 +519,7 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 | centerWideOpen | 2.0 | ~72 lpmm at f/2 center (109% of max). | >= 90% |
 | astigmatism | 2.0 | 3.2%. LensTip: "slight value." | < 5% |
 | coma | 2.0 | "difficult to notice any influence, even in the corner wide open." | "negligible" |
-| sphericalAberration | 1.5 | "no focus shift, corrected at least satisfactorily, slight differences before/after focal point." | "well corrected" |
+| sphericalAberration | 2.0 | Summary PRO: "imperceptible spherical aberration." Ch5: no focus shift, differences "slight." | PRO: "imperceptible" |
 | longitudinalCA | 1.5 | "not high", "might try to notice at max aperture", gone by f/2.8. | "low" |
 | lateralCA | 2.0 | 0.03%. LensTip: "negligible." | < 0.04% |
 | distortion | 2.0 | LensTip: "almost zero." | < 0.3% |
