@@ -87,22 +87,87 @@ wrong data.
 
 ### 2.5 Trusted review sources
 
-Ordered by measurement rigour (see `src/types/review.ts`):
+See `src/data/reviews.ts` for the full directory with methodology
+(lab/field) and trust (1-3) ratings. Top sources:
 
-1. LensRentals — optical bench MTF
-2. Lenstip — lab MTF charts
-3. Opticallimits — lab MTF
-4. DxOMark — sensor + lens measurements
-5. The Digital Picture — ISO chart comparisons
-6. Dustin Abbott — field + lab
-7. Imaging Resource — lab resolution/noise
-8. ePHOTOzine — lab MTF
-9. DPReview — comprehensive (archived)
-10. Phillip Reeve — manual focus specialist
+| Trust 3 | Methodology |
+|---------|-------------|
+| LensRentals | Lab — optical bench MTF |
+| LensTip | Lab — Imatest MTF charts |
+| OpticalLimits | Lab — Imatest MTF |
+| Dustin Abbott | Field — systematic + lab hybrid |
+| DPReview | Field — comprehensive |
+| Phillip Reeve | Field — manual focus specialist |
 
-**Do not use:** Ken Rockwell — not a trusted data source. Listed in
-`docs/bookmarks.md` as a competitor reference only (he ranks for per-lens
-queries we want to target).
+**Do not use:** Ken Rockwell — not a trusted data source.
+
+### 2.6 Score a lens
+
+Prerequisite: the lens must have reviews from at least one trust 3
+source. See ADR-014 for the full rubric and reference scorings.
+
+**Step 1 — Identify sources**
+
+Search for LensTip, OpticalLimits, and Dustin Abbott reviews of
+the lens. Check if the optical formula changed between versions
+(e.g. XF 27mm f/2.8 R WR uses the same optics as the original).
+
+**Step 2 — Collect data per field**
+
+Run targeted per-field searches — one search per optical field, not
+one broad query. For slow sites (LensTip), search snippets return
+cached data even when direct fetch times out.
+
+Fields to collect (all 0-2 scale, 0.5 steps):
+
+| Field | Source type | How to score |
+|-------|-----------|--------------|
+| centerStopped | lpmm at sweet spot | % of sensor max (see ADR-014) |
+| cornerStopped | lpmm at sweet spot | % of sensor max |
+| centerWideOpen | lpmm at max aperture | % of sensor max |
+| cornerWideOpen | lpmm at max aperture | % of sensor max (often missing) |
+| astigmatism | % S/T difference | < 5% = 2.0, 5-10% = 1.5, etc. |
+| coma | Point-source test only | Qualitative word mapping |
+| sphericalAberration | Focus shift test | Qualitative word mapping |
+| longitudinalCA | Colour fringing test | Qualitative word mapping |
+| lateralCA | % at 70% from center | LensTip scale (< 0.04% = 2.0) |
+| distortion | % RAW uncorrected | < 0.3% = 2.0, 0.3-1.0% = 1.5, etc. |
+| vignettingWideOpen | EV at max aperture, RAW | < 0.5 = 2.0, 0.5-1.0 = 1.5, etc. |
+| vignettingStopped | EV at f/5.6-f/8, RAW | Same scale |
+| bokeh | Qualitative assessment | Word mapping |
+| flareResistance | Qualitative assessment | Word mapping |
+
+Red flags: fast lenses (f/2 or wider) should have longitudinalCA,
+sphericalAberration, and coma data. Wide-angle lenses should have
+lateralCA and distortion data. If a field that should be significant
+is missing, search specifically before accepting undefined.
+
+**Step 3 — Apply rubric**
+
+For each field, apply the threshold from ADR-014. Use only discrete
+values: 0, 0.5, 1.0, 1.5, 2.0. When sources disagree, use the
+highest-trust source. When ambiguous, round conservative (lower).
+
+If a field has no data from any source, leave it undefined. Do not
+infer from related fields or optical construction alone.
+
+**Step 4 — Fallback sources (only when no lab/field data exists)**
+
+- Official MTF chart → astigmatism only (S/M divergence)
+- Optical construction + zero complaints → sphericalAberration,
+  CA (not coma, bokeh, or flare)
+
+**Step 5 — Write the data**
+
+1. Add optical fields + `sweetSpotAperture` + `reviewSources` to the
+   lens entry in `src/data/lenses.ts`
+2. Add reference scoring table to ADR-014, sorted by focal length
+3. Run `npm run check:all` to verify
+
+**Step 6 — Verify**
+
+Check that the scored lens appears in the Genre Guide for relevant
+genres (once genre formulas are implemented).
 
 ## 3. Maintenance
 
