@@ -159,27 +159,24 @@ not measured from production samples.
 
 Sorted by focal length (wide to tele).
 
-### Samyang 12mm f/2.0 NCS CS
+### XF 8-16mm f/2.8 R LM WR
 
-Third-party ultra-wide prime. Popular astro lens.
-Sources: LensTip (lab, trust 3).
-Sensor: X-Trans I (X-E1), max ~66 lpmm.
+Premium ultra-wide zoom. Sources: LensTip (lab, trust 3).
+Sensor: X-Trans III, max ~78 lpmm. Scored at 8mm.
 
 | Field | Score | Source data | Rubric rule |
 |-------|-------|-------------|-------------|
-| centerStopped | 2.0 | ~74 lpmm at f/2.8-4.0 center (112% of max). | >= 90% |
-| cornerStopped | 0.5 | Edge "below decency level" at f/2. No lpmm at sweet spot. | "poor" (conservative) |
-| centerWideOpen | 2.0 | ~60 lpmm at f/2 center (91% of max). | >= 90% |
-| astigmatism | 2.0 | 3.7%. "Corrected in a flawless way." | < 5% |
-| coma | 1.0 | "Visible but not highly intense." Reduces to insignificant at f/2.8. | "noticeable" |
-| sphericalAberration | 2.0 | "No focus shift, no problems with correction." | "negligible" |
-| longitudinalCA | 0.5 | "didn't manage to deal with that problem well", "photo shows it clearly." | "poor" |
-| lateralCA | 0.5 | ~0.15%. "Noticeable factor deteriorating edge image quality." | 0.15-0.20% |
-| distortion | 1.0 | -1.88% barrel. Same RAW and JPEG (no in-camera correction). | 1.0-2.0% |
-| vignettingWideOpen | 0.5 | -1.69 EV at f/2. | 1.5-2.5 EV |
-| vignettingStopped | 1.5 | -0.87 EV at f/4. | 0.5-1.0 EV |
-| bokeh | 1.5 | "Nice to look at, even light spread, no noticeable extremes." | "very good" |
-| flareResistance | 0.5 | "A lot of problems against bright light", deteriorates stopped down. | "poor" |
+| centerStopped | 2.0 | 74+ lpmm at 8mm, ~80 at 12-16mm. | >= 90% |
+| cornerStopped | 0.5 | "Problematic at 8mm full aperture", needs f/4. | "poor" |
+| centerWideOpen | 2.0 | ~70 lpmm at f/2.8 across range. | >= 90% |
+| astigmatism | 1.5 | 7.6%. "Moderate." | 5-10% |
+| coma | 1.0 | "Noticeable", most at 8mm, slight at 12-16mm. | "noticeable" |
+| longitudinalCA | 1.5 | "Slight", "out-of-focus images a bit tinted." Minor. | "low" |
+| lateralCA | 1.5 | <0.05% at 12-16mm, approaches medium at 8mm. | 0.04-0.08% |
+| distortion | 0.0 | RAW: -8.41% at 8mm. | > 4.0% |
+| vignettingWideOpen | 0.0 | RAW: -2.11 EV at 8mm f/2.8. | > 2.5 EV |
+| vignettingStopped | 1.0 | RAW: -1.52 EV at 8mm f/8. Resistant to stopping down. | 1.0-1.5 EV |
+| flareResistance | 1.0 | "Some slip-ups", "not that bad given complexity." Average. | "average" |
 
 ### XF 10-24mm f/4 R OIS WR
 
@@ -204,6 +201,49 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm. Scored at 10mm.
 | bokeh | 0.5 | "Moderately good", "distinct rim", "onion rings." | "poor" |
 | flareResistance | 1.5 | "Works against bright light very well" at wide end. Super EBC coating. Increases at long end. | "very good" (wide) → conservative 1.5 |
 
+### Samyang 12mm f/2.0 NCS CS
+
+Third-party ultra-wide prime. Popular astro lens.
+Sources: LensTip (lab, trust 3).
+Sensor: X-Trans I (X-E1), max ~66 lpmm.
+
+| Field | Score | Source data | Rubric rule |
+|-------|-------|-------------|-------------|
+| centerStopped | 2.0 | ~74 lpmm at f/2.8-4.0 center (112% of max). | >= 90% |
+| cornerStopped | 0.5 | Edge "below decency level" at f/2. No lpmm at sweet spot. | "poor" (conservative) |
+| centerWideOpen | 2.0 | ~60 lpmm at f/2 center (91% of max). | >= 90% |
+| astigmatism | 2.0 | 3.7%. "Corrected in a flawless way." | < 5% |
+| coma | 1.0 | "Visible but not highly intense." Reduces to insignificant at f/2.8. | "noticeable" |
+| sphericalAberration | 2.0 | "No focus shift, no problems with correction." | "negligible" |
+| longitudinalCA | 0.5 | "didn't manage to deal with that problem well", "photo shows it clearly." | "poor" |
+| lateralCA | 0.5 | ~0.15%. "Noticeable factor deteriorating edge image quality." | 0.15-0.20% |
+| distortion | 1.0 | -1.88% barrel. Same RAW and JPEG (no in-camera correction). | 1.0-2.0% |
+| vignettingWideOpen | 0.5 | -1.69 EV at f/2. | 1.5-2.5 EV |
+| vignettingStopped | 1.5 | -0.87 EV at f/4. | 0.5-1.0 EV |
+| bokeh | 1.5 | "Nice to look at, even light spread, no noticeable extremes." | "very good" |
+| flareResistance | 0.5 | "A lot of problems against bright light", deteriorates stopped down. | "poor" |
+
+### XF 14mm f/2.8 R
+
+Wide prime. Sources: LensTip (lab, trust 3).
+Sensor: X-Trans I (X-E1), max ~66 lpmm.
+
+| Field | Score | Source data | Rubric rule |
+|-------|-------|-------------|-------------|
+| centerStopped | 2.0 | 72 lpmm at f/4-5.6 (109% of max). | >= 90% |
+| cornerStopped | 1.0 | Edge 42+ lpmm. >20 lpmm gap from center. | "average" |
+| centerWideOpen | 2.0 | 69 lpmm at f/2.8 (105% of max). | >= 90% |
+| astigmatism | 2.0 | 3.4%. "No correction problems." | < 5% |
+| coma | 1.0 | "Clearly noticeable at max aperture." Low at f/4. | "noticeable" |
+| sphericalAberration | 1.5 | Even light spread, noticeable rim at edge. No focus shift. | "well corrected" |
+| longitudinalCA | 2.0 | "Not a problem whatsoever." | "negligible" |
+| lateralCA | 2.0 | Never exceeds 0.04%. | < 0.04% |
+| distortion | 2.0 | RAW: -0.23%. "Practically imperceptible." | < 0.3% |
+| vignettingWideOpen | 0.5 | RAW: -2.09 EV at f/2.8. | 1.5-2.5 EV |
+| vignettingStopped | 0.5 | RAW: -1.52 EV at f/4. Still heavy. | 1.5-2.5 EV |
+| bokeh | 1.5 | Even distribution, noticeable rim at edge only. | "very good" |
+| flareResistance | 1.5 | "Really difficult to catch any flares." Good. | "very good" |
+
 ### XF 16mm f/1.4 R WR
 
 Fast wide prime. Sources: LensTip (lab, trust 3).
@@ -224,6 +264,67 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 | vignettingStopped | 1.5 | RAW: -0.56 EV at f/4-5.6. "Further stopping down doesn't help much." | 0.5-1.0 EV |
 | bokeh | 0.5 | "Lighter rim on edge and noticeable onion ring", "not exactly pleasant." | "poor" |
 | flareResistance | 1.5 | "Good" overall, no problems wide open, issues stopped down with sun outside frame. | "very good" → conservative 1.5 |
+
+### XF 16mm f/2.8 R WR
+
+Compact wide prime. Sources: LensTip (lab, trust 3).
+Sensor: X-Trans III, max ~78 lpmm.
+
+| Field | Score | Source data | Rubric rule |
+|-------|-------|-------------|-------------|
+| centerStopped | 2.0 | 77 lpmm at f/4 (99% of max). | >= 90% |
+| cornerStopped | 1.0 | 55 lpmm at f/5.6-8. "Slightly better than average." | "average" |
+| centerWideOpen | 1.5 | 60 lpmm at f/2.8 (77% of max). | 75-89% |
+| astigmatism | 1.0 | 10.3%. "Medium level." | 10-18% |
+| coma | 1.0 | "Corrects well from f/4", visible at max aperture. | "noticeable" |
+| sphericalAberration | 2.0 | "No significant focus shift." | "negligible" |
+| lateralCA | 1.5 | ~0.05%. "Borderline imperceptible and low." | 0.04-0.08% |
+| distortion | 0.0 | RAW: -7.73%. "Monstrous." | > 4.0% |
+| vignettingWideOpen | 0.5 | RAW: -1.87 EV at f/2.8. | 1.5-2.5 EV |
+| vignettingStopped | 1.5 | RAW: -0.60 EV at f/8. | 0.5-1.0 EV |
+| bokeh | 0.5 | "Visible onion ring bokeh" from aspherical elements. | "poor" |
+| flareResistance | 1.5 | "Good", minimal issues wide open, degrades stopped down. | "very good" |
+
+### XF 16-55mm f/2.8 R LM WR
+
+Standard zoom. Sources: LensTip (lab, trust 3).
+Sensor: X-Trans I (X-E1), max ~66 lpmm. Scored at 16mm.
+
+| Field | Score | Source data | Rubric rule |
+|-------|-------|-------------|-------------|
+| centerStopped | 2.0 | 73.4 lpmm at f/4 at 16mm (111% of max). | >= 90% |
+| cornerStopped | 1.0 | 50 lpmm at edge. Conservative. | "average" |
+| centerWideOpen | 2.0 | 70+ lpmm at f/2.8 at 16mm (106% of max). | >= 90% |
+| astigmatism | 1.5 | 5.6%. "Low value." | 5-10% |
+| coma | 1.0 | "Moderate coma." | "noticeable" |
+| sphericalAberration | 2.0 | "Corrected in a perfect way." | "negligible" |
+| longitudinalCA | 1.5 | "Slight colouring, nothing to worry about." | "low" |
+| lateralCA | 1.0 | 0.11-0.12% at 55mm. "Medium" at long end. | 0.09-0.14% |
+| distortion | 0.5 | RAW: +3.07% pincushion. "One of the highest." | 2.0-4.0% |
+| vignettingWideOpen | 0.5 | RAW: -1.78 EV at 16mm f/2.8. | 1.5-2.5 EV |
+| vignettingStopped | 1.5 | RAW: -0.55 EV at 16mm f/5.6. | 0.5-1.0 EV |
+| bokeh | 0.5 | "Concentric lines, accentuated rim, truncations." | "poor" |
+| flareResistance | 1.5 | "Really difficult to catch flares", "small and not intensive." | "very good" |
+
+### XF 18mm f/2 R
+
+Pancake wide prime. Sources: LensTip (lab, trust 3).
+Sensor: X-Trans I (X-E1), max ~66 lpmm.
+
+| Field | Score | Source data | Rubric rule |
+|-------|-------|-------------|-------------|
+| centerStopped | 2.0 | 62 lpmm at f/4-5.6 (94% of max). | >= 90% |
+| cornerStopped | 0.5 | 43-44 lpmm. "Only slightly better than average." Barely above decency. | "poor" |
+| centerWideOpen | 1.0 | 48 lpmm at f/2 (73% of max). | 60-74% |
+| astigmatism | 2.0 | 1.8%. "Excellent result." | < 5% |
+| coma | 0.5 | "At max aperture the coma is very high." Slight when stopped down. | "poor" |
+| longitudinalCA | 1.5 | "Not bothersome", "slight colouring." | "low" |
+| lateralCA | 1.0 | 0.08-0.11%. "Borderline low and moderate." | 0.09-0.14% |
+| distortion | 0.0 | RAW: -5.28%. "Huge barrel distortion." | > 4.0% |
+| vignettingWideOpen | 0.5 | RAW: -1.69 EV at f/2. | 1.5-2.5 EV |
+| vignettingStopped | 1.0 | RAW: -1.02 EV at f/5.6. "Diminishing returns." | 1.0-1.5 EV |
+| bokeh | 1.5 | "Almost no reservations", even light spread, no rings. | "very good" |
+| flareResistance | 1.5 | "Very difficult to catch artifacts." Good. | "very good" |
 
 ### XF 23mm f/1.4 R LM WR
 
