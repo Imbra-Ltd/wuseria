@@ -166,20 +166,20 @@ Sorted by focal length (wide to tele).
 ### XF 8-16mm f/2.8 R LM WR
 
 Premium ultra-wide zoom. Sources: LensTip (lab, trust 3).
-Sensor: X-Trans III, max ~78 lpmm. Scored at 8mm.
+Sensor: X-Trans III, max ~78 lpmm. Scored at 12mm mid-range.
 
 | Field | Score | Source data | Rubric rule |
 |-------|-------|-------------|-------------|
-| centerStopped | 2.0 | 74+ lpmm at 8mm, ~80 at 12-16mm. | >= 90% |
-| cornerStopped | 0.5 | "Problematic at 8mm full aperture", needs f/4. | "poor" |
+| centerStopped | 2.0 | ~80 lpmm at 12-16mm. "Exceptional." | >= 90% |
+| cornerStopped | 1.5 | 62 lpmm edge at 12mm. 62/78 = 79%. "Very well even at max aperture" in 12-16mm range. | 75-89% |
 | centerWideOpen | 2.0 | ~70 lpmm at f/2.8 across range. | >= 90% |
 | astigmatism | 1.5 | 7.6%. "Moderate." | 5-10% |
 | coma | 1.0 | "Noticeable", most at 8mm, slight at 12-16mm. | "noticeable" |
 | longitudinalCA | 1.5 | "Slight", "out-of-focus images a bit tinted." Minor. | "low" |
 | lateralCA | 1.5 | <0.05% at 12-16mm, approaches medium at 8mm. | 0.04-0.08% |
-| distortion | 0.0 | RAW: -8.41% at 8mm. | > 4.0% |
-| vignettingWideOpen | 0.0 | RAW: -2.11 EV at 8mm f/2.8. | > 2.5 EV |
-| vignettingStopped | 1.0 | RAW: -1.52 EV at 8mm f/8. Resistant to stopping down. | 1.0-1.5 EV |
+| distortion | 1.5 | RAW: -0.56% at 12mm. (-8.41% at 8mm extreme.) | 0.3-1.0% |
+| vignettingWideOpen | 0.5 | RAW: -1.96 EV at 12mm f/2.8. | 1.5-2.5 EV |
+| vignettingStopped | 1.0 | RAW: -1.33 EV at 12mm f/11. Resistant to stopping down. | 1.0-1.5 EV |
 | flareResistance | 1.0 | "Some slip-ups", "not that bad given complexity." Average. | "average" |
 
 ### XF 10-24mm f/4 R OIS WR
@@ -187,19 +187,19 @@ Sensor: X-Trans III, max ~78 lpmm. Scored at 8mm.
 Ultra-wide zoom for landscape/architecture.
 Same optical formula as original XF 10-24mm f/4 R OIS (2013).
 Sources: LensTip (lab, trust 3).
-Sensor: X-Trans I (X-E1), max ~66 lpmm. Scored at 10mm.
+Sensor: X-Trans I (X-E1), per-review max 71 lpmm. Scored at mid-range.
 
 | Field | Score | Source data | Rubric rule |
 |-------|-------|-------------|-------------|
-| centerStopped | 2.0 | 69-70 lpmm at f/4-5.6 mid-range (106% of max). "Worth of a good quality fixed-focal lens." | >= 90% |
-| cornerStopped | 1.0 | Wide-angle zoom corner compromise. No lpmm. | "average" (conservative) |
-| centerWideOpen | 1.5 | At 24mm f/4: 54 lpmm (82%). Variable across range. | 75-89% |
+| centerStopped | 2.0 | 69-70 lpmm at f/4-5.6 mid-range (99% of 71 max). "Worth of a good quality fixed-focal lens." | >= 90% |
+| cornerStopped | 1.5 | 55 lpmm edge, "never exceeds 55 lpmm" across range. 55/71 = 77%. | 75-89% |
+| centerWideOpen | 1.5 | Variable across range. | 75-89% |
 | astigmatism | 1.5 | Average 7.1%. Ranges 13% at 10mm to low mid-range. | 5-10% (average) |
 | coma | 1.0 | "Influence can be felt", "highest at both ends", "almost imperceptible in the middle." | "noticeable" |
 | sphericalAberration | 1.5 | "Good control of spherical aberration." | "well corrected" |
 | longitudinalCA | 1.5 | "Not a big problem", "slightly yellow/bluish cast", decreases at f/5.6. | "low" |
 | lateralCA | 1.5 | At 10mm: ~0.05%. Increases at longer FL. | 0.04-0.08% |
-| distortion | 0.0 | RAW: -4.62% barrel at 10mm. | > 4.0% |
+| distortion | 1.0 | RAW: +1.53% at mid-range. (-4.62% at 10mm extreme.) | 1.0-2.0% |
 | vignettingWideOpen | 0.5 | RAW: -1.93 EV at 10mm f/4. "Very high value." | 1.5-2.5 EV |
 | vignettingStopped | 1.5 | RAW: -0.61 EV at mid-range f/5.6. | 0.5-1.0 EV |
 | bokeh | 0.5 | "Moderately good", "distinct rim", "onion rings." | "poor" |
@@ -292,34 +292,52 @@ Sensor: X-Trans III, max ~78 lpmm.
 ### XF 16-55mm f/2.8 R LM WR
 
 Standard zoom. Sources: LensTip (lab, trust 3).
-Sensor: X-Trans I (X-E1), max ~66 lpmm. Scored at 16mm.
+Sensor: X-Trans I (X-E1), per-review max ~71 lpmm. Scored at 35mm mid-range.
 
 | Field | Score | Source data | Rubric rule |
 |-------|-------|-------------|-------------|
-| centerStopped | 2.0 | 73.4 lpmm at f/4 at 16mm (111% of max). | >= 90% |
+| centerStopped | 1.5 | ~58 lpmm at 35mm mid-range. 58/71 = 82%. | 75-89% |
 | cornerStopped | 1.0 | 50 lpmm at edge. Conservative. | "average" |
-| centerWideOpen | 2.0 | 70+ lpmm at f/2.8 at 16mm (106% of max). | >= 90% |
+| centerWideOpen | 1.5 | ~58 lpmm at 35mm f/2.8. | 75-89% |
 | astigmatism | 1.5 | 5.6%. "Low value." | 5-10% |
 | coma | 1.0 | "Moderate coma." | "noticeable" |
 | sphericalAberration | 2.0 | "Corrected in a perfect way." | "negligible" |
 | longitudinalCA | 1.5 | "Slight colouring, nothing to worry about." | "low" |
 | lateralCA | 1.0 | 0.11-0.12% at 55mm. "Medium" at long end. | 0.09-0.14% |
-| distortion | 0.5 | RAW: +3.07% pincushion. "One of the highest." | 2.0-4.0% |
-| vignettingWideOpen | 0.5 | RAW: -1.78 EV at 16mm f/2.8. | 1.5-2.5 EV |
-| vignettingStopped | 1.5 | RAW: -0.55 EV at 16mm f/5.6. | 0.5-1.0 EV |
+| distortion | 0.5 | RAW: significant across range. "Relied on software." | 2.0-4.0% |
+| vignettingWideOpen | 1.5 | RAW: -0.89 EV at 35mm f/2.8. | 0.5-1.0 EV |
+| vignettingStopped | 2.0 | RAW: -0.38 EV at 35mm f/5.6. | < 0.5 EV |
 | bokeh | 0.5 | "Concentric lines, accentuated rim, truncations." | "poor" |
 | flareResistance | 1.5 | "Really difficult to catch flares", "small and not intensive." | "very good" |
+
+### XF 16-55mm f/2.8 R LM WR II
+
+Standard zoom, new optical design. Sources: Dustin Abbott (field,
+trust 3), official Fujifilm MTF chart (for astigmatism).
+No lab review yet.
+
+| Field | Score | Source data | Rubric rule |
+|-------|-------|-------------|-------------|
+| centerStopped | 1.5 | "Uniformly pretty excellent" f/4-f/8. "Most consistently excellent APS-C standard zoom." | "very good" to "excellent" → conservative |
+| cornerStopped | 1.5 | MTF: S/M high through midframe. "Improved corner performance" vs Mk I. | "very good" |
+| centerWideOpen | 1.5 | "Give and take at f/2.8" at 35mm. Not "excellent" wide open. | "very good" |
+| astigmatism | 1.5 | Official MTF chart: S/M gap 0.10-0.15 at 45 lp/mm worst case. Low for a zoom. | S/M low divergence |
+| sphericalAberration | 2.0 | Aspherical + Super ED. No focus shift reported. Fallback: design + zero complaints. | "negligible" |
+| longitudinalCA | 2.0 | "Extremely well controlled." "Huge advantage over Sigma." | "negligible" |
+| lateralCA | 2.0 | "Next to no fringing." | "negligible" |
+| bokeh | 1.0 | "Fairly good for a standard zoom", "busier", inner outlining. | "average" |
+| flareResistance | 1.5 | "Holds up to bright sun." Minor ghosting stopped down. | "very good" |
 
 ### XF 18mm f/2 R
 
 Pancake wide prime. Sources: LensTip (lab, trust 3).
-Sensor: X-Trans I (X-E1), max ~66 lpmm.
+Sensor: X-Trans I (X-Pro1), per-review max 66 lpmm.
 
 | Field | Score | Source data | Rubric rule |
 |-------|-------|-------------|-------------|
-| centerStopped | 2.0 | 62 lpmm at f/4-5.6 (94% of max). | >= 90% |
-| cornerStopped | 0.5 | 43-44 lpmm. "Only slightly better than average." Barely above decency. | "poor" |
-| centerWideOpen | 1.0 | 48 lpmm at f/2 (73% of max). | 60-74% |
+| centerStopped | 2.0 | 62 lpmm at f/4-5.6 (94% of 66 max). LensTip summary: "very good image quality in the frame centre." | >= 90% |
+| cornerStopped | 1.0 | 43-44 lpmm (67% of 66 max). "Only slightly better than average." | 60-74% |
+| centerWideOpen | 1.0 | 48 lpmm at f/2 (73% of 66 max). | 60-74% |
 | astigmatism | 2.0 | 1.8%. "Excellent result." | < 5% |
 | coma | 0.5 | "At max aperture the coma is very high." Slight when stopped down. | "poor" |
 | longitudinalCA | 1.5 | "Not bothersome", "slight colouring." | "low" |
@@ -465,13 +483,13 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 
 Super-tele zoom. Sources: LensTip (lab, trust 3),
 Dustin Abbott (field, trust 3).
-Sensor: X-Trans II, max ~70 lpmm. Scored at 400mm.
+Sensor: X-Trans I (X-E1), per-review max 74 lpmm. Scored at 200mm mid-range.
 
 | Field | Score | Source data | Rubric rule |
 |-------|-------|-------------|-------------|
 | centerStopped | 1.5 | "Very good quality across all FL." Not record-breaking. | "very good" |
 | cornerStopped | 1.0 | Edge performance lower, typical for super-tele zoom. No lpmm. | "average" (conservative) |
-| centerWideOpen | 1.0 | 50 lpmm at 400mm wide open (71% of max). Above decency. | 60-74% |
+| centerWideOpen | 1.0 | 54 lpmm at 200mm wide open (73% of 74 max). | 60-74% |
 | astigmatism | 1.0 | 12%. "Medium result." Highest at both ends of FL range. | 10-18% |
 | coma | 2.0 | "No noticeable problems, diode images very similar center and corner regardless of FL." | "negligible" |
 | sphericalAberration | 2.0 | "No focus shift, no visible influence in defocused circles, very similar before/after focus." | "negligible" |
