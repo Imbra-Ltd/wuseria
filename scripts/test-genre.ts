@@ -7,6 +7,14 @@ const genres: Record<string, { primary: string[]; secondary: string[] }> = {
     primary: ["cornerStopped", "centerStopped"],
     secondary: ["distortion", "lateralCA", "longitudinalCA", "vignettingStopped", "flareResistance", "astigmatism", "coma"],
   },
+  travel: {
+    primary: ["centerStopped", "_weightScore"],
+    secondary: ["_apertureScore", "flareResistance", "longitudinalCA"],
+  },
+  street: {
+    primary: ["centerStopped", "_apertureScore"],
+    secondary: ["centerWideOpen", "flareResistance", "longitudinalCA", "coma"],
+  },
   portrait: {
     primary: ["bokeh", "centerWideOpen"],
     secondary: ["longitudinalCA", "sphericalAberration", "vignettingWideOpen"],
@@ -39,11 +47,35 @@ console.log("Primary (w=" + W_P + "): " + config.primary.join(", "));
 console.log("Secondary (w=" + W_S + "): " + config.secondary.join(", "));
 console.log("");
 
+function weightScore(grams: number): number {
+  if (grams < 200) return 2.0;
+  if (grams <= 400) return 1.5;
+  if (grams <= 700) return 1.0;
+  if (grams <= 1000) return 0.5;
+  return 0.0;
+}
+
+function apertureScore(maxAp: number): number {
+  if (maxAp <= 1.4) return 2.0;
+  if (maxAp <= 2.0) return 1.5;
+  if (maxAp <= 2.8) return 1.0;
+  if (maxAp <= 4.0) return 0.5;
+  return 0.0;
+}
+
 for (const lens of lenses) {
   const l = lens as Record<string, unknown>;
   if (l.centerStopped == null) continue;
 
   const name = String(l.model);
+
+  // Compute derived scores
+  if (config.primary.includes("_apertureScore") || config.secondary.includes("_apertureScore")) {
+    (l as Record<string, unknown>)._apertureScore = apertureScore(l.maxAperture as number);
+  }
+  if (config.primary.includes("_weightScore") || config.secondary.includes("_weightScore")) {
+    (l as Record<string, unknown>)._weightScore = weightScore(l.weight as number);
+  }
 
   // Check primaries
   const missingP = config.primary.find((f) => l[f] == null);
@@ -77,8 +109,8 @@ for (const lens of lenses) {
   const floor = Math.min(...config.primary.map((f) => l[f] as number));
   const capped = Math.min(raw, floor);
 
-  // Map 0-2 -> 1-5 (integer steps)
-  const markFinal = Math.min(5, Math.max(1, Math.round(capped * 2 + 1)));
+  // Map 0-2 -> 1-5 (0.5 steps)
+  const markFinal = Math.min(5, Math.max(1, Math.round(capped * 4) / 2 + 1));
 
   const vals = [...config.primary, ...config.secondary]
     .map((f) => {

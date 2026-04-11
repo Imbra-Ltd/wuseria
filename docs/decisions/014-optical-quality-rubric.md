@@ -131,6 +131,36 @@ Bokeh cannot be inferred from lens specs (blade count, aspherical
 elements, entrance pupil) — these affect disc shape, not rendering
 quality.
 
+### Physical property scores
+
+Some genres use physical lens properties as scoring inputs, mapped
+to the 0–2 scale. These are computed from `Lens` spec fields, not
+from review data.
+
+**Aperture score** (from `maxAperture`):
+
+| Score | maxAperture |
+|-------|-------------|
+| 2.0 | f/1.4 or faster |
+| 1.5 | f/1.8-f/2.0 |
+| 1.0 | f/2.8 |
+| 0.5 | f/3.5-f/4.0 |
+| 0.0 | f/4.5 or slower |
+
+Used by: street (primary), travel (secondary).
+
+**Weight score** (from `weight` in grams):
+
+| Score | Weight |
+|-------|--------|
+| 2.0 | < 200g |
+| 1.5 | 200-400g |
+| 1.0 | 400-700g |
+| 0.5 | 700-1000g |
+| 0.0 | > 1000g |
+
+Used by: travel (primary).
+
 ### Fallback sources
 
 Independent lab data (LensTip, OpticalLimits) is the primary source.

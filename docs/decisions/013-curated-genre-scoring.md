@@ -13,10 +13,25 @@ the scoring system can be defined properly.
 
 ## Decision
 
-Each genre defines a **suitability formula** that combines a specific subset of
-the lens's optical quality fields. The formula produces a **mark** (1–5) that
-represents how optically suited the lens is for that genre's photographic
-intent.
+Each genre defines a **suitability formula** that combines optical quality
+fields with physical lens properties. The formula produces a **mark**
+(1–5 in 0.5 steps) that represents how suited the lens is for that
+genre's photographic intent.
+
+The formula draws from two sources on the `Lens` type:
+
+1. **Optical quality fields** (0–2 scale, from review sources per ADR-014)
+2. **Physical properties** (mapped to 0–2 scale per genre):
+   - `maxAperture` → light gathering score (used by street, travel)
+   - `weight` → portability score (used by travel)
+
+Physical properties are included only where they directly enable or
+prevent the photographic work — aperture determines whether handheld
+night capture is possible, weight determines whether the lens is
+carried at all.
+
+OIS, autofocus speed, weather sealing, and build quality are NOT
+scoring inputs — they are features, not physical or optical properties.
 
 ### Optical quality fields available on `Lens`
 
