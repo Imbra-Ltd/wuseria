@@ -26,9 +26,13 @@ If a field cannot be placed on the rubric from available data, it stays
 
 ### Resolution fields
 
-Resolution in lpmm depends on the sensor used for testing. To make scores
-sensor-independent, thresholds are expressed as **percentage of the sensor's
-theoretical maximum resolution** (stated by the reviewer for each test body).
+Resolution in lpmm depends on the sensor AND the RAW processing pipeline
+used for testing. LensTip's stated maximum varies between reviews even on
+the same sensor body (e.g. X-E1 max ranges from 70-72 to 78-80 lpmm
+across different review years as dcraw X-Trans processing matured).
+
+**Use the maximum stated by LensTip on the resolution page of the
+specific lens being scored**, not a global per-sensor number.
 
 Applies to: `centerStopped`, `cornerStopped`, `centerWideOpen`,
 `cornerWideOpen`.
