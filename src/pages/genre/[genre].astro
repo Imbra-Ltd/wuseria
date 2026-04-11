@@ -1,12 +1,15 @@
 ---
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
-import type { Genre } from "../../types/genre";
+import type { ScoredGenre } from "../../types/genre";
 import Base from "../../layouts/Base.astro";
+import GenreGuide from "../../components/interactive/GenreGuide/GenreGuide";
+import { genreConfigs } from "../../data/genres";
+import { lenses } from "../../data/lenses";
 
 export const getStaticPaths = (() => {
-  const genres: Genre[] = [
-    "astro", "portrait", "landscape", "sport",
-    "wildlife", "street", "travel", "architecture", "macro",
+  const genres: ScoredGenre[] = [
+    "astro", "landscape", "architecture", "street",
+    "travel", "portrait", "sport", "wildlife",
   ];
   return genres.map((genre) => ({
     params: { genre },
@@ -16,10 +19,16 @@ export const getStaticPaths = (() => {
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { genre } = Astro.props as Props;
-const title = genre.charAt(0).toUpperCase() + genre.slice(1);
+const config = genreConfigs[genre as ScoredGenre];
 ---
 
-<Base title={`${title} — Genre Guide — Fuji.me!`} description={`Best Fujifilm lenses for ${genre} photography, scored by optical performance.`}>
-  <h1>{title}</h1>
-  <p>Genre guide for {genre} photography.</p>
+<Base
+  title={`${config.name} — Genre Guide — Fuji.me!`}
+  description={`Best Fujifilm lenses for ${config.name.toLowerCase()}, scored by optical performance. ${config.description}`}
+>
+  <GenreGuide
+    client:load
+    lenses={lenses}
+    defaultGenre={genre as ScoredGenre}
+  />
 </Base>

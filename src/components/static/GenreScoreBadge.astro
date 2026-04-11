@@ -1,0 +1,26 @@
+---
+interface Props {
+  mark: number;
+}
+
+const { mark } = Astro.props;
+const palette = ["", "#2a2520", "#4a4540", "#7a7060", "#c08830", "#e8a045"];
+const color = palette[mark] || "#8a8070";
+const dots = "●".repeat(mark);
+---
+
+<span
+  class="mark-pips"
+  style={`color: ${color};`}
+  aria-label={`Mark ${mark} of 5`}
+>
+  {dots}
+</span>
+
+<style>
+  .mark-pips {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+</style>

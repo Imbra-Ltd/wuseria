@@ -42,6 +42,9 @@ for the X Series.
 | **lenspip.me** | Zero risk, unique, short, "pip" nods to scoring visualization, multi-system ready, fits me! series | Needs brand awareness from scratch |
 | **lensing.me** | Zero risk, short, elegant, real cinematography term, fits me! series | Lens-specific — cameras/accessories are secondary |
 | wisteria.me | Zero risk, elegant, "fuji" = wisteria in Japanese | Subtle, doesn't scale to multi-system |
+| **wuseria.com** | Zero risk, short, playful twist on "wisteria", .com availability | Invented word, no immediate meaning |
+| **wuseria.app** | Same as .com but signals web app, modern TLD | Invented word, .app forces HTTPS |
+| **wuseria.io** | Same base, developer/tech-forward TLD | .io trending but pricier |
 | lensgrade.me | Clear, describes scoring, multi-system ready | Generic |
 | xmount.me | Recognizable to Fuji shooters | "X" prefix associations, Fuji-specific |
 

@@ -172,3 +172,26 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - Upstream solid-ai-templates PRs #30-31 (typed arrays, dev journal, ADR format)
 - ADR-012: domain name trademark risk — lenspip.me and lensing.me as candidates
 - Issues created: #95 (hasAutofocus), #98 (field audit), #99 (coating), #100 (ghost lens), #102 (screener profiles epic), #105 (migration epic), #106 (FormFactor rename), #109 (domain decision), #110 (accessory prices)
+
+### Session 9 — 2026-04-11
+
+Tool: Claude Code (Opus 4.6)
+
+**Genre scoring engine + data model review**
+
+Genre guide implementation:
+- Vitest + testing-library setup (vitest.config.ts, src/test/setup.ts)
+- GenreGuide React island (mobile-first cards/table, EV scene selector, ISO/ND/FL controls)
+- Exposure calculations (astroExposure, handheldExposure) co-located with component
+- Genre index page (/genre) and per-genre pages (/genre/[genre])
+- GenreScoreBadge.astro static component for mark pips
+- ADR-013: curated genre scoring (supersedes ADR-007)
+
+Data model deep review and cleanup:
+- Lens: added genreMarks, editorialPicks, reviewSources; merged scoring onto Lens as single source of truth; removed separate GenreLensScore/genreLensScores; moved minFocusDistance to OPTICAL SPECS; created TILT-SHIFT section; renamed hasSmoothFocusRing to hasDampedFocusRing
+- Genre: stripped GenreConfig to essentials (removed rule500, minShutter, scoringMethod, benchmarkLens, referenceFl); renamed label to tagline; recommendedFlRange → typicalFl: FlCategory[]; removed dead ScoreResult/ScoreBreakdown types; moved EvScene to common.ts, GenreDefault to component, AstroResult/HandheldResult to exposure.ts
+- Camera: all booleans optional (absent=false); FormFactor slr→traditional, dslr-grip→grip; burstFps→mechanicalBurstFps, electronicShutterFps→electronicBurstFps; removed unused FilmSimulation type; added reviewSources
+- Accessory: FujiCompatible→MountAccessory (WR removed from mixin); restored isArcaCompatible on PlateAccessory
+- Common: added FlCategory, EvScene; renamed CardType→MemoryCardType; removed dead brands (Jaray, Opteka, Sainsonic)
+- Review: added ReviewMethodology (lab|field), ReviewTrust (1-3), ReviewSourceInfo; removed editorial tier; removed ReviewLink (unused); removed "other" escape hatch; 16 sources in reviewSourceDirectory (src/data/reviews.ts)
+- ADR-012: added wuseria.com/app/io domain candidates

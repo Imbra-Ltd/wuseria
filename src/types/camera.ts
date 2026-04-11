@@ -1,4 +1,5 @@
-import type { Mount, BatteryType, CardType, CardSpeedClass } from "./common";
+import type { Mount, BatteryType, MemoryCardType, CardSpeedClass } from "./common";
+import type { ReviewSource } from "./review";
 
 // =============================================================================
 // TYPES
@@ -6,7 +7,7 @@ import type { Mount, BatteryType, CardType, CardSpeedClass } from "./common";
 
 type EvfPosition = "center" | "corner" | "none";
 
-type FormFactor = "slr" | "dslr-grip" | "rangefinder" | "compact";
+type FormFactor = "traditional" | "grip" | "rangefinder" | "compact";
 
 type EvfType = "electronic" | "hybrid" | "none";
 
@@ -45,25 +46,6 @@ type SubjectDetect = "animal" | "bird" | "car" | "motorcycle" | "bicycle" | "air
 
 type VideoSpec = "1080p" | "4K" | "6.2K" | "8K";
 
-type FilmSimulation =
-  | "Provia"
-  | "Velvia"
-  | "Astia"
-  | "Classic Chrome"
-  | "Pro Neg Hi"
-  | "Pro Neg Std"
-  | "Monochrome"
-  | "Sepia"
-  | "ACROS"
-  | "ACROS+Ye"
-  | "ACROS+R"
-  | "ACROS+G"
-  | "Eterna"
-  | "Eterna Bleach Bypass"
-  | "Classic Neg"
-  | "Nostalgic Neg"
-  | "Reala ACE";
-
 // =============================================================================
 // CAMERA
 // =============================================================================
@@ -98,8 +80,8 @@ interface Camera {
   // STABILISATION & WEATHER
   // ===========================================================================
 
-  hasIbis: boolean;
-  isWeatherSealed: boolean;
+  hasIbis?: boolean;
+  isWeatherSealed?: boolean;
 
   // ===========================================================================
   // VIEWFINDER & SCREEN
@@ -115,15 +97,15 @@ interface Camera {
   // PERFORMANCE
   // ===========================================================================
 
-  burstFps?: number;
+  mechanicalBurstFps?: number;
   shutterType?: ShutterType;
   afType?: AfSystemType;
   afPoints?: number;
   pdafCoverage?: number;              // % of sensor area
-  hasFaceDetectAF: boolean;
+  hasFaceDetectAF?: boolean;
   subjectDetectAF?: SubjectDetect[];
   bufferDepth?: number;               // frames
-  electronicShutterFps?: number;
+  electronicBurstFps?: number;
   hasPixelShift?: boolean;
   batteryLife?: number;               // CIPA shots per charge
   batteryType?: BatteryType;
@@ -145,21 +127,21 @@ interface Camera {
   // ===========================================================================
 
   cardSlots?: number;
-  cardType?: CardType;
+  cardType?: MemoryCardType;
   cardSpeedClass?: CardSpeedClass;
 
   // ===========================================================================
   // CONNECTIVITY
   // ===========================================================================
 
-  hasFlashHotShoe: boolean;
+  hasFlashHotShoe?: boolean;
   hasBuiltInFlash?: boolean;
   usbType?: UsbType;
   hasTethering?: boolean;
   hasWifi?: boolean;
   hasBluetooth?: boolean;
-  hasMicInput: boolean;
-  hasHeadphoneJack: boolean;
+  hasMicInput?: boolean;
+  hasHeadphoneJack?: boolean;
 
   // ===========================================================================
   // PHYSICAL
@@ -175,6 +157,12 @@ interface Camera {
   // ===========================================================================
 
   price: number;                      // USD, rounded to nearest $250
+
+  // ===========================================================================
+  // REVIEW SOURCES
+  // ===========================================================================
+
+  reviewSources?: Partial<Record<ReviewSource, string>>;
 
   // ===========================================================================
   // LINKS
@@ -200,5 +188,4 @@ export type {
   UsbType,
   SubjectDetect,
   VideoSpec,
-  FilmSimulation,
 };

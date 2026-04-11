@@ -1,0 +1,136 @@
+import { describe, it, expect } from "vitest";
+import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import GenreGuide from "./GenreGuide";
+import type { Lens } from "../../../types/lens";
+
+// =============================================================================
+// TEST FIXTURES
+// =============================================================================
+
+function makeLens(
+  overrides: Partial<Lens> & Pick<Lens, "brand" | "model">,
+): Lens {
+  return {
+    type: "prime",
+    mount: "X",
+    focalLengthMin: 35,
+    focalLengthMax: 35,
+    maxAperture: 1.4,
+    weight: 200,
+    price: 600,
+    ...overrides,
+  };
+}
+
+const testLenses: Lens[] = [
+  makeLens({
+    brand: "Fujifilm",
+    model: "XF 23mm f/1.4",
+    focalLengthMin: 23,
+    focalLengthMax: 23,
+    maxAperture: 1.4,
+    weight: 300,
+    price: 950,
+    genreMarks: { astro: 4, street: 4, portrait: 3 },
+    editorialPicks: ["street"],
+  }),
+  makeLens({
+    brand: "Fujifilm",
+    model: "XF 16mm f/1.4",
+    focalLengthMin: 16,
+    focalLengthMax: 16,
+    maxAperture: 1.4,
+    weight: 375,
+    price: 1000,
+    genreMarks: { astro: 4, street: 4, portrait: 3 },
+    editorialPicks: ["astro", "street"],
+  }),
+  makeLens({
+    brand: "Fujifilm",
+    model: "XF 90mm f/2.0",
+    focalLengthMin: 90,
+    focalLengthMax: 90,
+    maxAperture: 2.0,
+    weight: 540,
+    price: 800,
+    genreMarks: { portrait: 5, sport: 3 },
+    editorialPicks: ["portrait"],
+  }),
+  makeLens({
+    brand: "Samyang",
+    model: "12mm f/2",
+    focalLengthMin: 12,
+    focalLengthMax: 12,
+    maxAperture: 2.0,
+    weight: 260,
+    price: 410,
+    genreMarks: { astro: 4, street: 4 },
+    editorialPicks: ["astro"],
+  }),
+];
+
+// =============================================================================
+// TESTS
+// =============================================================================
+
+describe("GenreGuide", () => {
+  it("renders with default genre (street)", () => {
+    render(<GenreGuide lenses={testLenses} />);
+    expect(screen.getByRole("heading", { name: "Street Photography" })).toBeInTheDocument();
+  });
+
+  it("renders with a specified default genre", () => {
+    render(<GenreGuide lenses={testLenses} defaultGenre="astro" />);
+    expect(screen.getByRole("heading", { name: "Astrophotography" })).toBeInTheDocument();
+  });
+
+  it("shows genre tabs for all 8 genres", () => {
+    render(<GenreGuide lenses={testLenses} />);
+    const tablist = screen.getByRole("tablist");
+    const tabs = within(tablist).getAllByRole("tab");
+    expect(tabs).toHaveLength(8);
+  });
+
+  it("switches genre when tab is clicked", async () => {
+    const user = userEvent.setup();
+    render(<GenreGuide lenses={testLenses} />);
+
+    await user.click(screen.getByRole("tab", { name: /portrait/i }));
+    expect(screen.getByRole("heading", { name: "Portrait Photography" })).toBeInTheDocument();
+  });
+
+  it("shows mark pips for scored lenses", () => {
+    render(<GenreGuide lenses={testLenses} defaultGenre="astro" />);
+    const pips = screen.getAllByLabelText(/Mark \d of 5/);
+    expect(pips.length).toBeGreaterThan(0);
+  });
+
+  it("shows lens count", () => {
+    render(<GenreGuide lenses={testLenses} defaultGenre="portrait" />);
+    expect(screen.getByText(/\d+ lens/)).toBeInTheDocument();
+  });
+
+  it("displays footnote about scoring methodology", () => {
+    render(<GenreGuide lenses={testLenses} />);
+    expect(
+      screen.getByText(/Marks represent optical suitability/),
+    ).toBeInTheDocument();
+  });
+
+  it("shows mount toggle (X-Mount / GFX)", () => {
+    render(<GenreGuide lenses={testLenses} />);
+    expect(screen.getByText("X-Mount")).toBeInTheDocument();
+    expect(screen.getByText("GFX")).toBeInTheDocument();
+  });
+
+  it("shows ISO selector", () => {
+    render(<GenreGuide lenses={testLenses} />);
+    expect(screen.getByLabelText("ISO")).toBeInTheDocument();
+  });
+
+  it("shows scene list", () => {
+    render(<GenreGuide lenses={testLenses} />);
+    expect(screen.getByText(/Scene/)).toBeInTheDocument();
+  });
+});

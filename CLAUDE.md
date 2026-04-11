@@ -80,6 +80,8 @@ src/
         GenreGuide.tsx            // Genre selector + scoring (client:load)
         GenreGuide.test.tsx
         GenreGuide.module.css
+        exposure.ts               // EV scene evaluation logic
+        exposure.test.ts
       TradeDealsFilter/
         TradeDealsFilter.tsx      // Filter deals (client:visible)
         TradeDealsFilter.module.css
@@ -88,9 +90,9 @@ src/
     cameras.ts                    // Camera[]
     accessories.ts                // Accessory[]
     wiki.ts                       // WikiEntry[]
-    genres.ts                     // Genre configs + scoring functions
+    genres.ts                     // Genre configs + EV scenes
     affiliates.ts                 // AffiliateLink[]
-    reviews.ts                    // ReviewLink[] keyed by product
+    reviews.ts                    // Review source directory
   hooks/
     useSort.ts
   types/
@@ -102,9 +104,12 @@ src/
   utils/
     slug.ts
     scoring.ts
+    scoring.test.ts
     formatting.ts
   styles/
     global.css                    // CSS custom properties, base styles, dark theme
+  test/
+    setup.ts                      // Vitest setup (e.g. RTL matchers)
 public/
   favicon.svg
   icons.svg
@@ -112,6 +117,7 @@ public/
   robots.txt
 astro.config.mjs
 tsconfig.json
+vitest.config.ts
 package.json
 ```
 
@@ -123,8 +129,8 @@ npm run build     # production build to dist/
 npm run preview   # preview production build locally
 npm run lint      # ESLint
 npm run check     # astro check — validate .astro files and type check
-npm run check:all # lint + check + build — full CI suite
-npm test          # run tests (watch mode, when configured)
+npm run check:all # lint + check + test + build — full CI suite
+npm test          # run tests (Vitest)
 ```
 
 
@@ -201,7 +207,7 @@ npm test          # run tests (watch mode, when configured)
 - UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`)
 - Footnote on all price displays: "All prices are approximate USD estimates"
 - Affiliate URLs in `src/data/affiliates.ts` — never inline in components
-- Review links in `src/data/reviews.ts` — keyed by product
+- Review source directory in `src/data/reviews.ts` — methodology and trust per source
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
 - Affiliate links use `rel="nofollow sponsored"` and `target="_blank"`
 

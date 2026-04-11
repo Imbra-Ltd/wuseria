@@ -1,0 +1,137 @@
+---
+import Base from "../../layouts/Base.astro";
+import GenreScoreBadge from "../../components/static/GenreScoreBadge.astro";
+import type { ScoredGenre } from "../../types/genre";
+import { genreConfigs } from "../../data/genres";
+import { lenses } from "../../data/lenses";
+
+const genres = Object.values(genreConfigs).map((config) => ({
+  ...config,
+  lensCount: lenses.filter((l) => l.genreMarks?.[config.genre as ScoredGenre] != null).length,
+  slug: config.genre,
+}));
+---
+
+<Base title="Genre Guide — Fuji.me!" description="Explore the best Fujifilm lenses for each photography genre, scored by optical suitability.">
+  <div class="hero">
+    <h1>Genre Guide</h1>
+    <p class="hero-sub">8 photography genres. Find the best optics for your style.</p>
+  </div>
+
+  <div class="genre-grid">
+    {genres.map((g) => (
+      <a href={`/genre/${g.slug}`} class="genre-card">
+        <h2 class="genre-name">{g.name}</h2>
+        <p class="genre-label">{g.tagline}</p>
+        <p class="genre-desc">{g.description}</p>
+        <div class="genre-meta">
+          <span class="lens-count">{g.lensCount} lenses</span>
+        </div>
+        <div class="genre-marks">
+          {[5, 4, 3, 2, 1].map((mark) => (
+            <span class="mark-sample">
+              <GenreScoreBadge mark={mark} />
+            </span>
+          ))}
+        </div>
+      </a>
+    ))}
+  </div>
+
+  <p class="footnote">
+    Marks represent optical suitability — sharpness, coma, bokeh, MTF — not feature perks.
+    OIS, WR, AF, and weight are display attributes shown alongside scores but do not affect the mark.
+    Focal length is a creative choice, not a scoring criterion.
+  </p>
+</Base>
+
+<style>
+  .hero {
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero h1 {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+  }
+
+  .hero-sub {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  .genre-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+
+  @media (min-width: 640px) {
+    .genre-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .genre-card {
+    display: block;
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-md);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s;
+  }
+
+  .genre-card:hover {
+    border-color: var(--color-accent);
+  }
+
+  .genre-name {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+  }
+
+  .genre-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    margin-bottom: var(--space-xs);
+  }
+
+  .genre-desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+  }
+
+  .genre-meta {
+    display: flex;
+    gap: var(--space-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+  }
+
+  .lens-count {
+    font-weight: 600;
+  }
+
+  .genre-marks {
+    display: flex;
+    gap: var(--space-sm);
+  }
+
+  .mark-sample {
+    display: inline-block;
+  }
+
+  .footnote {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+</style>
