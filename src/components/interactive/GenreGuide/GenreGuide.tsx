@@ -476,8 +476,10 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
 
           {/* Astro exposure matrix */}
           {isAstro && <ExposureMatrix crop={crop} iso={iso} ev={ev} aoV={aoV} />}
+        </div>{/* end main */}
+      </div>{/* end layout */}
 
-      {/* Results count */}
+      {/* Results — full width below the grid */}
       <p className={styles.resultCount}>
         {enrichedLenses.length} lens{enrichedLenses.length !== 1 ? "es" : ""}
       </p>
@@ -572,8 +574,6 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         and build quality do not affect the mark. Focal length is a creative choice shown
         as a filter, not a scoring input. Prices are approximate USD estimates.
       </p>
-        </div>{/* end main */}
-      </div>{/* end layout */}
     </div>
   );
 }
