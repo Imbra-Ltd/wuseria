@@ -85,11 +85,11 @@ describe("GenreGuide", () => {
     expect(screen.getByRole("heading", { name: "Astrophotography" })).toBeInTheDocument();
   });
 
-  it("shows genre tabs for all 8 genres", () => {
+  it("shows genre tabs for all 9 genres", () => {
     render(<GenreGuide lenses={testLenses} />);
     const tablist = screen.getByRole("tablist");
     const tabs = within(tablist).getAllByRole("tab");
-    expect(tabs).toHaveLength(8);
+    expect(tabs).toHaveLength(9);
   });
 
   it("switches genre when tab is clicked", async () => {
