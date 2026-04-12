@@ -6,26 +6,20 @@ import type { ScoredGenre } from "../types/genre";
 // GENRE CONFIGS
 // =============================================================================
 
-describe("genreConfigs", () => {
-  const expectedGenres: ScoredGenre[] = [
-    "astro",
-    "landscape",
-    "architecture",
-    "street",
-    "travel",
-    "portrait",
-    "sport",
-    "wildlife",
-  ];
+const ALL_GENRES: ScoredGenre[] = [
+  "astro", "landscape", "architecture", "street",
+  "travel", "portrait", "sport", "wildlife", "macro",
+];
 
-  it("has configs for all 8 scored genres", () => {
-    for (const genre of expectedGenres) {
+describe("genreConfigs", () => {
+  it("has configs for all 9 genres", () => {
+    for (const genre of ALL_GENRES) {
       expect(genreConfigs[genre]).toBeDefined();
     }
   });
 
   it("each config has required fields", () => {
-    for (const genre of expectedGenres) {
+    for (const genre of ALL_GENRES) {
       const config = genreConfigs[genre];
       expect(config.genre).toBe(genre);
       expect(config.name).toBeTruthy();
