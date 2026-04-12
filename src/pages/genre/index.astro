@@ -1,6 +1,5 @@
 ---
 import Base from "../../layouts/Base.astro";
-import GenreScoreBadge from "../../components/static/GenreScoreBadge.astro";
 import type { ScoredGenre } from "../../types/genre";
 import { genreConfigs } from "../../data/genres";
 import { lenses } from "../../data/lenses";
@@ -25,14 +24,7 @@ const genres = Object.values(genreConfigs).map((config) => ({
         <p class="genre-label">{g.tagline}</p>
         <p class="genre-desc">{g.description}</p>
         <div class="genre-meta">
-          <span class="lens-count">{g.lensCount} lenses</span>
-        </div>
-        <div class="genre-marks">
-          {[5, 4, 3, 2, 1].map((mark) => (
-            <span class="mark-sample">
-              <GenreScoreBadge mark={mark} />
-            </span>
-          ))}
+          <span class="lens-count">{g.lensCount} lenses scored</span>
         </div>
       </a>
     ))}
@@ -118,15 +110,6 @@ const genres = Object.values(genreConfigs).map((config) => ({
 
   .lens-count {
     font-weight: 600;
-  }
-
-  .genre-marks {
-    display: flex;
-    gap: var(--space-sm);
-  }
-
-  .mark-sample {
-    display: inline-block;
   }
 
   .footnote {
