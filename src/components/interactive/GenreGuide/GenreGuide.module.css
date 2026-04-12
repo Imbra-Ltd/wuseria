@@ -58,31 +58,6 @@
   color: var(--color-bg);
 }
 
-/* ==========================================================================
-   Genre header
-   ========================================================================== */
-
-.genreHeader {
-  margin-bottom: var(--space-md);
-}
-
-.genreName {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  margin-bottom: var(--space-xs);
-}
-
-.genreLabel {
-  font-size: var(--font-size-sm);
-  color: var(--color-accent);
-  font-family: var(--font-mono);
-  margin-bottom: var(--space-xs);
-}
-
-.genreDesc {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-}
 
 /* ==========================================================================
    Two-column layout
@@ -544,8 +519,8 @@
 @media (min-width: 640px) {
   .layout {
     display: grid;
-    grid-template-columns: 220px 1fr;
-    gap: var(--space-md);
+    grid-template-columns: 190px 1fr;
+    gap: var(--space-sm);
   }
 
   .tableWrap {
