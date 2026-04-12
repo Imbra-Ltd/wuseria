@@ -76,6 +76,18 @@ const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number 
   macro:        { ev: 10, iso: 200,  fl: 90 },
 };
 
+const GENRE_EQUIPMENT: Record<string, string[]> = {
+  astro:        ["Star tracker", "Sturdy tripod", "Lens heater", "Dew shield", "Light pollution filter", "External power bank", "Remote intervalometer", "Bahtinov mask", "Spare batteries", "Red light headlamp"],
+  landscape:    ["Sturdy tripod", "Ball head", "L-bracket", "Remote shutter", "Filter set (CPL & ND)", "Graduated ND filter", "Rain cover", "Spare batteries", "Fast memory cards", "Outdoor camera backpack"],
+  architecture: ["Sturdy tripod", "Geared tripod head", "L-bracket", "Remote shutter", "Tethering cable", "Field monitor", "Filter set (CPL & Graduated ND)", "Anti-reflective lens cover", "Color checker", "Power bank"],
+  street:       ["Thumb grip", "Compact bag", "Quick-adjust sling strap", "Mini travel tripod", "Flash (Compact)", "Filter set (ND, CPL & Black Mist)", "Fast memory cards", "Spare batteries", "Soft shutter release button", "Rain cover"],
+  travel:       ["Travel tripod", "Adjustable sling strap", "Travel camera backpack", "L-bracket", "Filter set (ND & Polarizer)", "Anti-reflection hood", "Remote shutter", "Fast memory cards", "Spare batteries", "Portable SSD"],
+  portrait:     ["Tripod", "Speedlight", "Flash trigger", "Light stand", "Constant light", "Light modifiers", "Reflector", "Tethering cable", "Color checker", "Remote shutter"],
+  sport:        ["Monopod", "Battery grip", "Dual harness", "Teleconverter", "Remote trigger", "Fast memory cards", "Spare batteries", "Rain cover", "Power bank", "Camera gear bag"],
+  wildlife:     ["Gimbal head", "Tripod/Monopod", "Teleconverter", "Beanbag", "Shoulder sling strap", "Lens covers", "Fast memory cards", "Spare batteries", "Power bank", "Wildlife backpack"],
+  macro:        ["Sturdy tripod", "Macro rail", "Ring flash", "Diffuser", "Extension tubes", "Remote shutter", "Reflector", "Focus stacking software", "Spare batteries", "Macro shooting tent"],
+};
+
 type SortKey = "mark" | "pick" | "brand" | "idealIso" | "weight" | "price" | "fl";
 
 // =============================================================================
@@ -357,98 +369,120 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         <p className={styles.genreDesc}>{config.description}</p>
       </div>
 
-      {/* Controls panel */}
-      <div className={styles.controls}>
-        {/* Scene selector */}
-        <div className={styles.controlGroup}>
-          <label className={styles.controlLabel}>Scene (EV {ev})</label>
-          <div className={styles.sceneList} ref={sceneListRef}>
-            {visibleScenes.map((s) => (
-              <button
-                key={s.ev}
-                type="button"
-                data-ev={s.ev}
-                className={`${styles.sceneItem} ${ev === s.ev ? styles.sceneItemActive : ""}`}
-                onClick={() => setEv(s.ev)}
-              >
-                <span className={styles.sceneEv}>{s.ev}</span>
-                <span className={styles.sceneText}>{sceneLabel(s.ev)}</span>
-              </button>
-            ))}
+      {/* Two-column layout: sidebar + main */}
+      <div className={styles.layout}>
+
+        {/* Left sidebar: scene list + equipment */}
+        <div className={styles.sidebar}>
+          {/* Scene selector */}
+          <div className={styles.sidebarPanel}>
+            <div className={styles.sidebarTitle}>EV / Scene</div>
+            <div className={styles.sceneList} ref={sceneListRef}>
+              {visibleScenes.map((s) => (
+                <button
+                  key={s.ev}
+                  type="button"
+                  data-ev={s.ev}
+                  className={`${styles.sceneItem} ${ev === s.ev ? styles.sceneItemActive : ""}`}
+                  onClick={() => setEv(s.ev)}
+                >
+                  <span className={styles.sceneEv}>{s.ev}</span>
+                  <span className={styles.sceneText}>{sceneLabel(s.ev)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Equipment panel */}
+          <div className={styles.sidebarPanel}>
+            <div className={styles.sidebarTitle}>Equipment</div>
+            <div className={styles.equipmentList}>
+              {GENRE_EQUIPMENT[genre]?.join(" · ")}
+            </div>
           </div>
         </div>
 
-        {/* Mount */}
-        <div className={styles.controlGroup}>
-          <ChipGroup
-            label="Mount"
-            value={crop === 1.5 ? "X" : "GFX"}
-            onChange={(v) => {
-              const c = v === "GFX" ? 0.79 : 1.5;
-              setCrop(c);
-              setMp(c === 0.79 ? 102 : 26);
-              if (isAstro) setIso(c === 0.79 ? 3200 : 1600);
-            }}
-            styles={styles}
-            options={[
-              { label: "X-Mount", value: "X" },
-              { label: "GFX", value: "GFX" },
-            ]}
-          />
-        </div>
-
-        {/* ISO */}
-        <div className={styles.controlGroup}>
-          <label className={styles.controlLabel} htmlFor="iso-select">ISO</label>
-          <select
-            id="iso-select"
-            className={styles.controlSelect}
-            value={iso}
-            onChange={(e) => setIso(Number(e.target.value))}
-          >
-            {ISO_OPTIONS.map((v) => (
-              <option key={v} value={v}>{v}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* ND filters */}
-        <div className={styles.controlGroup}>
-          <span className={styles.controlLabel}>ND Filter</span>
-          <div className={styles.ndRow}>
-            {ND_OPTIONS.map((opt) => (
-              <button
-                key={opt.factor}
-                type="button"
-                className={`${styles.chip} ${nd.includes(opt.factor) ? styles.chipOn : ""}`}
-                onClick={() => toggleNd(opt.factor)}
-              >
-                {opt.label}
-              </button>
-            ))}
+        {/* Right: controls + matrix + results */}
+        <div className={styles.main}>
+          {/* EV header */}
+          <div className={styles.evHeader}>
+            <span className={styles.evLabel}>EV {ev} — {sceneLabel(ev)}</span>
+            <span className={styles.evTagline}>{config.tagline}</span>
           </div>
-        </div>
 
-        {/* FL chips */}
-        <div className={styles.controlGroup}>
-          <span className={styles.controlLabel}>Focal Length</span>
-          <div className={styles.flRow}>
-            {flChips.map((chip) => (
-              <button
-                key={chip.fl}
-                type="button"
-                className={`${styles.chip} ${aoV === chip.fl ? styles.chipOn : ""}`}
-                onClick={() => setAoV(chip.fl)}
+          {/* Controls row */}
+          <div className={styles.controls}>
+            {/* Mount */}
+            <div className={styles.controlGroup}>
+              <ChipGroup
+                label="Mount"
+                value={crop === 1.5 ? "X" : "GFX"}
+                onChange={(v) => {
+                  const c = v === "GFX" ? 0.79 : 1.5;
+                  setCrop(c);
+                  setMp(c === 0.79 ? 102 : 26);
+                  if (isAstro) setIso(c === 0.79 ? 3200 : 1600);
+                }}
+                styles={styles}
+                options={[
+                  { label: "X-Mount", value: "X" },
+                  { label: "GFX", value: "GFX" },
+                ]}
+              />
+            </div>
+
+            {/* FL chips */}
+            <div className={styles.controlGroup}>
+              <span className={styles.controlLabel}>FL</span>
+              <div className={styles.flRow}>
+                {flChips.map((chip) => (
+                  <button
+                    key={chip.fl}
+                    type="button"
+                    className={`${styles.chip} ${aoV === chip.fl ? styles.chipOn : ""}`}
+                    onClick={() => setAoV(chip.fl)}
+                  >
+                    {chip.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* ISO */}
+            <div className={styles.controlGroup}>
+              <label className={styles.controlLabel} htmlFor="iso-select">ISO</label>
+              <select
+                id="iso-select"
+                className={styles.controlSelect}
+                value={iso}
+                onChange={(e) => setIso(Number(e.target.value))}
               >
-                {chip.label}
-              </button>
-            ))}
-          </div>
-        </div>
+                {ISO_OPTIONS.map((v) => (
+                  <option key={v} value={v}>{v}</option>
+                ))}
+              </select>
+            </div>
 
-        {/* Astro exposure matrix — inside controls panel */}
-        {isAstro && <ExposureMatrix crop={crop} iso={iso} ev={ev} aoV={aoV} />}
-      </div>
+            {/* ND filters */}
+            <div className={styles.controlGroup}>
+              <span className={styles.controlLabel}>ND</span>
+              <div className={styles.ndRow}>
+                {ND_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.factor}
+                    type="button"
+                    className={`${styles.chip} ${nd.includes(opt.factor) ? styles.chipOn : ""}`}
+                    onClick={() => toggleNd(opt.factor)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Astro exposure matrix */}
+          {isAstro && <ExposureMatrix crop={crop} iso={iso} ev={ev} aoV={aoV} />}
 
       {/* Results count */}
       <p className={styles.resultCount}>
@@ -545,6 +579,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         and build quality do not affect the mark. Focal length is a creative choice shown
         as a filter, not a scoring input. Prices are approximate USD estimates.
       </p>
+        </div>{/* end main */}
+      </div>{/* end layout */}
     </div>
   );
 }
