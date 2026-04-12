@@ -99,9 +99,18 @@ function MarkPips({ mark }: { mark: number | null }) {
   const full = Math.floor(mark);
   const half = mark % 1 >= 0.5;
   const color = MARK_PALETTE[Math.ceil(mark)] || "#8a8070";
+  const pips: React.ReactNode[] = [];
+  for (let i = 0; i < full; i++) {
+    pips.push(<span key={i} className={styles.pip} style={{ backgroundColor: color }} />);
+  }
+  if (half) {
+    pips.push(
+      <span key="half" className={styles.pip} style={{ background: `linear-gradient(to right, ${color} 50%, transparent 50%)` }} />
+    );
+  }
   return (
-    <span className={styles.markDots} style={{ color }} aria-label={`Mark ${mark} of 5`}>
-      {"●".repeat(full)}{half ? "◐" : ""}
+    <span className={styles.markDots} aria-label={`Mark ${mark} of 5`}>
+      {pips}
     </span>
   );
 }
