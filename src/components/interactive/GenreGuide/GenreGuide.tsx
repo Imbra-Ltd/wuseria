@@ -396,6 +396,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
 
         {/* Right: controls + matrix + results */}
         <div className={styles.main}>
+          <div className={styles.controlPanel}>
           {/* EV header */}
           <div className={styles.evHeader}>
             <span className={styles.evLabel}>EV {ev} — {sceneLabel(ev)}</span>
@@ -482,6 +483,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
 
           {/* Astro exposure matrix */}
           {isAstro && <ExposureMatrix crop={crop} iso={iso} ev={ev} aoV={aoV} />}
+          </div>{/* end controlPanel */}
         </div>{/* end main */}
       </div>{/* end layout */}
 
