@@ -25,7 +25,6 @@ interface GenreGuideProps {
 // CONSTANTS
 // =============================================================================
 
-const ISO_OPTIONS = [100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600];
 const ND_OPTIONS = [
   { label: "ND2", factor: 2 },
   { label: "ND4", factor: 4 },
@@ -403,7 +402,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             <span className={styles.evTagline}>{config.tagline}</span>
           </div>
 
-          {/* Controls row */}
+          {/* Controls — matching prototype order: Mount → FL → ISO → ND → MP */}
           <div className={styles.controls}>
             {/* Mount */}
             <div className={styles.controlGroup}>
@@ -441,37 +440,44 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
               </div>
             </div>
 
-            {/* ISO */}
+            {/* ISO — chips matching prototype */}
             <div className={styles.controlGroup}>
-              <label className={styles.controlLabel} htmlFor="iso-select">ISO</label>
-              <select
-                id="iso-select"
-                className={styles.controlSelect}
-                value={iso}
-                onChange={(e) => setIso(Number(e.target.value))}
-              >
-                {ISO_OPTIONS.map((v) => (
-                  <option key={v} value={v}>{v}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* ND filters */}
-            <div className={styles.controlGroup}>
-              <span className={styles.controlLabel}>ND</span>
-              <div className={styles.ndRow}>
-                {ND_OPTIONS.map((opt) => (
+              <span className={styles.controlLabel}>ISO</span>
+              <div className={styles.flRow}>
+                {(crop === 0.79
+                  ? [100, 200, 400, 800, 1600, 3200, 6400, 12800]
+                  : [100, 200, 400, 800, 1600, 3200, 6400]
+                ).map((v) => (
                   <button
-                    key={opt.factor}
+                    key={v}
                     type="button"
-                    className={`${styles.chip} ${nd.includes(opt.factor) ? styles.chipOn : ""}`}
-                    onClick={() => toggleNd(opt.factor)}
+                    className={`${styles.chip} ${iso === v ? styles.chipOn : ""}`}
+                    onClick={() => setIso(v)}
                   >
-                    {opt.label}
+                    {v}
                   </button>
                 ))}
               </div>
             </div>
+
+            {/* ND — only for landscape + architecture */}
+            {(genre === "landscape" || genre === "architecture") && (
+              <div className={styles.controlGroup}>
+                <span className={styles.controlLabel}>ND</span>
+                <div className={styles.ndRow}>
+                  {ND_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.factor}
+                      type="button"
+                      className={`${styles.chip} ${nd.includes(opt.factor) ? styles.chipOn : ""}`}
+                      onClick={() => toggleNd(opt.factor)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Astro exposure matrix */}
