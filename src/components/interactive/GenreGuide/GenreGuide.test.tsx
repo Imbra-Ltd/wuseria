@@ -106,9 +106,10 @@ describe("GenreGuide", () => {
     expect(pips.length).toBeGreaterThan(0);
   });
 
-  it("shows lens count", () => {
+  it("shows filter panel with dropdowns", () => {
     render(<GenreGuide lenses={testLenses} defaultGenre="portrait" />);
-    expect(screen.getByText(/\d+ lens/)).toBeInTheDocument();
+    // Filter panel has Brand, Mark, Price, Weight labels
+    expect(screen.getAllByText("Mark").length).toBeGreaterThanOrEqual(2); // filter + table header
   });
 
   it("displays footnote about scoring methodology", () => {
