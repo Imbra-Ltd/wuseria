@@ -356,7 +356,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             className={`${styles.genreTab} ${genre === g ? styles.genreTabActive : ""}`}
             onClick={() => handleGenreChange(g)}
           >
-            {genreConfigs[g].name.replace(" Photography", "")}
+            {genreConfigs[g].name.replace("photography", "").replace(" Photography", "").trim()}
           </button>
         ))}
       </div>
