@@ -93,7 +93,7 @@
 
 .equipmentList {
   padding: 8px 10px;
-  font-size: var(--font-size-sm);
+  font-size: 11px;
   color: var(--color-text-muted);
   line-height: 1.6;
 }
