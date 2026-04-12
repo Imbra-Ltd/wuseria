@@ -106,6 +106,8 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
   margin-bottom: 12px;
   padding-bottom: 8px;
   border-bottom: 1px solid var(--color-border);
@@ -119,7 +121,7 @@
 
 .evTagline {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
 }
 
