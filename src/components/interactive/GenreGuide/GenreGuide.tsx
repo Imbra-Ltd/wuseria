@@ -445,10 +445,10 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Astro exposure matrix */}
-      {isAstro && <ExposureMatrix crop={crop} iso={iso} ev={ev} aoV={aoV} />}
+        {/* Astro exposure matrix — inside controls panel */}
+        {isAstro && <ExposureMatrix crop={crop} iso={iso} ev={ev} aoV={aoV} />}
+      </div>
 
       {/* Results count */}
       <p className={styles.resultCount}>
