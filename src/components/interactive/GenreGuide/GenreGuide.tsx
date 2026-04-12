@@ -362,13 +362,6 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         ))}
       </div>
 
-      {/* Genre header */}
-      <div className={styles.genreHeader}>
-        <h2 className={styles.genreName}>{config.name}</h2>
-        <p className={styles.genreLabel}>{config.tagline}</p>
-        <p className={styles.genreDesc}>{config.description}</p>
-      </div>
-
       {/* Two-column layout: sidebar + main */}
       <div className={styles.layout}>
 

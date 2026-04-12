@@ -77,12 +77,12 @@ const testLenses: Lens[] = [
 describe("GenreGuide", () => {
   it("renders with default genre (street)", () => {
     render(<GenreGuide lenses={testLenses} />);
-    expect(screen.getByRole("heading", { name: "Street Photography" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /street/i, selected: true })).toBeInTheDocument();
   });
 
   it("renders with a specified default genre", () => {
     render(<GenreGuide lenses={testLenses} defaultGenre="astro" />);
-    expect(screen.getByRole("heading", { name: "Astrophotography" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /astro/i, selected: true })).toBeInTheDocument();
   });
 
   it("shows genre tabs for all 9 genres", () => {
@@ -97,7 +97,7 @@ describe("GenreGuide", () => {
     render(<GenreGuide lenses={testLenses} />);
 
     await user.click(screen.getByRole("tab", { name: /portrait/i }));
-    expect(screen.getByRole("heading", { name: "Portrait Photography" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /portrait/i, selected: true })).toBeInTheDocument();
   });
 
   it("shows mark pips for scored lenses", () => {
