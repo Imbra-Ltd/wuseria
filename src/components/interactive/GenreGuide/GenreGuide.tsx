@@ -470,9 +470,10 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       )}
 
       <p className={styles.footnote}>
-        Marks represent optical suitability (sharpness, coma, bokeh). OIS, WR, AF,
-        and weight are display attributes and do not affect the mark. Focal length is a
-        creative choice, not a scoring criterion. All prices are approximate USD estimates.
+        Marks score optical suitability only — resolution, aberrations, bokeh quality —
+        from lab measurements and trusted field reviews. OIS, autofocus, weather sealing,
+        and build quality do not affect the mark. Focal length is a creative choice shown
+        as a filter, not a scoring input. Prices are approximate USD estimates.
       </p>
     </div>
   );
