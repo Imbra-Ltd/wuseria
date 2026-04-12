@@ -117,6 +117,73 @@ function PickStar({ isPick }: { isPick: boolean }) {
 }
 
 // =============================================================================
+// EXPOSURE MATRIX — astro rule-of-500 grid
+// =============================================================================
+
+const MATRIX_FL_COLS: Record<number, number[]> = {
+  12:  [6, 8, 10, 12, 14, 16],
+  24:  [18, 21, 24, 28, 35],
+  50:  [35, 40, 50, 56],
+  135: [75, 85, 100, 135],
+  300: [200, 300, 400],
+};
+
+const MATRIX_APERTURES = [1.0, 1.2, 1.4, 1.8, 2.0, 2.8, 4.0];
+
+function ExposureMatrix({ crop, iso, ev, aoV }: { crop: number; iso: number; ev: number; aoV: number }) {
+  const cols = MATRIX_FL_COLS[aoV] || MATRIX_FL_COLS[12];
+
+  return (
+    <div className={styles.matrix}>
+      <div className={styles.matrixTitle}>
+        Rule of 500 · untracked · ISO {iso}
+      </div>
+      <div className={styles.matrixScroll}>
+        <table className={styles.matrixTable}>
+          <thead>
+            <tr>
+              <th className={styles.matrixCorner}>f/</th>
+              {cols.map((fl) => (
+                <th key={fl} className={styles.matrixColHead}>{fl}mm</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {MATRIX_APERTURES.map((ap) => (
+              <tr key={ap}>
+                <td className={styles.matrixRowHead}>{ap}</td>
+                {cols.map((fl) => {
+                  const maxT = Math.round(500 / (crop * fl));
+                  const needed = Math.round((ap * ap * 100) / (maxT * Math.pow(2, ev)));
+                  const viable = needed <= iso;
+                  const marginal = !viable && needed <= iso * 1.5;
+                  const label = maxT >= 60 ? `${Math.round(maxT / 60)}m` : `${maxT}s`;
+                  const cls = viable
+                    ? styles.matrixViable
+                    : marginal
+                      ? styles.matrixMarginal
+                      : styles.matrixOver;
+                  return (
+                    <td key={fl} className={`${styles.matrixCell} ${cls}`}>
+                      {label}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <div className={styles.matrixLegend}>
+        <span className={styles.matrixViableText}>●</span> within ISO{" "}
+        <span className={styles.matrixMarginalText}>●</span> within 1 stop{" "}
+        <span className={styles.matrixOverText}>●</span> needs more ISO
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
 // MAIN COMPONENT
 // =============================================================================
 
@@ -379,6 +446,9 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           </div>
         </div>
       </div>
+
+      {/* Astro exposure matrix */}
+      {isAstro && <ExposureMatrix crop={crop} iso={iso} ev={ev} aoV={aoV} />}
 
       {/* Results count */}
       <p className={styles.resultCount}>
