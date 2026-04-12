@@ -162,7 +162,7 @@ function ExposureMatrix({ crop, iso, ev, aoV }: { crop: number; iso: number; ev:
   return (
     <div className={styles.matrix}>
       <div className={styles.matrixTitle}>
-        Rule of 500 · untracked · ISO {iso}
+        EV Matrix · Rule of 500 · untracked · ISO {iso}
       </div>
       <div className={styles.matrixScroll}>
         <table className={styles.matrixTable}>
