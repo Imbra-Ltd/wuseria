@@ -408,7 +408,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                       className={
                         key === "weight" || key === "price" || key === "idealIso"
                           ? styles.cellRight
-                          : key === "mark" || key === "pick"
+                          : key === "pick"
                             ? styles.cellCenter
                             : undefined
                       }
@@ -423,7 +423,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
               <tbody>
                 {enrichedLenses.map((el) => (
                   <tr key={`${el.lens.brand}-${el.lens.model}`}>
-                    <td className={styles.cellCenter}><MarkPips mark={el.mark} /></td>
+                    <td><MarkPips mark={el.mark} /></td>
                     <td className={styles.cellCenter}><PickStar isPick={el.isPick} /></td>
                     <td>{el.lens.brand}</td>
                     <td>

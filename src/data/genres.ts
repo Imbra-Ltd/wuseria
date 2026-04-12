@@ -11,7 +11,7 @@ const genreConfigs: Record<ScoredGenre, GenreConfig> = {
     name: "Astrophotography",
     tagline: "Untracked tripod · Beat the startrails · 500 rule",
     description:
-      "Wide-field and deep-sky imaging on a fixed tripod. Fast apertures and sharp corners matter most.",
+      "Wide-field and deep-sky imaging on a fixed tripod. Low coma, low astigmatism, and fast apertures matter most.",
     typicalFl: ["ultra-wide", "wide"],
   },
   landscape: {
@@ -27,7 +27,7 @@ const genreConfigs: Record<ScoredGenre, GenreConfig> = {
     name: "Architecture Photography",
     tagline: "Tripod · maximize depth of field · sweet spot at f/8",
     description:
-      "Geometric precision with minimal distortion. Tilt-shift capability and corner-to-corner sharpness are prized.",
+      "Geometric precision with minimal distortion and corner-to-corner sharpness at stopped-down apertures.",
     typicalFl: ["ultra-wide", "wide"],
   },
   street: {
@@ -35,7 +35,7 @@ const genreConfigs: Record<ScoredGenre, GenreConfig> = {
     name: "Street Photography",
     tagline: "Handheld · capture the moment · 1/FL rule",
     description:
-      "Fast, discreet shooting in variable light. Compact size and wide aperture for low-light handheld work.",
+      "Sharp at the sweet spot and fast enough for low light. Stopped-down sharpness and wide aperture matter most.",
     typicalFl: ["wide", "standard"],
   },
   travel: {
@@ -59,7 +59,7 @@ const genreConfigs: Record<ScoredGenre, GenreConfig> = {
     name: "Sport Photography",
     tagline: "Handheld · freeze motion · 4x FL rule",
     description:
-      "Fast autofocus and high shutter speeds to freeze action. Long reach and tracking performance matter.",
+      "Sharp wide open to freeze action at fast shutter speeds. Wide-open center sharpness matters most.",
     typicalFl: ["standard", "tele"],
   },
   wildlife: {
@@ -67,7 +67,7 @@ const genreConfigs: Record<ScoredGenre, GenreConfig> = {
     name: "Wildlife Photography",
     tagline: "Handheld · capture behaviour · 4x FL rule",
     description:
-      "Long reach with sharp optics to photograph animals at distance. Teleconverter compatibility is a plus.",
+      "Sharp both wide open and stopped down for distant subjects. Center sharpness across apertures matters most.",
     typicalFl: ["tele", "super-tele"],
   },
   macro: {
