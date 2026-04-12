@@ -124,9 +124,10 @@ describe("GenreGuide", () => {
     expect(screen.getByText("GFX")).toBeInTheDocument();
   });
 
-  it("shows ISO selector", () => {
+  it("shows ISO chips", () => {
     render(<GenreGuide lenses={testLenses} />);
-    expect(screen.getByLabelText("ISO")).toBeInTheDocument();
+    expect(screen.getByText("ISO")).toBeInTheDocument();
+    expect(screen.getByText("1600")).toBeInTheDocument();
   });
 
   it("shows scene list", () => {
