@@ -1,0 +1,414 @@
+/* ==========================================================================
+   Genre Guide — mobile-first React island
+   ========================================================================== */
+
+.guide {
+  font-family: var(--font-sans);
+}
+
+/* ==========================================================================
+   Genre tabs — horizontal scroll on mobile
+   ========================================================================== */
+
+.genreTabs {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  padding-bottom: var(--space-xs);
+  margin-bottom: var(--space-md);
+}
+
+.genreTab {
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-sans);
+  padding: var(--space-xs) var(--space-sm);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.genreTab:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+
+.genreTab:last-child {
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.genreTab:not(:first-child) {
+  border-left: none;
+}
+
+.genreTab:hover {
+  color: var(--color-text);
+}
+
+.genreTabActive {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.genreTabActive:hover {
+  color: var(--color-bg);
+}
+
+/* ==========================================================================
+   Genre header
+   ========================================================================== */
+
+.genreHeader {
+  margin-bottom: var(--space-md);
+}
+
+.genreName {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+}
+
+.genreLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-accent);
+  font-family: var(--font-mono);
+  margin-bottom: var(--space-xs);
+}
+
+.genreDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   Controls panel
+   ========================================================================== */
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.controlLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.controlSelect {
+  background-color: var(--color-bg-surface);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  max-width: 160px;
+}
+
+.controlSelect:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+/* ==========================================================================
+   Scene selector — scrollable list (not slider)
+   ========================================================================== */
+
+.sceneList {
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  scrollbar-width: thin;
+}
+
+.sceneItem {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  width: 100%;
+  padding: 4px 10px;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  text-align: left;
+}
+
+.sceneItem:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.sceneItemActive {
+  background-color: #1e1710;
+  border-left-color: var(--color-accent);
+}
+
+.sceneEv {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-accent);
+  width: 22px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.sceneText {
+  font-size: var(--font-size-sm);
+}
+
+.sceneItemActive .sceneText {
+  color: var(--color-text);
+}
+
+/* ==========================================================================
+   Chips (ND, FL, mount)
+   ========================================================================== */
+
+.chipGroup {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.chipLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  font-weight: 600;
+  margin-right: var(--space-xs);
+  white-space: nowrap;
+}
+
+.chip {
+  background: none;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-sans);
+  padding: 2px var(--space-sm);
+  cursor: pointer;
+  border-radius: var(--radius);
+}
+
+.chip:hover {
+  color: var(--color-text);
+}
+
+.chipOn {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.chipOn:hover {
+  color: var(--color-bg);
+}
+
+.ndRow,
+.flRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+/* ==========================================================================
+   Results
+   ========================================================================== */
+
+.resultCount {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.emptyState {
+  padding: var(--space-2xl) var(--space-md);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   Mark pips
+   ========================================================================== */
+
+.markDots {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.markDash {
+  color: #8a8070;
+}
+
+.topStar {
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+}
+
+.sweetSpot {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  margin-left: var(--space-xs);
+}
+
+/* ==========================================================================
+   Table (desktop) — hidden on mobile
+   ========================================================================== */
+
+.tableWrap {
+  overflow-x: auto;
+  display: none;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.table th,
+.table td {
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.table th {
+  text-align: left;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  position: sticky;
+  top: 0;
+  background-color: var(--color-bg-surface);
+}
+
+.table th:hover {
+  color: var(--color-text);
+}
+
+.cellRight {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cellCenter {
+  text-align: center;
+}
+
+.table tbody tr:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.sortIndicator {
+  margin-left: var(--space-xs);
+  font-size: 0.7em;
+  opacity: 0.4;
+}
+
+/* ==========================================================================
+   Cards (mobile) — default visible
+   ========================================================================== */
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.card {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-md);
+}
+
+.cardTop {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.cardPrice {
+  margin-left: auto;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.cardName {
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.cardSpecs {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* ==========================================================================
+   Desktop breakpoint
+   ========================================================================== */
+
+@media (min-width: 640px) {
+  .tableWrap {
+    display: block;
+  }
+
+  .cards {
+    display: none;
+  }
+
+  .controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .controlGroup {
+    flex: 0 0 auto;
+  }
+
+  .sceneList {
+    max-height: 240px;
+    min-width: 280px;
+  }
+}
+
+/* ==========================================================================
+   Footnote
+   ========================================================================== */
+
+.footnote {
+  margin-top: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}

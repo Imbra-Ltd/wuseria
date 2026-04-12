@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "lint": "eslint .",
     "check": "astro check",
-    "check:all": "npm run lint && npm run check && npm run build"
+    "test": "vitest",
+    "check:all": "npm run lint && npm run check && vitest run && npm run build"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.3",
@@ -21,6 +22,10 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
     "@eslint/js": "^9.39.4",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.12.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -28,8 +33,10 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
+    "jsdom": "^29.0.2",
     "typescript": "~6.0.2",
-    "typescript-eslint": "^8.58.0"
+    "typescript-eslint": "^8.58.0",
+    "vitest": "^4.1.4"
   },
   "overrides": {
     "vite": "^7"

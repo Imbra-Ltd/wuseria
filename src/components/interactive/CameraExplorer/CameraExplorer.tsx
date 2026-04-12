@@ -16,7 +16,7 @@ type CameraSortKey =
   | "sensor"
   | "hasIbis"
   | "isWeatherSealed"
-  | "burstFps"
+  | "mechanicalBurstFps"
   | "videoSpec"
   | "batteryLife"
   | "weight"
@@ -31,7 +31,7 @@ const COLUMNS: { key: CameraSortKey; label: string; align: ColumnAlign }[] = [
   { key: "sensor", label: "Sensor", align: "left" },
   { key: "hasIbis", label: "IBIS", align: "center" },
   { key: "isWeatherSealed", label: "WR", align: "center" },
-  { key: "burstFps", label: "FPS", align: "right" },
+  { key: "mechanicalBurstFps", label: "FPS", align: "right" },
   { key: "videoSpec", label: "Video", align: "center" },
   { key: "batteryLife", label: "Battery", align: "right" },
   { key: "weight", label: "Weight", align: "right" },
@@ -171,8 +171,8 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
           <select className={`${styles.filterSelect} ${formFactor ? styles.filterActive : ""}`} value={formFactor} onChange={(e) => setFormFactor(resetValue(e.target.value))} aria-label="Filter by body style">
             <option value="" hidden>Body</option>
             <option value={RESET_VALUE}>All</option>
-            <option value="slr">Standard</option>
-            <option value="dslr-grip">Pro grip</option>
+            <option value="traditional">Standard</option>
+            <option value="grip">Pro grip</option>
             <option value="rangefinder">Rangefinder</option>
             <option value="compact">Compact</option>
           </select>
@@ -275,7 +275,7 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
                     <td>{cam.sensor}</td>
                     <td className={styles.cellCenter}><span className={cam.hasIbis ? styles.dotOn : styles.dotOff} /></td>
                     <td className={styles.cellCenter}><span className={cam.isWeatherSealed ? styles.dotOn : styles.dotOff} /></td>
-                    <td className={styles.cellRight}>{cam.burstFps ?? "\u2013"}</td>
+                    <td className={styles.cellRight}>{cam.mechanicalBurstFps ?? "\u2013"}</td>
                     <td className={styles.cellCenter}>{cam.videoSpec}</td>
                     <td className={styles.cellRight}>{cam.batteryLife ?? "\u2013"}</td>
                     <td className={styles.cellRight}>{cam.weight}g</td>
@@ -299,7 +299,7 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
                   <span>{cam.megapixels}MP</span>
                   <span>{cam.sensor}</span>
                   <span>{cam.videoSpec}</span>
-                  {cam.burstFps && <span>{cam.burstFps}fps</span>}
+                  {cam.mechanicalBurstFps && <span>{cam.mechanicalBurstFps}fps</span>}
                   {cam.batteryLife && <span>{cam.batteryLife} shots</span>}
                   <span>{cam.weight}g</span>
                 </div>

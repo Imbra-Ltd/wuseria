@@ -37,13 +37,12 @@ type MicPattern = "stereo" | "shotgun" | "omni" | "cardioid";
 type TripodMaterial = "carbon-fiber" | "aluminum" | "basalt";
 
 // =============================================================================
-// FUJI COMPATIBLE MIXIN
+// MOUNT ACCESSORY MIXIN
 // =============================================================================
 
-interface FujiCompatible {
+interface MountAccessory {
   mount?: Mount;
   compatibleWith?: string[];
-  isWeatherSealed?: boolean;
 }
 
 // =============================================================================
@@ -66,22 +65,24 @@ interface AccessoryBase {
 // CATEGORY-SPECIFIC EXTENSIONS
 // =============================================================================
 
-interface FlashAccessory extends AccessoryBase, FujiCompatible {
+interface FlashAccessory extends AccessoryBase, MountAccessory {
   category: "flash";
   guideNumber: number;
   hasTtl: boolean;
   hasHss: boolean;
+  isWeatherSealed?: boolean;
   isWirelessCommander?: boolean;
   isWirelessReceiver?: boolean;
 }
 
-interface LensAccessory extends AccessoryBase, FujiCompatible {
+interface LensAccessory extends AccessoryBase, MountAccessory {
   category: "lens-accessory";
 
   // e.g. 1.4 for a 1.4x teleconverter
   magnificationFactor?: number;
 
   isAfRetained?: boolean;
+  isWeatherSealed?: boolean;
 }
 
 interface BatteryAccessory extends AccessoryBase {
@@ -104,11 +105,12 @@ interface ChargerAccessory extends AccessoryBase {
   hasUsbInput?: boolean;
 }
 
-interface BatteryGripAccessory extends AccessoryBase, FujiCompatible {
+interface BatteryGripAccessory extends AccessoryBase, MountAccessory {
   category: "battery-grip";
   batteryType: BatteryType;
   batteryCount?: number;
   hasVerticalControls?: boolean;
+  isWeatherSealed?: boolean;
 }
 
 interface AdapterAccessory extends AccessoryBase {
@@ -274,7 +276,7 @@ export type {
   Accessory,
   AccessoryCategory,
   AccessoryBase,
-  FujiCompatible,
+  MountAccessory,
   FlashAccessory,
   LensAccessory,
   BatteryAccessory,

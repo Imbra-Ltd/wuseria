@@ -1,4 +1,6 @@
 import type { Mount, Brand } from "./common";
+import type { ScoredGenre } from "./genre";
+import type { ReviewSource } from "./review";
 
 // =============================================================================
 // TYPES
@@ -43,6 +45,9 @@ interface Lens {
   // Reproduction ratio as decimal (1.0 = life-size, 0.5 = half)
   maxMagnification?: number;
 
+  // mm
+  minFocusDistance?: number;
+
   // ===========================================================================
   // BUILD — absent = false for all booleans
   // ===========================================================================
@@ -56,7 +61,7 @@ interface Lens {
   hasFocusRing?: boolean;
   isFocusByWire?: boolean;
   hasDistanceScale?: boolean;
-  hasSmoothFocusRing?: boolean;
+  hasDampedFocusRing?: boolean;
 
   // Grams
   weight: number;
@@ -84,30 +89,29 @@ interface Lens {
   // OPTICAL QUALITY — MTF chart readings (0–2 scale)
   // ===========================================================================
 
-  sweetSpotSharpness?: number;
-  cornerSharpness?: number;
-  wideOpenSharpness?: number;
+  centerStopped?: number;
+  cornerStopped?: number;
+  centerWideOpen?: number;
+  cornerWideOpen?: number;
   astigmatism?: number;
-  fieldCurvature?: number;
   coma?: number;
+  sphericalAberration?: number;
 
   // ===========================================================================
-  // OPTICAL QUALITY — NOT from MTF charts (0–2 scale)
+  // OPTICAL QUALITY — lab tests and field reports (0–2 scale)
   // ===========================================================================
 
   longitudinalCA?: number;
   lateralCA?: number;
   distortion?: number;
-  vignetting?: number;
+  vignettingWideOpen?: number;   // at max aperture
+  vignettingStopped?: number;    // at f/5.6 or f/8
   bokeh?: number;
   flareResistance?: number;
 
   // ===========================================================================
-  // SCORING INPUTS
+  // TILT-SHIFT
   // ===========================================================================
-
-  // mm
-  minFocusDistance?: number;
 
   isTiltShift?: boolean;
 
@@ -121,6 +125,20 @@ interface Lens {
   imageCircle?: number;
 
   isTiltShiftIndependent?: boolean;
+
+  // ===========================================================================
+  // GENRE SCORING
+  // ===========================================================================
+
+  genreMarks?: Partial<Record<ScoredGenre, number>>;
+  editorialPicks?: ScoredGenre[];
+
+  // ===========================================================================
+  // REVIEW SOURCES — URLs keyed by source, highest-rigour source was used
+  // for optical quality fields
+  // ===========================================================================
+
+  reviewSources?: Partial<Record<ReviewSource, string>>;
 
   // ===========================================================================
   // LINKS

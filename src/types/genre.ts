@@ -1,3 +1,5 @@
+import type { FlCategory } from "./common";
+
 // =============================================================================
 // GENRE
 // =============================================================================
@@ -13,26 +15,27 @@ type Genre =
   | "architecture"
   | "macro";
 
+// All genres now have scoring formulas
+type ScoredGenre = Genre;
+
 // =============================================================================
-// SCORE RESULT
+// GENRE CONFIG
 // =============================================================================
 
-type ScoreBreakdown = Record<string, number>;
-
-interface ScoreResult {
-
-  // 1–5 in 0.5 steps
-  mark: number;
-
-  // Per-criterion scores for transparency
-  breakdown: ScoreBreakdown;
-
-  isDisqualified: boolean;
-  reason?: string;
+interface GenreConfig {
+  genre: ScoredGenre;
+  name: string;
+  tagline: string;
+  description: string;
+  typicalFl: FlCategory[];
 }
 
 // =============================================================================
 // EXPORTS
 // =============================================================================
 
-export type { Genre, ScoreResult, ScoreBreakdown };
+export type {
+  Genre,
+  ScoredGenre,
+  GenreConfig,
+};

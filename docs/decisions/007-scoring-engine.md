@@ -1,6 +1,6 @@
 # ADR-007: Code-defined scoring functions (computed, not stored)
 
-**Status:** Accepted
+**Status:** Superseded by [ADR-013](013-curated-genre-scoring.md)
 **Date:** 2026-04-06
 
 ## Context

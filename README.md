@@ -9,8 +9,8 @@ Lightweight Fuji lens and camera explorer with genre-based scoring.
 
 Fuji.me! helps Fujifilm photographers find the right lens or camera for their
 shooting genre. It scores every Fuji X and GFX lens against genres like
-landscape, portrait, street, and astro — backed by MTF chart data and
-measurable optical properties rather than subjective reviews.
+landscape, portrait, street, and astro — backed by optical quality measurements
+from trusted review sources rather than subjective opinions.
 
 ## Quick start
 
@@ -39,20 +39,25 @@ scores for your shooting style. Scores are computed from optical data — see
 ```
 me-fuji/
 ├── src/
-│   ├── data/           # Static data files (lenses, cameras, config)
-│   ├── types/          # TypeScript interfaces for all domain entities
-│   ├── hooks/          # Reusable React hooks
-│   └── utils/          # Scoring and formatting utilities
+│   ├── components/
+│   │   ├── interactive/  # React islands (LensExplorer, CameraExplorer, GenreGuide)
+│   │   └── static/       # Astro components (zero JS shipped)
+│   ├── data/             # Static data files (lenses, cameras, genres, reviews, config)
+│   ├── test/             # Vitest setup
+│   ├── types/            # TypeScript interfaces for all domain entities
+│   ├── hooks/            # Reusable React hooks
+│   └── utils/            # Genre queries and formatting utilities
 ├── docs/
-│   ├── decisions/      # Architecture Decision Records (ADR-001 to ADR-011)
-│   ├── dev-journal.md  # Development history and migration tracking
-│   ├── prototype/      # Original single-file prototype (reference only)
-│   ├── ONBOARDING.md   # New contributor guide
-│   ├── PLAYBOOK.md     # Operational reference
+│   ├── decisions/        # Architecture Decision Records (ADR-001 to ADR-013)
+│   ├── dev-journal.md    # Development history and migration tracking
+│   ├── prototype/        # Original single-file prototype (reference only)
+│   ├── ONBOARDING.md     # New contributor guide
+│   ├── PLAYBOOK.md       # Operational reference
 │   └── solid-ai-templates/ # Quality convention templates (submodule)
-├── public/             # Static assets (favicon, icons, robots.txt)
-├── CLAUDE.md           # AI agent context and project conventions
-├── eslint.config.js    # ESLint 9 flat config
+├── public/               # Static assets (favicon, icons, robots.txt)
+├── CLAUDE.md             # AI agent context and project conventions
+├── eslint.config.js      # ESLint 9 flat config
+├── vitest.config.ts      # Vitest configuration
 └── package.json
 ```
 
@@ -74,13 +79,14 @@ npm run dev       # hot reload at localhost:4321
 npm run build     # production build to dist/
 npm run preview   # preview production build
 npm run lint      # ESLint
-npm test          # run tests (when configured)
+npm test          # run tests (Vitest)
+npm run check:all # lint + type check + test + build — full CI suite
 ```
 
 ### Checks before committing
 
 ```bash
-npm run lint
+npm run check:all
 ```
 
 ## Configuration reference
