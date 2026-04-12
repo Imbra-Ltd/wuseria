@@ -106,8 +106,8 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: var(--space-sm);
-  padding-bottom: var(--space-sm);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -121,6 +121,16 @@
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   Control panel — wraps EV header + chips + matrix
+   ========================================================================== */
+
+.controlPanel {
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  padding: 10px 14px;
 }
 
 /* ==========================================================================
