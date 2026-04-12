@@ -195,3 +195,46 @@ Data model deep review and cleanup:
 - Common: added FlCategory, EvScene; renamed CardType→MemoryCardType; removed dead brands (Jaray, Opteka, Sainsonic)
 - Review: added ReviewMethodology (lab|field), ReviewTrust (1-3), ReviewSourceInfo; removed editorial tier; removed ReviewLink (unused); removed "other" escape hatch; 16 sources in reviewSourceDirectory (src/data/reviews.ts)
 - ADR-012: added wuseria.com/app/io domain candidates
+
+### Session 10 — 2026-04-12
+
+Tool: Claude Code (Opus 4.6)
+
+**Scoring engine, optical data, 9 genre formulas**
+
+Scoring engine (src/utils/scoring.ts):
+- Primary floor + weighted average algorithm — primary fields (w=3) set the tier via floor, secondary fields (w=1) rank within tier
+- 9 genre formulas: astro, landscape, architecture, portrait, street, travel, sport, wildlife, macro
+- Physical property scores: apertureScore, weightScore, magnificationScore — computed from lens specs for genres where they enable/prevent the work
+- computeGenreMark / computeAllGenreMarks functions
+- 81 tests passing (snapshot tests against real lens data)
+
+Optical quality data — 52 lenses scored:
+- LensTip as primary source (trust 3, lab methodology), supplemented by OpticalLimits, Dustin Abbott, ePHOTOzine, Lonely Speck
+- 14 optical fields per lens (0-2 scale): center/corner sharpness (stopped/wide open), astigmatism, coma, sphericalAberration, longitudinalCA, lateralCA, distortion, vignetting (wide open/stopped), bokeh, flareResistance
+- ADR-014: optical quality rubric with per-field thresholds, sensor-normalized resolution, qualitative word-to-score mapping
+- Summary page authority rule: LensTip summary page overrides individual test pages on contradiction
+- Audited all 20 original scored lenses against LensTip summary pages, corrected 11 scores
+- Samyang 12mm coma upgraded from 1.0 to 1.5 based on multi-source consensus (LensTip + Lonely Speck + Dustin Abbott)
+- XF 80mm f/2.8 Macro cornerStopped upgraded from 0.5 to 1.0 (summary PRO: "good image quality on the edge")
+
+Genre formulas validated:
+- Astro: coma + astigmatism + apertureScore (lateralCA moved to secondary — correctable in post)
+- Landscape: cornerStopped + centerStopped
+- Architecture: cornerStopped + centerStopped + distortion
+- Portrait: bokeh + centerWideOpen
+- Street: centerStopped + apertureScore (zone focusing at f/8 is dominant technique — centerWideOpen secondary)
+- Travel: centerStopped + weightScore (weight enables/prevents carrying the lens)
+- Sport: centerWideOpen
+- Wildlife: centerWideOpen + centerStopped
+- Macro: centerStopped + magnificationScore (cornerStopped excluded — infinity test data doesn't reflect macro distances; focusDistance dropped — working distance depends on FL)
+
+Key design decisions:
+- FL is never a scoring input (creative choice, shown as filter presets)
+- OIS, WR, AF are display attributes, not scoring inputs
+- Weight and aperture ARE scoring inputs where they directly enable/prevent the work
+- Zooms scored at mid-range FL, not extremes
+- Lenses without sufficient optical data excluded from genre results entirely
+- genreMarks populated on all 52 scored lenses for build-time access
+
+PRs: #114 (scoring engine), #115 (macro genre integration)
