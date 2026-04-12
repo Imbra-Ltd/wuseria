@@ -37,7 +37,7 @@ const ND_OPTIONS = [
 
 const SCORED_GENRES: ScoredGenre[] = [
   "astro", "landscape", "architecture", "street",
-  "travel", "portrait", "sport", "wildlife",
+  "travel", "portrait", "sport", "wildlife", "macro",
 ];
 
 const FL_CHIPS: Record<string, { label: string; fl: number }[]> = {
