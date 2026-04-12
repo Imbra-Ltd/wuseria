@@ -114,7 +114,7 @@ describe("GenreGuide", () => {
   it("displays footnote about scoring methodology", () => {
     render(<GenreGuide lenses={testLenses} />);
     expect(
-      screen.getByText(/Marks represent optical suitability/),
+      screen.getByText(/Marks score optical suitability only/),
     ).toBeInTheDocument();
   });
 

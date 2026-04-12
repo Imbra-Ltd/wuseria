@@ -189,16 +189,16 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         return { lens: l, mark, isPick, idealIso };
       });
 
-    // Sort
+    // Sort — v is always ascending (a < b → negative)
     enriched.sort((a, b) => {
       let v = 0;
       switch (sortBy) {
         case "mark":
-          v = b.mark - a.mark;
-          if (v === 0) v = (b.isPick ? 1 : 0) - (a.isPick ? 1 : 0);
+          v = a.mark - b.mark;
+          if (v === 0) v = (a.isPick ? 1 : 0) - (b.isPick ? 1 : 0);
           break;
         case "pick":
-          v = (b.isPick ? 1 : 0) - (a.isPick ? 1 : 0);
+          v = (a.isPick ? 1 : 0) - (b.isPick ? 1 : 0);
           break;
         case "brand":
           v = a.lens.brand.localeCompare(b.lens.brand);
