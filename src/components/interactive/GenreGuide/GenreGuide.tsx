@@ -25,7 +25,6 @@ interface GenreGuideProps {
 // CONSTANTS
 // =============================================================================
 
-const MARK_PALETTE = ["", "#2a2520", "#4a4540", "#7a7060", "#c08830", "#e8a045"];
 const ISO_OPTIONS = [100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600];
 const ND_OPTIONS = [
   { label: "ND2", factor: 2 },
@@ -98,15 +97,12 @@ function MarkPips({ mark }: { mark: number | null }) {
   if (mark == null) return <span className={styles.markDash}>&ndash;</span>;
   const full = Math.floor(mark);
   const half = mark % 1 >= 0.5;
-  const color = MARK_PALETTE[Math.ceil(mark)] || "#8a8070";
   const pips: React.ReactNode[] = [];
   for (let i = 0; i < full; i++) {
-    pips.push(<span key={i} className={styles.pip} style={{ backgroundColor: color }} />);
+    pips.push(<span key={i} className={`${styles.pip} ${styles.pipFull}`} />);
   }
   if (half) {
-    pips.push(
-      <span key="half" className={styles.pip} style={{ background: `linear-gradient(to right, ${color} 50%, transparent 50%)` }} />
-    );
+    pips.push(<span key="half" className={`${styles.pip} ${styles.pipHalf}`} />);
   }
   return (
     <span className={styles.markDots} aria-label={`Mark ${mark} of 5`}>
