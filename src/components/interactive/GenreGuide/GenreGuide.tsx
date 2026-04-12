@@ -63,6 +63,21 @@ const FL_CHIPS: Record<string, { label: string; fl: number }[]> = {
   ],
 };
 
+// FL ranges for filtering — lens must overlap the range to show
+const FL_RANGES: Record<number, [number, number]> = {
+  6:   [6, 10],
+  12:  [6, 18],
+  15:  [12, 24],
+  24:  [18, 40],
+  33:  [24, 45],
+  50:  [35, 70],
+  57:  [40, 75],
+  90:  [60, 120],
+  135: [70, 200],
+  200: [135, 300],
+  300: [200, 600],
+};
+
 const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number }> = {
   astro:        { ev: -7, iso: 1600, fl: 12 },
   landscape:    { ev: 9,  iso: 100,  fl: 24 },
@@ -263,7 +278,13 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         const mark = getGenreMark(l, genre);
         if (mark == null) return false;
         // Filter by mount
-        return crop === 0.79 ? l.mount === "GFX" : l.mount === "X";
+        if (crop === 0.79 ? l.mount !== "GFX" : l.mount !== "X") return false;
+        // Filter by FL range
+        const range = FL_RANGES[aoV];
+        if (range) {
+          if (l.focalLengthMax < range[0] || l.focalLengthMin > range[1]) return false;
+        }
+        return true;
       })
       .map((l) => {
         const mark = getGenreMark(l, genre)!;
@@ -313,7 +334,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       if (weightFilter && el.lens.weight > Number(weightFilter)) return false;
       return true;
     });
-  }, [lenses, genre, crop, ev, iso, mp, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter]);
+  }, [lenses, genre, crop, ev, iso, mp, aoV, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter]);
 
   // ── Sort handler ───────────────────────────────────────────────────────
   function handleSort(key: SortKey): void {
@@ -371,7 +392,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             className={`${styles.genreTab} ${genre === g ? styles.genreTabActive : ""}`}
             onClick={() => handleGenreChange(g)}
           >
-            {genreConfigs[g].name.replace("photography", "").replace(" Photography", "").trim()}
+            {genreConfigs[g].name.replace("Astrophotography", "Astronomy").replace(" Photography", "")}
           </button>
         ))}
       </div>

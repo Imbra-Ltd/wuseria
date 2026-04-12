@@ -108,8 +108,8 @@ describe("GenreGuide", () => {
 
   it("shows filter panel with dropdowns", () => {
     render(<GenreGuide lenses={testLenses} defaultGenre="portrait" />);
-    // Filter panel has Brand, Mark, Price, Weight labels
-    expect(screen.getAllByText("Mark").length).toBeGreaterThanOrEqual(2); // filter + table header
+    expect(screen.getAllByText("Mark").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("Weight")).toBeInTheDocument();
   });
 
   it("displays footnote about scoring methodology", () => {
