@@ -58,6 +58,11 @@ const FL_CHIPS: Record<string, { label: string; fl: number }[]> = {
     { label: "Tele", fl: 135 },
     { label: "Super-tele", fl: 300 },
   ],
+  macro: [
+    { label: "Standard", fl: 50 },
+    { label: "Tele", fl: 90 },
+    { label: "Long macro", fl: 200 },
+  ],
 };
 
 const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number }> = {
@@ -91,10 +96,12 @@ interface EnrichedLens {
 
 function MarkPips({ mark }: { mark: number | null }) {
   if (mark == null) return <span className={styles.markDash}>&ndash;</span>;
-  const color = MARK_PALETTE[mark] || "#8a8070";
+  const full = Math.floor(mark);
+  const half = mark % 1 >= 0.5;
+  const color = MARK_PALETTE[Math.ceil(mark)] || "#8a8070";
   return (
     <span className={styles.markDots} style={{ color }} aria-label={`Mark ${mark} of 5`}>
-      {"●".repeat(mark)}
+      {"●".repeat(full)}{half ? "◐" : ""}
     </span>
   );
 }
@@ -233,7 +240,9 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       ? FL_CHIPS.portrait
       : genre === "sport" || genre === "wildlife"
         ? FL_CHIPS.sportWildlife
-        : FL_CHIPS.default;
+        : genre === "macro"
+          ? FL_CHIPS.macro
+          : FL_CHIPS.default;
 
   // ── Scene label ────────────────────────────────────────────────────────
   function sceneLabel(sceneEv: number): string {
@@ -386,7 +395,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     ["brand", "Brand"],
                     ["fl", "Model"],
                     ["idealIso", "Ideal ISO"],
-                    ["weight", "Weight"],
+                    ["weight", "Wt"],
                     ["price", "Price"],
                   ] as [SortKey, string][]).map(([key, label]) => (
                     <th
@@ -415,7 +424,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     <td>
                       {el.lens.model}
                       {el.lens.sweetSpotAperture && (
-                        <span className={styles.sweetSpot}> f/{el.lens.sweetSpotAperture}</span>
+                        <span className={styles.sweetSpot}> sweet f/{el.lens.sweetSpotAperture}</span>
                       )}
                     </td>
                     <td className={styles.cellRight}>{fmtIso(el.idealIso)}</td>
@@ -440,7 +449,12 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                   {el.lens.brand} {el.lens.model}
                 </div>
                 <div className={styles.cardSpecs}>
-                  {el.lens.sweetSpotAperture && <span>f/{el.lens.sweetSpotAperture}</span>}
+                  <span>f/{el.lens.maxAperture}</span>
+                  <span>
+                    {el.lens.focalLengthMin === el.lens.focalLengthMax
+                      ? `${el.lens.focalLengthMin}mm`
+                      : `${el.lens.focalLengthMin}-${el.lens.focalLengthMax}mm`}
+                  </span>
                   {el.idealIso != null && <span>ISO {fmtIso(el.idealIso)}</span>}
                   <span>{el.lens.weight}g</span>
                 </div>
