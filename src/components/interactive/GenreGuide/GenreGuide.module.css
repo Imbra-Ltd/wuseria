@@ -263,7 +263,17 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 1.5px solid var(--color-text-muted);
+  border: 1.5px solid var(--color-border);
+}
+
+.pipFull {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.pipHalf {
+  background: linear-gradient(to right, var(--color-accent) 50%, transparent 50%);
+  border-color: var(--color-accent);
 }
 
 .markDash {
