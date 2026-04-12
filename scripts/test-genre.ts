@@ -35,6 +35,10 @@ const genres: Record<string, { primary: string[]; secondary: string[] }> = {
     primary: ["cornerStopped", "centerStopped", "distortion"],
     secondary: ["lateralCA", "vignettingStopped", "flareResistance"],
   },
+  macro: {
+    primary: ["centerStopped", "_magnificationScore"],
+    secondary: ["distortion", "lateralCA", "longitudinalCA", "sphericalAberration", "bokeh"],
+  },
 };
 
 const config = genres[genre];
@@ -75,6 +79,22 @@ function apertureScore(maxAp: number): number {
   return 0.0;
 }
 
+function magnificationScore(mag: number): number {
+  if (mag >= 1.0) return 2.0;
+  if (mag >= 0.5) return 1.5;
+  if (mag >= 0.25) return 1.0;
+  if (mag >= 0.15) return 0.5;
+  return 0.0;
+}
+
+function focusDistanceScore(mfd: number): number {
+  if (mfd <= 150) return 2.0;
+  if (mfd <= 250) return 1.5;
+  if (mfd <= 400) return 1.0;
+  if (mfd <= 700) return 0.5;
+  return 0.0;
+}
+
 for (const lens of lenses) {
   const l = lens as Record<string, unknown>;
   if (l.centerStopped == null) continue;
@@ -87,6 +107,14 @@ for (const lens of lenses) {
   }
   if (config.primary.includes("_weightScore") || config.secondary.includes("_weightScore")) {
     (l as Record<string, unknown>)._weightScore = weightScore(l.weight as number);
+  }
+  if (config.primary.includes("_magnificationScore") || config.secondary.includes("_magnificationScore")) {
+    const mag = l.maxMagnification as number | undefined;
+    if (mag != null) (l as Record<string, unknown>)._magnificationScore = magnificationScore(mag);
+  }
+  if (config.primary.includes("_focusDistanceScore") || config.secondary.includes("_focusDistanceScore")) {
+    const mfd = l.minFocusDistance as number | undefined;
+    if (mfd != null) (l as Record<string, unknown>)._focusDistanceScore = focusDistanceScore(mfd);
   }
 
   // Check primaries

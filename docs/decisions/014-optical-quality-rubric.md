@@ -492,7 +492,7 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 | Field | Score | Source data | Rubric rule |
 |-------|-------|-------------|-------------|
 | centerStopped | 2.0 | 82+ lpmm at f/4 (124% of max). "Revelation." | >= 90% |
-| cornerStopped | 0.5 | "Huge discrepancy between centre and edge." | "poor" |
+| cornerStopped | 1.0 | Summary PRO: "good image quality on the edge." Ch4: "hard to have serious reservations, sharp even at max aperture." Gap criticism is relative to near-record center (82 lpmm). | PRO: "good" |
 | centerWideOpen | 2.0 | 76 lpmm at f/2.8 (115% of max). "Sensational." | >= 90% |
 | cornerWideOpen | 1.0 | Summary PRO: "good image quality on the edge of the frame." Ch4: "hard to have serious reservations." | PRO: "good" |
 | astigmatism | 2.0 | 2.5%. "Negligible", "very low." | < 5% |
