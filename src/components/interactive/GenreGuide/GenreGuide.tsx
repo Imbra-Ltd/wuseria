@@ -69,6 +69,7 @@ const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number 
   portrait:     { ev: 10, iso: 200,  fl: 57 },
   sport:        { ev: 13, iso: 800,  fl: 135 },
   wildlife:     { ev: 9,  iso: 3200, fl: 300 },
+  macro:        { ev: 10, iso: 200,  fl: 90 },
 };
 
 type SortKey = "mark" | "pick" | "brand" | "idealIso" | "weight" | "price" | "fl";

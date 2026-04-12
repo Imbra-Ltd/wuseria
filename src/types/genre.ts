@@ -15,8 +15,8 @@ type Genre =
   | "architecture"
   | "macro";
 
-// Genres with scoring data implemented so far
-type ScoredGenre = Exclude<Genre, "macro">;
+// All genres now have scoring formulas
+type ScoredGenre = Genre;
 
 // =============================================================================
 // GENRE CONFIG

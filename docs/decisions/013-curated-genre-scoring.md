@@ -63,26 +63,39 @@ Additional scoring inputs: `maxAperture` (light gathering), `minFocusDistance`,
 
 ### Genre suitability — what each formula prioritises
 
-| Genre | Primary factors | Secondary factors |
-|-------|----------------|-------------------|
-| **Astro** | Low coma, low astigmatism, cornerStopped, light gathering (wide maxAperture) | vignettingWideOpen |
-| **Landscape** | cornerStopped, centerStopped, flareResistance | distortion, lateralCA |
-| **Architecture** | distortion, cornerStopped, centerStopped | lateralCA, tilt-shift capability |
-| **Street** | centerWideOpen, low vignettingWideOpen, bokeh | longitudinalCA, flareResistance |
-| **Travel** | centerWideOpen, centerStopped, flareResistance | distortion, vignettingWideOpen, lateralCA |
-| **Portrait** | bokeh, centerWideOpen, low longitudinalCA | flareResistance, vignettingWideOpen (for creative use) |
-| **Sport** | centerWideOpen, low longitudinalCA | lateralCA, flareResistance |
-| **Wildlife** | centerWideOpen, low longitudinalCA, cornerStopped | lateralCA, flareResistance |
+Each genre formula uses **primary floor + weighted average**:
+- Primary fields (w=3) determine the tier — mark cannot exceed floor
+  (min of all primary values)
+- Secondary fields (w=1) determine rank within tier
+- Floor = min(all primary fields), capped = min(raw, floor)
+- Mark mapping: capped × 2 + 1, rounded to nearest 0.5, clamped 1–5
+- Primary fields must all be present; 50% of all optical fields required
 
-Each genre's formula weights these factors, inverts penalties (low coma = good
-for astro), and maps the result to a 1–5 mark.
+| Genre | Primary (w=3) | Secondary (w=1) |
+|-------|--------------|-----------------|
+| **Astro** | coma, astigmatism, apertureScore | lateralCA, centerWideOpen, cornerWideOpen, longitudinalCA, vignettingWideOpen, sphericalAberration |
+| **Landscape** | cornerStopped, centerStopped | distortion, lateralCA, longitudinalCA, vignettingStopped, flareResistance, astigmatism, coma |
+| **Architecture** | cornerStopped, centerStopped, distortion | lateralCA, vignettingStopped, flareResistance |
+| **Portrait** | bokeh, centerWideOpen | longitudinalCA, sphericalAberration, vignettingWideOpen |
+| **Street** | centerStopped, apertureScore | centerWideOpen, flareResistance, longitudinalCA, coma |
+| **Travel** | centerStopped, weightScore | apertureScore, flareResistance, longitudinalCA |
+| **Sport** | centerWideOpen | apertureScore, longitudinalCA, lateralCA |
+| **Wildlife** | centerWideOpen, centerStopped | apertureScore, longitudinalCA, lateralCA |
+| **Macro** | centerStopped, magnificationScore | distortion, lateralCA, longitudinalCA, sphericalAberration, bokeh |
+
+**Physical property scores** (computed from lens specs, not reviews):
+- `apertureScore`: f/1.4+=2.0, f/2=1.5, f/2.8=1.0, f/4=0.5, f/4.5+=0.0
+- `weightScore`: <200g=2.0, ≤400g=1.5, ≤700g=1.0, ≤1000g=0.5, >1000g=0.0
+- `magnificationScore`: ≥1.0x=2.0, ≥0.5x=1.5, ≥0.25x=1.0, ≥0.15x=0.5, <0.15x=0.0
 
 **Focal length is never a scoring input.** It is a creative choice. The genre
 guide shows recommended FL ranges as filter presets, but FL does not affect
 the mark.
 
-**OIS, weather resistance, autofocus, and weight are not scoring inputs.**
+**OIS, weather resistance, and autofocus are not scoring inputs.**
 These are display attributes shown alongside marks in the genre guide.
+Weight and aperture ARE scoring inputs for genres where they directly
+enable or prevent the photographic work (see ADR-014 for thresholds).
 
 ### Data coverage rule
 

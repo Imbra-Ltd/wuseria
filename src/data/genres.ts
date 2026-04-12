@@ -70,6 +70,14 @@ const genreConfigs: Record<ScoredGenre, GenreConfig> = {
       "Long reach with sharp optics to photograph animals at distance. Teleconverter compatibility is a plus.",
     typicalFl: ["tele", "super-tele"],
   },
+  macro: {
+    genre: "macro",
+    name: "Macro Photography",
+    tagline: "Tripod · maximize magnification · peak sharpness",
+    description:
+      "Close-up imaging of small subjects. Magnification ratio and center sharpness at stopped-down apertures matter most.",
+    typicalFl: ["standard", "tele"],
+  },
 };
 
 // =============================================================================
@@ -210,6 +218,7 @@ const genreSceneFilter: Record<ScoredGenre, (ev: number) => boolean> = {
   portrait: (ev) => ev >= 5 && ev <= 14,
   sport: (ev) => ev >= 6 && ev <= 16,
   wildlife: (ev) => ev >= 5 && ev <= 14,
+  macro: (ev) => ev >= 5 && ev <= 14,
 };
 
 // =============================================================================
