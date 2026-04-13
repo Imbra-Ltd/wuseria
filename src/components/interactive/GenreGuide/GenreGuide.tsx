@@ -167,7 +167,7 @@ const MATRIX_FL_COLS: Record<number, number[]> = {
   300: [150, 200, 300, 400],
 };
 
-const MATRIX_APERTURES = [1.0, 1.2, 1.4, 1.8, 2.0, 2.8, 4.0];
+const MATRIX_APERTURES = [1.0, 1.2, 1.4, 1.8, 2.0, 2.8, 3.5, 4.0, 4.5, 5.6];
 
 function ExposureMatrix({ crop, iso, ev, aoV }: { crop: number; iso: number; ev: number; aoV: number }) {
   const cols = MATRIX_FL_COLS[aoV] || MATRIX_FL_COLS[12];

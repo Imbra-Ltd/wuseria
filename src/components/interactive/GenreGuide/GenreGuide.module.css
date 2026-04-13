@@ -152,8 +152,9 @@
 
 .controls {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  align-items: center;
   margin-bottom: var(--space-sm);
 }
 
