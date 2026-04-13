@@ -20,6 +20,7 @@ import { astroExposure, handheldExposure } from "./exposure";
 import { ChipGroup } from "../shared/ChipGroup";
 import { MarkPips, PickStar, FieldVal } from "../shared/MarkPips";
 import { ExposureMatrix } from "./ExposureMatrix";
+import { LandscapeMatrix } from "./LandscapeMatrix";
 import styles from "./GenreGuide.module.css";
 
 // =============================================================================
@@ -40,7 +41,7 @@ const SCORED_GENRES: ScoredGenre[] = [
   "travel", "portrait", "sport", "wildlife", "macro",
 ];
 
-type SortKey = "mark" | "pick" | "brand" | "idealIso" | "weight" | "price" | "fl" | "aperture" | "rule500" | "coma" | "astigmatism" | "wr";
+type SortKey = "mark" | "pick" | "brand" | "idealIso" | "weight" | "price" | "fl" | "aperture" | "rule500" | "coma" | "astigmatism" | "wr" | "cornerStopped" | "centerStopped" | "distortion" | "flareResistance";
 
 // =============================================================================
 // ENRICHED LENS — lens + computed fields for display
@@ -80,9 +81,14 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
   const [astigFilter, setAstigFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [wrFilter, setWrFilter] = useState("");
+  const [cornerFilter, setCornerFilter] = useState("");
+  const [distFilter, setDistFilter] = useState("");
+  const [flareFilter, setFlareFilter] = useState("");
   const sceneListRef = useRef<HTMLDivElement>(null);
 
   const isNightscape = genre === "nightscape";
+  const isLandscape = genre === "landscape";
+  const isArchitecture = genre === "architecture";
   const FL_CHIPS = cropFactor === 0.79 ? FL_CHIPS_GFX : FL_CHIPS_X;
   const FL_RANGES = cropFactor === 0.79 ? FL_RANGES_GFX : FL_RANGES_X;
 
@@ -105,6 +111,9 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
     setAstigFilter("");
     setTypeFilter("");
     setWrFilter("");
+    setCornerFilter("");
+    setDistFilter("");
+    setFlareFilter("");
   }
 
   // -- Scene scroll ---------------------------------------------------------
@@ -199,6 +208,18 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         case "wr":
           v = (a.lens.isWeatherSealed ? 1 : 0) - (b.lens.isWeatherSealed ? 1 : 0);
           break;
+        case "cornerStopped":
+          v = (a.lens.cornerStopped ?? -1) - (b.lens.cornerStopped ?? -1);
+          break;
+        case "centerStopped":
+          v = (a.lens.centerStopped ?? -1) - (b.lens.centerStopped ?? -1);
+          break;
+        case "distortion":
+          v = (a.lens.distortion ?? -1) - (b.lens.distortion ?? -1);
+          break;
+        case "flareResistance":
+          v = (a.lens.flareResistance ?? -1) - (b.lens.flareResistance ?? -1);
+          break;
       }
       return sortAsc ? v : -v;
     });
@@ -214,9 +235,12 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       if (typeFilter && el.lens.type !== typeFilter) return false;
       if (wrFilter === "yes" && !el.lens.isWeatherSealed) return false;
       if (wrFilter === "no" && el.lens.isWeatherSealed) return false;
+      if (cornerFilter && (el.lens.cornerStopped == null || el.lens.cornerStopped < Number(cornerFilter))) return false;
+      if (distFilter && (el.lens.distortion == null || el.lens.distortion < Number(distFilter))) return false;
+      if (flareFilter && (el.lens.flareResistance == null || el.lens.flareResistance < Number(flareFilter))) return false;
       return true;
     });
-  }, [lenses, genre, cropFactor, ev, iso, sensorMp, selectedFl, sortBy, sortAsc, isNightscape, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter]);
+  }, [lenses, genre, cropFactor, ev, iso, sensorMp, selectedFl, sortBy, sortAsc, isNightscape, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter, cornerFilter, distFilter, flareFilter]);
 
   // -- Sort handler ---------------------------------------------------------
   function handleSort(key: SortKey): void {
@@ -417,6 +441,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
               <ExposureMatrix cropFactor={cropFactor} iso={iso} ev={ev} selectedFl={selectedFl} />
             </div>
           )}
+          {(isLandscape || isArchitecture) && (
+            <div className={styles.matrixPanel}>
+              <LandscapeMatrix cropFactor={cropFactor} iso={iso} ev={ev} nd={nd} />
+            </div>
+          )}
         </div>{/* end main */}
       </div>{/* end layout */}
 
@@ -487,8 +516,44 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             </select>
           </div>
         )}
-        {/* Weight — non-astro */}
-        {!isNightscape && (
+        {/* CornerS — landscape */}
+        {isLandscape && (
+          <div className={styles.controlGroup}>
+            <span className={styles.controlLabel}>CornerS</span>
+            <select className={styles.controlSelect} value={cornerFilter} onChange={(e) => setCornerFilter(e.target.value)}>
+              <option value="">Any</option>
+              {[2.0, 1.5, 1.0].map((v) => (
+                <option key={v} value={v}>≥ {v}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        {/* Dist — landscape */}
+        {isLandscape && (
+          <div className={styles.controlGroup}>
+            <span className={styles.controlLabel}>Dist</span>
+            <select className={styles.controlSelect} value={distFilter} onChange={(e) => setDistFilter(e.target.value)}>
+              <option value="">Any</option>
+              {[2.0, 1.5, 1.0].map((v) => (
+                <option key={v} value={v}>≥ {v}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        {/* Flare — landscape */}
+        {isLandscape && (
+          <div className={styles.controlGroup}>
+            <span className={styles.controlLabel}>Flare</span>
+            <select className={styles.controlSelect} value={flareFilter} onChange={(e) => setFlareFilter(e.target.value)}>
+              <option value="">Any</option>
+              {[2.0, 1.5, 1.0].map((v) => (
+                <option key={v} value={v}>≥ {v}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        {/* Weight — non-astro, non-landscape */}
+        {!isNightscape && !isLandscape && (
           <div className={styles.controlGroup}>
             <span className={styles.controlLabel}>Wt</span>
             <select className={styles.controlSelect} value={weightFilter} onChange={(e) => setWeightFilter(e.target.value)}>
@@ -499,8 +564,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             </select>
           </div>
         )}
-        {/* WR — astro */}
-        {isNightscape && (
+        {/* WR — astro + landscape */}
+        {(isNightscape || isLandscape) && (
           <div className={styles.controlGroup}>
             <span className={styles.controlLabel}>WR</span>
             <select className={styles.controlSelect} value={wrFilter} onChange={(e) => setWrFilter(e.target.value)}>
@@ -521,11 +586,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           </select>
         </div>
         {/* Clear */}
-        {(brandFilter || markFilter || priceFilter || weightFilter || apertureFilter || comaFilter || astigFilter || typeFilter || wrFilter) && (
+        {(brandFilter || markFilter || priceFilter || weightFilter || apertureFilter || comaFilter || astigFilter || typeFilter || wrFilter || cornerFilter || distFilter || flareFilter) && (
           <button
             type="button"
             className={styles.clearBtn}
-            onClick={() => { setBrandFilter(""); setMarkFilter(""); setPriceFilter(""); setWeightFilter(""); setApertureFilter(""); setComaFilter(""); setAstigFilter(""); setTypeFilter(""); setWrFilter(""); }}
+            onClick={() => { setBrandFilter(""); setMarkFilter(""); setPriceFilter(""); setWeightFilter(""); setApertureFilter(""); setComaFilter(""); setAstigFilter(""); setTypeFilter(""); setWrFilter(""); setCornerFilter(""); setDistFilter(""); setFlareFilter(""); }}
           >
             ✕ clear
           </button>
@@ -552,6 +617,19 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     ["astigmatism", "Astig"],
                     ["rule500", "Rule 500"],
                     ["idealIso", "Ideal ISO"],
+                    ["wr", "WR"],
+                    ["price", "Price"],
+                  ] as [SortKey, string][]) : isLandscape ? ([
+                    ["mark", "Mark"],
+                    ["pick", ""],
+                    ["brand", "Brand"],
+                    ["fl", "Model"],
+                    ["fl", "FL"],
+                    ["aperture", "f/"],
+                    ["cornerStopped", "CornerS"],
+                    ["centerStopped", "CenterS"],
+                    ["distortion", "Dist"],
+                    ["flareResistance", "Flare"],
                     ["wr", "WR"],
                     ["price", "Price"],
                   ] as [SortKey, string][]) : ([
@@ -594,13 +672,23 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                         <td>{fmtIso(el.idealIso)}</td>
                       </>
                     )}
-                    {!isNightscape && (
+                    {isLandscape && (
+                      <>
+                        <td>{el.effectiveFl}mm</td>
+                        <td>f/{el.lens.maxAperture}</td>
+                        <td><FieldVal value={el.lens.cornerStopped} /></td>
+                        <td><FieldVal value={el.lens.centerStopped} /></td>
+                        <td><FieldVal value={el.lens.distortion} /></td>
+                        <td><FieldVal value={el.lens.flareResistance} /></td>
+                      </>
+                    )}
+                    {!isNightscape && !isLandscape && (
                       <>
                         <td>{fmtIso(el.idealIso)}</td>
                         <td>{el.lens.weight}g</td>
                       </>
                     )}
-                    {isNightscape && (
+                    {(isNightscape || isLandscape) && (
                       <td><span className={el.lens.isWeatherSealed ? styles.dotOn : styles.dotOff} /></td>
                     )}
                     <td>~${el.lens.price}</td>
@@ -632,6 +720,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                   {isNightscape && el.rule500 != null && <span>{el.rule500}s</span>}
                   {el.idealIso != null && <span>ISO {fmtIso(el.idealIso)}</span>}
                   {isNightscape && <><span>Coma <FieldVal value={el.lens.coma} /></span><span>Astig <FieldVal value={el.lens.astigmatism} /></span></>}
+                  {isLandscape && <><span>CornerS <FieldVal value={el.lens.cornerStopped} /></span><span>CenterS <FieldVal value={el.lens.centerStopped} /></span></>}
                   <span>{el.lens.weight}g</span>
                 </div>
               </div>
@@ -645,7 +734,10 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         {isNightscape && (
           <>{" · "}<a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Find dark skies</a></>
         )}
-        {" · "}FL is a creative choice, not a scoring input.
+        {" · "}
+        {isLandscape
+          ? "Marks are driven by corner and center sharpness at stopped-down apertures as primary factors, with distortion, chromatic aberration, vignetting, flare resistance, astigmatism, and coma as secondary."
+          : "FL is a creative choice, not a scoring input."}
       </div>
     </div>
   );
