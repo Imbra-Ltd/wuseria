@@ -693,7 +693,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     <th
                       key={`${key}-${label}`}
                       className={
-                        label === "FL" || label === "Rule 500" || label === "Ideal ISO" || label === "Wt" || label === "Price"
+                        false
                           ? styles.cellRight
                           : key === "pick"
                             ? styles.cellCenter
@@ -717,18 +717,18 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     {isAstro && (
                       <>
                         <td>f/{el.lens.maxAperture}</td>
-                        <td className={styles.cellRight}>{el.lens.focalLengthMin}mm</td>
-                        <td className={styles.cellRight}>{el.rule500}s</td>
-                        <td className={styles.cellRight}>{fmtIso(el.idealIso)}</td>
+                        <td>{el.lens.focalLengthMin}mm</td>
+                        <td>{el.rule500}s</td>
+                        <td>{fmtIso(el.idealIso)}</td>
                         <td><FieldVal value={el.lens.coma} /></td>
                         <td><FieldVal value={el.lens.astigmatism} /></td>
                       </>
                     )}
                     {!isAstro && (
-                      <td className={styles.cellRight}>{fmtIso(el.idealIso)}</td>
+                      <td>{fmtIso(el.idealIso)}</td>
                     )}
-                    <td className={styles.cellRight}>{el.lens.weight}g</td>
-                    <td className={styles.cellRight}>~${el.lens.price}</td>
+                    <td>{el.lens.weight}g</td>
+                    <td>~${el.lens.price}</td>
                   </tr>
                 ))}
               </tbody>
