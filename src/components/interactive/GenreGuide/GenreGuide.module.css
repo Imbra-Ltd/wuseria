@@ -633,16 +633,23 @@
 .footer {
   margin-top: var(--space-md);
   font-size: 11px;
-  color: var(--color-text-muted);
   line-height: 1.6;
 }
 
-.footerLink {
+.footerText {
   color: var(--color-text-muted);
-  text-decoration: underline;
-  text-decoration-color: var(--color-border);
+  margin-bottom: var(--space-xs);
+}
+
+.footerLinks {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.footerLink {
+  color: var(--color-link);
 }
 
 .footerLink:hover {
-  color: var(--color-text);
+  color: var(--color-link-hover);
 }
