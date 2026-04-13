@@ -7,8 +7,10 @@ import {
   genreEvLabels,
   genreSceneFilter,
   ND_OPTIONS,
-  FL_CHIPS,
-  FL_RANGES,
+  FL_CHIPS_X,
+  FL_CHIPS_GFX,
+  FL_RANGES_X,
+  FL_RANGES_GFX,
   GENRE_DEFAULTS,
   GENRE_EQUIPMENT,
   NIGHTSCAPE_ISO_BY_EV,
@@ -81,6 +83,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
   const sceneListRef = useRef<HTMLDivElement>(null);
 
   const isNightscape = genre === "nightscape";
+  const FL_CHIPS = cropFactor === 0.79 ? FL_CHIPS_GFX : FL_CHIPS_X;
+  const FL_RANGES = cropFactor === 0.79 ? FL_RANGES_GFX : FL_RANGES_X;
 
   // -- Genre change -> reset all --------------------------------------------
   function handleGenreChange(g: ScoredGenre): void {
@@ -231,7 +235,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
     );
   }
 
-  // -- FL chips -------------------------------------------------------------
+  // -- FL chips ----------------------------------------------------------------
   const flChips =
     genre === "portrait"
       ? FL_CHIPS.portrait
@@ -337,6 +341,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                   setCropFactor(c);
                   setSensorMp(c === 0.79 ? 102 : 26);
                   if (isNightscape) setIso(c === 0.79 ? 3200 : 1600);
+                  const chips = c === 0.79 ? FL_CHIPS_GFX : FL_CHIPS_X;
+                  setSelectedFl(chips.default[0].fl);
                 }}
                 styles={styles}
                 options={[

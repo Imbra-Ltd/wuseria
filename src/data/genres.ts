@@ -249,7 +249,8 @@ const ND_OPTIONS = [
 // FL CHIPS — per-genre focal-length presets
 // =============================================================================
 
-const FL_CHIPS: Record<string, { label: string; fl: number }[]> = {
+// APS-C (X-mount, crop 1.5)
+const FL_CHIPS_X: Record<string, { label: string; fl: number }[]> = {
   default: [
     { label: "Ultra-wide", fl: 12 },
     { label: "Wide", fl: 24 },
@@ -274,12 +275,38 @@ const FL_CHIPS: Record<string, { label: string; fl: number }[]> = {
   ],
 };
 
+// GFX (medium format, crop 0.79)
+const FL_CHIPS_GFX: Record<string, { label: string; fl: number }[]> = {
+  default: [
+    { label: "Ultra-wide", fl: 23 },
+    { label: "Wide", fl: 35 },
+    { label: "Standard", fl: 63 },
+    { label: "Tele", fl: 200 },
+    { label: "Super-tele", fl: 500 },
+  ],
+  portrait: [
+    { label: "Group", fl: 23 },
+    { label: "Indoor", fl: 55 },
+    { label: "Outdoor", fl: 80 },
+  ],
+  sportWildlife: [
+    { label: "Standard", fl: 63 },
+    { label: "Tele", fl: 200 },
+    { label: "Super-tele", fl: 500 },
+  ],
+  macro: [
+    { label: "Standard", fl: 63 },
+    { label: "Tele", fl: 120 },
+    { label: "Long macro", fl: 200 },
+  ],
+};
+
 // =============================================================================
-// FL RANGES — lens must overlap the range to show (actual X-mount focal lengths)
+// FL RANGES — lens must overlap the range to show
 // =============================================================================
 
-// Ultra-wide: 6-15mm, Wide: 16-27mm, Standard: 28-56mm, Tele: 57-150mm, Super-tele: 151+
-const FL_RANGES: Record<number, [number, number]> = {
+// APS-C: Ultra-wide 6-15mm, Wide 16-27mm, Standard 28-56mm, Tele 57-150mm, Super-tele 151+
+const FL_RANGES_X: Record<number, [number, number]> = {
   12:  [6, 15],      // Ultra-wide
   15:  [12, 24],     // Portrait group
   24:  [16, 27],     // Wide
@@ -290,6 +317,18 @@ const FL_RANGES: Record<number, [number, number]> = {
   135: [57, 150],    // Tele
   200: [100, 300],   // Long macro
   300: [151, 600],   // Super-tele
+};
+
+// GFX: Ultra-wide 14-30mm, Wide 31-45mm, Standard 46-90mm, Tele 91-250mm, Super-tele 251+
+const FL_RANGES_GFX: Record<number, [number, number]> = {
+  23:  [14, 30],     // Ultra-wide
+  35:  [31, 45],     // Wide
+  55:  [31, 60],     // Portrait indoor
+  63:  [46, 90],     // Standard
+  80:  [50, 100],    // Portrait outdoor
+  120: [91, 250],    // Tele / macro tele
+  200: [91, 250],    // Tele
+  500: [251, 600],   // Super-tele
 };
 
 // =============================================================================
@@ -337,12 +376,22 @@ const NIGHTSCAPE_ISO_BY_EV: Record<number, number> = {
 // EXPOSURE MATRIX CONSTANTS — focal lengths and apertures for nightscape grid
 // =============================================================================
 
-const MATRIX_FL_COLS: Record<number, number[]> = {
+// APS-C matrix FL columns (keyed by FL chip value)
+const MATRIX_FL_COLS_X: Record<number, number[]> = {
   12:  [8, 10, 12, 14],
   24:  [16, 18, 23, 27],
   50:  [33, 35, 50, 56],
   135: [60, 80, 90, 100, 135],
   300: [150, 200, 300, 400],
+};
+
+// GFX matrix FL columns (keyed by FL chip value)
+const MATRIX_FL_COLS_GFX: Record<number, number[]> = {
+  23:  [20, 23, 30, 35],
+  35:  [32, 35, 45, 50],
+  63:  [45, 55, 63, 80],
+  200: [100, 120, 200, 250],
+  500: [250, 500],
 };
 
 const MATRIX_APERTURES = [1.0, 1.4, 2.0, 2.8, 4.0, 5.6, 8, 11];
@@ -357,11 +406,14 @@ export {
   genreEvLabels,
   genreSceneFilter,
   ND_OPTIONS,
-  FL_CHIPS,
-  FL_RANGES,
+  FL_CHIPS_X,
+  FL_CHIPS_GFX,
+  FL_RANGES_X,
+  FL_RANGES_GFX,
   GENRE_DEFAULTS,
   GENRE_EQUIPMENT,
   NIGHTSCAPE_ISO_BY_EV,
-  MATRIX_FL_COLS,
+  MATRIX_FL_COLS_X,
+  MATRIX_FL_COLS_GFX,
   MATRIX_APERTURES,
 };

@@ -1,4 +1,4 @@
-import { MATRIX_FL_COLS, MATRIX_APERTURES } from "../../../data/genres";
+import { MATRIX_FL_COLS_X, MATRIX_FL_COLS_GFX, MATRIX_APERTURES } from "../../../data/genres";
 import styles from "./GenreGuide.module.css";
 
 interface ExposureMatrixProps {
@@ -9,7 +9,9 @@ interface ExposureMatrixProps {
 }
 
 function ExposureMatrix({ cropFactor, iso, ev, selectedFl }: ExposureMatrixProps) {
-  const cols = MATRIX_FL_COLS[selectedFl] || MATRIX_FL_COLS[12];
+  const MATRIX_FL_COLS = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
+  const fallback = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
+  const cols = MATRIX_FL_COLS[selectedFl] || fallback;
 
   return (
     <div className={styles.matrix}>
