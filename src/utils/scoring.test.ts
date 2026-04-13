@@ -117,7 +117,7 @@ describe("magnificationScore", () => {
 // =============================================================================
 
 describe("resolveField", () => {
-  const lens = findLens("XF 56mm f/1.2 R WR");
+  const lens = findLens("XF 56mm f/1.2 R LM WR");
 
   it("returns optical fields directly", () => {
     expect(resolveField(lens, "centerStopped")).toBe(2.0);
@@ -152,7 +152,7 @@ describe("resolveField", () => {
 
 describe("opticalFieldCount", () => {
   it("counts populated optical fields", () => {
-    const lens = findLens("XF 56mm f/1.2 R WR");
+    const lens = findLens("XF 56mm f/1.2 R LM WR");
     expect(opticalFieldCount(lens)).toBe(14);
   });
 
@@ -205,7 +205,7 @@ describe("computeGenreMark", () => {
 
   it("computes mark 5 for perfect lens (landscape)", () => {
     const result = computeGenreMark(
-      findLens("XF 56mm f/1.2 R WR"),
+      findLens("XF 56mm f/1.2 R LM WR"),
       "landscape",
     );
     expect(result).not.toBeNull();
@@ -216,7 +216,7 @@ describe("computeGenreMark", () => {
   it("floors mark by worst primary field", () => {
     // XF 14mm f/2.8: cornerStopped=1, centerStopped=2 → floor=1
     const result = computeGenreMark(
-      findLens("XF 14mm f/2.8"),
+      findLens("XF 14mm f/2.8 R"),
       "landscape",
     );
     expect(result).not.toBeNull();
@@ -227,7 +227,7 @@ describe("computeGenreMark", () => {
   it("includes derived fields in scoring", () => {
     // Street uses _apertureScore as primary
     const result = computeGenreMark(
-      findLens("XF 56mm f/1.2 R WR"),
+      findLens("XF 56mm f/1.2 R LM WR"),
       "street",
     );
     expect(result).not.toBeNull();
@@ -237,7 +237,7 @@ describe("computeGenreMark", () => {
   it("uses magnificationScore for macro genre", () => {
     // XF 80mm f/2.8 Macro: mag=1.0 → magnificationScore=2.0
     const result = computeGenreMark(
-      findLens("XF 80mm f/2.8 Macro"),
+      findLens("XF 80mm f/2.8 R LM OIS WR Macro"),
       "macro",
     );
     expect(result).not.toBeNull();
@@ -245,9 +245,9 @@ describe("computeGenreMark", () => {
   });
 
   it("gates non-macro lenses in macro genre", () => {
-    // XF 56mm f/1.2 R WR: mag=0.09 → magnificationScore=0 → floor=0 → mark=1
+    // XF 56mm f/1.2 R LM WR: mag=0.09 → magnificationScore=0 → floor=0 → mark=1
     const result = computeGenreMark(
-      findLens("XF 56mm f/1.2 R WR"),
+      findLens("XF 56mm f/1.2 R LM WR"),
       "macro",
     );
     expect(result).not.toBeNull();
@@ -262,7 +262,7 @@ describe("computeGenreMark", () => {
 
 describe("computeAllGenreMarks", () => {
   it("computes marks for all qualifying genres", () => {
-    const marks = computeAllGenreMarks(findLens("XF 56mm f/1.2 R WR"));
+    const marks = computeAllGenreMarks(findLens("XF 56mm f/1.2 R LM WR"));
     expect(Object.keys(marks).length).toBeGreaterThan(0);
     expect(marks.landscape).toBe(5);
     expect(marks.street).toBe(5);
@@ -287,51 +287,51 @@ describe("genre mark snapshots", () => {
     mark: number;
   }> = [
     // Landscape
-    { model: "XF 56mm f/1.2 R WR", genre: "landscape", mark: 5 },
-    { model: "XF 200mm f/2.0", genre: "landscape", mark: 5 },
-    { model: "XF 90mm f/2.0", genre: "landscape", mark: 4 },
-    { model: "XF 14mm f/2.8", genre: "landscape", mark: 3 },
+    { model: "XF 56mm f/1.2 R LM WR", genre: "landscape", mark: 5 },
+    { model: "XF 200mm f/2.0 R LM OIS WR", genre: "landscape", mark: 5 },
+    { model: "XF 90mm f/2.0 R LM WR", genre: "landscape", mark: 4 },
+    { model: "XF 14mm f/2.8 R", genre: "landscape", mark: 3 },
 
     // Architecture
-    { model: "XF 56mm f/1.2 R WR", genre: "architecture", mark: 5 },
-    { model: "XF 90mm f/2.0", genre: "architecture", mark: 4 },
+    { model: "XF 56mm f/1.2 R LM WR", genre: "architecture", mark: 5 },
+    { model: "XF 90mm f/2.0 R LM WR", genre: "architecture", mark: 4 },
     { model: "XF 8-16mm f/2.8 R LM WR", genre: "architecture", mark: 4 },
 
     // Portrait
-    { model: "XF 200mm f/2.0", genre: "portrait", mark: 5 },
-    { model: "XF 90mm f/2.0", genre: "portrait", mark: 4 },
-    { model: "XF 80mm f/2.8 Macro", genre: "portrait", mark: 4 },
+    { model: "XF 200mm f/2.0 R LM OIS WR", genre: "portrait", mark: 5 },
+    { model: "XF 90mm f/2.0 R LM WR", genre: "portrait", mark: 4 },
+    { model: "XF 80mm f/2.8 R LM OIS WR Macro", genre: "portrait", mark: 4 },
 
     // Street
-    { model: "XF 56mm f/1.2 R WR", genre: "street", mark: 5 },
-    { model: "XF 33mm f/1.4 LM WR", genre: "street", mark: 4.5 },
+    { model: "XF 56mm f/1.2 R LM WR", genre: "street", mark: 5 },
+    { model: "XF 33mm f/1.4 R LM WR", genre: "street", mark: 4.5 },
     { model: "XF 23mm f/1.4 R LM WR", genre: "street", mark: 4.5 },
 
     // Travel
-    { model: "XF 16mm f/2.8", genre: "travel", mark: 4.5 },
-    { model: "XF 23mm f/2.0", genre: "travel", mark: 4.5 },
-    { model: "XF 200mm f/2.0", genre: "travel", mark: 1 }, // too heavy
+    { model: "XF 16mm f/2.8 R LM WR", genre: "travel", mark: 4.5 },
+    { model: "XF 23mm f/2.0 R WR", genre: "travel", mark: 4.5 },
+    { model: "XF 200mm f/2.0 R LM OIS WR", genre: "travel", mark: 1 }, // too heavy
 
     // Sport
-    { model: "XF 56mm f/1.2 R WR", genre: "sport", mark: 5 },
-    { model: "XF 200mm f/2.0", genre: "sport", mark: 5 },
-    { model: "XF 90mm f/2.0", genre: "sport", mark: 4.5 },
+    { model: "XF 56mm f/1.2 R LM WR", genre: "sport", mark: 5 },
+    { model: "XF 200mm f/2.0 R LM OIS WR", genre: "sport", mark: 5 },
+    { model: "XF 90mm f/2.0 R LM WR", genre: "sport", mark: 4.5 },
 
     // Wildlife
-    { model: "XF 56mm f/1.2 R WR", genre: "wildlife", mark: 5 },
-    { model: "XF 200mm f/2.0", genre: "wildlife", mark: 5 },
-    { model: "XF 90mm f/2.0", genre: "wildlife", mark: 5 },
+    { model: "XF 56mm f/1.2 R LM WR", genre: "wildlife", mark: 5 },
+    { model: "XF 200mm f/2.0 R LM OIS WR", genre: "wildlife", mark: 5 },
+    { model: "XF 90mm f/2.0 R LM WR", genre: "wildlife", mark: 5 },
 
     // Astro
-    { model: "XF 56mm f/1.2 R WR", genre: "astro", mark: 4.5 },
-    { model: "XF 90mm f/2.0", genre: "astro", mark: 4 },
+    { model: "XF 56mm f/1.2 R LM WR", genre: "astro", mark: 4.5 },
+    { model: "XF 90mm f/2.0 R LM WR", genre: "astro", mark: 4 },
     { model: "12mm f/2", genre: "astro", mark: 4 },
     { model: "XF 100-400mm f/4.5-5.6 R LM OIS WR", genre: "astro", mark: 1 },
 
     // Macro
-    { model: "XF 80mm f/2.8 Macro", genre: "macro", mark: 5 },
-    { model: "XF 60mm f/2.4 Macro", genre: "macro", mark: 4 },
-    { model: "XF 56mm f/1.2 R WR", genre: "macro", mark: 1 },
+    { model: "XF 80mm f/2.8 R LM OIS WR Macro", genre: "macro", mark: 5 },
+    { model: "XF 60mm f/2.4 R Macro", genre: "macro", mark: 4 },
+    { model: "XF 56mm f/1.2 R LM WR", genre: "macro", mark: 1 },
   ];
 
   for (const { model, genre, mark } of snapshots) {
@@ -369,7 +369,7 @@ describe("genreFormulas", () => {
 
 const scored = makeLens({
   brand: "Fujifilm",
-  model: "XF 90mm f/2.0",
+  model: "XF 90mm f/2.0 R LM WR",
   genreMarks: { portrait: 5, sport: 3, wildlife: 3 },
   editorialPicks: ["portrait"],
 });
