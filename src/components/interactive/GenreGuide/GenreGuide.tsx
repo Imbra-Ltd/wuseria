@@ -540,8 +540,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
               <span className={styles.controlLabel}>ISO</span>
               <div className={styles.flRow}>
                 {(crop === 0.79
-                  ? [100, 200, 400, 800, 1600, 3200, 6400, 12800]
-                  : [100, 200, 400, 800, 1600, 3200, 6400]
+                  ? [64, 100, 200, 400, 800, 1600, 3200, 6400, 12800]
+                  : [64, 100, 200, 400, 800, 1600, 3200, 6400]
                 ).map((v) => (
                   <button
                     key={v}
