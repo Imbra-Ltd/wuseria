@@ -633,17 +633,7 @@
 .footer {
   margin-top: var(--space-md);
   font-size: 11px;
-  line-height: 1.6;
-}
-
-.footerText {
   color: var(--color-text-muted);
-  margin-bottom: var(--space-xs);
-}
-
-.footerLinks {
-  display: flex;
-  gap: var(--space-md);
 }
 
 .footerLink {
