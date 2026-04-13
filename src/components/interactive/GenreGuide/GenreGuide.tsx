@@ -580,12 +580,6 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           {/* Exposure matrix — separate panel */}
           {isAstro && (
             <div className={styles.matrixPanel}>
-              {ev > -2 && (
-                <p className={styles.matrixWarn}>
-                  EV {ev} is heavily light-polluted. Stars will be buried in sky glow.
-                  Consider a light pollution filter or travel to a darker site (EV -4 or below).
-                </p>
-              )}
               <ExposureMatrix crop={crop} iso={iso} ev={ev} aoV={aoV} />
             </div>
           )}
