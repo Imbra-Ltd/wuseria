@@ -80,7 +80,7 @@ const FL_RANGES: Record<number, [number, number]> = {
 };
 
 const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number }> = {
-  astro:        { ev: -7, iso: 1600, fl: 12 },
+  astro:        { ev: -7, iso: 3200, fl: 12 },
   landscape:    { ev: 9,  iso: 100,  fl: 24 },
   architecture: { ev: 7,  iso: 200,  fl: 12 },
   street:       { ev: 2,  iso: 6400, fl: 24 },
@@ -154,6 +154,12 @@ function PickStar({ isPick }: { isPick: boolean }) {
   if (!isPick) return null;
   return <span className={styles.topStar} aria-label="Editor pick">★</span>;
 }
+
+// Suggested ISO per EV for astro — balanced matrix at f/2.8
+const ASTRO_ISO_BY_EV: Record<number, number> = {
+  1: 100, 0: 200, [-1]: 200, [-2]: 400, [-3]: 400,
+  [-4]: 800, [-5]: 1600, [-6]: 1600, [-7]: 3200,
+};
 
 // =============================================================================
 // EXPOSURE MATRIX — astro rule-of-500 grid
@@ -471,7 +477,12 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                   type="button"
                   data-ev={s.ev}
                   className={`${styles.sceneItem} ${ev === s.ev ? styles.sceneItemActive : ""}`}
-                  onClick={() => setEv(s.ev)}
+                  onClick={() => {
+                    setEv(s.ev);
+                    if (isAstro && ASTRO_ISO_BY_EV[s.ev] != null) {
+                      setIso(ASTRO_ISO_BY_EV[s.ev]);
+                    }
+                  }}
                 >
                   <span className={styles.sceneEv}>{s.ev}</span>
                   <span className={styles.sceneText}>{sceneLabel(s.ev)}</span>
