@@ -82,7 +82,7 @@ describe("GenreGuide", () => {
 
   it("renders with a specified default genre", () => {
     render(<GenreGuide lenses={testLenses} defaultGenre="astro" />);
-    expect(screen.getByRole("tab", { name: /astro/i, selected: true })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /nightscape/i, selected: true })).toBeInTheDocument();
   });
 
   it("shows genre tabs for all 9 genres", () => {

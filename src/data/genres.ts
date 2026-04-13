@@ -8,10 +8,10 @@ import type { EvScene } from "../types/common";
 const genreConfigs: Record<ScoredGenre, GenreConfig> = {
   astro: {
     genre: "astro",
-    name: "Astrophotography",
+    name: "Nightscape Photography",
     tagline: "Untracked tripod · Beat the startrails · 500 rule",
     description:
-      "Wide-field and deep-sky imaging on a fixed tripod. Low coma, low astigmatism, and fast apertures matter most.",
+      "Stars, Milky Way, and night landscapes on a fixed tripod. Low coma, low astigmatism, and fast apertures matter most.",
     typicalFl: ["ultra-wide", "wide"],
   },
   landscape: {
