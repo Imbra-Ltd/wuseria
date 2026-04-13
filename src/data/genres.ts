@@ -111,7 +111,7 @@ const evScenes: EvScene[] = [
   { ev: -5, short: "Crescent moon" },
   { ev: -6, short: "Starlight landscape" },
   { ev: -7, short: "Milky Way" },
-  { ev: -8, short: "Dark sky reserve" },
+  { ev: -8, short: "Exceptional darkness" },
 ];
 
 // =============================================================================
