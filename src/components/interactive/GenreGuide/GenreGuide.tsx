@@ -205,6 +205,13 @@ function ExposureMatrix({ crop, iso, ev, aoV }: { crop: number; iso: number; ev:
         <span className={styles.matrixMarginalText}>●</span> within 1 stop{" "}
         <span className={styles.matrixOverText}>●</span> needs more ISO
       </div>
+      <p className={styles.matrixExplain}>
+        Max exposure before star trails = 500 / (crop x FL). Each cell shows
+        the longest untracked exposure at that aperture and focal length.
+        Green means your selected ISO is enough. Amber means you are within
+        one stop — push ISO or accept slight noise. Red means the lens
+        cannot gather enough light at this ISO without trailing.
+      </p>
     </div>
   );
 }
