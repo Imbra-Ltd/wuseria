@@ -627,16 +627,18 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             </select>
           </div>
         )}
-        {/* Weight */}
-        <div className={styles.controlGroup}>
-          <span className={styles.controlLabel}>Wt</span>
-          <select className={styles.controlSelect} value={weightFilter} onChange={(e) => setWeightFilter(e.target.value)}>
-            <option value="">Any</option>
-            {[200, 300, 500, 800, 1500].map((v) => (
-              <option key={v} value={v}>≤ {v}g</option>
-            ))}
-          </select>
-        </div>
+        {/* Weight — non-astro */}
+        {!isAstro && (
+          <div className={styles.controlGroup}>
+            <span className={styles.controlLabel}>Wt</span>
+            <select className={styles.controlSelect} value={weightFilter} onChange={(e) => setWeightFilter(e.target.value)}>
+              <option value="">Any</option>
+              {[200, 300, 500, 800, 1500].map((v) => (
+                <option key={v} value={v}>≤ {v}g</option>
+              ))}
+            </select>
+          </div>
+        )}
         {/* Price */}
         <div className={styles.controlGroup}>
           <span className={styles.controlLabel}>Price</span>
@@ -679,8 +681,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     ["idealIso", "Ideal ISO"],
                     ["coma", "Coma"],
                     ["astigmatism", "Astig"],
-                    ["weight", "Wt"],
                     ["price", "Price"],
+                    ["brand", "WR"],
                   ] as [SortKey, string][]) : ([
                     ["mark", "Mark"],
                     ["pick", ""],
@@ -725,10 +727,15 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                       </>
                     )}
                     {!isAstro && (
-                      <td>{fmtIso(el.idealIso)}</td>
+                      <>
+                        <td>{fmtIso(el.idealIso)}</td>
+                        <td>{el.lens.weight}g</td>
+                      </>
                     )}
-                    <td>{el.lens.weight}g</td>
                     <td>~${el.lens.price}</td>
+                    {isAstro && (
+                      <td>{el.lens.isWeatherSealed ? "WR" : ""}</td>
+                    )}
                   </tr>
                 ))}
               </tbody>
