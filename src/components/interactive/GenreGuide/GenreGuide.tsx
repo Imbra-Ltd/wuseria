@@ -271,11 +271,15 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
 
   // -- Scene label ----------------------------------------------------------
   function sceneLabel(sceneEv: number): string {
-    return evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
+    // Nightscape sidebar uses short labels; Bortle labels only in EV header
+    if (isNightscape) {
+      return evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
+    }
+    return genreEvLabels[genre]?.[sceneEv] ?? evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
   }
 
   function evHeaderLabel(sceneEv: number): string {
-    return genreEvLabels[genre]?.[sceneEv] ?? sceneLabel(sceneEv);
+    return genreEvLabels[genre]?.[sceneEv] ?? evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
   }
 
   // -- Format helpers -------------------------------------------------------
@@ -398,7 +402,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
               <span className={styles.controlLabel}>ISO</span>
               <div className={styles.flRow}>
                 {(cropFactor === 0.79
-                  ? [100, 200, 400, 800, 1600, 3200, 6400, 12800]
+                  ? [100, 200, 400, 800, 1600, 3200, 6400]
                   : [100, 200, 400, 800, 1600, 3200, 6400]
                 ).map((v) => (
                   <button
@@ -443,7 +447,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           )}
           {(isLandscape || isArchitecture) && (
             <div className={styles.matrixPanel}>
-              <LandscapeMatrix cropFactor={cropFactor} iso={iso} ev={ev} nd={nd} />
+              <LandscapeMatrix cropFactor={cropFactor} iso={iso} ev={ev} nd={nd} selectedFl={selectedFl} />
             </div>
           )}
         </div>{/* end main */}
@@ -626,6 +630,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     ["fl", "Model"],
                     ["fl", "FL"],
                     ["aperture", "f/"],
+                    ["aperture", "Sweet"],
                     ["cornerStopped", "CornerS"],
                     ["centerStopped", "CenterS"],
                     ["distortion", "Dist"],
@@ -676,6 +681,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                       <>
                         <td>{el.effectiveFl}mm</td>
                         <td>f/{el.lens.maxAperture}</td>
+                        <td>{el.lens.sweetSpotAperture ? `f/${el.lens.sweetSpotAperture}` : "\u2013"}</td>
                         <td><FieldVal value={el.lens.cornerStopped} /></td>
                         <td><FieldVal value={el.lens.centerStopped} /></td>
                         <td><FieldVal value={el.lens.distortion} /></td>
@@ -734,10 +740,10 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         {isNightscape && (
           <>{" · "}<a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Find dark skies</a></>
         )}
-        {" · "}
-        {isLandscape
-          ? "Marks are driven by corner and center sharpness at stopped-down apertures as primary factors, with distortion, chromatic aberration, vignetting, flare resistance, astigmatism, and coma as secondary."
-          : "FL is a creative choice, not a scoring input."}
+        {isLandscape && (
+          <>{" · "}<a href="/wiki/landscape-photography" className={styles.footerLink}>Landscape guide</a></>
+        )}
+        {" · "}FL is a creative choice, not a scoring input.
       </div>
     </div>
   );

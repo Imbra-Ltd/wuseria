@@ -159,7 +159,7 @@ describe("GenreGuide", () => {
 
     await user.click(screen.getByRole("tab", { name: /landscape/i }));
     expect(
-      screen.getByText(/corner and center sharpness at stopped-down apertures/),
+      screen.getByText(/Landscape guide/),
     ).toBeInTheDocument();
   });
 
@@ -178,6 +178,6 @@ describe("GenreGuide", () => {
     render(<GenreGuide lenses={testLenses} />);
 
     await user.click(screen.getByRole("tab", { name: /landscape/i }));
-    expect(screen.getByText(/Shutter speed matrix/)).toBeInTheDocument();
+    expect(screen.getByText(/EV Matrix.*tripod/)).toBeInTheDocument();
   });
 });
