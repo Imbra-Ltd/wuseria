@@ -248,6 +248,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
   const [priceFilter, setPriceFilter] = useState("");
   const [weightFilter, setWeightFilter] = useState("");
   const [apertureFilter, setApertureFilter] = useState("");
+  const [comaFilter, setComaFilter] = useState("");
+  const [astigFilter, setAstigFilter] = useState("");
   const sceneListRef = useRef<HTMLDivElement>(null);
 
   const config = genreConfigs[genre];
@@ -268,6 +270,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
     setPriceFilter("");
     setWeightFilter("");
     setApertureFilter("");
+    setComaFilter("");
+    setAstigFilter("");
   }
 
   // ── Scene scroll ───────────────────────────────────────────────────────
@@ -368,9 +372,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       if (priceFilter && el.lens.price > Number(priceFilter)) return false;
       if (weightFilter && el.lens.weight > Number(weightFilter)) return false;
       if (apertureFilter && el.lens.maxAperture > Number(apertureFilter)) return false;
+      if (comaFilter && (el.lens.coma == null || el.lens.coma < Number(comaFilter))) return false;
+      if (astigFilter && (el.lens.astigmatism == null || el.lens.astigmatism < Number(astigFilter))) return false;
       return true;
     });
-  }, [lenses, genre, crop, ev, iso, mp, aoV, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter]);
+  }, [lenses, genre, crop, ev, iso, mp, aoV, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter]);
 
   // ── Sort handler ───────────────────────────────────────────────────────
   function handleSort(key: SortKey): void {
@@ -563,68 +569,33 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         </div>{/* end main */}
       </div>{/* end layout */}
 
-      {/* Filter panel — full width */}
+      {/* Filter panel — ordered to match columns */}
       <div className={styles.filterPanel}>
-        <div className={styles.controlGroup}>
-          <span className={styles.controlLabel}>Brand</span>
-          <select
-            className={styles.controlSelect}
-            value={brandFilter}
-            onChange={(e) => setBrandFilter(e.target.value)}
-          >
-            <option value="">All</option>
-            {[...new Set(enrichedLenses.map((el) => el.lens.brand))].sort().map((b) => (
-              <option key={b} value={b}>{b}</option>
-            ))}
-          </select>
-        </div>
+        {/* Mark */}
         <div className={styles.controlGroup}>
           <span className={styles.controlLabel}>Mark</span>
-          <select
-            className={styles.controlSelect}
-            value={markFilter}
-            onChange={(e) => setMarkFilter(e.target.value)}
-          >
+          <select className={styles.controlSelect} value={markFilter} onChange={(e) => setMarkFilter(e.target.value)}>
             <option value="">All</option>
             {[5, 4.5, 4, 3.5, 3, 2.5, 2, 1.5, 1].map((v) => (
               <option key={v} value={v}>≥ {v}</option>
             ))}
           </select>
         </div>
+        {/* Brand */}
         <div className={styles.controlGroup}>
-          <span className={styles.controlLabel}>Price</span>
-          <select
-            className={styles.controlSelect}
-            value={priceFilter}
-            onChange={(e) => setPriceFilter(e.target.value)}
-          >
-            <option value="">Any</option>
-            {[500, 1000, 1500, 2000, 4000].map((v) => (
-              <option key={v} value={v}>≤ ~${v}</option>
+          <span className={styles.controlLabel}>Brand</span>
+          <select className={styles.controlSelect} value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)}>
+            <option value="">All</option>
+            {[...new Set(enrichedLenses.map((el) => el.lens.brand))].sort().map((b) => (
+              <option key={b} value={b}>{b}</option>
             ))}
           </select>
         </div>
-        <div className={styles.controlGroup}>
-          <span className={styles.controlLabel}>Weight</span>
-          <select
-            className={styles.controlSelect}
-            value={weightFilter}
-            onChange={(e) => setWeightFilter(e.target.value)}
-          >
-            <option value="">Any</option>
-            {[200, 300, 500, 800, 1500].map((v) => (
-              <option key={v} value={v}>≤ {v}g</option>
-            ))}
-          </select>
-        </div>
+        {/* Aperture — astro */}
         {isAstro && (
           <div className={styles.controlGroup}>
-            <span className={styles.controlLabel}>Aperture</span>
-            <select
-              className={styles.controlSelect}
-              value={apertureFilter}
-              onChange={(e) => setApertureFilter(e.target.value)}
-            >
+            <span className={styles.controlLabel}>f/</span>
+            <select className={styles.controlSelect} value={apertureFilter} onChange={(e) => setApertureFilter(e.target.value)}>
               <option value="">Any</option>
               {[1.4, 2.0, 2.8, 4.0].map((v) => (
                 <option key={v} value={v}>≤ f/{v}</option>
@@ -632,11 +603,56 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             </select>
           </div>
         )}
-        {(brandFilter || markFilter || priceFilter || weightFilter || apertureFilter) && (
+        {/* Coma — astro */}
+        {isAstro && (
+          <div className={styles.controlGroup}>
+            <span className={styles.controlLabel}>Coma</span>
+            <select className={styles.controlSelect} value={comaFilter} onChange={(e) => setComaFilter(e.target.value)}>
+              <option value="">Any</option>
+              {[2.0, 1.5, 1.0].map((v) => (
+                <option key={v} value={v}>≥ {v}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        {/* Astigmatism — astro */}
+        {isAstro && (
+          <div className={styles.controlGroup}>
+            <span className={styles.controlLabel}>Astig</span>
+            <select className={styles.controlSelect} value={astigFilter} onChange={(e) => setAstigFilter(e.target.value)}>
+              <option value="">Any</option>
+              {[2.0, 1.5, 1.0].map((v) => (
+                <option key={v} value={v}>≥ {v}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        {/* Weight */}
+        <div className={styles.controlGroup}>
+          <span className={styles.controlLabel}>Wt</span>
+          <select className={styles.controlSelect} value={weightFilter} onChange={(e) => setWeightFilter(e.target.value)}>
+            <option value="">Any</option>
+            {[200, 300, 500, 800, 1500].map((v) => (
+              <option key={v} value={v}>≤ {v}g</option>
+            ))}
+          </select>
+        </div>
+        {/* Price */}
+        <div className={styles.controlGroup}>
+          <span className={styles.controlLabel}>Price</span>
+          <select className={styles.controlSelect} value={priceFilter} onChange={(e) => setPriceFilter(e.target.value)}>
+            <option value="">Any</option>
+            {[500, 1000, 1500, 2000, 4000].map((v) => (
+              <option key={v} value={v}>≤ ~${v}</option>
+            ))}
+          </select>
+        </div>
+        {/* Clear */}
+        {(brandFilter || markFilter || priceFilter || weightFilter || apertureFilter || comaFilter || astigFilter) && (
           <button
             type="button"
             className={styles.clearBtn}
-            onClick={() => { setBrandFilter(""); setMarkFilter(""); setPriceFilter(""); setWeightFilter(""); setApertureFilter(""); }}
+            onClick={() => { setBrandFilter(""); setMarkFilter(""); setPriceFilter(""); setWeightFilter(""); setApertureFilter(""); setComaFilter(""); setAstigFilter(""); }}
           >
             ✕ clear
           </button>
