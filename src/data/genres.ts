@@ -123,7 +123,7 @@ const genreEvLabels: Partial<Record<ScoredGenre, Record<number, string>>> = {
     1: "City center (Bortle 8-9)",
     0: "Bright suburb (Bortle 7)",
     [-1]: "Suburb (Bortle 6)",
-    [-2]: "Full moon (any site)",
+    [-2]: "Full moon (any site, ~Bortle 5-6)",
     [-3]: "Rural town (Bortle 5)",
     [-4]: "Rural (Bortle 4)",
     [-5]: "Dark rural (Bortle 3)",
