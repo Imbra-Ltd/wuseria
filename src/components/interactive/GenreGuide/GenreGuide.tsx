@@ -436,7 +436,6 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           {/* EV header */}
           <div className={styles.evHeader}>
             <span className={styles.evLabel}>EV {ev} — {sceneLabel(ev)}</span>
-            <span className={styles.evTagline}>{config.tagline}</span>
           </div>
 
           {/* Controls — matching prototype order: Mount → FL → ISO → ND → MP */}
