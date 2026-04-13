@@ -102,7 +102,7 @@ const GENRE_EQUIPMENT: Record<string, string[]> = {
   macro:        ["Sturdy tripod", "Macro rail", "Ring flash", "Diffuser", "Extension tubes", "Remote shutter", "Reflector", "Focus stacking software", "Spare batteries", "Macro shooting tent"],
 };
 
-type SortKey = "mark" | "pick" | "brand" | "idealIso" | "weight" | "price" | "fl";
+type SortKey = "mark" | "pick" | "brand" | "idealIso" | "weight" | "price" | "fl" | "aperture" | "rule500" | "coma" | "astigmatism";
 
 // =============================================================================
 // ENRICHED LENS — lens + computed fields for display
@@ -113,6 +113,17 @@ interface EnrichedLens {
   mark: number;
   isPick: boolean;
   idealIso: number | null;
+  rule500: number | null;
+}
+
+// =============================================================================
+// FIELD VALUE DISPLAY — 0-2 scale with color
+// =============================================================================
+
+function FieldVal({ value }: { value: number | undefined }) {
+  if (value == null) return <span className={styles.markDash}>&ndash;</span>;
+  const color = value >= 1.5 ? "#6aaa70" : value >= 1.0 ? "#b09040" : "#905030";
+  return <span style={{ color, fontFamily: "var(--font-mono)" }}>{value}</span>;
 }
 
 // =============================================================================
@@ -236,6 +247,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
   const [markFilter, setMarkFilter] = useState("");
   const [priceFilter, setPriceFilter] = useState("");
   const [weightFilter, setWeightFilter] = useState("");
+  const [apertureFilter, setApertureFilter] = useState("");
   const sceneListRef = useRef<HTMLDivElement>(null);
 
   const config = genreConfigs[genre];
@@ -255,6 +267,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
     setMarkFilter("");
     setPriceFilter("");
     setWeightFilter("");
+    setApertureFilter("");
   }
 
   // ── Scene scroll ───────────────────────────────────────────────────────
@@ -299,8 +312,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         const idealIso = isAstro
           ? astroExposure(l, ev, iso, crop).idealIso
           : handheldExposure(l, genre, ev, crop, mp).idealIso;
+        const rule500 = isAstro
+          ? Math.round(500 / (crop * l.focalLengthMin))
+          : null;
 
-        return { lens: l, mark, isPick, idealIso };
+        return { lens: l, mark, isPick, idealIso, rule500 };
       });
 
     // Sort — v is always ascending (a < b → negative)
@@ -329,6 +345,18 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         case "fl":
           v = a.lens.focalLengthMin - b.lens.focalLengthMin;
           break;
+        case "aperture":
+          v = a.lens.maxAperture - b.lens.maxAperture;
+          break;
+        case "rule500":
+          v = (a.rule500 ?? 0) - (b.rule500 ?? 0);
+          break;
+        case "coma":
+          v = (a.lens.coma ?? -1) - (b.lens.coma ?? -1);
+          break;
+        case "astigmatism":
+          v = (a.lens.astigmatism ?? -1) - (b.lens.astigmatism ?? -1);
+          break;
       }
       return sortAsc ? v : -v;
     });
@@ -339,9 +367,10 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       if (markFilter && el.mark < Number(markFilter)) return false;
       if (priceFilter && el.lens.price > Number(priceFilter)) return false;
       if (weightFilter && el.lens.weight > Number(weightFilter)) return false;
+      if (apertureFilter && el.lens.maxAperture > Number(apertureFilter)) return false;
       return true;
     });
-  }, [lenses, genre, crop, ev, iso, mp, aoV, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter]);
+  }, [lenses, genre, crop, ev, iso, mp, aoV, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter]);
 
   // ── Sort handler ───────────────────────────────────────────────────────
   function handleSort(key: SortKey): void {
@@ -588,11 +617,26 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             ))}
           </select>
         </div>
-        {(brandFilter || markFilter || priceFilter || weightFilter) && (
+        {isAstro && (
+          <div className={styles.controlGroup}>
+            <span className={styles.controlLabel}>Aperture</span>
+            <select
+              className={styles.controlSelect}
+              value={apertureFilter}
+              onChange={(e) => setApertureFilter(e.target.value)}
+            >
+              <option value="">Any</option>
+              {[1.4, 2.0, 2.8, 4.0].map((v) => (
+                <option key={v} value={v}>≤ f/{v}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        {(brandFilter || markFilter || priceFilter || weightFilter || apertureFilter) && (
           <button
             type="button"
             className={styles.clearBtn}
-            onClick={() => { setBrandFilter(""); setMarkFilter(""); setPriceFilter(""); setWeightFilter(""); }}
+            onClick={() => { setBrandFilter(""); setMarkFilter(""); setPriceFilter(""); setWeightFilter(""); setApertureFilter(""); }}
           >
             ✕ clear
           </button>
@@ -608,7 +652,20 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             <table className={styles.table}>
               <thead>
                 <tr>
-                  {([
+                  {(isAstro ? ([
+                    ["mark", "Mark"],
+                    ["pick", ""],
+                    ["brand", "Brand"],
+                    ["fl", "Model"],
+                    ["aperture", "f/"],
+                    ["fl", "FL"],
+                    ["rule500", "Rule 500"],
+                    ["idealIso", "Ideal ISO"],
+                    ["coma", "Coma"],
+                    ["astigmatism", "Astig"],
+                    ["weight", "Wt"],
+                    ["price", "Price"],
+                  ] as [SortKey, string][]) : ([
                     ["mark", "Mark"],
                     ["pick", ""],
                     ["brand", "Brand"],
@@ -616,11 +673,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     ["idealIso", "Ideal ISO"],
                     ["weight", "Wt"],
                     ["price", "Price"],
-                  ] as [SortKey, string][]).map(([key, label]) => (
+                  ] as [SortKey, string][])).map(([key, label]) => (
                     <th
-                      key={key}
+                      key={`${key}-${label}`}
                       className={
-                        key === "weight" || key === "price" || key === "idealIso"
+                        key === "weight" || key === "price" || key === "idealIso" || key === "rule500" || key === "aperture" || key === "coma" || key === "astigmatism"
                           ? styles.cellRight
                           : key === "pick"
                             ? styles.cellCenter
@@ -640,13 +697,20 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     <td><MarkPips mark={el.mark} /></td>
                     <td className={styles.cellCenter}><PickStar isPick={el.isPick} /></td>
                     <td>{el.lens.brand}</td>
-                    <td>
-                      {el.lens.model}
-                      {el.lens.sweetSpotAperture && (
-                        <span className={styles.sweetSpot}> sweet f/{el.lens.sweetSpotAperture}</span>
-                      )}
-                    </td>
-                    <td className={styles.cellRight}>{fmtIso(el.idealIso)}</td>
+                    <td>{el.lens.model}</td>
+                    {isAstro && (
+                      <>
+                        <td className={styles.cellRight}>f/{el.lens.maxAperture}</td>
+                        <td className={styles.cellRight}>{el.lens.focalLengthMin}mm</td>
+                        <td className={styles.cellRight}>{el.rule500}s</td>
+                        <td className={styles.cellRight}>{fmtIso(el.idealIso)}</td>
+                        <td className={styles.cellRight}><FieldVal value={el.lens.coma} /></td>
+                        <td className={styles.cellRight}><FieldVal value={el.lens.astigmatism} /></td>
+                      </>
+                    )}
+                    {!isAstro && (
+                      <td className={styles.cellRight}>{fmtIso(el.idealIso)}</td>
+                    )}
                     <td className={styles.cellRight}>{el.lens.weight}g</td>
                     <td className={styles.cellRight}>~${el.lens.price}</td>
                   </tr>
@@ -674,7 +738,9 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                       ? `${el.lens.focalLengthMin}mm`
                       : `${el.lens.focalLengthMin}-${el.lens.focalLengthMax}mm`}
                   </span>
+                  {isAstro && el.rule500 != null && <span>{el.rule500}s</span>}
                   {el.idealIso != null && <span>ISO {fmtIso(el.idealIso)}</span>}
+                  {isAstro && <><span>Coma <FieldVal value={el.lens.coma} /></span><span>Astig <FieldVal value={el.lens.astigmatism} /></span></>}
                   <span>{el.lens.weight}g</span>
                 </div>
               </div>
