@@ -119,18 +119,6 @@ const evScenes: EvScene[] = [
 // =============================================================================
 
 const genreEvLabels: Partial<Record<ScoredGenre, Record<number, string>>> = {
-  astro: {
-    1: "Heavy light pollution — brightest stars only",
-    0: "Suburban glow — planets and major constellations",
-    [-1]: "Suburban fringe — Milky Way faintly visible",
-    [-2]: "Full moon — washes out faint nebulae",
-    [-3]: "Half moon — Milky Way core visible low on horizon",
-    [-4]: "Crescent moon — Milky Way clearly visible",
-    [-5]: "No moon, slight airglow — deep sky objects emerge",
-    [-6]: "Dark site — Milky Way casts shadows, zodiacal light",
-    [-7]: "Pristine dark site — Milky Way structure, faint nebulae",
-    [-8]: "Exceptional darkness — limiting magnitude 7+",
-  },
   landscape: {
     16: "Snow field / bright beach",
     15: "Sunny open landscape",
