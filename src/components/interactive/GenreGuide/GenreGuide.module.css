@@ -430,6 +430,17 @@
   line-height: 1.5;
 }
 
+.matrixWarn {
+  font-size: var(--font-size-sm);
+  color: #b09040;
+  background-color: #181610;
+  border: 1px solid #3a3010;
+  border-radius: var(--radius);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-sm);
+  line-height: 1.5;
+}
+
 /* ==========================================================================
    Mark pips
    ========================================================================== */
