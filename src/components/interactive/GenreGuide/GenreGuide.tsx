@@ -253,6 +253,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
   const [comaFilter, setComaFilter] = useState("");
   const [astigFilter, setAstigFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
+  const [wrFilter, setWrFilter] = useState("");
   const sceneListRef = useRef<HTMLDivElement>(null);
 
   const config = genreConfigs[genre];
@@ -276,6 +277,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
     setComaFilter("");
     setAstigFilter("");
     setTypeFilter("");
+    setWrFilter("");
   }
 
   // ── Scene scroll ───────────────────────────────────────────────────────
@@ -387,9 +389,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       if (comaFilter && (el.lens.coma == null || el.lens.coma < Number(comaFilter))) return false;
       if (astigFilter && (el.lens.astigmatism == null || el.lens.astigmatism < Number(astigFilter))) return false;
       if (typeFilter && el.lens.type !== typeFilter) return false;
+      if (wrFilter === "yes" && !el.lens.isWeatherSealed) return false;
+      if (wrFilter === "no" && el.lens.isWeatherSealed) return false;
       return true;
     });
-  }, [lenses, genre, crop, ev, iso, mp, aoV, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter]);
+  }, [lenses, genre, crop, ev, iso, mp, aoV, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter]);
 
   // ── Sort handler ───────────────────────────────────────────────────────
   function handleSort(key: SortKey): void {
@@ -661,6 +665,17 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             </select>
           </div>
         )}
+        {/* WR — astro */}
+        {isAstro && (
+          <div className={styles.controlGroup}>
+            <span className={styles.controlLabel}>WR</span>
+            <select className={styles.controlSelect} value={wrFilter} onChange={(e) => setWrFilter(e.target.value)}>
+              <option value="">All</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+        )}
         {/* Price */}
         <div className={styles.controlGroup}>
           <span className={styles.controlLabel}>Price</span>
@@ -672,11 +687,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           </select>
         </div>
         {/* Clear */}
-        {(brandFilter || markFilter || priceFilter || weightFilter || apertureFilter || comaFilter || astigFilter || typeFilter) && (
+        {(brandFilter || markFilter || priceFilter || weightFilter || apertureFilter || comaFilter || astigFilter || typeFilter || wrFilter) && (
           <button
             type="button"
             className={styles.clearBtn}
-            onClick={() => { setBrandFilter(""); setMarkFilter(""); setPriceFilter(""); setWeightFilter(""); setApertureFilter(""); setComaFilter(""); setAstigFilter(""); setTypeFilter(""); }}
+            onClick={() => { setBrandFilter(""); setMarkFilter(""); setPriceFilter(""); setWeightFilter(""); setApertureFilter(""); setComaFilter(""); setAstigFilter(""); setTypeFilter(""); setWrFilter(""); }}
           >
             ✕ clear
           </button>
@@ -697,12 +712,12 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     ["pick", ""],
                     ["brand", "Brand"],
                     ["fl", "Model"],
-                    ["aperture", "f/"],
                     ["fl", "FL"],
-                    ["rule500", "Rule 500"],
-                    ["idealIso", "Ideal ISO"],
+                    ["aperture", "f/"],
                     ["coma", "Coma"],
                     ["astigmatism", "Astig"],
+                    ["rule500", "Rule 500"],
+                    ["idealIso", "Ideal ISO"],
                     ["brand", "WR"],
                     ["price", "Price"],
                   ] as [SortKey, string][]) : ([
@@ -740,12 +755,12 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     <td>{el.lens.model}</td>
                     {isAstro && (
                       <>
-                        <td>f/{el.lens.maxAperture}</td>
                         <td>{el.effectiveFl}mm</td>
-                        <td>{el.rule500}s</td>
-                        <td>{fmtIso(el.idealIso)}</td>
+                        <td>f/{el.lens.maxAperture}</td>
                         <td><FieldVal value={el.lens.coma} /></td>
                         <td><FieldVal value={el.lens.astigmatism} /></td>
+                        <td>{el.rule500}s</td>
+                        <td>{fmtIso(el.idealIso)}</td>
                       </>
                     )}
                     {!isAstro && (
