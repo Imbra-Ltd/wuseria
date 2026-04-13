@@ -119,6 +119,18 @@ const evScenes: EvScene[] = [
 // =============================================================================
 
 const genreEvLabels: Partial<Record<ScoredGenre, Record<number, string>>> = {
+  astro: {
+    1: "City center (Bortle 8-9)",
+    0: "Bright suburb (Bortle 7)",
+    [-1]: "Suburb (Bortle 6)",
+    [-2]: "Full moon",
+    [-3]: "Rural town (Bortle 5)",
+    [-4]: "Rural (Bortle 4)",
+    [-5]: "Dark rural (Bortle 3)",
+    [-6]: "Dark site (Bortle 2)",
+    [-7]: "Excellent dark site (Bortle 1)",
+    [-8]: "Pristine dark site (Bortle 1)",
+  },
   landscape: {
     16: "Snow field / bright beach",
     15: "Sunny open landscape",
