@@ -158,7 +158,7 @@ function PickStar({ isPick }: { isPick: boolean }) {
 // Suggested ISO per EV for astro — balanced matrix at f/2.8
 const ASTRO_ISO_BY_EV: Record<number, number> = {
   1: 100, 0: 200, [-1]: 200, [-2]: 400, [-3]: 400,
-  [-4]: 800, [-5]: 1600, [-6]: 1600, [-7]: 3200,
+  [-4]: 800, [-5]: 1600, [-6]: 1600, [-7]: 3200, [-8]: 6400,
 };
 
 // =============================================================================
