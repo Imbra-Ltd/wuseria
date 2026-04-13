@@ -825,11 +825,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       )}
 
       <div className={styles.footer}>
-        FL is a creative choice, not a scoring input{" · "}
         <a href="/wiki/optical-scoring" className={styles.footerLink}>How are marks calculated?</a>
         {isAstro && (
           <>{" · "}<a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Find dark skies</a></>
         )}
+        {" · "}FL is a creative choice, not a scoring input.
       </div>
     </div>
   );
