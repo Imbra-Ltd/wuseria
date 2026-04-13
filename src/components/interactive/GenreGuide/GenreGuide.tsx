@@ -304,6 +304,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         // Must have a mark for this genre
         const mark = getGenreMark(l, genre);
         if (mark == null) return false;
+        // Hide discontinued lenses
+        if (l.isDiscontinued) return false;
         // Filter by mount
         if (crop === 0.79 ? l.mount !== "GFX" : l.mount !== "X") return false;
         // Filter by FL range
