@@ -65,11 +65,11 @@ const FL_CHIPS: Record<string, { label: string; fl: number }[]> = {
 
 // FL ranges for filtering — lens must overlap the range to show
 // FL ranges for filtering — actual X-mount focal lengths (not FF equiv)
-// Ultra-wide: 6-14mm, Wide: 15-27mm, Standard: 28-56mm, Tele: 57-150mm, Super-tele: 151+
+// Ultra-wide: 6-15mm, Wide: 16-27mm, Standard: 28-56mm, Tele: 57-150mm, Super-tele: 151+
 const FL_RANGES: Record<number, [number, number]> = {
-  12:  [6, 14],      // Ultra-wide
+  12:  [6, 15],      // Ultra-wide
   15:  [12, 24],     // Portrait group
-  24:  [15, 27],     // Wide
+  24:  [16, 27],     // Wide
   33:  [24, 45],     // Portrait indoor
   50:  [28, 56],     // Standard
   57:  [40, 75],     // Portrait outdoor
