@@ -209,8 +209,8 @@ function ExposureMatrix({ crop, iso, ev, aoV }: { crop: number; iso: number; ev:
         Max exposure before star trails = 500 / (crop x FL). Each cell shows
         the longest untracked exposure at that aperture and focal length.
         Green means your selected ISO is enough. Amber means you are within
-        one stop — push ISO or accept slight noise. Red means the exposure
-        does not gather enough light at this ISO.
+        one stop — recoverable in post processing with some noise. Red means
+        the exposure does not gather enough light at this ISO.
       </p>
     </div>
   );
