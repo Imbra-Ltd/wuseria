@@ -430,7 +430,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
 
   // ── Scene label ────────────────────────────────────────────────────────
   function sceneLabel(sceneEv: number): string {
-    return genreEvLabels[genre]?.[sceneEv] ?? evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
+    return evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
+  }
+
+  function evHeaderLabel(sceneEv: number): string {
+    return genreEvLabels[genre]?.[sceneEv] ?? sceneLabel(sceneEv);
   }
 
   // ── Format helpers ─────────────────────────────────────────────────────
@@ -505,7 +509,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           <div className={styles.controlPanel}>
           {/* EV header */}
           <div className={styles.evHeader}>
-            <span className={styles.evLabel}>EV {ev} — {sceneLabel(ev)}</span>
+            <span className={styles.evLabel}>EV {ev} — {evHeaderLabel(ev)}</span>
           </div>
 
           {/* Controls — matching prototype order: Mount → FL → ISO → ND → MP */}
