@@ -630,30 +630,35 @@
    Footnote
    ========================================================================== */
 
-.footnote {
+.footer {
   margin-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-md);
+}
+
+.footerScoring {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   line-height: 1.5;
+  margin-bottom: var(--space-sm);
 }
 
-.footnoteLink {
-  color: var(--color-link);
+.footerLinks {
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
 }
 
-.footnoteLink:hover {
-  color: var(--color-link-hover);
-}
-
-.equipmentLink {
-  padding: 4px 10px 8px;
+.footerLink {
   font-size: var(--font-size-sm);
-}
-
-.equipmentLink a {
   color: var(--color-link);
 }
 
-.equipmentLink a:hover {
+.footerLink:hover {
   color: var(--color-link-hover);
+}
+
+.footerDisclaimer {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
 }

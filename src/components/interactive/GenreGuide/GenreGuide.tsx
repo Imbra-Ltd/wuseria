@@ -501,13 +501,6 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             <div className={styles.equipmentList}>
               {GENRE_EQUIPMENT[genre]?.join(" · ")}
             </div>
-            {isAstro && (
-              <div className={styles.equipmentLink}>
-                <a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer">
-                  Find dark skies →
-                </a>
-              </div>
-            )}
           </div>
         </div>
 
@@ -831,14 +824,23 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         </>
       )}
 
-      <p className={styles.footnote}>
-        {isAstro
-          ? "Marks are driven by coma and astigmatism (aberration control) and fast aperture (light gathering) as primary factors, with chromatic and spherical aberration, center/corner sharpness wide open, and vignetting as secondary factors. Low coma and astigmatism keep stars as points; fast aperture gathers more light in the rule-of-500 window."
-          : "Marks score optical suitability only — resolution, aberrations, bokeh quality — from lab measurements and trusted field reviews. OIS, autofocus, weather sealing, and build quality do not affect the mark."
-        }
-        {" "}Focal length is a creative choice shown as a filter, not a scoring input. Prices are approximate USD estimates.
-        {" "}<a href="/wiki/optical-scoring" className={styles.footnoteLink}>How are marks calculated?</a>
-      </p>
+      <div className={styles.footer}>
+        <p className={styles.footerScoring}>
+          {isAstro
+            ? "Marks are driven by coma and astigmatism (aberration control) and fast aperture (light gathering) as primary factors, with chromatic and spherical aberration, center/corner sharpness wide open, and vignetting as secondary factors."
+            : "Marks score optical suitability only — resolution, aberrations, bokeh quality — from lab measurements and trusted field reviews."
+          }
+        </p>
+        <div className={styles.footerLinks}>
+          <a href="/wiki/optical-scoring" className={styles.footerLink}>How are marks calculated?</a>
+          {isAstro && (
+            <a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Find dark skies</a>
+          )}
+        </div>
+        <p className={styles.footerDisclaimer}>
+          Focal length is a creative choice shown as a filter, not a scoring input. Prices are approximate USD estimates.
+        </p>
+      </div>
     </div>
   );
 }
