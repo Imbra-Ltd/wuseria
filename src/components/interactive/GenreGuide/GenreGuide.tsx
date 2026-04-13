@@ -693,7 +693,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     <th
                       key={`${key}-${label}`}
                       className={
-                        key === "weight" || key === "price" || key === "idealIso" || key === "rule500" || key === "aperture" || key === "fl" || key === "coma" || key === "astigmatism"
+                        key === "weight" || key === "price" || key === "idealIso" || key === "rule500" || key === "aperture" || key === "coma" || key === "astigmatism" || (key === "fl" && label !== "Model")
                           ? styles.cellRight
                           : key === "pick"
                             ? styles.cellCenter
