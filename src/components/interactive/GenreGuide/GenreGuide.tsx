@@ -319,13 +319,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       .map((l) => {
         const mark = getGenreMark(l, genre)!;
         const isPick = isEditorialPick(l, genre);
-        // Effective FL: for zooms, use midpoint of overlap with selected FL range
+        // Effective FL: for zooms, use shortest FL in the selected range (best exposure)
         const range = FL_RANGES[aoV];
         let effectiveFl = l.focalLengthMin;
         if (range && l.type === "zoom") {
-          const overlapMin = Math.max(l.focalLengthMin, range[0]);
-          const overlapMax = Math.min(l.focalLengthMax, range[1]);
-          effectiveFl = Math.round((overlapMin + overlapMax) / 2);
+          effectiveFl = Math.max(l.focalLengthMin, range[0]);
         }
         const idealIso = isAstro
           ? astroExposure({ ...l, focalLengthMin: effectiveFl } as Lens, ev, iso, crop).idealIso
