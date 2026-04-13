@@ -811,7 +811,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
 
       <p className={styles.footnote}>
         {isAstro
-          ? "Marks are driven by coma, astigmatism, and aperture (primary), with lateral CA, center/corner sharpness wide open, longitudinal CA, vignetting, and spherical aberration as secondary factors. Low coma and astigmatism keep stars as points; fast aperture gathers more light in the rule-of-500 window."
+          ? "Marks are driven by coma, astigmatism, and aperture (primary), with chromatic and spherical aberration, center/corner sharpness wide open, and vignetting as secondary factors. Low coma and astigmatism keep stars as points; fast aperture gathers more light in the rule-of-500 window."
           : "Marks score optical suitability only — resolution, aberrations, bokeh quality — from lab measurements and trusted field reviews. OIS, autofocus, weather sealing, and build quality do not affect the mark."
         }
         {" "}Focal length is a creative choice shown as a filter, not a scoring input. Prices are approximate USD estimates.
