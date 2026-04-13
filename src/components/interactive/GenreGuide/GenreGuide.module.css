@@ -473,6 +473,23 @@
   margin-left: var(--space-xs);
 }
 
+.dotOn,
+.dotOff {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.dotOn {
+  background-color: #5a9060;
+}
+
+.dotOff {
+  background-color: var(--color-bg-hover);
+  border: 1px solid var(--color-border);
+}
+
 /* ==========================================================================
    Table (desktop) — hidden on mobile
    ========================================================================== */
