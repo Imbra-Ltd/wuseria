@@ -6,10 +6,18 @@ import {
   evScenes,
   genreEvLabels,
   genreSceneFilter,
+  ND_OPTIONS,
+  FL_CHIPS,
+  FL_RANGES,
+  GENRE_DEFAULTS,
+  GENRE_EQUIPMENT,
+  ASTRO_ISO_BY_EV,
 } from "../../../data/genres";
 import { getGenreMark, isEditorialPick } from "../../../utils/scoring";
 import { astroExposure, handheldExposure } from "./exposure";
 import { ChipGroup } from "../shared/ChipGroup";
+import { MarkPips, PickStar, FieldVal } from "../shared/MarkPips";
+import { ExposureMatrix } from "./ExposureMatrix";
 import styles from "./GenreGuide.module.css";
 
 // =============================================================================
@@ -25,85 +33,12 @@ interface GenreGuideProps {
 // CONSTANTS
 // =============================================================================
 
-const ND_OPTIONS = [
-  { label: "ND2", factor: 2 },
-  { label: "ND4", factor: 4 },
-  { label: "ND8", factor: 8 },
-  { label: "ND64", factor: 64 },
-  { label: "ND1000", factor: 1000 },
-];
-
 const SCORED_GENRES: ScoredGenre[] = [
   "astro", "landscape", "architecture", "street",
   "travel", "portrait", "sport", "wildlife", "macro",
 ];
 
-const FL_CHIPS: Record<string, { label: string; fl: number }[]> = {
-  default: [
-    { label: "Ultra-wide", fl: 12 },
-    { label: "Wide", fl: 24 },
-    { label: "Standard", fl: 50 },
-    { label: "Tele", fl: 135 },
-    { label: "Super-tele", fl: 300 },
-  ],
-  portrait: [
-    { label: "Group", fl: 15 },
-    { label: "Indoor", fl: 33 },
-    { label: "Outdoor", fl: 57 },
-  ],
-  sportWildlife: [
-    { label: "Standard", fl: 50 },
-    { label: "Tele", fl: 135 },
-    { label: "Super-tele", fl: 300 },
-  ],
-  macro: [
-    { label: "Standard", fl: 50 },
-    { label: "Tele", fl: 90 },
-    { label: "Long macro", fl: 200 },
-  ],
-};
-
-// FL ranges for filtering — lens must overlap the range to show
-// FL ranges for filtering — actual X-mount focal lengths (not FF equiv)
-// Ultra-wide: 6-15mm, Wide: 16-27mm, Standard: 28-56mm, Tele: 57-150mm, Super-tele: 151+
-const FL_RANGES: Record<number, [number, number]> = {
-  12:  [6, 15],      // Ultra-wide
-  15:  [12, 24],     // Portrait group
-  24:  [16, 27],     // Wide
-  33:  [24, 45],     // Portrait indoor
-  50:  [28, 56],     // Standard
-  57:  [40, 75],     // Portrait outdoor
-  90:  [57, 150],    // Tele / macro tele
-  135: [57, 150],    // Tele
-  200: [100, 300],   // Long macro
-  300: [151, 600],   // Super-tele
-};
-
-const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number }> = {
-  astro:        { ev: -7, iso: 3200, fl: 12 },
-  landscape:    { ev: 9,  iso: 100,  fl: 24 },
-  architecture: { ev: 7,  iso: 200,  fl: 12 },
-  street:       { ev: 2,  iso: 6400, fl: 24 },
-  travel:       { ev: 11, iso: 400,  fl: 24 },
-  portrait:     { ev: 10, iso: 200,  fl: 57 },
-  sport:        { ev: 13, iso: 800,  fl: 135 },
-  wildlife:     { ev: 9,  iso: 3200, fl: 300 },
-  macro:        { ev: 10, iso: 200,  fl: 90 },
-};
-
-const GENRE_EQUIPMENT: Record<string, string[]> = {
-  astro:        ["Star tracker", "Sturdy tripod", "Lens heater", "Dew shield", "Light pollution filter", "External power bank", "Remote intervalometer", "Bahtinov mask", "Spare batteries", "Red light headlamp"],
-  landscape:    ["Sturdy tripod", "Ball head", "L-bracket", "Remote shutter", "Filter set (CPL & ND)", "Graduated ND filter", "Rain cover", "Spare batteries", "Fast memory cards", "Outdoor camera backpack"],
-  architecture: ["Sturdy tripod", "Geared tripod head", "L-bracket", "Remote shutter", "Tethering cable", "Field monitor", "Filter set (CPL & Graduated ND)", "Anti-reflective lens cover", "Color checker", "Power bank"],
-  street:       ["Thumb grip", "Compact bag", "Quick-adjust sling strap", "Mini travel tripod", "Flash (Compact)", "Filter set (ND, CPL & Black Mist)", "Fast memory cards", "Spare batteries", "Soft shutter release button", "Rain cover"],
-  travel:       ["Travel tripod", "Adjustable sling strap", "Travel camera backpack", "L-bracket", "Filter set (ND & Polarizer)", "Anti-reflection hood", "Remote shutter", "Fast memory cards", "Spare batteries", "Portable SSD"],
-  portrait:     ["Tripod", "Speedlight", "Flash trigger", "Light stand", "Constant light", "Light modifiers", "Reflector", "Tethering cable", "Color checker", "Remote shutter"],
-  sport:        ["Monopod", "Battery grip", "Dual harness", "Teleconverter", "Remote trigger", "Fast memory cards", "Spare batteries", "Rain cover", "Power bank", "Camera gear bag"],
-  wildlife:     ["Gimbal head", "Tripod/Monopod", "Teleconverter", "Beanbag", "Shoulder sling strap", "Lens covers", "Fast memory cards", "Spare batteries", "Power bank", "Wildlife backpack"],
-  macro:        ["Sturdy tripod", "Macro rail", "Ring flash", "Diffuser", "Extension tubes", "Remote shutter", "Reflector", "Focus stacking software", "Spare batteries", "Macro shooting tent"],
-};
-
-type SortKey = "mark" | "pick" | "brand" | "idealIso" | "weight" | "price" | "fl" | "aperture" | "rule500" | "coma" | "astigmatism";
+type SortKey = "mark" | "pick" | "brand" | "idealIso" | "weight" | "price" | "fl" | "aperture" | "rule500" | "coma" | "astigmatism" | "wr";
 
 // =============================================================================
 // ENRICHED LENS — lens + computed fields for display
@@ -119,136 +54,19 @@ interface EnrichedLens {
 }
 
 // =============================================================================
-// FIELD VALUE DISPLAY — 0-2 scale with color
-// =============================================================================
-
-function FieldVal({ value }: { value: number | undefined }) {
-  if (value == null) return <span className={styles.markDash}>&ndash;</span>;
-  const color = value >= 1.5 ? "#6aaa70" : value >= 1.0 ? "#b09040" : "#905030";
-  return <span style={{ color, fontFamily: "var(--font-mono)" }}>{value}</span>;
-}
-
-// =============================================================================
-// SUB-COMPONENTS
-// =============================================================================
-
-function MarkPips({ mark }: { mark: number | null }) {
-  if (mark == null) return <span className={styles.markDash}>&ndash;</span>;
-  const full = Math.floor(mark);
-  const half = mark % 1 >= 0.5;
-  const pips: React.ReactNode[] = [];
-  for (let i = 0; i < full; i++) {
-    pips.push(<span key={i} className={`${styles.pip} ${styles.pipFull}`} />);
-  }
-  if (half) {
-    pips.push(<span key="half" className={`${styles.pip} ${styles.pipHalf}`} />);
-  }
-  return (
-    <span className={styles.markDots} aria-label={`Mark ${mark} of 5`}>
-      {pips}
-    </span>
-  );
-}
-
-function PickStar({ isPick }: { isPick: boolean }) {
-  if (!isPick) return null;
-  return <span className={styles.topStar} aria-label="Editor pick">★</span>;
-}
-
-// Suggested ISO per EV for astro — balanced matrix at f/2.8
-const ASTRO_ISO_BY_EV: Record<number, number> = {
-  1: 100, 0: 200, [-1]: 200, [-2]: 400, [-3]: 400,
-  [-4]: 800, [-5]: 1600, [-6]: 1600, [-7]: 3200, [-8]: 6400,
-};
-
-// =============================================================================
-// EXPOSURE MATRIX — astro rule-of-500 grid
-// =============================================================================
-
-const MATRIX_FL_COLS: Record<number, number[]> = {
-  12:  [8, 10, 12, 14],
-  24:  [16, 18, 23, 27],
-  50:  [33, 35, 50, 56],
-  135: [60, 80, 90, 100, 135],
-  300: [150, 200, 300, 400],
-};
-
-const MATRIX_APERTURES = [1.0, 1.4, 2.0, 2.8, 4.0, 5.6, 8, 11];
-
-function ExposureMatrix({ crop, iso, ev, aoV }: { crop: number; iso: number; ev: number; aoV: number }) {
-  const cols = MATRIX_FL_COLS[aoV] || MATRIX_FL_COLS[12];
-
-  return (
-    <div className={styles.matrix}>
-      <div className={styles.matrixTitle}>
-        EV Matrix · Rule of 500 · untracked · ISO {iso}
-      </div>
-      <div className={styles.matrixScroll}>
-        <table className={styles.matrixTable}>
-          <thead>
-            <tr>
-              <th className={styles.matrixCorner}>f/</th>
-              {cols.map((fl) => (
-                <th key={fl} className={styles.matrixColHead}>{fl}mm</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {MATRIX_APERTURES.map((ap) => (
-              <tr key={ap}>
-                <td className={styles.matrixRowHead}>{ap}</td>
-                {cols.map((fl) => {
-                  const maxT = Math.round(500 / (crop * fl));
-                  const needed = Math.round((ap * ap * 100) / (maxT * Math.pow(2, ev)));
-                  const viable = needed <= iso;
-                  const marginal = !viable && needed <= iso * 2;
-                  const label = maxT >= 60 ? `${Math.round(maxT / 60)}m` : `${maxT}s`;
-                  const cls = viable
-                    ? styles.matrixViable
-                    : marginal
-                      ? styles.matrixMarginal
-                      : styles.matrixOver;
-                  return (
-                    <td key={fl} className={`${styles.matrixCell} ${cls}`}>
-                      {label}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className={styles.matrixLegend}>
-        <span className={styles.matrixViableText}>●</span> within ISO{" "}
-        <span className={styles.matrixMarginalText}>●</span> within 1 stop{" "}
-        <span className={styles.matrixOverText}>●</span> needs more ISO
-      </div>
-      <p className={styles.matrixExplain}>
-        Max exposure before star trails = 500 / (crop x FL). Each cell shows
-        the longest untracked exposure at that aperture and focal length.
-        Green means your selected ISO is enough. Amber means you are within
-        one stop — recoverable with exposure push and noise reduction. Red means
-        the exposure does not gather enough light at this ISO.
-      </p>
-    </div>
-  );
-}
-
-// =============================================================================
 // MAIN COMPONENT
 // =============================================================================
 
 function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
-  // ── State ──────────────────────────────────────────────────────────────
+  // -- State ----------------------------------------------------------------
   const [genre, setGenre] = useState<ScoredGenre>(defaultGenre);
   const defaults = GENRE_DEFAULTS[genre];
   const [ev, setEv] = useState(defaults.ev);
   const [iso, setIso] = useState(defaults.iso);
   const [nd, setNd] = useState<number[]>([]);
-  const [crop, setCrop] = useState(1.5);
-  const [mp, setMp] = useState(26);
-  const [aoV, setAoV] = useState(defaults.fl);
+  const [cropFactor, setCropFactor] = useState(1.5);
+  const [sensorMp, setSensorMp] = useState(26);
+  const [selectedFl, setSelectedFl] = useState(defaults.fl);
   const [sortBy, setSortBy] = useState<SortKey>("mark");
   const [sortAsc, setSortAsc] = useState(false);
   const [brandFilter, setBrandFilter] = useState("");
@@ -262,16 +80,15 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
   const [wrFilter, setWrFilter] = useState("");
   const sceneListRef = useRef<HTMLDivElement>(null);
 
-  const config = genreConfigs[genre];
   const isAstro = genre === "astro";
 
-  // ── Genre change → reset all ───────────────────────────────────────────
+  // -- Genre change -> reset all --------------------------------------------
   function handleGenreChange(g: ScoredGenre): void {
     setGenre(g);
     const d = GENRE_DEFAULTS[g];
     setEv(d.ev);
     setIso(d.iso);
-    setAoV(d.fl);
+    setSelectedFl(d.fl);
     setNd([]);
     setSortBy("mark");
     setSortAsc(false);
@@ -286,7 +103,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
     setWrFilter("");
   }
 
-  // ── Scene scroll ───────────────────────────────────────────────────────
+  // -- Scene scroll ---------------------------------------------------------
   const scrollToEv = useCallback(() => {
     const container = sceneListRef.current;
     if (!container) return;
@@ -300,25 +117,21 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
 
   useEffect(() => { scrollToEv(); }, [ev, genre, scrollToEv]);
 
-  // ── Filtered scenes ────────────────────────────────────────────────────
+  // -- Filtered scenes ------------------------------------------------------
   const visibleScenes = useMemo(
     () => evScenes.filter((s) => genreSceneFilter[genre](s.ev)),
     [genre],
   );
 
-  // ── Filter + enrich + sort lenses ──────────────────────────────────────
+  // -- Filter + enrich + sort lenses ----------------------------------------
   const enrichedLenses = useMemo(() => {
     const enriched: EnrichedLens[] = lenses
       .filter((l) => {
-        // Must have a mark for this genre
         const mark = getGenreMark(l, genre);
         if (mark == null) return false;
-        // Hide discontinued lenses
         if (l.isDiscontinued) return false;
-        // Filter by mount
-        if (crop === 0.79 ? l.mount !== "GFX" : l.mount !== "X") return false;
-        // Filter by FL range
-        const range = FL_RANGES[aoV];
+        if (cropFactor === 0.79 ? l.mount !== "GFX" : l.mount !== "X") return false;
+        const range = FL_RANGES[selectedFl];
         if (range) {
           if (l.focalLengthMax < range[0] || l.focalLengthMin > range[1]) return false;
         }
@@ -327,23 +140,21 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       .map((l) => {
         const mark = getGenreMark(l, genre)!;
         const isPick = isEditorialPick(l, genre);
-        // Effective FL: for zooms, use shortest FL in the selected range (best exposure)
-        const range = FL_RANGES[aoV];
+        const range = FL_RANGES[selectedFl];
         let effectiveFl = l.focalLengthMin;
         if (range && l.type === "zoom") {
           effectiveFl = Math.max(l.focalLengthMin, range[0]);
         }
         const idealIso = isAstro
-          ? astroExposure({ ...l, focalLengthMin: effectiveFl } as Lens, ev, iso, crop).idealIso
-          : handheldExposure(l, genre, ev, crop, mp).idealIso;
+          ? astroExposure({ ...l, focalLengthMin: effectiveFl } as Lens, ev, iso, cropFactor).idealIso
+          : handheldExposure(l, genre, ev, cropFactor, sensorMp).idealIso;
         const rule500 = isAstro
-          ? Math.round(500 / (crop * effectiveFl))
+          ? Math.round(500 / (cropFactor * effectiveFl))
           : null;
 
         return { lens: l, mark, isPick, idealIso, rule500, effectiveFl };
       });
 
-    // Sort — v is always ascending (a < b → negative)
     enriched.sort((a, b) => {
       let v = 0;
       switch (sortBy) {
@@ -381,11 +192,13 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         case "astigmatism":
           v = (a.lens.astigmatism ?? -1) - (b.lens.astigmatism ?? -1);
           break;
+        case "wr":
+          v = (a.lens.isWeatherSealed ? 1 : 0) - (b.lens.isWeatherSealed ? 1 : 0);
+          break;
       }
       return sortAsc ? v : -v;
     });
 
-    // Apply filters
     return enriched.filter((el) => {
       if (brandFilter && el.lens.brand !== brandFilter) return false;
       if (markFilter && el.mark < Number(markFilter)) return false;
@@ -399,9 +212,9 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       if (wrFilter === "no" && el.lens.isWeatherSealed) return false;
       return true;
     });
-  }, [lenses, genre, crop, ev, iso, mp, aoV, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter]);
+  }, [lenses, genre, cropFactor, ev, iso, sensorMp, selectedFl, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter]);
 
-  // ── Sort handler ───────────────────────────────────────────────────────
+  // -- Sort handler ---------------------------------------------------------
   function handleSort(key: SortKey): void {
     if (sortBy === key) {
       setSortAsc(!sortAsc);
@@ -411,14 +224,14 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
     }
   }
 
-  // ── ND factor ──────────────────────────────────────────────────────────
+  // -- ND factor ------------------------------------------------------------
   function toggleNd(factor: number): void {
     setNd((prev) =>
       prev.includes(factor) ? prev.filter((f) => f !== factor) : [...prev, factor],
     );
   }
 
-  // ── FL chips ───────────────────────────────────────────────────────────
+  // -- FL chips -------------------------------------------------------------
   const flChips =
     genre === "portrait"
       ? FL_CHIPS.portrait
@@ -428,7 +241,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           ? FL_CHIPS.macro
           : FL_CHIPS.default;
 
-  // ── Scene label ────────────────────────────────────────────────────────
+  // -- Scene label ----------------------------------------------------------
   function sceneLabel(sceneEv: number): string {
     return evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
   }
@@ -437,7 +250,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
     return genreEvLabels[genre]?.[sceneEv] ?? sceneLabel(sceneEv);
   }
 
-  // ── Format helpers ─────────────────────────────────────────────────────
+  // -- Format helpers -------------------------------------------------------
   function fmtIso(v: number | null): string {
     if (v == null) return "\u2013";
     if (v > 99999) return ">100K";
@@ -447,7 +260,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
   const sortIndicator = (key: SortKey) =>
     sortBy === key ? (sortAsc ? "\u2191" : "\u2193") : "\u2195";
 
-  // ── Render ─────────────────────────────────────────────────────────────
+  // -- Render ---------------------------------------------------------------
   return (
     <div className={styles.guide}>
       {/* Genre tabs */}
@@ -512,17 +325,17 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             <span className={styles.evLabel}>EV {ev} — {evHeaderLabel(ev)}</span>
           </div>
 
-          {/* Controls — matching prototype order: Mount → FL → ISO → ND → MP */}
+          {/* Controls — matching prototype order: Mount -> FL -> ISO -> ND -> MP */}
           <div className={styles.controls}>
             {/* Mount */}
             <div className={styles.controlGroup}>
               <ChipGroup
                 label="Mount"
-                value={crop === 1.5 ? "X" : "GFX"}
+                value={cropFactor === 1.5 ? "X" : "GFX"}
                 onChange={(v) => {
                   const c = v === "GFX" ? 0.79 : 1.5;
-                  setCrop(c);
-                  setMp(c === 0.79 ? 102 : 26);
+                  setCropFactor(c);
+                  setSensorMp(c === 0.79 ? 102 : 26);
                   if (isAstro) setIso(c === 0.79 ? 3200 : 1600);
                 }}
                 styles={styles}
@@ -541,8 +354,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                   <button
                     key={chip.fl}
                     type="button"
-                    className={`${styles.chip} ${aoV === chip.fl ? styles.chipOn : ""}`}
-                    onClick={() => setAoV(chip.fl)}
+                    className={`${styles.chip} ${selectedFl === chip.fl ? styles.chipOn : ""}`}
+                    onClick={() => setSelectedFl(chip.fl)}
                   >
                     {chip.label}
                   </button>
@@ -554,7 +367,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             <div className={styles.controlGroup}>
               <span className={styles.controlLabel}>ISO</span>
               <div className={styles.flRow}>
-                {(crop === 0.79
+                {(cropFactor === 0.79
                   ? [100, 200, 400, 800, 1600, 3200, 6400, 12800]
                   : [100, 200, 400, 800, 1600, 3200, 6400]
                 ).map((v) => (
@@ -595,7 +408,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           {/* Exposure matrix — separate panel */}
           {isAstro && (
             <div className={styles.matrixPanel}>
-              <ExposureMatrix crop={crop} iso={iso} ev={ev} aoV={aoV} />
+              <ExposureMatrix cropFactor={cropFactor} iso={iso} ev={ev} selectedFl={selectedFl} />
             </div>
           )}
         </div>{/* end main */}
@@ -733,7 +546,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     ["astigmatism", "Astig"],
                     ["rule500", "Rule 500"],
                     ["idealIso", "Ideal ISO"],
-                    ["brand", "WR"],
+                    ["wr", "WR"],
                     ["price", "Price"],
                   ] as [SortKey, string][]) : ([
                     ["mark", "Mark"],
@@ -746,17 +559,14 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                   ] as [SortKey, string][])).map(([key, label]) => (
                     <th
                       key={`${key}-${label}`}
-                      className={
-                        false
-                          ? styles.cellRight
-                          : key === "pick"
-                            ? styles.cellCenter
-                            : undefined
-                      }
-                      onClick={() => handleSort(key)}
+                      className={key === "pick" ? styles.cellCenter : undefined}
+                      onClick={key === "wr" ? undefined : () => handleSort(key)}
+                      style={key === "wr" ? { cursor: "default" } : undefined}
                     >
                       {label}
-                      <span className={styles.sortIndicator}>{sortIndicator(key)}</span>
+                      {key !== "wr" && (
+                        <span className={styles.sortIndicator}>{sortIndicator(key)}</span>
+                      )}
                     </th>
                   ))}
                 </tr>
