@@ -201,7 +201,7 @@ function ExposureMatrix({ crop, iso, ev, aoV }: { crop: number; iso: number; ev:
                   const maxT = Math.round(500 / (crop * fl));
                   const needed = Math.round((ap * ap * 100) / (maxT * Math.pow(2, ev)));
                   const viable = needed <= iso;
-                  const marginal = !viable && needed <= iso * 1.5;
+                  const marginal = !viable && needed <= iso * 2;
                   const label = maxT >= 60 ? `${Math.round(maxT / 60)}m` : `${maxT}s`;
                   const cls = viable
                     ? styles.matrixViable
