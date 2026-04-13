@@ -13,6 +13,7 @@ interface LensExplorerProps {
 type LensSortKey =
   | "brand"
   | "model"
+  | "year"
   | "focalLengthMin"
   | "maxAperture"
   | "hasOis"
@@ -26,6 +27,7 @@ type ColumnAlign = "left" | "right" | "center";
 const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
   { key: "brand", label: "Brand", align: "left" },
   { key: "model", label: "Model", align: "left" },
+  { key: "year", label: "Year", align: "left" },
   { key: "focalLengthMin", label: "FL", align: "right" },
   { key: "maxAperture", label: "f/", align: "right" },
   { key: "hasOis", label: "OIS", align: "center" },
@@ -274,11 +276,11 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                   <tr key={`${lens.brand}-${lens.model}`} className={lens.isDiscontinued ? styles.rowDiscontinued : undefined}>
                     <td>{lens.brand}</td>
                     <td>
-                      <span className={styles.typeBadge}>{lens.type === "prime" ? "P" : "Z"}</span>
                       <a className={styles.lensLink} href={`/lenses/${slugMap.get(`${lens.brand}-${lens.model}`)}`}>
                         {lens.model}
                       </a>
                     </td>
+                    <td>{lens.year ?? ""}</td>
                     <td className={styles.cellRight}>{formatFL(lens)}</td>
                     <td className={styles.cellRight}>{lens.maxAperture}</td>
                     <td className={styles.cellCenter}><span className={lens.hasOis ? styles.dotOn : styles.dotOff} /></td>
@@ -306,7 +308,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                   <span>{formatFL(lens)}</span>
                   <span>f/{lens.maxAperture}</span>
                   <span>{lens.weight}g</span>
-                  <span>{lens.type === "prime" ? "Prime" : "Zoom"}</span>
+                  {lens.year && <span>{lens.year}</span>}
                 </div>
                 <div className={styles.cardBadges}>
                   {lens.hasOis && <span className={styles.badge}>OIS</span>}
