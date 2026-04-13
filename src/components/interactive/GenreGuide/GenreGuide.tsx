@@ -693,7 +693,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     <th
                       key={`${key}-${label}`}
                       className={
-                        key === "weight" || key === "price" || key === "idealIso" || key === "rule500" || key === "aperture" || key === "coma" || key === "astigmatism" || (key === "fl" && label !== "Model")
+                        label === "FL" || label === "Rule 500" || label === "Ideal ISO" || label === "Wt" || label === "Price"
                           ? styles.cellRight
                           : key === "pick"
                             ? styles.cellCenter
@@ -716,12 +716,12 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     <td>{el.lens.model}</td>
                     {isAstro && (
                       <>
-                        <td className={styles.cellRight}>f/{el.lens.maxAperture}</td>
+                        <td>f/{el.lens.maxAperture}</td>
                         <td className={styles.cellRight}>{el.lens.focalLengthMin}mm</td>
                         <td className={styles.cellRight}>{el.rule500}s</td>
                         <td className={styles.cellRight}>{fmtIso(el.idealIso)}</td>
-                        <td className={styles.cellRight}><FieldVal value={el.lens.coma} /></td>
-                        <td className={styles.cellRight}><FieldVal value={el.lens.astigmatism} /></td>
+                        <td><FieldVal value={el.lens.coma} /></td>
+                        <td><FieldVal value={el.lens.astigmatism} /></td>
                       </>
                     )}
                     {!isAstro && (
