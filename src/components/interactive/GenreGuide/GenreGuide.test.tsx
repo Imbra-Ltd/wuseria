@@ -178,6 +178,6 @@ describe("GenreGuide", () => {
     render(<GenreGuide lenses={testLenses} />);
 
     await user.click(screen.getByRole("tab", { name: /landscape/i }));
-    expect(screen.getByText(/EV Matrix.*tripod/)).toBeInTheDocument();
+    expect(screen.getByText(/EV Matrix.*Tripod/)).toBeInTheDocument();
   });
 });

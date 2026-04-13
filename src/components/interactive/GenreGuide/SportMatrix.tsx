@@ -1,22 +1,24 @@
 import { MATRIX_FL_COLS_X, MATRIX_FL_COLS_GFX, MATRIX_APERTURES } from "../../../data/genres";
 import styles from "./GenreGuide.module.css";
 
-interface ExposureMatrixProps {
+interface SportMatrixProps {
   cropFactor: number;
   iso: number;
   ev: number;
   selectedFl: number;
+  genre: "sport" | "wildlife";
 }
 
-function ExposureMatrix({ cropFactor, iso, ev, selectedFl }: ExposureMatrixProps) {
+function SportMatrix({ cropFactor, iso, ev, selectedFl, genre }: SportMatrixProps) {
   const MATRIX_FL_COLS = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
-  const fallback = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
+  const fallback = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[63] : MATRIX_FL_COLS_X[135];
   const cols = MATRIX_FL_COLS[selectedFl] || fallback;
+  const apertures = MATRIX_APERTURES.filter((ap) => ap <= 11);
 
   return (
     <div className={styles.matrix}>
       <div className={styles.matrixTitle}>
-        EV Matrix · Tripod · Rule of 500 · Untracked · Capture the stars
+        EV Matrix · Tripod/Monopod · 1/4×FL rule · {genre === "wildlife" ? "Capture the behaviour" : "Capture the action"}
       </div>
       <div className={styles.matrixScroll}>
         <table className={styles.matrixTable}>
@@ -29,15 +31,16 @@ function ExposureMatrix({ cropFactor, iso, ev, selectedFl }: ExposureMatrixProps
             </tr>
           </thead>
           <tbody>
-            {MATRIX_APERTURES.map((ap) => (
+            {apertures.map((ap) => (
               <tr key={ap}>
                 <td className={styles.matrixRowHead}>{ap}</td>
                 {cols.map((fl) => {
-                  const maxT = Math.round(500 / (cropFactor * fl));
-                  const needed = Math.round((ap * ap * 100) / (maxT * Math.pow(2, ev)));
-                  const viable = needed <= iso;
-                  const marginal = !viable && needed <= iso * 2;
-                  const label = maxT >= 60 ? `${Math.round(maxT / 60)}m` : `${maxT}s`;
+                  // 4× FL rule: min shutter = 1/(4 × crop × FL)
+                  const minS = 1 / (4 * cropFactor * fl);
+                  const t = (ap * ap * 100) / (iso * Math.pow(2, ev));
+                  const viable = t <= minS;
+                  const marginal = !viable && t <= minS * 2;
+                  const label = minS >= 1 ? `${Math.round(minS)}s` : `1/${Math.round(1 / minS)}`;
                   const cls = viable
                     ? styles.matrixViable
                     : marginal
@@ -55,20 +58,18 @@ function ExposureMatrix({ cropFactor, iso, ev, selectedFl }: ExposureMatrixProps
         </table>
       </div>
       <div className={styles.matrixLegend}>
-        <span className={styles.matrixViableText}>●</span> within ISO{" "}
-        <span className={styles.matrixMarginalText}>●</span> within 1 stop{" "}
-        <span className={styles.matrixOverText}>●</span> needs more ISO
+        <span className={styles.matrixViableText}>●</span> fast enough{" "}
+        <span className={styles.matrixMarginalText}>●</span> 1 stop slow{" "}
+        <span className={styles.matrixOverText}>●</span> too slow
       </div>
       <p className={styles.matrixExplain}>
-        Max exposure before star trails = 500 / (crop x FL). Each cell shows
-        the longest untracked exposure at that aperture and focal length.
-        Green means your selected ISO is enough. Amber means you are within
-        one stop — recoverable with exposure push and noise reduction. Red means
-        the exposure does not gather enough light at this ISO.
+        Each cell shows the minimum shutter speed to freeze action at that
+        focal length. Green means your settings freeze motion. Amber is
+        borderline — slight blur on fast movement.
       </p>
     </div>
   );
 }
 
-export { ExposureMatrix };
-export type { ExposureMatrixProps };
+export { SportMatrix };
+export type { SportMatrixProps };

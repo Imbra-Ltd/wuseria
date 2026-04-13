@@ -457,6 +457,45 @@
   color: #40d0b0;
 }
 
+/* Architecture matrix — people frozen/blur/vanish */
+
+.archFrozen {
+  background-color: #0e1820;
+  color: #4090d0;
+}
+
+.archBlur {
+  background-color: #1a1008;
+  color: #d06040;
+}
+
+.archVanish {
+  background-color: #0e1e1c;
+  color: #40d0b0;
+  font-weight: 600;
+}
+
+.archFrozenText {
+  color: #4090d0;
+}
+
+.archBlurText {
+  color: #d06040;
+}
+
+.archVanishText {
+  color: #40d0b0;
+}
+
+.archSweetRow {
+  background-color: #141210;
+}
+
+.archSweetLabel {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
 .lsDiffWarn {
   color: #b09040;
 }
@@ -593,6 +632,10 @@
 
 .table .cellCenter {
   text-align: center;
+}
+
+.table .primaryCol {
+  color: var(--color-accent);
 }
 
 .table tbody tr:hover {
