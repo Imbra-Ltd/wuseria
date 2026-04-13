@@ -96,7 +96,7 @@
 }
 
 .equipmentList {
-  padding: 8px 10px;
+  padding: 8px 10px 4px;
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   line-height: 1.6;
@@ -635,4 +635,25 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   line-height: 1.5;
+}
+
+.footnoteLink {
+  color: var(--color-link);
+}
+
+.footnoteLink:hover {
+  color: var(--color-link-hover);
+}
+
+.equipmentLink {
+  padding: 4px 10px 8px;
+  font-size: var(--font-size-sm);
+}
+
+.equipmentLink a {
+  color: var(--color-link);
+}
+
+.equipmentLink a:hover {
+  color: var(--color-link-hover);
 }
