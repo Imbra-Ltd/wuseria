@@ -423,6 +423,13 @@
   color: #905030;
 }
 
+.matrixExplain {
+  margin-top: var(--space-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
 /* ==========================================================================
    Mark pips
    ========================================================================== */
