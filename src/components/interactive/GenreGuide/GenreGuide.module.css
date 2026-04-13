@@ -510,12 +510,12 @@
   color: var(--color-text);
 }
 
-.cellRight {
+.table .cellRight {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-.cellCenter {
+.table .cellCenter {
   text-align: center;
 }
 
