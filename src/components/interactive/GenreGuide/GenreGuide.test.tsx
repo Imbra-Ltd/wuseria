@@ -109,7 +109,7 @@ describe("GenreGuide", () => {
   it("shows filter panel with dropdowns", () => {
     render(<GenreGuide lenses={testLenses} defaultGenre="portrait" />);
     expect(screen.getAllByText("Mark").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText("Weight")).toBeInTheDocument();
+    expect(screen.getByText("Price")).toBeInTheDocument();
   });
 
   it("displays footnote about scoring methodology", () => {
