@@ -501,6 +501,13 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             <div className={styles.equipmentList}>
               {GENRE_EQUIPMENT[genre]?.join(" · ")}
             </div>
+            {isAstro && (
+              <div className={styles.equipmentLink}>
+                <a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer">
+                  Find dark skies →
+                </a>
+              </div>
+            )}
           </div>
         </div>
 
@@ -830,6 +837,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           : "Marks score optical suitability only — resolution, aberrations, bokeh quality — from lab measurements and trusted field reviews. OIS, autofocus, weather sealing, and build quality do not affect the mark."
         }
         {" "}Focal length is a creative choice shown as a filter, not a scoring input. Prices are approximate USD estimates.
+        {" "}<a href="/wiki/optical-scoring" className={styles.footnoteLink}>How are marks calculated?</a>
       </p>
     </div>
   );
