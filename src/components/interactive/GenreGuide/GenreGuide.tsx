@@ -115,6 +115,7 @@ interface EnrichedLens {
   isPick: boolean;
   idealIso: number | null;
   rule500: number | null;
+  effectiveFl: number;
 }
 
 // =============================================================================
@@ -318,14 +319,22 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       .map((l) => {
         const mark = getGenreMark(l, genre)!;
         const isPick = isEditorialPick(l, genre);
+        // Effective FL: for zooms, use midpoint of overlap with selected FL range
+        const range = FL_RANGES[aoV];
+        let effectiveFl = l.focalLengthMin;
+        if (range && l.type === "zoom") {
+          const overlapMin = Math.max(l.focalLengthMin, range[0]);
+          const overlapMax = Math.min(l.focalLengthMax, range[1]);
+          effectiveFl = Math.round((overlapMin + overlapMax) / 2);
+        }
         const idealIso = isAstro
-          ? astroExposure(l, ev, iso, crop).idealIso
+          ? astroExposure({ ...l, focalLengthMin: effectiveFl } as Lens, ev, iso, crop).idealIso
           : handheldExposure(l, genre, ev, crop, mp).idealIso;
         const rule500 = isAstro
-          ? Math.round(500 / (crop * l.focalLengthMin))
+          ? Math.round(500 / (crop * effectiveFl))
           : null;
 
-        return { lens: l, mark, isPick, idealIso, rule500 };
+        return { lens: l, mark, isPick, idealIso, rule500, effectiveFl };
       });
 
     // Sort — v is always ascending (a < b → negative)
@@ -734,7 +743,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     {isAstro && (
                       <>
                         <td>f/{el.lens.maxAperture}</td>
-                        <td>{el.lens.focalLengthMin}mm</td>
+                        <td>{el.effectiveFl}mm</td>
                         <td>{el.rule500}s</td>
                         <td>{fmtIso(el.idealIso)}</td>
                         <td><FieldVal value={el.lens.coma} /></td>
