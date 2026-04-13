@@ -330,6 +330,7 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.0,
     flareResistance: 1.0,
+    genreMarks: { astro: 2, landscape: 4, architecture: 2, street: 3, travel: 4, sport: 4, wildlife: 4 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/382.1-Lens_review-Carl_Zeiss_Touit_12_mm_f_2.8-Introduction.html",
     },
@@ -369,6 +370,7 @@ const lenses: Lens[] = [
     distortion: 1.0,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
+    genreMarks: { astro: 1, landscape: 3, architecture: 3, street: 3.5, travel: 4, sport: 3, wildlife: 3 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/386.1-Lens_review-Carl_Zeiss_Touit_32_mm_f_1.8.html",
     },
@@ -409,6 +411,7 @@ const lenses: Lens[] = [
     distortion: 1.5,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
+    genreMarks: { astro: 3, landscape: 4, architecture: 4, street: 3, travel: 4, sport: 4, wildlife: 4.5, macro: 4.5 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/418.1-Lens_review-Carl_Zeiss_Touit_M_50_mm_f_2.8.html",
     },
@@ -807,6 +810,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.5,
+    genreMarks: { landscape: 3, architecture: 3, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 4.5 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2023/01/fujinon-xf-30mm-f2-8-lm-wr-macro-review/",
     },
@@ -1506,6 +1510,7 @@ const lenses: Lens[] = [
     distortion: 1.5,
     vignettingWideOpen: 1.0,
     vignettingStopped: 2.0,
+    genreMarks: { landscape: 3, architecture: 3, street: 2, travel: 3, sport: 3.5, wildlife: 4, macro: 3 },
     reviewSources: {
       ephotozine: "https://www.ephotozine.com/article/fujifilm-xf-18-135mm-f-3-5-5-6-r-lm-lens-review-25914",
     },
@@ -2637,6 +2642,7 @@ const lenses: Lens[] = [
     vignettingWideOpen: 2.0,
     vignettingStopped: 2.0,
     bokeh: 2.0,
+    genreMarks: { astro: 2, landscape: 4, architecture: 4, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/594.1-Lens_review-Samyang_AF_75_mm_f_1.8_FE_Introduction.html",
     },
@@ -2672,6 +2678,7 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.0,
     vignettingStopped: 0.5,
     flareResistance: 0.5,
+    genreMarks: { landscape: 3, architecture: 3, street: 3, travel: 4, sport: 4.5, wildlife: 4.5 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/529.1-Lens_review-Venus_Optics_LAOWA_9_mm_f_2.8_ZERO-D_Introduction.html",
     },
@@ -2726,6 +2733,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 0.5,
+    genreMarks: { landscape: 4.5, architecture: 4.5, portrait: 4, street: 3, travel: 4, sport: 4.5, wildlife: 5, macro: 5 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2020/02/laowa-65mm-f2-8-ultra-2x-macro-review/",
     },
@@ -3147,6 +3155,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.5,
+    genreMarks: { landscape: 3, architecture: 2, portrait: 3, street: 3, travel: 4, sport: 3.5, wildlife: 4, macro: 3 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2023/12/sigma-18-50mm-f2-8-dn-x-mount-review-40mp/",
     },
@@ -3186,6 +3195,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.0,
     flareResistance: 2.0,
+    genreMarks: { landscape: 3, architecture: 2, portrait: 3, street: 4, travel: 3, sport: 4, wildlife: 4, macro: 2 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2025/08/sigma-12mm-f1-4-dc-contemporary-review/",
     },
@@ -3225,6 +3235,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.5,
+    genreMarks: { landscape: 3, architecture: 1, portrait: 3, street: 4, travel: 3, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2026/02/sigma-15mm-f1-4-dc-contemporary-review/",
     },
@@ -3305,6 +3316,7 @@ const lenses: Lens[] = [
     vignettingStopped: 0.5,
     bokeh: 1.0,
     flareResistance: 1.5,
+    genreMarks: { landscape: 4, architecture: 2, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 3 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2023/12/sigma-10-18mm-f2-8-dn-x-mount-40mp-review/",
     },
@@ -3392,6 +3404,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 1.0,
+    genreMarks: { landscape: 4, architecture: 4, portrait: 4, street: 1, travel: 1, sport: 4, wildlife: 4, macro: 2 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2023/09/sigma-100-400mm-f5-6-3-dg-dn-os-x-mount-review/",
     },
@@ -3433,6 +3446,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.0,
+    genreMarks: { landscape: 3, architecture: 3, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 3 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2023/06/tamron-11-20mm-f2-8-rxd-for-fuji-x-mount-review/",
     },
@@ -3515,6 +3529,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 1.5,
+    genreMarks: { landscape: 3, architecture: 2, portrait: 4, street: 2, travel: 3, sport: 4, wildlife: 4, macro: 4 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2021/10/tamron-18-300mm-f3-5-6-3-vc-vxd-b061-review/",
     },
@@ -3557,6 +3572,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 2.0,
     flareResistance: 1.5,
+    genreMarks: { landscape: 3, architecture: 3, portrait: 4, street: 1, travel: 1, sport: 4, wildlife: 4, macro: 3 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2023/08/tamron-150-500mm-f5-6-7-di-ii-vc-vxd-x-mount-review/",
     },
@@ -3676,6 +3692,7 @@ const lenses: Lens[] = [
     distortion: 1.5,
     vignettingWideOpen: 1.5,
     vignettingStopped: 2.0,
+    genreMarks: { landscape: 3, architecture: 3, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       opticallimits: "https://opticallimits.com/fujifilm/viltrox-af-33mm-f-1-4-xf-review/",
     },
@@ -4084,6 +4101,7 @@ const lenses: Lens[] = [
     distortion: 2.0,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
+    genreMarks: { landscape: 4, architecture: 4, street: 4, travel: 4, sport: 3.5, wildlife: 4, macro: 2 },
     reviewSources: {
       opticallimits: "https://opticallimits.com/sony/3705/",
     },
@@ -4162,6 +4180,7 @@ const lenses: Lens[] = [
     distortion: 1.0,
     vignettingWideOpen: 1.5,
     vignettingStopped: 2.0,
+    genreMarks: { landscape: 3.5, architecture: 3, street: 4, travel: 4, sport: 3.5, wildlife: 4, macro: 1 },
     reviewSources: {
       opticallimits: "https://opticallimits.com/fujifilm/tokina-atx-m-56mm-f-1-4-x/",
     },
@@ -4201,6 +4220,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.0,
+    genreMarks: { landscape: 3, architecture: 3, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 3 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2025/02/tokina-atx-m-11-18mm-f2-8-x-mount-review/",
     },
@@ -4874,6 +4894,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.5,
     flareResistance: 1.0,
+    genreMarks: { astro: 3, landscape: 4, architecture: 2, portrait: 4, street: 3, travel: 4.5, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/713.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_2.8_R_WR.html",
     },
@@ -5131,6 +5152,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.5,
     flareResistance: 1.5,
+    genreMarks: { landscape: 3, architecture: 2, portrait: 4, street: 2, travel: 3, sport: 3.5, wildlife: 4, macro: 2 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2023/07/fujinon-xf-18-120mm-f4-lm-pz-wr-review/",
     },
@@ -5211,6 +5233,7 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.0,
     flareResistance: 1.5,
+    genreMarks: { landscape: 4, architecture: 4, portrait: 3, street: 1, travel: 1, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2023/01/fujinon-xf-150-600mm-f5-6-8-r-lm-ois-wr-review/",
     },
@@ -5354,6 +5377,7 @@ const lenses: Lens[] = [
     sphericalAberration: 1.5,
     bokeh: 2.0,
     flareResistance: 0.5,
+    genreMarks: { astro: 3, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 3, sport: 2, wildlife: 2, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/420.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R.html",
     },
