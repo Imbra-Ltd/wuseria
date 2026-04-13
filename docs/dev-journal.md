@@ -238,3 +238,68 @@ Key design decisions:
 - genreMarks populated on all 52 scored lenses for build-time access
 
 PRs: #114 (scoring engine), #115 (macro genre integration)
+
+### Session 11 — 2026-04-13
+
+Tool: Claude Code (Opus 4.6)
+
+**Nightscape genre screener — full UX build-out**
+
+Genre Guide UX:
+- Two-column layout: sidebar (EV scenes + equipment) | main (controls + matrix + lenses)
+- Lens table spans full width below the grid
+- Exposure matrix ported from prototype (Rule of 500, color-coded ISO viability)
+- Genre renamed: Astrophotography → Nightscape Photography (covers stars, Milky Way, nightscapes)
+- Genre index page replaced with direct screener (no card page)
+
+Astro-specific screener:
+- Dedicated columns: Mark, Brand, Model, FL, f/, Coma, Astig, Rule 500, Ideal ISO, WR, Price
+- Filters matching columns 1:1: Mark, Type, Brand, f/, Coma, Astig, WR, Price
+- Dynamic FL for zooms (shortest FL in overlap with selected range)
+- Dynamic ISO per EV scene (auto-adjusts when clicking EV scenes)
+- WR column with dot indicator (matching Lens Explorer style)
+- Discontinued lenses hidden from screener
+- Astro-specific footnote explaining primary/secondary scoring factors
+
+EV scenes research and refinement:
+- EV-to-Bortle mapping researched from Patat (2003), Benn & Ellison (1998), Leinert et al. (1998)
+- Scene names updated: City center, Bright suburb, Suburb, Full moon, Rural town, Rural, Dark rural, Dark site, Excellent dark site, Pristine dark site
+- Bortle scale shown in EV header for astro (genre-specific label override)
+- Full moon labeled "(any site, ~Bortle 5-6)" — moon brightness independent of Bortle
+- EV -7 = Bortle 1 solar max, EV -8 = Bortle 1 solar min
+- Zodiacal light research: comparable to Milky Way brightness, not fainter
+- Natural sky brightness floor: ~22.0 mag/arcsec² (EV -9 to -10), EV -8 confirmed achievable
+
+Exposure matrix improvements:
+- Standard f-stop scale: f/1.0, 1.4, 2.0, 2.8, 4.0, 5.6, 8, 11
+- FL columns use actual Fuji X-mount focal lengths (not FF equivalents)
+- FL ranges corrected: Ultra-wide 6-15mm, Wide 16-27mm, Standard 28-56mm, Tele 57-150mm, Super-tele 151+
+- Amber threshold fixed: 1 full stop (was half stop)
+- Matrix explanation text below legend
+
+Visual polish:
+- Mark pips: CSS circles (full + half), chip color scheme (accent fill)
+- All table columns left-aligned
+- Controls compact inline with labels
+- Equipment panel font matched
+- Footer: one line with links first, then FL disclaimer
+
+Data quality:
+- Lens data validation tests (94 tests passing)
+- XF 80mm cornerStopped corrected 0.5→1.0 (LensTip summary: "good edge quality")
+
+Wiki and issues:
+- Wiki pages created for all 9 genres (#193-#202)
+- Optical scoring explainer page planned (#205)
+- Sample images for mark levels (#203)
+- Editorial picks planned (#204)
+- Astro accessories categories (#175)
+- Bahtinov mask wiki entry (#174)
+- Reusable genre screener epic (#122)
+
+Key design insight:
+- The screener is a planning tool, not a shopping page
+- Workflow: Scene → Matrix → FL → Lens → Field reference
+- Each element earns its place in the top-to-bottom decision funnel
+
+PRs: #117-#212 (35+ PRs for screener build-out)
