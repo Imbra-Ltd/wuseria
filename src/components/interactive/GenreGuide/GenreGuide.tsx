@@ -64,18 +64,19 @@ const FL_CHIPS: Record<string, { label: string; fl: number }[]> = {
 };
 
 // FL ranges for filtering — lens must overlap the range to show
+// FL ranges for filtering — actual X-mount focal lengths (not FF equiv)
+// Ultra-wide: 6-14mm, Wide: 15-27mm, Standard: 28-56mm, Tele: 57-150mm, Super-tele: 151+
 const FL_RANGES: Record<number, [number, number]> = {
-  6:   [6, 10],
-  12:  [6, 18],
-  15:  [12, 24],
-  24:  [18, 40],
-  33:  [24, 45],
-  50:  [35, 70],
-  57:  [40, 75],
-  90:  [60, 120],
-  135: [70, 200],
-  200: [135, 300],
-  300: [200, 600],
+  12:  [6, 14],      // Ultra-wide
+  15:  [12, 24],     // Portrait group
+  24:  [15, 27],     // Wide
+  33:  [24, 45],     // Portrait indoor
+  50:  [28, 56],     // Standard
+  57:  [40, 75],     // Portrait outdoor
+  90:  [57, 150],    // Tele / macro tele
+  135: [57, 150],    // Tele
+  200: [100, 300],   // Long macro
+  300: [151, 600],   // Super-tele
 };
 
 const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number }> = {
@@ -158,11 +159,11 @@ function PickStar({ isPick }: { isPick: boolean }) {
 // =============================================================================
 
 const MATRIX_FL_COLS: Record<number, number[]> = {
-  12:  [6, 8, 10, 12, 14, 16],
-  24:  [18, 21, 24, 28, 35],
-  50:  [35, 40, 50, 56],
-  135: [75, 85, 100, 135],
-  300: [200, 300, 400],
+  12:  [8, 10, 12, 14],
+  24:  [16, 18, 23, 27],
+  50:  [33, 35, 50, 56],
+  135: [60, 80, 90, 100, 135],
+  300: [150, 200, 300, 400],
 };
 
 const MATRIX_APERTURES = [1.0, 1.2, 1.4, 1.8, 2.0, 2.8, 4.0];
