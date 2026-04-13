@@ -734,7 +734,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     )}
                     <td>~${el.lens.price}</td>
                     {isAstro && (
-                      <td>{el.lens.isWeatherSealed ? "WR" : ""}</td>
+                      <td><span className={el.lens.isWeatherSealed ? styles.dotOn : styles.dotOff} /></td>
                     )}
                   </tr>
                 ))}
