@@ -42,7 +42,7 @@ interface GenreFormula {
 }
 
 const genreFormulas: Record<ScoredGenre, GenreFormula> = {
-  astro: {
+  nightscape: {
     primary: ["coma", "astigmatism", "_apertureScore"],
     secondary: [
       "lateralCA",

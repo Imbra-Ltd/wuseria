@@ -32,7 +32,7 @@ const testLenses: Lens[] = [
     maxAperture: 1.4,
     weight: 300,
     price: 950,
-    genreMarks: { astro: 4, street: 4, portrait: 3 },
+    genreMarks: { nightscape: 4, street: 4, portrait: 3 },
     editorialPicks: ["street"],
   }),
   makeLens({
@@ -43,8 +43,8 @@ const testLenses: Lens[] = [
     maxAperture: 1.4,
     weight: 375,
     price: 1000,
-    genreMarks: { astro: 4, street: 4, portrait: 3 },
-    editorialPicks: ["astro", "street"],
+    genreMarks: { nightscape: 4, street: 4, portrait: 3 },
+    editorialPicks: ["nightscape", "street"],
   }),
   makeLens({
     brand: "Fujifilm",
@@ -65,8 +65,8 @@ const testLenses: Lens[] = [
     maxAperture: 2.0,
     weight: 260,
     price: 410,
-    genreMarks: { astro: 4, street: 4 },
-    editorialPicks: ["astro"],
+    genreMarks: { nightscape: 4, street: 4 },
+    editorialPicks: ["nightscape"],
   }),
 ];
 
@@ -81,7 +81,7 @@ describe("GenreGuide", () => {
   });
 
   it("renders with a specified default genre", () => {
-    render(<GenreGuide lenses={testLenses} defaultGenre="astro" />);
+    render(<GenreGuide lenses={testLenses} defaultGenre="nightscape" />);
     expect(screen.getByRole("tab", { name: /nightscape/i, selected: true })).toBeInTheDocument();
   });
 
@@ -101,7 +101,7 @@ describe("GenreGuide", () => {
   });
 
   it("shows mark pips for scored lenses", () => {
-    render(<GenreGuide lenses={testLenses} defaultGenre="astro" />);
+    render(<GenreGuide lenses={testLenses} defaultGenre="nightscape" />);
     const pips = screen.getAllByLabelText(/Mark \d of 5/);
     expect(pips.length).toBeGreaterThan(0);
   });

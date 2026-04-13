@@ -11,7 +11,7 @@ import {
   FL_RANGES,
   GENRE_DEFAULTS,
   GENRE_EQUIPMENT,
-  ASTRO_ISO_BY_EV,
+  NIGHTSCAPE_ISO_BY_EV,
 } from "../../../data/genres";
 import { getGenreMark, isEditorialPick } from "../../../utils/scoring";
 import { astroExposure, handheldExposure } from "./exposure";
@@ -34,7 +34,7 @@ interface GenreGuideProps {
 // =============================================================================
 
 const SCORED_GENRES: ScoredGenre[] = [
-  "astro", "landscape", "architecture", "street",
+  "nightscape", "landscape", "architecture", "street",
   "travel", "portrait", "sport", "wildlife", "macro",
 ];
 
@@ -80,7 +80,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
   const [wrFilter, setWrFilter] = useState("");
   const sceneListRef = useRef<HTMLDivElement>(null);
 
-  const isAstro = genre === "astro";
+  const isNightscape = genre === "nightscape";
 
   // -- Genre change -> reset all --------------------------------------------
   function handleGenreChange(g: ScoredGenre): void {
@@ -145,10 +145,10 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         if (range && l.type === "zoom") {
           effectiveFl = Math.max(l.focalLengthMin, range[0]);
         }
-        const idealIso = isAstro
+        const idealIso = isNightscape
           ? astroExposure({ ...l, focalLengthMin: effectiveFl } as Lens, ev, iso, cropFactor).idealIso
           : handheldExposure(l, genre, ev, cropFactor, sensorMp).idealIso;
-        const rule500 = isAstro
+        const rule500 = isNightscape
           ? Math.round(500 / (cropFactor * effectiveFl))
           : null;
 
@@ -212,7 +212,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       if (wrFilter === "no" && el.lens.isWeatherSealed) return false;
       return true;
     });
-  }, [lenses, genre, cropFactor, ev, iso, sensorMp, selectedFl, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter]);
+  }, [lenses, genre, cropFactor, ev, iso, sensorMp, selectedFl, sortBy, sortAsc, isNightscape, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter]);
 
   // -- Sort handler ---------------------------------------------------------
   function handleSort(key: SortKey): void {
@@ -296,8 +296,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                   className={`${styles.sceneItem} ${ev === s.ev ? styles.sceneItemActive : ""}`}
                   onClick={() => {
                     setEv(s.ev);
-                    if (isAstro && ASTRO_ISO_BY_EV[s.ev] != null) {
-                      setIso(ASTRO_ISO_BY_EV[s.ev]);
+                    if (isNightscape && NIGHTSCAPE_ISO_BY_EV[s.ev] != null) {
+                      setIso(NIGHTSCAPE_ISO_BY_EV[s.ev]);
                     }
                   }}
                 >
@@ -336,7 +336,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                   const c = v === "GFX" ? 0.79 : 1.5;
                   setCropFactor(c);
                   setSensorMp(c === 0.79 ? 102 : 26);
-                  if (isAstro) setIso(c === 0.79 ? 3200 : 1600);
+                  if (isNightscape) setIso(c === 0.79 ? 3200 : 1600);
                 }}
                 styles={styles}
                 options={[
@@ -406,7 +406,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           </div>{/* end controlPanel */}
 
           {/* Exposure matrix — separate panel */}
-          {isAstro && (
+          {isNightscape && (
             <div className={styles.matrixPanel}>
               <ExposureMatrix cropFactor={cropFactor} iso={iso} ev={ev} selectedFl={selectedFl} />
             </div>
@@ -446,7 +446,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           </select>
         </div>
         {/* Aperture — astro */}
-        {isAstro && (
+        {isNightscape && (
           <div className={styles.controlGroup}>
             <span className={styles.controlLabel}>f/</span>
             <select className={styles.controlSelect} value={apertureFilter} onChange={(e) => setApertureFilter(e.target.value)}>
@@ -458,7 +458,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           </div>
         )}
         {/* Coma — astro */}
-        {isAstro && (
+        {isNightscape && (
           <div className={styles.controlGroup}>
             <span className={styles.controlLabel}>Coma</span>
             <select className={styles.controlSelect} value={comaFilter} onChange={(e) => setComaFilter(e.target.value)}>
@@ -470,7 +470,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           </div>
         )}
         {/* Astigmatism — astro */}
-        {isAstro && (
+        {isNightscape && (
           <div className={styles.controlGroup}>
             <span className={styles.controlLabel}>Astig</span>
             <select className={styles.controlSelect} value={astigFilter} onChange={(e) => setAstigFilter(e.target.value)}>
@@ -482,7 +482,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           </div>
         )}
         {/* Weight — non-astro */}
-        {!isAstro && (
+        {!isNightscape && (
           <div className={styles.controlGroup}>
             <span className={styles.controlLabel}>Wt</span>
             <select className={styles.controlSelect} value={weightFilter} onChange={(e) => setWeightFilter(e.target.value)}>
@@ -494,7 +494,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           </div>
         )}
         {/* WR — astro */}
-        {isAstro && (
+        {isNightscape && (
           <div className={styles.controlGroup}>
             <span className={styles.controlLabel}>WR</span>
             <select className={styles.controlSelect} value={wrFilter} onChange={(e) => setWrFilter(e.target.value)}>
@@ -535,7 +535,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             <table className={styles.table}>
               <thead>
                 <tr>
-                  {(isAstro ? ([
+                  {(isNightscape ? ([
                     ["mark", "Mark"],
                     ["pick", ""],
                     ["brand", "Brand"],
@@ -578,7 +578,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     <td className={styles.cellCenter}><PickStar isPick={el.isPick} /></td>
                     <td>{el.lens.brand}</td>
                     <td>{el.lens.model}</td>
-                    {isAstro && (
+                    {isNightscape && (
                       <>
                         <td>{el.effectiveFl}mm</td>
                         <td>f/{el.lens.maxAperture}</td>
@@ -588,13 +588,13 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                         <td>{fmtIso(el.idealIso)}</td>
                       </>
                     )}
-                    {!isAstro && (
+                    {!isNightscape && (
                       <>
                         <td>{fmtIso(el.idealIso)}</td>
                         <td>{el.lens.weight}g</td>
                       </>
                     )}
-                    {isAstro && (
+                    {isNightscape && (
                       <td><span className={el.lens.isWeatherSealed ? styles.dotOn : styles.dotOff} /></td>
                     )}
                     <td>~${el.lens.price}</td>
@@ -623,9 +623,9 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                       ? `${el.lens.focalLengthMin}mm`
                       : `${el.lens.focalLengthMin}-${el.lens.focalLengthMax}mm`}
                   </span>
-                  {isAstro && el.rule500 != null && <span>{el.rule500}s</span>}
+                  {isNightscape && el.rule500 != null && <span>{el.rule500}s</span>}
                   {el.idealIso != null && <span>ISO {fmtIso(el.idealIso)}</span>}
-                  {isAstro && <><span>Coma <FieldVal value={el.lens.coma} /></span><span>Astig <FieldVal value={el.lens.astigmatism} /></span></>}
+                  {isNightscape && <><span>Coma <FieldVal value={el.lens.coma} /></span><span>Astig <FieldVal value={el.lens.astigmatism} /></span></>}
                   <span>{el.lens.weight}g</span>
                 </div>
               </div>
@@ -636,7 +636,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
 
       <div className={styles.footer}>
         <a href="/wiki/optical-scoring" className={styles.footerLink}>How are marks calculated?</a>
-        {isAstro && (
+        {isNightscape && (
           <>{" · "}<a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Find dark skies</a></>
         )}
         {" · "}FL is a creative choice, not a scoring input.

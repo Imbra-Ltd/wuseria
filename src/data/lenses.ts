@@ -330,7 +330,7 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.0,
     flareResistance: 1.0,
-    genreMarks: { astro: 2, landscape: 4, architecture: 2, street: 3, travel: 4, sport: 4, wildlife: 4 },
+    genreMarks: { nightscape: 2, landscape: 4, architecture: 2, street: 3, travel: 4, sport: 4, wildlife: 4 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/382.1-Lens_review-Carl_Zeiss_Touit_12_mm_f_2.8-Introduction.html",
     },
@@ -370,7 +370,7 @@ const lenses: Lens[] = [
     distortion: 1.0,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
-    genreMarks: { astro: 1, landscape: 3, architecture: 3, street: 3.5, travel: 4, sport: 3, wildlife: 3 },
+    genreMarks: { nightscape: 1, landscape: 3, architecture: 3, street: 3.5, travel: 4, sport: 3, wildlife: 3 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/386.1-Lens_review-Carl_Zeiss_Touit_32_mm_f_1.8.html",
     },
@@ -411,7 +411,7 @@ const lenses: Lens[] = [
     distortion: 1.5,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
-    genreMarks: { astro: 3, landscape: 4, architecture: 4, street: 3, travel: 4, sport: 4, wildlife: 4.5, macro: 4.5 },
+    genreMarks: { nightscape: 3, landscape: 4, architecture: 4, street: 3, travel: 4, sport: 4, wildlife: 4.5, macro: 4.5 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/418.1-Lens_review-Carl_Zeiss_Touit_M_50_mm_f_2.8.html",
     },
@@ -456,7 +456,7 @@ const lenses: Lens[] = [
     vignettingStopped: 0.5,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { astro: 3, landscape: 3, architecture: 3, portrait: 4, street: 3, travel: 4, sport: 4.5, wildlife: 5, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 4, street: 3, travel: 4, sport: 4.5, wildlife: 5, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/387.1-Lens_review-Fujifilm_Fujinon_XF_14_mm_f_2.8_R.html",
     },
@@ -501,7 +501,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 0.5,
     flareResistance: 1.0,
-    genreMarks: { astro: 2, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 4, sport: 3, wildlife: 3, macro: 2 },
+    genreMarks: { nightscape: 2, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 4, sport: 3, wildlife: 3, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/449.1-Lens_review-Fujifilm_Fujinon_XF_16_mm_f_1.4_R_WR-Introduction.html",
     },
@@ -546,7 +546,7 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.0,
     price: 1250,
-    genreMarks: { astro: 2, landscape: 3, architecture: 3, portrait: 4, street: 4.5, travel: 4, sport: 5, wildlife: 5, macro: 2 },
+    genreMarks: { nightscape: 2, landscape: 3, architecture: 3, portrait: 4, street: 4.5, travel: 4, sport: 5, wildlife: 5, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/611.1-Lens_review-Fujifilm_Fujinon_XF_18_mm_f_1.4_R_LM_WR.html",
     },
@@ -589,7 +589,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { astro: 2, landscape: 3, architecture: 1, portrait: 3, street: 4, travel: 4.5, sport: 3, wildlife: 3, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 3, architecture: 1, portrait: 3, street: 4, travel: 4.5, sport: 3, wildlife: 3, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/349.1-Lens_review-Fujifilm_Fujinon_XF_18_mm_f_2_R.html",
     },
@@ -634,7 +634,7 @@ const lenses: Lens[] = [
     bokeh: 2.0,
     flareResistance: 1.5,
     price: 1250,
-    genreMarks: { astro: 2, landscape: 4, architecture: 4, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 4, architecture: 4, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/398.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_1.4_R.html",
     },
@@ -679,7 +679,7 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 0.5,
-    genreMarks: { astro: 3, landscape: 4, architecture: 2, portrait: 4, street: 4.5, travel: 4, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: { nightscape: 3, landscape: 4, architecture: 2, portrait: 4, street: 4.5, travel: 4, sport: 4, wildlife: 4, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/628.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_1.4_R_LM_WR.html",
       opticallimits: "https://opticallimits.com/fujifilm/fujinon-xf-23mm-1-4-r-lm-wr-review/",
@@ -726,7 +726,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 0.5,
     flareResistance: 1.0,
-    genreMarks: { astro: 3, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 4.5, sport: 3, wildlife: 3, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 4.5, sport: 3, wildlife: 3, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/489.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_2_R_WR.html",
     },
@@ -769,7 +769,7 @@ const lenses: Lens[] = [
     sphericalAberration: 2.0,
     bokeh: 1.5,
     price: 500,
-    genreMarks: { astro: 2, landscape: 4, architecture: 3, portrait: 4, street: 3, travel: 5, sport: 4.5, wildlife: 5, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 4, architecture: 3, portrait: 4, street: 3, travel: 5, sport: 4.5, wildlife: 5, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/385.1-Lens_review-Fujifilm_Fujinon_XF_27_mm_f_2.8_Introduction.html",
     },
@@ -854,7 +854,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { astro: 3, landscape: 4, architecture: 3, portrait: 3, street: 4.5, travel: 4, sport: 3, wildlife: 3, macro: 2 },
+    genreMarks: { nightscape: 3, landscape: 4, architecture: 3, portrait: 3, street: 4.5, travel: 4, sport: 3, wildlife: 3, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/622.1-Lens_review-Fujifilm_Fujinon_XF_33_mm_f_1.4_R_LM_WR.html",
     },
@@ -898,7 +898,7 @@ const lenses: Lens[] = [
     bokeh: 1.0,
     flareResistance: 1.5,
     price: 750,
-    genreMarks: { astro: 1, landscape: 4, architecture: 4, portrait: 3, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: { nightscape: 1, landscape: 4, architecture: 4, portrait: 3, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/348.1-Lens_review-Fujifilm_Fujinon_XF_35_mm_f_1.4_R_Introduction.html",
     },
@@ -943,7 +943,7 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.5,
     price: 500,
-    genreMarks: { astro: 2, landscape: 3, architecture: 2, portrait: 3.5, street: 4, travel: 4, sport: 3.5, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 3, architecture: 2, portrait: 3.5, street: 4, travel: 4, sport: 3.5, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/456.1-Lens_review-Fujifilm_Fujinon_XF_35_mm_f_2_R_WR.html",
     },
@@ -988,7 +988,7 @@ const lenses: Lens[] = [
     bokeh: 2.0,
     flareResistance: 0.5,
     price: 1750,
-    genreMarks: { astro: 2, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 2, sport: 2, wildlife: 2, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 2, sport: 2, wildlife: 2, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/596.1-Lens_review-Fujifilm_Fujinon_XF_50_mm_f_1.0_R_WR-Introduction.html",
     },
@@ -1033,7 +1033,7 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.5,
     price: 750,
-    genreMarks: { astro: 4, landscape: 3, architecture: 3, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4.5, macro: 2 },
+    genreMarks: { nightscape: 4, landscape: 3, architecture: 3, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4.5, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/499.1-Lens_review-Fujifilm_Fujinon_XF_50_mm_f_2_R_WR.html",
     },
@@ -1078,7 +1078,7 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 0.5,
     price: 1000,
-    genreMarks: { astro: 3, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 4, sport: 2, wildlife: 2, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 4, sport: 2, wildlife: 2, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/420.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R.html",
     },
@@ -1122,7 +1122,7 @@ const lenses: Lens[] = [
     bokeh: 1.0,
     flareResistance: 0.5,
     price: 1000,
-    genreMarks: { astro: 3, landscape: 4, architecture: 2, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 4 },
+    genreMarks: { nightscape: 3, landscape: 4, architecture: 2, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 4 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/352.1-Lens_review-Fujifilm_Fujinon_XF_60_mm_f_2.4_R_Macro.html",
     },
@@ -1168,7 +1168,7 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { astro: 3, landscape: 3, architecture: 3, portrait: 4, street: 3, travel: 2, sport: 4.5, wildlife: 5, macro: 5 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 4, street: 3, travel: 2, sport: 4.5, wildlife: 5, macro: 5 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/519.1-Lens_review-Fujifilm_Fujinon_XF_80_mm_f_2.8_LM_OIS_WR_Macro-Introduction.html",
     },
@@ -1213,7 +1213,7 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 0.5,
-    genreMarks: { astro: 4, landscape: 4, architecture: 4, portrait: 4, street: 4, travel: 3, sport: 4.5, wildlife: 5, macro: 1 },
+    genreMarks: { nightscape: 4, landscape: 4, architecture: 4, portrait: 4, street: 4, travel: 3, sport: 4.5, wildlife: 5, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/446.1-Lens_review-Fujifilm_Fujinon_XF_90_mm_f_2_R_LM_WR.html",
       dustinabbott: "https://dustinabbott.net/2019/12/fujinon-xf-90mm-f2-lm-wr-review/",
@@ -1303,7 +1303,7 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.0,
     flareResistance: 1.0,
-    genreMarks: { astro: 3, landscape: 4, architecture: 4, street: 3, travel: 2, sport: 4.5, wildlife: 4.5, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 4, architecture: 4, street: 3, travel: 2, sport: 4.5, wildlife: 4.5, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/546.1-Lens_review-Fujifilm_Fujinon_XF_8-16_mm_f_2.8_R_LM_WR.html",
     },
@@ -1347,7 +1347,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 0.5,
     flareResistance: 1.5,
-    genreMarks: { astro: 2, landscape: 4, architecture: 3, portrait: 2, street: 2, travel: 4, sport: 3.5, wildlife: 4, macro: 2 },
+    genreMarks: { nightscape: 2, landscape: 4, architecture: 3, portrait: 2, street: 2, travel: 4, sport: 3.5, wildlife: 4, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/413.1-Lens_review-Fujifilm_Fujinon_XF_10-24_mm_f_4R_OIS.html",
     },
@@ -1391,7 +1391,7 @@ const lenses: Lens[] = [
     sphericalAberration: 1.5,
     flareResistance: 1.5,
     price: 750,
-    genreMarks: { astro: 2, landscape: 4, architecture: 3, street: 2, travel: 3, sport: 4, wildlife: 4.5, macro: 2 },
+    genreMarks: { nightscape: 2, landscape: 4, architecture: 3, street: 2, travel: 3, sport: 4, wildlife: 4.5, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/413.1-Lens_review-Fujifilm_Fujinon_XF_10-24_mm_f_4R_OIS.html",
     },
@@ -1435,7 +1435,7 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 0.5,
     flareResistance: 1.5,
-    genreMarks: { astro: 3, landscape: 3, architecture: 2, portrait: 2, street: 3, travel: 3, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 2, portrait: 2, street: 3, travel: 3, sport: 4, wildlife: 4, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/433.1-Lens_review-Fujifilm_Fujinon_XF_16-55_mm_f_2.8_R_LM_WR.html",
     },
@@ -1477,7 +1477,7 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.5,
     price: 1000,
-    genreMarks: { astro: 3, landscape: 4, architecture: 4, portrait: 3, street: 3, travel: 4, sport: 3, wildlife: 3, macro: 2 },
+    genreMarks: { nightscape: 3, landscape: 4, architecture: 4, portrait: 3, street: 3, travel: 4, sport: 3, wildlife: 3, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/383.1-Lens_review-Fujifilm_Fujinon_XF_18-55_mm_f_2.8-4_OIS.html",
     },
@@ -1561,7 +1561,7 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { astro: 3, landscape: 3, architecture: 3, portrait: 4, street: 3, travel: 2, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 4, street: 3, travel: 2, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/421.1-Lens_review-Fujifilm_Fujinon_XF_50-140_mm_f_2.8_R_LM_OIS_WR_-Introduction.html",
     },
@@ -1643,7 +1643,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.0,
     flareResistance: 1.0,
-    genreMarks: { astro: 1, landscape: 3, architecture: 2, portrait: 3, street: 1, travel: 1, sport: 3.5, wildlife: 4, macro: 2 },
+    genreMarks: { nightscape: 1, landscape: 3, architecture: 2, portrait: 3, street: 1, travel: 1, sport: 3.5, wildlife: 4, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/475.1-Lens_review-Fujifilm_Fujinon_XF_100-400_mm_f_4.5-5.6_R_LM_OIS-Introduction.html",
       dustinabbott: "https://dustinabbott.net/2023/01/fujinon-xf-100-400mm-f4-5-5-6-r-lm-wr-ois-review/",
@@ -1725,7 +1725,7 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     flareResistance: 0.5,
     price: 500,
-    genreMarks: { astro: 2, landscape: 3, architecture: 3, street: 2, travel: 3.5, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: { nightscape: 2, landscape: 3, architecture: 3, street: 2, travel: 3.5, sport: 4, wildlife: 4, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/409.1-Lens_review-Fujifilm_Fujinon_XC_16-50_mm_f_3.5-5.6_OIS.html",
     },
@@ -2318,7 +2318,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 0.5,
-    genreMarks: { astro: 4, landscape: 3, architecture: 3, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 4, landscape: 3, architecture: 3, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/404.1-Lens_review-Samyang_12_mm_f_2.0_NCS_CS.html",
       dustinabbott: "https://dustinabbott.net/2014/10/rokinon-12mm-f2-ncs-review/",
@@ -2651,7 +2651,7 @@ const lenses: Lens[] = [
     vignettingWideOpen: 2.0,
     vignettingStopped: 2.0,
     bokeh: 2.0,
-    genreMarks: { astro: 2, landscape: 4, architecture: 4, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 4, architecture: 4, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/594.1-Lens_review-Samyang_AF_75_mm_f_1.8_FE_Introduction.html",
     },
@@ -3043,7 +3043,7 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 2.0,
     bokeh: 1.5,
-    genreMarks: { astro: 2, landscape: 3, architecture: 2, portrait: 3, street: 4, travel: 3, sport: 3, wildlife: 3, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 3, architecture: 2, portrait: 3, street: 4, travel: 3, sport: 3, wildlife: 3, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/522.1-Lens_review-Sigma_C_16_mm_f_1.4_DC_DN.html",
     },
@@ -3083,7 +3083,7 @@ const lenses: Lens[] = [
     distortion: 1.0,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { astro: 3, landscape: 4, architecture: 3, portrait: 3, street: 4.5, travel: 4, sport: 3, wildlife: 3, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 4, architecture: 3, portrait: 3, street: 4.5, travel: 4, sport: 3, wildlife: 3, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/477.1-Lens_review-Sigma_C_30_mm_f_1.4_DC_DN_Introduction.html",
     },
@@ -3124,7 +3124,7 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
     bokeh: 1.0,
-    genreMarks: { astro: 3, landscape: 2, architecture: 2, portrait: 3, street: 4.5, travel: 4, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 2, architecture: 2, portrait: 3, street: 4.5, travel: 4, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/550.1-Lens_review-Sigma_C_56_mm_f_1.4_DC_DN.html",
     },
@@ -3286,7 +3286,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 2.0,
-    genreMarks: { astro: 3, landscape: 4, architecture: 2, portrait: 4, street: 4.5, travel: 4, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: { nightscape: 3, landscape: 4, architecture: 2, portrait: 4, street: 4.5, travel: 4, sport: 4, wildlife: 4, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/670.1-Lens_review-Sigma_C_23_mm_f_1.4_DC_DN-Introduction.html",
     },
@@ -3497,7 +3497,7 @@ const lenses: Lens[] = [
     distortion: 0.5,
     bokeh: 0.5,
     flareResistance: 0.5,
-    genreMarks: { astro: 3, landscape: 4, architecture: 2, portrait: 2, street: 3, travel: 3, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: { nightscape: 3, landscape: 4, architecture: 2, portrait: 2, street: 3, travel: 3, sport: 4, wildlife: 4, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/625.1-Lens_review-Tamron_17-70_mm_f_2.8_Di_III-A_VC_RXD_Introduction.html",
     },
@@ -3624,7 +3624,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 0.5,
-    genreMarks: { astro: 2, landscape: 4, architecture: 4, portrait: 3, street: 4.5, travel: 3, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 4, architecture: 4, portrait: 3, street: 4.5, travel: 3, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/657.1-Lens_review-Viltrox_AF_13_mm_f_1.4_XF-Introduction.html",
     },
@@ -3665,7 +3665,7 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
     bokeh: 1.5,
-    genreMarks: { astro: 2, landscape: 2, architecture: 2, portrait: 2, street: 4, travel: 4, sport: 2, wildlife: 2, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 2, architecture: 2, portrait: 2, street: 4, travel: 4, sport: 2, wildlife: 2, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/592.1-Lens_review-Viltrox_AF_23_mm_f_1.4_XF.html",
     },
@@ -3770,7 +3770,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 2.0,
     flareResistance: 1.0,
-    genreMarks: { astro: 3, landscape: 3, architecture: 3, portrait: 4, street: 4.5, travel: 3, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 4, street: 4.5, travel: 3, sport: 4, wildlife: 4, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/689.1-Lens_review-Viltrox_AF_27_mm_f_1.2.html",
     },
@@ -3813,7 +3813,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 2.0,
     flareResistance: 0.0,
-    genreMarks: { astro: 4, landscape: 4, architecture: 4, portrait: 4, street: 4.5, travel: 3, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 4, landscape: 4, architecture: 4, portrait: 4, street: 4.5, travel: 3, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/659.1-Lens_review-Viltrox_AF_75_mm_f_1.2-Introduction.html",
     },
@@ -3870,7 +3870,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.5,
-    genreMarks: { astro: 4, landscape: 3, architecture: 3, portrait: 3, street: 4, travel: 4, sport: 4, wildlife: 4 },
+    genreMarks: { nightscape: 4, landscape: 3, architecture: 3, portrait: 3, street: 4, travel: 4, sport: 4, wildlife: 4 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/705.1-Lens_review-Viltrox_AF_15_mm_f_1.7_Air_review.html",
     },
@@ -3904,7 +3904,7 @@ const lenses: Lens[] = [
     lateralCA: 1.5,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
-    genreMarks: { astro: 3, landscape: 3, street: 4, travel: 5, sport: 3, wildlife: 3 },
+    genreMarks: { nightscape: 3, landscape: 3, street: 4, travel: 5, sport: 3, wildlife: 3 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/706.1-Lens_review-Viltrox_AF_25_mm_f_1.7_Air.html",
     },
@@ -3979,7 +3979,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { astro: 3, landscape: 3, architecture: 3, portrait: 3, street: 4, travel: 4, sport: 3, wildlife: 3 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 3, street: 4, travel: 4, sport: 3, wildlife: 3 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/712.1-Lens_review-Viltrox_AF_56_mm_f_1.7_Air_review.html",
     },
@@ -4152,7 +4152,7 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 2.0,
     flareResistance: 0.5,
-    genreMarks: { astro: 2, landscape: 2, architecture: 2, portrait: 1, street: 4, travel: 4, sport: 1, wildlife: 1, macro: 2 },
+    genreMarks: { nightscape: 2, landscape: 2, architecture: 2, portrait: 1, street: 4, travel: 4, sport: 1, wildlife: 1, macro: 2 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/634.1-Lens_review-Tokina_ATX-M_33_mm_f_1.4_X.html",
     },
@@ -4363,7 +4363,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 2.0,
     flareResistance: 0.5,
-    genreMarks: { astro: 1, landscape: 1, architecture: 1, portrait: 1, street: 4, travel: 4.5, sport: 1, wildlife: 1 },
+    genreMarks: { nightscape: 1, landscape: 1, architecture: 1, portrait: 1, street: 4, travel: 4.5, sport: 1, wildlife: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/638.1-Lens_review-Voigtlander_Nokton_35_mm_f_1.2_X___Z.html",
     },
@@ -4816,7 +4816,7 @@ const lenses: Lens[] = [
     bokeh: 0.5,
     flareResistance: 1.0,
     price: 500,
-    genreMarks: { astro: 2, landscape: 3, architecture: 1, portrait: 2, street: 2, travel: 4, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 3, architecture: 1, portrait: 2, street: 2, travel: 4, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/656.1-Lens_review-Fujifilm_Fujinon_XF_8_mm_f_3.5_R_WR-Introduction.html",
     },
@@ -4859,7 +4859,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 0.5,
     flareResistance: 1.5,
-    genreMarks: { astro: 3, landscape: 3, architecture: 1, portrait: 2, street: 3, travel: 4.5, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 1, portrait: 2, street: 3, travel: 4.5, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/563.1-Lens_review-Fujifilm_Fujinon_XF_16_mm_f_2.8_R_WR.html",
     },
@@ -4903,7 +4903,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { astro: 3, landscape: 4, architecture: 2, portrait: 4, street: 3, travel: 4.5, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 4, architecture: 2, portrait: 4, street: 3, travel: 4.5, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/713.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_2.8_R_WR.html",
     },
@@ -4946,7 +4946,7 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 0.5,
     flareResistance: 1.0,
-    genreMarks: { astro: 3, landscape: 3, architecture: 3, portrait: 2, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 2, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/385.1-Lens_review-Fujifilm_Fujinon_XF_27_mm_f_2.8_Introduction.html",
       admiringlight: "https://admiringlight.com/blog/review-fujifilm-fujinon-xf-27mm-f2-8/",
@@ -4992,7 +4992,7 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 2.0,
     flareResistance: 1.5,
-    genreMarks: { astro: 4.5, landscape: 5, architecture: 5, portrait: 4.5, street: 5, travel: 3, sport: 5, wildlife: 5, macro: 1 },
+    genreMarks: { nightscape: 4.5, landscape: 5, architecture: 5, portrait: 4.5, street: 5, travel: 3, sport: 5, wildlife: 5, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/647.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R_WR.html",
       opticallimits: "https://opticallimits.com/fujifilm/fujinon-xf-56mm-1-2-r-wr-review/",
@@ -5037,7 +5037,7 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.5,
     price: 250,
-    genreMarks: { astro: 2, landscape: 3, architecture: 1, portrait: 3, street: 4, travel: 4.5, sport: 3, wildlife: 3, macro: 1 },
+    genreMarks: { nightscape: 2, landscape: 3, architecture: 1, portrait: 3, street: 4, travel: 4.5, sport: 3, wildlife: 3, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/583.1-Lens_review-Fujifilm_Fujinon_XC_35_mm_f_2.html",
     },
@@ -5079,7 +5079,7 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     sphericalAberration: 2.0,
     price: 1000,
-    genreMarks: { astro: 3, landscape: 3, architecture: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/684.1-Lens_review-Fujifilm_Fujinon_XF_16-50_mm_f_2.8-4.8_R_LM_WR.html",
     },
@@ -5123,7 +5123,7 @@ const lenses: Lens[] = [
     bokeh: 0.5,
     flareResistance: 0.5,
     price: 750,
-    genreMarks: { astro: 2, landscape: 3, architecture: 2, portrait: 2, street: 2, travel: 3, sport: 4, wildlife: 4, macro: 3 },
+    genreMarks: { nightscape: 2, landscape: 3, architecture: 2, portrait: 2, street: 2, travel: 3, sport: 4, wildlife: 4, macro: 3 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/571.1-Lens_review-Fujifilm_Fujinon_XF_16-80_mm_f_4_R_OIS_WR_Introduction.html",
     },
@@ -5391,7 +5391,7 @@ const lenses: Lens[] = [
     sphericalAberration: 1.5,
     bokeh: 2.0,
     flareResistance: 0.5,
-    genreMarks: { astro: 3, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 3, sport: 2, wildlife: 2, macro: 1 },
+    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 3, sport: 2, wildlife: 2, macro: 1 },
     reviewSources: {
       lenstip: "https://www.lenstip.com/420.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R.html",
     },
