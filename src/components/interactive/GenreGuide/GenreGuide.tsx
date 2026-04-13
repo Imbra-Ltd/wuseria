@@ -250,6 +250,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
   const [apertureFilter, setApertureFilter] = useState("");
   const [comaFilter, setComaFilter] = useState("");
   const [astigFilter, setAstigFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
   const sceneListRef = useRef<HTMLDivElement>(null);
 
   const config = genreConfigs[genre];
@@ -272,6 +273,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
     setApertureFilter("");
     setComaFilter("");
     setAstigFilter("");
+    setTypeFilter("");
   }
 
   // ── Scene scroll ───────────────────────────────────────────────────────
@@ -374,9 +376,10 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       if (apertureFilter && el.lens.maxAperture > Number(apertureFilter)) return false;
       if (comaFilter && (el.lens.coma == null || el.lens.coma < Number(comaFilter))) return false;
       if (astigFilter && (el.lens.astigmatism == null || el.lens.astigmatism < Number(astigFilter))) return false;
+      if (typeFilter && el.lens.type !== typeFilter) return false;
       return true;
     });
-  }, [lenses, genre, crop, ev, iso, mp, aoV, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter]);
+  }, [lenses, genre, crop, ev, iso, mp, aoV, sortBy, sortAsc, isAstro, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter]);
 
   // ── Sort handler ───────────────────────────────────────────────────────
   function handleSort(key: SortKey): void {
@@ -581,6 +584,15 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             ))}
           </select>
         </div>
+        {/* Type */}
+        <div className={styles.controlGroup}>
+          <span className={styles.controlLabel}>Type</span>
+          <select className={styles.controlSelect} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+            <option value="">All</option>
+            <option value="prime">Prime</option>
+            <option value="zoom">Zoom</option>
+          </select>
+        </div>
         {/* Brand */}
         <div className={styles.controlGroup}>
           <span className={styles.controlLabel}>Brand</span>
@@ -650,11 +662,11 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           </select>
         </div>
         {/* Clear */}
-        {(brandFilter || markFilter || priceFilter || weightFilter || apertureFilter || comaFilter || astigFilter) && (
+        {(brandFilter || markFilter || priceFilter || weightFilter || apertureFilter || comaFilter || astigFilter || typeFilter) && (
           <button
             type="button"
             className={styles.clearBtn}
-            onClick={() => { setBrandFilter(""); setMarkFilter(""); setPriceFilter(""); setWeightFilter(""); setApertureFilter(""); setComaFilter(""); setAstigFilter(""); }}
+            onClick={() => { setBrandFilter(""); setMarkFilter(""); setPriceFilter(""); setWeightFilter(""); setApertureFilter(""); setComaFilter(""); setAstigFilter(""); setTypeFilter(""); }}
           >
             ✕ clear
           </button>
@@ -681,8 +693,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     ["idealIso", "Ideal ISO"],
                     ["coma", "Coma"],
                     ["astigmatism", "Astig"],
-                    ["price", "Price"],
                     ["brand", "WR"],
+                    ["price", "Price"],
                   ] as [SortKey, string][]) : ([
                     ["mark", "Mark"],
                     ["pick", ""],
@@ -732,10 +744,10 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                         <td>{el.lens.weight}g</td>
                       </>
                     )}
-                    <td>~${el.lens.price}</td>
                     {isAstro && (
                       <td><span className={el.lens.isWeatherSealed ? styles.dotOn : styles.dotOff} /></td>
                     )}
+                    <td>~${el.lens.price}</td>
                   </tr>
                 ))}
               </tbody>
