@@ -322,11 +322,11 @@ describe("genre mark snapshots", () => {
     { model: "XF 200mm f/2.0 R LM OIS WR", genre: "wildlife", mark: 5 },
     { model: "XF 90mm f/2.0 R LM WR", genre: "wildlife", mark: 5 },
 
-    // Astro
-    { model: "XF 56mm f/1.2 R LM WR", genre: "astro", mark: 4.5 },
-    { model: "XF 90mm f/2.0 R LM WR", genre: "astro", mark: 4 },
-    { model: "12mm f/2", genre: "astro", mark: 4 },
-    { model: "XF 100-400mm f/4.5-5.6 R LM OIS WR", genre: "astro", mark: 1 },
+    // Nightscape
+    { model: "XF 56mm f/1.2 R LM WR", genre: "nightscape", mark: 4.5 },
+    { model: "XF 90mm f/2.0 R LM WR", genre: "nightscape", mark: 4 },
+    { model: "12mm f/2", genre: "nightscape", mark: 4 },
+    { model: "XF 100-400mm f/4.5-5.6 R LM OIS WR", genre: "nightscape", mark: 1 },
 
     // Macro
     { model: "XF 80mm f/2.8 R LM OIS WR Macro", genre: "macro", mark: 5 },
@@ -385,7 +385,7 @@ describe("getGenreMark", () => {
   });
 
   it("returns null for an unscored genre", () => {
-    expect(getGenreMark(scored, "astro")).toBeNull();
+    expect(getGenreMark(scored, "nightscape")).toBeNull();
   });
 
   it("returns null for a lens with no genreMarks", () => {
@@ -421,7 +421,7 @@ describe("lensesForGenre", () => {
 describe("isScoredGenre", () => {
   it("returns true for all 9 genres", () => {
     const genres: Genre[] = [
-      "astro", "landscape", "architecture", "street",
+      "nightscape", "landscape", "architecture", "street",
       "travel", "portrait", "sport", "wildlife", "macro",
     ];
     for (const g of genres) {

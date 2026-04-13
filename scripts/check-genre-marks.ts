@@ -2,7 +2,7 @@ import { lenses } from "../src/data/lenses";
 import type { ScoredGenre } from "../src/types/genre";
 
 const genres: ScoredGenre[] = [
-  "astro", "landscape", "architecture", "street",
+  "nightscape", "landscape", "architecture", "street",
   "travel", "portrait", "sport", "wildlife", "macro",
 ];
 

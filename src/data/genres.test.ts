@@ -7,7 +7,7 @@ import type { ScoredGenre } from "../types/genre";
 // =============================================================================
 
 const ALL_GENRES: ScoredGenre[] = [
-  "astro", "landscape", "architecture", "street",
+  "nightscape", "landscape", "architecture", "street",
   "travel", "portrait", "sport", "wildlife", "macro",
 ];
 

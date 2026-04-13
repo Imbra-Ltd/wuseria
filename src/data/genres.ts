@@ -6,8 +6,8 @@ import type { EvScene } from "../types/common";
 // =============================================================================
 
 const genreConfigs: Record<ScoredGenre, GenreConfig> = {
-  astro: {
-    genre: "astro",
+  nightscape: {
+    genre: "nightscape",
     name: "Nightscape Photography",
     tagline: "Untracked tripod · Beat the startrails · 500 rule",
     description:
@@ -119,7 +119,7 @@ const evScenes: EvScene[] = [
 // =============================================================================
 
 const genreEvLabels: Partial<Record<ScoredGenre, Record<number, string>>> = {
-  astro: {
+  nightscape: {
     1: "City center (Bortle 8-9)",
     0: "Bright suburb (Bortle 7)",
     [-1]: "Suburb (Bortle 6)",
@@ -222,7 +222,7 @@ const genreEvLabels: Partial<Record<ScoredGenre, Record<number, string>>> = {
 // =============================================================================
 
 const genreSceneFilter: Record<ScoredGenre, (ev: number) => boolean> = {
-  astro: (ev) => ev <= 1,
+  nightscape: (ev) => ev <= 1,
   landscape: (ev) => ev >= 7 && ev <= 16,
   architecture: (ev) => ev >= 3 && ev <= 12,
   street: (ev) => ev >= -1 && ev <= 8,
@@ -297,7 +297,7 @@ const FL_RANGES: Record<number, [number, number]> = {
 // =============================================================================
 
 const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number }> = {
-  astro:        { ev: -7, iso: 3200, fl: 12 },
+  nightscape:   { ev: -7, iso: 3200, fl: 12 },
   landscape:    { ev: 9,  iso: 100,  fl: 24 },
   architecture: { ev: 7,  iso: 200,  fl: 12 },
   street:       { ev: 2,  iso: 6400, fl: 24 },
@@ -313,7 +313,7 @@ const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number 
 // =============================================================================
 
 const GENRE_EQUIPMENT: Record<string, string[]> = {
-  astro:        ["Star tracker", "Sturdy tripod", "Lens heater", "Dew shield", "Light pollution filter", "External power bank", "Remote intervalometer", "Bahtinov mask", "Spare batteries", "Red light headlamp"],
+  nightscape:   ["Star tracker", "Sturdy tripod", "Lens heater", "Dew shield", "Light pollution filter", "External power bank", "Remote intervalometer", "Bahtinov mask", "Spare batteries", "Red light headlamp"],
   landscape:    ["Sturdy tripod", "Ball head", "L-bracket", "Remote shutter", "Filter set (CPL & ND)", "Graduated ND filter", "Rain cover", "Spare batteries", "Fast memory cards", "Outdoor camera backpack"],
   architecture: ["Sturdy tripod", "Geared tripod head", "L-bracket", "Remote shutter", "Tethering cable", "Field monitor", "Filter set (CPL & Graduated ND)", "Anti-reflective lens cover", "Color checker", "Power bank"],
   street:       ["Thumb grip", "Compact bag", "Quick-adjust sling strap", "Mini travel tripod", "Flash (Compact)", "Filter set (ND, CPL & Black Mist)", "Fast memory cards", "Spare batteries", "Soft shutter release button", "Rain cover"],
@@ -325,16 +325,16 @@ const GENRE_EQUIPMENT: Record<string, string[]> = {
 };
 
 // =============================================================================
-// ASTRO ISO BY EV — suggested ISO per EV for astro, balanced at f/2.8
+// NIGHTSCAPE ISO BY EV — suggested ISO per EV for nightscape, balanced at f/2.8
 // =============================================================================
 
-const ASTRO_ISO_BY_EV: Record<number, number> = {
+const NIGHTSCAPE_ISO_BY_EV: Record<number, number> = {
   1: 100, 0: 200, [-1]: 200, [-2]: 400, [-3]: 400,
   [-4]: 800, [-5]: 1600, [-6]: 1600, [-7]: 3200, [-8]: 6400,
 };
 
 // =============================================================================
-// EXPOSURE MATRIX CONSTANTS — focal lengths and apertures for astro grid
+// EXPOSURE MATRIX CONSTANTS — focal lengths and apertures for nightscape grid
 // =============================================================================
 
 const MATRIX_FL_COLS: Record<number, number[]> = {
@@ -361,7 +361,7 @@ export {
   FL_RANGES,
   GENRE_DEFAULTS,
   GENRE_EQUIPMENT,
-  ASTRO_ISO_BY_EV,
+  NIGHTSCAPE_ISO_BY_EV,
   MATRIX_FL_COLS,
   MATRIX_APERTURES,
 };

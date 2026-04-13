@@ -5,7 +5,7 @@ import type { FlCategory } from "./common";
 // =============================================================================
 
 type Genre =
-  | "astro"
+  | "nightscape"
   | "portrait"
   | "landscape"
   | "sport"

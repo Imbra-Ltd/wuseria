@@ -73,7 +73,7 @@ Each genre formula uses **primary floor + weighted average**:
 
 | Genre | Primary (w=3) | Secondary (w=1) |
 |-------|--------------|-----------------|
-| **Astro** | coma, astigmatism, apertureScore | lateralCA, centerWideOpen, cornerWideOpen, longitudinalCA, vignettingWideOpen, sphericalAberration |
+| **Nightscape** | coma, astigmatism, apertureScore | lateralCA, centerWideOpen, cornerWideOpen, longitudinalCA, vignettingWideOpen, sphericalAberration |
 | **Landscape** | cornerStopped, centerStopped | distortion, lateralCA, longitudinalCA, vignettingStopped, flareResistance, astigmatism, coma |
 | **Architecture** | cornerStopped, centerStopped, distortion | lateralCA, vignettingStopped, flareResistance |
 | **Portrait** | bokeh, centerWideOpen | longitudinalCA, sphericalAberration, vignettingWideOpen |

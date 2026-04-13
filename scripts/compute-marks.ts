@@ -4,7 +4,7 @@ import type { ScoredGenre } from "../src/types/genre";
 import * as fs from "fs";
 
 const GENRES: ScoredGenre[] = [
-  "astro", "landscape", "architecture", "portrait",
+  "nightscape", "landscape", "architecture", "portrait",
   "street", "travel", "sport", "wildlife", "macro",
 ];
 

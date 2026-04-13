@@ -3,7 +3,7 @@ import { lenses } from "../src/data/lenses";
 const genre = process.argv[2] || "landscape";
 
 const genres: Record<string, { primary: string[]; secondary: string[] }> = {
-  astro: {
+  nightscape: {
     primary: ["coma", "astigmatism", "_apertureScore"],
     secondary: ["lateralCA", "centerWideOpen", "cornerWideOpen", "longitudinalCA", "vignettingWideOpen", "sphericalAberration"],
   },
