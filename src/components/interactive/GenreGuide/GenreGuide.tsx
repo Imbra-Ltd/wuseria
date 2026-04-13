@@ -824,17 +824,21 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         </>
       )}
 
-      <p className={styles.footer}>
-        {isAstro
-          ? "Marks are driven by coma and astigmatism (aberration control) and fast aperture (light gathering) as primary factors, with chromatic and spherical aberration, sharpness wide open, and vignetting as secondary."
-          : "Marks score optical suitability — resolution, aberrations, bokeh — from lab measurements and trusted field reviews."
-        }
-        {" "}<a href="/wiki/optical-scoring" className={styles.footerLink}>How are marks calculated?</a>
-        {isAstro && (
-          <>{" · "}<a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Find dark skies</a></>
-        )}
-        {" · "}FL is a creative choice, not a scoring input. Prices are approximate USD estimates.
-      </p>
+      <div className={styles.footer}>
+        <p className={styles.footerText}>
+          {isAstro
+            ? "Marks are driven by coma and astigmatism (aberration control) and fast aperture (light gathering) as primary factors, with chromatic and spherical aberration, sharpness wide open, and vignetting as secondary."
+            : "Marks score optical suitability — resolution, aberrations, bokeh — from lab measurements and trusted field reviews."
+          }
+          {" "}FL is a creative choice, not a scoring input. Prices are approximate USD estimates.
+        </p>
+        <div className={styles.footerLinks}>
+          <a href="/wiki/optical-scoring" className={styles.footerLink}>How are marks calculated?</a>
+          {isAstro && (
+            <a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Find dark skies</a>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
