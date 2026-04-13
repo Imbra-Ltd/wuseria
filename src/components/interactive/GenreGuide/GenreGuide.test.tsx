@@ -32,8 +32,12 @@ const testLenses: Lens[] = [
     maxAperture: 1.4,
     weight: 300,
     price: 950,
-    genreMarks: { nightscape: 4, street: 4, portrait: 3 },
+    genreMarks: { nightscape: 4, street: 4, portrait: 3, landscape: 3.5 },
     editorialPicks: ["street"],
+    cornerStopped: 1.5,
+    centerStopped: 2.0,
+    distortion: 1.5,
+    flareResistance: 1.0,
   }),
   makeLens({
     brand: "Fujifilm",
@@ -43,8 +47,13 @@ const testLenses: Lens[] = [
     maxAperture: 1.4,
     weight: 375,
     price: 1000,
-    genreMarks: { nightscape: 4, street: 4, portrait: 3 },
-    editorialPicks: ["nightscape", "street"],
+    genreMarks: { nightscape: 4, street: 4, portrait: 3, landscape: 4 },
+    editorialPicks: ["nightscape", "street", "landscape"],
+    cornerStopped: 1.5,
+    centerStopped: 2.0,
+    distortion: 1.0,
+    flareResistance: 1.5,
+    isWeatherSealed: true,
   }),
   makeLens({
     brand: "Fujifilm",
@@ -134,5 +143,41 @@ describe("GenreGuide", () => {
   it("shows scene list", () => {
     render(<GenreGuide lenses={testLenses} />);
     expect(screen.getByText(/Scene/)).toBeInTheDocument();
+  });
+
+  it("switches to landscape and shows landscape-specific columns", async () => {
+    const user = userEvent.setup();
+    render(<GenreGuide lenses={testLenses} />);
+
+    await user.click(screen.getByRole("tab", { name: /landscape/i }));
+    expect(screen.getByRole("tab", { name: /landscape/i, selected: true })).toBeInTheDocument();
+  });
+
+  it("shows landscape footer text when landscape is selected", async () => {
+    const user = userEvent.setup();
+    render(<GenreGuide lenses={testLenses} />);
+
+    await user.click(screen.getByRole("tab", { name: /landscape/i }));
+    expect(
+      screen.getByText(/corner and center sharpness at stopped-down apertures/),
+    ).toBeInTheDocument();
+  });
+
+  it("shows landscape-specific filters when landscape is selected", async () => {
+    const user = userEvent.setup();
+    render(<GenreGuide lenses={testLenses} />);
+
+    await user.click(screen.getByRole("tab", { name: /landscape/i }));
+    expect(screen.getAllByText("CornerS").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Dist").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("Flare").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("shows shutter speed matrix for landscape", async () => {
+    const user = userEvent.setup();
+    render(<GenreGuide lenses={testLenses} />);
+
+    await user.click(screen.getByRole("tab", { name: /landscape/i }));
+    expect(screen.getByText(/Shutter speed matrix/)).toBeInTheDocument();
   });
 });

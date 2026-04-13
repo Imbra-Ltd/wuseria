@@ -425,6 +425,41 @@
   line-height: 1.5;
 }
 
+/* Landscape matrix — shutter speed categories */
+.lsStatic {
+  background-color: #0e1820;
+  color: #4090d0;
+  font-weight: 600;
+}
+
+.lsSilk {
+  background-color: #141e14;
+  color: #6aaa70;
+  font-weight: 600;
+}
+
+.lsDramatic {
+  background-color: #0e1818;
+  color: #40d0b0;
+  font-weight: 600;
+}
+
+.lsStaticText {
+  color: #4090d0;
+}
+
+.lsSilkText {
+  color: #6aaa70;
+}
+
+.lsDramaticText {
+  color: #40d0b0;
+}
+
+.lsDiffWarn {
+  color: #b09040;
+}
+
 .matrixWarn {
   font-size: var(--font-size-sm);
   color: #b09040;
