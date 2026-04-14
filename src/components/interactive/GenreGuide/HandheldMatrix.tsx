@@ -6,11 +6,11 @@ interface HandheldMatrixProps {
   iso: number;
   ev: number;
   selectedFl: number;
-  sensorMp: number;
   genre: "street" | "travel" | "portrait" | "macro";
+  magnification?: number;
 }
 
-function HandheldMatrix({ cropFactor, iso, ev, selectedFl, sensorMp, genre }: HandheldMatrixProps) {
+function HandheldMatrix({ cropFactor, iso, ev, selectedFl, genre, magnification = 1.0 }: HandheldMatrixProps) {
   const MATRIX_FL_COLS = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
   const fallback = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
   const cols = MATRIX_FL_COLS[selectedFl] || fallback;
@@ -22,15 +22,15 @@ function HandheldMatrix({ cropFactor, iso, ev, selectedFl, sensorMp, genre }: Ha
   // Street/Travel: reciprocal rule adjusted for megapixels
   function minShutter(fl: number): number {
     if (genre === "portrait") return 1 / (2 * cropFactor * fl);
-    if (genre === "macro") return 1 / (2 * cropFactor * fl);
-    return 1 / (Math.sqrt(sensorMp / 12) * cropFactor * fl);
+    if (genre === "macro") return 1 / (fl * (1 + magnification) * cropFactor);
+    return 1 / (cropFactor * fl);
   }
 
   const titles: Record<string, string> = {
     portrait: "1/2×FL rule · Capture the emotion",
     street: "1/FL rule · Capture the moment",
     travel: "1/FL rule · Capture the story",
-    macro: "1/2×FL rule · Capture the detail",
+    macro: `1/${1 + magnification}×FL rule · Capture the detail`,
   };
 
   return (

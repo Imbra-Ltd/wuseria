@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import type { Lens } from "../../../types/lens";
 import { useSort } from "../../../hooks/useSort";
 import { toSlug } from "../../../utils/slug";
@@ -120,7 +120,9 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     });
   }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, priceRange]);
 
-  const { sorted, sortKey, sortDirection, toggleSort } = useSort<Lens, LensSortKey>(filtered, "focalLengthMin");
+  const availableFirst = useCallback((a: Lens, b: Lens) =>
+    Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false), []);
+  const { sorted, sortKey, sortDirection, toggleSort } = useSort<Lens, LensSortKey>(filtered, "focalLengthMin", "asc", availableFirst);
 
   function handleMountChange(value: string): void {
     setMount(value);

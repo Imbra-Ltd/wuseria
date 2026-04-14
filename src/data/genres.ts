@@ -170,11 +170,11 @@ const genreEvLabels: Partial<Record<ScoredGenre, Record<number, string>>> = {
   travel: {
     14: "Bright beach / snow",
     13: "Sunny open square",
-    12: "Hazy sun / open shade",
+    12: "Hazy / open shade",
     11: "Partly cloudy",
     10: "Overcast exterior",
-    9: "Covered market / arcade",
-    8: "Bright interior / atrium",
+    9: "Covered market",
+    8: "Bright interior",
     7: "Dim interior / cafe",
     6: "Blue hour / dusk",
     5: "Golden hour street",
@@ -215,6 +215,18 @@ const genreEvLabels: Partial<Record<ScoredGenre, Record<number, string>>> = {
     6: "Dusk / low light",
     5: "Near darkness",
   },
+  macro: {
+    14: "Direct sun",
+    13: "Overcast / flash",
+    12: "Shade / ring flash",
+    11: "Diffused flash",
+    10: "Overcast garden",
+    9: "Shaded foliage",
+    8: "Deep shade / forest",
+    7: "Indoor window",
+    6: "Dim natural light",
+    5: "Aquarium / tank",
+  },
 };
 
 // =============================================================================
@@ -232,6 +244,18 @@ const genreSceneFilter: Record<ScoredGenre, (ev: number) => boolean> = {
   wildlife: (ev) => ev >= 5 && ev <= 14,
   macro: (ev) => ev >= 5 && ev <= 14,
 };
+
+// =============================================================================
+// MACRO MAGNIFICATION OPTIONS
+// =============================================================================
+
+const MACRO_MAGNIFICATION_OPTIONS = [
+  { label: "0.25×", value: 0.25 },
+  { label: "0.5×", value: 0.5 },
+  { label: "1.0×", value: 1.0 },
+  { label: "1.4×", value: 1.4 },
+  { label: "2.0×", value: 2.0 },
+];
 
 // =============================================================================
 // ND FILTER OPTIONS
@@ -340,11 +364,11 @@ const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number 
   landscape:    { ev: 9,  iso: 100,  fl: 24 },
   architecture: { ev: 7,  iso: 200,  fl: 12 },
   street:       { ev: 2,  iso: 6400, fl: 24 },
-  travel:       { ev: 11, iso: 400,  fl: 24 },
+  travel:       { ev: 6,  iso: 400,  fl: 24 },
   portrait:     { ev: 7,  iso: 200,  fl: 57 },
   sport:        { ev: 8,  iso: 800,  fl: 135 },
-  wildlife:     { ev: 7,  iso: 3200, fl: 300 },
-  macro:        { ev: 10, iso: 200,  fl: 135 },
+  wildlife:     { ev: 10, iso: 3200, fl: 300 },
+  macro:        { ev: 10, iso: 200,  fl: 90 },
 };
 
 // =============================================================================
@@ -379,9 +403,14 @@ const NIGHTSCAPE_ISO_BY_EV: Record<number, number> = {
 // APS-C matrix FL columns (keyed by FL chip value)
 const MATRIX_FL_COLS_X: Record<number, number[]> = {
   12:  [8, 10, 12, 14],
+  15:  [12, 15, 18, 23],
   24:  [16, 18, 23, 27],
+  33:  [24, 33, 35, 50],
   50:  [33, 35, 50, 56],
+  57:  [40, 50, 57, 75],
+  90:  [60, 80, 90, 100],
   135: [60, 80, 90, 100, 135],
+  200: [100, 135, 200, 300],
   300: [150, 200, 300, 400],
 };
 
@@ -389,7 +418,10 @@ const MATRIX_FL_COLS_X: Record<number, number[]> = {
 const MATRIX_FL_COLS_GFX: Record<number, number[]> = {
   23:  [20, 23, 30, 35],
   35:  [32, 35, 45, 50],
+  55:  [35, 45, 55, 63],
   63:  [45, 55, 63, 80],
+  80:  [55, 63, 80, 100],
+  120: [80, 100, 120, 200],
   200: [100, 120, 200, 250],
   500: [250, 500],
 };
@@ -405,6 +437,7 @@ export {
   evScenes,
   genreEvLabels,
   genreSceneFilter,
+  MACRO_MAGNIFICATION_OPTIONS,
   ND_OPTIONS,
   FL_CHIPS_X,
   FL_CHIPS_GFX,

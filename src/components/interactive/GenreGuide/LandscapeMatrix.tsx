@@ -1,4 +1,5 @@
 import { MATRIX_FL_COLS_X, MATRIX_FL_COLS_GFX, MATRIX_APERTURES } from "../../../data/genres";
+import { formatShutter } from "../../../utils/formatting";
 import styles from "./GenreGuide.module.css";
 
 interface LandscapeMatrixProps {
@@ -10,20 +11,11 @@ interface LandscapeMatrixProps {
   title?: string;
 }
 
-function formatShutter(seconds: number): string {
-  if (seconds >= 3600) return `${Math.round(seconds / 3600)}h`;
-  if (seconds >= 60) return `${Math.round(seconds / 60)}m`;
-  if (seconds >= 1) return `${Math.round(seconds)}s`;
-  const denom = Math.round(1 / seconds);
-  return `1/${denom}`;
-}
-
 function LandscapeMatrix({ cropFactor, iso, ev, nd, selectedFl, title }: LandscapeMatrixProps) {
   const MATRIX_FL_COLS = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
   const fallback = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
   const cols = MATRIX_FL_COLS[selectedFl] || fallback;
   const ndFactor = nd.reduce((acc, f) => acc * f, 1);
-  const ndLabel = ndFactor > 1 ? ` · ND${ndFactor.toLocaleString()}` : "";
   const apertures = MATRIX_APERTURES;
 
   return (

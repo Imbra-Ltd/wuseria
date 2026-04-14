@@ -14,6 +14,7 @@ import {
   GENRE_DEFAULTS,
   GENRE_EQUIPMENT,
   NIGHTSCAPE_ISO_BY_EV,
+  MACRO_MAGNIFICATION_OPTIONS,
 } from "../../../data/genres";
 import { getGenreMark, isEditorialPick } from "../../../utils/scoring";
 import { astroExposure, handheldExposure } from "./exposure";
@@ -44,7 +45,7 @@ const SCORED_GENRES: ScoredGenre[] = [
   "travel", "portrait", "sport", "wildlife", "macro",
 ];
 
-type SortKey = "mark" | "pick" | "brand" | "idealIso" | "weight" | "price" | "fl" | "aperture" | "rule500" | "coma" | "astigmatism" | "wr" | "ois" | "cornerStopped" | "centerStopped" | "centerWideOpen" | "distortion" | "flareResistance" | "bokeh" | "longitudinalCA" | "sphericalAberration" | "lateralCA" | "vignettingStopped" | "magnification";
+type SortKey = "mark" | "pick" | "brand" | "idealIso" | "weight" | "price" | "fl" | "aperture" | "rule500" | "coma" | "astigmatism" | "wr" | "ois" | "cornerStopped" | "centerStopped" | "centerWideOpen" | "distortion" | "flareResistance" | "bokeh" | "longitudinalCA" | "lateralCA" | "magnification";
 
 // =============================================================================
 // ENRICHED LENS — lens + computed fields for display
@@ -71,8 +72,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
   const [iso, setIso] = useState(defaults.iso);
   const [nd, setNd] = useState<number[]>([]);
   const [cropFactor, setCropFactor] = useState(1.5);
-  const [sensorMp, setSensorMp] = useState(26);
   const [selectedFl, setSelectedFl] = useState(defaults.fl);
+  const [magnification, setMagnification] = useState(1.0);
   const [sortBy, setSortBy] = useState<SortKey>("mark");
   const [sortAsc, setSortAsc] = useState(false);
   const [brandFilter, setBrandFilter] = useState("");
@@ -111,6 +112,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
     setIso(d.iso);
     setSelectedFl(d.fl);
     setNd([]);
+    setMagnification(1.0);
     setSortBy("mark");
     setSortAsc(false);
     setBrandFilter("");
@@ -174,7 +176,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         }
         const idealIso = isNightscape
           ? astroExposure({ ...l, focalLengthMin: effectiveFl } as Lens, ev, iso, cropFactor).idealIso
-          : handheldExposure(l, genre, ev, cropFactor, sensorMp).idealIso;
+          : handheldExposure(l, genre, ev, cropFactor, genre === "macro" ? magnification : undefined).idealIso;
         const rule500 = isNightscape
           ? Math.round(500 / (cropFactor * effectiveFl))
           : null;
@@ -243,14 +245,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
         case "longitudinalCA":
           v = (a.lens.longitudinalCA ?? -1) - (b.lens.longitudinalCA ?? -1);
           break;
-        case "sphericalAberration":
-          v = (a.lens.sphericalAberration ?? -1) - (b.lens.sphericalAberration ?? -1);
-          break;
         case "lateralCA":
           v = (a.lens.lateralCA ?? -1) - (b.lens.lateralCA ?? -1);
-          break;
-        case "vignettingStopped":
-          v = (a.lens.vignettingStopped ?? -1) - (b.lens.vignettingStopped ?? -1);
           break;
         case "magnification":
           v = (a.lens.maxMagnification ?? 0) - (b.lens.maxMagnification ?? 0);
@@ -278,7 +274,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       if (latcaFilter && (el.lens.lateralCA == null || el.lens.lateralCA < Number(latcaFilter))) return false;
       return true;
     });
-  }, [lenses, genre, cropFactor, ev, iso, sensorMp, selectedFl, sortBy, sortAsc, isNightscape, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter, cornerFilter, distFilter, flareFilter, bokehFilter, locaFilter, latcaFilter]);
+  }, [lenses, genre, cropFactor, ev, iso, selectedFl, magnification, sortBy, sortAsc, isNightscape, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter, cornerFilter, distFilter, flareFilter, bokehFilter, locaFilter, latcaFilter]);
 
   // -- Sort handler ---------------------------------------------------------
   function handleSort(key: SortKey): void {
@@ -345,7 +341,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       {/* Two-column layout: sidebar + main */}
       <div className={styles.layout}>
 
-        {/* Left sidebar: scene list + equipment */}
+        {/* Left sidebar */}
         <div className={styles.sidebar}>
           {/* Scene selector */}
           <div className={styles.sidebarPanel}>
@@ -371,8 +367,8 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             </div>
           </div>
 
-          {/* Equipment panel */}
-          <div className={styles.sidebarPanel}>
+          {/* Equipment */}
+          <div className={`${styles.sidebarPanel} ${styles.sidebarBottom}`}>
             <div className={styles.sidebarTitle}>Equipment</div>
             <div className={styles.equipmentList}>
               {GENRE_EQUIPMENT[genre]?.join(" · ")}
@@ -398,7 +394,6 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                 onChange={(v) => {
                   const c = v === "GFX" ? 0.79 : 1.5;
                   setCropFactor(c);
-                  setSensorMp(c === 0.79 ? 102 : 26);
                   if (isNightscape) setIso(c === 0.79 ? 3200 : 1600);
                   const chips = c === 0.79 ? FL_CHIPS_GFX : FL_CHIPS_X;
                   setSelectedFl(chips.default[0].fl);
@@ -432,10 +427,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
             <div className={styles.controlGroup}>
               <span className={styles.controlLabel}>ISO</span>
               <div className={styles.flRow}>
-                {(cropFactor === 0.79
-                  ? [100, 200, 400, 800, 1600, 3200, 6400]
-                  : [100, 200, 400, 800, 1600, 3200, 6400]
-                ).map((v) => (
+                {[100, 200, 400, 800, 1600, 3200, 6400].map((v) => (
                   <button
                     key={v}
                     type="button"
@@ -466,6 +458,25 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                 </div>
               </div>
             )}
+
+            {/* Magnification — only for macro */}
+            {genre === "macro" && (
+              <div className={styles.controlGroup}>
+                <span className={styles.controlLabel}>Mag</span>
+                <div className={styles.flRow}>
+                  {MACRO_MAGNIFICATION_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      className={`${styles.chip} ${magnification === opt.value ? styles.chipOn : ""}`}
+                      onClick={() => setMagnification(opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           </div>{/* end controlPanel */}
@@ -488,7 +499,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           )}
           {(isPortrait || isStreet || isTravel) && (
             <div className={styles.matrixPanel}>
-              <HandheldMatrix cropFactor={cropFactor} iso={iso} ev={ev} selectedFl={selectedFl} sensorMp={sensorMp} genre={genre as "street" | "travel" | "portrait"} />
+              <HandheldMatrix cropFactor={cropFactor} iso={iso} ev={ev} selectedFl={selectedFl} genre={genre as "street" | "travel" | "portrait"} />
             </div>
           )}
           {(isSport || isWildlife) && (
@@ -498,9 +509,18 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           )}
           {genre === "macro" && (
             <div className={styles.matrixPanel}>
-              <HandheldMatrix cropFactor={cropFactor} iso={iso} ev={ev} selectedFl={selectedFl} sensorMp={sensorMp} genre="macro" />
+              <HandheldMatrix cropFactor={cropFactor} iso={iso} ev={ev} selectedFl={selectedFl} genre="macro" magnification={magnification} />
             </div>
           )}
+
+          {/* Learn more — below matrix */}
+          <div className={styles.learnMoreLinks}>
+            <a href="/wiki/optical-scoring" className={styles.learnMoreBtn}>How marks work</a>
+            <a href={`/wiki/${genre}-photography`} className={styles.learnMoreBtn}>{genreConfigs[genre].name.replace(" Photography", "")} guide</a>
+            {isNightscape && (
+              <a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer" className={styles.learnMoreBtn}>Find dark skies</a>
+            )}
+          </div>
         </div>{/* end main */}
       </div>{/* end layout */}
 
@@ -1001,35 +1021,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       )}
 
       <div className={styles.footer}>
-        <a href="/wiki/optical-scoring" className={styles.footerLink}>How are marks calculated?</a>
-        {isNightscape && (
-          <>{" · "}<a href="https://www.lightpollutionmap.info" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>Find dark skies</a></>
-        )}
-        {isLandscape && (
-          <>{" · "}<a href="/wiki/landscape-photography" className={styles.footerLink}>Landscape guide</a></>
-        )}
-        {isArchitecture && (
-          <>{" · "}<a href="/wiki/architecture-photography" className={styles.footerLink}>Architecture guide</a></>
-        )}
-        {isPortrait && (
-          <>{" · "}<a href="/wiki/portrait-photography" className={styles.footerLink}>Portrait guide</a></>
-        )}
-        {isStreet && (
-          <>{" · "}<a href="/wiki/street-photography" className={styles.footerLink}>Street guide</a></>
-        )}
-        {isTravel && (
-          <>{" · "}<a href="/wiki/travel-photography" className={styles.footerLink}>Travel guide</a></>
-        )}
-        {isSport && (
-          <>{" · "}<a href="/wiki/sport-photography" className={styles.footerLink}>Sport guide</a></>
-        )}
-        {isWildlife && (
-          <>{" · "}<a href="/wiki/wildlife-photography" className={styles.footerLink}>Wildlife guide</a></>
-        )}
-        {genre === "macro" && (
-          <>{" · "}<a href="/wiki/macro-photography" className={styles.footerLink}>Macro guide</a></>
-        )}
-        {" · "}FL is a creative choice, not a scoring input.
+        FL is a creative choice, not a scoring input.
         {isNightscape && " Primary: coma, astigmatism, aperture. Secondary: chromatic/spherical aberration, sharpness wide open, vignetting."}
         {isLandscape && " Primary: corner + center sharpness stopped down. Secondary: distortion, CA, vignetting, flare, astigmatism, coma."}
         {isArchitecture && " Primary: corner + center sharpness, distortion. Secondary: lateral CA, vignetting, flare."}

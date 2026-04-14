@@ -42,8 +42,9 @@ function astroExposure(
 // HANDHELD — minimum shutter + ideal ISO per genre rules
 //
 //   portrait:       1 / (2 × crop × FL)
+//   macro:          1 / (FL × (1+mag) × crop)
 //   sport/wildlife: 1 / (4 × crop × FL)
-//   default:        1 / (√(MP/12) × crop × FL)
+//   street/travel:  1 / (crop × FL)
 // =============================================================================
 
 function handheldExposure(
@@ -51,7 +52,7 @@ function handheldExposure(
   genre: ScoredGenre,
   ev: number,
   crop: number,
-  mp: number,
+  magnification?: number,
 ): HandheldExposure {
   const fl = lens.focalLengthMin;
   const ap = lens.maxAperture;
@@ -60,10 +61,13 @@ function handheldExposure(
   let minShutter: number;
   if (genre === "portrait") {
     minShutter = 1 / (2 * crop * fl);
+  } else if (genre === "macro") {
+    const mag = magnification ?? 1.0;
+    minShutter = 1 / (fl * (1 + mag) * crop);
   } else if (genre === "sport" || genre === "wildlife") {
     minShutter = 1 / (4 * crop * fl);
   } else {
-    minShutter = 1 / (Math.sqrt(mp / 12) * crop * fl);
+    minShutter = 1 / (crop * fl);
   }
 
   const idealIso = Math.round(

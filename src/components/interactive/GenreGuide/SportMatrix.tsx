@@ -18,7 +18,7 @@ function SportMatrix({ cropFactor, iso, ev, selectedFl, genre }: SportMatrixProp
   return (
     <div className={styles.matrix}>
       <div className={styles.matrixTitle}>
-        EV Matrix · Tripod/Monopod · 1/4×FL rule · {genre === "wildlife" ? "Capture the behaviour" : "Capture the action"}
+        EV Matrix · Tripod/Monopod · 1/4×FL rule · {genre === "wildlife" ? "Capture the wild" : "Capture the action"}
       </div>
       <div className={styles.matrixScroll}>
         <table className={styles.matrixTable}>
@@ -63,9 +63,9 @@ function SportMatrix({ cropFactor, iso, ev, selectedFl, genre }: SportMatrixProp
         <span className={styles.matrixOverText}>●</span> too slow
       </div>
       <p className={styles.matrixExplain}>
-        Each cell shows the minimum shutter speed to freeze action at that
-        focal length. Green means your settings freeze motion. Amber is
-        borderline — slight blur on fast movement.
+        {genre === "wildlife"
+          ? "Each cell shows the minimum shutter speed to freeze fast-moving subjects like birds in flight. Green means your settings freeze motion. Amber is borderline — slight blur on wings and fast movement."
+          : "Each cell shows the minimum shutter speed to freeze action at that focal length. Green means your settings freeze motion. Amber is borderline — slight blur on fast movement."}
       </p>
     </div>
   );
