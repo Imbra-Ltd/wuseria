@@ -365,7 +365,7 @@ const GENRE_DEFAULTS: Record<ScoredGenre, { ev: number; iso: number; fl: number 
   architecture: { ev: 7,  iso: 200,  fl: 12 },
   street:       { ev: 2,  iso: 6400, fl: 24 },
   travel:       { ev: 6,  iso: 400,  fl: 24 },
-  portrait:     { ev: 7,  iso: 200,  fl: 57 },
+  portrait:     { ev: 7,  iso: 200,  fl: 50 },
   sport:        { ev: 8,  iso: 800,  fl: 135 },
   wildlife:     { ev: 10, iso: 3200, fl: 300 },
   macro:        { ev: 10, iso: 200,  fl: 90 },

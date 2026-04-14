@@ -5,5 +5,9 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://fujime.app",
   output: "static",
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: "hover",
+  },
   integrations: [react(), sitemap()],
 });
