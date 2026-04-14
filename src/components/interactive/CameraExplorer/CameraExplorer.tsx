@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import type { Camera } from "../../../types/camera";
 import { useSort } from "../../../hooks/useSort";
+import { toSlug } from "../../../utils/slug";
 import { ChipGroup } from "../shared/ChipGroup";
 import { RESET_VALUE, resetValue } from "../shared/constants";
 import styles from "./CameraExplorer.module.css";
@@ -271,7 +272,9 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
               <tbody>
                 {sorted.map((cam) => (
                   <tr key={`${cam.series}-${cam.model}`} className={cam.isDiscontinued ? styles.rowDiscontinued : undefined}>
-                    <td>{cam.model}</td>
+                    <td>
+                      <a className={styles.lensLink} href={`/cameras/${toSlug(cam.model)}`}>{cam.model}</a>
+                    </td>
                     <td className={styles.cellRight}>{cam.year}</td>
                     <td className={styles.cellRight}>{cam.megapixels}</td>
                     <td>{cam.sensor}</td>
@@ -293,7 +296,7 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
             {sorted.map((cam) => (
               <div key={`${cam.series}-${cam.model}`} className={`${styles.card} ${cam.isDiscontinued ? styles.cardDiscontinued : ""}`}>
                 <div className={styles.cardHeader}>
-                  <span className={styles.cardTitle}>{cam.model}</span>
+                  <a className={styles.lensLink} href={`/cameras/${toSlug(cam.model)}`}>{cam.model}</a>
                   <span className={styles.cardPrice}>~${cam.price}</span>
                 </div>
                 <div className={styles.cardSpecs}>
