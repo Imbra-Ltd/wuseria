@@ -1,6 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import type { Accessory, AccessoryCategory } from "../../../types/accessory";
 import { useSort } from "../../../hooks/useSort";
+import { toSlug } from "../../../utils/slug";
 import { ChipGroup } from "../shared/ChipGroup";
 import { RESET_VALUE, resetValue } from "../shared/constants";
 import styles from "./AccessoriesExplorer.module.css";
@@ -92,7 +93,9 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
     });
   }, [accessories, search, category, mount, compatible, discontinued, priceRange]);
 
-  const { sorted, sortKey, sortDirection, toggleSort } = useSort<Accessory, AccessorySortKey>(filtered, "category");
+  const availableFirst = useCallback((a: Accessory, b: Accessory) =>
+    Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false), []);
+  const { sorted, sortKey, sortDirection, toggleSort } = useSort<Accessory, AccessorySortKey>(filtered, "category", "asc", availableFirst);
 
   const hasFilters = search || category || mount || compatible || discontinued || priceRange;
 
@@ -206,7 +209,9 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
                   <tr key={`${acc.brand}-${acc.model}`} className={acc.isDiscontinued ? styles.rowDiscontinued : undefined}>
                     <td><span className={styles.categoryBadge}>{formatCategory(acc.category)}</span></td>
                     <td>{acc.brand}</td>
-                    <td className={styles.modelCell}>{acc.model}</td>
+                    <td className={styles.modelCell}>
+                      <a className={styles.lensLink} href={`/accessories/${toSlug(`${acc.brand} ${acc.model}`)}`}>{acc.model}</a>
+                    </td>
                     <td className={styles.descriptionCell}>
                       {acc.description}
                       {"compatibleWith" in acc && Array.isArray(acc.compatibleWith) && (
@@ -229,7 +234,7 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
             {sorted.map((acc) => (
               <div key={`${acc.brand}-${acc.model}`} className={`${styles.card} ${acc.isDiscontinued ? styles.cardDiscontinued : ""}`}>
                 <div className={styles.cardHeader}>
-                  <span className={styles.cardTitle}>{acc.brand} {acc.model}</span>
+                  <a className={styles.lensLink} href={`/accessories/${toSlug(`${acc.brand} ${acc.model}`)}`}>{acc.brand} {acc.model}</a>
                   <span className={styles.cardPrice}>~${acc.price}</span>
                 </div>
                 <p className={styles.cardDescription}>{acc.description}</p>

@@ -1,0 +1,21 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import Base from "../../layouts/Base.astro";
+import accessories from "../../data/accessories";
+import { toSlug } from "../../utils/slug";
+
+export const getStaticPaths = (() => {
+  return accessories.map((accessory) => ({
+    params: { slug: toSlug(`${accessory.brand} ${accessory.model}`) },
+    props: { accessory },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { accessory } = Astro.props as Props;
+---
+
+<Base title={`${accessory.brand} ${accessory.model} — Fuji.me!`} description={`${accessory.description}`}>
+  <h1>{accessory.brand} {accessory.model}</h1>
+  <p>{accessory.category} — {accessory.description} — ~${accessory.price}</p>
+</Base>

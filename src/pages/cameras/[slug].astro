@@ -1,0 +1,21 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import Base from "../../layouts/Base.astro";
+import { cameras } from "../../data/cameras";
+import { toSlug } from "../../utils/slug";
+
+export const getStaticPaths = (() => {
+  return cameras.map((camera) => ({
+    params: { slug: toSlug(camera.model) },
+    props: { camera },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { camera } = Astro.props as Props;
+---
+
+<Base title={`${camera.model} — Fuji.me!`} description={`Specs and features for the Fujifilm ${camera.model}.`}>
+  <h1>{camera.model}</h1>
+  <p>{camera.mount} mount — {camera.sensor} — {camera.megapixels}MP — {camera.weight}g — ~${camera.price}</p>
+</Base>
