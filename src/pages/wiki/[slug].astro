@@ -1,0 +1,106 @@
+---
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+import Base from "../../layouts/Base.astro";
+import { wiki } from "../../data/wiki";
+
+export const getStaticPaths = (() => {
+  return wiki.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { entry } = Astro.props as Props;
+
+const relatedEntries = entry.related
+  ? wiki.filter((e) => entry.related!.includes(e.slug))
+  : [];
+---
+
+<Base title={`${entry.title} — Wiki — Fuji.me!`} description={entry.summary}>
+  <article class="wiki-article">
+    <h1>{entry.title}</h1>
+    <p class="summary">{entry.summary}</p>
+
+    <div class="body">
+      {entry.body.map((paragraph) => (
+        <p>{paragraph}</p>
+      ))}
+    </div>
+
+    {relatedEntries.length > 0 && (
+      <nav class="related" aria-label="Related articles">
+        <h2>Related</h2>
+        <ul class="related-list">
+          {relatedEntries.map((r) => (
+            <li>
+              <a href={`/wiki/${r.slug}`}>{r.title}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+
+    <a href="/wiki" class="back-link">Back to Wiki</a>
+  </article>
+</Base>
+
+<style>
+  .wiki-article {
+    max-width: 48rem;
+  }
+
+  .summary {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-xl);
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    line-height: 1.8;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .related {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-lg);
+    margin-bottom: var(--space-xl);
+  }
+
+  .related h2 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-sm);
+  }
+
+  .related-list {
+    list-style: none;
+    display: flex;
+    gap: var(--space-md);
+  }
+
+  .related-list a {
+    color: var(--color-link);
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font-size: var(--font-size-sm);
+  }
+
+  .related-list a:hover {
+    color: var(--color-link-hover);
+    border-color: var(--color-accent);
+  }
+
+  .back-link {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .back-link:hover {
+    color: var(--color-link);
+  }
+</style>
