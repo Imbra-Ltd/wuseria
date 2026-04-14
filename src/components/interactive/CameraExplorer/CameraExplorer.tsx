@@ -174,8 +174,8 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
           <select className={`${styles.filterSelect} ${formFactor ? styles.filterActive : ""}`} value={formFactor} onChange={(e) => setFormFactor(resetValue(e.target.value))} aria-label="Filter by body style">
             <option value="" hidden>Body</option>
             <option value={RESET_VALUE}>All</option>
-            <option value="traditional">Standard</option>
-            <option value="grip">Pro grip</option>
+            <option value="standard">Standard</option>
+            <option value="pro-grip">Pro grip</option>
             <option value="rangefinder">Rangefinder</option>
             <option value="compact">Compact</option>
           </select>

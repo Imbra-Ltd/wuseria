@@ -54,7 +54,6 @@ interface Lens {
 
   hasOis?: boolean;
   isWeatherSealed?: boolean;
-  hasAutofocus?: boolean;
   afMotor?: AfMotor;
   hasApertureRing?: boolean;
   isApertureClickless?: boolean;

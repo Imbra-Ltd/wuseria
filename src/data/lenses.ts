@@ -159,7 +159,7 @@ const lenses: Lens[] = [
     focalLengthMax: 10,
     maxAperture: 2.8,
     apertureBlades: 7,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 280,
@@ -308,7 +308,7 @@ const lenses: Lens[] = [
     maxAperture: 2.8,
     apertureBlades: 9,
     hasCircularAperture: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     isFocusByWire: true,
     weight: 300,
@@ -348,7 +348,7 @@ const lenses: Lens[] = [
     maxAperture: 1.8,
     apertureBlades: 9,
     hasCircularAperture: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     isFocusByWire: true,
     weight: 200,
@@ -389,7 +389,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 1.0,
-    hasAutofocus: true,
+
     afMotor: "DC",
     isFocusByWire: true,
     weight: 300,
@@ -430,7 +430,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.1,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -475,7 +475,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.21,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -520,7 +520,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.15,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -565,7 +565,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.14,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -608,7 +608,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.1,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -653,7 +653,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.19,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -700,7 +700,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.13,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -745,7 +745,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.1,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -788,7 +788,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 1.0,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -829,7 +829,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.15,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -872,7 +872,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.17,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -917,7 +917,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.135,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -962,7 +962,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.08,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -1007,7 +1007,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.15,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -1052,7 +1052,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.09,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -1096,7 +1096,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.5,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -1142,7 +1142,7 @@ const lenses: Lens[] = [
     maxMagnification: 1.0,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1187,7 +1187,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.11,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1234,7 +1234,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.12,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1281,7 +1281,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.1,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1323,7 +1323,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.16,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "STM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1367,7 +1367,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.16,
     hasOis: true,
-    hasAutofocus: true,
+
     afMotor: "STM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1411,7 +1411,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.16,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1454,7 +1454,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.15,
     hasOis: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1497,7 +1497,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.27,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1536,7 +1536,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.12,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1580,7 +1580,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.18,
     hasOis: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1618,7 +1618,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.19,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -1663,7 +1663,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.14,
     hasOis: true,
-    hasAutofocus: true,
+
     afMotor: "STM",
     isFocusByWire: true,
     weight: 100,
@@ -1704,7 +1704,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.21,
     hasOis: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     isFocusByWire: true,
     weight: 200,
@@ -1744,7 +1744,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.2,
     hasOis: true,
-    hasAutofocus: true,
+
     afMotor: "STM",
     isFocusByWire: true,
     weight: 400,
@@ -2057,7 +2057,7 @@ const lenses: Lens[] = [
     focalLengthMin: 33,
     focalLengthMax: 33,
     maxAperture: 1.4,
-    hasAutofocus: true,
+
     afMotor: "STM",
     isFocusByWire: true,
     weight: 210,
@@ -2092,7 +2092,7 @@ const lenses: Lens[] = [
     focalLengthMin: 55,
     focalLengthMax: 55,
     maxAperture: 1.4,
-    hasAutofocus: true,
+
     afMotor: "STM",
     isFocusByWire: true,
     weight: 280,
@@ -2110,7 +2110,7 @@ const lenses: Lens[] = [
     focalLengthMin: 55,
     focalLengthMax: 55,
     maxAperture: 1.8,
-    hasAutofocus: true,
+
     afMotor: "STM",
     isFocusByWire: true,
     weight: 320,
@@ -2146,7 +2146,7 @@ const lenses: Lens[] = [
     focalLengthMin: 85,
     focalLengthMax: 85,
     maxAperture: 1.8,
-    hasAutofocus: true,
+
     afMotor: "STM",
     isFocusByWire: true,
     weight: 380,
@@ -2605,7 +2605,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.1,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 213,
@@ -2628,7 +2628,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.13,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 230,
@@ -3020,7 +3020,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.1,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 405,
@@ -3061,7 +3061,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.14,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 265,
@@ -3101,7 +3101,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.14,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 280,
@@ -3142,7 +3142,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.35,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 290,
@@ -3184,7 +3184,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.19,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 520,
@@ -3223,7 +3223,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.13,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 420,
@@ -3264,7 +3264,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.15,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 340,
@@ -3306,7 +3306,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.25,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 260,
@@ -3345,7 +3345,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.18,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 510,
@@ -3369,7 +3369,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.28,
     hasOis: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 660,
@@ -3393,7 +3393,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.24,
     hasOis: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 1140,
@@ -3435,7 +3435,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.25,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 335,
@@ -3478,7 +3478,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.2,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 525,
@@ -3520,7 +3520,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.5,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 620,
@@ -3562,7 +3562,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.32,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 1725,
@@ -3603,7 +3603,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.1,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 410,
@@ -3645,7 +3645,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.1,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 224,
@@ -3686,7 +3686,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.1,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 224,
@@ -3722,7 +3722,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.1,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 216,
@@ -3749,7 +3749,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.17,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 560,
@@ -3792,7 +3792,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.12,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 670,
@@ -3834,7 +3834,7 @@ const lenses: Lens[] = [
     maxAperture: 2.8,
     apertureBlades: 7,
     hasCircularAperture: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 195,
@@ -3853,7 +3853,7 @@ const lenses: Lens[] = [
     maxAperture: 1.7,
     apertureBlades: 9,
     hasCircularAperture: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 206,
@@ -3890,7 +3890,7 @@ const lenses: Lens[] = [
     maxAperture: 1.7,
     apertureBlades: 9,
     hasCircularAperture: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 155,
@@ -3924,7 +3924,7 @@ const lenses: Lens[] = [
     maxAperture: 4.5,
     apertureBlades: 7,
     hasCircularAperture: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 60,
@@ -3943,7 +3943,7 @@ const lenses: Lens[] = [
     maxAperture: 1.7,
     apertureBlades: 9,
     hasCircularAperture: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 160,
@@ -3962,7 +3962,7 @@ const lenses: Lens[] = [
     maxAperture: 1.7,
     apertureBlades: 9,
     hasCircularAperture: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 260,
@@ -4000,7 +4000,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.13,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 340,
@@ -4024,7 +4024,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.14,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 380,
@@ -4047,7 +4047,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.14,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 398,
@@ -4070,7 +4070,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.14,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 419,
@@ -4094,7 +4094,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.15,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 285,
@@ -4131,7 +4131,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.15,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 270,
@@ -4173,7 +4173,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.14,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 315,
@@ -4210,7 +4210,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.25,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 320,
@@ -4250,7 +4250,7 @@ const lenses: Lens[] = [
     focalLengthMax: 27,
     maxAperture: 2.8,
     apertureBlades: 9,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 95,
@@ -4270,7 +4270,7 @@ const lenses: Lens[] = [
     focalLengthMax: 35,
     maxAperture: 1.8,
     apertureBlades: 9,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 200,
@@ -4289,7 +4289,7 @@ const lenses: Lens[] = [
     focalLengthMax: 56,
     maxAperture: 1.8,
     apertureBlades: 9,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 260,
@@ -4308,7 +4308,7 @@ const lenses: Lens[] = [
     focalLengthMax: 75,
     maxAperture: 2.0,
     apertureBlades: 9,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 350,
@@ -4794,7 +4794,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.07,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -4839,7 +4839,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.13,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -4882,7 +4882,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.13,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -4926,7 +4926,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.1,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -4970,7 +4970,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.09,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5017,7 +5017,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.135,
-    hasAutofocus: true,
+
     afMotor: "STM",
     isFocusByWire: true,
     weight: 130,
@@ -5060,7 +5060,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.1,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5103,7 +5103,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.25,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "STM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5146,7 +5146,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.2,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     isFocusByWire: true,
     weight: 460,
@@ -5187,7 +5187,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.33,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5227,7 +5227,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.14,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5270,7 +5270,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.09,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5296,7 +5296,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.14,
     hasOis: true,
-    hasAutofocus: true,
+
     afMotor: "STM",
     isFocusByWire: true,
     weight: 130,
@@ -5369,7 +5369,7 @@ const lenses: Lens[] = [
     apertureBlades: 7,
     hasCircularAperture: true,
     maxMagnification: 0.09,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -5414,7 +5414,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.16,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5454,7 +5454,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.5,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5497,7 +5497,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.12,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5540,7 +5540,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.12,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -5580,7 +5580,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.12,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -5622,7 +5622,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.1,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5662,7 +5662,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.11,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -5707,7 +5707,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.12,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -5749,7 +5749,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.1,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -5792,7 +5792,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.12,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5834,7 +5834,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.12,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5876,7 +5876,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.09,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -5919,7 +5919,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.1,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -5963,7 +5963,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.12,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -6004,7 +6004,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.12,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     isFocusByWire: false,
     hasDistanceScale: false,
@@ -6044,7 +6044,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.12,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -6086,7 +6086,7 @@ const lenses: Lens[] = [
     maxMagnification: 0.19,
     hasOis: true,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "LM",
     hasApertureRing: true,
     isFocusByWire: true,
@@ -6126,7 +6126,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.06,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,
@@ -6169,7 +6169,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.5,
     isWeatherSealed: true,
-    hasAutofocus: true,
+
     afMotor: "DC",
     hasApertureRing: true,
     isFocusByWire: false,

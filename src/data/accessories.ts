@@ -27,7 +27,7 @@ const flashes: FlashAccessory[] = [
     hasHss: true,
     isWirelessCommander: true,
     isWirelessReceiver: true,
-    price: 500,
+    price: 450,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/ef-x500/",
   },
   {
@@ -40,7 +40,7 @@ const flashes: FlashAccessory[] = [
     hasTtl: true,
     hasHss: true,
     isWirelessReceiver: true,
-    price: 500,
+    price: 400,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/ef-60/",
   },
   {
@@ -52,7 +52,8 @@ const flashes: FlashAccessory[] = [
     guideNumber: 42,
     hasTtl: true,
     hasHss: false,
-    price: 250,
+    isDiscontinued: true,
+    price: 200,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/ef-42/",
   },
   {
@@ -64,7 +65,8 @@ const flashes: FlashAccessory[] = [
     guideNumber: 20,
     hasTtl: true,
     hasHss: false,
-    price: 250,
+    isDiscontinued: true,
+    price: 170,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/ef-x20/",
   },
   {
@@ -76,7 +78,8 @@ const flashes: FlashAccessory[] = [
     guideNumber: 20,
     hasTtl: true,
     hasHss: false,
-    price: 250,
+    isDiscontinued: true,
+    price: 130,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/ef-20/",
   },
   {
@@ -88,7 +91,7 @@ const flashes: FlashAccessory[] = [
     guideNumber: 8,
     hasTtl: true,
     hasHss: false,
-    price: 250,
+    price: 52,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/ef-x8/",
   },
   {
@@ -101,7 +104,7 @@ const flashes: FlashAccessory[] = [
     hasTtl: false,
     hasHss: false,
     isWirelessCommander: true,
-    price: 250,
+    price: 200,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/ef-w1/",
   },
 ];
@@ -122,7 +125,7 @@ const batteryGrips: BatteryGripAccessory[] = [
     batteryCount: 2,
     hasVerticalControls: true,
     isWeatherSealed: true,
-    price: 500,
+    price: 349,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/vg-xt4/",
   },
   {
@@ -136,7 +139,7 @@ const batteryGrips: BatteryGripAccessory[] = [
     batteryCount: 2,
     hasVerticalControls: true,
     isWeatherSealed: true,
-    price: 500,
+    price: 450,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/vg-xh/",
   },
   {
@@ -149,7 +152,7 @@ const batteryGrips: BatteryGripAccessory[] = [
     batteryType: "NP-T125",
     hasVerticalControls: true,
     isWeatherSealed: true,
-    price: 750,
+    price: 500,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/vg-gfx100ii/",
   },
   {
@@ -163,7 +166,7 @@ const batteryGrips: BatteryGripAccessory[] = [
     batteryCount: 2,
     hasVerticalControls: true,
     isWeatherSealed: true,
-    price: 1000,
+    price: 999,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/ft-xh/",
   },
   {
@@ -237,7 +240,8 @@ const handGrips: GenericAccessory[] = [
     model: "MHG-XT3",
     description: "Metal Hand Grip for X-T3. Improves ergonomics, adds Arca-Swiss rail mount.",
     compatibleWith: ["X-T3"],
-    price: 250,
+    isDiscontinued: true,
+    price: 80,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/mhg-xt3/",
   },
   {
@@ -246,7 +250,7 @@ const handGrips: GenericAccessory[] = [
     model: "MHG-XT4",
     description: "Metal Hand Grip for X-T4. Improves grip, adds Arca-Swiss compatible rail.",
     compatibleWith: ["X-T4"],
-    price: 250,
+    price: 80,
   },
   {
     category: "hand-grip",
@@ -254,7 +258,7 @@ const handGrips: GenericAccessory[] = [
     model: "MHG-XT5",
     description: "Metal Hand Grip for X-T5. Improves grip, adds Arca-Swiss compatible rail.",
     compatibleWith: ["X-T5"],
-    price: 250,
+    price: 170,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/mhg-xt5/",
   },
   {
@@ -263,7 +267,7 @@ const handGrips: GenericAccessory[] = [
     model: "MHG-XH",
     description: "Metal Hand Grip for X-H2 / X-H2S. Arca-Swiss rail, improved ergonomics.",
     compatibleWith: ["X-H2", "X-H2S"],
-    price: 250,
+    price: 80,
   },
   {
     category: "hand-grip",
@@ -272,7 +276,7 @@ const handGrips: GenericAccessory[] = [
     description: "Metal Hand Grip for X-Pro2. Arca-Swiss rail, improves grip on the rangefinder-style body.",
     compatibleWith: ["X-Pro2"],
     isDiscontinued: true,
-    price: 250,
+    price: 80,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/mhg-xpro2/",
   },
   {
@@ -282,7 +286,7 @@ const handGrips: GenericAccessory[] = [
     description: "Metal Hand Grip for X-T10/X-T20. Improves grip, adds Arca-Swiss rail.",
     compatibleWith: ["X-T10", "X-T20"],
     isDiscontinued: true,
-    price: 250,
+    price: 80,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/mhg-xt10/",
   },
 ];
@@ -299,7 +303,7 @@ const batteries: BatteryAccessory[] = [
     description: "Standard X-series Li-ion battery. Improved over NP-W126. ~350 frames.",
     compatibleWith: ["X-T1", "X-T2", "X-T3", "X-Pro1", "X-Pro2", "X-E1", "X-E2", "X-E3", "X-T10", "X-T20", "X-T30", "X-H1"],
     batteryType: "NP-W126S",
-    price: 250,
+    price: 65,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/np-w126s/",
   },
   {
@@ -309,7 +313,7 @@ const batteries: BatteryAccessory[] = [
     description: "High-capacity Li-ion for newer flagships. ~680 frames (X-T5).",
     compatibleWith: ["X-T4", "X-T5", "X-H2", "X-H2S", "X-S20"],
     batteryType: "NP-W235",
-    price: 250,
+    price: 89,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/np-w235/",
   },
   {
@@ -320,7 +324,7 @@ const batteries: BatteryAccessory[] = [
     compatibleWith: ["X-T1", "X-T2", "X-T3", "X-Pro1", "X-Pro2", "X-E1", "X-E2", "X-E3", "X-T10", "X-T20", "X-T30", "X-H1"],
     batteryType: "NP-W126",
     isDiscontinued: true,
-    price: 250,
+    price: 50,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/np-w126/",
   },
 ];
@@ -338,7 +342,7 @@ const chargers: ChargerAccessory[] = [
     compatibleWith: ["NP-W126S"],
     batteryType: "NP-W126S",
     slots: 1,
-    price: 250,
+    price: 70,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/bc-w126s/",
   },
 ];
@@ -356,7 +360,7 @@ const lensAccessories: LensAccessory[] = [
     mount: "X",
     compatibleWith: ["XF 16mm", "XF 23mm", "XF 27mm", "XF 35mm", "XF 50mm", "XF 56mm", "XF 60mm", "XF 80mm", "XF 90mm"],
     isWeatherSealed: true,
-    price: 250,
+    price: 100,
   },
   {
     category: "lens-accessory",
@@ -366,7 +370,7 @@ const lensAccessories: LensAccessory[] = [
     mount: "X",
     compatibleWith: ["XF 16mm", "XF 23mm", "XF 27mm", "XF 35mm", "XF 50mm", "XF 56mm", "XF 60mm", "XF 80mm", "XF 90mm"],
     isWeatherSealed: true,
-    price: 250,
+    price: 100,
   },
   {
     category: "lens-accessory",
@@ -375,7 +379,7 @@ const lensAccessories: LensAccessory[] = [
     description: "Original non-WR extension tube 11mm. Works with all XF lenses. No autofocus.",
     mount: "X",
     isDiscontinued: true,
-    price: 250,
+    price: 108,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/mcex-11/",
   },
   {
@@ -385,7 +389,7 @@ const lensAccessories: LensAccessory[] = [
     description: "Original non-WR extension tube 16mm. Works with all XF lenses. No autofocus.",
     mount: "X",
     isDiscontinued: true,
-    price: 250,
+    price: 99,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/mcex-16/",
   },
   {
@@ -395,7 +399,7 @@ const lensAccessories: LensAccessory[] = [
     description: "Extension tube 18mm for G-Mount. WR.",
     mount: "GFX",
     isWeatherSealed: true,
-    price: 250,
+    price: 200,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/mcex-18g-wr/",
   },
   {
@@ -418,7 +422,7 @@ const lensAccessories: LensAccessory[] = [
     magnificationFactor: 1.4,
     isAfRetained: true,
     isWeatherSealed: true,
-    price: 500,
+    price: 449,
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf14x-tc-wr/",
   },
   {
@@ -431,7 +435,7 @@ const lensAccessories: LensAccessory[] = [
     magnificationFactor: 2.0,
     isAfRetained: true,
     isWeatherSealed: true,
-    price: 500,
+    price: 449,
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf2x-tc-wr/",
   },
 ];
@@ -450,7 +454,7 @@ const adapters: AdapterAccessory[] = [
     sourceMount: "Leica M",
     targetMount: "X",
     isAfSupported: false,
-    price: 250,
+    price: 260,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/m-mount-adapter/",
   },
   {
@@ -463,7 +467,7 @@ const adapters: AdapterAccessory[] = [
     targetMount: "GFX",
     isAfSupported: false,
     hasApertureControl: true,
-    price: 500,
+    price: 660,
     officialUrl: "https://fujifilm-x.com/global/products/accessories/h-mount-adapter-g/",
   },
 ];
@@ -480,7 +484,7 @@ const remotes: RemoteAccessory[] = [
     description: "Wired remote release. 2.5mm jack. Reduces camera shake for tripod work and time exposures.",
     compatibleWith: ["X-T1", "X-T2", "X-T3", "X-T4", "X-T5", "X-Pro1", "X-Pro2", "X-Pro3", "X-H1", "X-H2", "X-H2S"],
     connectionType: "wired-2.5mm",
-    price: 250,
+    price: 40,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/rr-100/",
   },
   {
@@ -490,7 +494,7 @@ const remotes: RemoteAccessory[] = [
     description: "Bluetooth tripod grip. Controls shutter, video, power zoom lenses via Bluetooth.",
     compatibleWith: ["X-T3", "X-T4", "X-T5", "X-Pro3", "X-H1", "X-H2", "X-H2S", "X-E4", "X-S10", "X-S20"],
     connectionType: "bluetooth",
-    price: 250,
+    price: 200,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/tg-bt1/",
   },
 ];
@@ -508,7 +512,7 @@ const audio: AudioAccessory[] = [
     compatibleWith: ["X-T1", "X-T2", "X-T3", "X-T4", "X-Pro1", "X-Pro2", "X-Pro3", "X-H1", "X-H2", "X-H2S"],
     micPattern: "stereo",
     connectionType: "wired-2.5mm",
-    price: 250,
+    price: 130,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/mic-st1/",
   },
 ];
@@ -524,7 +528,7 @@ const bodyAccessories: GenericAccessory[] = [
     model: "FAN-001",
     description: "Cooling fan for extended video recording. Prevents overheating during long 4K/6K sessions.",
     compatibleWith: ["X-M5", "X-H2S", "X-H2", "X-S20"],
-    price: 250,
+    price: 199,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/fan-001/",
   },
   {
@@ -534,7 +538,7 @@ const bodyAccessories: GenericAccessory[] = [
     description: "Leather bottom case for X-T3. Pictures can be taken with case on.",
     compatibleWith: ["X-T3"],
     isDiscontinued: true,
-    price: 250,
+    price: 80,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/blc-xt3/",
   },
   {
@@ -544,7 +548,7 @@ const bodyAccessories: GenericAccessory[] = [
     description: "Leather bottom case for X-T2. Full access to battery/card slot.",
     compatibleWith: ["X-T2"],
     isDiscontinued: true,
-    price: 250,
+    price: 80,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/blc-xt2/",
   },
   {
@@ -554,7 +558,7 @@ const bodyAccessories: GenericAccessory[] = [
     description: "Leather bottom case for X-T1. Popular for the classic X-T1 aesthetic.",
     compatibleWith: ["X-T1"],
     isDiscontinued: true,
-    price: 250,
+    price: 80,
   },
   {
     category: "body-accessory",
@@ -562,7 +566,7 @@ const bodyAccessories: GenericAccessory[] = [
     model: "LC-X100V",
     description: "Genuine leather case for X100V. Formfitting, improves grip, access to battery slot.",
     compatibleWith: ["X100V"],
-    price: 250,
+    price: 295,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/lc-x100v/",
   },
   {
@@ -571,7 +575,7 @@ const bodyAccessories: GenericAccessory[] = [
     model: "GB-001",
     description: "Grip belt add-on. Improves hand grip when combined with a hand grip accessory.",
     compatibleWith: ["X-T1", "X-T2", "X-T3", "X-T4", "X-T5"],
-    price: 250,
+    price: 40,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/gb-001/",
   },
   {
@@ -581,7 +585,7 @@ const bodyAccessories: GenericAccessory[] = [
     description: "Cover set for X-T3. Protects connector covers from wear.",
     compatibleWith: ["X-T3"],
     isDiscontinued: true,
-    price: 250,
+    price: 30,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/cvr-xt3/",
   },
   {
@@ -590,7 +594,7 @@ const bodyAccessories: GenericAccessory[] = [
     model: "EF-BP1",
     description: "External battery pack for EF-X500 flash. Takes 8x AA batteries for extended flash sessions.",
     compatibleWith: ["EF-X500"],
-    price: 250,
+    price: 200,
     officialUrl: "https://fujifilm-x.com/en-us/products/accessories/ef-bp1/",
   },
 ];

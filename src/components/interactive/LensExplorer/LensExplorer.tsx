@@ -102,8 +102,8 @@ function LensExplorer({ lenses }: LensExplorerProps) {
       if (ois === "no" && lens.hasOis) return false;
       if (wr === "yes" && !lens.isWeatherSealed) return false;
       if (wr === "no" && lens.isWeatherSealed) return false;
-      if (af === "yes" && !lens.hasAutofocus) return false;
-      if (af === "no" && lens.hasAutofocus) return false;
+      if (af === "yes" && !lens.afMotor) return false;
+      if (af === "no" && lens.afMotor) return false;
       if (discontinued === "available" && lens.isDiscontinued) return false;
       if (discontinued === "discontinued" && !lens.isDiscontinued) return false;
       if (fl) {
