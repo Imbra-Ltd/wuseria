@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import type { Camera } from "../../../types/camera";
 import { useSort } from "../../../hooks/useSort";
 import { ChipGroup } from "../shared/ChipGroup";
@@ -111,7 +111,9 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
     });
   }, [cameras, search, mount, series, yearRange, sensorType, formFactor, discontinued, ibis, wr, videoSpec, priceRange]);
 
-  const { sorted, sortKey, sortDirection, toggleSort } = useSort<Camera, CameraSortKey>(filtered, "year");
+  const availableFirst = useCallback((a: Camera, b: Camera) =>
+    Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false), []);
+  const { sorted, sortKey, sortDirection, toggleSort } = useSort<Camera, CameraSortKey>(filtered, "year", "asc", availableFirst);
 
   function handleMountChange(value: string): void {
     setMount(value);

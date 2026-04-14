@@ -76,30 +76,40 @@ describe("astroExposure", () => {
 // =============================================================================
 
 describe("handheldExposure", () => {
-  it("street uses standard shutter rule", () => {
-    const result = handheldExposure(xf23, "street", 2, 1.5, 26);
-    const expected = 1 / (Math.sqrt(26 / 12) * 1.5 * 23);
+  it("street uses reciprocal rule: 1/(crop × FL)", () => {
+    const result = handheldExposure(xf23, "street", 2, 1.5);
+    const expected = 1 / (1.5 * 23);
     expect(result.minShutter).toBeCloseTo(expected, 6);
   });
 
   it("portrait uses 2x FL rule", () => {
-    const result = handheldExposure(xf90, "portrait", 10, 1.5, 26);
+    const result = handheldExposure(xf90, "portrait", 10, 1.5);
     expect(result.minShutter).toBeCloseTo(1 / (2 * 1.5 * 90), 6);
   });
 
+  it("macro uses magnification-adjusted rule", () => {
+    const result = handheldExposure(xf90, "macro", 10, 1.5, 1.0);
+    expect(result.minShutter).toBeCloseTo(1 / (90 * 2 * 1.5), 6);
+  });
+
+  it("macro at 0.5x magnification", () => {
+    const result = handheldExposure(xf90, "macro", 10, 1.5, 0.5);
+    expect(result.minShutter).toBeCloseTo(1 / (90 * 1.5 * 1.5), 6);
+  });
+
   it("sport uses 4x FL rule", () => {
-    const result = handheldExposure(xf90, "sport", 13, 1.5, 26);
+    const result = handheldExposure(xf90, "sport", 13, 1.5);
     expect(result.minShutter).toBeCloseTo(1 / (4 * 1.5 * 90), 6);
   });
 
   it("wildlife uses same 4x FL rule as sport", () => {
-    const s = handheldExposure(xf90, "sport", 9, 1.5, 26);
-    const w = handheldExposure(xf90, "wildlife", 9, 1.5, 26);
+    const s = handheldExposure(xf90, "sport", 9, 1.5);
+    const w = handheldExposure(xf90, "wildlife", 9, 1.5);
     expect(w.minShutter).toBe(s.minShutter);
   });
 
   it("computes ideal ISO at widest aperture", () => {
-    const result = handheldExposure(xf23, "street", 2, 1.5, 26);
+    const result = handheldExposure(xf23, "street", 2, 1.5);
     const expectedIso = Math.round(
       (1.4 * 1.4 * 100) / (result.minShutter * Math.pow(2, 2)),
     );

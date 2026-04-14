@@ -18,6 +18,7 @@ function useSort<T, K extends string & keyof T>(
   items: T[],
   defaultKey: K,
   defaultDirection: SortDirection = "asc",
+  stablePrefix?: (a: T, b: T) => number,
 ): UseSortResult<T, K> {
   const [sort, setSort] = useState<SortState<K>>({
     key: defaultKey,
@@ -27,6 +28,12 @@ function useSort<T, K extends string & keyof T>(
   const sorted = useMemo(() => {
     const copy = [...items];
     copy.sort((a, b) => {
+      // Stable prefix sort (e.g. available before discontinued)
+      if (stablePrefix) {
+        const pre = stablePrefix(a, b);
+        if (pre !== 0) return pre;
+      }
+
       const aVal = a[sort.key as keyof T];
       const bVal = b[sort.key as keyof T];
 
@@ -46,7 +53,7 @@ function useSort<T, K extends string & keyof T>(
       return 0;
     });
     return copy;
-  }, [items, sort.key, sort.direction]);
+  }, [items, sort.key, sort.direction, stablePrefix]);
 
   function toggleSort(key: K): void {
     setSort((prev) => ({

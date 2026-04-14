@@ -153,13 +153,13 @@ describe("GenreGuide", () => {
     expect(screen.getByRole("tab", { name: /landscape/i, selected: true })).toBeInTheDocument();
   });
 
-  it("shows landscape footer text when landscape is selected", async () => {
+  it("shows landscape scoring explanation when landscape is selected", async () => {
     const user = userEvent.setup();
     render(<GenreGuide lenses={testLenses} />);
 
     await user.click(screen.getByRole("tab", { name: /landscape/i }));
     expect(
-      screen.getByText(/Landscape guide/),
+      screen.getByText(/corner \+ center sharpness stopped down/),
     ).toBeInTheDocument();
   });
 
@@ -178,6 +178,6 @@ describe("GenreGuide", () => {
     render(<GenreGuide lenses={testLenses} />);
 
     await user.click(screen.getByRole("tab", { name: /landscape/i }));
-    expect(screen.getByText(/EV Matrix.*tripod/)).toBeInTheDocument();
+    expect(screen.getByText(/EV Matrix.*Tripod/)).toBeInTheDocument();
   });
 });
