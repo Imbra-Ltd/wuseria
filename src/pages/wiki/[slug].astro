@@ -20,7 +20,11 @@ const relatedEntries = entry.related
 
 <Base title={`${entry.title} — Wiki — Fuji.me!`} description={entry.summary}>
   <article class="wiki-article">
-    <h1>{entry.title}</h1>
+    <div class="title-row">
+      <h1>{entry.title}</h1>
+      {entry.fullTitle && <span class="full-title">{entry.fullTitle}</span>}
+      <span class="category-badge">{entry.category}</span>
+    </div>
     <p class="summary">{entry.summary}</p>
 
     <div class="body">
@@ -49,6 +53,32 @@ const relatedEntries = entry.related
 <style>
   .wiki-article {
     max-width: 48rem;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-xs);
+  }
+
+  .full-title {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .category-badge {
+    margin-left: auto;
+    font-size: 0.6875rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--color-bg-surface);
+    padding: 1px 6px;
+    font-family: var(--font-mono);
+    white-space: nowrap;
   }
 
   .summary {

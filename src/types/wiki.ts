@@ -2,12 +2,28 @@
 // WIKI ENTRY
 // =============================================================================
 
+type WikiCategory =
+  | "Composition"
+  | "Exposure"
+  | "Focus"
+  | "Geometry"
+  | "Lenses"
+  | "Lighting"
+  | "Optics"
+  | "Sensor";
+
 interface WikiEntry {
   /** URL slug — lowercase, hyphenated (e.g. "bortle-scale") */
   slug: string;
 
   /** Display title (e.g. "Bortle Scale") */
   title: string;
+
+  /** Full title or expansion of acronym (e.g. "Modulation Transfer Function") */
+  fullTitle?: string;
+
+  /** Topic category for filtering */
+  category: WikiCategory;
 
   /** One-line summary for index page and meta description */
   summary: string;
@@ -23,4 +39,4 @@ interface WikiEntry {
 // EXPORTS
 // =============================================================================
 
-export type { WikiEntry };
+export type { WikiEntry, WikiCategory };
