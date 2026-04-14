@@ -43,7 +43,7 @@ const categories: WikiCategory[] = [...new Set(wiki.map((e) => e.category))].sor
 </Base>
 
 <script>
-  document.addEventListener("astro:page-load", () => {
+  document.addEventListener("DOMContentLoaded", () => {
     const chips = document.querySelectorAll<HTMLButtonElement>(".chip");
     const cards = document.querySelectorAll<HTMLAnchorElement>(".wiki-card");
     const search = document.getElementById("wiki-search") as HTMLInputElement | null;
