@@ -7,7 +7,7 @@ import type { ReviewSource } from "./review";
 
 type EvfPosition = "center" | "corner" | "none";
 
-type FormFactor = "traditional" | "grip" | "rangefinder" | "compact";
+type FormFactor = "standard" | "pro-grip" | "rangefinder" | "compact";
 
 type EvfType = "electronic" | "hybrid" | "none";
 
