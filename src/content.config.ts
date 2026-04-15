@@ -7,6 +7,7 @@ const wiki = defineCollection({
     title: z.string(),
     fullTitle: z.string().optional(),
     category: z.enum([
+      "Camera",
       "Composition",
       "Exposure",
       "Focus",

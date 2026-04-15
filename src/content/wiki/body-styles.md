@@ -1,6 +1,6 @@
 ---
 title: "Body Styles"
-category: "Sensor"
+category: "Camera"
 summary: "Fujifilm camera form factors: standard, pro grip, rangefinder, and compact."
 related:
   - "af-motors"
