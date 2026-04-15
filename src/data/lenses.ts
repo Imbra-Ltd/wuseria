@@ -3454,6 +3454,7 @@ const lenses: Lens[] = [
     cornerWideOpen: 0.5,
     astigmatism: 0.5,
     coma: 1.5,
+    sphericalAberration: 2.0,
     longitudinalCA: 2.0,
     lateralCA: 2.0,
     distortion: 1.0,
@@ -3464,6 +3465,7 @@ const lenses: Lens[] = [
     genreMarks: { nightscape: 2, landscape: 3, architecture: 3, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 3 },
     reviewSources: {
       dustinabbott: "https://dustinabbott.net/2023/06/tamron-11-20mm-f2-8-rxd-for-fuji-x-mount-review/",
+      "the-digital-picture": "https://www.the-digital-picture.com/Reviews/Tamron-11-20mm-F2-8-Di-III-A-RXD-Lens.aspx",
     },
     officialUrl: "https://www.tamron.com/global/consumer/lenses/b060/",
   },
