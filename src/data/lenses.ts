@@ -1289,7 +1289,7 @@ const lenses: Lens[] = [
     diameter: 88,
     length: 121.5,
     minFocusDistance: 250,
-    price: 2250,
+    price: 1500,
     sweetSpotAperture: 5.6,
     centerStopped: 2.0,
     cornerStopped: 1.5,
