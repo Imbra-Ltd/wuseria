@@ -1,66 +1,201 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { wiki } from "../../data/wiki";
+import { getCollection } from "astro:content";
 
-const sorted = [...wiki].sort((a, b) => a.title.localeCompare(b.title));
+const entries = await getCollection("wiki");
+const sorted = [...entries].sort((a, b) => a.data.title.localeCompare(b.data.title));
+const categories = [...new Set(entries.map((e) => e.data.category))].sort();
 ---
 
 <Base title="Wiki — Fuji.me!" description="Photography terms and concepts explained for Fujifilm shooters.">
   <h1>Wiki</h1>
-  <p class="subtitle">A-Z index of photography terms and concepts.</p>
+  <p class="subtitle">{entries.length} photography terms and concepts.</p>
 
-  <ul class="wiki-list">
-    {sorted.map((entry) => (
-      <li class="wiki-item">
-        <a href={`/wiki/${entry.slug}`} class="wiki-link">
-          <span class="wiki-title">{entry.title}</span>
-          <span class="wiki-summary">{entry.summary}</span>
-        </a>
-      </li>
+  <div class="category-chips">
+    <button class="chip active" data-cat="All">All</button>
+    {categories.map((cat) => (
+      <button class="chip" data-cat={cat}>{cat}</button>
     ))}
-  </ul>
+  </div>
+
+  <input
+    type="text"
+    class="search-input"
+    placeholder="Search..."
+    aria-label="Search wiki entries"
+    id="wiki-search"
+  />
+
+  <p class="count" id="wiki-count">{sorted.length} / {entries.length} terms</p>
+
+  <div class="wiki-grid" id="wiki-grid">
+    {sorted.map((entry) => (
+      <a href={`/wiki/${entry.id}`} class="wiki-card" data-cat={entry.data.category} data-search={`${entry.data.title} ${entry.data.fullTitle ?? ""} ${entry.data.summary}`.toLowerCase()}>
+        <div class="card-header">
+          <span class="card-title">{entry.data.title}</span>
+          {entry.data.fullTitle && entry.data.fullTitle !== entry.data.title && <span class="card-full">{entry.data.fullTitle}</span>}
+          <span class="card-cat">{entry.data.category}</span>
+        </div>
+        <p class="card-summary">{entry.data.summary}</p>
+      </a>
+    ))}
+  </div>
 </Base>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const chips = document.querySelectorAll<HTMLButtonElement>(".chip");
+    const cards = document.querySelectorAll<HTMLAnchorElement>(".wiki-card");
+    const search = document.getElementById("wiki-search") as HTMLInputElement | null;
+    const count = document.getElementById("wiki-count");
+    const total = cards.length;
+    let activeCat = "All";
+
+    function filter(): void {
+      const q = search?.value.toLowerCase() ?? "";
+      let visible = 0;
+      cards.forEach((card) => {
+        const cat = card.dataset.cat ?? "";
+        const text = card.dataset.search ?? "";
+        const catMatch = activeCat === "All" || cat === activeCat;
+        const searchMatch = !q || text.includes(q);
+        const show = catMatch && searchMatch;
+        card.style.display = show ? "" : "none";
+        if (show) visible++;
+      });
+      if (count) count.textContent = `${visible} / ${total} terms`;
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener("click", () => {
+        chips.forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeCat = chip.dataset.cat ?? "All";
+        filter();
+      });
+    });
+
+    search?.addEventListener("input", filter);
+  });
+</script>
 
 <style>
   .subtitle {
     color: var(--color-text-muted);
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-md);
   }
 
-  .wiki-list {
-    list-style: none;
+  .category-chips {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: var(--space-md);
+  }
+
+  .chip {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    font-family: var(--font-sans);
+    padding: var(--space-xs) var(--space-sm);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .chip:hover {
+    color: var(--color-text);
+  }
+
+  .chip.active {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  .search-input {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    padding: var(--space-xs) var(--space-sm);
+    width: 200px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .count {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
+    font-family: var(--font-mono);
+  }
+
+  .wiki-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: var(--space-sm);
   }
 
-  .wiki-link {
+  .wiki-card {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
-    padding: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     color: var(--color-text);
     text-decoration: none;
+    background: var(--color-bg);
   }
 
-  .wiki-link:hover {
+  .wiki-card:hover {
     background-color: var(--color-bg-hover);
     border-color: var(--color-accent);
   }
 
-  .wiki-title {
-    font-weight: 600;
-    color: var(--color-link);
+  .card-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
   }
 
-  .wiki-link:hover .wiki-title {
-    color: var(--color-link-hover);
-  }
-
-  .wiki-summary {
+  .card-title {
+    font-weight: 700;
+    color: var(--color-accent);
+    font-family: var(--font-mono);
     font-size: var(--font-size-sm);
+  }
+
+  .card-full {
+    font-size: 0.75rem;
     color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .card-cat {
+    margin-left: auto;
+    font-size: 0.6875rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--color-bg-surface);
+    padding: 1px 6px;
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
+
+  .card-summary {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
   }
 </style>

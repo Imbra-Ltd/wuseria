@@ -1,32 +1,38 @@
 ---
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import Base from "../../layouts/Base.astro";
-import { wiki } from "../../data/wiki";
+import { getCollection, render } from "astro:content";
 
-export const getStaticPaths = (() => {
-  return wiki.map((entry) => ({
-    params: { slug: entry.slug },
-    props: { entry },
+export const getStaticPaths = (async () => {
+  const entries = await getCollection("wiki");
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry, allEntries: entries },
   }));
 }) satisfies GetStaticPaths;
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-const { entry } = Astro.props as Props;
+const { entry, allEntries } = Astro.props as Props;
+const { Content } = await render(entry);
 
-const relatedEntries = entry.related
-  ? wiki.filter((e) => entry.related!.includes(e.slug))
+const relatedEntries = entry.data.related
+  ? allEntries.filter((e) => entry.data.related!.includes(e.id))
   : [];
 ---
 
-<Base title={`${entry.title} — Wiki — Fuji.me!`} description={entry.summary}>
+<Base title={`${entry.data.title} — Wiki — Fuji.me!`} description={entry.data.summary}>
   <article class="wiki-article">
-    <h1>{entry.title}</h1>
-    <p class="summary">{entry.summary}</p>
+    <div class="title-row">
+      <h1>{entry.data.title}</h1>
+      {entry.data.fullTitle && entry.data.fullTitle !== entry.data.title && (
+        <span class="full-title">{entry.data.fullTitle}</span>
+      )}
+      <span class="category-badge">{entry.data.category}</span>
+    </div>
+    <p class="summary">{entry.data.summary}</p>
 
     <div class="body">
-      {entry.body.map((paragraph) => (
-        <p>{paragraph}</p>
-      ))}
+      <Content />
     </div>
 
     {relatedEntries.length > 0 && (
@@ -35,7 +41,7 @@ const relatedEntries = entry.related
         <ul class="related-list">
           {relatedEntries.map((r) => (
             <li>
-              <a href={`/wiki/${r.slug}`}>{r.title}</a>
+              <a href={`/wiki/${r.id}`}>{r.data.title}</a>
             </li>
           ))}
         </ul>
@@ -51,6 +57,32 @@ const relatedEntries = entry.related
     max-width: 48rem;
   }
 
+  .title-row {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-xs);
+  }
+
+  .full-title {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .category-badge {
+    margin-left: auto;
+    font-size: 0.6875rem;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--color-bg-surface);
+    padding: 1px 6px;
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
+
   .summary {
     color: var(--color-text-muted);
     font-size: var(--font-size-lg);
@@ -58,11 +90,71 @@ const relatedEntries = entry.related
   }
 
   .body {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
     line-height: 1.8;
     margin-bottom: var(--space-2xl);
+  }
+
+  .body :global(p) {
+    margin-bottom: var(--space-md);
+  }
+
+  .body :global(h2) {
+    font-size: var(--font-size-xl);
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-sm);
+  }
+
+  .body :global(h3) {
+    font-size: var(--font-size-lg);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-sm);
+  }
+
+  .body :global(ul),
+  .body :global(ol) {
+    padding-left: var(--space-lg);
+    margin-bottom: var(--space-md);
+  }
+
+  .body :global(li) {
+    margin-bottom: var(--space-xs);
+  }
+
+  .body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--space-md);
+    font-size: var(--font-size-sm);
+  }
+
+  .body :global(th),
+  .body :global(td) {
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .body :global(th) {
+    background: var(--color-bg-surface);
+    font-weight: 600;
+  }
+
+  .body :global(strong) {
+    color: var(--color-text);
+  }
+
+  .body :global(code) {
+    background: var(--color-bg-surface);
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-size: var(--font-size-sm);
+  }
+
+  .body :global(blockquote) {
+    border-left: 3px solid var(--color-accent);
+    padding-left: var(--space-md);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
   }
 
   .related {
@@ -79,6 +171,7 @@ const relatedEntries = entry.related
   .related-list {
     list-style: none;
     display: flex;
+    flex-wrap: wrap;
     gap: var(--space-md);
   }
 
