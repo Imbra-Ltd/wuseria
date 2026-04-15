@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://fujime.app/sitemap-index.xml
+Sitemap: https://wuseria.com/sitemap-index.xml

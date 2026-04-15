@@ -1,13 +1,13 @@
-# Fuji.me!
+# Wuseria
 
-Lightweight Fuji lens and camera explorer with genre-based scoring.
+Fujifilm lens and camera explorer with genre-based scoring.
 
-**Domain:** [fujime.app](https://fujime.app)
-**Part of the me! series by [braboj.me](https://braboj.me)**
+**Domain:** [wuseria.com](https://wuseria.com)
+**By [braboj.me](https://braboj.me)**
 
 ## What it does
 
-Fuji.me! helps Fujifilm photographers find the right lens for their shooting
+Wuseria helps Fujifilm photographers find the right lens for their shooting
 genre. It scores every Fuji X and GFX lens against genres like nightscape,
 landscape, portrait, street, architecture, sport, wildlife, travel, and macro
 -- backed by optical quality data from trusted review sources.
