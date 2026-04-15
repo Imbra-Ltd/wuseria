@@ -124,7 +124,7 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - 54 GitHub tickets created across 6 epics
 
 ### Session 6 — Data Migration & Astro Switch (2026-04-08)
-**Tool:** Claude Code (me-fuji repo)
+**Tool:** Claude Code (wuseria repo)
 
 - TypeScript interfaces: Lens (40+ fields), Camera (46 fields), Genre, Affiliate, Review
 - Lens data migration: 242 lenses with full specs, verified URLs, mount audit
@@ -136,7 +136,7 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - CLAUDE.md rewritten for Astro architecture
 
 ### Session 7 — Quality & Accessories (2026-04-09)
-**Tool:** Claude Code (me-fuji repo)
+**Tool:** Claude Code (wuseria repo)
 
 - Accessory type system: discriminated unions, 18 sub-interfaces, 46 accessories migrated
 - solid-ai-templates added as git submodule at `docs/solid-ai-templates/`
@@ -150,7 +150,7 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - ADRs extracted from architecture.md into `docs/decisions/` (this session)
 
 ### Session 8 — Astro Migration & Screeners (2026-04-09)
-**Tool:** Claude Code (me-fuji repo)
+**Tool:** Claude Code (wuseria repo)
 
 - Astro migration complete (#57 closed):
   - Scaffold with React integration, Base layout, dark theme

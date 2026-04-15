@@ -24,8 +24,8 @@ landscape, portrait, street, architecture, sport, wildlife, travel, and macro
 Prerequisites: Node.js 20+, npm 10+
 
 ```bash
-git clone --recursive https://github.com/Imbra-Ltd/me-fuji.git
-cd me-fuji
+git clone --recursive https://github.com/Imbra-Ltd/wuseria.git
+cd wuseria
 npm install
 npm run dev
 ```
@@ -104,7 +104,7 @@ See [CLAUDE.md](CLAUDE.md) for full project conventions:
 - [Architecture decisions](docs/decisions/)
 - [Development journal](docs/dev-journal.md)
 - [Quality conventions](docs/solid-ai-templates/)
-- [GitHub Issues](https://github.com/Imbra-Ltd/me-fuji/issues)
+- [GitHub Issues](https://github.com/Imbra-Ltd/wuseria/issues)
 
 ## License
 

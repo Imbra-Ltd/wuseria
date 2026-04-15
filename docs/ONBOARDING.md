@@ -12,8 +12,8 @@ New contributor guide for Wuseria
 ## 2. First-time setup
 
 ```bash
-git clone --recursive https://github.com/Imbra-Ltd/me-fuji.git
-cd me-fuji
+git clone --recursive https://github.com/Imbra-Ltd/wuseria.git
+cd wuseria
 npm install
 ```
 

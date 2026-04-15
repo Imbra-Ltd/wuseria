@@ -180,7 +180,7 @@ Links verified: 2026-04-06.
 ## Affiliate marketing
 
 ### Programs (photography/camera gear)
-- https://www.mpb.com/en-eu/affiliates — MPB used camera marketplace; strong fit for me-fuji
+- https://www.mpb.com/en-eu/affiliates — MPB used camera marketplace; strong fit for wuseria
 - https://www.bhphotovideo.com/find/affiliateProgram.jsp — B&H Photo; major US retailer
 - https://www.amazon.com/gp/associates — Amazon Associates; broadest product range
 - https://www.adorama.com/als.mvc/affiliateprogram — Adorama; US photo retailer
