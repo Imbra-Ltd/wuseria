@@ -1,0 +1,53 @@
+name: Deploy to GitHub Pages
+
+# Run on every push to main, or manually via the Actions tab
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Minimum permissions needed for GitHub Pages deployment
+permissions:
+  contents: read       # read repo contents
+  pages: write         # publish to GitHub Pages
+  id-token: write      # verify the deployment originates from this repo
+
+# Only one deployment at a time — don't cancel in-progress deploys
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out the repo, including the solid-ai-templates submodule
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      # Set up Node.js with npm cache for faster installs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # Clean install from lock file, then build the static site into dist/
+      - run: npm ci
+      - run: npm run build
+
+      # Package dist/ as a GitHub Pages artifact for the deploy job
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  deploy:
+    needs: build           # wait for build to finish
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Deploy the uploaded artifact to GitHub Pages
+      - id: deployment
+        uses: actions/deploy-pages@v4
