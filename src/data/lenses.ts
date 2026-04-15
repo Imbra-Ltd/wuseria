@@ -1302,6 +1302,8 @@ const lenses: Lens[] = [
     distortion: 1.5,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.0,
+    sphericalAberration: 1.5,
+    bokeh: 1.0,
     flareResistance: 1.0,
     genreMarks: { nightscape: 3, landscape: 4, architecture: 4, street: 3, travel: 2, sport: 4.5, wildlife: 4.5, macro: 1 },
     reviewSources: {
