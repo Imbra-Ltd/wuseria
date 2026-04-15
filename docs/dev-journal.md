@@ -3,25 +3,25 @@
 ## Architecture Overview
 
 ```
-Phase 1 — Launch:
-  Static site (Astro + React islands)
-  -> Data compiled to static HTML at build time
-  -> Interactive tables hydrated as React islands
-  -> Deployed to GitHub Pages
-  -> Affiliate links are plain <a> tags with tracking params
+Phase 1 — Launch & Scoring (COMPLETE):
+  Static site (Astro + React islands), deployed to GitHub Pages
+  -> 458 pages: 240+ lenses, 38 cameras, 46 accessories, 115 wiki, 9 genre screeners
+  -> Genre scoring with OQ (Optical Quality) weighted formula
+  -> Affiliate links as plain <a> tags with tracking params
+  -> Domain: wuseria.com
 
-Phase 2 — Scoring:
+Phase 2 — Revenue Diversification:
   Same static site
-  -> Complete genre scoring (remaining 6 genres)
-  -> Systematic MTF review
+  -> Trade Deals section: used vs new price comparisons (MPB, KEH, eBay)
+  -> High-commission affiliate programs (B&H, Amazon, Adorama, MPB, KEH)
+  -> UX improvements: light theme, lens comparison, OQ filter
+  -> Price audit, UI polish, remaining genre scoring
 
-Phase 3 — Revenue diversification:
-  Same static site + Gumroad (merch) + Buttondown (newsletter)
-  -> Sponsored placements, high-commission affiliates, newsletter sponsorship
+Phase 3 — Multi-system (if phase 2 gate passes):
+  Same architecture + Gumroad (merch) + Buttondown (newsletter)
+  -> Sponsored placements, newsletter sponsorship
+  -> More mount data files (Sony E, Nikon Z, Canon RF)
   -> No backend needed
-
-Phase 4 — Multi-system (if phase 3 gate passes):
-  Same architecture, more data files (Sony E, Nikon Z, Canon RF)
 ```
 
 
