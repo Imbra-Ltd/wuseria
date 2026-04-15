@@ -276,6 +276,56 @@ function isScoredGenre(genre: Genre): genre is ScoredGenre {
 }
 
 // =============================================================================
+// OVERALL OPTICAL QUALITY — genre-usage-derived weights
+// =============================================================================
+
+const OPTICAL_WEIGHTS: Record<OpticalField, number> = {
+  centerStopped: 4,
+  centerWideOpen: 3,
+  longitudinalCA: 2,
+  lateralCA: 1.5,
+  cornerStopped: 1.5,
+  coma: 1.5,
+  distortion: 1,
+  astigmatism: 1,
+  flareResistance: 1,
+  bokeh: 1,
+  sphericalAberration: 0.5,
+  vignettingWideOpen: 0.5,
+  vignettingStopped: 0.5,
+  cornerWideOpen: 0.5,
+};
+
+/**
+ * Compute an overall optical quality score (0–10) from a weighted average
+ * of available optical fields. Returns null if fewer than 7 fields present.
+ *
+ * Weights are derived from genre formula usage: fields that appear as primary
+ * in more genres get higher weight, so lenses that perform well across many
+ * genres score higher.
+ */
+function computeOpticalQuality(lens: Lens): number | null {
+  if (opticalFieldCount(lens) < MIN_OPTICAL_FIELDS) return null;
+
+  let sumW = 0;
+  let sumWV = 0;
+
+  for (const field of OPTICAL_FIELDS) {
+    const val = lens[field];
+    if (val == null) continue;
+    const w = OPTICAL_WEIGHTS[field];
+    sumW += w;
+    sumWV += w * val;
+  }
+
+  if (sumW === 0) return null;
+
+  // Weighted average is 0–2, scale to 0–10
+  const avg = sumWV / sumW;
+  return Math.round(avg * 5 * 10) / 10;
+}
+
+// =============================================================================
 // EXPORTS
 // =============================================================================
 
@@ -291,7 +341,10 @@ export {
   opticalFieldCount,
   genreFormulas,
   OPTICAL_FIELDS,
+  OPTICAL_WEIGHTS,
   MIN_OPTICAL_FIELDS,
+  // Overall optical quality
+  computeOpticalQuality,
   // Lookup helpers
   getGenreMark,
   isEditorialPick,

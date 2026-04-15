@@ -6,8 +6,12 @@ import { ChipGroup } from "../shared/ChipGroup";
 import { RESET_VALUE, resetValue } from "../shared/constants";
 import styles from "./LensExplorer.module.css";
 
+interface ExplorerLens extends Lens {
+  opticalQuality?: number | null;
+}
+
 interface LensExplorerProps {
-  lenses: Lens[];
+  lenses: ExplorerLens[];
 }
 
 type LensSortKey =
@@ -20,6 +24,7 @@ type LensSortKey =
   | "isWeatherSealed"
   | "afMotor"
   | "weight"
+  | "opticalQuality"
   | "price";
 
 type ColumnAlign = "left" | "right" | "center";
@@ -34,6 +39,7 @@ const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
   { key: "isWeatherSealed", label: "WR", align: "center" },
   { key: "afMotor", label: "AF", align: "center" },
   { key: "weight", label: "Weight", align: "right" },
+  { key: "opticalQuality", label: "OQ", align: "right" },
   { key: "price", label: "Price", align: "right" },
 ];
 
@@ -120,9 +126,9 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     });
   }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, priceRange]);
 
-  const availableFirst = useCallback((a: Lens, b: Lens) =>
+  const availableFirst = useCallback((a: ExplorerLens, b: ExplorerLens) =>
     Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false), []);
-  const { sorted, sortKey, sortDirection, toggleSort } = useSort<Lens, LensSortKey>(filtered, "focalLengthMin", "asc", availableFirst);
+  const { sorted, sortKey, sortDirection, toggleSort } = useSort<ExplorerLens, LensSortKey>(filtered, "focalLengthMin", "asc", availableFirst);
 
   function handleMountChange(value: string): void {
     setMount(value);
@@ -289,6 +295,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                     <td className={styles.cellCenter}><span className={lens.isWeatherSealed ? styles.dotOn : styles.dotOff} /></td>
                     <td className={styles.cellCenter}>{lens.afMotor ?? "MF"}</td>
                     <td className={styles.cellRight}>{lens.weight}g</td>
+                    <td className={styles.cellRight}>{lens.opticalQuality != null ? lens.opticalQuality.toFixed(1) : "\u2013"}</td>
                     <td className={styles.cellRight}>~${lens.price}</td>
                   </tr>
                 ))}
@@ -310,6 +317,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                   <span>{formatFL(lens)}</span>
                   <span>f/{lens.maxAperture}</span>
                   <span>{lens.weight}g</span>
+                  {lens.opticalQuality != null && <span>OQ {lens.opticalQuality.toFixed(1)}</span>}
                   {lens.year && <span>{lens.year}</span>}
                 </div>
                 <div className={styles.cardBadges}>
