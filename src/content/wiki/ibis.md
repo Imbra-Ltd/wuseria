@@ -1,7 +1,7 @@
 ---
 title: "IBIS"
 fullTitle: "In-Body Image Stabilisation"
-category: "Sensor"
+category: "Camera"
 summary: "Sensor-shift stabilisation built into the camera body."
 ---
 

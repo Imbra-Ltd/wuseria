@@ -1,7 +1,7 @@
 ---
 title: "ND"
 fullTitle: "Neutral Density Filter"
-category: "Exposure"
+category: "Lenses"
 summary: "A filter that reduces light entering the lens without affecting colour balance."
 ---
 

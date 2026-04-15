@@ -1,6 +1,6 @@
 ---
 title: "Aperture Sweet Spot"
-category: "Exposure"
+category: "Optics"
 summary: "The aperture at which a lens delivers peak sharpness across the frame, typically 2–3 stops below maximum aperture."
 ---
 
