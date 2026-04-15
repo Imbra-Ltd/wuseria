@@ -168,6 +168,7 @@ npm test          # run tests (Vitest)
 - Do not commit `node_modules/`, `dist/`, `.env`, `.env.local`
 - Lock file (`package-lock.json`) is committed
 - Run `npm run check:all` before committing
+- When creating GitHub issues, follow the formats in `docs/solid-ai-templates/base/issues.md` — use the correct label (`epic`, `bug`, `incident`, `question`) and body structure for each type
 
 ### 2.2 TypeScript
 
