@@ -303,3 +303,41 @@ Key design insight:
 - Each element earns its place in the top-to-bottom decision funnel
 
 PRs: #117-#212 (35+ PRs for screener build-out)
+
+### Session 12 — 2026-04-15
+
+Tool: Claude Code (Opus 4.6)
+
+**Rebrand & launch — Wuseria goes live**
+
+Rebrand:
+- Full rebrand from Fuji.me! to Wuseria across 26 files (PR #247, closes #242)
+- Brand name: Wuseria (no trademark conflict with Fujifilm)
+- Domain: wuseria.com (registered on Namecheap, DNS configured for GitHub Pages)
+- Repo renamed from me-fuji to wuseria, all clone URLs and references updated
+- Footer updated: "Wuseria — Fujifilm lens & camera explorer by braboj.me"
+- Historical files (ADR-012, prototype) left untouched as decision records
+
+Deploy:
+- GitHub Actions deploy workflow added (PR #248, closes #241)
+- Build: checkout with submodules → Node 22 → npm ci → npm run build → upload artifact
+- Deploy: official GitHub Pages deploy-pages@v4 action
+- TypeScript downgraded from 6.0 to 5.9 (@astrojs/check requires ^5.0.0)
+- Node upgraded from 20 to 22 in CI (Astro 6 requirement)
+
+Homepage:
+- Homepage redirects to /lenses via meta refresh (blog content planned for later)
+- Nav brand links directly to /lenses (avoids redirect flash)
+
+DNS:
+- 4x A records pointing to GitHub Pages IPs
+- CNAME www → imbra-ltd.github.io
+- HTTPS enforced in GitHub Pages settings
+
+Issues created:
+- #249 — OQ filter for Lens Explorer (Phase 2)
+
+Key decisions:
+- Full rebrand (not hybrid) to avoid Fujifilm trademark risk
+- wuseria.com confirmed after evaluating alternatives (Wusi, LensAtlas, Visu, etc.)
+- TS 5.9 over dropping @astrojs/check or using .npmrc workaround
