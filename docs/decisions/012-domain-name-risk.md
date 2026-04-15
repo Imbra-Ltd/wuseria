@@ -1,7 +1,7 @@
 # ADR-012: Domain name trademark risk (fujime.app)
 
-**Status:** Under review
-**Date:** 2026-04-09
+**Status:** Accepted
+**Date:** 2026-04-15 (decided), 2026-04-09 (opened)
 
 ## Context
 
@@ -51,9 +51,15 @@ for the X Series.
 
 ## Decision
 
-Under review. Top candidates: **lenspip.me** (unique, scoring-focused) and
-**lensing.me** (elegant, cinematography term). Both zero trademark risk,
-multi-system ready, and fit the me! series (.me TLD).
+**wuseria.com** — rename from fujime.app before launch.
+
+Rationale:
+- Zero trademark risk — invented word, no existing brand conflicts
+- `.com` is the strongest TLD for global reach, SEO, and user trust
+- Short (7 letters), unique, fully ownable — will dominate search results
+- "Wuseria" is a playful twist on "wisteria" (fuji = wisteria in Japanese) — an easter egg for those who know
+- Rejected lenspip.com: too similar to LensTip (primary data source), risks confusion or damaging the relationship
+- Rejected .me TLD: weaker for global audience despite fitting the me! series branding
 
 ## References
 
@@ -67,8 +73,7 @@ multi-system ready, and fit the me! series (.me TLD).
 
 ## Consequences
 
-If kept: must add "Not affiliated with FUJIFILM" disclaimer on every page.
-Site operates at Fujifilm's discretion — they can enforce at any time.
-
-If renamed: domain change before launch is low-cost. After launch, SEO and
-brand equity are lost. Change sooner rather than later.
+- Register wuseria.com immediately
+- Update `astro.config.mjs` site URL, `public/CNAME`, CLAUDE.md, README, and all internal references
+- Add "Not affiliated with FUJIFILM" disclaimer in footer (good practice regardless)
+- fujime.app can redirect to wuseria.com temporarily if already registered, or be abandoned
