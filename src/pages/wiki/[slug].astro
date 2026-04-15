@@ -18,9 +18,25 @@ const { Content } = await render(entry);
 const relatedEntries = entry.data.related
   ? allEntries.filter((e) => entry.data.related!.includes(e.id))
   : [];
+
+const canonicalUrl = new URL(`/wiki/${entry.id}`, Astro.site);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: entry.data.title,
+  description: entry.data.summary,
+  url: canonicalUrl.href,
+  publisher: {
+    "@type": "Organization",
+    name: "Fuji.me!",
+    url: Astro.site?.href,
+  },
+};
 ---
 
 <Base title={`${entry.data.title} — Wiki — Fuji.me!`} description={entry.data.summary}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <article class="wiki-article">
     <div class="title-row">
       <h1>{entry.data.title}</h1>

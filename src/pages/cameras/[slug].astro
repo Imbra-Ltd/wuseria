@@ -13,9 +13,30 @@ export const getStaticPaths = (() => {
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { camera } = Astro.props as Props;
+
+const canonicalUrl = new URL(`/cameras/${toSlug(camera.model)}`, Astro.site);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: `Fujifilm ${camera.model}`,
+  description: `Fujifilm ${camera.model} — ${camera.sensor}, ${camera.megapixels}MP, ${camera.weight}g.`,
+  brand: { "@type": "Brand", name: "Fujifilm" },
+  url: canonicalUrl.href,
+  ...(camera.officialUrl && { sameAs: camera.officialUrl }),
+  offers: {
+    "@type": "Offer",
+    price: camera.price,
+    priceCurrency: "USD",
+    availability: camera.isDiscontinued
+      ? "https://schema.org/Discontinued"
+      : "https://schema.org/InStock",
+  },
+};
 ---
 
 <Base title={`${camera.model} — Fuji.me!`} description={`Specs and features for the Fujifilm ${camera.model}.`}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <h1>{camera.model}</h1>
   <p>{camera.mount} mount — {camera.sensor} — {camera.megapixels}MP — {camera.weight}g — ~${camera.price}</p>
 </Base>
