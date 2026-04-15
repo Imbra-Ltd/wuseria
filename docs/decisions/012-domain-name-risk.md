@@ -45,6 +45,7 @@ for the X Series.
 | **wuseria.com** | Zero risk, short, playful twist on "wisteria", .com availability | Invented word, no immediate meaning |
 | **wuseria.app** | Same as .com but signals web app, modern TLD | Invented word, .app forces HTTPS |
 | **wuseria.io** | Same base, developer/tech-forward TLD | .io trending but pricier |
+| **wuseria.me** | Zero risk, playful twist on "wisteria", fits me! series (.me TLD) | Invented word, no immediate meaning |
 | lensgrade.me | Clear, describes scoring, multi-system ready | Generic |
 | xmount.me | Recognizable to Fuji shooters | "X" prefix associations, Fuji-specific |
 
