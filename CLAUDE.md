@@ -19,6 +19,29 @@ Key references:
 Project-specific overrides and additions follow below.
 
 
+## 0. Session Protocol
+
+**The agent MUST enforce this protocol. If the user deviates, remind them.**
+
+### Start of session
+1. Check which branch we're on — if not `main`, ask why
+2. Check `git status` — if uncommitted changes exist, resolve before starting
+3. Ask: "What's the theme for this session?" — agree on ONE theme
+4. Review open issues for that theme before writing code
+
+### During the session
+- **One theme per session.** If an unrelated topic comes up, create a GitHub issue for it and say: "Noted as #X — let's come back to it next session."
+- **Always branch before coding.** No commits directly to `main` for feature work. Data fixes (single field updates) are acceptable on `main`.
+- **Build after every change.** Don't accumulate multiple changes without verifying.
+- **Commit before switching topics.** If the user wants to change direction mid-session, push current work first.
+
+### End of session
+1. Ensure all changes are committed and pushed
+2. Close any issues completed during the session
+3. Update epic checklists if relevant
+4. Summarize what was done and what's next
+
+
 ## 1. Project
 
 ### 1.1 Stack
