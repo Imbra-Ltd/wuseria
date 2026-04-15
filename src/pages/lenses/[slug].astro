@@ -4,6 +4,7 @@ import Base from "../../layouts/Base.astro";
 import { lenses } from "../../data/lenses";
 import { genreConfigs } from "../../data/genres";
 import { toSlug } from "../../utils/slug";
+import { opticalFieldCount, OPTICAL_FIELDS } from "../../utils/scoring";
 import type { ScoredGenre } from "../../types/genre";
 
 export const getStaticPaths = (() => {
@@ -47,6 +48,8 @@ const opticalFields: [string, number | undefined][] = [
 ];
 
 const hasOptical = opticalFields.some(([, v]) => v != null);
+const fieldCount = opticalFieldCount(lens);
+const totalFields = OPTICAL_FIELDS.length;
 
 const genreEntries = lens.genreMarks
   ? (Object.entries(lens.genreMarks) as [ScoredGenre, number][])
@@ -81,6 +84,7 @@ const jsonLd = {
     {/* ── Header ── */}
     <header class="header">
       <h1>{lens.brand} {lens.model}</h1>
+      <p class="price-line">~${lens.price} USD</p>
     </header>
 
     {/* ── Specs + Optical grid ── */}
@@ -124,7 +128,7 @@ const jsonLd = {
 
       {hasOptical && (
         <section class="card">
-          <h2>Optical Quality</h2>
+          <h2>Optical Quality <span class="field-count">{fieldCount}/{totalFields}</span></h2>
           <table class="spec-table">
             <tbody>
               {opticalFields.map(([label, val]) =>
@@ -152,7 +156,7 @@ const jsonLd = {
 
       {!hasOptical && (
         <section class="card card-empty">
-          <h2>Optical Quality</h2>
+          <h2>Optical Quality <span class="field-count">{fieldCount}/{totalFields}</span></h2>
           <p class="empty-text">Not yet scored. Optical data from trusted review sources is required before scoring.</p>
         </section>
       )}
@@ -207,6 +211,19 @@ const jsonLd = {
 
   .header h1 {
     margin-bottom: var(--space-xs);
+  }
+
+  .price-line {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .field-count {
+    font-size: var(--font-size-sm);
+    font-weight: 400;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
   }
 
   /* ── Cards ── */
