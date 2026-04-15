@@ -1339,6 +1339,7 @@ const lenses: Lens[] = [
     centerStopped: 2.0,
     cornerStopped: 1.5,
     centerWideOpen: 1.5,
+    cornerWideOpen: 1.0,
     astigmatism: 1.5,
     coma: 1.0,
     sphericalAberration: 1.5,
