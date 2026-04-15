@@ -13,9 +13,30 @@ export const getStaticPaths = (() => {
 
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { accessory } = Astro.props as Props;
+
+const canonicalUrl = new URL(`/accessories/${toSlug(`${accessory.brand} ${accessory.model}`)}`, Astro.site);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: `${accessory.brand} ${accessory.model}`,
+  description: accessory.description,
+  brand: { "@type": "Brand", name: accessory.brand },
+  url: canonicalUrl.href,
+  ...(accessory.officialUrl && { sameAs: accessory.officialUrl }),
+  offers: {
+    "@type": "Offer",
+    price: accessory.price,
+    priceCurrency: "USD",
+    availability: accessory.isDiscontinued
+      ? "https://schema.org/Discontinued"
+      : "https://schema.org/InStock",
+  },
+};
 ---
 
-<Base title={`${accessory.brand} ${accessory.model} — Fuji.me!`} description={`${accessory.description}`}>
+<Base title={`${accessory.brand} ${accessory.model} — Fuji.me!`} description={accessory.description}>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <h1>{accessory.brand} {accessory.model}</h1>
   <p>{accessory.category} — {accessory.description} — ~${accessory.price}</p>
 </Base>
