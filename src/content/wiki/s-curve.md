@@ -1,7 +1,8 @@
 ---
 title: "S-curve"
 fullTitle: "S-Curve"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "A flowing S-shaped curve (rivers, roads, staircases) that leads the eye gracefully through the frame."
 ---
 

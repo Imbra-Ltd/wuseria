@@ -1,6 +1,7 @@
 ---
 title: "Rule of thirds"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Divide the frame into a 3×3 grid; place key subjects or horizon lines along the grid lines or at their intersections (power points)."
 ---
 

@@ -1,7 +1,8 @@
 ---
 title: "Golden rectangle"
 fullTitle: "Golden Rectangle"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "A rectangle whose sides are in the golden ratio (1:1."
 ---
 

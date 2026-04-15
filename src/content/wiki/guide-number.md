@@ -1,6 +1,7 @@
 ---
 title: "Guide number"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A standardised measure of flash power: GN = distance × f-number (at ISO 100)."
 ---
 

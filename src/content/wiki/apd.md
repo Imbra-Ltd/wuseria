@@ -1,7 +1,8 @@
 ---
 title: "APD"
 fullTitle: "Apodization Filter"
-category: "Lenses"
+categories:
+  - "Lenses"
 summary: "A radial neutral-density filter built into the lens that gradually reduces light transmission towards the outer aperture zone."
 ---
 

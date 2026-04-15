@@ -43,7 +43,7 @@ const jsonLd = {
       {entry.data.fullTitle && entry.data.fullTitle !== entry.data.title && (
         <span class="full-title">{entry.data.fullTitle}</span>
       )}
-      <span class="category-badge">{entry.data.category}</span>
+      <span class="category-badge">{entry.data.categories.join(" / ")}</span>
     </div>
     <p class="summary">{entry.data.summary}</p>
 

@@ -1,6 +1,7 @@
 ---
 title: "Leading lines"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Lines within the scene (roads, rivers, fences, shadows) that draw the viewer's eye towards the main subject or deeper into the frame."
 ---
 

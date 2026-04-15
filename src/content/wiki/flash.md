@@ -1,6 +1,7 @@
 ---
 title: "Flash"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A brief, intense burst of artificial light used to illuminate a scene."
 ---
 

@@ -1,7 +1,8 @@
 ---
 title: "Full-frame"
 fullTitle: "Full-Frame"
-category: "Sensor"
+categories:
+  - "Sensor"
 summary: "Sensor size matching 35mm film: 36×24mm, crop factor 1."
 ---
 

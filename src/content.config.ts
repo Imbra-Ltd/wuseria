@@ -6,7 +6,7 @@ const wiki = defineCollection({
   schema: z.object({
     title: z.string(),
     fullTitle: z.string().optional(),
-    category: z.enum([
+    categories: z.array(z.enum([
       "Camera",
       "Composition",
       "Exposure",
@@ -16,7 +16,7 @@ const wiki = defineCollection({
       "Lighting",
       "Optics",
       "Sensor",
-    ]),
+    ])).min(1),
     summary: z.string(),
     related: z.array(z.string()).optional(),
   }),

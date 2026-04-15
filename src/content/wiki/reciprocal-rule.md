@@ -1,6 +1,7 @@
 ---
 title: "Reciprocal Rule"
-category: "Exposure"
+categories:
+  - "Exposure"
 summary: "The minimum handheld shutter speed to avoid camera-shake blur equals 1 divided by the focal length."
 ---
 

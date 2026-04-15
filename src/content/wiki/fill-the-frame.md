@@ -1,6 +1,7 @@
 ---
 title: "Fill the frame"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Getting close to the subject so it occupies most or all of the frame, eliminating distracting backgrounds."
 ---
 

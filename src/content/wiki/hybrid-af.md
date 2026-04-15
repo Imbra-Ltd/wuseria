@@ -1,7 +1,8 @@
 ---
 title: "Hybrid AF"
 fullTitle: "Hybrid AF  [Passive]"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "Combines PDAF (for speed and direction) with CDAF (for final accuracy)."
 ---
 

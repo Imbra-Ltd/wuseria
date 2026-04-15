@@ -1,6 +1,7 @@
 ---
 title: "Point of view"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "The physical relationship between photographer, subject, and background."
 ---
 

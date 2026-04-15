@@ -1,7 +1,8 @@
 ---
 title: "Oversampling"
 fullTitle: "Oversampling"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "Capturing at higher resolution than needed and downsampling."
 ---
 

@@ -1,7 +1,8 @@
 ---
 title: "f-Value"
 fullTitle: "f-Number (f-Stop)"
-category: "Exposure"
+categories:
+  - "Exposure"
 summary: "The ratio of focal length to aperture diameter."
 ---
 

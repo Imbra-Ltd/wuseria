@@ -1,7 +1,8 @@
 ---
 title: "MTF"
 fullTitle: "Modulation Transfer Function"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "A measure of a lens's ability to reproduce fine detail and contrast."
 ---
 

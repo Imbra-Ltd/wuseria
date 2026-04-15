@@ -1,6 +1,7 @@
 ---
 title: "AF Motors"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "How autofocus motors work in Fujifilm lenses: DC, STM, and LM types compared."
 related:
   - "focus-modes"

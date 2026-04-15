@@ -1,6 +1,7 @@
 ---
 title: "Sunstars"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "How aperture blade count and shape create starburst patterns around point light sources."
 related:
   - "diffraction-limit"

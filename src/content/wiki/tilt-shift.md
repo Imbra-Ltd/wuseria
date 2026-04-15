@@ -1,6 +1,7 @@
 ---
 title: "Tilt-Shift"
-category: "Lenses"
+categories:
+  - "Lenses"
 summary: "A lens with mechanical movements allowing the optical axis to be tilted (controls plane of focus) or shifted (corrects perspective distortion)."
 ---
 

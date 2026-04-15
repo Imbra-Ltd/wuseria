@@ -1,7 +1,8 @@
 ---
 title: "XF"
 fullTitle: "XF Lens Series"
-category: "Lenses"
+categories:
+  - "Lenses"
 summary: "Fujifilm's main X-Mount lens lineup."
 ---
 

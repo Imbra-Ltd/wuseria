@@ -1,7 +1,8 @@
 ---
 title: "PDAF"
 fullTitle: "Phase Detection AF  [Passive]"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "Dedicated pixel pairs on the sensor receive light from slightly different angles; the phase difference between them reveals the direction and magnitude of defocus."
 ---
 

@@ -1,7 +1,8 @@
 ---
 title: "Gamma correction"
 fullTitle: "Gamma Correction"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "A nonlinear tone mapping applied to image data to match human perception of brightness."
 ---
 

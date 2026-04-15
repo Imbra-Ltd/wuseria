@@ -1,7 +1,8 @@
 ---
 title: "Reflector"
 fullTitle: "Reflector"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A surface used to redirect ambient or artificial light onto a subject."
 ---
 

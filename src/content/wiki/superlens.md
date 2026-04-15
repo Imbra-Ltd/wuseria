@@ -1,7 +1,8 @@
 ---
 title: "Superlens"
 fullTitle: "Superlens"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "A theoretical or experimental optical device using metamaterials with negative refractive index to overcome the diffraction limit."
 ---
 

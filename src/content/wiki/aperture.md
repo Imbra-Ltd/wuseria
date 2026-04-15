@@ -1,7 +1,8 @@
 ---
 title: "Aperture"
 fullTitle: "Aperture"
-category: "Exposure"
+categories:
+  - "Exposure"
 summary: "The opening in the lens that controls light transmission."
 ---
 

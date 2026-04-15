@@ -1,6 +1,7 @@
 ---
 title: "Anti-aliasing"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "An optical low-pass filter placed in front of the sensor that slightly blurs the image to prevent aliasing artefacts."
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: "Focus Modes"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "Autofocus modes on Fujifilm cameras: AF-S, AF-C, and MF explained."
 related:
   - "af-motors"

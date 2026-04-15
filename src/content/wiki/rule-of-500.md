@@ -1,7 +1,8 @@
 ---
 title: "Rule of 500"
 fullTitle: "Rule of 500 (Astrophotography)"
-category: "Exposure"
+categories:
+  - "Exposure"
 summary: "Maximum untracked exposure time before stars trail: 500 ÷ (crop factor × focal length)."
 ---
 

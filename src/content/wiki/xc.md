@@ -1,7 +1,8 @@
 ---
 title: "XC"
 fullTitle: "XC Lens Series"
-category: "Lenses"
+categories:
+  - "Lenses"
 summary: "Fujifilm's budget X-Mount lens series."
 ---
 

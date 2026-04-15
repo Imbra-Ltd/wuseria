@@ -1,6 +1,7 @@
 ---
 title: "Diffraction Limit"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "The aperture beyond which stopping down reduces sharpness instead of increasing it."
 ---
 

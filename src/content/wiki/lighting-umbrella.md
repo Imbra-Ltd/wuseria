@@ -1,6 +1,7 @@
 ---
 title: "Lighting Umbrella"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A modifier used with flash or studio lights."
 ---
 

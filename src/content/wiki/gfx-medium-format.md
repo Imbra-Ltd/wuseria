@@ -1,7 +1,8 @@
 ---
 title: "GFX / Medium Format"
 fullTitle: "GFX / Medium Format"
-category: "Sensor"
+categories:
+  - "Sensor"
 summary: "Fujifilm's medium format system uses a 43."
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: "Viewpoint"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "The position and angle from which a photo is taken dramatically changes its meaning."
 ---
 

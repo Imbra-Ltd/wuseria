@@ -1,6 +1,7 @@
 ---
 title: "Lens Coating"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "Multi-layer anti-reflective coatings applied to lens elements to reduce flare, ghosting, and light loss."
 ---
 

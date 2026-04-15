@@ -1,7 +1,8 @@
 ---
 title: "Super-resolution imaging"
 fullTitle: "Super-Resolution Imaging"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "Techniques to produce images with resolution beyond the sensor's native limit."
 ---
 

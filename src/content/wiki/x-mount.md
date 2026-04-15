@@ -1,6 +1,8 @@
 ---
 title: "X-Mount"
-category: "Lenses"
+categories:
+  - "Lenses"
+  - "Camera"
 summary: "Fujifilm's mirrorless interchangeable lens mount for the X-series APS-C system."
 ---
 

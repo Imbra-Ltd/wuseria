@@ -1,7 +1,8 @@
 ---
 title: "Strehl ratio"
 fullTitle: "Strehl Ratio"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "A measure of optical quality comparing peak intensity of an aberrated system to a perfect diffraction-limited system."
 ---
 

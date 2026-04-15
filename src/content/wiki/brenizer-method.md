@@ -1,7 +1,8 @@
 ---
 title: "Brenizer method"
 fullTitle: "Brenizer Method"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Technique pioneered by Ryan Brenizer: shoot a subject at wide aperture with a telephoto lens, then stitch multiple images into a panoramic frame."
 ---
 

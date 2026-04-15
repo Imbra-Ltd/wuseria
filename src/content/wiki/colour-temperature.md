@@ -1,6 +1,7 @@
 ---
 title: "Colour temperature"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "The warmth or coolness of a light source, measured in Kelvin (K)."
 ---
 

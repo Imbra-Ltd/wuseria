@@ -1,7 +1,8 @@
 ---
 title: "LED panel"
 fullTitle: "LED Continuous Light"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A continuous (always-on) light source using LEDs."
 ---
 

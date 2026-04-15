@@ -1,7 +1,8 @@
 ---
 title: "Diffraction-limited system"
 fullTitle: "Diffraction-Limited System"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "An optical system where performance is limited by diffraction rather than aberrations or manufacturing imperfections."
 ---
 

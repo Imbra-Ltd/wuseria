@@ -1,6 +1,7 @@
 ---
 title: "Honeycomb Grid"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A honeycomb-shaped attachment that fits over a modifier to control light spill and keep illumination directional."
 ---
 

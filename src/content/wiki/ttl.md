@@ -1,7 +1,8 @@
 ---
 title: "TTL"
 fullTitle: "Through The Lens metering"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "Automatic flash exposure system where the camera meters light through the lens and adjusts flash power accordingly."
 ---
 

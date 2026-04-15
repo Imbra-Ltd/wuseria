@@ -1,6 +1,7 @@
 ---
 title: "Beauty dish"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A circular modifier with a central deflector that produces a distinctive quality of light — softer than bare flash but harder than a softbox."
 ---
 

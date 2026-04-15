@@ -1,7 +1,8 @@
 ---
 title: "Passive AF"
 fullTitle: "Passive Autofocus"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "AF category that analyses the incoming image itself to determine focus — no light is emitted by the camera."
 ---
 

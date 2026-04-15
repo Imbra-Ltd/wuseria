@@ -1,7 +1,8 @@
 ---
 title: "LM"
 fullTitle: "Linear Motor (actuator)"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "A lens AF actuator using a linear electromagnetic motor rather than a traditional rotating motor."
 ---
 

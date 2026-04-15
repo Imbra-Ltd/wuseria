@@ -1,6 +1,7 @@
 ---
 title: "Colour harmony"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Intentional use of colour relationships to create mood: complementary colours (opposite on the colour wheel, e."
 ---
 

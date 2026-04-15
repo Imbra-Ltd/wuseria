@@ -1,6 +1,7 @@
 ---
 title: "Framing"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Using elements within the scene (doorways, arches, foliage, windows) to form a natural frame around the subject."
 ---
 

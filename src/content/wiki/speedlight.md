@@ -1,6 +1,7 @@
 ---
 title: "Speedlight"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A portable battery-powered flash unit that mounts on the camera hotshoe or is used off-camera."
 ---
 

@@ -1,7 +1,8 @@
 ---
 title: "Golden ratio"
 fullTitle: "Golden Ratio"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Mathematical ratio ≈1."
 ---
 

@@ -1,7 +1,8 @@
 ---
 title: "Diffraction"
 fullTitle: "Diffraction"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "At small apertures (f/11+), light bends around the aperture blades, causing softness regardless of lens quality."
 ---
 

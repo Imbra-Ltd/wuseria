@@ -1,6 +1,7 @@
 ---
 title: "Anti-Reflective Coating"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "A specific type of lens coating that minimises light reflection at glass-air interfaces."
 ---
 

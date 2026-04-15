@@ -1,6 +1,7 @@
 ---
 title: "MTF Charts"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "How to read MTF (Modulation Transfer Function) charts to evaluate lens sharpness."
 related:
   - "scoring-methodology"

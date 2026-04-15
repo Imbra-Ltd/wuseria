@@ -1,6 +1,7 @@
 ---
 title: "Symmetry"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Placing the subject centrally to exploit mirror-like reflections or architectural symmetry."
 ---
 

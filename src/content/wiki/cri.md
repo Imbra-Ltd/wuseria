@@ -1,7 +1,8 @@
 ---
 title: "CRI"
 fullTitle: "Colour Rendering Index"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A scale (0–100) measuring how accurately a light source renders colours compared to natural sunlight."
 ---
 

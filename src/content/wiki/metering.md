@@ -1,7 +1,8 @@
 ---
 title: "Metering"
 fullTitle: "Metering"
-category: "Exposure"
+categories:
+  - "Exposure"
 summary: "The camera's system for measuring scene brightness to determine exposure."
 ---
 

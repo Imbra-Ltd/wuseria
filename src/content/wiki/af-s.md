@@ -1,7 +1,8 @@
 ---
 title: "AF-S"
 fullTitle: "Single AF"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "Camera focuses once, then locks."
 ---
 

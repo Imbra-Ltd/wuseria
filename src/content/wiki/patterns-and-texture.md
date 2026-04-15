@@ -1,6 +1,7 @@
 ---
 title: "Patterns and texture"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Repeating shapes, lines, or textures create rhythm and visual interest."
 ---
 

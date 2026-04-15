@@ -1,7 +1,8 @@
 ---
 title: "Negative space"
 fullTitle: "Negative Space"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "The empty or unoccupied area surrounding the main subject."
 ---
 

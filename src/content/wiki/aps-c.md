@@ -1,7 +1,8 @@
 ---
 title: "APS-C"
 fullTitle: "Advanced Photo System type-C"
-category: "Sensor"
+categories:
+  - "Sensor"
 summary: "A sensor format measuring approximately 23."
 ---
 

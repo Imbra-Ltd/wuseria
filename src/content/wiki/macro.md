@@ -1,7 +1,8 @@
 ---
 title: "Macro"
 fullTitle: "Macro Photography"
-category: "Lenses"
+categories:
+  - "Lenses"
 summary: "Close-up photography at reproduction ratios of 1:1 (life-size) or greater."
 ---
 

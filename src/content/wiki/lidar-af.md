@@ -1,7 +1,8 @@
 ---
 title: "LiDAR AF"
 fullTitle: "LiDAR AF  [Active]"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "Emits pulsed laser light and measures the time-of-flight of the reflection with high precision."
 ---
 

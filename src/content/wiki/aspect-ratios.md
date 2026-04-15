@@ -1,6 +1,7 @@
 ---
 title: "Aspect Ratios"
-category: "Geometry"
+categories:
+  - "Geometry"
 summary: "Common sensor aspect ratios in Fujifilm cameras and how they affect composition."
 ---
 

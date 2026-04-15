@@ -1,6 +1,7 @@
 ---
 title: "Foreground interest"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Placing a visually interesting element in the immediate foreground to anchor the composition and create depth."
 ---
 

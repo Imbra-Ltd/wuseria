@@ -1,7 +1,8 @@
 ---
 title: "AF-C"
 fullTitle: "Continuous AF"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "Camera continuously adjusts focus while the shutter is held half-pressed, tracking moving subjects."
 ---
 

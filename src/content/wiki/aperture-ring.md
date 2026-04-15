@@ -1,6 +1,7 @@
 ---
 title: "Aperture Ring"
-category: "Lenses"
+categories:
+  - "Lenses"
 summary: "A physical ring on the lens barrel that controls the aperture directly, independent of camera dials."
 ---
 

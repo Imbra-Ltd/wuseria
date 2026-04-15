@@ -1,6 +1,7 @@
 ---
 title: "Filter Types"
-category: "Lenses"
+categories:
+  - "Lenses"
 summary: "Lens filters for Fujifilm shooters: CPL, ND, GND, UV, black mist, IR, and light pollution."
 related:
   - "bortle-scale"

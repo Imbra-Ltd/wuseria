@@ -1,7 +1,8 @@
 ---
 title: "SNR"
 fullTitle: "Signal-to-Noise Ratio"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "Ratio of the useful image signal to background noise."
 ---
 

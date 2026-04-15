@@ -1,7 +1,8 @@
 ---
 title: "Handheld"
 fullTitle: "Handheld Shooting"
-category: "Exposure"
+categories:
+  - "Exposure"
 summary: "Shooting without a tripod or other support."
 ---
 

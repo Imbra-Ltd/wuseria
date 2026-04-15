@@ -1,7 +1,8 @@
 ---
 title: "Active AF"
 fullTitle: "Active Autofocus"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "AF category where the camera emits energy (light or sound) and measures the reflection to determine distance to the subject."
 ---
 

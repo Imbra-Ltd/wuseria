@@ -1,7 +1,8 @@
 ---
 title: "SiTF"
 fullTitle: "Signal Transfer Function"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "Describes how a sensor or imaging system converts scene radiance to output signal."
 ---
 

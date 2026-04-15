@@ -1,7 +1,8 @@
 ---
 title: "Bokeh"
 fullTitle: "Bokeh"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "The aesthetic quality of the out-of-focus areas in an image."
 ---
 

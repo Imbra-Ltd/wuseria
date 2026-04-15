@@ -1,7 +1,8 @@
 ---
 title: "FoV"
 fullTitle: "Field of View"
-category: "Geometry"
+categories:
+  - "Geometry"
 summary: "The physical area of a scene captured at a given distance."
 ---
 

@@ -1,7 +1,8 @@
 ---
 title: "Siemens star"
 fullTitle: "Siemens Star"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "A test chart consisting of alternating black and white wedges radiating from a centre point."
 ---
 

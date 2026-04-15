@@ -1,7 +1,8 @@
 ---
 title: "Angular resolution"
 fullTitle: "Angular Resolution"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "The minimum angle between two point sources that a system can resolve as distinct."
 ---
 

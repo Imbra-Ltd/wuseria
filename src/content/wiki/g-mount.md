@@ -1,6 +1,8 @@
 ---
 title: "G-Mount"
-category: "Lenses"
+categories:
+  - "Lenses"
+  - "Camera"
 summary: "Fujifilm's lens mount for the GFX medium format system."
 ---
 

@@ -4,7 +4,7 @@ import { getCollection } from "astro:content";
 
 const entries = await getCollection("wiki");
 const sorted = [...entries].sort((a, b) => a.data.title.localeCompare(b.data.title));
-const categories = [...new Set(entries.map((e) => e.data.category))].sort();
+const categories = [...new Set(entries.flatMap((e) => e.data.categories))].sort();
 ---
 
 <Base title="Wiki — Fuji.me!" description="Photography terms and concepts explained for Fujifilm shooters.">
@@ -30,11 +30,11 @@ const categories = [...new Set(entries.map((e) => e.data.category))].sort();
 
   <div class="wiki-grid" id="wiki-grid">
     {sorted.map((entry) => (
-      <a href={`/wiki/${entry.id}`} class="wiki-card" data-cat={entry.data.category} data-search={`${entry.data.title} ${entry.data.fullTitle ?? ""} ${entry.data.summary}`.toLowerCase()}>
+      <a href={`/wiki/${entry.id}`} class="wiki-card" data-cats={entry.data.categories.join(",")} data-search={`${entry.data.title} ${entry.data.fullTitle ?? ""} ${entry.data.summary}`.toLowerCase()}>
         <div class="card-header">
           <span class="card-title">{entry.data.title}</span>
           {entry.data.fullTitle && entry.data.fullTitle !== entry.data.title && <span class="card-full">{entry.data.fullTitle}</span>}
-          <span class="card-cat">{entry.data.category}</span>
+          <span class="card-cat">{entry.data.categories.join(" / ")}</span>
         </div>
         <p class="card-summary">{entry.data.summary}</p>
       </a>
@@ -55,9 +55,9 @@ const categories = [...new Set(entries.map((e) => e.data.category))].sort();
       const q = search?.value.toLowerCase() ?? "";
       let visible = 0;
       cards.forEach((card) => {
-        const cat = card.dataset.cat ?? "";
+        const cats = (card.dataset.cats ?? "").split(",");
         const text = card.dataset.search ?? "";
-        const catMatch = activeCat === "All" || cat === activeCat;
+        const catMatch = activeCat === "All" || cats.includes(activeCat);
         const searchMatch = !q || text.includes(q);
         const show = catMatch && searchMatch;
         card.style.display = show ? "" : "none";

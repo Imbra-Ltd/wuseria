@@ -1,7 +1,8 @@
 ---
 title: "TC"
 fullTitle: "Tele Converter"
-category: "Lenses"
+categories:
+  - "Lenses"
 summary: "An optical accessory placed between camera body and lens to multiply focal length."
 ---
 

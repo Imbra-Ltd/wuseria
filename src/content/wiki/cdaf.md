@@ -1,7 +1,8 @@
 ---
 title: "CDAF"
 fullTitle: "Contrast Detection AF  [Passive]"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "Moves the lens in small steps and measures contrast at each position; stops when contrast peaks."
 ---
 

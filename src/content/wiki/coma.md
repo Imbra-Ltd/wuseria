@@ -1,6 +1,7 @@
 ---
 title: "Coma"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "An optical aberration that stretches point light sources into comet-like shapes near frame edges."
 related:
   - "scoring-methodology"

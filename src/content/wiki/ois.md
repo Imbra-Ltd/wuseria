@@ -1,7 +1,8 @@
 ---
 title: "OIS"
 fullTitle: "Optical Image Stabilisation"
-category: "Lenses"
+categories:
+  - "Lenses"
 summary: "In-lens mechanism that shifts optical elements to compensate for camera shake."
 ---
 

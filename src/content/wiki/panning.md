@@ -1,7 +1,8 @@
 ---
 title: "Panning"
 fullTitle: "Panning"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Technique of tracking a moving subject with the camera during a relatively slow exposure."
 ---
 

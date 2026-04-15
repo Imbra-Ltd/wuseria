@@ -1,6 +1,7 @@
 ---
 title: "Fresnel Lens"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A stepped focusing lens placed in front of a light source to concentrate and shape the beam."
 ---
 

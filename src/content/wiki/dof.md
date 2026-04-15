@@ -1,7 +1,8 @@
 ---
 title: "DoF"
 fullTitle: "Depth of Field"
-category: "Geometry"
+categories:
+  - "Geometry"
 summary: "The range of distances in a scene that appear acceptably sharp."
 ---
 

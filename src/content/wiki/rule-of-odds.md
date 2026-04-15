@@ -1,6 +1,7 @@
 ---
 title: "Rule of odds"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Groups of odd numbers of subjects (3, 5, 7) are more visually pleasing than even groups."
 ---
 

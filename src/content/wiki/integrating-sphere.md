@@ -1,7 +1,8 @@
 ---
 title: "Integrating sphere"
 fullTitle: "Integrating Sphere"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "A hollow sphere with diffuse white interior coating used to measure total luminous flux from a light source."
 ---
 

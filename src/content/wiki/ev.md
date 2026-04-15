@@ -1,7 +1,8 @@
 ---
 title: "EV"
 fullTitle: "Exposure Value"
-category: "Exposure"
+categories:
+  - "Exposure"
 summary: "A single number representing a combination of shutter speed and aperture that produces the same exposure."
 ---
 

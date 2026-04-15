@@ -1,7 +1,8 @@
 ---
 title: "Moiré pattern"
 fullTitle: "Moiré Pattern"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "An interference pattern that appears when two regular patterns (e."
 ---
 

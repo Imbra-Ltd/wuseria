@@ -1,6 +1,7 @@
 ---
 title: "Diffuser"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "Any material that scatters light to make it softer and more even."
 ---
 

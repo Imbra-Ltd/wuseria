@@ -1,7 +1,8 @@
 ---
 title: "Crop factor"
 fullTitle: "Crop Factor"
-category: "Geometry"
+categories:
+  - "Geometry"
 summary: "Ratio of a sensor's diagonal to that of full-frame (36×24mm)."
 ---
 

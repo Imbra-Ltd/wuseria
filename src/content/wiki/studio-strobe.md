@@ -1,6 +1,7 @@
 ---
 title: "Studio Strobe"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "A powerful mains-powered flash unit used in studio settings."
 ---
 

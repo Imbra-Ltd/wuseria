@@ -1,7 +1,8 @@
 ---
 title: "FL"
 fullTitle: "Focal Length"
-category: "Geometry"
+categories:
+  - "Geometry"
 summary: "Distance in mm from the optical centre of the lens to the focal point on the sensor."
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: "Bortle Scale"
-category: "Exposure"
+categories:
+  - "Exposure"
 summary: "A 1-9 scale measuring night sky darkness, critical for astrophotography and nightscape planning."
 ---
 

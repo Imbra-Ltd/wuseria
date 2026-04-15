@@ -1,7 +1,8 @@
 ---
 title: "Deblurring"
 fullTitle: "Deblurring"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "Post-processing technique to recover sharpness from motion blur or defocus blur."
 ---
 

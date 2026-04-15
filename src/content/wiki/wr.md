@@ -1,7 +1,9 @@
 ---
 title: "WR"
 fullTitle: "Weather Resistance"
-category: "Lenses"
+categories:
+  - "Lenses"
+  - "Camera"
 summary: "Sealing at lens barrel joints and focus ring to resist dust and moisture ingress."
 ---
 

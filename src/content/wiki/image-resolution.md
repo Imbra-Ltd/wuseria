@@ -1,7 +1,8 @@
 ---
 title: "Image resolution"
 fullTitle: "Image Resolution"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "The number of pixels in a captured image, typically expressed as megapixels (MP) or as width × height (e."
 ---
 

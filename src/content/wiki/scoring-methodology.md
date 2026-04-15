@@ -1,6 +1,7 @@
 ---
 title: "Scoring Methodology"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "How Fuji.me! scores lenses for each photography genre using optical data and weighted formulas."
 related:
   - "mtf-charts"

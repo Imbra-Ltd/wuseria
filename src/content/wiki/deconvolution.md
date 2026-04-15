@@ -1,7 +1,8 @@
 ---
 title: "Deconvolution"
 fullTitle: "Deconvolution"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "Mathematical process to reverse the blurring effect of a known optical system (PSF)."
 ---
 

@@ -1,7 +1,8 @@
 ---
 title: "Optical resolution"
 fullTitle: "Optical Resolution"
-category: "Optics"
+categories:
+  - "Optics"
 summary: "The true resolving power of a lens, independent of sensor resolution."
 ---
 

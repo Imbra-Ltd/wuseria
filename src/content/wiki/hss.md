@@ -1,7 +1,8 @@
 ---
 title: "HSS"
 fullTitle: "High Speed Sync"
-category: "Lighting"
+categories:
+  - "Lighting"
 summary: "Allows flash to be used at shutter speeds above the camera sync speed (typically 1/250s)."
 ---
 

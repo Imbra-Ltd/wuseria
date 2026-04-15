@@ -1,7 +1,8 @@
 ---
 title: "Depth"
 fullTitle: "Depth and Layers"
-category: "Composition"
+categories:
+  - "Composition"
 summary: "Including a foreground, mid-ground, and background creates a sense of three-dimensional space in a flat image."
 ---
 

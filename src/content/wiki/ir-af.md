@@ -1,7 +1,8 @@
 ---
 title: "IR AF"
 fullTitle: "IR Beam AF  [Active]"
-category: "Focus"
+categories:
+  - "Focus"
 summary: "Emits an infrared beam and measures the angle or time-of-flight of the reflection to determine distance."
 ---
 

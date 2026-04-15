@@ -1,7 +1,8 @@
 ---
 title: "ISO"
 fullTitle: "ISO Sensitivity"
-category: "Exposure"
+categories:
+  - "Exposure"
 summary: "The sensor's amplification of the captured light signal."
 ---
 
