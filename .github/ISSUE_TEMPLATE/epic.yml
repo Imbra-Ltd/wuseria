@@ -1,0 +1,33 @@
+name: Epic
+description: A large initiative spanning multiple tasks
+labels: ["epic"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: One sentence — what does success look like?
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      description: Checklist of child issues
+      value: |
+        - [ ] #XX — description
+        - [ ] #YY — description
+    validations:
+      required: true
+  - type: textarea
+    id: out-of-scope
+    attributes:
+      label: Out of scope
+      description: What this epic does NOT cover
+  - type: textarea
+    id: done
+    attributes:
+      label: Definition of done
+      description: Measurable criteria for closing
+    validations:
+      required: true

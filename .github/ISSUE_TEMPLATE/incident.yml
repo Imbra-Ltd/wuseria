@@ -1,0 +1,56 @@
+name: Incident
+description: Production outage or degradation affecting users now
+labels: ["incident"]
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - critical
+        - major
+    validations:
+      required: true
+  - type: dropdown
+    id: status
+    attributes:
+      label: Status
+      options:
+        - investigating
+        - identified
+        - mitigating
+        - resolved
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who is affected, how severely
+    validations:
+      required: true
+  - type: textarea
+    id: timeline
+    attributes:
+      label: Timeline
+      description: Sequence of events with timestamps
+      value: |
+        - HH:MM UTC —
+        - HH:MM UTC —
+    validations:
+      required: true
+  - type: textarea
+    id: root-cause
+    attributes:
+      label: Root cause
+      description: What caused it (fill in after identified)
+  - type: textarea
+    id: resolution
+    attributes:
+      label: Resolution
+      description: What fixed it (fill in after resolved)
+  - type: textarea
+    id: prevention
+    attributes:
+      label: Prevention
+      description: What changes prevent recurrence (mandatory after postmortem)

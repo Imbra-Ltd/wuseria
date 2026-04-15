@@ -1,0 +1,35 @@
+name: Spike / Research
+description: Research or exploration — output is a decision or ADR
+labels: ["question"]
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: User story
+      description: "As a [role], I want to understand [topic] so that [decision can be made]."
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: Question or area to explore
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What decision is blocked without this research?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: What the spike should produce
+      value: |
+        - [ ] ADR documenting the decision
+        - [ ] Recommendation with alternatives considered
+    validations:
+      required: true

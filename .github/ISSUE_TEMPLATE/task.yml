@@ -1,0 +1,35 @@
+name: Task
+description: An atomic, implementable unit of work
+body:
+  - type: textarea
+    id: story
+    attributes:
+      label: User story
+      description: "As a [user type], I want [capability] so that [benefit]."
+      placeholder: "As a budget photographer, I want to sort by OQ and price so that I can find the best value."
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      description: Clear description of the change
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: Motivation — which epic does this serve?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Verifiable behaviors
+      value: |
+        - [ ]
+        - [ ]
+    validations:
+      required: true
