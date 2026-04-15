@@ -1,7 +1,7 @@
-# Fuji.me!
+# Wuseria
 
-Lightweight Fuji lens and camera explorer with genre-based scoring.
-Domain: fujime.app. Part of the me! series by braboj.me.
+Fujifilm lens and camera explorer with genre-based scoring.
+Domain: wuseria.com. By braboj.me.
 
 For architecture decisions, see `docs/decisions/`. For development history, see `docs/dev-journal.md`.
 
@@ -136,7 +136,7 @@ src/
 public/
   favicon.svg
   icons.svg
-  CNAME                           // fujime.app
+  CNAME                           // wuseria.com
   robots.txt
 astro.config.mjs
 tsconfig.json

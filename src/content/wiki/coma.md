@@ -16,4 +16,4 @@ For nightscape and astrophotography, coma is the most important optical flaw to 
 
 Stopping down reduces coma significantly — most lenses improve dramatically by f/2.8. But nightscape shooters need wide apertures for light gathering, so a lens that controls coma wide open is far more valuable than one that only sharpens stopped down.
 
-In the Fuji.me! scoring system, coma is rated 0-2 based on corner star rendering at maximum aperture. A score of 2 means minimal coma even wide open — stars stay tight points across the frame. A score of 0 means heavy coma that makes the lens unsuitable for astrophotography without stopping down.
+In the Wuseria scoring system, coma is rated 0-2 based on corner star rendering at maximum aperture. A score of 2 means minimal coma even wide open — stars stay tight points across the frame. A score of 0 means heavy coma that makes the lens unsuitable for astrophotography without stopping down.

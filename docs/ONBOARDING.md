@@ -1,6 +1,6 @@
 # Onboarding
 
-New contributor guide for Fuji.me!
+New contributor guide for Wuseria
 
 ## 1. Prerequisites
 
@@ -51,7 +51,7 @@ npm run lint
 
 ## 5. Project context
 
-Fuji.me! scores Fujifilm lenses against shooting genres (landscape, portrait,
+Wuseria scores Fujifilm lenses against shooting genres (landscape, portrait,
 street, astro, etc.) using MTF chart data from trusted review sources. See
 [docs/decisions/](decisions/) for architecture decisions and
 `src/types/` for the data model.

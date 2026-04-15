@@ -9,7 +9,7 @@ The site is fully static (Astro output). Needs a CDN-backed host with custom dom
 
 ## Decision
 
-Deploy to GitHub Pages via GitHub Actions. Custom domain: fujime.app.
+Deploy to GitHub Pages via GitHub Actions. Custom domain: wuseria.com.
 
 ## Alternatives considered
 

@@ -6,7 +6,7 @@ interface Props {
   description?: string;
 }
 
-const { title, description = "Lightweight Fuji lens and camera explorer with genre-based scoring." } = Astro.props;
+const { title, description = "Fujifilm lens and camera explorer with genre-based scoring." } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 
 const navLinks = [
@@ -30,7 +30,7 @@ const navLinks = [
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:site_name" content="Fuji.me!" />
+    <meta property="og:site_name" content="Wuseria" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -39,7 +39,7 @@ const navLinks = [
   <body>
     <header class="site-header">
       <nav class="nav" aria-label="Main navigation">
-        <a href="/" class="nav-brand">Fuji.me!</a>
+        <a href="/" class="nav-brand">Wuseria</a>
         <ul class="nav-links" role="list">
           {navLinks.map((link) => (
             <li>
@@ -61,7 +61,7 @@ const navLinks = [
 
     <footer class="site-footer">
       <p class="footer-text">
-        Fuji.me! — part of the <a href="https://braboj.me">me! series</a> by braboj.me
+        Wuseria — Fujifilm lens &amp; camera explorer by <a href="https://braboj.me">braboj.me</a>
       </p>
     </footer>
   </body>

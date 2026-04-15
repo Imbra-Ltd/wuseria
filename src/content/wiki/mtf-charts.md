@@ -18,4 +18,4 @@ A great lens shows both lines above 0.8 across the frame at 10 lp/mm, and above 
 
 MTF charts have limitations: they are measured at a single aperture (usually wide open and f/8), do not capture chromatic aberration, coma, or flare, and lab conditions do not match real-world shooting. Use them as one input alongside field reports, sample images, and optical scores.
 
-In Fuji.me!, the center/corner stopped and wide-open scores are derived from MTF data and lab tests. They are simplified to a 0-2 scale for quick comparison across the entire lens lineup.
+In Wuseria, the center/corner stopped and wide-open scores are derived from MTF data and lab tests. They are simplified to a 0-2 scale for quick comparison across the entire lens lineup.

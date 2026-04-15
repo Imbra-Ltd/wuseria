@@ -1,4 +1,4 @@
-# Fuji.me! — Development Journal
+# Wuseria — Development Journal
 
 ## Architecture Overview
 
