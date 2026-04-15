@@ -11,6 +11,7 @@ const wiki = defineCollection({
       "Composition",
       "Exposure",
       "Focus",
+      "Genre",
       "Geometry",
       "Lenses",
       "Lighting",
