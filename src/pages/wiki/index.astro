@@ -1,15 +1,15 @@
 ---
 import Base from "../../layouts/Base.astro";
-import { wiki } from "../../data/wiki";
-import type { WikiCategory } from "../../types/wiki";
+import { getCollection } from "astro:content";
 
-const sorted = [...wiki].sort((a, b) => a.title.localeCompare(b.title));
-const categories: WikiCategory[] = [...new Set(wiki.map((e) => e.category))].sort() as WikiCategory[];
+const entries = await getCollection("wiki");
+const sorted = [...entries].sort((a, b) => a.data.title.localeCompare(b.data.title));
+const categories = [...new Set(entries.map((e) => e.data.category))].sort();
 ---
 
 <Base title="Wiki — Fuji.me!" description="Photography terms and concepts explained for Fujifilm shooters.">
   <h1>Wiki</h1>
-  <p class="subtitle">{wiki.length} photography terms and concepts.</p>
+  <p class="subtitle">{entries.length} photography terms and concepts.</p>
 
   <div class="category-chips">
     <button class="chip active" data-cat="All">All</button>
@@ -26,17 +26,17 @@ const categories: WikiCategory[] = [...new Set(wiki.map((e) => e.category))].sor
     id="wiki-search"
   />
 
-  <p class="count" id="wiki-count">{sorted.length} / {wiki.length} terms</p>
+  <p class="count" id="wiki-count">{sorted.length} / {entries.length} terms</p>
 
   <div class="wiki-grid" id="wiki-grid">
     {sorted.map((entry) => (
-      <a href={`/wiki/${entry.slug}`} class="wiki-card" data-cat={entry.category} data-search={`${entry.title} ${entry.fullTitle ?? ""} ${entry.summary}`.toLowerCase()}>
+      <a href={`/wiki/${entry.id}`} class="wiki-card" data-cat={entry.data.category} data-search={`${entry.data.title} ${entry.data.fullTitle ?? ""} ${entry.data.summary}`.toLowerCase()}>
         <div class="card-header">
-          <span class="card-title">{entry.title}</span>
-          {entry.fullTitle && <span class="card-full">{entry.fullTitle}</span>}
-          <span class="card-cat">{entry.category}</span>
+          <span class="card-title">{entry.data.title}</span>
+          {entry.data.fullTitle && entry.data.fullTitle !== entry.data.title && <span class="card-full">{entry.data.fullTitle}</span>}
+          <span class="card-cat">{entry.data.category}</span>
         </div>
-        <p class="card-summary">{entry.summary}</p>
+        <p class="card-summary">{entry.data.summary}</p>
       </a>
     ))}
   </div>
