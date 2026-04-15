@@ -2,7 +2,9 @@
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import Base from "../../layouts/Base.astro";
 import { lenses } from "../../data/lenses";
+import { genreConfigs } from "../../data/genres";
 import { toSlug } from "../../utils/slug";
+import type { ScoredGenre } from "../../types/genre";
 
 export const getStaticPaths = (() => {
   return lenses.map((lens) => ({
@@ -14,7 +16,47 @@ export const getStaticPaths = (() => {
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { lens } = Astro.props as Props;
 
-const canonicalUrl = new URL(`/lenses/${toSlug(`${lens.brand} ${lens.model}`)}`, Astro.site);
+const slug = toSlug(`${lens.brand} ${lens.model}`);
+const canonicalUrl = new URL(`/lenses/${slug}`, Astro.site);
+
+function formatFL(): string {
+  return lens.focalLengthMin === lens.focalLengthMax
+    ? `${lens.focalLengthMin}mm`
+    : `${lens.focalLengthMin}-${lens.focalLengthMax}mm`;
+}
+
+function yesNo(val?: boolean): string {
+  return val ? "Yes" : "No";
+}
+
+function optVal(val: unknown, suffix = ""): string {
+  if (val == null) return "\u2013";
+  return `${val}${suffix}`;
+}
+
+const opticalFields: [string, number | undefined][] = [
+  ["Center (wide open)", lens.centerWideOpen],
+  ["Corner (wide open)", lens.cornerWideOpen],
+  ["Center (stopped)", lens.centerStopped],
+  ["Corner (stopped)", lens.cornerStopped],
+  ["Coma", lens.coma],
+  ["Astigmatism", lens.astigmatism],
+  ["Spherical aberration", lens.sphericalAberration],
+  ["Longitudinal CA", lens.longitudinalCA],
+  ["Lateral CA", lens.lateralCA],
+  ["Distortion", lens.distortion],
+  ["Vignetting (wide open)", lens.vignettingWideOpen],
+  ["Vignetting (stopped)", lens.vignettingStopped],
+  ["Bokeh", lens.bokeh],
+  ["Flare resistance", lens.flareResistance],
+];
+
+const hasOptical = opticalFields.some(([, v]) => v != null);
+
+const genreEntries = lens.genreMarks
+  ? (Object.entries(lens.genreMarks) as [ScoredGenre, number][])
+      .sort((a, b) => b[1] - a[1])
+  : [];
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -37,6 +79,289 @@ const jsonLd = {
 
 <Base title={`${lens.brand} ${lens.model} — Fuji.me!`} description={`Specs and genre scores for the ${lens.brand} ${lens.model}.`}>
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <h1>{lens.brand} {lens.model}</h1>
-  <p>{lens.mount} mount — {lens.type} — {lens.weight}g — ~${lens.price}</p>
+
+  <div class="detail">
+    <header class="header">
+      <h1>{lens.brand} {lens.model}</h1>
+      <div class="badges">
+        <span class="badge">{lens.mount}</span>
+        <span class="badge">{lens.type}</span>
+        {lens.isDiscontinued && <span class="badge badge-warn">Discontinued</span>}
+      </div>
+    </header>
+
+    <div class="grid">
+      {/* Specs table */}
+      <section>
+        <h2>Specifications</h2>
+        <table class="spec-table">
+          <tbody>
+            <tr><td>Focal length</td><td>{formatFL()}</td></tr>
+            <tr><td>Max aperture</td><td>f/{lens.maxAperture}</td></tr>
+            {lens.sweetSpotAperture && <tr><td>Sweet spot</td><td>f/{lens.sweetSpotAperture}</td></tr>}
+            {lens.apertureBlades && <tr><td>Aperture blades</td><td>{lens.apertureBlades}{lens.hasCircularAperture ? " (circular)" : ""}</td></tr>}
+            {lens.maxMagnification && <tr><td>Max magnification</td><td>{lens.maxMagnification}x</td></tr>}
+            {lens.minFocusDistance && <tr><td>Min focus distance</td><td>{lens.minFocusDistance}mm</td></tr>}
+            <tr><td>AF motor</td><td>{lens.afMotor ?? "Manual focus"}</td></tr>
+            <tr><td>OIS</td><td>{yesNo(lens.hasOis)}</td></tr>
+            <tr><td>Weather sealed</td><td>{yesNo(lens.isWeatherSealed)}</td></tr>
+            {lens.hasApertureRing != null && <tr><td>Aperture ring</td><td>{yesNo(lens.hasApertureRing)}</td></tr>}
+            <tr><td>Weight</td><td>{lens.weight}g</td></tr>
+            {lens.diameter && <tr><td>Diameter</td><td>{lens.diameter}mm</td></tr>}
+            {lens.length && <tr><td>Length</td><td>{lens.length}mm</td></tr>}
+            {lens.filterThread && <tr><td>Filter thread</td><td>{lens.filterThread}mm</td></tr>}
+            {lens.year && <tr><td>Year</td><td>{lens.year}</td></tr>}
+            <tr><td>Price</td><td>~${lens.price}</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      {/* Optical quality */}
+      {hasOptical && (
+        <section>
+          <h2>Optical Quality</h2>
+          <table class="spec-table">
+            <tbody>
+              {opticalFields.map(([label, val]) =>
+                val != null && (
+                  <tr>
+                    <td>{label}</td>
+                    <td>
+                      <span class="pips">
+                        {[0, 1, 2].map((i) => (
+                          <span class={`pip ${i < Math.round(val) ? "pip-on" : "pip-off"}`} />
+                        ))}
+                      </span>
+                      <span class="pip-val">{val.toFixed(1)}</span>
+                    </td>
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
+          <p class="footnote">Scores on a 0-2 scale. See <a href="/wiki/scoring-methodology">scoring methodology</a>.</p>
+        </section>
+      )}
+    </div>
+
+    {/* Genre scores */}
+    {genreEntries.length > 0 && (
+      <section>
+        <h2>Genre Scores</h2>
+        <div class="genre-grid">
+          {genreEntries.map(([genre, mark]) => (
+            <a href={`/genre/${genre}`} class="genre-card">
+              <span class="genre-name">{genreConfigs[genre].name}</span>
+              <span class="genre-mark">{mark}</span>
+            </a>
+          ))}
+        </div>
+        {lens.editorialPicks && lens.editorialPicks.length > 0 && (
+          <p class="editorial">Editorial pick for: {lens.editorialPicks.map((g) => genreConfigs[g].name).join(", ")}</p>
+        )}
+      </section>
+    )}
+
+    {/* Links */}
+    <section class="links">
+      {lens.officialUrl && (
+        <a href={lens.officialUrl} target="_blank" rel="nofollow sponsored" class="link-button">Official product page</a>
+      )}
+      {lens.reviewSources && Object.entries(lens.reviewSources).length > 0 && (
+        <>
+          <h3>Reviews</h3>
+          <div class="review-links">
+            {Object.entries(lens.reviewSources).map(([source, url]) => (
+              <a href={url} target="_blank" rel="nofollow" class="link-button">{source}</a>
+            ))}
+          </div>
+        </>
+      )}
+      <a href="/lenses" class="back-link">Back to Lens Explorer</a>
+    </section>
+  </div>
 </Base>
+
+<style>
+  .detail {
+    max-width: 56rem;
+  }
+
+  .header {
+    margin-bottom: var(--space-xl);
+  }
+
+  .header h1 {
+    margin-bottom: var(--space-xs);
+  }
+
+  .badges {
+    display: flex;
+    gap: var(--space-xs);
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .badge-warn {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xl);
+  }
+
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  h2 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-sm);
+  }
+
+  h3 {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-xs);
+  }
+
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  .spec-table td {
+    padding: var(--space-xs) var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .spec-table td:first-child {
+    color: var(--color-text-muted);
+    width: 45%;
+  }
+
+  .pips {
+    display: inline-flex;
+    gap: 3px;
+    margin-right: var(--space-xs);
+    vertical-align: middle;
+  }
+
+  .pip {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .pip-on {
+    background: var(--color-accent);
+  }
+
+  .pip-off {
+    background: var(--color-border);
+  }
+
+  .pip-val {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .footnote {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-top: var(--space-sm);
+  }
+
+  .genre-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .genre-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+  }
+
+  .genre-card:hover {
+    border-color: var(--color-accent);
+  }
+
+  .genre-name {
+    color: var(--color-text-muted);
+  }
+
+  .genre-mark {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  .editorial {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    margin-top: var(--space-xs);
+  }
+
+  .links {
+    margin-top: var(--space-xl);
+  }
+
+  .link-button {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-link);
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+    margin-right: var(--space-xs);
+    margin-bottom: var(--space-xs);
+  }
+
+  .link-button:hover {
+    border-color: var(--color-accent);
+    color: var(--color-link-hover);
+  }
+
+  .review-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+  }
+
+  .back-link {
+    display: block;
+    margin-top: var(--space-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .back-link:hover {
+    color: var(--color-link);
+  }
+</style>

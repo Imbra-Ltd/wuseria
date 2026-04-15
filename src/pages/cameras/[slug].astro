@@ -16,6 +16,15 @@ const { camera } = Astro.props as Props;
 
 const canonicalUrl = new URL(`/cameras/${toSlug(camera.model)}`, Astro.site);
 
+function yesNo(val?: boolean): string {
+  return val ? "Yes" : "No";
+}
+
+function optVal(val: unknown, suffix = ""): string {
+  if (val == null) return "\u2013";
+  return `${val}${suffix}`;
+}
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
@@ -37,6 +46,180 @@ const jsonLd = {
 
 <Base title={`${camera.model} — Fuji.me!`} description={`Specs and features for the Fujifilm ${camera.model}.`}>
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <h1>{camera.model}</h1>
-  <p>{camera.mount} mount — {camera.sensor} — {camera.megapixels}MP — {camera.weight}g — ~${camera.price}</p>
+
+  <div class="detail">
+    <header class="header">
+      <h1>Fujifilm {camera.model}</h1>
+      <div class="badges">
+        <span class="badge">{camera.mount}</span>
+        <span class="badge">{camera.series}</span>
+        <span class="badge">{camera.formFactor}</span>
+        {camera.isDiscontinued && <span class="badge badge-warn">Discontinued</span>}
+      </div>
+    </header>
+
+    <div class="grid">
+      <section>
+        <h2>Sensor & Image</h2>
+        <table class="spec-table">
+          <tbody>
+            <tr><td>Sensor</td><td>{camera.sensor}</td></tr>
+            <tr><td>Resolution</td><td>{camera.megapixels}MP</td></tr>
+            {camera.isBsi && <tr><td>BSI</td><td>Yes</td></tr>}
+            {camera.isoMin && <tr><td>ISO range</td><td>{camera.isoMin} - {camera.isoMax}</td></tr>}
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Performance</h2>
+        <table class="spec-table">
+          <tbody>
+            <tr><td>AF system</td><td>{optVal(camera.afType)}</td></tr>
+            {camera.afPoints && <tr><td>AF points</td><td>{camera.afPoints}</td></tr>}
+            {camera.pdafCoverage && <tr><td>PDAF coverage</td><td>{camera.pdafCoverage}%</td></tr>}
+            {camera.mechanicalBurstFps && <tr><td>Burst (mechanical)</td><td>{camera.mechanicalBurstFps} fps</td></tr>}
+            {camera.electronicBurstFps && <tr><td>Burst (electronic)</td><td>{camera.electronicBurstFps} fps</td></tr>}
+            {camera.bufferDepth && <tr><td>Buffer depth</td><td>{camera.bufferDepth} frames</td></tr>}
+            <tr><td>Video</td><td>{camera.videoSpec}</td></tr>
+            {camera.batteryLife && <tr><td>Battery life</td><td>{camera.batteryLife} shots</td></tr>}
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Body & Build</h2>
+        <table class="spec-table">
+          <tbody>
+            <tr><td>IBIS</td><td>{yesNo(camera.hasIbis)}</td></tr>
+            <tr><td>Weather sealed</td><td>{yesNo(camera.isWeatherSealed)}</td></tr>
+            {camera.evfType && camera.evfType !== "none" && <tr><td>Viewfinder</td><td>{camera.evfType}{camera.evfResolution ? ` (${(camera.evfResolution / 1000000).toFixed(1)}M dots)` : ""}</td></tr>}
+            {camera.screenType && <tr><td>Screen</td><td>{camera.screenType}{camera.hasTouchscreen ? ", touch" : ""}</td></tr>}
+            {camera.filmSimulations && <tr><td>Film simulations</td><td>{camera.filmSimulations}</td></tr>}
+            <tr><td>Weight</td><td>{camera.weight}g</td></tr>
+            <tr><td>Year</td><td>{camera.year}</td></tr>
+            <tr><td>Price</td><td>~${camera.price}</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Connectivity</h2>
+        <table class="spec-table">
+          <tbody>
+            {camera.cardSlots && <tr><td>Card slots</td><td>{camera.cardSlots}x {camera.cardType ?? ""}</td></tr>}
+            {camera.usbType && <tr><td>USB</td><td>{camera.usbType}</td></tr>}
+            <tr><td>Wi-Fi</td><td>{yesNo(camera.hasWifi)}</td></tr>
+            <tr><td>Bluetooth</td><td>{yesNo(camera.hasBluetooth)}</td></tr>
+            {camera.hasMicInput != null && <tr><td>Mic input</td><td>{yesNo(camera.hasMicInput)}</td></tr>}
+            {camera.hasHeadphoneJack != null && <tr><td>Headphone jack</td><td>{yesNo(camera.hasHeadphoneJack)}</td></tr>}
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <section class="links">
+      {camera.officialUrl && (
+        <a href={camera.officialUrl} target="_blank" rel="nofollow sponsored" class="link-button">Official product page</a>
+      )}
+      <a href="/cameras" class="back-link">Back to Camera Explorer</a>
+    </section>
+  </div>
 </Base>
+
+<style>
+  .detail {
+    max-width: 56rem;
+  }
+
+  .header {
+    margin-bottom: var(--space-xl);
+  }
+
+  .header h1 {
+    margin-bottom: var(--space-xs);
+  }
+
+  .badges {
+    display: flex;
+    gap: var(--space-xs);
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .badge-warn {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xl);
+  }
+
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  h2 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-sm);
+  }
+
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  .spec-table td {
+    padding: var(--space-xs) var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .spec-table td:first-child {
+    color: var(--color-text-muted);
+    width: 45%;
+  }
+
+  .links {
+    margin-top: var(--space-xl);
+  }
+
+  .link-button {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-link);
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+  }
+
+  .link-button:hover {
+    border-color: var(--color-accent);
+    color: var(--color-link-hover);
+  }
+
+  .back-link {
+    display: block;
+    margin-top: var(--space-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .back-link:hover {
+    color: var(--color-link);
+  }
+</style>

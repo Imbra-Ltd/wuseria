@@ -16,6 +16,23 @@ const { accessory } = Astro.props as Props;
 
 const canonicalUrl = new URL(`/accessories/${toSlug(`${accessory.brand} ${accessory.model}`)}`, Astro.site);
 
+function formatCategory(cat: string): string {
+  const labels: Record<string, string> = {
+    "flash": "Flash",
+    "battery-grip": "Battery Grip",
+    "hand-grip": "Hand Grip",
+    "battery": "Battery",
+    "charger": "Charger",
+    "lens-accessory": "Lens Accessory",
+    "adapter": "Adapter",
+    "remote": "Remote",
+    "audio": "Audio",
+    "cooling": "Cooling",
+    "body-accessory": "Body Accessory",
+  };
+  return labels[cat] ?? cat;
+}
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
@@ -33,10 +50,176 @@ const jsonLd = {
       : "https://schema.org/InStock",
   },
 };
+
+const compat = "compatibleWith" in accessory && Array.isArray(accessory.compatibleWith)
+  ? accessory.compatibleWith as string[]
+  : [];
 ---
 
 <Base title={`${accessory.brand} ${accessory.model} — Fuji.me!`} description={accessory.description}>
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-  <h1>{accessory.brand} {accessory.model}</h1>
-  <p>{accessory.category} — {accessory.description} — ~${accessory.price}</p>
+
+  <div class="detail">
+    <header class="header">
+      <h1>{accessory.brand} {accessory.model}</h1>
+      <div class="badges">
+        <span class="badge">{formatCategory(accessory.category)}</span>
+        {"mount" in accessory && accessory.mount && <span class="badge">{accessory.mount}</span>}
+        {accessory.isDiscontinued && <span class="badge badge-warn">Discontinued</span>}
+      </div>
+    </header>
+
+    <p class="description">{accessory.description}</p>
+
+    <div class="grid">
+      <section>
+        <h2>Details</h2>
+        <table class="spec-table">
+          <tbody>
+            <tr><td>Category</td><td>{formatCategory(accessory.category)}</td></tr>
+            <tr><td>Brand</td><td>{accessory.brand}</td></tr>
+            {accessory.weight && <tr><td>Weight</td><td>{accessory.weight}g</td></tr>}
+            <tr><td>Price</td><td>~${accessory.price}</td></tr>
+            {accessory.year && <tr><td>Year</td><td>{accessory.year}</td></tr>}
+          </tbody>
+        </table>
+      </section>
+
+      {compat.length > 0 && (
+        <section>
+          <h2>Compatible With</h2>
+          <div class="compat-list">
+            {compat.map((c) => (
+              <span class="compat-badge">{c}</span>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+
+    <section class="links">
+      {accessory.officialUrl && (
+        <a href={accessory.officialUrl} target="_blank" rel="nofollow sponsored" class="link-button">Official product page</a>
+      )}
+      <a href="/accessories" class="back-link">Back to Accessories</a>
+    </section>
+  </div>
 </Base>
+
+<style>
+  .detail {
+    max-width: 56rem;
+  }
+
+  .header {
+    margin-bottom: var(--space-sm);
+  }
+
+  .header h1 {
+    margin-bottom: var(--space-xs);
+  }
+
+  .badges {
+    display: flex;
+    gap: var(--space-xs);
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .badge-warn {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .description {
+    color: var(--color-text-muted);
+    line-height: 1.8;
+    margin-bottom: var(--space-xl);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xl);
+  }
+
+  @media (max-width: 640px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  h2 {
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--space-sm);
+  }
+
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+  }
+
+  .spec-table td {
+    padding: var(--space-xs) var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .spec-table td:first-child {
+    color: var(--color-text-muted);
+    width: 45%;
+  }
+
+  .compat-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .compat-badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .links {
+    margin-top: var(--space-xl);
+  }
+
+  .link-button {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-link);
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+  }
+
+  .link-button:hover {
+    border-color: var(--color-accent);
+    color: var(--color-link-hover);
+  }
+
+  .back-link {
+    display: block;
+    margin-top: var(--space-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+  }
+
+  .back-link:hover {
+    color: var(--color-link);
+  }
+</style>
