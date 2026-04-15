@@ -29,11 +29,6 @@ function yesNo(val?: boolean): string {
   return val ? "Yes" : "No";
 }
 
-function optVal(val: unknown, suffix = ""): string {
-  if (val == null) return "\u2013";
-  return `${val}${suffix}`;
-}
-
 const opticalFields: [string, number | undefined][] = [
   ["Center (wide open)", lens.centerWideOpen],
   ["Corner (wide open)", lens.cornerWideOpen],
@@ -58,6 +53,8 @@ const genreEntries = lens.genreMarks
       .sort((a, b) => b[1] - a[1])
   : [];
 
+const isTiltShift = lens.isTiltShift && (lens.shiftRange || lens.tiltAngle || lens.imageCircle);
+
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
@@ -81,18 +78,14 @@ const jsonLd = {
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <div class="detail">
+    {/* ── Header ── */}
     <header class="header">
       <h1>{lens.brand} {lens.model}</h1>
-      <div class="badges">
-        <span class="badge">{lens.mount}</span>
-        <span class="badge">{lens.type}</span>
-        {lens.isDiscontinued && <span class="badge badge-warn">Discontinued</span>}
-      </div>
     </header>
 
+    {/* ── Specs + Optical grid ── */}
     <div class="grid">
-      {/* Specs table */}
-      <section>
+      <section class="card">
         <h2>Specifications</h2>
         <table class="spec-table">
           <tbody>
@@ -111,14 +104,26 @@ const jsonLd = {
             {lens.length && <tr><td>Length</td><td>{lens.length}mm</td></tr>}
             {lens.filterThread && <tr><td>Filter thread</td><td>{lens.filterThread}mm</td></tr>}
             {lens.year && <tr><td>Year</td><td>{lens.year}</td></tr>}
-            <tr><td>Price</td><td>~${lens.price}</td></tr>
           </tbody>
         </table>
+
+        {isTiltShift && (
+          <>
+            <h3>Tilt-Shift</h3>
+            <table class="spec-table">
+              <tbody>
+                {lens.shiftRange && <tr><td>Shift range</td><td>{lens.shiftRange}mm</td></tr>}
+                {lens.tiltAngle && <tr><td>Tilt angle</td><td>{lens.tiltAngle}deg</td></tr>}
+                {lens.imageCircle && <tr><td>Image circle</td><td>{lens.imageCircle}mm</td></tr>}
+                {lens.isTiltShiftIndependent != null && <tr><td>Independent T/S</td><td>{yesNo(lens.isTiltShiftIndependent)}</td></tr>}
+              </tbody>
+            </table>
+          </>
+        )}
       </section>
 
-      {/* Optical quality */}
       {hasOptical && (
-        <section>
+        <section class="card">
           <h2>Optical Quality</h2>
           <table class="spec-table">
             <tbody>
@@ -127,26 +132,35 @@ const jsonLd = {
                   <tr>
                     <td>{label}</td>
                     <td>
-                      <span class="pips">
-                        {[0, 1, 2].map((i) => (
-                          <span class={`pip ${i < Math.round(val) ? "pip-on" : "pip-off"}`} />
-                        ))}
-                      </span>
-                      <span class="pip-val">{val.toFixed(1)}</span>
+                      <div class="pip-row">
+                        <span class="pips">
+                          {[0.5, 1.0, 1.5, 2.0].map((threshold) => (
+                            <span class={`pip ${val >= threshold ? "pip-on" : "pip-off"}`} />
+                          ))}
+                        </span>
+                        <span class="pip-val">{val.toFixed(1)}</span>
+                      </div>
                     </td>
                   </tr>
                 )
               )}
             </tbody>
           </table>
-          <p class="footnote">Scores on a 0-2 scale. See <a href="/wiki/scoring-methodology">scoring methodology</a>.</p>
+          <p class="footnote">0-2 scale. See <a href="/wiki/scoring-methodology">scoring methodology</a>.</p>
+        </section>
+      )}
+
+      {!hasOptical && (
+        <section class="card card-empty">
+          <h2>Optical Quality</h2>
+          <p class="empty-text">Not yet scored. Optical data from trusted review sources is required before scoring.</p>
         </section>
       )}
     </div>
 
-    {/* Genre scores */}
+    {/* ── Genre Scores ── */}
     {genreEntries.length > 0 && (
-      <section>
+      <section class="card">
         <h2>Genre Scores</h2>
         <div class="genre-grid">
           {genreEntries.map(([genre, mark]) => (
@@ -162,23 +176,20 @@ const jsonLd = {
       </section>
     )}
 
-    {/* Links */}
-    <section class="links">
-      {lens.officialUrl && (
-        <a href={lens.officialUrl} target="_blank" rel="nofollow sponsored" class="link-button">Official product page</a>
-      )}
-      {lens.reviewSources && Object.entries(lens.reviewSources).length > 0 && (
-        <>
-          <h3>Reviews</h3>
-          <div class="review-links">
-            {Object.entries(lens.reviewSources).map(([source, url]) => (
-              <a href={url} target="_blank" rel="nofollow" class="link-button">{source}</a>
-            ))}
-          </div>
-        </>
-      )}
-      <a href="/lenses" class="back-link">Back to Lens Explorer</a>
+    {/* ── Links ── */}
+    <section class="card">
+      <h2>Links</h2>
+      <div class="link-row">
+        {lens.officialUrl && (
+          <a href={lens.officialUrl} target="_blank" rel="nofollow sponsored" class="link-button">Official product page</a>
+        )}
+        {lens.reviewSources && Object.entries(lens.reviewSources).map(([source, url]) => (
+          <a href={url} target="_blank" rel="nofollow" class="link-button">{source}</a>
+        ))}
+      </div>
     </section>
+
+    <a href="/lenses" class="back-link">Back to Lens Explorer</a>
   </div>
 </Base>
 
@@ -187,38 +198,43 @@ const jsonLd = {
     max-width: 56rem;
   }
 
+  /* ── Header ── */
   .header {
     margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .header h1 {
     margin-bottom: var(--space-xs);
   }
 
-  .badges {
-    display: flex;
-    gap: var(--space-xs);
-  }
-
-  .badge {
-    font-size: 0.75rem;
-    padding: 2px 8px;
+  /* ── Cards ── */
+  .card {
+    background: var(--color-bg-surface);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-md);
+  }
+
+  .card-empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .empty-text {
     color: var(--color-text-muted);
-    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
   }
 
-  .badge-warn {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-  }
-
+  /* ── Grid ── */
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-xl);
-    margin-bottom: var(--space-xl);
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
   }
 
   @media (max-width: 640px) {
@@ -227,16 +243,22 @@ const jsonLd = {
     }
   }
 
+  /* ── Headings ── */
   h2 {
     font-size: var(--font-size-lg);
     margin-bottom: var(--space-sm);
+    padding-bottom: var(--space-xs);
+    border-bottom: 1px solid var(--color-border);
   }
 
   h3 {
     font-size: var(--font-size-base);
+    margin-top: var(--space-md);
     margin-bottom: var(--space-xs);
+    color: var(--color-text-muted);
   }
 
+  /* ── Spec table ── */
   .spec-table {
     width: 100%;
     border-collapse: collapse;
@@ -244,8 +266,12 @@ const jsonLd = {
   }
 
   .spec-table td {
-    padding: var(--space-xs) var(--space-sm);
-    border-bottom: 1px solid var(--color-border);
+    padding: var(--space-xs) 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+  }
+
+  .spec-table tr:last-child td {
+    border-bottom: none;
   }
 
   .spec-table td:first-child {
@@ -253,11 +279,16 @@ const jsonLd = {
     width: 45%;
   }
 
+  /* ── Pips ── */
+  .pip-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
   .pips {
     display: inline-flex;
     gap: 3px;
-    margin-right: var(--space-xs);
-    vertical-align: middle;
   }
 
   .pip {
@@ -287,11 +318,11 @@ const jsonLd = {
     margin-top: var(--space-sm);
   }
 
+  /* ── Genre scores ── */
   .genre-grid {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-sm);
-    margin-bottom: var(--space-sm);
   }
 
   .genre-card {
@@ -304,6 +335,7 @@ const jsonLd = {
     color: var(--color-text);
     text-decoration: none;
     font-size: var(--font-size-sm);
+    background: var(--color-bg);
   }
 
   .genre-card:hover {
@@ -323,11 +355,14 @@ const jsonLd = {
   .editorial {
     font-size: var(--font-size-sm);
     color: var(--color-accent);
-    margin-top: var(--space-xs);
+    margin-top: var(--space-sm);
   }
 
-  .links {
-    margin-top: var(--space-xl);
+  /* ── Links ── */
+  .link-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
   }
 
   .link-button {
@@ -338,8 +373,7 @@ const jsonLd = {
     color: var(--color-link);
     font-size: var(--font-size-sm);
     text-decoration: none;
-    margin-right: var(--space-xs);
-    margin-bottom: var(--space-xs);
+    background: var(--color-bg);
   }
 
   .link-button:hover {
@@ -347,15 +381,9 @@ const jsonLd = {
     color: var(--color-link-hover);
   }
 
-  .review-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-    margin-bottom: var(--space-md);
-  }
-
+  /* ── Back link ── */
   .back-link {
-    display: block;
+    display: inline-block;
     margin-top: var(--space-lg);
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
