@@ -16,6 +16,7 @@ const wiki = defineCollection({
       "Lenses",
       "Lighting",
       "Optics",
+      "Post-Processing",
       "Sensor",
     ])).min(1),
     summary: z.string(),

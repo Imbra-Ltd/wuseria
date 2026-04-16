@@ -40,7 +40,20 @@ const navLinks = [
     <header class="site-header">
       <nav class="nav" aria-label="Main navigation">
         <a href="/lenses" class="nav-brand">Wuseria</a>
-        <ul class="nav-links" role="list">
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-label="Toggle menu"
+          aria-expanded="false"
+          aria-controls="nav-menu"
+        >
+          <svg class="nav-toggle-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <line class="bar bar1" x1="3" y1="5" x2="17" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            <line class="bar bar2" x1="3" y1="10" x2="17" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            <line class="bar bar3" x1="3" y1="15" x2="17" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </button>
+        <ul class="nav-links" id="nav-menu" role="list">
           {navLinks.map((link) => (
             <li>
               <a
@@ -54,6 +67,13 @@ const navLinks = [
         </ul>
       </nav>
     </header>
+    <script is:inline>
+      document.querySelector('.nav-toggle').addEventListener('click', function () {
+        const expanded = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', String(!expanded));
+        document.querySelector('.nav-links').classList.toggle('open');
+      });
+    </script>
 
     <main class="main">
       <slot />
@@ -74,17 +94,17 @@ const navLinks = [
     z-index: 10;
     background-color: var(--color-bg-surface);
     border-bottom: 1px solid var(--color-border);
-    height: var(--nav-height);
   }
 
   .nav {
     display: flex;
     align-items: center;
-    gap: var(--space-lg);
+    flex-wrap: wrap;
+    gap: var(--space-xl);
     max-width: var(--max-width);
     margin: 0 auto;
     padding: 0 var(--space-md);
-    height: 100%;
+    min-height: var(--nav-height);
   }
 
   .nav-brand {
@@ -98,29 +118,60 @@ const navLinks = [
     color: var(--color-accent);
   }
 
+  /* Hamburger toggle — mobile only */
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    padding: var(--space-xs);
+    margin-left: auto;
+  }
+
+  .nav-toggle:hover {
+    color: var(--color-text);
+  }
+
+  .nav-toggle-icon .bar {
+    transition: transform 0.2s, opacity 0.2s;
+    transform-origin: center;
+  }
+
+  .nav-toggle[aria-expanded="true"] .bar1 {
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  .nav-toggle[aria-expanded="true"] .bar2 {
+    opacity: 0;
+  }
+
+  .nav-toggle[aria-expanded="true"] .bar3 {
+    transform: translateY(-5px) rotate(-45deg);
+  }
+
   .nav-links {
     display: flex;
     gap: var(--space-sm);
     list-style: none;
-    overflow-x: auto;
   }
 
   .nav-link {
     display: block;
     padding: var(--space-xs) var(--space-sm);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
     color: var(--color-text-muted);
-    border-radius: var(--radius);
     white-space: nowrap;
+    border-bottom: 2px solid transparent;
   }
 
   .nav-link:hover {
     color: var(--color-text);
-    background-color: var(--color-bg-hover);
   }
 
   .nav-link.active {
     color: var(--color-accent);
+    border-bottom-color: var(--color-accent);
   }
 
   .main {
@@ -142,15 +193,27 @@ const navLinks = [
     color: var(--color-text-muted);
   }
 
-  /* Mobile: hide nav links, show brand only */
+  /* Mobile: hamburger menu */
   @media (max-width: 640px) {
+    .nav-toggle {
+      display: block;
+    }
+
     .nav-links {
-      gap: var(--space-xs);
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      gap: 0;
+      padding: var(--space-sm) 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .nav-links.open {
+      display: flex;
     }
 
     .nav-link {
-      font-size: 0.75rem;
-      padding: var(--space-xs);
+      padding: var(--space-sm) var(--space-sm);
     }
   }
 </style>

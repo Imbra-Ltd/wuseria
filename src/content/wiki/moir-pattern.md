@@ -2,7 +2,7 @@
 title: "Moiré pattern"
 fullTitle: "Moiré Pattern"
 categories:
-  - "Optics"
+  - "Sensor"
 summary: "An interference pattern that appears when two regular patterns (e."
 ---
 

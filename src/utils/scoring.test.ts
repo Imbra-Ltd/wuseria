@@ -12,8 +12,6 @@ import {
   resolveField,
   opticalFieldCount,
   genreFormulas,
-  OPTICAL_FIELDS,
-  MIN_OPTICAL_FIELDS,
   getGenreMark,
   isEditorialPick,
   lensesForGenre,

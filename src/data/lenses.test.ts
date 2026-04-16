@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { lenses } from "./lenses";
-import type { ScoredGenre } from "../types/genre";
 import { OPTICAL_FIELDS, genreFormulas } from "../utils/scoring";
 
 // =============================================================================

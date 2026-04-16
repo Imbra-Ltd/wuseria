@@ -1,9 +1,9 @@
 import { lenses } from "../src/data/lenses";
 
-const scored = lenses.filter((l) => (l as Record<string, unknown>).centerStopped != null);
+const scored = lenses.filter((l) => (l as unknown as Record<string, unknown>).centerStopped != null);
 
 for (const l of scored) {
-  const lens = l as Record<string, unknown>;
+  const lens = l as unknown as Record<string, unknown>;
   const line = [
     String(lens.model).padEnd(40),
     "cS=" + String(lens.centerStopped ?? "-").padEnd(5),

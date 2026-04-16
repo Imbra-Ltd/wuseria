@@ -39,9 +39,15 @@
 }
 
 .filterRow {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-xs);
+}
+
+@media (min-width: 640px) {
+  .filterRow {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
 }
 
 .searchInput {
@@ -73,8 +79,8 @@
   font-size: var(--font-size-sm);
   font-family: var(--font-sans);
   cursor: pointer;
-  flex: 1;
   min-width: 0;
+  width: 100%;
 }
 
 .filterSelect:focus {
@@ -110,9 +116,17 @@
    ========================================================================== */
 
 .chipRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xs);
+}
+
+@media (min-width: 640px) {
+  .chipRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
 }
 
 .chipGroup {
