@@ -20,6 +20,7 @@ type LensSortKey =
   | "year"
   | "focalLengthMin"
   | "maxAperture"
+  | "filterThread"
   | "hasOis"
   | "isWeatherSealed"
   | "afMotor"
@@ -35,6 +36,7 @@ const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
   { key: "year", label: "Year", align: "left" },
   { key: "focalLengthMin", label: "FL", align: "right" },
   { key: "maxAperture", label: "f/", align: "right" },
+  { key: "filterThread", label: "\u03A6", align: "right" },
   { key: "hasOis", label: "OIS", align: "center" },
   { key: "isWeatherSealed", label: "WR", align: "center" },
   { key: "afMotor", label: "AF", align: "center" },
@@ -44,6 +46,8 @@ const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
 ];
 
 const APERTURE_OPTIONS = ["0.95", "1.0", "1.2", "1.4", "1.8", "2.0", "2.8", "3.5", "4.0", "4.5", "5.6", "6.3", "8.0"];
+
+const FILTER_THREAD_OPTIONS = ["39", "43", "46", "49", "52", "55", "58", "62", "67", "72", "77", "82", "95"];
 
 const FL_RANGES: Record<string, [number, number]> = {
   "0-14": [0, 14],
@@ -86,6 +90,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
   const [discontinued, setDiscontinued] = useState("");
   const [fl, setFl] = useState("");
   const [maxAp, setMaxAp] = useState("");
+  const [filterThread, setFilterThread] = useState("");
   const [priceRange, setPriceRange] = useState("");
 
   const slugMap = useMemo(
@@ -117,6 +122,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         if (lens.focalLengthMax < min || lens.focalLengthMin > max) return false;
       }
       if (maxAp && lens.maxAperture > parseFloat(maxAp)) return false;
+      if (filterThread && lens.filterThread !== Number(filterThread)) return false;
       if (priceRange) {
         const [min, max] = PRICE_RANGES[priceRange];
         if (lens.price < min || lens.price > max) return false;
@@ -124,7 +130,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
       if (q && !`${lens.brand} ${lens.model}`.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, priceRange]);
+  }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, filterThread, priceRange]);
 
   const availableFirst = useCallback((a: ExplorerLens, b: ExplorerLens) =>
     Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false), []);
@@ -140,7 +146,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     }
   }
 
-  const hasFilters = search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || priceRange;
+  const hasFilters = search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || filterThread || priceRange;
 
   function clearFilters(): void {
     setSearch("");
@@ -153,6 +159,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     setDiscontinued("");
     setFl("");
     setMaxAp("");
+    setFilterThread("");
     setPriceRange("");
   }
 
@@ -211,6 +218,14 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             <option value={RESET_VALUE}>All</option>
             {APERTURE_OPTIONS.map((ap) => (
               <option key={ap} value={ap}>f/{ap} or faster</option>
+            ))}
+          </select>
+
+          <select className={`${styles.filterSelect} ${filterThread ? styles.filterActive : ""}`} value={filterThread} onChange={(e) => setFilterThread(resetValue(e.target.value))} aria-label="Filter by filter thread">
+            <option value="" hidden>{"\u03A6"} Thread</option>
+            <option value={RESET_VALUE}>All</option>
+            {FILTER_THREAD_OPTIONS.map((t) => (
+              <option key={t} value={t}>{"\u03A6"}{t}mm</option>
             ))}
           </select>
 
@@ -291,6 +306,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                     <td>{lens.year ?? ""}</td>
                     <td className={styles.cellRight}>{formatFL(lens)}</td>
                     <td className={styles.cellRight}>{lens.maxAperture}</td>
+                    <td className={styles.cellRight}>{lens.filterThread ?? "\u2013"}</td>
                     <td className={styles.cellCenter}><span className={lens.hasOis ? styles.dotOn : styles.dotOff} /></td>
                     <td className={styles.cellCenter}><span className={lens.isWeatherSealed ? styles.dotOn : styles.dotOff} /></td>
                     <td className={styles.cellCenter}>{lens.afMotor ?? "MF"}</td>
@@ -316,7 +332,6 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                 <div className={styles.cardSpecs}>
                   <span>f/{lens.maxAperture}</span>
                   <span>{lens.weight}g</span>
-                  {lens.filterThread != null && <span>{"\u03A6"}{lens.filterThread}</span>}
                   {lens.opticalQuality != null && <span>OQ {lens.opticalQuality.toFixed(1)}</span>}
                   {lens.year && <span>{lens.year}</span>}
                 </div>
