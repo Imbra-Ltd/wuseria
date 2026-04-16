@@ -47,7 +47,7 @@ const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
 
 const APERTURE_OPTIONS = ["0.95", "1.0", "1.2", "1.4", "1.8", "2.0", "2.8", "3.5", "4.0", "4.5", "5.6", "6.3", "8.0"];
 
-const FILTER_THREAD_OPTIONS = ["39", "43", "46", "49", "52", "55", "58", "62", "67", "72", "77", "82", "95"];
+const FILTER_THREAD_OPTIONS = ["39", "43", "46", "49", "52", "55", "58", "62", "67", "72", "77", "82", "95", "none"];
 
 const FL_RANGES: Record<string, [number, number]> = {
   "0-14": [0, 14],
@@ -56,6 +56,13 @@ const FL_RANGES: Record<string, [number, number]> = {
   "36-100": [36, 100],
   "101-300": [101, 300],
   "300+": [300, Infinity],
+};
+
+const OQ_RANGES: Record<string, [number, number]> = {
+  "1.5+": [1.5, 2],
+  "1.0-1.5": [1.0, 1.5],
+  "0.5-1.0": [0.5, 1.0],
+  "0-0.5": [0, 0.5],
 };
 
 const PRICE_RANGES: Record<string, [number, number]> = {
@@ -91,6 +98,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
   const [fl, setFl] = useState("");
   const [maxAp, setMaxAp] = useState("");
   const [filterThread, setFilterThread] = useState("");
+  const [oqRange, setOqRange] = useState("");
   const [priceRange, setPriceRange] = useState("");
 
   const slugMap = useMemo(
@@ -122,7 +130,12 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         if (lens.focalLengthMax < min || lens.focalLengthMin > max) return false;
       }
       if (maxAp && lens.maxAperture > parseFloat(maxAp)) return false;
-      if (filterThread && lens.filterThread !== Number(filterThread)) return false;
+      if (filterThread === "none" && lens.filterThread != null) return false;
+      if (filterThread && filterThread !== "none" && lens.filterThread !== Number(filterThread)) return false;
+      if (oqRange) {
+        const [min, max] = OQ_RANGES[oqRange];
+        if (lens.opticalQuality == null || lens.opticalQuality < min || lens.opticalQuality > max) return false;
+      }
       if (priceRange) {
         const [min, max] = PRICE_RANGES[priceRange];
         if (lens.price < min || lens.price > max) return false;
@@ -130,7 +143,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
       if (q && !`${lens.brand} ${lens.model}`.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, filterThread, priceRange]);
+  }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, filterThread, oqRange, priceRange]);
 
   const availableFirst = useCallback((a: ExplorerLens, b: ExplorerLens) =>
     Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false), []);
@@ -146,7 +159,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     }
   }
 
-  const hasFilters = search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || filterThread || priceRange;
+  const hasFilters = search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || filterThread || oqRange || priceRange;
 
   function clearFilters(): void {
     setSearch("");
@@ -160,6 +173,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     setFl("");
     setMaxAp("");
     setFilterThread("");
+    setOqRange("");
     setPriceRange("");
   }
 
@@ -224,9 +238,19 @@ function LensExplorer({ lenses }: LensExplorerProps) {
           <select className={`${styles.filterSelect} ${filterThread ? styles.filterActive : ""}`} value={filterThread} onChange={(e) => setFilterThread(resetValue(e.target.value))} aria-label="Filter by filter thread">
             <option value="" hidden>{"\u03A6"} Thread</option>
             <option value={RESET_VALUE}>All</option>
-            {FILTER_THREAD_OPTIONS.map((t) => (
+            {FILTER_THREAD_OPTIONS.filter((t) => t !== "none").map((t) => (
               <option key={t} value={t}>{"\u03A6"}{t}mm</option>
             ))}
+            <option value="none">None</option>
+          </select>
+
+          <select className={`${styles.filterSelect} ${oqRange ? styles.filterActive : ""}`} value={oqRange} onChange={(e) => setOqRange(resetValue(e.target.value))} aria-label="Filter by optical quality">
+            <option value="" hidden>OQ</option>
+            <option value={RESET_VALUE}>All</option>
+            <option value="1.5+">1.5+ (Excellent)</option>
+            <option value="1.0-1.5">1.0 – 1.5 (Good)</option>
+            <option value="0.5-1.0">0.5 – 1.0 (Average)</option>
+            <option value="0-0.5">0 – 0.5 (Below avg)</option>
           </select>
 
           <select className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
