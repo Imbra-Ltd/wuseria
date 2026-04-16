@@ -314,9 +314,9 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                   <span className={styles.cardPrice}>~${lens.price}</span>
                 </div>
                 <div className={styles.cardSpecs}>
-                  <span>{formatFL(lens)}</span>
                   <span>f/{lens.maxAperture}</span>
                   <span>{lens.weight}g</span>
+                  {lens.filterThread != null && <span>{"\u03A6"}{lens.filterThread}</span>}
                   {lens.opticalQuality != null && <span>OQ {lens.opticalQuality.toFixed(1)}</span>}
                   {lens.year && <span>{lens.year}</span>}
                 </div>

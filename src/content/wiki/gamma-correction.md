@@ -2,7 +2,7 @@
 title: "Gamma correction"
 fullTitle: "Gamma Correction"
 categories:
-  - "Optics"
+  - "Post-Processing"
 summary: "A nonlinear tone mapping applied to image data to match human perception of brightness."
 ---
 

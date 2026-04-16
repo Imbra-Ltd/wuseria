@@ -13,7 +13,7 @@ const allOptical = [
 ];
 
 for (const lens of lenses) {
-  const l = lens as Record<string, unknown>;
+  const l = lens as unknown as Record<string, unknown>;
   if (l.centerStopped == null) continue;
 
   const name = String(l.model);

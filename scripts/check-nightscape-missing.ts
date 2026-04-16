@@ -1,12 +1,12 @@
 import { lenses } from "../src/data/lenses";
 
-const scored = lenses.filter((l) => (l as Record<string, unknown>).centerStopped != null);
+const scored = lenses.filter((l) => (l as unknown as Record<string, unknown>).centerStopped != null);
 const nightscape = scored.filter((l) => {
-  const marks = (l as Record<string, unknown>).genreMarks as Record<string, number> | undefined;
+  const marks = (l as unknown as Record<string, unknown>).genreMarks as Record<string, number> | undefined;
   return marks?.nightscape != null;
 });
 const missing = scored.filter((l) => {
-  const marks = (l as Record<string, unknown>).genreMarks as Record<string, number> | undefined;
+  const marks = (l as unknown as Record<string, unknown>).genreMarks as Record<string, number> | undefined;
   return marks?.nightscape == null;
 });
 
@@ -16,7 +16,7 @@ console.log("Missing nightscape: " + missing.length);
 console.log("");
 console.log("=== Missing nightscape (why?) ===");
 for (const l of missing) {
-  const a = l as Record<string, unknown>;
+  const a = l as unknown as Record<string, unknown>;
   const coma = a.coma;
   const astig = a.astigmatism;
   const reasons: string[] = [];

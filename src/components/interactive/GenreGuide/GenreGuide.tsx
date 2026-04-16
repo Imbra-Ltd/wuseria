@@ -274,7 +274,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
       if (latcaFilter && (el.lens.lateralCA == null || el.lens.lateralCA < Number(latcaFilter))) return false;
       return true;
     });
-  }, [lenses, genre, cropFactor, ev, iso, selectedFl, magnification, sortBy, sortAsc, isNightscape, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter, cornerFilter, distFilter, flareFilter, bokehFilter, locaFilter, latcaFilter]);
+  }, [lenses, genre, cropFactor, ev, iso, selectedFl, magnification, sortBy, sortAsc, isNightscape, brandFilter, markFilter, priceFilter, weightFilter, apertureFilter, comaFilter, astigFilter, typeFilter, wrFilter, cornerFilter, distFilter, flareFilter, bokehFilter, locaFilter, latcaFilter, FL_RANGES]);
 
   // -- Sort handler ---------------------------------------------------------
   function handleSort(key: SortKey): void {

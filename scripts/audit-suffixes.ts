@@ -12,7 +12,7 @@ for (const { suffix, field, label, matchValue } of checks) {
   let issues = 0;
 
   for (const l of lenses) {
-    const a = l as Record<string, unknown>;
+    const a = l as unknown as Record<string, unknown>;
     const model = String(a.model);
     const brand = String(a.brand);
     if (brand !== "Fujifilm") continue;

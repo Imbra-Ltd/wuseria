@@ -96,25 +96,25 @@ function focusDistanceScore(mfd: number): number {
 }
 
 for (const lens of lenses) {
-  const l = lens as Record<string, unknown>;
+  const l = lens as unknown as Record<string, unknown>;
   if (l.centerStopped == null) continue;
 
   const name = String(l.model);
 
   // Compute derived scores
   if (config.primary.includes("_apertureScore") || config.secondary.includes("_apertureScore")) {
-    (l as Record<string, unknown>)._apertureScore = apertureScore(l.maxAperture as number);
+    (l as unknown as Record<string, unknown>)._apertureScore = apertureScore(l.maxAperture as number);
   }
   if (config.primary.includes("_weightScore") || config.secondary.includes("_weightScore")) {
-    (l as Record<string, unknown>)._weightScore = weightScore(l.weight as number);
+    (l as unknown as Record<string, unknown>)._weightScore = weightScore(l.weight as number);
   }
   if (config.primary.includes("_magnificationScore") || config.secondary.includes("_magnificationScore")) {
     const mag = l.maxMagnification as number | undefined;
-    if (mag != null) (l as Record<string, unknown>)._magnificationScore = magnificationScore(mag);
+    if (mag != null) (l as unknown as Record<string, unknown>)._magnificationScore = magnificationScore(mag);
   }
   if (config.primary.includes("_focusDistanceScore") || config.secondary.includes("_focusDistanceScore")) {
     const mfd = l.minFocusDistance as number | undefined;
-    if (mfd != null) (l as Record<string, unknown>)._focusDistanceScore = focusDistanceScore(mfd);
+    if (mfd != null) (l as unknown as Record<string, unknown>)._focusDistanceScore = focusDistanceScore(mfd);
   }
 
   // Check primaries
