@@ -238,10 +238,10 @@ function LensExplorer({ lenses }: LensExplorerProps) {
           <select className={`${styles.filterSelect} ${filterThread ? styles.filterActive : ""}`} value={filterThread} onChange={(e) => setFilterThread(resetValue(e.target.value))} aria-label="Filter by filter thread">
             <option value="" hidden>{"\u03A6"} Thread</option>
             <option value={RESET_VALUE}>All</option>
+            <option value="none">None</option>
             {FILTER_THREAD_OPTIONS.filter((t) => t !== "none").map((t) => (
               <option key={t} value={t}>{"\u03A6"}{t}mm</option>
             ))}
-            <option value="none">None</option>
           </select>
 
           <select className={`${styles.filterSelect} ${oqRange ? styles.filterActive : ""}`} value={oqRange} onChange={(e) => setOqRange(resetValue(e.target.value))} aria-label="Filter by optical quality">
