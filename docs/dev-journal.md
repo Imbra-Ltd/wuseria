@@ -5,7 +5,7 @@
 ```
 Phase 1 — Launch & Scoring (COMPLETE):
   Static site (Astro + React islands), deployed to GitHub Pages
-  -> 458 pages: 240+ lenses, 38 cameras, 46 accessories, 115 wiki, 9 genre screeners
+  -> 448 pages: 240+ lenses, 38 cameras, 46 accessories, 105 wiki, 9 genre screeners
   -> Genre scoring with OQ (Optical Quality) weighted formula
   -> Affiliate links as plain <a> tags with tracking params
   -> Domain: wuseria.com
@@ -341,3 +341,57 @@ Key decisions:
 - Full rebrand (not hybrid) to avoid Fujifilm trademark risk
 - wuseria.com confirmed after evaluating alternatives (Wusi, LensAtlas, Visu, etc.)
 - TS 5.9 over dropping @astrojs/check or using .npmrc workaround
+
+### Session 13 — 2026-04-16
+
+Tool: Claude Code (Opus 4.6)
+
+**Bug fixes, mobile UX, wiki cleanup**
+
+Mobile nav:
+- Added hamburger menu for screens < 640px (CSS + inline script, no React island)
+- Brand + toggle on mobile, full horizontal nav on desktop
+- Animated hamburger-to-X icon with aria-expanded for accessibility
+- Bumped nav link font from 0.875rem to 1rem, added active underline indicator
+- Increased brand-to-links spacing with gap: 2rem
+
+Filter layout:
+- Replaced flex-wrap with CSS Grid (2-col on mobile, auto-fit on desktop)
+- Applied to filter dropdowns and chip rows across all 3 explorers
+- Deterministic stacking — no more unpredictable wrap behaviour
+
+Redirect flash:
+- Styled index.astro redirect page with dark background (#0f1117)
+- Removed visible "Redirecting..." text — instant dark-to-dark transition
+
+Lens explorer cards:
+- Replaced focal length with filter thread using Φ symbol in mobile cards
+
+Lint / type fixes:
+- Removed unused imports (ScoredGenre, OPTICAL_FIELDS, MIN_OPTICAL_FIELDS)
+- Added missing FL_RANGES to useMemo dependency array
+- Fixed 26 TypeScript errors in scripts: double-cast through unknown
+- Removed stale git worktree that was polluting lint results
+
+Wiki cleanup:
+- Removed 10 academic/lab entries: angular-resolution, diffraction-limited-system,
+  integrating-sphere, ulbricht-sphere, siemens-star, sitf, strehl-ratio,
+  superlens, optical-resolution, aliasing
+- Added Post-Processing category to content schema
+- Moved 4 entries to Post-Processing: deblurring, deconvolution,
+  gamma-correction, super-resolution-imaging
+- Moved oversampling and moiré pattern from Optics to Sensor
+- Wiki guiding principle established: entries should help beginners decide
+  what to shoot and which lens to buy — no lab-only or theoretical content
+
+Issues created:
+- #254-#258 — Aberration wiki entries (astigmatism, distortion, chromatic
+  aberration, spherical aberration, vignetting)
+- #259 — Create Aberrations category and migrate entries
+- #260-#263 — Post-processing technique entries (focus stacking, HDR,
+  star stacking, panorama stitching)
+
+Key decisions:
+- Hamburger menu over horizontal scroll — users can't discover hidden links
+- CSS Grid over flex-wrap for filters — deterministic 2-col on mobile
+- Wiki rationale: beginner-friendly, decision-oriented, not academic
