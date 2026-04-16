@@ -657,6 +657,14 @@
   font-variant-numeric: tabular-nums;
 }
 
+.lensLink {
+  color: var(--color-link);
+}
+
+.lensLink:hover {
+  color: var(--color-link-hover);
+}
+
 .cardName {
   font-weight: 600;
   margin-bottom: var(--space-xs);

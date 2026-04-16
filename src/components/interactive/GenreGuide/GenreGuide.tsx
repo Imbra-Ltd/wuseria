@@ -17,6 +17,7 @@ import {
   MACRO_MAGNIFICATION_OPTIONS,
 } from "../../../data/genres";
 import { getGenreMark, isEditorialPick } from "../../../utils/scoring";
+import { toSlug } from "../../../utils/slug";
 import { astroExposure, handheldExposure } from "./exposure";
 import { ChipGroup } from "../shared/ChipGroup";
 import { MarkPips, PickStar, FieldVal } from "../shared/MarkPips";
@@ -882,7 +883,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                     <td><MarkPips mark={el.mark} /></td>
                     <td className={styles.cellCenter}><PickStar isPick={el.isPick} /></td>
                     <td>{el.lens.brand}</td>
-                    <td>{el.lens.model}</td>
+                    <td><a className={styles.lensLink} href={`/lenses/${toSlug(`${el.lens.brand} ${el.lens.model}`)}`}>{el.lens.model}</a></td>
                     {isNightscape && (
                       <>
                         <td>{el.effectiveFl}mm</td>
@@ -996,7 +997,9 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                   <span className={styles.cardPrice}>~${el.lens.price}</span>
                 </div>
                 <div className={styles.cardName}>
-                  {el.lens.brand} {el.lens.model}
+                  <a className={styles.lensLink} href={`/lenses/${toSlug(`${el.lens.brand} ${el.lens.model}`)}`}>
+                    {el.lens.brand} {el.lens.model}
+                  </a>
                 </div>
                 <div className={styles.cardSpecs}>
                   <span>f/{el.lens.maxAperture}</span>
