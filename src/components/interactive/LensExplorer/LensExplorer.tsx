@@ -60,9 +60,9 @@ const FL_RANGES: Record<string, [number, number]> = {
 
 const OQ_RANGES: Record<string, [number, number]> = {
   "8+": [8, 10],
-  "6-8": [6, 8],
-  "4-6": [4, 6],
-  "0-4": [0, 4],
+  "6-7.9": [6, 7.9],
+  "4-5.9": [4, 5.9],
+  "0-3.9": [0, 3.9],
 };
 
 const PRICE_RANGES: Record<string, [number, number]> = {
@@ -245,12 +245,12 @@ function LensExplorer({ lenses }: LensExplorerProps) {
           </select>
 
           <select className={`${styles.filterSelect} ${oqRange ? styles.filterActive : ""}`} value={oqRange} onChange={(e) => setOqRange(resetValue(e.target.value))} aria-label="Filter by optical quality">
-            <option value="" hidden>OQ</option>
+            <option value="" hidden>Optical Quality</option>
             <option value={RESET_VALUE}>All</option>
             <option value="8+">8+ (Excellent)</option>
-            <option value="6-8">6 – 8 (Good)</option>
-            <option value="4-6">4 – 6 (Average)</option>
-            <option value="0-4">0 – 4 (Below avg)</option>
+            <option value="6-7.9">6 – 7.9 (Good)</option>
+            <option value="4-5.9">4 – 5.9 (Average)</option>
+            <option value="0-3.9">0 – 3.9 (Below avg)</option>
           </select>
 
           <select className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
