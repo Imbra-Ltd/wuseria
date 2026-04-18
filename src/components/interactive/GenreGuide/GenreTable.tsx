@@ -25,12 +25,14 @@ function GenreTable({ state, enrichedLenses }: GenreTableProps) {
               <th
                 key={`${key}-${label}`}
                 className={`${key === "pick" ? styles.cellCenter : ""} ${primary ? styles.primaryCol : ""}`}
-                onClick={key === "wr" || key === "ois" ? undefined : () => handleSort(key)}
-                style={key === "wr" || key === "ois" ? { cursor: "default" } : undefined}
               >
-                {label}
-                {key !== "wr" && key !== "ois" && (
-                  <span className={styles.sortIndicator}>{sortIndicator(sortBy, sortAsc, key)}</span>
+                {key === "wr" || key === "ois" ? (
+                  label
+                ) : (
+                  <button type="button" className={styles.sortButton} onClick={() => handleSort(key)}>
+                    {label}
+                    <span className={styles.sortIndicator}>{sortIndicator(sortBy, sortAsc, key)}</span>
+                  </button>
                 )}
               </th>
             ))}

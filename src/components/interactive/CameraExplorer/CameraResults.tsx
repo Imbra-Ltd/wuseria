@@ -22,12 +22,14 @@ function CameraResults({ sorted, sortKey, sortDirection, toggleSort }: CameraRes
           <thead>
             <tr>
               {COLUMNS.map((col) => (
-                <th key={col.key} className={ALIGN_CLASSES[col.align]} onClick={() => toggleSort(col.key)}
+                <th key={col.key} className={ALIGN_CLASSES[col.align]}
                   aria-sort={sortKey === col.key ? (sortDirection === "asc" ? "ascending" : "descending") : "none"}>
-                  {col.label}
-                  <span className={styles.sortIndicator}>
-                    {sortKey === col.key ? (sortDirection === "asc" ? "\u2191" : "\u2193") : "\u2195"}
-                  </span>
+                  <button type="button" className={styles.sortButton} onClick={() => toggleSort(col.key)}>
+                    {col.label}
+                    <span className={styles.sortIndicator}>
+                      {sortKey === col.key ? (sortDirection === "asc" ? "\u2191" : "\u2193") : "\u2195"}
+                    </span>
+                  </button>
                 </th>
               ))}
             </tr>
