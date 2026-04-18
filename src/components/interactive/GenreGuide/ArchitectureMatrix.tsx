@@ -66,7 +66,8 @@ function ArchitectureMatrix({ cropFactor, iso, ev, nd, selectedFl }: Architectur
         <span className={styles.lsDramaticText}>●</span> people vanish
       </div>
       <p className={styles.matrixExplain}>
-        Each cell shows the shutter speed at that aperture. Blue freezes
+        Each cell shows the shutter speed at that aperture. On a tripod, shutter
+        speed depends on aperture and light, not focal length. Blue freezes
         people sharply. Amber blurs movement. Teal makes people disappear
         from long exposures — ideal for empty architecture shots.
       </p>
