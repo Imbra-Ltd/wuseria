@@ -3,25 +3,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import GenreGuide from "./GenreGuide";
 import type { Lens } from "../../../types/lens";
-
-// =============================================================================
-// TEST FIXTURES
-// =============================================================================
-
-function makeLens(
-  overrides: Partial<Lens> & Pick<Lens, "brand" | "model">,
-): Lens {
-  return {
-    type: "prime",
-    mount: "X",
-    focalLengthMin: 35,
-    focalLengthMax: 35,
-    maxAperture: 1.4,
-    weight: 200,
-    price: 600,
-    ...overrides,
-  };
-}
+import { makeLens } from "../../../test/factories";
 
 const testLenses: Lens[] = [
   makeLens({
