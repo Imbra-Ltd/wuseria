@@ -105,9 +105,6 @@ src/
         GenreGuide.module.css
         exposure.ts               // EV scene evaluation logic
         exposure.test.ts
-      TradeDealsFilter/
-        TradeDealsFilter.tsx      // Filter deals (client:visible)
-        TradeDealsFilter.module.css
   data/
     lenses.ts                     // Lens[]
     cameras.ts                    // Camera[]

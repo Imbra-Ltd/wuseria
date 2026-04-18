@@ -99,6 +99,12 @@ See [CLAUDE.md](CLAUDE.md) for full project conventions:
 - Run `npm run check:all` before every commit
 - No `any` in TypeScript, no inline styles, no hardcoded data in components
 
+## Configuration
+
+No environment variables are required. Site-level settings (currency, site
+name) are in `src/data/config.ts`. All content lives in `src/data/*.ts`
+files, type-checked at build time.
+
 ## Links
 
 - [Architecture decisions](docs/decisions/)

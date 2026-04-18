@@ -15,6 +15,14 @@
   --color-link: #6c9bff;
   --color-link-hover: #8db3ff;
 
+  /* Mark level colors (genre score pips) */
+  --color-mark-1: #2a2520;
+  --color-mark-2: #4a4540;
+  --color-mark-3: #7a7060;
+  --color-mark-4: #c08830;
+  --color-mark-5: #e8a045;
+  --color-mark-fallback: #8a8070;
+
   /* Spacing */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
