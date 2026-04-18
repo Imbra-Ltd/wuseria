@@ -206,7 +206,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         </div>
 
         <div className={styles.filterRow}>
-          <select className={`${styles.filterSelect} ${brand ? styles.filterActive : ""}`} value={brand} onChange={(e) => setBrand(resetValue(e.target.value))} aria-label="Filter by brand">
+          <select autoComplete="off" className={`${styles.filterSelect} ${brand ? styles.filterActive : ""}`} value={brand} onChange={(e) => setBrand(resetValue(e.target.value))} aria-label="Filter by brand">
             <option value="" hidden>Brand</option>
             <option value={RESET_VALUE}>All brands</option>
             {brands.includes("Fujifilm") && <option value="Fujifilm">Fujifilm</option>}
@@ -216,7 +216,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             ))}
           </select>
 
-          <select className={`${styles.filterSelect} ${fl ? styles.filterActive : ""}`} value={fl} onChange={(e) => setFl(resetValue(e.target.value))} aria-label="Filter by focal length">
+          <select autoComplete="off" className={`${styles.filterSelect} ${fl ? styles.filterActive : ""}`} value={fl} onChange={(e) => setFl(resetValue(e.target.value))} aria-label="Filter by focal length">
             <option value="" hidden>Focal Length</option>
             <option value={RESET_VALUE}>All</option>
             <option value="0-14">&le; 14mm</option>
@@ -227,7 +227,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             <option value="300+">300mm+</option>
           </select>
 
-          <select className={`${styles.filterSelect} ${maxAp ? styles.filterActive : ""}`} value={maxAp} onChange={(e) => setMaxAp(resetValue(e.target.value))} aria-label="Filter by aperture">
+          <select autoComplete="off" className={`${styles.filterSelect} ${maxAp ? styles.filterActive : ""}`} value={maxAp} onChange={(e) => setMaxAp(resetValue(e.target.value))} aria-label="Filter by aperture">
             <option value="" hidden>Aperture</option>
             <option value={RESET_VALUE}>All</option>
             {APERTURE_OPTIONS.map((ap) => (
@@ -235,7 +235,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             ))}
           </select>
 
-          <select className={`${styles.filterSelect} ${filterThread ? styles.filterActive : ""}`} value={filterThread} onChange={(e) => setFilterThread(resetValue(e.target.value))} aria-label="Filter by filter thread">
+          <select autoComplete="off" className={`${styles.filterSelect} ${filterThread ? styles.filterActive : ""}`} value={filterThread} onChange={(e) => setFilterThread(resetValue(e.target.value))} aria-label="Filter by filter thread">
             <option value="" hidden>{"\u03A6"} Thread</option>
             <option value={RESET_VALUE}>All</option>
             <option value="none">None</option>
@@ -244,7 +244,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             ))}
           </select>
 
-          <select className={`${styles.filterSelect} ${oqRange ? styles.filterActive : ""}`} value={oqRange} onChange={(e) => setOqRange(resetValue(e.target.value))} aria-label="Filter by optical quality">
+          <select autoComplete="off" className={`${styles.filterSelect} ${oqRange ? styles.filterActive : ""}`} value={oqRange} onChange={(e) => setOqRange(resetValue(e.target.value))} aria-label="Filter by optical quality">
             <option value="" hidden>Optical Quality</option>
             <option value={RESET_VALUE}>All</option>
             <option value="8+">8+ (Excellent)</option>
@@ -253,7 +253,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             <option value="0-3.9">0 – 3.9 (Below avg)</option>
           </select>
 
-          <select className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
+          <select autoComplete="off" className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
             <option value="" hidden>Price</option>
             <option value={RESET_VALUE}>All</option>
             <option value="0-250">Under $250</option>
@@ -354,12 +354,14 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                   <span className={styles.cardPrice}>~${lens.price}</span>
                 </div>
                 <div className={styles.cardSpecs}>
-                  <span>f/{lens.maxAperture}</span>
+                  {lens.year && <span>{lens.year}</span>}
                   <span>{lens.weight}g</span>
                   {lens.opticalQuality != null && <span>OQ {lens.opticalQuality.toFixed(1)}</span>}
-                  {lens.year && <span>{lens.year}</span>}
+                  {lens.filterThread && <span>{"\u03A6"}{lens.filterThread}mm</span>}
                 </div>
                 <div className={styles.cardBadges}>
+                  <span className={styles.badge}>{lens.mount}</span>
+                  <span className={styles.badge}>{lens.type === "prime" ? "Prime" : "Zoom"}</span>
                   {lens.hasOis && <span className={styles.badge}>OIS</span>}
                   {lens.isWeatherSealed && <span className={styles.badge}>WR</span>}
                   {lens.afMotor && <span className={styles.badge}>{lens.afMotor}</span>}

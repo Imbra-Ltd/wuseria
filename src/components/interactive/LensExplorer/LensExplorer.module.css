@@ -133,6 +133,7 @@
   display: flex;
   align-items: center;
   gap: 2px;
+  min-width: 0;
 }
 
 .chipLabel {
@@ -151,6 +152,10 @@
   font-family: var(--font-sans);
   padding: 2px var(--space-sm);
   cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
 }
 
 .chip:first-of-type {
