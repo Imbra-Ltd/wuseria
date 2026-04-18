@@ -56,114 +56,20 @@ Project-specific overrides and additions follow below.
 - Package manager: npm
 - Deployment: GitHub Pages via GitHub Actions
 
-### 1.2 Project structure
+### 1.2 Project layout conventions
 
-```
-src/
-  pages/
-    index.astro                   // Homepage
-    lenses/
-      index.astro                 // /lenses — lens explorer
-      [slug].astro                // /lenses/xf-23mm-f1-4 — per-lens page
-    cameras/
-      index.astro                 // /cameras — camera explorer
-    genre/
-      [genre].astro               // /genre/landscape — per-genre page
-    wiki/
-      index.astro                 // /wiki — A-Z index
-      [slug].astro                // /wiki/aperture — per-entry page
-    trade-deals.astro             // /trade-deals
-    accessories.astro             // /accessories
-    404.astro                     // Custom error page
-  layouts/
-    Base.astro                    // HTML shell, nav, footer, global meta
-    LensDetail.astro              // Layout for individual lens pages
-  components/
-    static/                       // .astro — zero JS shipped
-      Header.astro
-      Footer.astro
-      LensCard.astro
-      LensSpecTable.astro
-      GenreScoreBadge.astro
-      WikiEntry.astro
-      PriceTag.astro
-    interactive/                  // React — hydrated as islands
-      shared/
-        ChipGroup.tsx             // Reusable chip filter group
-        MarkPips.tsx              // Mark pips, pick star, field value
-        constants.ts              // Shared filter constants (RESET_VALUE)
-        table.ts                  // ColumnAlign type + makeAlignClasses()
-      LensExplorer/
-        LensExplorer.tsx          // Orchestrator (client:load)
-        LensExplorer.test.tsx
-        LensExplorer.module.css
-        constants.ts              // Types, column defs, filter ranges
-        LensFilters.tsx           // Filter dropdowns + chip groups
-        LensResults.tsx           // Desktop table + mobile cards
-      CameraExplorer/
-        CameraExplorer.tsx        // Orchestrator (client:load)
-        CameraExplorer.test.tsx
-        CameraExplorer.module.css
-        constants.ts              // Types, column defs, filter ranges
-        CameraFilters.tsx         // Filter dropdowns + chip groups
-        CameraResults.tsx         // Desktop table + mobile cards
-      GenreGuide/
-        GenreGuide.tsx            // Orchestrator (client:load)
-        GenreGuide.test.tsx
-        GenreGuide.module.css
-        types.ts                  // GenreGuideProps, SortKey, EnrichedLens
-        helpers.ts                // sceneLabel, evHeaderLabel, fmtIso
-        useGenreState.ts          // All state, handlers, derived values
-        useEnrichedLenses.ts      // Filter + enrich + sort logic
-        genreColumns.ts           // Per-genre column definitions
-        GenreControls.tsx         // Mount/FL/ISO/ND/magnification chips
-        FilterSelect.tsx          // Reusable filter dropdown
-        GenreFilterPanel.tsx      // Genre-conditional filter panel
-        GenreTable.tsx            // Desktop table with sortable headers
-        GenreRowCells.tsx         // Per-genre table row cells
-        GenreCards.tsx            // Mobile card layout
-        GenreFooter.tsx           // Scoring methodology text
-        exposure.ts               // EV scene evaluation logic
-        exposure.test.ts
-  data/
-    lenses.ts                     // Lens[]
-    cameras.ts                    // Camera[]
-    accessories.ts                // Accessory[]
-    wiki.ts                       // WikiEntry[]
-    genres.ts                     // Genre configs + EV scenes
-    affiliates.ts                 // AffiliateLink[]
-    reviews.ts                    // Review source directory
-  hooks/
-    useSort.ts
-    useSort.test.ts
-  types/
-    lens.ts
-    camera.ts
-    genre.ts
-    affiliate.ts
-    review.ts
-  utils/
-    slug.ts
-    slug.test.ts
-    scoring.ts
-    scoring.test.ts
-    formatting.ts
-    formatting.test.ts
-  styles/
-    global.css                    // CSS custom properties, base styles, dark theme
-  test/
-    setup.ts                      // Vitest setup (e.g. RTL matchers)
-    factories.ts                  // makeLens, makeCamera test factories
-public/
-  favicon.svg
-  icons.svg
-  CNAME                           // wuseria.com
-  robots.txt
-astro.config.mjs
-tsconfig.json
-vitest.config.ts
-package.json
-```
+- `src/pages/` — Astro file-based routing (explore with `ls`)
+- `src/layouts/` — shared page shells
+- `src/components/static/` — `.astro` components that ship zero JS
+- `src/components/interactive/` — React islands, each in its own directory with co-located tests, CSS module, and sub-components
+- `src/components/interactive/shared/` — reusable UI pieces shared across islands
+- `src/data/` — all editable content as TypeScript files (not JSON)
+- `src/types/` — shared type definitions
+- `src/hooks/` — reusable React hooks
+- `src/utils/` — pure utility functions with co-located tests
+- `src/styles/global.css` — CSS custom properties, base styles, dark theme
+- `src/test/` — Vitest setup and test factories
+- `public/` — static assets (favicon, icons, CNAME, robots.txt)
 
 ### 1.3 Commands
 
