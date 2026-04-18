@@ -1,6 +1,6 @@
 import { formatFL } from "../../../utils/formatting";
 import { toSlug } from "../../../utils/slug";
-import { MarkPips, PickStar, FieldVal } from "../shared/MarkPips";
+import { MarkPips, FieldVal } from "../shared/MarkPips";
 import { fmtIso } from "./helpers";
 import type { EnrichedLens } from "./types";
 import type { GenreState } from "./useGenreState";
@@ -20,7 +20,6 @@ function GenreCards({ state, enrichedLenses }: GenreCardsProps) {
         <div key={`${el.lens.brand}-${el.lens.model}`} className={styles.card}>
           <div className={styles.cardTop}>
             <MarkPips mark={el.mark} />
-            <PickStar isPick={el.isPick} />
             <span className={styles.cardPrice}>~${el.lens.price}</span>
           </div>
           <div className={styles.cardName}>
