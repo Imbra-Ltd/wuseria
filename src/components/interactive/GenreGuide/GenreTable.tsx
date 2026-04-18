@@ -26,7 +26,7 @@ function GenreTable({ state, enrichedLenses }: GenreTableProps) {
                 key={`${key}-${label}`}
                 className={`${key === "pick" ? styles.cellCenter : ""} ${primary ? styles.primaryCol : ""}`}
               >
-                {key === "wr" || key === "ois" ? (
+                {key === "pick" || key === "wr" || key === "ois" ? (
                   label
                 ) : (
                   <button type="button" className={styles.sortButton} onClick={() => handleSort(key)}>
