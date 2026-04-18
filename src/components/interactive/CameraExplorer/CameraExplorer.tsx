@@ -171,7 +171,7 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
         </div>
 
         <div className={styles.filterRow}>
-          <select className={`${styles.filterSelect} ${formFactor ? styles.filterActive : ""}`} value={formFactor} onChange={(e) => setFormFactor(resetValue(e.target.value))} aria-label="Filter by body style">
+          <select autoComplete="off" className={`${styles.filterSelect} ${formFactor ? styles.filterActive : ""}`} value={formFactor} onChange={(e) => setFormFactor(resetValue(e.target.value))} aria-label="Filter by body style">
             <option value="" hidden>Body</option>
             <option value={RESET_VALUE}>All</option>
             <option value="standard">Standard</option>
@@ -180,7 +180,7 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
             <option value="compact">Compact</option>
           </select>
 
-          <select className={`${styles.filterSelect} ${series ? styles.filterActive : ""}`} value={series} onChange={(e) => setSeries(resetValue(e.target.value))} aria-label="Filter by series">
+          <select autoComplete="off" className={`${styles.filterSelect} ${series ? styles.filterActive : ""}`} value={series} onChange={(e) => setSeries(resetValue(e.target.value))} aria-label="Filter by series">
             <option value="" hidden>Series</option>
             <option value={RESET_VALUE}>All series</option>
             {seriesOptions.map((s) => (
@@ -188,7 +188,7 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
             ))}
           </select>
 
-          <select className={`${styles.filterSelect} ${yearRange ? styles.filterActive : ""}`} value={yearRange} onChange={(e) => setYearRange(resetValue(e.target.value))} aria-label="Filter by year">
+          <select autoComplete="off" className={`${styles.filterSelect} ${yearRange ? styles.filterActive : ""}`} value={yearRange} onChange={(e) => setYearRange(resetValue(e.target.value))} aria-label="Filter by year">
             <option value="" hidden>Year</option>
             <option value={RESET_VALUE}>All</option>
             {Object.keys(YEAR_RANGES).map((key) => (
@@ -196,7 +196,7 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
             ))}
           </select>
 
-          <select className={`${styles.filterSelect} ${sensorType ? styles.filterActive : ""}`} value={sensorType} onChange={(e) => setSensorType(resetValue(e.target.value))} aria-label="Filter by sensor">
+          <select autoComplete="off" className={`${styles.filterSelect} ${sensorType ? styles.filterActive : ""}`} value={sensorType} onChange={(e) => setSensorType(resetValue(e.target.value))} aria-label="Filter by sensor">
             <option value="" hidden>Sensor</option>
             <option value={RESET_VALUE}>All</option>
             {sensorOptions.map((s) => (
@@ -204,7 +204,7 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
             ))}
           </select>
 
-          <select className={`${styles.filterSelect} ${videoSpec ? styles.filterActive : ""}`} value={videoSpec} onChange={(e) => setVideoSpec(resetValue(e.target.value))} aria-label="Filter by video">
+          <select autoComplete="off" className={`${styles.filterSelect} ${videoSpec ? styles.filterActive : ""}`} value={videoSpec} onChange={(e) => setVideoSpec(resetValue(e.target.value))} aria-label="Filter by video">
             <option value="" hidden>Video</option>
             <option value={RESET_VALUE}>All</option>
             {VIDEO_OPTIONS.map((v) => (
@@ -212,7 +212,7 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
             ))}
           </select>
 
-          <select className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
+          <select autoComplete="off" className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
             <option value="" hidden>Price</option>
             <option value={RESET_VALUE}>All</option>
             <option value="0-500">Under $500</option>
