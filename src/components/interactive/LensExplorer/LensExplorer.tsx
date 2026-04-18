@@ -47,7 +47,7 @@ const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
 
 const APERTURE_OPTIONS = ["0.95", "1.0", "1.2", "1.4", "1.8", "2.0", "2.8", "3.5", "4.0", "4.5", "5.6", "6.3", "8.0"];
 
-const FILTER_THREAD_OPTIONS = ["39", "43", "46", "49", "52", "55", "58", "62", "67", "72", "77", "82", "95"];
+const FILTER_THREAD_OPTIONS = ["39", "43", "46", "49", "52", "55", "58", "62", "67", "72", "77", "82", "95", "none"];
 
 const FL_RANGES: Record<string, [number, number]> = {
   "0-14": [0, 14],
@@ -56,6 +56,13 @@ const FL_RANGES: Record<string, [number, number]> = {
   "36-100": [36, 100],
   "101-300": [101, 300],
   "300+": [300, Infinity],
+};
+
+const OQ_RANGES: Record<string, [number, number]> = {
+  "8+": [8, 10],
+  "6-7.9": [6, 7.9],
+  "4-5.9": [4, 5.9],
+  "0-3.9": [0, 3.9],
 };
 
 const PRICE_RANGES: Record<string, [number, number]> = {
@@ -91,6 +98,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
   const [fl, setFl] = useState("");
   const [maxAp, setMaxAp] = useState("");
   const [filterThread, setFilterThread] = useState("");
+  const [oqRange, setOqRange] = useState("");
   const [priceRange, setPriceRange] = useState("");
 
   const slugMap = useMemo(
@@ -122,7 +130,12 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         if (lens.focalLengthMax < min || lens.focalLengthMin > max) return false;
       }
       if (maxAp && lens.maxAperture > parseFloat(maxAp)) return false;
-      if (filterThread && lens.filterThread !== Number(filterThread)) return false;
+      if (filterThread === "none" && lens.filterThread != null) return false;
+      if (filterThread && filterThread !== "none" && lens.filterThread !== Number(filterThread)) return false;
+      if (oqRange) {
+        const [min, max] = OQ_RANGES[oqRange];
+        if (lens.opticalQuality == null || lens.opticalQuality < min || lens.opticalQuality > max) return false;
+      }
       if (priceRange) {
         const [min, max] = PRICE_RANGES[priceRange];
         if (lens.price < min || lens.price > max) return false;
@@ -130,7 +143,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
       if (q && !`${lens.brand} ${lens.model}`.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, filterThread, priceRange]);
+  }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, filterThread, oqRange, priceRange]);
 
   const availableFirst = useCallback((a: ExplorerLens, b: ExplorerLens) =>
     Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false), []);
@@ -146,7 +159,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     }
   }
 
-  const hasFilters = search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || filterThread || priceRange;
+  const hasFilters = search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || filterThread || oqRange || priceRange;
 
   function clearFilters(): void {
     setSearch("");
@@ -160,6 +173,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     setFl("");
     setMaxAp("");
     setFilterThread("");
+    setOqRange("");
     setPriceRange("");
   }
 
@@ -192,7 +206,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         </div>
 
         <div className={styles.filterRow}>
-          <select className={`${styles.filterSelect} ${brand ? styles.filterActive : ""}`} value={brand} onChange={(e) => setBrand(resetValue(e.target.value))} aria-label="Filter by brand">
+          <select autoComplete="off" className={`${styles.filterSelect} ${brand ? styles.filterActive : ""}`} value={brand} onChange={(e) => setBrand(resetValue(e.target.value))} aria-label="Filter by brand">
             <option value="" hidden>Brand</option>
             <option value={RESET_VALUE}>All brands</option>
             {brands.includes("Fujifilm") && <option value="Fujifilm">Fujifilm</option>}
@@ -202,7 +216,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             ))}
           </select>
 
-          <select className={`${styles.filterSelect} ${fl ? styles.filterActive : ""}`} value={fl} onChange={(e) => setFl(resetValue(e.target.value))} aria-label="Filter by focal length">
+          <select autoComplete="off" className={`${styles.filterSelect} ${fl ? styles.filterActive : ""}`} value={fl} onChange={(e) => setFl(resetValue(e.target.value))} aria-label="Filter by focal length">
             <option value="" hidden>Focal Length</option>
             <option value={RESET_VALUE}>All</option>
             <option value="0-14">&le; 14mm</option>
@@ -213,7 +227,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             <option value="300+">300mm+</option>
           </select>
 
-          <select className={`${styles.filterSelect} ${maxAp ? styles.filterActive : ""}`} value={maxAp} onChange={(e) => setMaxAp(resetValue(e.target.value))} aria-label="Filter by aperture">
+          <select autoComplete="off" className={`${styles.filterSelect} ${maxAp ? styles.filterActive : ""}`} value={maxAp} onChange={(e) => setMaxAp(resetValue(e.target.value))} aria-label="Filter by aperture">
             <option value="" hidden>Aperture</option>
             <option value={RESET_VALUE}>All</option>
             {APERTURE_OPTIONS.map((ap) => (
@@ -221,15 +235,25 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             ))}
           </select>
 
-          <select className={`${styles.filterSelect} ${filterThread ? styles.filterActive : ""}`} value={filterThread} onChange={(e) => setFilterThread(resetValue(e.target.value))} aria-label="Filter by filter thread">
+          <select autoComplete="off" className={`${styles.filterSelect} ${filterThread ? styles.filterActive : ""}`} value={filterThread} onChange={(e) => setFilterThread(resetValue(e.target.value))} aria-label="Filter by filter thread">
             <option value="" hidden>{"\u03A6"} Thread</option>
             <option value={RESET_VALUE}>All</option>
-            {FILTER_THREAD_OPTIONS.map((t) => (
+            <option value="none">None</option>
+            {FILTER_THREAD_OPTIONS.filter((t) => t !== "none").map((t) => (
               <option key={t} value={t}>{"\u03A6"}{t}mm</option>
             ))}
           </select>
 
-          <select className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
+          <select autoComplete="off" className={`${styles.filterSelect} ${oqRange ? styles.filterActive : ""}`} value={oqRange} onChange={(e) => setOqRange(resetValue(e.target.value))} aria-label="Filter by optical quality">
+            <option value="" hidden>Optical Quality</option>
+            <option value={RESET_VALUE}>All</option>
+            <option value="8+">8+ (Excellent)</option>
+            <option value="6-7.9">6 – 7.9 (Good)</option>
+            <option value="4-5.9">4 – 5.9 (Average)</option>
+            <option value="0-3.9">0 – 3.9 (Below avg)</option>
+          </select>
+
+          <select autoComplete="off" className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
             <option value="" hidden>Price</option>
             <option value={RESET_VALUE}>All</option>
             <option value="0-250">Under $250</option>
@@ -330,12 +354,14 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                   <span className={styles.cardPrice}>~${lens.price}</span>
                 </div>
                 <div className={styles.cardSpecs}>
-                  <span>f/{lens.maxAperture}</span>
+                  {lens.year && <span>{lens.year}</span>}
                   <span>{lens.weight}g</span>
                   {lens.opticalQuality != null && <span>OQ {lens.opticalQuality.toFixed(1)}</span>}
-                  {lens.year && <span>{lens.year}</span>}
+                  {lens.filterThread && <span>{"\u03A6"}{lens.filterThread}mm</span>}
                 </div>
                 <div className={styles.cardBadges}>
+                  <span className={styles.badge}>{lens.mount}</span>
+                  <span className={styles.badge}>{lens.type === "prime" ? "Prime" : "Zoom"}</span>
                   {lens.hasOis && <span className={styles.badge}>OIS</span>}
                   {lens.isWeatherSealed && <span className={styles.badge}>WR</span>}
                   {lens.afMotor && <span className={styles.badge}>{lens.afMotor}</span>}
