@@ -1,80 +1,11 @@
 import { useState, useMemo, useCallback } from "react";
-import type { Lens } from "../../../types/lens";
 import { useSort } from "../../../hooks/useSort";
 import { toSlug } from "../../../utils/slug";
-import { formatFL } from "../../../utils/formatting";
-import { ChipGroup } from "../shared/ChipGroup";
-import { RESET_VALUE, resetValue } from "../shared/constants";
-import type { ColumnAlign } from "../shared/table";
-import { makeAlignClasses } from "../shared/table";
+import type { ExplorerLens, LensExplorerProps, LensSortKey } from "./constants";
+import { FL_RANGES, OQ_RANGES, PRICE_RANGES } from "./constants";
+import { LensFilters } from "./LensFilters";
+import { LensResults } from "./LensResults";
 import styles from "./LensExplorer.module.css";
-
-interface ExplorerLens extends Lens {
-  opticalQuality?: number | null;
-}
-
-interface LensExplorerProps {
-  lenses: ExplorerLens[];
-}
-
-type LensSortKey =
-  | "brand"
-  | "model"
-  | "year"
-  | "focalLengthMin"
-  | "maxAperture"
-  | "filterThread"
-  | "hasOis"
-  | "isWeatherSealed"
-  | "afMotor"
-  | "weight"
-  | "opticalQuality"
-  | "price";
-
-const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
-  { key: "brand", label: "Brand", align: "left" },
-  { key: "model", label: "Model", align: "left" },
-  { key: "year", label: "Year", align: "left" },
-  { key: "focalLengthMin", label: "FL", align: "right" },
-  { key: "maxAperture", label: "f/", align: "right" },
-  { key: "filterThread", label: "\u03A6", align: "right" },
-  { key: "hasOis", label: "OIS", align: "center" },
-  { key: "isWeatherSealed", label: "WR", align: "center" },
-  { key: "afMotor", label: "AF", align: "center" },
-  { key: "weight", label: "Weight", align: "right" },
-  { key: "opticalQuality", label: "OQ", align: "right" },
-  { key: "price", label: "Price", align: "right" },
-];
-
-const APERTURE_OPTIONS = ["0.95", "1.0", "1.2", "1.4", "1.8", "2.0", "2.8", "3.5", "4.0", "4.5", "5.6", "6.3", "8.0"];
-
-const FILTER_THREAD_OPTIONS = ["39", "43", "46", "49", "52", "55", "58", "62", "67", "72", "77", "82", "95", "none"];
-
-const FL_RANGES: Record<string, [number, number]> = {
-  "0-14": [0, 14],
-  "15-23": [15, 23],
-  "24-35": [24, 35],
-  "36-100": [36, 100],
-  "101-300": [101, 300],
-  "300+": [300, Infinity],
-};
-
-const OQ_RANGES: Record<string, [number, number]> = {
-  "8+": [8, 10],
-  "6-7.9": [6, 7.9],
-  "4-5.9": [4, 5.9],
-  "0-3.9": [0, 3.9],
-};
-
-const PRICE_RANGES: Record<string, [number, number]> = {
-  "0-250": [0, 250],
-  "250-500": [250, 500],
-  "500-1000": [500, 1000],
-  "1000-2000": [1000, 2000],
-  "2000+": [2000, Infinity],
-};
-
-const ALIGN_CLASSES = makeAlignClasses(styles);
 
 function LensExplorer({ lenses }: LensExplorerProps) {
   const [search, setSearch] = useState("");
@@ -142,29 +73,17 @@ function LensExplorer({ lenses }: LensExplorerProps) {
   function handleMountChange(value: string): void {
     setMount(value);
     if (brand) {
-      const brandExistsInMount = lenses.some(
-        (l) => l.brand === brand && (!value || l.mount === value),
-      );
+      const brandExistsInMount = lenses.some((l) => l.brand === brand && (!value || l.mount === value));
       if (!brandExistsInMount) setBrand("");
     }
   }
 
-  const hasFilters = search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || filterThread || oqRange || priceRange;
+  const hasFilters = !!(search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || filterThread || oqRange || priceRange);
 
   function clearFilters(): void {
-    setSearch("");
-    setMount("");
-    setType("");
-    setBrand("");
-    setOis("");
-    setWr("");
-    setAf("");
-    setDiscontinued("");
-    setFl("");
-    setMaxAp("");
-    setFilterThread("");
-    setOqRange("");
-    setPriceRange("");
+    setSearch(""); setMount(""); setType(""); setBrand(""); setOis(""); setWr("");
+    setAf(""); setDiscontinued(""); setFl(""); setMaxAp(""); setFilterThread("");
+    setOqRange(""); setPriceRange("");
   }
 
   return (
@@ -173,195 +92,22 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         <h1 className={styles.heroTitle}>Lens Explorer</h1>
         <p className={styles.heroSub}>{sorted.length} / {lenses.length} Fujifilm-compatible lenses</p>
       </div>
-      <div className={styles.filters}>
-        <div className={styles.filterTop}>
-          <input
-            className={styles.searchInput}
-            type="text"
-            placeholder="Search model..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            aria-label="Search by model name"
-          />
-          {hasFilters && (
-            <button
-              className={styles.clearButton}
-              onClick={clearFilters}
-              type="button"
-              aria-label="Clear all filters"
-            >
-              &#x2715; Clear
-            </button>
-          )}
-        </div>
 
-        <div className={styles.filterRow}>
-          <select autoComplete="off" className={`${styles.filterSelect} ${brand ? styles.filterActive : ""}`} value={brand} onChange={(e) => setBrand(resetValue(e.target.value))} aria-label="Filter by brand">
-            <option value="" hidden>Brand</option>
-            <option value={RESET_VALUE}>All brands</option>
-            {brands.includes("Fujifilm") && <option value="Fujifilm">Fujifilm</option>}
-            {brands.includes("Fujifilm") && <option disabled>───</option>}
-            {brands.filter((b) => b !== "Fujifilm").map((b) => (
-              <option key={b} value={b}>{b}</option>
-            ))}
-          </select>
-
-          <select autoComplete="off" className={`${styles.filterSelect} ${fl ? styles.filterActive : ""}`} value={fl} onChange={(e) => setFl(resetValue(e.target.value))} aria-label="Filter by focal length">
-            <option value="" hidden>Focal Length</option>
-            <option value={RESET_VALUE}>All</option>
-            <option value="0-14">&le; 14mm</option>
-            <option value="15-23">15-23mm</option>
-            <option value="24-35">24-35mm</option>
-            <option value="36-100">36-100mm</option>
-            <option value="101-300">101-300mm</option>
-            <option value="300+">300mm+</option>
-          </select>
-
-          <select autoComplete="off" className={`${styles.filterSelect} ${maxAp ? styles.filterActive : ""}`} value={maxAp} onChange={(e) => setMaxAp(resetValue(e.target.value))} aria-label="Filter by aperture">
-            <option value="" hidden>Aperture</option>
-            <option value={RESET_VALUE}>All</option>
-            {APERTURE_OPTIONS.map((ap) => (
-              <option key={ap} value={ap}>f/{ap} or faster</option>
-            ))}
-          </select>
-
-          <select autoComplete="off" className={`${styles.filterSelect} ${filterThread ? styles.filterActive : ""}`} value={filterThread} onChange={(e) => setFilterThread(resetValue(e.target.value))} aria-label="Filter by filter thread">
-            <option value="" hidden>{"\u03A6"} Thread</option>
-            <option value={RESET_VALUE}>All</option>
-            <option value="none">None</option>
-            {FILTER_THREAD_OPTIONS.filter((t) => t !== "none").map((t) => (
-              <option key={t} value={t}>{"\u03A6"}{t}mm</option>
-            ))}
-          </select>
-
-          <select autoComplete="off" className={`${styles.filterSelect} ${oqRange ? styles.filterActive : ""}`} value={oqRange} onChange={(e) => setOqRange(resetValue(e.target.value))} aria-label="Filter by optical quality">
-            <option value="" hidden>Optical Quality</option>
-            <option value={RESET_VALUE}>All</option>
-            <option value="8+">8+ (Excellent)</option>
-            <option value="6-7.9">6 – 7.9 (Good)</option>
-            <option value="4-5.9">4 – 5.9 (Average)</option>
-            <option value="0-3.9">0 – 3.9 (Below avg)</option>
-          </select>
-
-          <select autoComplete="off" className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">
-            <option value="" hidden>Price</option>
-            <option value={RESET_VALUE}>All</option>
-            <option value="0-250">Under $250</option>
-            <option value="250-500">$250 - $500</option>
-            <option value="500-1000">$500 - $1,000</option>
-            <option value="1000-2000">$1,000 - $2,000</option>
-            <option value="2000+">$2,000+</option>
-          </select>
-
-        </div>
-
-        <div className={styles.chipRow}>
-          <ChipGroup label="Mount" value={mount} onChange={handleMountChange} styles={styles} options={[
-            { label: "All", value: "" }, { label: "X", value: "X" }, { label: "GFX", value: "GFX" },
-          ]} />
-          <ChipGroup label="Type" value={type} onChange={setType} styles={styles} options={[
-            { label: "All", value: "" }, { label: "Prime", value: "prime" }, { label: "Zoom", value: "zoom" },
-          ]} />
-          <ChipGroup label="AF" value={af} onChange={setAf} styles={styles} options={[
-            { label: "All", value: "" }, { label: "AF", value: "yes" }, { label: "MF", value: "no" },
-          ]} />
-          <ChipGroup label="OIS" value={ois} onChange={setOis} styles={styles} options={[
-            { label: "All", value: "" }, { label: "Yes", value: "yes" }, { label: "No", value: "no" },
-          ]} />
-          <ChipGroup label="WR" value={wr} onChange={setWr} styles={styles} options={[
-            { label: "All", value: "" }, { label: "Yes", value: "yes" }, { label: "No", value: "no" },
-          ]} />
-          <ChipGroup label="Status" value={discontinued} onChange={setDiscontinued} styles={styles} options={[
-            { label: "All", value: "" }, { label: "Available", value: "available" }, { label: "Discontinued", value: "discontinued" },
-          ]} />
-        </div>
-
-      </div>
+      <LensFilters
+        search={search} setSearch={setSearch} mount={mount} onMountChange={handleMountChange}
+        type={type} setType={setType} brand={brand} setBrand={setBrand}
+        ois={ois} setOis={setOis} wr={wr} setWr={setWr} af={af} setAf={setAf}
+        discontinued={discontinued} setDiscontinued={setDiscontinued}
+        fl={fl} setFl={setFl} maxAp={maxAp} setMaxAp={setMaxAp}
+        filterThread={filterThread} setFilterThread={setFilterThread}
+        oqRange={oqRange} setOqRange={setOqRange} priceRange={priceRange} setPriceRange={setPriceRange}
+        brands={brands} hasFilters={hasFilters} clearFilters={clearFilters}
+      />
 
       {sorted.length === 0 ? (
         <p className={styles.emptyState}>No lenses match the current filters.</p>
       ) : (
-        <>
-          {/* Table — desktop */}
-          <div className={styles.tableWrap}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  {COLUMNS.map((col) => (
-                    <th
-                      key={col.key}
-                      className={ALIGN_CLASSES[col.align]}
-                      onClick={() => toggleSort(col.key)}
-                      aria-sort={
-                        sortKey === col.key
-                          ? sortDirection === "asc" ? "ascending" : "descending"
-                          : "none"
-                      }
-                    >
-                      {col.label}
-                      <span className={styles.sortIndicator}>
-                        {sortKey === col.key
-                          ? (sortDirection === "asc" ? "\u2191" : "\u2193")
-                          : "\u2195"}
-                      </span>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {sorted.map((lens) => (
-                  <tr key={`${lens.brand}-${lens.model}`} className={lens.isDiscontinued ? styles.rowDiscontinued : undefined}>
-                    <td>{lens.brand}</td>
-                    <td>
-                      <a className={styles.lensLink} href={`/lenses/${slugMap.get(`${lens.brand}-${lens.model}`)}`}>
-                        {lens.model}
-                      </a>
-                    </td>
-                    <td>{lens.year ?? ""}</td>
-                    <td className={styles.cellRight}>{formatFL(lens.focalLengthMin, lens.focalLengthMax)}</td>
-                    <td className={styles.cellRight}>{lens.maxAperture}</td>
-                    <td className={styles.cellRight}>{lens.filterThread ?? "\u2013"}</td>
-                    <td className={styles.cellCenter}><span className={lens.hasOis ? styles.dotOn : styles.dotOff} /></td>
-                    <td className={styles.cellCenter}><span className={lens.isWeatherSealed ? styles.dotOn : styles.dotOff} /></td>
-                    <td className={styles.cellCenter}>{lens.afMotor ?? "MF"}</td>
-                    <td className={styles.cellRight}>{lens.weight}g</td>
-                    <td className={styles.cellRight}>{lens.opticalQuality != null ? lens.opticalQuality.toFixed(1) : "\u2013"}</td>
-                    <td className={styles.cellRight}>~${lens.price}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Cards — mobile */}
-          <div className={styles.cards}>
-            {sorted.map((lens) => (
-              <div key={`${lens.brand}-${lens.model}`} className={`${styles.card} ${lens.isDiscontinued ? styles.cardDiscontinued : ""}`}>
-                <div className={styles.cardHeader}>
-                  <a className={styles.lensLink} href={`/lenses/${slugMap.get(`${lens.brand}-${lens.model}`)}`}>
-                    {lens.brand} {lens.model}
-                  </a>
-                  <span className={styles.cardPrice}>~${lens.price}</span>
-                </div>
-                <div className={styles.cardSpecs}>
-                  {lens.year && <span>{lens.year}</span>}
-                  <span>{lens.weight}g</span>
-                  {lens.opticalQuality != null && <span>OQ {lens.opticalQuality.toFixed(1)}</span>}
-                  {lens.filterThread && <span>{"\u03A6"}{lens.filterThread}mm</span>}
-                </div>
-                <div className={styles.cardBadges}>
-                  <span className={styles.badge}>{lens.mount}</span>
-                  <span className={styles.badge}>{lens.type === "prime" ? "Prime" : "Zoom"}</span>
-                  {lens.hasOis && <span className={styles.badge}>OIS</span>}
-                  {lens.isWeatherSealed && <span className={styles.badge}>WR</span>}
-                  {lens.afMotor && <span className={styles.badge}>{lens.afMotor}</span>}
-                  {!lens.afMotor && <span className={styles.badge}>MF</span>}
-                  {lens.isDiscontinued && <span className={styles.badge}>Discontinued</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
+        <LensResults sorted={sorted} slugMap={slugMap} sortKey={sortKey} sortDirection={sortDirection} toggleSort={toggleSort} />
       )}
 
       <p className={styles.footnote}>
