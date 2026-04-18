@@ -66,7 +66,8 @@ function LandscapeMatrix({ cropFactor, iso, ev, nd, selectedFl, title }: Landsca
         <span className={styles.lsDramaticText}>●</span> dramatic (&gt;30s)
       </div>
       <p className={styles.matrixExplain}>
-        Each cell shows the shutter speed at that aperture. Blue freezes motion.
+        Each cell shows the shutter speed at that aperture. On a tripod, shutter
+        speed depends on aperture and light, not focal length. Blue freezes motion.
         Green gives silky water and cloud streaks. Teal creates dramatic long
         exposures where moving objects disappear.
       </p>
