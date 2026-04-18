@@ -53,7 +53,7 @@ function useEnrichedLenses(lenses: Lens[], state: GenreState): EnrichedLens[] {
           v = a.mark - b.mark;
           if (v === 0) v = (a.isPick ? 1 : 0) - (b.isPick ? 1 : 0);
           break;
-        case "pick": v = (a.isPick ? 1 : 0) - (b.isPick ? 1 : 0); break;
+
         case "brand": v = a.lens.brand.localeCompare(b.lens.brand); break;
         case "idealIso": v = (a.idealIso ?? 99999) - (b.idealIso ?? 99999); break;
         case "weight": v = a.lens.weight - b.lens.weight; break;
@@ -64,6 +64,7 @@ function useEnrichedLenses(lenses: Lens[], state: GenreState): EnrichedLens[] {
         case "coma": v = (a.lens.coma ?? -1) - (b.lens.coma ?? -1); break;
         case "astigmatism": v = (a.lens.astigmatism ?? -1) - (b.lens.astigmatism ?? -1); break;
         case "wr": v = (a.lens.isWeatherSealed ? 1 : 0) - (b.lens.isWeatherSealed ? 1 : 0); break;
+        case "ois": v = (a.lens.hasOis ? 1 : 0) - (b.lens.hasOis ? 1 : 0); break;
         case "cornerStopped": v = (a.lens.cornerStopped ?? -1) - (b.lens.cornerStopped ?? -1); break;
         case "centerStopped": v = (a.lens.centerStopped ?? -1) - (b.lens.centerStopped ?? -1); break;
         case "centerWideOpen": v = (a.lens.centerWideOpen ?? -1) - (b.lens.centerWideOpen ?? -1); break;

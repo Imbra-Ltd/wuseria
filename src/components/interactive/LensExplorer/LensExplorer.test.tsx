@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LensExplorer from "./LensExplorer";
 import { makeLens } from "../../../test/factories";
@@ -58,5 +58,25 @@ describe("LensExplorer", () => {
   it("shows price footnote", () => {
     render(<LensExplorer lenses={lenses} />);
     expect(screen.getByText(/approximate USD estimates/)).toBeInTheDocument();
+  });
+
+  it("sorts by price when Price header is clicked", async () => {
+    const user = userEvent.setup();
+    render(<LensExplorer lenses={lenses} />);
+
+    const table = screen.getAllByRole("table")[0];
+    const priceButton = within(table).getByRole("button", { name: /price/i });
+
+    // Click once — ascending
+    await user.click(priceButton);
+    const rowsAsc = within(table).getAllByRole("row").slice(1); // skip thead row
+    const modelsAsc = rowsAsc.map((row) => within(row).getByRole("link").textContent);
+    expect(modelsAsc).toEqual(["XF 23mm f/1.4 R", "XF 56mm f/1.2 R", "XF 16-55mm f/2.8 R LM WR"]);
+
+    // Click again — descending
+    await user.click(priceButton);
+    const rowsDesc = within(table).getAllByRole("row").slice(1);
+    const modelsDesc = rowsDesc.map((row) => within(row).getByRole("link").textContent);
+    expect(modelsDesc).toEqual(["XF 16-55mm f/2.8 R LM WR", "XF 56mm f/1.2 R", "XF 23mm f/1.4 R"]);
   });
 });

@@ -215,15 +215,30 @@
   text-align: left;
   color: var(--color-text-muted);
   font-weight: 600;
-  cursor: pointer;
-  user-select: none;
   position: sticky;
   top: 0;
   background-color: var(--color-bg-surface);
 }
 
-.table th:hover {
+.sortButton {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  user-select: none;
+  font: inherit;
+  color: inherit;
+  font-weight: inherit;
+}
+
+.sortButton:hover {
   color: var(--color-text);
+}
+
+.sortButton:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
 }
 
 .table th.cellRight,

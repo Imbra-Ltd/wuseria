@@ -1,5 +1,5 @@
 import { toSlug } from "../../../utils/slug";
-import { MarkPips, PickStar } from "../shared/MarkPips";
+import { MarkPips } from "../shared/MarkPips";
 import type { EnrichedLens } from "./types";
 import type { GenreState } from "./useGenreState";
 import { sortIndicator } from "./helpers";
@@ -24,14 +24,12 @@ function GenreTable({ state, enrichedLenses }: GenreTableProps) {
             {columns.map(([key, label, primary]) => (
               <th
                 key={`${key}-${label}`}
-                className={`${key === "pick" ? styles.cellCenter : ""} ${primary ? styles.primaryCol : ""}`}
-                onClick={key === "wr" || key === "ois" ? undefined : () => handleSort(key)}
-                style={key === "wr" || key === "ois" ? { cursor: "default" } : undefined}
+                className={primary ? styles.primaryCol : ""}
               >
-                {label}
-                {key !== "wr" && key !== "ois" && (
+                <button type="button" className={styles.sortButton} onClick={() => handleSort(key)}>
+                  {label}
                   <span className={styles.sortIndicator}>{sortIndicator(sortBy, sortAsc, key)}</span>
-                )}
+                </button>
               </th>
             ))}
           </tr>
@@ -40,7 +38,6 @@ function GenreTable({ state, enrichedLenses }: GenreTableProps) {
           {enrichedLenses.map((el) => (
             <tr key={`${el.lens.brand}-${el.lens.model}`}>
               <td><MarkPips mark={el.mark} /></td>
-              <td className={styles.cellCenter}><PickStar isPick={el.isPick} /></td>
               <td>{el.lens.brand}</td>
               <td><a className={styles.lensLink} href={`/lenses/${toSlug(`${el.lens.brand} ${el.lens.model}`)}`}>{el.lens.model}</a></td>
               <GenreRowCells el={el} genre={genre} />

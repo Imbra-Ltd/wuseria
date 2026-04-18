@@ -6,7 +6,7 @@ type ColumnDef = [SortKey, string, boolean?];
 function getColumnDefs(genre: ScoredGenre): ColumnDef[] {
   const common: ColumnDef[] = [
     ["mark", "Mark"],
-    ["pick", ""],
+
     ["brand", "Brand"],
     ["fl", "Model"],
     ["fl", "FL"],
@@ -103,7 +103,7 @@ function getColumnDefs(genre: ScoredGenre): ColumnDef[] {
 
   return genreColumns[genre] ?? [
     ["mark", "Mark"],
-    ["pick", ""],
+
     ["brand", "Brand"],
     ["fl", "Model"],
     ["idealIso", "Ideal ISO"],

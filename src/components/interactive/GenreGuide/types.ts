@@ -7,7 +7,7 @@ interface GenreGuideProps {
 }
 
 type SortKey =
-  | "mark" | "pick" | "brand" | "idealIso" | "weight" | "price"
+  | "mark" | "brand" | "idealIso" | "weight" | "price"
   | "fl" | "aperture" | "rule500" | "coma" | "astigmatism" | "wr"
   | "ois" | "cornerStopped" | "centerStopped" | "centerWideOpen"
   | "distortion" | "flareResistance" | "bokeh" | "longitudinalCA"
