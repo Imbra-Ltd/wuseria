@@ -2,8 +2,11 @@ import { useState, useMemo, useCallback } from "react";
 import type { Lens } from "../../../types/lens";
 import { useSort } from "../../../hooks/useSort";
 import { toSlug } from "../../../utils/slug";
+import { formatFL } from "../../../utils/formatting";
 import { ChipGroup } from "../shared/ChipGroup";
 import { RESET_VALUE, resetValue } from "../shared/constants";
+import type { ColumnAlign } from "../shared/table";
+import { makeAlignClasses } from "../shared/table";
 import styles from "./LensExplorer.module.css";
 
 interface ExplorerLens extends Lens {
@@ -27,8 +30,6 @@ type LensSortKey =
   | "weight"
   | "opticalQuality"
   | "price";
-
-type ColumnAlign = "left" | "right" | "center";
 
 const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
   { key: "brand", label: "Brand", align: "left" },
@@ -73,18 +74,7 @@ const PRICE_RANGES: Record<string, [number, number]> = {
   "2000+": [2000, Infinity],
 };
 
-const ALIGN_CLASSES: Record<ColumnAlign, string | undefined> = {
-  left: undefined,
-  right: styles.cellRight,
-  center: styles.cellCenter,
-};
-
-function formatFL(lens: Lens): string {
-  if (lens.focalLengthMin === lens.focalLengthMax) {
-    return `${lens.focalLengthMin}mm`;
-  }
-  return `${lens.focalLengthMin}-${lens.focalLengthMax}mm`;
-}
+const ALIGN_CLASSES = makeAlignClasses(styles);
 
 function LensExplorer({ lenses }: LensExplorerProps) {
   const [search, setSearch] = useState("");
@@ -328,7 +318,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
                       </a>
                     </td>
                     <td>{lens.year ?? ""}</td>
-                    <td className={styles.cellRight}>{formatFL(lens)}</td>
+                    <td className={styles.cellRight}>{formatFL(lens.focalLengthMin, lens.focalLengthMax)}</td>
                     <td className={styles.cellRight}>{lens.maxAperture}</td>
                     <td className={styles.cellRight}>{lens.filterThread ?? "\u2013"}</td>
                     <td className={styles.cellCenter}><span className={lens.hasOis ? styles.dotOn : styles.dotOff} /></td>

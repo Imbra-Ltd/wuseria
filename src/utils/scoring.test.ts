@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import type { Lens } from "../types/lens";
 import type { Genre, ScoredGenre } from "../types/genre";
 import { lenses } from "../data/lenses";
+import { makeLens } from "../test/factories";
 import {
   computeGenreMark,
   computeAllGenreMarks,
@@ -17,25 +18,6 @@ import {
   lensesForGenre,
   isScoredGenre,
 } from "./scoring";
-
-// =============================================================================
-// TEST FIXTURES
-// =============================================================================
-
-function makeLens(
-  overrides: Partial<Lens> & Pick<Lens, "brand" | "model">,
-): Lens {
-  return {
-    type: "prime",
-    mount: "X",
-    focalLengthMin: 35,
-    focalLengthMax: 35,
-    maxAperture: 1.4,
-    weight: 200,
-    price: 600,
-    ...overrides,
-  };
-}
 
 function findLens(model: string): Lens {
   const lens = lenses.find((l) => l.model === model);

@@ -16,6 +16,7 @@ import {
   NIGHTSCAPE_ISO_BY_EV,
   MACRO_MAGNIFICATION_OPTIONS,
 } from "../../../data/genres";
+import { formatFL } from "../../../utils/formatting";
 import { getGenreMark, isEditorialPick } from "../../../utils/scoring";
 import { toSlug } from "../../../utils/slug";
 import { astroExposure, handheldExposure } from "./exposure";
@@ -1004,9 +1005,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
                 <div className={styles.cardSpecs}>
                   <span>f/{el.lens.maxAperture}</span>
                   <span>
-                    {el.lens.focalLengthMin === el.lens.focalLengthMax
-                      ? `${el.lens.focalLengthMin}mm`
-                      : `${el.lens.focalLengthMin}-${el.lens.focalLengthMax}mm`}
+                    {formatFL(el.lens.focalLengthMin, el.lens.focalLengthMax)}
                   </span>
                   {isNightscape && el.rule500 != null && <span>{el.rule500}s</span>}
                   {(isNightscape || (!isLandscape && !isArchitecture && !isPortrait && !isStreet)) && el.idealIso != null && <span>ISO {fmtIso(el.idealIso)}</span>}

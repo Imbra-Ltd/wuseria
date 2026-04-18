@@ -4,6 +4,8 @@ import { useSort } from "../../../hooks/useSort";
 import { toSlug } from "../../../utils/slug";
 import { ChipGroup } from "../shared/ChipGroup";
 import { RESET_VALUE, resetValue } from "../shared/constants";
+import type { ColumnAlign } from "../shared/table";
+import { makeAlignClasses } from "../shared/table";
 import styles from "./CameraExplorer.module.css";
 
 interface CameraExplorerProps {
@@ -23,8 +25,6 @@ type CameraSortKey =
   | "weight"
   | "price";
 
-type ColumnAlign = "left" | "right" | "center";
-
 const COLUMNS: { key: CameraSortKey; label: string; align: ColumnAlign }[] = [
   { key: "model", label: "Model", align: "left" },
   { key: "year", label: "Year", align: "right" },
@@ -39,11 +39,7 @@ const COLUMNS: { key: CameraSortKey; label: string; align: ColumnAlign }[] = [
   { key: "price", label: "Price", align: "right" },
 ];
 
-const ALIGN_CLASSES: Record<ColumnAlign, string | undefined> = {
-  left: undefined,
-  right: styles.cellRight,
-  center: styles.cellCenter,
-};
+const ALIGN_CLASSES = makeAlignClasses(styles);
 
 const YEAR_RANGES: Record<string, [number, number]> = {
   "2022+": [2022, Infinity],

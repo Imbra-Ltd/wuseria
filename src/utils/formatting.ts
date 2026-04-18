@@ -14,4 +14,11 @@ function formatShutter(seconds: number): string {
   return `1/${denom}`;
 }
 
-export { formatShutter };
+function formatFL(focalLengthMin: number, focalLengthMax: number): string {
+  if (focalLengthMin === focalLengthMax) {
+    return `${focalLengthMin}mm`;
+  }
+  return `${focalLengthMin}-${focalLengthMax}mm`;
+}
+
+export { formatShutter, formatFL };

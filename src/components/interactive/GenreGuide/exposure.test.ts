@@ -1,21 +1,6 @@
 import { describe, it, expect } from "vitest";
-import type { Lens } from "../../../types/lens";
+import { makeLens } from "../../../test/factories";
 import { astroExposure, handheldExposure } from "./exposure";
-
-function makeLens(
-  overrides: Partial<Lens> & Pick<Lens, "brand" | "model">,
-): Lens {
-  return {
-    type: "prime",
-    mount: "X",
-    focalLengthMin: 35,
-    focalLengthMax: 35,
-    maxAperture: 1.4,
-    weight: 200,
-    price: 600,
-    ...overrides,
-  };
-}
 
 const xf16 = makeLens({
   brand: "Fujifilm",

@@ -4,6 +4,7 @@ import Base from "../../layouts/Base.astro";
 import { lenses } from "../../data/lenses";
 import { genreConfigs } from "../../data/genres";
 import { toSlug } from "../../utils/slug";
+import { formatFL } from "../../utils/formatting";
 import { opticalFieldCount, OPTICAL_FIELDS } from "../../utils/scoring";
 import type { ScoredGenre } from "../../types/genre";
 
@@ -19,12 +20,6 @@ const { lens } = Astro.props as Props;
 
 const slug = toSlug(`${lens.brand} ${lens.model}`);
 const canonicalUrl = new URL(`/lenses/${slug}`, Astro.site);
-
-function formatFL(): string {
-  return lens.focalLengthMin === lens.focalLengthMax
-    ? `${lens.focalLengthMin}mm`
-    : `${lens.focalLengthMin}-${lens.focalLengthMax}mm`;
-}
 
 function yesNo(val?: boolean): string {
   return val ? "Yes" : "No";
@@ -93,7 +88,7 @@ const jsonLd = {
         <h2>Specifications</h2>
         <table class="spec-table">
           <tbody>
-            <tr><td>Focal length</td><td>{formatFL()}</td></tr>
+            <tr><td>Focal length</td><td>{formatFL(lens.focalLengthMin, lens.focalLengthMax)}</td></tr>
             <tr><td>Max aperture</td><td>f/{lens.maxAperture}</td></tr>
             {lens.sweetSpotAperture && <tr><td>Sweet spot</td><td>f/{lens.sweetSpotAperture}</td></tr>}
             {lens.apertureBlades && <tr><td>Aperture blades</td><td>{lens.apertureBlades}{lens.hasCircularAperture ? " (circular)" : ""}</td></tr>}

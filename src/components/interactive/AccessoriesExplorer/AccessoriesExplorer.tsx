@@ -4,6 +4,8 @@ import { useSort } from "../../../hooks/useSort";
 import { toSlug } from "../../../utils/slug";
 import { ChipGroup } from "../shared/ChipGroup";
 import { RESET_VALUE, resetValue } from "../shared/constants";
+import type { ColumnAlign } from "../shared/table";
+import { makeAlignClasses } from "../shared/table";
 import styles from "./AccessoriesExplorer.module.css";
 
 interface AccessoriesExplorerProps {
@@ -17,8 +19,6 @@ type AccessorySortKey =
   | "description"
   | "price";
 
-type ColumnAlign = "left" | "right";
-
 const COLUMNS: { key: AccessorySortKey; label: string; align: ColumnAlign }[] = [
   { key: "category", label: "Category", align: "left" },
   { key: "brand", label: "Brand", align: "left" },
@@ -27,10 +27,7 @@ const COLUMNS: { key: AccessorySortKey; label: string; align: ColumnAlign }[] = 
   { key: "price", label: "Price", align: "right" },
 ];
 
-const ALIGN_CLASSES: Record<ColumnAlign, string | undefined> = {
-  left: undefined,
-  right: styles.cellRight,
-};
+const ALIGN_CLASSES = makeAlignClasses(styles);
 
 const CATEGORY_LABELS: Record<string, string> = {
   "flash": "Flash",
