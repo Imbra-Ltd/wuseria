@@ -26,9 +26,8 @@ already cloned without it, run `git submodule update --init`.
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). You should see a blank
-page (no UI yet — the project is in data migration phase). Confirm the dev
-server starts without errors.
+Open [http://localhost:4321](http://localhost:4321). You should be redirected
+to the Lens Explorer page. Confirm the dev server starts without errors.
 
 To verify linting:
 
