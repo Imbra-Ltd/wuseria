@@ -90,19 +90,39 @@ src/
     interactive/                  // React — hydrated as islands
       shared/
         ChipGroup.tsx             // Reusable chip filter group
+        MarkPips.tsx              // Mark pips, pick star, field value
         constants.ts              // Shared filter constants (RESET_VALUE)
+        table.ts                  // ColumnAlign type + makeAlignClasses()
       LensExplorer/
-        LensExplorer.tsx          // Sort/filter table (client:load)
+        LensExplorer.tsx          // Orchestrator (client:load)
         LensExplorer.test.tsx
         LensExplorer.module.css
+        constants.ts              // Types, column defs, filter ranges
+        LensFilters.tsx           // Filter dropdowns + chip groups
+        LensResults.tsx           // Desktop table + mobile cards
       CameraExplorer/
-        CameraExplorer.tsx        // Sort/filter table (client:load)
+        CameraExplorer.tsx        // Orchestrator (client:load)
         CameraExplorer.test.tsx
         CameraExplorer.module.css
+        constants.ts              // Types, column defs, filter ranges
+        CameraFilters.tsx         // Filter dropdowns + chip groups
+        CameraResults.tsx         // Desktop table + mobile cards
       GenreGuide/
-        GenreGuide.tsx            // Genre selector + scoring (client:load)
+        GenreGuide.tsx            // Orchestrator (client:load)
         GenreGuide.test.tsx
         GenreGuide.module.css
+        types.ts                  // GenreGuideProps, SortKey, EnrichedLens
+        helpers.ts                // sceneLabel, evHeaderLabel, fmtIso
+        useGenreState.ts          // All state, handlers, derived values
+        useEnrichedLenses.ts      // Filter + enrich + sort logic
+        genreColumns.ts           // Per-genre column definitions
+        GenreControls.tsx         // Mount/FL/ISO/ND/magnification chips
+        FilterSelect.tsx          // Reusable filter dropdown
+        GenreFilterPanel.tsx      // Genre-conditional filter panel
+        GenreTable.tsx            // Desktop table with sortable headers
+        GenreRowCells.tsx         // Per-genre table row cells
+        GenreCards.tsx            // Mobile card layout
+        GenreFooter.tsx           // Scoring methodology text
         exposure.ts               // EV scene evaluation logic
         exposure.test.ts
   data/
@@ -115,6 +135,7 @@ src/
     reviews.ts                    // Review source directory
   hooks/
     useSort.ts
+    useSort.test.ts
   types/
     lens.ts
     camera.ts
@@ -123,13 +144,16 @@ src/
     review.ts
   utils/
     slug.ts
+    slug.test.ts
     scoring.ts
     scoring.test.ts
     formatting.ts
+    formatting.test.ts
   styles/
     global.css                    // CSS custom properties, base styles, dark theme
   test/
     setup.ts                      // Vitest setup (e.g. RTL matchers)
+    factories.ts                  // makeLens, makeCamera test factories
 public/
   favicon.svg
   icons.svg
@@ -185,6 +209,8 @@ npm test          # run tests (Vitest)
 - Compose sub-interfaces when a domain has multiple categories with different fields
 - Keep single-purpose types flat — do not compose for composition's sake
 - Self-documenting names over comments — comment only intent that code cannot express
+- Brief JSDoc (`/** one-liner */`) on exported utility functions where the name alone doesn't convey the transform
+- No JSDoc on components (Props interface is self-documenting), types, or internal functions
 
 ### 2.4 Components
 
@@ -207,6 +233,9 @@ npm test          # run tests (Vitest)
 - Props typed with an explicit `interface` in the same file
 - Reusable logic goes in `hooks/use[Name].ts`
 - Keep components under ~150 lines — split if larger
+- When splitting, follow this extraction order: `types.ts` → `constants.ts` → `helpers.ts` → hooks → UI sub-components → orchestrator
+- Pass `styles` (CSS module) as a prop to sub-components — do not import a sibling's CSS module directly
+- Pure declaration files (e.g. 25+ useState calls) may exceed 150 lines if splitting would be artificial
 
 ### 2.5 Styling
 
@@ -240,6 +269,8 @@ npm test          # run tests (Vitest)
 - Vitest for unit tests on utils, hooks, and scoring formulas
 - React Testing Library for interactive component tests — test behaviour, not implementation
 - Prefer accessible queries (`getByRole`, `getByText`) over `getByTestId`
+- Use `getAllByText` for explorer content — table and cards both render (CSS handles visibility)
+- Test factories live in `src/test/factories.ts` — use `makeLens`/`makeCamera` instead of inline objects
 - Genre scoring functions MUST have unit tests
 - Data files MUST have validation tests (no duplicates, no missing required fields)
 - Run before every commit: `npm run check:all`
