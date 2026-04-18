@@ -395,3 +395,66 @@ Key decisions:
 - Hamburger menu over horizontal scroll — users can't discover hidden links
 - CSS Grid over flex-wrap for filters — deterministic 2-col on mobile
 - Wiki rationale: beginner-friendly, decision-oriented, not academic
+
+---
+
+### Session 14 — 2026-04-18 — Issue Organization + Code Review
+
+#### Issue reorganization
+- Split Phase 2 catch-all milestone (58 issues) into 5 focused milestones:
+  Phase 2 — SEO & Discovery, UI & UX, Wiki & Content, Equipment Database,
+  Developer Tooling, Performance
+- Phase 1 milestone fully cleared (0 open)
+- Fixed 10 issue titles and 12 labels per base/issues.md
+
+#### Code review + structure audit (PR #299, merged)
+- Full code review against quality/SOLID/TypeScript/frontend conventions
+- Full structure audit against base/docs, base/readme, base/git, etc.
+- Created 11 issues (#288–#298) for findings
+- Fixed 6 quick wins in PR #299
+
+---
+
+### Session 15 — 2026-04-18 — Code Review Fixes
+
+Theme: clear all technical debt from the code review before Phase 2.
+
+#### #295 — FL parameter in tripod matrices (PR #301)
+- Investigated: shutter speed on a tripod is genuinely FL-independent
+- Not a bug — added explanatory note to landscape/architecture matrices
+- Created #300 for hyperfocal matrix tab (Phase 2 feature)
+
+#### #290 — Extract duplicated types and helpers (PR #302)
+- ColumnAlign type + makeAlignClasses() → shared/table.ts (3 consumers)
+- formatFL() → utils/formatting.ts (3 consumers)
+- makeLens() test factory → test/factories.ts (3 consumers)
+- Net: +58 −93 lines
+
+#### #288 — Split GenreGuide.tsx (PR #303)
+- 1,041 lines → 13 focused modules
+- Largest file: useGenreState.ts at 160 (pure state declarations)
+- Orchestrator: GenreGuide.tsx at 109 lines
+- Key extractions: useGenreState hook, useEnrichedLenses hook,
+  FilterSelect reusable component, genreColumns data-driven column defs
+- All 13 existing tests passed unchanged
+
+#### #289 — Split LensExplorer and CameraExplorer (PR #304)
+- LensExplorer: 375 → 4 files (max 121 lines)
+- CameraExplorer: 326 → 4 files (max 115 lines)
+- Same pattern: constants, filters, results, orchestrator
+
+#### #291 — Add missing tests (PR #305)
+- formatting.test.ts — formatShutter + formatFL
+- slug.test.ts — toSlug edge cases
+- useSort.test.ts — direction, key switch, stable prefix, nulls
+- LensExplorer.test.tsx — render, search, type filter, clear, empty state
+- CameraExplorer.test.tsx — render, search, clear, empty state
+- Added makeCamera factory to test/factories.ts
+- Test suite: 10 files, 132 tests, all passing
+
+Key decisions:
+- Tripod shutter speed is FL-independent — correct physics, not a bug
+- Hyperfocal matrix is a new feature (#300), not a fix for #295
+- CSS modules passed as props to sub-components (ChipGroup pattern)
+- useGenreState at 160 lines accepted — pure state declarations
+- FilterSelect extracted to eliminate repetitive dropdown boilerplate
