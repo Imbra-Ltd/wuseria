@@ -184,19 +184,20 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
                     <th
                       key={col.key}
                       className={ALIGN_CLASSES[col.align]}
-                      onClick={() => toggleSort(col.key)}
                       aria-sort={
                         sortKey === col.key
                           ? sortDirection === "asc" ? "ascending" : "descending"
                           : "none"
                       }
                     >
-                      {col.label}
-                      <span className={styles.sortIndicator}>
-                        {sortKey === col.key
-                          ? (sortDirection === "asc" ? "\u2191" : "\u2193")
-                          : "\u2195"}
-                      </span>
+                      <button type="button" className={styles.sortButton} onClick={() => toggleSort(col.key)}>
+                        {col.label}
+                        <span className={styles.sortIndicator}>
+                          {sortKey === col.key
+                            ? (sortDirection === "asc" ? "\u2191" : "\u2193")
+                            : "\u2195"}
+                        </span>
+                      </button>
                     </th>
                   ))}
                 </tr>
