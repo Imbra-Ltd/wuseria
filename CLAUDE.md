@@ -300,6 +300,7 @@ npm test          # run tests (Vitest)
 - WCAG 2.1 AA target
 - All interactive elements keyboard-accessible
 - Semantic HTML — `<button>` not `<div onClick>`
+- Any non-focusable element (`<th>`, `<div>`, `<span>`) with `onClick` must use a `<button>` inside it — `onClick` alone does not make an element keyboard-reachable
 - Every form input has an associated `<label>`
 - Minimum text contrast ratio: 4.5:1
 - `aria-label` on icon-only buttons and links
