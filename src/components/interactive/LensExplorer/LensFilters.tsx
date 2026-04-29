@@ -78,6 +78,7 @@ function LensFilters(props: LensFiltersProps) {
           <option value="6-7.9">6 – 7.9 (Good)</option>
           <option value="4-5.9">4 – 5.9 (Average)</option>
           <option value="0-3.9">0 – 3.9 (Below avg)</option>
+          <option value="not-scored">Not scored</option>
         </select>
 
         <select autoComplete="off" className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`} value={priceRange} onChange={(e) => setPriceRange(resetValue(e.target.value))} aria-label="Filter by price">

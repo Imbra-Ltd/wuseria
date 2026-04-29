@@ -53,7 +53,9 @@ function LensExplorer({ lenses }: LensExplorerProps) {
       if (maxAp && lens.maxAperture > parseFloat(maxAp)) return false;
       if (filterThread === "none" && lens.filterThread != null) return false;
       if (filterThread && filterThread !== "none" && lens.filterThread !== Number(filterThread)) return false;
-      if (oqRange) {
+      if (oqRange === "not-scored") {
+        if (lens.opticalQuality != null) return false;
+      } else if (oqRange) {
         const [min, max] = OQ_RANGES[oqRange];
         if (lens.opticalQuality == null || lens.opticalQuality < min || lens.opticalQuality > max) return false;
       }
