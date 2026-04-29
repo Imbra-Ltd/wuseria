@@ -156,6 +156,7 @@ npm test          # run tests (Vitest)
 ### 2.6 Data rules
 
 - All editable content in `src/data/*.ts` — never hardcode data in components
+- Never hardcode derived counts or statistics — compute them from the data source at build time
 - TypeScript files, not JSON — gives type checking at build time and IDE autocomplete on the data itself; a missing field is a compile error, not a runtime surprise
 - Astro imports `.ts` data at build time; data never ships as JS to the browser
 - Prices in USD by default (configurable in `src/data/config.ts`), rounded up to nearest $250
