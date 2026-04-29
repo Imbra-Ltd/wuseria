@@ -112,7 +112,6 @@ function LensExplorer({ lenses }: LensExplorerProps) {
 
       <p className={styles.footnote}>
         All prices are approximate USD estimates.
-        See <a href="/trade-deals">Trade Deals</a> for current market rates.
       </p>
     </div>
   );
