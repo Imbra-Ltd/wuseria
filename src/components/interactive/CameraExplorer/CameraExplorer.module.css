@@ -252,9 +252,17 @@
   font-variant-numeric: tabular-nums;
 }
 
+.table th.cellRight .sortButton {
+  justify-content: flex-end;
+}
+
 .table th.cellCenter,
 .table td.cellCenter {
   text-align: center;
+}
+
+.table th.cellCenter .sortButton {
+  justify-content: center;
 }
 
 /* Dot indicators (OIS, WR) */
