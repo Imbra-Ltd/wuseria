@@ -12,11 +12,11 @@ genre. It scores every Fuji X and GFX lens against genres like nightscape,
 landscape, portrait, street, architecture, sport, wildlife, travel, and macro
 -- backed by optical quality data from trusted review sources.
 
-- **Lens Explorer** -- browse, filter, and sort 240+ lenses by specs
-- **Camera Explorer** -- compare 38 Fujifilm bodies with sortable specs
-- **Accessories** -- 46 Fujifilm accessories with compatibility info
+- **Lens Explorer** -- browse, filter, and sort all Fujifilm-compatible lenses by specs
+- **Camera Explorer** -- compare Fujifilm bodies with sortable specs
+- **Accessories** -- Fujifilm accessories with compatibility info
 - **Genre Guide** -- per-genre screeners with EV matrices, FL chips, and scored lens rankings
-- **Wiki** -- 115 photography terms and concepts with category filtering
+- **Wiki** -- photography terms and concepts with category filtering
 - **Detail pages** -- per-lens, per-camera, and per-accessory pages for SEO
 
 ## Quick start
@@ -51,7 +51,7 @@ src/
     interactive/    # React islands (LensExplorer, CameraExplorer, GenreGuide, etc.)
     static/         # Astro components (zero JS)
   content/
-    wiki/           # 115 Markdown wiki entries (Content Collections)
+    wiki/           # Markdown wiki entries (Content Collections)
   data/             # Lenses, cameras, accessories, genres, affiliates, reviews
   types/            # TypeScript interfaces
   hooks/            # Reusable React hooks
