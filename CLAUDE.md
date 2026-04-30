@@ -26,8 +26,9 @@ Project-specific overrides and additions follow below.
 ### Start of session
 1. Check which branch we're on — if not `main`, ask why
 2. Check `git status` — if uncommitted changes exist, resolve before starting
-3. Ask: "What's the theme for this session?" — agree on ONE theme
-4. Review open issues for that theme before writing code
+3. Sync Roadmap: find open `epic` issues across all repos not yet on the [Roadmap board](https://github.com/users/braboj/projects/19) and add them
+4. Ask: "What's the theme for this session?" — agree on ONE theme
+5. Review open issues for that theme before writing code
 
 ### During the session
 - **One theme per session.** If an unrelated topic comes up, create a GitHub issue for it and say: "Noted as #X — let's come back to it next session."
