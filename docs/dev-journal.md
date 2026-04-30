@@ -5,7 +5,7 @@
 ```
 Phase 1 — Launch & Scoring (COMPLETE):
   Static site (Astro + React islands), deployed to GitHub Pages
-  -> 448 pages: 240+ lenses, 38 cameras, 46 accessories, 105 wiki, 9 genre screeners
+  -> 457 pages: 241 lenses, 39 cameras, 46 accessories, 115 wiki, 9 genre screeners
   -> Genre scoring with OQ (Optical Quality) weighted formula
   -> Affiliate links as plain <a> tags with tracking params
   -> Domain: wuseria.com
@@ -458,3 +458,59 @@ Key decisions:
 - CSS modules passed as props to sub-components (ChipGroup pattern)
 - useGenreState at 160 lines accepted — pure state declarations
 - FilterSelect extracted to eliminate repetitive dropdown boilerplate
+
+---
+
+### Session 16 — 2026-04-29/30 — 360 Analysis, Pre-Launch Fixes, Landing Page
+
+Tool: Claude Code (Opus 4.6)
+
+**Full project review + pre-launch sprint**
+
+360-degree analysis:
+- Updated solid-ai-templates submodule (30 new commits, PR #312)
+- Ran code review, structure audit, and 4-perspective 360 analysis in parallel
+- Scores: Value B+, Quality B+, Viability B+, Discovery D+, Overall D+
+- Created 21 issues (#313–#333) from findings
+- Closed 1 false positive (#313 — Brand sort key was correct)
+- Identified code review agent error: misread genreColumns.ts line 10
+
+Pre-launch fixes (P1s resolved):
+- #317 — Removed Trade Deals stub page and links from 3 explorers (PR #339)
+- #315 — Added OG image (dark/light variants) + summary_large_image Twitter card (PR #341)
+- #314 — Landing page: hero punchline, stats strip (build-time computed), scoring explanation, origin story (PR #343)
+- #316 — Analytics: added Plausible then switched to Umami Cloud free tier (PRs #344, #345)
+- #277 — Google Search Console verification meta tag (PR #346)
+- #113 — Branch protection on main: required status checks, enforce admins, no force push
+- #311 — Column header alignment: sort buttons now use justify-content matching column text-align (PR #347)
+- #280 — Lighthouse audit: Home 98/95/100/100, Lenses 73/91/100/100 → created #349 (contrast), #350 (LCP)
+- #279 — JSON-LD validation: structurally valid, image field blocked on #337
+
+Infrastructure:
+- Added CI workflow for PRs (.github/workflows/ci.yml) — required by branch protection
+- Cleaned 18 stale branches (11 merged local, 11 merged remote, 7 squash-merged local)
+- Triaged 76 issues with priority labels (P1–P4)
+- Closed 4 duplicates (#73, #250, #278, #310)
+
+Feature:
+- #348 — Added "Not scored" option to OQ filter in Lens Explorer (PR #348)
+
+CLAUDE.md updates:
+- Added rule: never hardcode derived counts — compute from data at build time
+
+Upstream (solid-ai-templates):
+- #78 — Structure audit should decompose compound sections into individual sub-clauses
+- #79 — Add rule against hardcoded derived counts and statistics
+
+User feedback captured:
+- #336 — Light theme option (from photographers)
+- #337 — Product images for equipment (from photographers)
+- #342 — Review scoring methodology wiki (outdated content)
+
+Key decisions:
+- Umami over Plausible — free tier allows 3 sites
+- Landing page: stats strip over feature cards (avoids nav duplication)
+- Hero punchline: weight + accent alternation inspired by imbra.io
+- "Document everything, share everything" kept as origin story, not primary tagline
+- OG image: dark variant as default, light kept for future theme toggle
+- Wuseria name origin (misspelled Wisteria/Fuji) stays as easter egg
