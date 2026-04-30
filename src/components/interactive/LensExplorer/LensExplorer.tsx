@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback } from "react";
 import { useSort } from "../../../hooks/useSort";
 import { toSlug } from "../../../utils/slug";
 import type { ExplorerLens, LensExplorerProps, LensSortKey } from "./constants";
-import { FL_RANGES, OQ_RANGES, PRICE_RANGES } from "./constants";
+import { FL_RANGES, OQ_RANGES, PRICE_RANGES, INITIAL_PAGE_SIZE } from "./constants";
 import { LensFilters } from "./LensFilters";
 import { LensResults } from "./LensResults";
 import styles from "./LensExplorer.module.css";
@@ -80,6 +80,8 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     }
   }
 
+  const [showAll, setShowAll] = useState(false);
+
   const hasFilters = !!(search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || filterThread || oqRange || priceRange);
 
   function clearFilters(): void {
@@ -109,7 +111,17 @@ function LensExplorer({ lenses }: LensExplorerProps) {
       {sorted.length === 0 ? (
         <p className={styles.emptyState}>No lenses match the current filters.</p>
       ) : (
-        <LensResults sorted={sorted} slugMap={slugMap} sortKey={sortKey} sortDirection={sortDirection} toggleSort={toggleSort} />
+        <>
+          <LensResults
+            sorted={showAll || hasFilters ? sorted : sorted.slice(0, INITIAL_PAGE_SIZE)}
+            slugMap={slugMap} sortKey={sortKey} sortDirection={sortDirection} toggleSort={toggleSort}
+          />
+          {!showAll && !hasFilters && sorted.length > INITIAL_PAGE_SIZE && (
+            <button type="button" className={styles.showAllButton} onClick={() => setShowAll(true)}>
+              Show all {sorted.length} lenses
+            </button>
+          )}
+        </>
       )}
 
       <p className={styles.footnote}>

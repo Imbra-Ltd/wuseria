@@ -29,6 +29,8 @@ const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
   { key: "price", label: "Price", align: "right" },
 ];
 
+const INITIAL_PAGE_SIZE = 50;
+
 const APERTURE_OPTIONS = ["0.95", "1.0", "1.2", "1.4", "1.8", "2.0", "2.8", "3.5", "4.0", "4.5", "5.6", "6.3", "8.0"];
 const FILTER_THREAD_OPTIONS = ["39", "43", "46", "49", "52", "55", "58", "62", "67", "72", "77", "82", "95", "none"];
 
@@ -47,4 +49,4 @@ const PRICE_RANGES: Record<string, [number, number]> = {
 };
 
 export type { ExplorerLens, LensExplorerProps, LensSortKey };
-export { COLUMNS, APERTURE_OPTIONS, FILTER_THREAD_OPTIONS, FL_RANGES, OQ_RANGES, PRICE_RANGES };
+export { COLUMNS, INITIAL_PAGE_SIZE, APERTURE_OPTIONS, FILTER_THREAD_OPTIONS, FL_RANGES, OQ_RANGES, PRICE_RANGES };
