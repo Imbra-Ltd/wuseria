@@ -183,7 +183,7 @@ const jsonLd = {
           <a href={lens.officialUrl} target="_blank" rel="noopener noreferrer" class="link-button">Official product page</a>
         )}
         {lens.reviewSources && Object.entries(lens.reviewSources).map(([source, url]) => (
-          <a href={url} target="_blank" rel="nofollow" class="link-button">{source}</a>
+          <a href={url} target="_blank" rel="nofollow sponsored" class="link-button">{source}</a>
         ))}
       </div>
     </section>
