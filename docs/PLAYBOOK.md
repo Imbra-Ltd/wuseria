@@ -169,6 +169,26 @@ infer from related fields or optical construction alone.
 Check that the scored lens appears in the Genre Guide for relevant
 genres (once genre formulas are implemented).
 
+### 2.7 Lighthouse CI
+
+Lighthouse runs automatically on every PR against 4 key pages
+(`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
+`lighthouserc.json`.
+
+| Category | Threshold | Level |
+|----------|-----------|-------|
+| Performance | >= 80 | error |
+| Accessibility | >= 90 | warn |
+| SEO | >= 90 | warn |
+| Best Practices | >= 90 | warn |
+
+Results are uploaded as GitHub Actions artifacts. To run locally:
+
+```bash
+npm run build
+npx @lhci/cli autorun --config lighthouserc.json
+```
+
 ## 3. Maintenance
 
 ### 3.1 Update quality conventions
@@ -210,7 +230,9 @@ only. Do not commit the copied files.
 
 ```bash
 git checkout -b chore/release-vA.B.C
-git commit --allow-empty -m "chore: release vA.B.C"
+# Bump version in package.json to A.B.C
+git add package.json
+git commit -m "chore: release vA.B.C"
 git push -u origin chore/release-vA.B.C
 gh pr create --title "chore: release vA.B.C" --body "Release vA.B.C"
 gh pr merge --merge
