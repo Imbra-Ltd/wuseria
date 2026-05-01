@@ -25,6 +25,7 @@ function GenreTable({ state, enrichedLenses }: GenreTableProps) {
               <th
                 key={`${key}-${label}`}
                 className={primary ? styles.primaryCol : ""}
+                aria-sort={sortBy === key ? (sortAsc ? "ascending" : "descending") : "none"}
               >
                 <button type="button" className={styles.sortButton} onClick={() => handleSort(key)}>
                   {label}
