@@ -23,9 +23,30 @@ jobs:
       - run: npm ci
       - run: npm run check:all
 
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            code:
+              - 'src/**'
+              - 'public/**'
+              - 'astro.config.mjs'
+              - 'tsconfig.json'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'lighthouserc.json'
+              - '.github/workflows/**'
+
   lighthouse:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [build, changes]
+    if: needs.changes.outputs.code == 'true'
     steps:
       - uses: actions/checkout@v4
         with:
