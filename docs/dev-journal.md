@@ -773,16 +773,18 @@ Key decisions:
 - Keep genre chip sizing compact (content-width) vs explorer chips (equal-width grid) — different interaction contexts
 - URL param names kept short: q, mount, type, brand, ois, wr, af, status, fl, aperture, thread, oq, price
 
-## Session 23 — 2026-05-01 — UI & UX Milestone Closure
+---
 
-Tool: Claude Code (Opus 4.6)
-Theme: UI & UX — final polish and milestone closure
-Branch: feat/ui-ux-polish
-PR: #419 (merged)
+### Session 23 — UI & UX Milestone Closure
+
+PRs merged:
+- #419 — Mobile sort, OQ color coding, feedback link, remove price footnote
+
 Issues closed: #320 (already done), #412, #413, #265, #418, #246 (wontdo), #46 (epic)
+Issues created: #418 (price footnote removal)
 Milestone closed: Phase 2 — UI & UX (27/27)
 
-Triage: moved 8 issues to other milestones (#394, #270, #410 → Wiki & Content; #269 → Revenue; #251, #266, #272, #300 → Phase 4), moved #336 (light theme) to Phase 4, closed #246 (Material Design spike) as wontdo.
+Triage: moved #394, #270, #410 to Wiki & Content; #269 to Revenue; #251, #266, #272, #300, #336 to Phase 4; closed #246 as wontdo.
 
 Key changes:
 - Mobile sort controls: new shared MobileSort component (generic, reusable), integrated in all 3 explorers inside the filter box
@@ -791,9 +793,10 @@ Key changes:
 - OQ filter ranges updated to 0-2 scale
 - Feedback mailto link added to footer (contact@imbra.io)
 - Price footnote removed from all explorers (~ prefix is sufficient)
+- CLAUDE.md updated: removed price footnote rule
 
 Key decisions:
-- OQ uses 0-2 raw scale for consistency with individual optical field scores; future rescaling (0-5 or 0-10) is a single multiplier change
+- ADR-019: Display OQ on native 0-2 scale for consistency with optical field scores
 - Feedback in footer, not nav — nav reserved for content pages
 - Mobile sort inside filter box, not floating — visually grouped with other controls
 - Light theme deferred to Phase 4 — dark-only is a brand choice, dual-theme adds maintenance overhead
