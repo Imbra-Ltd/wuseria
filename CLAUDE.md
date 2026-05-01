@@ -164,10 +164,9 @@ npm test          # run tests (Vitest)
 - All prices are approximate estimates — no `priceEstimated` flag needed
 - UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`)
 - Footnote on all price displays: "All prices are approximate USD estimates"
-- Affiliate URLs in `src/data/affiliates.ts` — never inline in components
 - Review source directory in `src/data/reviews.ts` — methodology and trust per source
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
-- Affiliate links use `rel="nofollow sponsored"` and `target="_blank"`
+- Review source links use `rel="nofollow sponsored"` and `target="_blank"`
 
 
 ## 3. Quality
