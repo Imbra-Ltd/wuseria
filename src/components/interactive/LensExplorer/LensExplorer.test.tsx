@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LensExplorer from "./LensExplorer";
@@ -11,6 +11,10 @@ const lenses = [
 ];
 
 describe("LensExplorer", () => {
+  beforeEach(() => {
+    window.history.replaceState(null, "", window.location.pathname);
+  });
+
   it("renders all lenses", () => {
     render(<LensExplorer lenses={lenses} />);
     expect(screen.getAllByText("XF 23mm f/1.4 R").length).toBeGreaterThan(0);
