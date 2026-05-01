@@ -646,12 +646,24 @@ Performance (#229, PR #373):
 - Created ExplorerCamera and GenreLens lean interfaces
 - Created pickGenreFields utility
 
+Infrastructure:
+- #382 — Lighthouse CI added to PR workflow (PR #383)
+  - Runs on 4 key pages: /, /lenses/, /cameras/, /genre/
+  - Thresholds: Performance >= 80 (error), A11y/SEO/BP >= 90 (warn)
+  - Results uploaded as GitHub Actions artifacts
+- Created 5 retroactive issues (#375-#379) for completed work, linked in epic
+- Created 3 issues (#380-#382) for remaining performance tasks
+
 Upstream issues created:
 - solid-ai-templates #108 — Keep dev journal phases in sync with milestones
 - solid-ai-templates #109 — Add package version bump to release process
 
 Issues created:
 - #370 — Skip CI on docs-only changes
+- #375-#379 — Retroactive issues for completed performance work
+- #380 — Externalize data to JSON (spike)
+- #381 — View Transitions evaluation (spike)
+- #382 — Lighthouse CI (done)
 
 Key decisions:
 - Don't sacrifice perceived performance for Lighthouse scores — hero extraction caused visible flash
