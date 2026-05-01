@@ -1,8 +1,37 @@
-import type { Lens } from "../../../types/lens";
 import type { ScoredGenre } from "../../../types/genre";
+import type { Brand, Mount } from "../../../types/common";
+
+interface GenreLens {
+  brand: Brand;
+  model: string;
+  mount: Mount;
+  type: "prime" | "zoom";
+  focalLengthMin: number;
+  focalLengthMax: number;
+  maxAperture: number;
+  sweetSpotAperture?: number;
+  maxMagnification?: number;
+  hasOis?: boolean;
+  isWeatherSealed?: boolean;
+  isDiscontinued?: boolean;
+  weight: number;
+  price: number;
+  genreMarks?: Partial<Record<ScoredGenre, number>>;
+  editorialPicks?: ScoredGenre[];
+  centerStopped?: number;
+  cornerStopped?: number;
+  centerWideOpen?: number;
+  astigmatism?: number;
+  coma?: number;
+  longitudinalCA?: number;
+  lateralCA?: number;
+  distortion?: number;
+  bokeh?: number;
+  flareResistance?: number;
+}
 
 interface GenreGuideProps {
-  lenses: Lens[];
+  lenses: GenreLens[];
   defaultGenre?: ScoredGenre;
 }
 
@@ -14,7 +43,7 @@ type SortKey =
   | "lateralCA" | "magnification";
 
 interface EnrichedLens {
-  lens: Lens;
+  lens: GenreLens;
   mark: number;
   isPick: boolean;
   idealIso: number | null;
@@ -27,5 +56,5 @@ const SCORED_GENRES: ScoredGenre[] = [
   "travel", "portrait", "sport", "wildlife", "macro",
 ];
 
-export type { GenreGuideProps, SortKey, EnrichedLens };
+export type { GenreLens, GenreGuideProps, SortKey, EnrichedLens };
 export { SCORED_GENRES };

@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import type { Lens } from "../../../types/lens";
+import type { GenreLens } from "./types";
 import { getGenreMark, isEditorialPick } from "../../../utils/scoring";
 import { astroExposure, handheldExposure } from "./exposure";
 import type { EnrichedLens } from "./types";
 import type { GenreState } from "./useGenreState";
 
-function useEnrichedLenses(lenses: Lens[], state: GenreState): EnrichedLens[] {
+function useEnrichedLenses(lenses: GenreLens[], state: GenreState): EnrichedLens[] {
   const {
     genre, cropFactor, ev, iso, selectedFl, magnification,
     sortBy, sortAsc, isNightscape, FL_RANGES,
@@ -37,7 +37,7 @@ function useEnrichedLenses(lenses: Lens[], state: GenreState): EnrichedLens[] {
           effectiveFl = Math.max(l.focalLengthMin, range[0]);
         }
         const idealIso = isNightscape
-          ? astroExposure({ ...l, focalLengthMin: effectiveFl } as Lens, ev, iso, cropFactor).idealIso
+          ? astroExposure({ ...l, focalLengthMin: effectiveFl } as GenreLens, ev, iso, cropFactor).idealIso
           : handheldExposure(l, genre, ev, cropFactor, genre === "macro" ? magnification : undefined).idealIso;
         const rule500 = isNightscape
           ? Math.round(500 / (cropFactor * effectiveFl))

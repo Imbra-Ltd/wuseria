@@ -2,10 +2,10 @@ import { describe, it, expect } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import GenreGuide from "./GenreGuide";
-import type { Lens } from "../../../types/lens";
+import type { GenreLens } from "./types";
 import { makeLens } from "../../../test/factories";
 
-const testLenses: Lens[] = [
+const testLenses: GenreLens[] = [
   makeLens({
     brand: "Fujifilm",
     model: "XF 23mm f/1.4",

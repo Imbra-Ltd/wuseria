@@ -1,4 +1,4 @@
-import type { Lens } from "../../../types/lens";
+import type { GenreLens } from "./types";
 import type { ScoredGenre } from "../../../types/genre";
 
 // =============================================================================
@@ -23,7 +23,7 @@ interface HandheldExposure {
 // =============================================================================
 
 function astroExposure(
-  lens: Lens,
+  lens: GenreLens,
   ev: number,
   iso: number,
   crop: number,
@@ -48,7 +48,7 @@ function astroExposure(
 // =============================================================================
 
 function handheldExposure(
-  lens: Lens,
+  lens: GenreLens,
   genre: ScoredGenre,
   ev: number,
   crop: number,
