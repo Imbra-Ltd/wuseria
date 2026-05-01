@@ -16,6 +16,7 @@
 .chipGroup { composes: chipGroup from '../shared/shared.module.css'; }
 .chipLabel { composes: chipLabel from '../shared/shared.module.css'; }
 .chip { composes: chip from '../shared/shared.module.css'; }
+.chipButtons { composes: chipButtons from '../shared/shared.module.css'; }
 .chipOn { composes: chipOn from '../shared/shared.module.css'; }
 .emptyState { composes: emptyState from '../shared/shared.module.css'; }
 .tableWrap { composes: tableWrap from '../shared/shared.module.css'; }
