@@ -20,31 +20,6 @@ Key references:
 Project-specific overrides and additions follow below.
 
 
-## 0. Session Protocol
-
-**The agent MUST enforce this protocol. If the user deviates, remind them.**
-
-### Start of session
-1. Check which branch we're on — if not `main`, ask why
-2. Check `git status` — if uncommitted changes exist, resolve before starting
-3. Sync Roadmap: find open `epic` issues across all repos not yet on the [Roadmap board](https://github.com/users/braboj/projects/19) and add them
-4. Ask: "What's the theme for this session?" — agree on ONE theme
-5. Review open issues for that theme before writing code
-
-### During the session
-- **One theme per session.** If an unrelated topic comes up, create a GitHub issue for it and say: "Noted as #X — let's come back to it next session."
-- **Always branch before coding.** No commits directly to `main` for feature work. Data fixes (single field updates) are acceptable on `main`.
-- **Build after every change.** Don't accumulate multiple changes without verifying.
-- **Commit before switching topics.** If the user wants to change direction mid-session, push current work first.
-
-### End of session
-Follow the full end-of-session audit in `docs/solid-ai-templates/base/scope.md`.
-Additionally:
-1. Update epic checklists if relevant
-2. Sync Roadmap board with any newly created epic issues
-3. Summarize what was done and what's next
-
-
 ## 1. Project
 
 ### 1.1 Stack
@@ -258,3 +233,28 @@ Verify every MUST from `base/docs.md` (standard documents, ADRs),
 `stack/static-site-astro.md` (.prettierrc, eslint config, Astro conventions).
 Run after: new project setup, framework migration, adding a major layer
 (backend, CI/CD), or before a release.
+
+
+## 6. Session Protocol
+
+Follow `docs/solid-ai-templates/base/scope.md` for scope guard and end-of-session audit.
+**The agent MUST enforce this protocol. If the user deviates, remind them.**
+
+### 6.1 Start of session
+1. Check which branch we're on — if not `main`, ask why
+2. Check `git status` — if uncommitted changes exist, resolve before starting
+3. Sync Roadmap: find open `epic` issues across all repos not yet on the [Roadmap board](https://github.com/users/braboj/projects/19) and add them
+4. Ask: "What's the theme for this session?" — agree on ONE theme
+5. Review open issues for that theme before writing code
+
+### 6.2 During the session
+- **One theme per session.** If an unrelated topic comes up, create a GitHub issue for it and say: "Noted as #X — let's come back to it next session."
+- **Always branch before coding.** No commits directly to `main` for feature work. Data fixes (single field updates) are acceptable on `main`.
+- **Build after every change.** Don't accumulate multiple changes without verifying.
+
+### 6.3 End of session
+Follow the full end-of-session audit in `docs/solid-ai-templates/base/scope.md`.
+Additionally:
+1. Update epic checklists if relevant
+2. Sync Roadmap board with any newly created epic issues
+3. Summarize what was done and what's next
