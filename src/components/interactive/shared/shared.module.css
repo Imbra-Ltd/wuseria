@@ -70,9 +70,9 @@
   color: var(--color-text-muted);
 }
 
-.searchInput:focus {
+.searchInput:focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
+  outline-offset: 2px;
 }
 
 .filterSelect {
@@ -88,9 +88,9 @@
   width: 100%;
 }
 
-.filterSelect:focus {
+.filterSelect:focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
+  outline-offset: 2px;
 }
 
 .filterActive {
@@ -114,6 +114,11 @@
 .clearButton:hover {
   background-color: var(--color-accent);
   color: var(--color-bg);
+}
+
+.clearButton:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 /* ==========================================================================
@@ -177,6 +182,11 @@
 
 .chip:hover {
   color: var(--color-text);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .chipOn {
@@ -248,7 +258,7 @@
 
 .sortButton:focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
+  outline-offset: 2px;
 }
 
 .table th.cellRight,
