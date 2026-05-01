@@ -13,6 +13,7 @@ Key references:
 - `docs/solid-ai-templates/base/typescript.md` — type design, naming, strictness
 - `docs/solid-ai-templates/base/review.md` — peer review checklist
 - `docs/solid-ai-templates/base/git.md` — git workflow
+- `docs/solid-ai-templates/base/scope.md` — session scope guard, end-of-session audit
 - `docs/solid-ai-templates/frontend/quality.md` — frontend design patterns
 - `docs/solid-ai-templates/frontend/ux.md` — UX and accessibility
 
@@ -37,12 +38,11 @@ Project-specific overrides and additions follow below.
 - **Commit before switching topics.** If the user wants to change direction mid-session, push current work first.
 
 ### End of session
-1. Ensure all changes are committed and pushed
-2. Close any issues completed during the session
-3. Update epic checklists if relevant
-4. Add a session entry to `docs/dev-journal.md`
-5. Evaluate upstream — flag anything that should go to `solid-ai-templates` or `CLAUDE.md`
-6. Summarize what was done and what's next
+Follow the full end-of-session audit in `docs/solid-ai-templates/base/scope.md`.
+Additionally:
+1. Update epic checklists if relevant
+2. Sync Roadmap board with any newly created epic issues
+3. Summarize what was done and what's next
 
 
 ## 1. Project
