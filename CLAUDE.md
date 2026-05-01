@@ -263,7 +263,8 @@ Follow `docs/solid-ai-templates/base/scope.md` for scope guard and end-of-sessio
 - **Build after every change.** Don't accumulate multiple changes without verifying.
 
 ### 6.3 End of session
-When the user says "wrap up", print the full checklist below and execute
+When the user signals end of session ("wrap up", "let's finish",
+"end session", "close out", or similar), print the full checklist below and execute
 each item sequentially. Mark each item done (with result) before moving
 to the next. Do not batch, skip, or summarize — visible sequential
 execution prevents missed steps.
