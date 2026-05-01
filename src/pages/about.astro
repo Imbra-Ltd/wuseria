@@ -1,0 +1,115 @@
+---
+import Base from "../layouts/Base.astro";
+---
+
+<Base
+  title="About — Wuseria"
+  description="Wuseria is a free Fujifilm lens and camera explorer with genre-based scoring. Built by Branimir Georgiev at Imbra."
+>
+  <article class="about-page">
+    <h1>About Wuseria</h1>
+
+    <section>
+      <h2>What it is</h2>
+      <p>
+        Wuseria is a free, independent Fujifilm lens and camera explorer.
+        Every lens is scored against photography genres — nightscape, portrait,
+        landscape, street, and more — using optical quality data from trusted
+        lab reviews, not marketing specs or manufacturer claims.
+      </p>
+    </section>
+
+    <section>
+      <h2>Why it exists</h2>
+      <p>
+        After spending countless hours compiling specs, reading reviews, and
+        building spreadsheets to find the best lenses on a budget, one gap kept
+        coming back: plenty of data, zero genre recommendations. Wuseria closes
+        that gap — document everything, share everything.
+      </p>
+    </section>
+
+    <section>
+      <h2>How scoring works</h2>
+      <p>
+        Each genre weights optical fields differently. Nightscape penalizes coma
+        and astigmatism. Portrait rewards bokeh and longitudinal CA control.
+        Architecture demands low distortion. Scores come from lab measurements
+        published by independent review sites — not from affiliate deals or
+        brand partnerships.
+      </p>
+      <p>
+        Scoring is opinionated and subjective by design. The methodology is
+        documented and open to scrutiny.
+        <a href="/wiki/optical-scoring">Read the full scoring methodology.</a>
+      </p>
+    </section>
+
+    <section>
+      <h2>Data sources</h2>
+      <p>
+        Optical quality data comes from trusted lab review sites including
+        LensTip, LensRentals, OpticalLimits, and DxOMark. Each source is
+        rated by methodology (lab vs. field) and trust level. Only sources
+        with reproducible, lab-based measurements receive the highest trust
+        rating.
+      </p>
+      <p>
+        All prices are approximate USD estimates.
+      </p>
+    </section>
+
+    <section>
+      <h2>Who built it</h2>
+      <p>
+        Built by <a href="https://braboj.me">Branimir Georgiev</a> at
+        <a href="https://imbra.io">Imbra</a> — an engineer who builds systems
+        for a living and photographs as a hobby.
+      </p>
+    </section>
+
+    <section>
+      <h2>License</h2>
+      <p>
+        Content and code are licensed under
+        <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank" rel="noopener noreferrer">CC BY-NC-ND 4.0</a>.
+      </p>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .about-page {
+    max-width: 40rem;
+    margin: 0 auto;
+  }
+
+  .about-page h1 {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-xl);
+  }
+
+  .about-page h2 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-sm);
+  }
+
+  .about-page p {
+    color: var(--color-text-muted);
+    line-height: var(--line-height);
+    margin-bottom: var(--space-md);
+  }
+
+  .about-page a {
+    color: var(--color-link);
+  }
+
+  .about-page a:hover {
+    color: var(--color-link-hover);
+  }
+</style>
