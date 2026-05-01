@@ -40,7 +40,9 @@ Project-specific overrides and additions follow below.
 1. Ensure all changes are committed and pushed
 2. Close any issues completed during the session
 3. Update epic checklists if relevant
-4. Summarize what was done and what's next
+4. Add a session entry to `docs/dev-journal.md`
+5. Evaluate upstream — flag anything that should go to `solid-ai-templates` or `CLAUDE.md`
+6. Summarize what was done and what's next
 
 
 ## 1. Project
