@@ -679,3 +679,41 @@ Key decisions:
 - CSS inlining trades 2KB gzip for eliminating render-blocking round-trip
 - Real-world LCP (2.0s on PageSpeed) matters more than simulated 3G (3.5s)
 - Hybrid session protocol: reference scope.md + project-specific additions (not full inline)
+
+---
+
+### Session 20 — Performance Spike Evaluation
+
+**Date:** 2026-05-01
+**Tool:** Claude Code (Opus 4.6)
+
+Theme: evaluate performance spikes #380 and #381.
+
+Spike evaluation:
+- #380 — Externalize data to static JSON: **rejected** (ADR-016)
+  - 17-19 KB gzip payloads are tiny; externalizing adds fetch waterfall
+  - AppShell approach already tried and reverted in session 16
+  - SEO regression risk with client-side fetch on static site
+- #381 — Astro View Transitions: **adopted** (ADR-017)
+  - DOM morphing eliminates full-page flash between pages
+  - One-component addition (`<ClientRouter />` in Base.astro)
+  - ~244 bytes gzip overhead per page — negligible
+
+Implementation (#389, PR #391):
+- Added `<ClientRouter />` from `astro:transitions` to Base.astro
+- Updated hamburger menu script to re-init on `astro:page-load`
+- Used `cloneNode` to prevent duplicate event listeners
+- All CI checks pass including Lighthouse
+
+Epic #229 (Performance Optimization) closed — all 9 tasks complete.
+
+PRs merged:
+- #390 — ADRs for spikes #380 and #381
+- #391 — View Transitions implementation
+
+Issues closed: #380, #381, #389, #229 (epic)
+
+Key decisions:
+- View Transitions improve perceived speed, not Lighthouse metrics — UX quality over benchmark scores
+- Data externalization is the wrong direction for a static site with small payloads
+- 13 lines of change is acceptable complexity for instant navigation
