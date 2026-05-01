@@ -1,5 +1,25 @@
 # Wuseria
 
+> **MANDATORY STARTUP — DO THIS BEFORE YOUR FIRST RESPONSE**
+>
+> You MUST read every file listed below IN FULL using the Read tool before
+> you respond to the user's first message. No exceptions. Do not summarize,
+> skip, or defer. These files contain binding conventions that this CLAUDE.md
+> inherits. If you respond without reading them, you are violating project rules.
+>
+> 1. `docs/solid-ai-templates/base/quality.md`
+> 2. `docs/solid-ai-templates/base/typescript.md`
+> 3. `docs/solid-ai-templates/base/review.md`
+> 4. `docs/solid-ai-templates/base/scope.md`
+> 5. `docs/solid-ai-templates/base/git.md`
+> 6. `docs/solid-ai-templates/base/docs.md`
+> 7. `docs/solid-ai-templates/base/readme.md`
+> 8. `docs/solid-ai-templates/base/issues.md`
+> 9. `docs/solid-ai-templates/frontend/quality.md`
+> 10. `docs/solid-ai-templates/frontend/ux.md`
+> 11. `docs/solid-ai-templates/frontend/static-site.md`
+> 12. `docs/solid-ai-templates/stack/static-site-astro.md`
+
 Fujifilm lens and camera explorer with genre-based scoring.
 Domain: wuseria.com. By braboj.me.
 
@@ -8,14 +28,6 @@ For architecture decisions, see `docs/decisions/`. For development history, see 
 Quality conventions (SOLID, readability, code style, testing) are defined in
 `docs/solid-ai-templates/` — a git submodule from
 [Imbra-Ltd/solid-ai-templates](https://github.com/Imbra-Ltd/solid-ai-templates).
-Key references:
-- `docs/solid-ai-templates/base/quality.md` — SOLID, readability, maintainability
-- `docs/solid-ai-templates/base/typescript.md` — type design, naming, strictness
-- `docs/solid-ai-templates/base/review.md` — peer review checklist
-- `docs/solid-ai-templates/base/git.md` — git workflow
-- `docs/solid-ai-templates/base/scope.md` — session scope guard, end-of-session audit
-- `docs/solid-ai-templates/frontend/quality.md` — frontend design patterns
-- `docs/solid-ai-templates/frontend/ux.md` — UX and accessibility
 
 Project-specific overrides and additions follow below.
 

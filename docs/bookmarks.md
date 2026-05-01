@@ -52,6 +52,7 @@
 - https://fujilove.com/flash-options-for-fujifilm-x-and-gfx-cameras/
 - https://alikgriffin.com/must-have-accessories-for-the-fuji-x-t1/
 - https://trailtopeak.com/2020/08/16/gear-review-fujifilm-xf-23mm-f-2-0-r-wr/
+- https://www.fujix-forum.com/
 
 ## Fujifilm batteries and power
 - https://ultralightphotography.net/gear/fuji-cameras/fujifilm-batteries-charging-usb-solar-powerbanks/
@@ -203,9 +204,24 @@ Links verified: 2026-04-06.
 
 - https://photo-forum.net — Photo-Forum.net; BG photography community + secondhand bazar
 
+### Aggregators and deal sites
+- https://www.skimlinks.com/ — Skimlinks; affiliate link aggregator (many retailers, one integration)
+
 No public affiliate programs found (2026-04-06). Contact ФотоСинтезис and Dynaphos directly for referral deals.
 
 ### Price comparison / deal aggregation
 - https://www.idealo.de — Idealo; EU price comparison
 - https://www.camelcamelcamel.com — Amazon price history tracker
 - https://www.skinflint.co.uk — Skinflint (formerly Geizhals UK); EU price aggregator
+
+## Photo sharing sites
+- www.unsplash.com
+- www.flickr.com
+- www.500px.com
+- www.smugmug.com
+- www.photobucket.com
+- www.deviantart.com
+- www.imgur.com
+- www.pixabay.com
+- www.istockphoto.com
+- www.gettyimages.com
