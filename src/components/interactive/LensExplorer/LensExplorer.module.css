@@ -1,305 +1,45 @@
 /* ==========================================================================
-   Hero
+   Re-export shared styles — component code uses styles.className unchanged
    ========================================================================== */
 
-.hero {
-  margin-bottom: var(--space-lg);
-}
-
-.heroTitle {
-  font-size: var(--font-size-2xl);
-  font-weight: 700;
-  margin-bottom: var(--space-xs);
-}
-
-.heroSub {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-}
+.hero { composes: hero from '../shared/shared.module.css'; }
+.heroTitle { composes: heroTitle from '../shared/shared.module.css'; }
+.heroSub { composes: heroSub from '../shared/shared.module.css'; }
+.filters { composes: filters from '../shared/shared.module.css'; }
+.filterTop { composes: filterTop from '../shared/shared.module.css'; }
+.filterRow { composes: filterRow from '../shared/shared.module.css'; }
+.searchInput { composes: searchInput from '../shared/shared.module.css'; }
+.filterSelect { composes: filterSelect from '../shared/shared.module.css'; }
+.filterActive { composes: filterActive from '../shared/shared.module.css'; }
+.clearButton { composes: clearButton from '../shared/shared.module.css'; }
+.chipRow { composes: chipRow from '../shared/shared.module.css'; }
+.chipGroup { composes: chipGroup from '../shared/shared.module.css'; }
+.chipLabel { composes: chipLabel from '../shared/shared.module.css'; }
+.chip { composes: chip from '../shared/shared.module.css'; }
+.chipOn { composes: chipOn from '../shared/shared.module.css'; }
+.emptyState { composes: emptyState from '../shared/shared.module.css'; }
+.tableWrap { composes: tableWrap from '../shared/shared.module.css'; }
+.table { composes: table from '../shared/shared.module.css'; }
+.sortButton { composes: sortButton from '../shared/shared.module.css'; }
+.sortIndicator { composes: sortIndicator from '../shared/shared.module.css'; }
+.lensLink { composes: lensLink from '../shared/shared.module.css'; }
+.dotOn { composes: dotOn from '../shared/shared.module.css'; }
+.dotOff { composes: dotOff from '../shared/shared.module.css'; }
+.rowDiscontinued { composes: rowDiscontinued from '../shared/shared.module.css'; }
+.cardDiscontinued { composes: cardDiscontinued from '../shared/shared.module.css'; }
+.cards { composes: cards from '../shared/shared.module.css'; }
+.card { composes: card from '../shared/shared.module.css'; }
+.cardHeader { composes: cardHeader from '../shared/shared.module.css'; }
+.cardPrice { composes: cardPrice from '../shared/shared.module.css'; }
+.cardSpecs { composes: cardSpecs from '../shared/shared.module.css'; }
+.cardBadges { composes: cardBadges from '../shared/shared.module.css'; }
+.badge { composes: badge from '../shared/shared.module.css'; }
+.showAllButton { composes: showAllButton from '../shared/shared.module.css'; }
+.footnote { composes: footnote from '../shared/shared.module.css'; }
 
 /* ==========================================================================
-   Filters
+   Lens-specific styles
    ========================================================================== */
-
-.filters {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-lg);
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--space-md);
-}
-
-.filterTop {
-  display: flex;
-  gap: var(--space-sm);
-  align-items: center;
-}
-
-.filterRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-xs);
-}
-
-@media (min-width: 640px) {
-  .filterRow {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  }
-}
-
-.searchInput {
-  flex: 1;
-  background-color: var(--color-bg-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--space-sm);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-sans);
-}
-
-.searchInput::placeholder {
-  color: var(--color-text-muted);
-}
-
-.searchInput:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
-}
-
-.filterSelect {
-  background-color: var(--color-bg-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--space-xs) var(--space-sm);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-sans);
-  cursor: pointer;
-  min-width: 0;
-  width: 100%;
-}
-
-.filterSelect:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
-}
-
-.filterActive {
-  border-color: var(--color-accent);
-  background-color: var(--color-bg-hover);
-}
-
-.clearButton {
-  background: none;
-  border: 1px solid var(--color-accent);
-  border-radius: var(--radius);
-  color: var(--color-accent);
-  font-size: var(--font-size-base);
-  font-family: var(--font-sans);
-  padding: var(--space-sm);
-  line-height: 1;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.clearButton:hover {
-  background-color: var(--color-accent);
-  color: var(--color-bg);
-}
-
-/* ==========================================================================
-   Chips
-   ========================================================================== */
-
-.chipRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-}
-
-@media (min-width: 640px) {
-  .chipRow {
-    gap: var(--space-md);
-  }
-}
-
-.chipGroup {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  min-width: 0;
-}
-
-.chipLabel {
-  font-size: var(--font-size-sm);
-  color: var(--color-text);
-  font-weight: 600;
-  margin-right: var(--space-xs);
-  white-space: nowrap;
-}
-
-.chip {
-  background: none;
-  border: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-sans);
-  padding: 2px var(--space-sm);
-  cursor: pointer;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  min-width: 0;
-  flex: 1 1 auto;
-  text-align: center;
-}
-
-.chip:first-of-type {
-  border-radius: var(--radius) 0 0 var(--radius);
-}
-
-.chip:last-child {
-  border-radius: 0 var(--radius) var(--radius) 0;
-}
-
-.chip:not(:first-of-type) {
-  border-left: none;
-}
-
-.chip:hover {
-  color: var(--color-text);
-}
-
-.chipOn {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-bg);
-}
-
-.chipOn:hover {
-  color: var(--color-bg);
-}
-
-/* ==========================================================================
-   Empty state
-   ========================================================================== */
-
-.emptyState {
-  padding: var(--space-2xl) var(--space-md);
-  text-align: center;
-  color: var(--color-text-muted);
-}
-
-/* ==========================================================================
-   Table (desktop)
-   ========================================================================== */
-
-.tableWrap {
-  overflow-x: auto;
-  display: none;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: var(--font-size-sm);
-}
-
-.table th,
-.table td {
-  padding: var(--space-xs) var(--space-sm);
-  border-bottom: 1px solid var(--color-border);
-  white-space: nowrap;
-}
-
-.table th {
-  text-align: left;
-  color: var(--color-text-muted);
-  font-weight: 600;
-  position: sticky;
-  top: 0;
-  background-color: var(--color-bg-surface);
-}
-
-.sortButton {
-  all: unset;
-  display: inline-flex;
-  align-items: center;
-  width: 100%;
-  cursor: pointer;
-  user-select: none;
-  font: inherit;
-  color: inherit;
-  font-weight: inherit;
-}
-
-.sortButton:hover {
-  color: var(--color-text);
-}
-
-.sortButton:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
-}
-
-.table th.cellRight,
-.table td.cellRight {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-.table th.cellRight .sortButton {
-  justify-content: flex-end;
-}
-
-.table th.cellCenter,
-.table td.cellCenter {
-  text-align: center;
-}
-
-.table th.cellCenter .sortButton {
-  justify-content: center;
-}
-
-/* Dot indicators (OIS, WR) */
-.dotOn,
-.dotOff {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-}
-
-.dotOn {
-  background-color: #5a9060;
-}
-
-.dotOff {
-  background-color: var(--color-bg-hover);
-  border: 1px solid var(--color-border);
-}
-
-.table tbody tr:hover {
-  background-color: var(--color-bg-hover);
-}
-
-.sortIndicator {
-  margin-left: var(--space-xs);
-  font-size: 0.7em;
-  opacity: 0.4;
-}
-
-.lensLink {
-  color: var(--color-link);
-}
-
-.lensLink:hover {
-  color: var(--color-link-hover);
-}
 
 .typeBadge {
   display: inline-block;
@@ -311,121 +51,4 @@
   color: var(--color-text-muted);
   vertical-align: middle;
   letter-spacing: 0.03em;
-}
-
-.rowDiscontinued {
-  opacity: 0.5;
-}
-
-.cardDiscontinued {
-  opacity: 0.5;
-}
-
-/* ==========================================================================
-   Cards (mobile — default)
-   ========================================================================== */
-
-.cards {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.card {
-  background-color: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: var(--space-md);
-}
-
-.cardHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-xs);
-}
-
-.cardHeader .lensLink {
-  font-weight: 600;
-}
-
-.cardPrice {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-
-.cardSpecs {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-xs);
-}
-
-.cardBadges {
-  display: flex;
-  gap: var(--space-xs);
-}
-
-.badge {
-  font-size: 0.7rem;
-  padding: 1px var(--space-xs);
-  border-radius: 2px;
-  background-color: var(--color-bg-hover);
-  color: var(--color-text-muted);
-  letter-spacing: 0.03em;
-}
-
-/* ==========================================================================
-   Desktop
-   ========================================================================== */
-
-@media (min-width: 640px) {
-  .tableWrap {
-    display: block;
-  }
-
-  .cards {
-    display: none;
-  }
-}
-
-/* ==========================================================================
-   Show All
-   ========================================================================== */
-
-.showAllButton {
-  display: block;
-  margin: var(--space-md) auto;
-  padding: var(--space-sm) var(--space-lg);
-  background-color: var(--color-bg-surface);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-sans);
-  cursor: pointer;
-}
-
-.showAllButton:hover {
-  background-color: var(--color-bg-hover);
-}
-
-.showAllButton:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-/* ==========================================================================
-   Footnote
-   ========================================================================== */
-
-.footnote {
-  margin-top: var(--space-md);
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
 }
