@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { useSort } from "../../../hooks/useSort";
+import { useUrlFilters } from "../../../hooks/useUrlFilters";
 import { toSlug } from "../../../utils/slug";
 import type { ExplorerLens, LensExplorerProps, LensSortKey } from "./constants";
 import { FL_RANGES, OQ_RANGES, PRICE_RANGES, INITIAL_PAGE_SIZE } from "./constants";
@@ -7,20 +8,13 @@ import { LensFilters } from "./LensFilters";
 import { LensResults } from "./LensResults";
 import styles from "./LensExplorer.module.css";
 
+const FILTER_KEYS = [
+  "q", "mount", "type", "brand", "ois", "wr", "af",
+  "status", "fl", "aperture", "thread", "oq", "price",
+] as const;
+
 function LensExplorer({ lenses }: LensExplorerProps) {
-  const [search, setSearch] = useState("");
-  const [mount, setMount] = useState("");
-  const [type, setType] = useState("");
-  const [brand, setBrand] = useState("");
-  const [ois, setOis] = useState("");
-  const [wr, setWr] = useState("");
-  const [af, setAf] = useState("");
-  const [discontinued, setDiscontinued] = useState("");
-  const [fl, setFl] = useState("");
-  const [maxAp, setMaxAp] = useState("");
-  const [filterThread, setFilterThread] = useState("");
-  const [oqRange, setOqRange] = useState("");
-  const [priceRange, setPriceRange] = useState("");
+  const { values: f, set, clear: clearFilters, hasFilters } = useUrlFilters(FILTER_KEYS);
 
   const slugMap = useMemo(
     () => new Map(lenses.map((l) => [`${l.brand}-${l.model}`, toSlug(`${l.brand} ${l.model}`)])),
@@ -28,67 +22,59 @@ function LensExplorer({ lenses }: LensExplorerProps) {
   );
 
   const brands = useMemo(() => {
-    const pool = mount ? lenses.filter((l) => l.mount === mount) : lenses;
+    const pool = f.mount ? lenses.filter((l) => l.mount === f.mount) : lenses;
     return [...new Set(pool.map((l) => l.brand))].sort();
-  }, [lenses, mount]);
+  }, [lenses, f.mount]);
 
   const filtered = useMemo(() => {
-    const q = search.toLowerCase();
+    const q = f.q.toLowerCase();
     return lenses.filter((lens) => {
-      if (mount && lens.mount !== mount) return false;
-      if (type && lens.type !== type) return false;
-      if (brand && lens.brand !== brand) return false;
-      if (ois === "yes" && !lens.hasOis) return false;
-      if (ois === "no" && lens.hasOis) return false;
-      if (wr === "yes" && !lens.isWeatherSealed) return false;
-      if (wr === "no" && lens.isWeatherSealed) return false;
-      if (af === "yes" && !lens.afMotor) return false;
-      if (af === "no" && lens.afMotor) return false;
-      if (discontinued === "available" && lens.isDiscontinued) return false;
-      if (discontinued === "discontinued" && !lens.isDiscontinued) return false;
-      if (fl) {
-        const [min, max] = FL_RANGES[fl];
+      if (f.mount && lens.mount !== f.mount) return false;
+      if (f.type && lens.type !== f.type) return false;
+      if (f.brand && lens.brand !== f.brand) return false;
+      if (f.ois === "yes" && !lens.hasOis) return false;
+      if (f.ois === "no" && lens.hasOis) return false;
+      if (f.wr === "yes" && !lens.isWeatherSealed) return false;
+      if (f.wr === "no" && lens.isWeatherSealed) return false;
+      if (f.af === "yes" && !lens.afMotor) return false;
+      if (f.af === "no" && lens.afMotor) return false;
+      if (f.status === "available" && lens.isDiscontinued) return false;
+      if (f.status === "discontinued" && !lens.isDiscontinued) return false;
+      if (f.fl) {
+        const [min, max] = FL_RANGES[f.fl];
         if (lens.focalLengthMax < min || lens.focalLengthMin > max) return false;
       }
-      if (maxAp && lens.maxAperture > parseFloat(maxAp)) return false;
-      if (filterThread === "none" && lens.filterThread != null) return false;
-      if (filterThread && filterThread !== "none" && lens.filterThread !== Number(filterThread)) return false;
-      if (oqRange === "not-scored") {
+      if (f.aperture && lens.maxAperture > parseFloat(f.aperture)) return false;
+      if (f.thread === "none" && lens.filterThread != null) return false;
+      if (f.thread && f.thread !== "none" && lens.filterThread !== Number(f.thread)) return false;
+      if (f.oq === "not-scored") {
         if (lens.opticalQuality != null) return false;
-      } else if (oqRange) {
-        const [min, max] = OQ_RANGES[oqRange];
+      } else if (f.oq) {
+        const [min, max] = OQ_RANGES[f.oq];
         if (lens.opticalQuality == null || lens.opticalQuality < min || lens.opticalQuality > max) return false;
       }
-      if (priceRange) {
-        const [min, max] = PRICE_RANGES[priceRange];
+      if (f.price) {
+        const [min, max] = PRICE_RANGES[f.price];
         if (lens.price < min || lens.price > max) return false;
       }
       if (q && !`${lens.brand} ${lens.model}`.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [lenses, search, mount, type, brand, ois, wr, af, discontinued, fl, maxAp, filterThread, oqRange, priceRange]);
+  }, [lenses, f]);
 
   const availableFirst = useCallback((a: ExplorerLens, b: ExplorerLens) =>
     Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false), []);
   const { sorted, sortKey, sortDirection, toggleSort } = useSort<ExplorerLens, LensSortKey>(filtered, "focalLengthMin", "asc", availableFirst);
 
   function handleMountChange(value: string): void {
-    setMount(value);
-    if (brand) {
-      const brandExistsInMount = lenses.some((l) => l.brand === brand && (!value || l.mount === value));
-      if (!brandExistsInMount) setBrand("");
+    set("mount", value);
+    if (f.brand) {
+      const brandExistsInMount = lenses.some((l) => l.brand === f.brand && (!value || l.mount === value));
+      if (!brandExistsInMount) set("brand", "");
     }
   }
 
   const [showAll, setShowAll] = useState(false);
-
-  const hasFilters = !!(search || mount || type || brand || ois || wr || af || discontinued || fl || maxAp || filterThread || oqRange || priceRange);
-
-  function clearFilters(): void {
-    setSearch(""); setMount(""); setType(""); setBrand(""); setOis(""); setWr("");
-    setAf(""); setDiscontinued(""); setFl(""); setMaxAp(""); setFilterThread("");
-    setOqRange(""); setPriceRange("");
-  }
 
   return (
     <div>
@@ -98,13 +84,13 @@ function LensExplorer({ lenses }: LensExplorerProps) {
       </div>
 
       <LensFilters
-        search={search} setSearch={setSearch} mount={mount} onMountChange={handleMountChange}
-        type={type} setType={setType} brand={brand} setBrand={setBrand}
-        ois={ois} setOis={setOis} wr={wr} setWr={setWr} af={af} setAf={setAf}
-        discontinued={discontinued} setDiscontinued={setDiscontinued}
-        fl={fl} setFl={setFl} maxAp={maxAp} setMaxAp={setMaxAp}
-        filterThread={filterThread} setFilterThread={setFilterThread}
-        oqRange={oqRange} setOqRange={setOqRange} priceRange={priceRange} setPriceRange={setPriceRange}
+        search={f.q} setSearch={(v) => set("q", v)} mount={f.mount} onMountChange={handleMountChange}
+        type={f.type} setType={(v) => set("type", v)} brand={f.brand} setBrand={(v) => set("brand", v)}
+        ois={f.ois} setOis={(v) => set("ois", v)} wr={f.wr} setWr={(v) => set("wr", v)} af={f.af} setAf={(v) => set("af", v)}
+        discontinued={f.status} setDiscontinued={(v) => set("status", v)}
+        fl={f.fl} setFl={(v) => set("fl", v)} maxAp={f.aperture} setMaxAp={(v) => set("aperture", v)}
+        filterThread={f.thread} setFilterThread={(v) => set("thread", v)}
+        oqRange={f.oq} setOqRange={(v) => set("oq", v)} priceRange={f.price} setPriceRange={(v) => set("price", v)}
         brands={brands} hasFilters={hasFilters} clearFilters={clearFilters}
       />
 
