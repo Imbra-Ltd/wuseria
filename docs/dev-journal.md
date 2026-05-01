@@ -772,3 +772,28 @@ Key decisions:
 - Genre scoring formula breakdown prototyped but reverted — too detailed for the card format, needs different UX approach
 - Keep genre chip sizing compact (content-width) vs explorer chips (equal-width grid) — different interaction contexts
 - URL param names kept short: q, mount, type, brand, ois, wr, af, status, fl, aperture, thread, oq, price
+
+## Session 23 — 2026-05-01 — UI & UX Milestone Closure
+
+Tool: Claude Code (Opus 4.6)
+Theme: UI & UX — final polish and milestone closure
+Branch: feat/ui-ux-polish
+PR: #419 (merged)
+Issues closed: #320 (already done), #412, #413, #265, #418, #246 (wontdo), #46 (epic)
+Milestone closed: Phase 2 — UI & UX (27/27)
+
+Triage: moved 8 issues to other milestones (#394, #270, #410 → Wiki & Content; #269 → Revenue; #251, #266, #272, #300 → Phase 4), moved #336 (light theme) to Phase 4, closed #246 (Material Design spike) as wontdo.
+
+Key changes:
+- Mobile sort controls: new shared MobileSort component (generic, reusable), integrated in all 3 explorers inside the filter box
+- OQ scale changed from 0-10 to 0-2 (raw weighted average, no x5 multiplier) — single scale across the entire site
+- OQ color coding: traffic-light colors matching FieldVal thresholds (green 1.5+, amber 1.0+, red <1.0)
+- OQ filter ranges updated to 0-2 scale
+- Feedback mailto link added to footer (contact@imbra.io)
+- Price footnote removed from all explorers (~ prefix is sufficient)
+
+Key decisions:
+- OQ uses 0-2 raw scale for consistency with individual optical field scores; future rescaling (0-5 or 0-10) is a single multiplier change
+- Feedback in footer, not nav — nav reserved for content pages
+- Mobile sort inside filter box, not floating — visually grouped with other controls
+- Light theme deferred to Phase 4 — dark-only is a brand choice, dual-theme adds maintenance overhead
