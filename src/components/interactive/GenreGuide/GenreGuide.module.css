@@ -55,6 +55,11 @@
   color: var(--color-text);
 }
 
+.genreTab:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 .genreTabActive {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
@@ -129,6 +134,11 @@
 .learnMoreBtn:hover {
   border-color: var(--color-accent);
   background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+}
+
+.learnMoreBtn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .main {
@@ -213,9 +223,9 @@
   max-width: 160px;
 }
 
-.controlSelect:focus {
+.controlSelect:focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
+  outline-offset: 2px;
 }
 
 /* ==========================================================================
@@ -246,6 +256,11 @@
 
 .sceneItem:hover {
   background-color: var(--color-bg-hover);
+}
+
+.sceneItem:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
 }
 
 .sceneItemActive {
@@ -349,6 +364,11 @@
 
 .clearBtn:hover {
   color: var(--color-text);
+}
+
+.clearBtn:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 
 .emptyState {
@@ -628,7 +648,7 @@
 
 .sortButton:focus-visible {
   outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
+  outline-offset: 2px;
 }
 
 .table .cellRight {
