@@ -35,6 +35,10 @@
 .lensLink { composes: lensLink from '../shared/shared.module.css'; }
 
 .chipRow { composes: chipRow from '../shared/shared.module.css'; }
+.mobileSort { composes: mobileSort from '../shared/shared.module.css'; }
+.mobileSortLabel { composes: mobileSortLabel from '../shared/shared.module.css'; }
+.mobileSortSelect { composes: mobileSortSelect from '../shared/shared.module.css'; }
+.mobileSortDirection { composes: mobileSortDirection from '../shared/shared.module.css'; }
 
 /* ==========================================================================
    Accessories-specific styles

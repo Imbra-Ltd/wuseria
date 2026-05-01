@@ -38,6 +38,14 @@
 .showAllButton { composes: showAllButton from '../shared/shared.module.css'; }
 .footnote { composes: footnote from '../shared/shared.module.css'; }
 
+.mobileSort { composes: mobileSort from '../shared/shared.module.css'; }
+.mobileSortLabel { composes: mobileSortLabel from '../shared/shared.module.css'; }
+.mobileSortSelect { composes: mobileSortSelect from '../shared/shared.module.css'; }
+.mobileSortDirection { composes: mobileSortDirection from '../shared/shared.module.css'; }
+.oqHigh { composes: oqHigh from '../shared/shared.module.css'; }
+.oqMid { composes: oqMid from '../shared/shared.module.css'; }
+.oqLow { composes: oqLow from '../shared/shared.module.css'; }
+
 /* ==========================================================================
    Lens-specific styles
    ========================================================================== */

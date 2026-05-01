@@ -320,9 +320,9 @@ function computeOpticalQuality(lens: Lens): number | null {
 
   if (sumW === 0) return null;
 
-  // Weighted average is 0–2, scale to 0–10
+  // Weighted average on 0–2 scale, one decimal
   const avg = sumWV / sumW;
-  return Math.round(avg * 5 * 10) / 10;
+  return Math.round(avg * 10) / 10;
 }
 
 // =============================================================================

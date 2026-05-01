@@ -54,7 +54,7 @@ const FL_RANGES: Record<string, [number, number]> = {
 };
 
 const OQ_RANGES: Record<string, [number, number]> = {
-  "8+": [8, 10], "6-7.9": [6, 7.9], "4-5.9": [4, 5.9], "0-3.9": [0, 3.9],
+  "1.5+": [1.5, 2], "1.0-1.4": [1.0, 1.4], "0.5-0.9": [0.5, 0.9], "0-0.4": [0, 0.4],
 };
 
 const PRICE_RANGES: Record<string, [number, number]> = {

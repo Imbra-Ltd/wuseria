@@ -1,6 +1,8 @@
 import { ChipGroup } from "../shared/ChipGroup";
+import { MobileSort } from "../shared/MobileSort";
 import { RESET_VALUE, resetValue } from "../shared/constants";
-import { YEAR_RANGES, VIDEO_OPTIONS } from "./constants";
+import type { CameraSortKey } from "./constants";
+import { COLUMNS, YEAR_RANGES, VIDEO_OPTIONS } from "./constants";
 import styles from "./CameraExplorer.module.css";
 
 interface CameraFiltersProps {
@@ -19,6 +21,9 @@ interface CameraFiltersProps {
   sensorOptions: string[];
   hasFilters: boolean;
   clearFilters: () => void;
+  sortKey: CameraSortKey;
+  sortDirection: "asc" | "desc";
+  toggleSort: (key: CameraSortKey) => void;
 }
 
 function CameraFilters(props: CameraFiltersProps) {
@@ -29,6 +34,7 @@ function CameraFilters(props: CameraFiltersProps) {
     discontinued, setDiscontinued, videoSpec, setVideoSpec,
     priceRange, setPriceRange, seriesOptions, sensorOptions,
     hasFilters, clearFilters,
+    sortKey, sortDirection, toggleSort,
   } = props;
 
   return (
@@ -97,6 +103,14 @@ function CameraFilters(props: CameraFiltersProps) {
           { label: "All", value: "" }, { label: "Available", value: "available" }, { label: "Discontinued", value: "discontinued" },
         ]} />
       </div>
+
+      <MobileSort
+        columns={COLUMNS}
+        sortKey={sortKey}
+        sortDirection={sortDirection}
+        toggleSort={toggleSort}
+        styles={styles}
+      />
     </div>
   );
 }
