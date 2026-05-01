@@ -151,8 +151,7 @@ npm test          # run tests (Vitest)
 - Astro imports `.ts` data at build time; data never ships as JS to the browser
 - Prices in USD by default (configurable in `src/data/config.ts`), rounded up to nearest $250
 - All prices are approximate estimates — no `priceEstimated` flag needed
-- UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`)
-- Footnote on all price displays: "All prices are approximate USD estimates"
+- UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`) — no separate footnote needed
 - Review source directory in `src/data/reviews.ts` — methodology and trust per source
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
 - Review source links use `rel="nofollow sponsored"` and `target="_blank"`
@@ -211,7 +210,7 @@ npm test          # run tests (Vitest)
 - Data tables with sortable column headers (click-to-sort)
 - Mobile: card layout below 640px
 - Genre scores as visual indicators (pips or bars)
-- Prices prefixed with `~` and footnoted
+- Prices prefixed with `~`
 - No stock photography
 - No emojis in UI text
 
