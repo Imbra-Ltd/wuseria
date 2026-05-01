@@ -29,6 +29,9 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
 
   return (
     <div className={styles.guide}>
+      <div className={styles.hero}>
+        <h1 className={styles.heroTitle}>{genreConfigs[genre].name} Screener</h1>
+      </div>
       <div className={styles.genreTabs} role="tablist" aria-label="Photography genres">
         {SCORED_GENRES.map((g) => (
           <button
