@@ -514,3 +514,37 @@ Key decisions:
 - "Document everything, share everything" kept as origin story, not primary tagline
 - OG image: dark variant as default, light kept for future theme toggle
 - Wuseria name origin (misspelled Wisteria/Fuji) stays as easter egg
+
+---
+
+### Session 17 — 2026-05-01 — Bugs & Fixes
+
+Tool: Claude Code (Opus 4.6)
+
+**Bug sweep — zero open bugs remaining**
+
+Accessibility fixes:
+- #349 — Contrast ratio: bumped --color-text-muted from #8a8fa8 to #9a9fb6 (PR #354)
+  - Badge on bg-hover: 4.59:1 → 5.59:1, card text on bg-surface: 5.26:1 → 6.41:1
+- #330 — Added global :focus-visible styles for all anchor elements (PR #358)
+  - 2px solid accent outline, consistent with existing sort button focus styles
+
+Performance:
+- #350 — LCP on Lens Explorer: limit initial render to 50 lenses (PR #355)
+  - "Show all N lenses" button expands full list
+  - Filters active: all matching results shown immediately (no pagination)
+
+SEO:
+- #321 — Added rel="nofollow sponsored" on review source links (PR #357)
+  - Only lens detail pages have review source links (cameras/accessories confirmed clean)
+
+Housekeeping:
+- Updated solid-ai-templates submodule (10 commits behind → current) (PR #356)
+- Removed hardcoded counts from README (240+, 38, 46, 115) per no-hardcoded-counts rule (PR #356)
+- #328 — Removed stale affiliates.ts reference from CLAUDE.md (PR #359)
+  - Updated "affiliate links" rule to "review source links" to match actual usage
+
+Key decisions:
+- "Show all" button over pagination — explorer users sort/filter and need full list access
+- Contrast fix via single CSS custom property — all 80+ usages updated automatically
+- focus-visible (not focus) — mouse clicks don't trigger outline
