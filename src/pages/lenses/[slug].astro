@@ -92,6 +92,7 @@ const jsonLd = {
             <tr><td>Max aperture</td><td>f/{lens.maxAperture}</td></tr>
             {lens.sweetSpotAperture && <tr><td>Sweet spot</td><td>f/{lens.sweetSpotAperture}</td></tr>}
             {lens.apertureBlades && <tr><td>Aperture blades</td><td>{lens.apertureBlades}{lens.hasCircularAperture ? " (circular)" : ""}</td></tr>}
+            {lens.apertureBlades && <tr><td>Sunstar points</td><td>{lens.apertureBlades % 2 === 0 ? lens.apertureBlades : lens.apertureBlades * 2}{lens.hasCircularAperture ? " (soft — circular blades)" : " (sharp — straight blades)"}</td></tr>}
             {lens.maxMagnification && <tr><td>Max magnification</td><td>{lens.maxMagnification}x</td></tr>}
             {lens.minFocusDistance && <tr><td>Min focus distance</td><td>{lens.minFocusDistance}mm</td></tr>}
             <tr><td>AF motor</td><td>{lens.afMotor ?? "Manual focus"}</td></tr>
