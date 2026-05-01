@@ -52,6 +52,53 @@ const wikiCount = wikiEntries.length;
     </a>
   </section>
 
+  <div class="content-column">
+  <section class="workflows">
+    <h2 class="section-title">Find your gear</h2>
+    <div class="workflow-cards">
+      <a href="/lenses" class="workflow-card">
+        <span class="workflow-card-title">Lenses</span>
+        <span class="workflow-card-desc">
+          Browse and filter by mount, focal length, aperture, price, and
+          optical quality scores.
+        </span>
+      </a>
+      <a href="/cameras" class="workflow-card">
+        <span class="workflow-card-title">Cameras</span>
+        <span class="workflow-card-desc">
+          Compare Fujifilm bodies by sensor, resolution, video specs, and
+          price.
+        </span>
+      </a>
+      <a href="/accessories" class="workflow-card">
+        <span class="workflow-card-title">Accessories</span>
+        <span class="workflow-card-desc">
+          Find filters, adapters, flash units, and other gear for your
+          setup.
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <section class="workflows">
+    <h2 class="section-title">Plan your shoot</h2>
+    <ol class="workflow-steps">
+      <li>
+        <a href="/genre">Pick a genre</a> — nightscape, landscape, portrait,
+        street, or architecture
+      </li>
+      <li>
+        Select the scene you want to shoot and check the conditions
+      </li>
+      <li>
+        See which lenses score best and decide what to rent or buy
+      </li>
+      <li>
+        On location, use the EV matrix to dial in the right shutter speed
+      </li>
+    </ol>
+  </section>
+
   <section class="methodology">
     <h2 class="section-title">How scoring works</h2>
     <p class="section-desc">
@@ -75,6 +122,7 @@ const wikiCount = wikiEntries.length;
       <a href="/about">Learn more.</a>
     </p>
   </section>
+  </div>
 </Base>
 
 <style>
@@ -139,11 +187,84 @@ const wikiCount = wikiEntries.length;
     margin-top: var(--space-xs);
   }
 
+  .content-column {
+    max-width: 40rem;
+    margin: 0 auto;
+  }
+
+  .workflows {
+    padding: var(--space-xl) 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .workflow-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+  }
+
+  .workflow-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding: var(--space-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+
+  .workflow-card:hover {
+    border-color: var(--color-accent);
+  }
+
+  .workflow-card-title {
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: var(--font-size-lg);
+  }
+
+  .workflow-card:hover .workflow-card-title {
+    color: var(--color-accent);
+  }
+
+  .workflow-card-desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    line-height: var(--line-height);
+  }
+
+  .workflow-steps {
+    margin-top: var(--space-lg);
+    list-style-position: outside;
+    padding-left: var(--space-lg);
+    color: var(--color-text-muted);
+    line-height: var(--line-height);
+  }
+
+  .workflow-steps li {
+    margin-bottom: var(--space-sm);
+  }
+
+  .workflow-steps a {
+    color: var(--color-link);
+  }
+
+  .workflow-steps a:hover {
+    color: var(--color-link-hover);
+  }
+
+  @media (max-width: 640px) {
+    .workflow-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .methodology,
   .about {
     padding: var(--space-xl) 0;
     border-top: 1px solid var(--color-border);
-    text-align: center;
   }
 
   .about {
@@ -157,8 +278,7 @@ const wikiCount = wikiEntries.length;
   }
 
   .section-desc {
-    max-width: 40rem;
-    margin: var(--space-md) auto 0;
+    margin-top: var(--space-md);
     font-size: var(--font-size-base);
     color: var(--color-text-muted);
     line-height: var(--line-height);
