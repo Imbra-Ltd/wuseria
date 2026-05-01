@@ -92,11 +92,6 @@ function LensExplorer({ lenses }: LensExplorerProps) {
 
   return (
     <div>
-      <div className={styles.hero}>
-        <h1 className={styles.heroTitle}>Lens Explorer</h1>
-        <p className={styles.heroSub}>{sorted.length} / {lenses.length} Fujifilm-compatible lenses</p>
-      </div>
-
       <LensFilters
         search={search} setSearch={setSearch} mount={mount} onMountChange={handleMountChange}
         type={type} setType={setType} brand={brand} setBrand={setBrand}
