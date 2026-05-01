@@ -613,3 +613,49 @@ Key decisions:
 - CC-BY-NC-ND-4.0 over proprietary — legal protection + allows public repo on free tier
 - Stay public — scoring data is derived from public sources, niche risk is low, portfolio value is high
 - Meta descriptions as pitches per solid-ai-templates/frontend/static-site.md SEO rules
+
+---
+
+### Session 19 — SEO Closure & Performance
+
+**Date:** 2026-05-01
+**Tool:** Claude Code (Opus 4.6)
+
+Docs:
+- Fixed phase numbering in dev journal — milestones were renumbered in session 14 but overview never updated (PR #369)
+- Phase 2 is now "Polish & Foundation" (6 workstreams), Phase 3 "Revenue", Phase 4 "Multi-system"
+
+SEO & Discovery (epic #48 closed):
+- #281 — Heading hierarchy audit: all pages pass, genre screener had zero H1 (PR #371)
+- Genre H1 initially dynamic per tab, caused CLS — changed to static "Genre Screener"
+- Epic fully complete, all 11 tasks checked off
+
+Release:
+- Tagged v0.2.0 — bumped package.json from 0.0.0 (Astro scaffold default)
+- Discovered release process gap: base/git.md doesn't mention package version bump
+
+Performance (#229, PR #373):
+- Trimmed serialized data across all explorers:
+  - LensExplorer: 40+ → 16 fields, gzip 26KB → 17KB (-35%)
+  - CameraExplorer: 46 → 15 fields, raw 125KB → 88KB (-30%)
+  - GenreGuide: 40+ → 25 fields, gzip 24KB → 16KB (-33%)
+- Inlined all CSS via `build.inlineStylesheets: "always"` — zero render-blocking requests
+- Attempted hero extraction (H1 from React to static Astro) — reverted, worse perceived perf
+- Moved misassigned issues: #309 → UI & UX, #228 → Equipment Database
+- Updated epic with current baseline and concrete remaining tasks
+- Created ExplorerCamera and GenreLens lean interfaces
+- Created pickGenreFields utility
+
+Upstream issues created:
+- solid-ai-templates #108 — Keep dev journal phases in sync with milestones
+- solid-ai-templates #109 — Add package version bump to release process
+
+Issues created:
+- #370 — Skip CI on docs-only changes
+
+Key decisions:
+- Don't sacrifice perceived performance for Lighthouse scores — hero extraction caused visible flash
+- Static H1 with variable-length text causes CLS on tab switch — use fixed text
+- Data trimming is invisible to users — pure win
+- CSS inlining trades 2KB gzip for eliminating render-blocking round-trip
+- Real-world LCP (2.0s on PageSpeed) matters more than simulated 3G (3.5s)
