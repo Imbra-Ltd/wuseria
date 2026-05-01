@@ -107,6 +107,8 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
 
   return (
     <div>
+      <p className={styles.resultCount}>{sorted.length} / {accessories.length} accessories</p>
+
       <div className={styles.filters}>
         <div className={styles.filterTop}>
           <input

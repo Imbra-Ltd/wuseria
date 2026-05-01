@@ -92,6 +92,8 @@ function LensExplorer({ lenses }: LensExplorerProps) {
 
   return (
     <div>
+      <p className={styles.resultCount}>{sorted.length} / {lenses.length} lenses</p>
+
       <LensFilters
         search={search} setSearch={setSearch} mount={mount} onMountChange={handleMountChange}
         type={type} setType={setType} brand={brand} setBrand={setBrand}

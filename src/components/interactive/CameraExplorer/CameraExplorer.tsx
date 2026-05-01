@@ -82,6 +82,8 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
 
   return (
     <div>
+      <p className={styles.resultCount}>{sorted.length} / {cameras.length} cameras</p>
+
       <CameraFilters
         search={search} setSearch={setSearch} mount={mount} onMountChange={handleMountChange}
         series={series} setSeries={setSeries} yearRange={yearRange} setYearRange={setYearRange}
