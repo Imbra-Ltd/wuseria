@@ -5,26 +5,14 @@ import AccessoriesExplorer from "../components/interactive/AccessoriesExplorer/A
 ---
 
 <Base title="Fujifilm Accessories — Wuseria" description="Flashes, grips, batteries, and adapters for Fujifilm cameras. Find compatible accessories for your setup.">
-  <div class="hero">
-    <h1 class="hero-title">Accessories</h1>
-    <p class="hero-sub">{accessories.length} Fujifilm accessories</p>
-  </div>
+  <h1 class="hero-title">Accessories</h1>
   <AccessoriesExplorer client:load accessories={accessories} />
 </Base>
 
 <style>
-  .hero {
-    margin-bottom: var(--space-lg);
-  }
-
   .hero-title {
     font-size: var(--font-size-2xl);
     font-weight: 700;
-    margin-bottom: var(--space-xs);
-  }
-
-  .hero-sub {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-md);
   }
 </style>

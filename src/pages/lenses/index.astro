@@ -25,27 +25,15 @@ const lensesWithOQ = lenses.map((l) => ({
 ---
 
 <Base title="Fujifilm Lenses Compared — Wuseria" description="Filter Fujifilm lenses by specs, price, and genre score. Find the right lens for your style of shooting.">
-  <div class="hero">
-    <h1 class="hero-title">Lens Explorer</h1>
-    <p class="hero-sub">{lensesWithOQ.length} Fujifilm-compatible lenses</p>
-  </div>
+  <h1 class="hero-title">Lens Explorer</h1>
   <LensExplorer client:load lenses={lensesWithOQ} />
 </Base>
 
 <style>
-  .hero {
-    margin-bottom: var(--space-lg);
-  }
-
   .hero-title {
     font-size: var(--font-size-2xl);
     font-weight: 700;
-    margin-bottom: var(--space-xs);
-  }
-
-  .hero-sub {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-md);
   }
 </style>
 

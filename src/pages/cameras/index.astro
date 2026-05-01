@@ -5,26 +5,14 @@ import CameraExplorer from "../../components/interactive/CameraExplorer/CameraEx
 ---
 
 <Base title="Fujifilm Cameras Compared — Wuseria" description="Compare every Fujifilm camera body side by side. Specs, sensor size, and key features to pick your next body.">
-  <div class="hero">
-    <h1 class="hero-title">Camera Explorer</h1>
-    <p class="hero-sub">{cameras.length} Fujifilm cameras</p>
-  </div>
+  <h1 class="hero-title">Camera Explorer</h1>
   <CameraExplorer client:load cameras={cameras} />
 </Base>
 
 <style>
-  .hero {
-    margin-bottom: var(--space-lg);
-  }
-
   .hero-title {
     font-size: var(--font-size-2xl);
     font-weight: 700;
-    margin-bottom: var(--space-xs);
-  }
-
-  .hero-sub {
-    color: var(--color-text-muted);
-    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-md);
   }
 </style>
