@@ -744,3 +744,31 @@ Key decisions:
 - ADR-018: Extract shared CSS module, keep two button families (accent-primary for actions, link-primary for navigation)
 - Defer affiliate disclosure and feedback button until traffic/affiliates exist
 - DRY, KISS, YAGNI flagged as missing core principles in solid-ai-templates
+
+---
+
+### Session 22 — UI & UX Polish, URL Params, Detail Page
+
+PRs merged:
+- #408 — Polish chip group design across explorers and genre guide
+- #409 — Persist Lens Explorer filters in URL params
+- #411 — Show sunstar points on lens detail page
+- #414 — Show genre mark scale (/5) on lens detail page
+
+Issues closed: #36 (outdated), #37, #274, #275, #396, #397, #415
+Issues created: #410 (wiki sunstars), #412 (mobile sort), #413 (OQ coloring), #415 (mark scale)
+Issues deferred: #271 → Phase 2 Wiki & Content (needs UX rethink)
+
+Key changes:
+- Chip groups: 44px touch targets on mobile, label-above-buttons layout, 2-column grid, hover/focus-visible polish, removed ~50 lines duplicated CSS from AccessoriesExplorer
+- ChipGroup component: added chipButtons wrapper for layout control
+- Genre controls: column stack on mobile, consistent sizing with explorers
+- Lens Explorer filters persist in URL search params (shareable, bookmarkable)
+- New useUrlFilters hook in src/hooks/ (reusable for Camera/Accessories)
+- Sunstar points computed from aperture blades on lens detail page
+- Genre marks show "/5" scale for context
+
+Key decisions:
+- Genre scoring formula breakdown prototyped but reverted — too detailed for the card format, needs different UX approach
+- Keep genre chip sizing compact (content-width) vs explorer chips (equal-width grid) — different interaction contexts
+- URL param names kept short: q, mount, type, brand, ois, wr, af, status, fl, aperture, thread, oq, price
