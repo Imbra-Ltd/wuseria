@@ -10,14 +10,23 @@ Phase 1 — Launch & Scoring (COMPLETE):
   -> Affiliate links as plain <a> tags with tracking params
   -> Domain: wuseria.com
 
-Phase 2 — Revenue Diversification:
+Phase 2 — Polish & Foundation (IN PROGRESS):
+  Same static site, 6 workstreams:
+  -> SEO & Discovery: search console, JSON-LD, Lighthouse, heading hierarchy
+  -> UI & UX: light theme, product images, chip polish, URL params
+  -> Wiki & Content: genre wiki entries, post-processing techniques
+  -> Equipment Database: optical data, scoring coverage
+  -> Developer Tooling: pre-commit hooks, coverage, CI badges, Dependabot
+  -> Performance: LCP, bundle size, Core Web Vitals
+
+Phase 3 — Revenue Diversification:
   Same static site
   -> Trade Deals section: used vs new price comparisons (MPB, KEH, eBay)
   -> High-commission affiliate programs (B&H, Amazon, Adorama, MPB, KEH)
-  -> UX improvements: light theme, lens comparison, OQ filter
+  -> UX improvements: lens comparison, OQ filter
   -> Price audit, UI polish, remaining genre scoring
 
-Phase 3 — Multi-system (if phase 2 gate passes):
+Phase 4 — Multi-system (if phase 3 gate passes):
   Same architecture + Gumroad (merch) + Buttondown (newsletter)
   -> Sponsored placements, newsletter sponsorship
   -> More mount data files (Sony E, Nikon Z, Canon RF)
