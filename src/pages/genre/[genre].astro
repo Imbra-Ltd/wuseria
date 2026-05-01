@@ -5,6 +5,9 @@ import Base from "../../layouts/Base.astro";
 import GenreGuide from "../../components/interactive/GenreGuide/GenreGuide";
 import { genreConfigs } from "../../data/genres";
 import { lenses } from "../../data/lenses";
+import { pickGenreFields } from "../../utils/pickGenreFields";
+
+const genreLenses = lenses.map(pickGenreFields);
 
 export const getStaticPaths = (() => {
   const genres: ScoredGenre[] = [
@@ -28,7 +31,7 @@ const config = genreConfigs[genre as ScoredGenre];
 >
   <GenreGuide
     client:load
-    lenses={lenses}
+    lenses={genreLenses}
     defaultGenre={genre as ScoredGenre}
   />
 </Base>

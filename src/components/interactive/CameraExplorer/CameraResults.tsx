@@ -1,4 +1,4 @@
-import type { Camera } from "../../../types/camera";
+import type { ExplorerCamera } from "./types";
 import { toSlug } from "../../../utils/slug";
 import { makeAlignClasses } from "../shared/table";
 import type { CameraSortKey } from "./constants";
@@ -8,7 +8,7 @@ import styles from "./CameraExplorer.module.css";
 const ALIGN_CLASSES = makeAlignClasses(styles);
 
 interface CameraResultsProps {
-  sorted: Camera[];
+  sorted: ExplorerCamera[];
   sortKey: CameraSortKey;
   sortDirection: "asc" | "desc";
   toggleSort: (key: CameraSortKey) => void;

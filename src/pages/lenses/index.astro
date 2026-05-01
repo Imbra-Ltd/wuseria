@@ -5,7 +5,21 @@ import { computeOpticalQuality } from "../../utils/scoring";
 import LensExplorer from "../../components/interactive/LensExplorer/LensExplorer";
 
 const lensesWithOQ = lenses.map((l) => ({
-  ...l,
+  brand: l.brand,
+  model: l.model,
+  year: l.year,
+  mount: l.mount,
+  type: l.type,
+  focalLengthMin: l.focalLengthMin,
+  focalLengthMax: l.focalLengthMax,
+  maxAperture: l.maxAperture,
+  filterThread: l.filterThread,
+  hasOis: l.hasOis,
+  isWeatherSealed: l.isWeatherSealed,
+  afMotor: l.afMotor,
+  weight: l.weight,
+  price: l.price,
+  isDiscontinued: l.isDiscontinued,
   opticalQuality: computeOpticalQuality(l),
 }));
 ---

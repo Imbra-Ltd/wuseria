@@ -1,14 +1,14 @@
 import { useState, useMemo, useCallback } from "react";
-import type { Camera } from "../../../types/camera";
 import { useSort } from "../../../hooks/useSort";
 import type { CameraSortKey } from "./constants";
 import { YEAR_RANGES, PRICE_RANGES } from "./constants";
 import { CameraFilters } from "./CameraFilters";
 import { CameraResults } from "./CameraResults";
+import type { ExplorerCamera } from "./types";
 import styles from "./CameraExplorer.module.css";
 
 interface CameraExplorerProps {
-  cameras: Camera[];
+  cameras: ExplorerCamera[];
 }
 
 function CameraExplorer({ cameras }: CameraExplorerProps) {
@@ -61,9 +61,9 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
     });
   }, [cameras, search, mount, series, yearRange, sensorType, formFactor, discontinued, ibis, wr, videoSpec, priceRange]);
 
-  const availableFirst = useCallback((a: Camera, b: Camera) =>
+  const availableFirst = useCallback((a: ExplorerCamera, b: ExplorerCamera) =>
     Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false), []);
-  const { sorted, sortKey, sortDirection, toggleSort } = useSort<Camera, CameraSortKey>(filtered, "year", "asc", availableFirst);
+  const { sorted, sortKey, sortDirection, toggleSort } = useSort<ExplorerCamera, CameraSortKey>(filtered, "year", "asc", availableFirst);
 
   function handleMountChange(value: string): void {
     setMount(value);

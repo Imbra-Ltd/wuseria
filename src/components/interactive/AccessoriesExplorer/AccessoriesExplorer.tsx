@@ -111,6 +111,7 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
         <h1 className={styles.heroTitle}>Accessories</h1>
         <p className={styles.heroSub}>{sorted.length} / {accessories.length} Fujifilm accessories</p>
       </div>
+
       <div className={styles.filters}>
         <div className={styles.filterTop}>
           <input

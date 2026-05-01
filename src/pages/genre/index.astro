@@ -2,6 +2,9 @@
 import Base from "../../layouts/Base.astro";
 import GenreGuide from "../../components/interactive/GenreGuide/GenreGuide";
 import { lenses } from "../../data/lenses";
+import { pickGenreFields } from "../../utils/pickGenreFields";
+
+const genreLenses = lenses.map(pickGenreFields);
 ---
 
 <Base
@@ -10,7 +13,7 @@ import { lenses } from "../../data/lenses";
 >
   <GenreGuide
     client:load
-    lenses={lenses}
+    lenses={genreLenses}
     defaultGenre="nightscape"
   />
 </Base>

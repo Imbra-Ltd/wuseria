@@ -1,7 +1,21 @@
-import type { Lens } from "../../../types/lens";
 import type { ColumnAlign } from "../shared/table";
 
-interface ExplorerLens extends Lens {
+interface ExplorerLens {
+  brand: string;
+  model: string;
+  year?: number;
+  mount: string;
+  type: "prime" | "zoom";
+  focalLengthMin: number;
+  focalLengthMax: number;
+  maxAperture: number;
+  filterThread?: number;
+  hasOis?: boolean;
+  isWeatherSealed?: boolean;
+  afMotor?: string;
+  weight: number;
+  price: number;
+  isDiscontinued?: boolean;
   opticalQuality?: number | null;
 }
 
