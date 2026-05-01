@@ -5,7 +5,7 @@
 ```
 Phase 1 — Launch & Scoring (COMPLETE):
   Static site (Astro + React islands), deployed to GitHub Pages
-  -> 457 pages: 241 lenses, 39 cameras, 46 accessories, 115 wiki, 9 genre screeners
+  -> 458 pages: 241 lenses, 39 cameras, 46 accessories, 115 wiki, 9 genre screeners, 1 about
   -> Genre scoring with OQ (Optical Quality) weighted formula
   -> Affiliate links as plain <a> tags with tracking params
   -> Domain: wuseria.com
@@ -717,3 +717,30 @@ Key decisions:
 - View Transitions improve perceived speed, not Lighthouse metrics — UX quality over benchmark scores
 - Data externalization is the wrong direction for a static site with small payloads
 - 13 lines of change is acceptable complexity for instant navigation
+
+---
+
+### Session 21 — UI & UX Quick Wins & CSS Consolidation
+
+PRs merged:
+- #395 — aria-sort on GenreTable, About page, workflow sections on homepage
+- #402 — ADR-018 clickable styles consolidation (spike)
+- #403 — Extract shared interactive styles into shared.module.css
+- #404 — Standardize focus-visible on all interactive elements
+- #406 — Restyle learn-more buttons, fix wiki chips View Transition bug
+
+Issues closed: #270, #309 (wontdo), #320, #394, #398 (spike), #399, #400, #401, #405
+Issues created: #394, #396, #397, #398, #399, #400, #401, #405
+Upstream issues: solid-ai-templates #111, #112, #113, #114
+
+Key changes:
+- 458 pages (added About page)
+- Shared CSS module eliminates 568 lines of duplication across explorers
+- All interactive elements have consistent focus-visible (WCAG 2.1 AA)
+- Homepage has workflow sections (Find your gear, Plan your shoot)
+- Wiki chips bug fixed (DOMContentLoaded → astro:page-load for View Transitions)
+
+Key decisions:
+- ADR-018: Extract shared CSS module, keep two button families (accent-primary for actions, link-primary for navigation)
+- Defer affiliate disclosure and feedback button until traffic/affiliates exist
+- DRY, KISS, YAGNI flagged as missing core principles in solid-ai-templates
