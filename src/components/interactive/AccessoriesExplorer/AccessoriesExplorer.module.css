@@ -12,7 +12,10 @@
 .filterSelect { composes: filterSelect from '../shared/shared.module.css'; }
 .filterActive { composes: filterActive from '../shared/shared.module.css'; }
 .clearButton { composes: clearButton from '../shared/shared.module.css'; }
+.chipGroup { composes: chipGroup from '../shared/shared.module.css'; }
 .chipLabel { composes: chipLabel from '../shared/shared.module.css'; }
+.chip { composes: chip from '../shared/shared.module.css'; }
+.chipButtons { composes: chipButtons from '../shared/shared.module.css'; }
 .chipOn { composes: chipOn from '../shared/shared.module.css'; }
 .emptyState { composes: emptyState from '../shared/shared.module.css'; }
 .tableWrap { composes: tableWrap from '../shared/shared.module.css'; }
@@ -31,55 +34,7 @@
 .footnote { composes: footnote from '../shared/shared.module.css'; }
 .lensLink { composes: lensLink from '../shared/shared.module.css'; }
 
-/* ==========================================================================
-   Accessories-specific overrides — chipRow uses grid on mobile
-   ========================================================================== */
-
-.chipRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-xs);
-}
-
-@media (min-width: 640px) {
-  .chipRow {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-md);
-  }
-}
-
-.chipGroup {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.chip {
-  background: none;
-  border: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-sans);
-  padding: 2px var(--space-sm);
-  cursor: pointer;
-}
-
-.chip:first-of-type {
-  border-radius: var(--radius) 0 0 var(--radius);
-}
-
-.chip:last-child {
-  border-radius: 0 var(--radius) var(--radius) 0;
-}
-
-.chip:not(:first-of-type) {
-  border-left: none;
-}
-
-.chip:hover {
-  color: var(--color-text);
-}
+.chipRow { composes: chipRow from '../shared/shared.module.css'; }
 
 /* ==========================================================================
    Accessories-specific styles

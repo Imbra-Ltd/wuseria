@@ -10,16 +10,18 @@ function ChipGroup({ label, value, options, onChange, styles }: ChipGroupProps) 
   return (
     <div className={styles.chipGroup}>
       <span className={styles.chipLabel}>{label}</span>
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          className={`${styles.chip} ${value === opt.value ? styles.chipOn : ""}`}
-          onClick={() => onChange(opt.value)}
-        >
-          {opt.label}
-        </button>
-      ))}
+      <div className={styles.chipButtons}>
+        {options.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            className={`${styles.chip} ${value === opt.value ? styles.chipOn : ""}`}
+            onClick={() => onChange(opt.value)}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

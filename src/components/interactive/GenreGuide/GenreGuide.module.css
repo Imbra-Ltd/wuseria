@@ -192,22 +192,36 @@
 
 .controls {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: var(--space-sm);
-  align-items: center;
   margin-bottom: var(--space-sm);
+}
+
+@media (min-width: 640px) {
+  .controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
 }
 
 .controlGroup {
   display: flex;
-  align-items: center;
-  gap: var(--space-sm);
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
+@media (min-width: 640px) {
+  .controlGroup {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+}
 
 .controlLabel {
   font-size: var(--font-size-sm);
-  color: var(--color-text);
+  color: var(--color-text-muted);
   font-weight: 600;
 }
 
@@ -291,15 +305,27 @@
 
 .chipGroup {
   display: flex;
-  align-items: center;
-  gap: 2px;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+@media (min-width: 640px) {
+  .chipGroup {
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+  }
+}
+
+.chipButtons {
+  display: flex;
 }
 
 .chipLabel {
   font-size: var(--font-size-sm);
-  color: var(--color-text);
+  color: var(--color-text-muted);
   font-weight: 600;
-  margin-right: var(--space-xs);
+  margin-right: var(--space-sm);
   white-space: nowrap;
 }
 
@@ -309,22 +335,40 @@
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   font-family: var(--font-sans);
-  padding: 2px var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  min-height: 32px;
   cursor: pointer;
   border-radius: var(--radius);
+  transition: background-color 0.1s, color 0.1s, border-color 0.1s;
+}
+
+@media (max-width: 639px) {
+  .chip {
+    min-height: 44px;
+    padding: var(--space-sm) var(--space-sm);
+  }
 }
 
 .chip:hover {
   color: var(--color-text);
+  background-color: var(--color-bg-hover);
+}
+
+.chip:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  z-index: 1;
 }
 
 .chipOn {
   background-color: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--color-bg);
+  font-weight: 600;
 }
 
 .chipOn:hover {
+  background-color: var(--color-accent-hover);
   color: var(--color-bg);
 }
 
