@@ -264,7 +264,10 @@ Follow `docs/solid-ai-templates/base/scope.md` for scope guard and end-of-sessio
 - **Build after every change.** Don't accumulate multiple changes without verifying.
 
 ### 6.3 End of session
-Follow the full end-of-session audit in `docs/solid-ai-templates/base/scope.md`.
-Additionally:
+Run every item in `docs/solid-ai-templates/base/scope.md` end-of-session audit.
+Check each item independently — do not batch or skip.
+
+Project-specific additions:
 1. Update epic checklists if relevant
-2. Summarize what was done and what's next
+2. Flag conventions for solid-ai-templates upstream
+3. Summarize what was done and what's next
