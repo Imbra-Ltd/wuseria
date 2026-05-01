@@ -18,6 +18,11 @@ describe("LensExplorer", () => {
     expect(screen.getAllByText("XF 16-55mm f/2.8 R LM WR").length).toBeGreaterThan(0);
   });
 
+  it("shows lens count", () => {
+    render(<LensExplorer lenses={lenses} />);
+    expect(screen.getByText("3 / 3 Fujifilm-compatible lenses")).toBeInTheDocument();
+  });
+
   it("filters by search", async () => {
     const user = userEvent.setup();
     render(<LensExplorer lenses={lenses} />);

@@ -82,7 +82,10 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
 
   return (
     <div>
-      <p className={styles.resultCount}>{sorted.length} / {cameras.length} cameras</p>
+      <div className={styles.hero}>
+        <h1 className={styles.heroTitle}>Camera Explorer</h1>
+        <p className={styles.heroSub}>{sorted.length} / {cameras.length} Fujifilm cameras</p>
+      </div>
 
       <CameraFilters
         search={search} setSearch={setSearch} mount={mount} onMountChange={handleMountChange}

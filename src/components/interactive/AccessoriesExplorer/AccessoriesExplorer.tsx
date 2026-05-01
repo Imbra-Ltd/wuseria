@@ -107,7 +107,10 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
 
   return (
     <div>
-      <p className={styles.resultCount}>{sorted.length} / {accessories.length} accessories</p>
+      <div className={styles.hero}>
+        <h1 className={styles.heroTitle}>Accessories</h1>
+        <p className={styles.heroSub}>{sorted.length} / {accessories.length} Fujifilm accessories</p>
+      </div>
 
       <div className={styles.filters}>
         <div className={styles.filterTop}>

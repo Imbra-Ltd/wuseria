@@ -18,6 +18,11 @@ describe("CameraExplorer", () => {
     expect(screen.getAllByText("X-S10").length).toBeGreaterThan(0);
   });
 
+  it("shows camera count", () => {
+    render(<CameraExplorer cameras={cameras} />);
+    expect(screen.getByText("3 / 3 Fujifilm cameras")).toBeInTheDocument();
+  });
+
   it("filters by search", async () => {
     const user = userEvent.setup();
     render(<CameraExplorer cameras={cameras} />);

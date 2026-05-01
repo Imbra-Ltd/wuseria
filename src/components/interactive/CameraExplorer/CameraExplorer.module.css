@@ -1,11 +1,20 @@
 /* ==========================================================================
-   Result count
+   Hero
    ========================================================================== */
 
-.resultCount {
+.hero {
+  margin-bottom: var(--space-lg);
+}
+
+.heroTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-xs);
+}
+
+.heroSub {
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-  margin-bottom: var(--space-sm);
 }
 
 /* ==========================================================================
