@@ -60,7 +60,9 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 
 ## Session Log
 
-### Session 1 — Foundation (~2026-04-02)
+### Session 1 — Foundation
+
+**Date:** 2026-04-02
 **Chat:** [TypeScript prototype from Excel workbook](https://claude.ai/chat/6f050216-4961-498f-a4ef-e27dab2a0f5b)
 
 - Bootstrapped from an Excel workbook with X-Mount lens data
@@ -73,7 +75,9 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - All prices converted BGN to EUR
 - Calculator tab removed (code preserved with TODO)
 
-### Session 2 — Genre Guide & UI Polish (~2026-04-03)
+### Session 2 — Genre Guide & UI Polish
+
+**Date:** 2026-04-03
 **Chat:** [Fuji.me changelog: lens and camera database expansion](https://claude.ai/chat/54e23966-1869-49e6-96b8-fdb4e58aeaff)
 
 - Fixed critical missing closing brace bug in `handheldSuitability`
@@ -87,7 +91,9 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - EV 9 set as landscape default
 - All prices prefixed with `~`
 
-### Session 3 — Wiki, Accessories & Genre Equipment (~2026-04-05)
+### Session 3 — Wiki, Accessories & Genre Equipment
+
+**Date:** 2026-04-05
 **Chat:** [Session priorities and pending items](https://claude.ai/chat/b4f9f5b9-2582-4221-9c4a-694320e1dfdb)
 
 - ISO chip fix — display full number (1600 not 1.6k)
@@ -98,7 +104,9 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - Portrait genre analyzed and implemented
 - Sport/Wildlife mark scores — 4-criterion formula
 
-### Session 4 — Third-party GFX Lenses & UI Fixes (~2026-04-05-06)
+### Session 4 — Third-party GFX Lenses & UI Fixes
+
+**Date:** 2026-04-06
 
 - Added 19 native G-Mount third-party lenses (Venus Laowa, Mitakon, Irix, TTartisan, AstrHori, Kipon, NiSi Athena Cinema)
 - Tokina atx-m 11-18mm f/2.8 X added
@@ -108,7 +116,9 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - Architecture matrix f/16 row added; sweet spot label now mount-aware
 - Astronomy FL chips now filter lens list by FF-equivalent FL range
 
-### Session 5 — Analysis, Design & Scoring System (~2026-04-06-07)
+### Session 5 — Analysis, Design & Scoring System
+
+**Date:** 2026-04-07
 **Tool:** Claude Code (imbra-spikes repo)
 
 - Product brief (FUJI-ME.md) — 15 sections, revenue model, competitive landscape
@@ -123,7 +133,9 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - Repo scaffolded (Vite + React + TypeScript, later switched to Astro)
 - 54 GitHub tickets created across 6 epics
 
-### Session 6 — Data Migration & Astro Switch (2026-04-08)
+### Session 6 — Data Migration & Astro Switch
+
+**Date:** 2026-04-08
 **Tool:** Claude Code (wuseria repo)
 
 - TypeScript interfaces: Lens (40+ fields), Camera (46 fields), Genre, Affiliate, Review
@@ -135,7 +147,9 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - GitHub issues: #57 (Astro switch), #61-66 (wiki entries), #68 (camera scoring discussion)
 - CLAUDE.md rewritten for Astro architecture
 
-### Session 7 — Quality & Accessories (2026-04-09)
+### Session 7 — Quality & Accessories
+
+**Date:** 2026-04-09
 **Tool:** Claude Code (wuseria repo)
 
 - Accessory type system: discriminated unions, 18 sub-interfaces, 46 accessories migrated
@@ -149,7 +163,9 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - Accessory data refactored to use explicit sub-interface types per category
 - ADRs extracted from architecture.md into `docs/decisions/` (this session)
 
-### Session 8 — Astro Migration & Screeners (2026-04-09)
+### Session 8 — Astro Migration & Screeners
+
+**Date:** 2026-04-09
 **Tool:** Claude Code (wuseria repo)
 
 - Astro migration complete (#57 closed):
@@ -173,11 +189,10 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 - ADR-012: domain name trademark risk — lenspip.me and lensing.me as candidates
 - Issues created: #95 (hasAutofocus), #98 (field audit), #99 (coating), #100 (ghost lens), #102 (screener profiles epic), #105 (migration epic), #106 (FormFactor rename), #109 (domain decision), #110 (accessory prices)
 
-### Session 9 — 2026-04-11
+### Session 9 — Genre Scoring Engine & Data Model Review
 
-Tool: Claude Code (Opus 4.6)
-
-**Genre scoring engine + data model review**
+**Date:** 2026-04-11
+**Tool:** Claude Code (Opus 4.6)
 
 Genre guide implementation:
 - Vitest + testing-library setup (vitest.config.ts, src/test/setup.ts)
@@ -196,11 +211,10 @@ Data model deep review and cleanup:
 - Review: added ReviewMethodology (lab|field), ReviewTrust (1-3), ReviewSourceInfo; removed editorial tier; removed ReviewLink (unused); removed "other" escape hatch; 16 sources in reviewSourceDirectory (src/data/reviews.ts)
 - ADR-012: added wuseria.com/app/io domain candidates
 
-### Session 10 — 2026-04-12
+### Session 10 — Scoring Engine, Optical Data & Genre Formulas
 
-Tool: Claude Code (Opus 4.6)
-
-**Scoring engine, optical data, 9 genre formulas**
+**Date:** 2026-04-12
+**Tool:** Claude Code (Opus 4.6)
 
 Scoring engine (src/utils/scoring.ts):
 - Primary floor + weighted average algorithm — primary fields (w=3) set the tier via floor, secondary fields (w=1) rank within tier
@@ -239,11 +253,10 @@ Key design decisions:
 
 PRs: #114 (scoring engine), #115 (macro genre integration)
 
-### Session 11 — 2026-04-13
+### Session 11 — Nightscape Genre Screener
 
-Tool: Claude Code (Opus 4.6)
-
-**Nightscape genre screener — full UX build-out**
+**Date:** 2026-04-13
+**Tool:** Claude Code (Opus 4.6)
 
 Genre Guide UX:
 - Two-column layout: sidebar (EV scenes + equipment) | main (controls + matrix + lenses)
@@ -304,11 +317,10 @@ Key design insight:
 
 PRs: #117-#212 (35+ PRs for screener build-out)
 
-### Session 12 — 2026-04-15
+### Session 12 — Rebrand & Launch
 
-Tool: Claude Code (Opus 4.6)
-
-**Rebrand & launch — Wuseria goes live**
+**Date:** 2026-04-15
+**Tool:** Claude Code (Opus 4.6)
 
 Rebrand:
 - Full rebrand from Fuji.me! to Wuseria across 26 files (PR #247, closes #242)
@@ -342,11 +354,10 @@ Key decisions:
 - wuseria.com confirmed after evaluating alternatives (Wusi, LensAtlas, Visu, etc.)
 - TS 5.9 over dropping @astrojs/check or using .npmrc workaround
 
-### Session 13 — 2026-04-16
+### Session 13 — Bug Fixes, Mobile UX & Wiki Cleanup
 
-Tool: Claude Code (Opus 4.6)
-
-**Bug fixes, mobile UX, wiki cleanup**
+**Date:** 2026-04-16
+**Tool:** Claude Code (Opus 4.6)
 
 Mobile nav:
 - Added hamburger menu for screens < 640px (CSS + inline script, no React island)
@@ -398,7 +409,9 @@ Key decisions:
 
 ---
 
-### Session 14 — 2026-04-18 — Issue Organization + Code Review
+### Session 14 — Issue Organization & Code Review
+
+**Date:** 2026-04-18
 
 #### Issue reorganization
 - Split Phase 2 catch-all milestone (58 issues) into 5 focused milestones:
@@ -415,7 +428,9 @@ Key decisions:
 
 ---
 
-### Session 15 — 2026-04-18 — Code Review Fixes
+### Session 15 — Code Review Fixes
+
+**Date:** 2026-04-18
 
 Theme: clear all technical debt from the code review before Phase 2.
 
@@ -461,11 +476,10 @@ Key decisions:
 
 ---
 
-### Session 16 — 2026-04-29/30 — 360 Analysis, Pre-Launch Fixes, Landing Page
+### Session 16 — 360 Analysis, Pre-Launch Fixes & Landing Page
 
-Tool: Claude Code (Opus 4.6)
-
-**Full project review + pre-launch sprint**
+**Date:** 2026-04-29
+**Tool:** Claude Code (Opus 4.6)
 
 360-degree analysis:
 - Updated solid-ai-templates submodule (30 new commits, PR #312)
@@ -517,11 +531,10 @@ Key decisions:
 
 ---
 
-### Session 17 — 2026-05-01 — Bugs & Fixes
+### Session 17 — Bugs & Fixes
 
-Tool: Claude Code (Opus 4.6)
-
-**Bug sweep — zero open bugs remaining**
+**Date:** 2026-05-01
+**Tool:** Claude Code (Opus 4.6)
 
 Accessibility fixes:
 - #349 — Contrast ratio: bumped --color-text-muted from #8a8fa8 to #9a9fb6 (PR #354)
@@ -563,11 +576,10 @@ Key decisions:
 
 ---
 
-### Session 18 — 2026-05-01 — Pre-Launch First Impressions
+### Session 18 — Pre-Launch First Impressions
 
-Tool: Claude Code (Opus 4.6)
-
-**LICENSE, meta SEO, OG images**
+**Date:** 2026-05-01
+**Tool:** Claude Code (Opus 4.6)
 
 License:
 - Added LICENSE file to repo root (PR #365, closes #322)

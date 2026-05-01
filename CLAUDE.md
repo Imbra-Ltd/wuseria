@@ -255,9 +255,8 @@ Follow `docs/solid-ai-templates/base/scope.md` for scope guard and end-of-sessio
 ### 6.1 Start of session
 1. Check which branch we're on — if not `main`, ask why
 2. Check `git status` — if uncommitted changes exist, resolve before starting
-3. Sync Roadmap: find open `epic` issues across all repos not yet on the [Roadmap board](https://github.com/users/braboj/projects/19) and add them
-4. Ask: "What's the theme for this session?" — agree on ONE theme
-5. Review open issues for that theme before writing code
+3. Ask: "What's the theme for this session?" — agree on ONE theme
+4. Review open issues for that theme before writing code
 
 ### 6.2 During the session
 - **One theme per session.** If an unrelated topic comes up, create a GitHub issue for it and say: "Noted as #X — let's come back to it next session."
@@ -268,5 +267,4 @@ Follow `docs/solid-ai-templates/base/scope.md` for scope guard and end-of-sessio
 Follow the full end-of-session audit in `docs/solid-ai-templates/base/scope.md`.
 Additionally:
 1. Update epic checklists if relevant
-2. Sync Roadmap board with any newly created epic issues
-3. Summarize what was done and what's next
+2. Summarize what was done and what's next
