@@ -114,4 +114,4 @@ files, type-checked at build time.
 
 ## License
 
-All rights reserved.
+All rights reserved. See [LICENSE](LICENSE) for details.
