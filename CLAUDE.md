@@ -263,10 +263,22 @@ Follow `docs/solid-ai-templates/base/scope.md` for scope guard and end-of-sessio
 - **Build after every change.** Don't accumulate multiple changes without verifying.
 
 ### 6.3 End of session
-Run every item in `docs/solid-ai-templates/base/scope.md` end-of-session audit.
-Check each item independently — do not batch or skip.
+When the user says "wrap up", print the full checklist below and execute
+each item sequentially. Mark each item done (with result) before moving
+to the next. Do not batch, skip, or summarize — visible sequential
+execution prevents missed steps.
 
-Project-specific additions:
-1. Update epic checklists if relevant
-2. Flag conventions for solid-ai-templates upstream
-3. Summarize what was done and what's next
+```
+[ ] 1. All changes committed and pushed (via PR if branch-protected)
+[ ] 2. Close completed issues (verify auto-close worked)
+[ ] 3. Update epic checklists if relevant
+[ ] 4. Dev journal entry (### heading, --- separator, PRs, issues, key changes, key decisions with ADR refs)
+[ ] 5. ADRs — record any architectural decisions in docs/decisions/
+[ ] 6. CLAUDE.md — update if conventions or architecture changed
+[ ] 7. README.md — update if public-facing info changed
+[ ] 8. ONBOARDING.md — update if prerequisites or setup changed
+[ ] 9. PLAYBOOK.md — update if commands, workflows, or release process changed
+[ ] 10. Submodules — check if upstream needs update
+[ ] 11. Flag conventions for solid-ai-templates upstream
+[ ] 12. Summarize what was done and what's next
+```
