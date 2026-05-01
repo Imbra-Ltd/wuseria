@@ -36,3 +36,7 @@
 .cardBadges { composes: cardBadges from '../shared/shared.module.css'; }
 .badge { composes: badge from '../shared/shared.module.css'; }
 .footnote { composes: footnote from '../shared/shared.module.css'; }
+.mobileSort { composes: mobileSort from '../shared/shared.module.css'; }
+.mobileSortLabel { composes: mobileSortLabel from '../shared/shared.module.css'; }
+.mobileSortSelect { composes: mobileSortSelect from '../shared/shared.module.css'; }
+.mobileSortDirection { composes: mobileSortDirection from '../shared/shared.module.css'; }

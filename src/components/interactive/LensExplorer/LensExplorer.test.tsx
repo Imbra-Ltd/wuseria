@@ -59,11 +59,6 @@ describe("LensExplorer", () => {
     expect(screen.getByText("No lenses match the current filters.")).toBeInTheDocument();
   });
 
-  it("shows price footnote", () => {
-    render(<LensExplorer lenses={lenses} />);
-    expect(screen.getByText(/approximate USD estimates/)).toBeInTheDocument();
-  });
-
   it("sorts by price when Price header is clicked", async () => {
     const user = userEvent.setup();
     render(<LensExplorer lenses={lenses} />);

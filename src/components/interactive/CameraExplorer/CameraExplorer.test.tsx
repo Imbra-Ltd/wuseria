@@ -47,11 +47,6 @@ describe("CameraExplorer", () => {
     expect(screen.getByText("No cameras match the current filters.")).toBeInTheDocument();
   });
 
-  it("shows price footnote", () => {
-    render(<CameraExplorer cameras={cameras} />);
-    expect(screen.getByText(/approximate USD estimates/)).toBeInTheDocument();
-  });
-
   it("sorts by price when Price header is clicked", async () => {
     const user = userEvent.setup();
     render(<CameraExplorer cameras={cameras} />);

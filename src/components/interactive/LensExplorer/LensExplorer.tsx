@@ -92,6 +92,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         filterThread={f.thread} setFilterThread={(v) => set("thread", v)}
         oqRange={f.oq} setOqRange={(v) => set("oq", v)} priceRange={f.price} setPriceRange={(v) => set("price", v)}
         brands={brands} hasFilters={hasFilters} clearFilters={clearFilters}
+        sortKey={sortKey} sortDirection={sortDirection} toggleSort={toggleSort}
       />
 
       {sorted.length === 0 ? (
@@ -110,9 +111,6 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         </>
       )}
 
-      <p className={styles.footnote}>
-        All prices are approximate USD estimates.
-      </p>
     </div>
   );
 }

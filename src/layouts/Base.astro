@@ -100,6 +100,9 @@ const navLinks = [
       <p class="footer-text">
         Wuseria — Fujifilm lens &amp; camera explorer by <a href="https://braboj.me">braboj.me</a>
       </p>
+      <p class="footer-feedback">
+        <a href="mailto:contact@imbra.io?subject=Wuseria Feedback">Feedback</a>
+      </p>
     </footer>
   </body>
 </html>
@@ -208,6 +211,19 @@ const navLinks = [
   .footer-text {
     font-size: var(--font-size-sm);
     color: var(--color-text-muted);
+  }
+
+  .footer-feedback {
+    margin-top: var(--space-xs);
+    font-size: var(--font-size-sm);
+  }
+
+  .footer-feedback a {
+    color: var(--color-text-muted);
+  }
+
+  .footer-feedback a:hover {
+    color: var(--color-accent);
   }
 
   /* Mobile: hamburger menu */

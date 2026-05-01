@@ -1,6 +1,8 @@
 import { ChipGroup } from "../shared/ChipGroup";
+import { MobileSort } from "../shared/MobileSort";
 import { RESET_VALUE, resetValue } from "../shared/constants";
-import { APERTURE_OPTIONS, FILTER_THREAD_OPTIONS } from "./constants";
+import type { LensSortKey } from "./constants";
+import { APERTURE_OPTIONS, COLUMNS, FILTER_THREAD_OPTIONS } from "./constants";
 import styles from "./LensExplorer.module.css";
 
 interface LensFiltersProps {
@@ -20,6 +22,9 @@ interface LensFiltersProps {
   brands: string[];
   hasFilters: boolean;
   clearFilters: () => void;
+  sortKey: LensSortKey;
+  sortDirection: "asc" | "desc";
+  toggleSort: (key: LensSortKey) => void;
 }
 
 function LensFilters(props: LensFiltersProps) {
@@ -29,6 +34,7 @@ function LensFilters(props: LensFiltersProps) {
     discontinued, setDiscontinued, fl, setFl, maxAp, setMaxAp,
     filterThread, setFilterThread, oqRange, setOqRange,
     priceRange, setPriceRange, brands, hasFilters, clearFilters,
+    sortKey, sortDirection, toggleSort,
   } = props;
 
   return (
@@ -74,10 +80,10 @@ function LensFilters(props: LensFiltersProps) {
         <select autoComplete="off" className={`${styles.filterSelect} ${oqRange ? styles.filterActive : ""}`} value={oqRange} onChange={(e) => setOqRange(resetValue(e.target.value))} aria-label="Filter by optical quality">
           <option value="" hidden>Optical Quality</option>
           <option value={RESET_VALUE}>All</option>
-          <option value="8+">8+ (Excellent)</option>
-          <option value="6-7.9">6 – 7.9 (Good)</option>
-          <option value="4-5.9">4 – 5.9 (Average)</option>
-          <option value="0-3.9">0 – 3.9 (Below avg)</option>
+          <option value="1.5+">1.5+ (Excellent)</option>
+          <option value="1.0-1.4">1.0 – 1.4 (Good)</option>
+          <option value="0.5-0.9">0.5 – 0.9 (Average)</option>
+          <option value="0-0.4">0 – 0.4 (Below avg)</option>
           <option value="not-scored">Not scored</option>
         </select>
 
@@ -112,6 +118,14 @@ function LensFilters(props: LensFiltersProps) {
           { label: "All", value: "" }, { label: "Available", value: "available" }, { label: "Discontinued", value: "discontinued" },
         ]} />
       </div>
+
+      <MobileSort
+        columns={COLUMNS}
+        sortKey={sortKey}
+        sortDirection={sortDirection}
+        toggleSort={toggleSort}
+        styles={styles}
+      />
     </div>
   );
 }

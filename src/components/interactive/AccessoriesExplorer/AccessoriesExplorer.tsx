@@ -4,6 +4,7 @@ import { useSort } from "../../../hooks/useSort";
 import { toSlug } from "../../../utils/slug";
 import { ChipGroup } from "../shared/ChipGroup";
 import { RESET_VALUE, resetValue } from "../shared/constants";
+import { MobileSort } from "../shared/MobileSort";
 import type { ColumnAlign } from "../shared/table";
 import { makeAlignClasses } from "../shared/table";
 import styles from "./AccessoriesExplorer.module.css";
@@ -170,6 +171,14 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
             { label: "All", value: "" }, { label: "Available", value: "available" }, { label: "Discontinued", value: "discontinued" },
           ]} />
         </div>
+
+        <MobileSort
+          columns={COLUMNS}
+          sortKey={sortKey}
+          sortDirection={sortDirection}
+          toggleSort={toggleSort}
+          styles={styles}
+        />
       </div>
 
       {sorted.length === 0 ? (
@@ -255,9 +264,6 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
         </>
       )}
 
-      <p className={styles.footnote}>
-        All prices are approximate USD estimates.
-      </p>
     </div>
   );
 }

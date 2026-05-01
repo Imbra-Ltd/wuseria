@@ -6,6 +6,13 @@ import styles from "./LensExplorer.module.css";
 
 const ALIGN_CLASSES = makeAlignClasses(styles);
 
+function oqClass(oq: number | null | undefined): string {
+  if (oq == null) return "";
+  if (oq >= 1.5) return styles.oqHigh;
+  if (oq >= 1.0) return styles.oqMid;
+  return styles.oqLow;
+}
+
 interface LensResultsProps {
   sorted: ExplorerLens[];
   slugMap: Map<string, string>;
@@ -47,7 +54,7 @@ function LensResults({ sorted, slugMap, sortKey, sortDirection, toggleSort }: Le
                 <td className={styles.cellCenter}><span className={lens.isWeatherSealed ? styles.dotOn : styles.dotOff} /></td>
                 <td className={styles.cellCenter}>{lens.afMotor ?? "MF"}</td>
                 <td className={styles.cellRight}>{lens.weight}g</td>
-                <td className={styles.cellRight}>{lens.opticalQuality != null ? lens.opticalQuality.toFixed(1) : "\u2013"}</td>
+                <td className={`${styles.cellRight} ${oqClass(lens.opticalQuality)}`}>{lens.opticalQuality != null ? lens.opticalQuality.toFixed(1) : "\u2013"}</td>
                 <td className={styles.cellRight}>~${lens.price}</td>
               </tr>
             ))}
@@ -65,7 +72,7 @@ function LensResults({ sorted, slugMap, sortKey, sortDirection, toggleSort }: Le
             <div className={styles.cardSpecs}>
               {lens.year && <span>{lens.year}</span>}
               <span>{lens.weight}g</span>
-              {lens.opticalQuality != null && <span>OQ {lens.opticalQuality.toFixed(1)}</span>}
+              {lens.opticalQuality != null && <span className={oqClass(lens.opticalQuality)}>OQ {lens.opticalQuality.toFixed(1)}</span>}
               {lens.filterThread && <span>{"\u03A6"}{lens.filterThread}mm</span>}
             </div>
             <div className={styles.cardBadges}>

@@ -96,6 +96,7 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
         videoSpec={videoSpec} setVideoSpec={setVideoSpec} priceRange={priceRange} setPriceRange={setPriceRange}
         seriesOptions={seriesOptions} sensorOptions={sensorOptions}
         hasFilters={hasFilters} clearFilters={clearFilters}
+        sortKey={sortKey} sortDirection={sortDirection} toggleSort={toggleSort}
       />
 
       {sorted.length === 0 ? (
@@ -104,9 +105,6 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
         <CameraResults sorted={sorted} sortKey={sortKey} sortDirection={sortDirection} toggleSort={toggleSort} />
       )}
 
-      <p className={styles.footnote}>
-        All prices are approximate USD estimates.
-      </p>
     </div>
   );
 }
