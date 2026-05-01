@@ -124,7 +124,7 @@
   padding: var(--space-xs) var(--space-sm);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  color: var(--color-accent);
+  color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   font-family: var(--font-sans);
   text-decoration: none;
@@ -133,7 +133,7 @@
 
 .learnMoreBtn:hover {
   border-color: var(--color-accent);
-  background-color: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  color: var(--color-text);
 }
 
 .learnMoreBtn:focus-visible {

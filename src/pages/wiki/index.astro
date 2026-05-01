@@ -43,7 +43,7 @@ const categories = [...new Set(entries.flatMap((e) => e.data.categories))].sort(
 </Base>
 
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
+  function initWikiFilter() {
     const chips = document.querySelectorAll<HTMLButtonElement>(".chip");
     const cards = document.querySelectorAll<HTMLAnchorElement>(".wiki-card");
     const search = document.getElementById("wiki-search") as HTMLInputElement | null;
@@ -76,7 +76,8 @@ const categories = [...new Set(entries.flatMap((e) => e.data.categories))].sort(
     });
 
     search?.addEventListener("input", filter);
-  });
+  }
+  document.addEventListener("astro:page-load", initWikiFilter);
 </script>
 
 <style>
