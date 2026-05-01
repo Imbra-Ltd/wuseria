@@ -560,3 +560,35 @@ Key decisions:
 - Contrast fix via single CSS custom property — all 80+ usages updated automatically
 - focus-visible (not focus) — mouse clicks don't trigger outline
 - Session protocol lives at section 6 (matching upstream), with project-specific overrides only
+
+---
+
+### Session 18 — 2026-05-01 — Pre-Launch First Impressions
+
+Tool: Claude Code (Opus 4.6)
+
+**LICENSE, meta SEO, OG images**
+
+License:
+- Added LICENSE file to repo root (PR #365, closes #322)
+- Initially proprietary, then switched to CC-BY-NC-ND-4.0 (PR #366)
+- Researched GitHub license detection: only 13 "featured" licenses + a few CC variants
+- CC-BY-NC-ND-4.0 not in GitHub's licensee database — About section stays blank
+- Decision: keep CC-BY-NC-ND-4.0 for legal protection over GitHub badge visibility
+- Audited solid-ai-templates (CC-BY-4.0, detected) and tutorial-git (CC-BY-NC-SA-4.0, not detected — created braboj/tutorial-git#236)
+
+Meta SEO (PR #365, closes #329):
+- Rewrote meta titles across 8 page templates with intent signals and differentiators
+- Rewrote meta descriptions as pitches, not feature statements
+- Index pages: "Fujifilm Lenses Compared", "Which Lens for Your Genre?"
+- Detail pages: "Review Data", "Specs", "Best Lenses for [Genre]"
+
+OG images (PR #365, closes #340):
+- Resized both variants from 1731x909 to 1280x640 (2:1 ratio)
+- Center-cropped to improve composition balance
+- File sizes reduced: dark 1.2MB→641KB, light 877KB→516KB
+
+Key decisions:
+- CC-BY-NC-ND-4.0 over proprietary — legal protection + allows public repo on free tier
+- Stay public — scoring data is derived from public sources, niche risk is low, portfolio value is high
+- Meta descriptions as pitches per solid-ai-templates/frontend/static-site.md SEO rules
