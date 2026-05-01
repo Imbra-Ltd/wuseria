@@ -544,7 +544,19 @@ Housekeeping:
 - #328 — Removed stale affiliates.ts reference from CLAUDE.md (PR #359)
   - Updated "affiliate links" rule to "review source links" to match actual usage
 
+Session protocol consolidation:
+- Aligned CLAUDE.md session protocol with upstream formats/agents.md (section 0 → section 6) (PR #363)
+- Added base/scope.md to key references (PR #362)
+- End-of-session now references base/scope.md 10-step audit instead of incomplete local checklist (PR #361, #362)
+- Removed "commit before switching" rule (covered by base/scope.md)
+
+Upstream issues created (solid-ai-templates):
+- #104 — Add focus-visible rule to frontend/ux.md
+- #105 — Align formats/agents.md session protocol with base/scope.md
+- #106 — Add startup hygiene and build-after-change rules to base/scope.md
+
 Key decisions:
 - "Show all" button over pagination — explorer users sort/filter and need full list access
 - Contrast fix via single CSS custom property — all 80+ usages updated automatically
 - focus-visible (not focus) — mouse clicks don't trigger outline
+- Session protocol lives at section 6 (matching upstream), with project-specific overrides only
