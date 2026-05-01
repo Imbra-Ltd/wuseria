@@ -2,8 +2,26 @@
 import Base from "../../layouts/Base.astro";
 import { cameras } from "../../data/cameras";
 import CameraExplorer from "../../components/interactive/CameraExplorer/CameraExplorer";
+
+const explorerCameras = cameras.map((c) => ({
+  model: c.model,
+  mount: c.mount,
+  year: c.year,
+  series: c.series,
+  formFactor: c.formFactor,
+  sensor: c.sensor,
+  megapixels: c.megapixels,
+  hasIbis: c.hasIbis,
+  isWeatherSealed: c.isWeatherSealed,
+  isDiscontinued: c.isDiscontinued,
+  mechanicalBurstFps: c.mechanicalBurstFps,
+  videoSpec: c.videoSpec,
+  batteryLife: c.batteryLife,
+  weight: c.weight,
+  price: c.price,
+}));
 ---
 
 <Base title="Fujifilm Cameras Compared — Wuseria" description="Compare every Fujifilm camera body side by side. Specs, sensor size, and key features to pick your next body.">
-  <CameraExplorer client:load cameras={cameras} />
+  <CameraExplorer client:load cameras={explorerCameras} />
 </Base>
