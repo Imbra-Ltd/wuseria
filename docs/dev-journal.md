@@ -658,12 +658,19 @@ Upstream issues created:
 - solid-ai-templates #108 — Keep dev journal phases in sync with milestones
 - solid-ai-templates #109 — Add package version bump to release process
 
+CI improvements:
+- #370 — Skip Lighthouse on docs-only changes via dorny/paths-filter (PR #386)
+- #387 — Enforce item-by-item scope.md audit in CLAUDE.md session protocol
+
 Issues created:
-- #370 — Skip CI on docs-only changes
-- #375-#379 — Retroactive issues for completed performance work
-- #380 — Externalize data to JSON (spike)
-- #381 — View Transitions evaluation (spike)
+- #370 — Skip CI on docs-only changes (done)
+- #375-#379 — Retroactive issues for completed performance work (closed)
+- #380 — Externalize data to JSON (spike, open)
+- #381 — View Transitions evaluation (spike, open)
 - #382 — Lighthouse CI (done)
+
+Upstream issues created:
+- solid-ai-templates #110 — Add 'check each item independently' to end-of-session audit
 
 Key decisions:
 - Don't sacrifice perceived performance for Lighthouse scores — hero extraction caused visible flash
@@ -671,3 +678,4 @@ Key decisions:
 - Data trimming is invisible to users — pure win
 - CSS inlining trades 2KB gzip for eliminating render-blocking round-trip
 - Real-world LCP (2.0s on PageSpeed) matters more than simulated 3G (3.5s)
+- Hybrid session protocol: reference scope.md + project-specific additions (not full inline)
