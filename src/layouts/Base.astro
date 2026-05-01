@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
 
 interface Props {
@@ -36,6 +37,7 @@ const navLinks = [
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <ClientRouter />
     <slot name="head" />
     <!-- Privacy-friendly analytics by Umami -->
     <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id="f2aa0edb-3e74-4cc7-9a64-2a583aa8a53e"></script>
@@ -72,11 +74,22 @@ const navLinks = [
       </nav>
     </header>
     <script is:inline>
-      document.querySelector('.nav-toggle').addEventListener('click', function () {
-        const expanded = this.getAttribute('aria-expanded') === 'true';
-        this.setAttribute('aria-expanded', String(!expanded));
-        document.querySelector('.nav-links').classList.toggle('open');
-      });
+      function initNavToggle() {
+        var toggle = document.querySelector('.nav-toggle');
+        var menu = document.querySelector('.nav-links');
+        if (!toggle || !menu) return;
+        toggle.replaceWith(toggle.cloneNode(true));
+        var fresh = document.querySelector('.nav-toggle');
+        fresh.addEventListener('click', function () {
+          var expanded = this.getAttribute('aria-expanded') === 'true';
+          this.setAttribute('aria-expanded', String(!expanded));
+          menu.classList.toggle('open');
+        });
+        fresh.setAttribute('aria-expanded', 'false');
+        menu.classList.remove('open');
+      }
+      initNavToggle();
+      document.addEventListener('astro:page-load', initNavToggle);
     </script>
 
     <main class="main">
