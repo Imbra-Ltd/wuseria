@@ -10,9 +10,8 @@
     "lint": "eslint .",
     "format": "prettier --check .",
     "check": "astro check",
-    "test": "vitest run",
+    "test": "vitest run --coverage",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
     "validate": "npm run lint && npm run format && npm run check && npm run test && npm run build",
     "release": "bash scripts/release.sh",
     "prepare": "husky"
