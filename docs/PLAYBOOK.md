@@ -162,7 +162,7 @@ infer from related fields or optical construction alone.
 1. Add optical fields + `sweetSpotAperture` + `reviewSources` to the
    lens entry in `src/data/lenses.ts`
 2. Add reference scoring table to ADR-014, sorted by focal length
-3. Run `npm run check:all` to verify
+3. Run `npm run validate` to verify
 
 **Step 6 — Verify**
 

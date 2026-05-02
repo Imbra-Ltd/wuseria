@@ -876,3 +876,28 @@ Key decisions:
 - Feedback in footer, not nav — nav reserved for content pages
 - Mobile sort inside filter box, not floating — visually grouped with other controls
 - Light theme deferred to Phase 4 — dark-only is a brand choice, dual-theme adds maintenance overhead
+
+---
+
+### Session 25 — Pre-commit Hooks and Script Conventions
+
+PRs: #428
+Issues closed: #325 (pending merge)
+Issues created: #427 (resolve astro check warnings), solid-ai-templates#126 (standard npm script conventions)
+
+Key changes:
+
+- Installed husky + lint-staged for Layer 2 quality gate (pre-commit hooks)
+- lint-staged runs ESLint + Prettier on staged .ts/.tsx, Prettier on .astro/.json/.md/.css
+- Added .prettierignore to exclude submodule, prototype, build output
+- One-time Prettier formatting pass across entire codebase (109 files)
+- Added `format` script (prettier --check) — closes Layer 3 Prettier gap
+- Renamed `check:all` to `validate` — avoids collision with `check` (astro check)
+- Renamed `test` to `vitest run` (single run), added `test:watch` for development
+- `validate` now composes all named scripts: lint + format + check + test + build
+
+Key decisions:
+
+- Script naming: short verbs without namespace prefix for primary commands (lint, format, check, test); colon variants for modes (test:watch); `validate` for the full gate
+- Two-commit strategy: formatting-only commit separate from functional changes to keep git blame useful
+- Upstream issue created for standardizing npm scripts in solid-ai-templates
