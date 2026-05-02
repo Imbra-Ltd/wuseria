@@ -13,7 +13,8 @@ const palette = [
   "var(--color-mark-5)",
 ];
 const color = palette[mark] || "var(--color-mark-fallback)";
-const dots = "●".repeat(mark);
+const filled = "●".repeat(mark);
+const empty = "○".repeat(5 - mark);
 ---
 
 <span
@@ -21,7 +22,7 @@ const dots = "●".repeat(mark);
   style={`color: ${color};`}
   aria-label={`Mark ${mark} of 5`}
 >
-  {dots}
+  {filled}<span class="mark-empty">{empty}</span>
 </span>
 
 <style>
@@ -29,5 +30,9 @@ const dots = "●".repeat(mark);
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
+  }
+
+  .mark-empty {
+    opacity: 0.3;
   }
 </style>
