@@ -31,7 +31,6 @@ Quality conventions (SOLID, readability, code style, testing) are defined in
 
 Project-specific overrides and additions follow below.
 
-
 ## 1. Project
 
 ### 1.1 Stack
@@ -64,15 +63,16 @@ Project-specific overrides and additions follow below.
 ### 1.3 Commands
 
 ```
-npm run dev       # develop — hot reload at localhost:4321
-npm run build     # production build to dist/
-npm run preview   # preview production build locally
-npm run lint      # ESLint
-npm run check     # astro check — validate .astro files and type check
-npm run check:all # lint + check + test + build — full CI suite
-npm test          # run tests (Vitest)
+npm run dev          # develop — hot reload at localhost:4321
+npm run build        # production build to dist/
+npm run preview      # preview production build locally
+npm run lint         # ESLint
+npm run format       # Prettier — check formatting
+npm run check        # astro check — validate .astro files, types, content schemas
+npm test             # run tests (Vitest, single run)
+npm run test:watch   # run tests in watch mode (development)
+npm run validate     # lint + format + check + test + build — full CI suite
 ```
-
 
 ## 2. Code conventions
 
@@ -84,7 +84,7 @@ npm test          # run tests (Vitest)
 - Branch naming: `feat/description`, `fix/description`, `chore/description`
 - Do not commit `node_modules/`, `dist/`, `.env`, `.env.local`
 - Lock file (`package-lock.json`) is committed
-- Run `npm run check:all` before committing
+- Run `npm run validate` before committing
 - When creating GitHub issues, follow the formats in `docs/solid-ai-templates/base/issues.md` — use the correct label (`epic`, `bug`, `incident`, `question`) and body structure for each type
 
 ### 2.2 TypeScript
@@ -156,7 +156,6 @@ npm test          # run tests (Vitest)
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
 - Review source links use `rel="nofollow sponsored"` and `target="_blank"`
 
-
 ## 3. Quality
 
 ### 3.1 Testing
@@ -168,7 +167,7 @@ npm test          # run tests (Vitest)
 - Test factories live in `src/test/factories.ts` — use `makeLens`/`makeCamera` instead of inline objects
 - Genre scoring functions MUST have unit tests
 - Data files MUST have validation tests (no duplicates, no missing required fields)
-- Run before every commit: `npm run check:all`
+- Run before every commit: `npm run validate`
 
 ### 3.2 SEO
 
@@ -201,7 +200,6 @@ npm test          # run tests (Vitest)
 - `aria-label` on icon-only buttons and links
 - axe-core in CI — zero violations before merge
 
-
 ## 4. Identity
 
 ### 4.1 Design
@@ -220,7 +218,6 @@ npm test          # run tests (Vitest)
 - Opinionated — recommend, don't just list
 - Technical but accessible — beginners should understand the genre guide
 - Honest about limitations — "scoring is subjective, here's our methodology"
-
 
 ## 5. Review process
 
@@ -245,24 +242,26 @@ Verify every MUST from `base/docs.md` (standard documents, ADRs),
 Run after: new project setup, framework migration, adding a major layer
 (backend, CI/CD), or before a release.
 
-
 ## 6. Session Protocol
 
 Follow `docs/solid-ai-templates/base/scope.md` for scope guard and end-of-session audit.
 **The agent MUST enforce this protocol. If the user deviates, remind them.**
 
 ### 6.1 Start of session
+
 1. Check which branch we're on — if not `main`, ask why
 2. Check `git status` — if uncommitted changes exist, resolve before starting
 3. Ask: "What's the theme for this session?" — agree on ONE theme
 4. Review open issues for that theme before writing code
 
 ### 6.2 During the session
+
 - **One theme per session.** If an unrelated topic comes up, create a GitHub issue for it and say: "Noted as #X — let's come back to it next session."
 - **Always branch before coding.** No commits directly to `main` for feature work. Data fixes (single field updates) are acceptable on `main`.
 - **Build after every change.** Don't accumulate multiple changes without verifying.
 
 ### 6.3 End of session
+
 When the user signals end of session ("wrap up", "let's finish",
 "end session", "close out", or similar), print the full checklist below and execute
 each item sequentially. Mark each item done (with result) before moving

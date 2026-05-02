@@ -8,9 +8,12 @@
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",
+    "format": "prettier --check .",
     "check": "astro check",
-    "test": "vitest",
-    "check:all": "npm run lint && npm run check && vitest run && npm run build"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "validate": "npm run lint && npm run format && npm run check && npm run test && npm run build",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/react": "^5.0.3",
@@ -33,11 +36,25 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
+    "husky": "^9.1.7",
     "jsdom": "^29.0.2",
+    "lint-staged": "^16.4.0",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.58.0",
     "vitest": "^4.1.4"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.astro": [
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   },
   "overrides": {
     "vite": "^7"
