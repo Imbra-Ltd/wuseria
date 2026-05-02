@@ -904,3 +904,27 @@ Key decisions:
 - Upstream: added testability as first-class quality attribute (pure functions, boundary architecture, SOLID-to-testing connection)
 - Upstream: replaced cherry-picked design patterns with principle statement — all patterns enable testability
 - Submodule bumped to pick up upstream changes (PRs #128, #129)
+
+---
+
+### Session 26 — Ticket Reassessment
+
+Housekeeping pass across all open issues (49 → 46).
+
+Closed issues:
+
+- #244 — CLAUDE.md audit (done repeatedly across sessions)
+- #331 — Bus factor docs (mitigations already in place)
+- #334 — Sharp exclusion (transitive dep, not actionable)
+- #342 — Scoring methodology review (merged into #205)
+
+Created issues:
+
+- #429 — Epic: Aberration wiki entries (groups #254-259)
+- #430 — Epic: Genre photography guides (groups #193-202)
+
+Changes:
+
+- #273 — Added missing P3 priority label
+- #336 — Light theme demoted from P2 to P3 (Phase 4, not urgent)
+- #337 — Converted from task to spike (image sourcing needs research first)
