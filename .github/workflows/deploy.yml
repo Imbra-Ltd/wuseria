@@ -37,7 +37,7 @@ jobs:
       - run: npm run validate
 
       # Package dist/ as a GitHub Pages artifact for the deploy job
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist/
 
