@@ -8,10 +8,10 @@ function FieldVal({ value }: { value: number | undefined }) {
   if (value == null) return <span className={styles.markDash}>&ndash;</span>;
   const cls =
     value >= 1.5
-      ? styles.fieldViable     // green — good optical performance
+      ? styles.fieldViable // green — good optical performance
       : value >= 1.0
         ? styles.fieldMarginal // amber — acceptable
-        : styles.fieldOver;    // red — poor
+        : styles.fieldOver; // red — poor
   return <span className={`${cls} ${styles.fieldMono}`}>{value}</span>;
 }
 
@@ -28,7 +28,9 @@ function MarkPips({ mark }: { mark: number | null }) {
     pips.push(<span key={i} className={`${styles.pip} ${styles.pipFull}`} />);
   }
   if (half) {
-    pips.push(<span key="half" className={`${styles.pip} ${styles.pipHalf}`} />);
+    pips.push(
+      <span key="half" className={`${styles.pip} ${styles.pipHalf}`} />,
+    );
   }
   return (
     <span className={styles.markDots} aria-label={`Mark ${mark} of 5`}>
@@ -43,7 +45,11 @@ function MarkPips({ mark }: { mark: number | null }) {
 
 function PickStar({ isPick }: { isPick: boolean }) {
   if (!isPick) return null;
-  return <span className={styles.topStar} aria-label="Editor pick">★</span>;
+  return (
+    <span className={styles.topStar} aria-label="Editor pick">
+      ★
+    </span>
+  );
 }
 
 export { MarkPips, PickStar, FieldVal };

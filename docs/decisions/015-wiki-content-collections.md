@@ -13,12 +13,12 @@ Move wiki entries from `src/data/wiki.ts` to Astro Content Collections (`src/con
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
-| Keep `wiki.ts` with markdown strings | Markdown inside TS string literals is hard to author and review. No syntax highlighting, no linting, awkward escaping. |
-| Keep `wiki.ts` with structured body blocks (union types) | Type-safe but verbose — every heading, list, and table needs a type discriminant. Authoring friction grows with content complexity. |
-| MDX files | Adds React hydration overhead for content that is purely static. Markdown suffices — no interactive components needed inside wiki articles. |
-| External CMS | Same rejection as ADR-001 — adds complexity for a solo-maintainer project with monthly updates. |
+| Alternative                                              | Why rejected                                                                                                                                |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Keep `wiki.ts` with markdown strings                     | Markdown inside TS string literals is hard to author and review. No syntax highlighting, no linting, awkward escaping.                      |
+| Keep `wiki.ts` with structured body blocks (union types) | Type-safe but verbose — every heading, list, and table needs a type discriminant. Authoring friction grows with content complexity.         |
+| MDX files                                                | Adds React hydration overhead for content that is purely static. Markdown suffices — no interactive components needed inside wiki articles. |
+| External CMS                                             | Same rejection as ADR-001 — adds complexity for a solo-maintainer project with monthly updates.                                             |
 
 ## Consequences
 

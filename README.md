@@ -68,13 +68,15 @@ public/             # Static assets (favicon, icons, robots.txt, CNAME)
 ## Commands
 
 ```bash
-npm run dev       # hot reload at localhost:4321
-npm run build     # production build to dist/
-npm run preview   # preview production build
-npm run lint      # ESLint
-npm run check     # astro check (validate .astro + type check)
-npm test          # run tests (Vitest)
-npm run check:all # lint + check + test + build -- full CI suite
+npm run dev          # hot reload at localhost:4321
+npm run build        # production build to dist/
+npm run preview      # preview production build
+npm run lint         # ESLint
+npm run format       # Prettier -- check formatting
+npm run check        # astro check -- validate .astro files, types, content schemas
+npm test             # run tests (Vitest, single run)
+npm run test:watch   # run tests in watch mode (development)
+npm run validate     # lint + format + check + test + build -- full CI suite
 ```
 
 ## How to add a new lens
@@ -82,7 +84,7 @@ npm run check:all # lint + check + test + build -- full CI suite
 1. Open `src/data/lenses.ts`
 2. Add a new entry to the `lenses` array following the `Lens` interface in `src/types/lens.ts`
 3. All fields are type-checked at build time -- the compiler will catch missing required fields
-4. Run `npm run check:all` before committing
+4. Run `npm run validate` before committing
 
 ## How to add a wiki entry
 
@@ -94,9 +96,10 @@ npm run check:all # lint + check + test + build -- full CI suite
 ## Conventions
 
 See [CLAUDE.md](CLAUDE.md) for full project conventions:
+
 - Conventional commits (`feat:`, `fix:`, `chore:`, etc.)
 - Always work on a branch, never commit to main
-- Run `npm run check:all` before every commit
+- Run `npm run validate` before every commit
 - No `any` in TypeScript, no inline styles, no hardcoded data in components
 
 ## Configuration

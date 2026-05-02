@@ -109,7 +109,8 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 400,
     isTiltShift: true,
-    officialUrl: "https://7artisans.store/products/50mm-f1-4-aps-c-tilt-lens-for-e-fx-m43",
+    officialUrl:
+      "https://7artisans.store/products/50mm-f1-4-aps-c-tilt-lens-for-e-fx-m43",
   },
   {
     brand: "7Artisans",
@@ -275,7 +276,8 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 500,
     minFocusDistance: 500,
-    officialUrl: "https://7artisans.store/products/7artisans-50mm-f0-95-large-aperture-manual-focus-prime-fixed-lens-aps-c-for-sony-e-nikon-z-fuji-fx-canon-eos-m-olympus-m43",
+    officialUrl:
+      "https://7artisans.store/products/7artisans-50mm-f0-95-large-aperture-manual-focus-prime-fixed-lens-aps-c-for-sony-e-nikon-z-fuji-fx-canon-eos-m-olympus-m43",
   },
   {
     brand: "7Artisans",
@@ -293,7 +295,8 @@ const lenses: Lens[] = [
     filterThread: 43,
     price: 250,
     minFocusDistance: 500,
-    officialUrl: "https://7artisans.store/products/mf-50mm-f-1-2-aps-c-lens-for-sony-e-fuji-x-eos-r-nikon-z-panasonic-olympus-m43",
+    officialUrl:
+      "https://7artisans.store/products/mf-50mm-f-1-2-aps-c-lens-for-sony-e-fuji-x-eos-r-nikon-z-panasonic-olympus-m43",
   },
   // Carl Zeiss
   {
@@ -330,11 +333,21 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.0,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 2, landscape: 4, architecture: 2, street: 3, travel: 4, sport: 4, wildlife: 4 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/382.1-Lens_review-Carl_Zeiss_Touit_12_mm_f_2.8-Introduction.html",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 4,
+      architecture: 2,
+      street: 3,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
     },
-    officialUrl: "https://www.zeiss.com/content/dam/pno/downloads/photo-lenses/datasheets/touit-lenses/datasheet-zeiss-touit-2812.pdf",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/382.1-Lens_review-Carl_Zeiss_Touit_12_mm_f_2.8-Introduction.html",
+    },
+    officialUrl:
+      "https://www.zeiss.com/content/dam/pno/downloads/photo-lenses/datasheets/touit-lenses/datasheet-zeiss-touit-2812.pdf",
   },
   {
     brand: "Carl Zeiss",
@@ -370,11 +383,21 @@ const lenses: Lens[] = [
     distortion: 1.0,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
-    genreMarks: { nightscape: 1, landscape: 3, architecture: 3, street: 3.5, travel: 4, sport: 3, wildlife: 3 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/386.1-Lens_review-Carl_Zeiss_Touit_32_mm_f_1.8.html",
+    genreMarks: {
+      nightscape: 1,
+      landscape: 3,
+      architecture: 3,
+      street: 3.5,
+      travel: 4,
+      sport: 3,
+      wildlife: 3,
     },
-    officialUrl: "https://www.zeiss.com/content/dam/pno/downloads/photo-lenses/datasheets/touit-lenses/datasheet-zeiss-touit-1832.pdf",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/386.1-Lens_review-Carl_Zeiss_Touit_32_mm_f_1.8.html",
+    },
+    officialUrl:
+      "https://www.zeiss.com/content/dam/pno/downloads/photo-lenses/datasheets/touit-lenses/datasheet-zeiss-touit-1832.pdf",
   },
   {
     brand: "Carl Zeiss",
@@ -411,11 +434,22 @@ const lenses: Lens[] = [
     distortion: 1.5,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
-    genreMarks: { nightscape: 3, landscape: 4, architecture: 4, street: 3, travel: 4, sport: 4, wildlife: 4.5, macro: 4.5 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/418.1-Lens_review-Carl_Zeiss_Touit_M_50_mm_f_2.8.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 4,
+      architecture: 4,
+      street: 3,
+      travel: 4,
+      sport: 4,
+      wildlife: 4.5,
+      macro: 4.5,
     },
-    officialUrl: "https://www.zeiss.com/content/dam/pno/downloads/photo-lenses/datasheets/touit-lenses/datasheet-zeiss-touit-2850m.pdf",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/418.1-Lens_review-Carl_Zeiss_Touit_M_50_mm_f_2.8.html",
+    },
+    officialUrl:
+      "https://www.zeiss.com/content/dam/pno/downloads/photo-lenses/datasheets/touit-lenses/datasheet-zeiss-touit-2850m.pdf",
   },
   // Fujifilm primes
   {
@@ -456,9 +490,20 @@ const lenses: Lens[] = [
     vignettingStopped: 0.5,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 4, street: 3, travel: 4, sport: 4.5, wildlife: 5, macro: 1 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      portrait: 4,
+      street: 3,
+      travel: 4,
+      sport: 4.5,
+      wildlife: 5,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/387.1-Lens_review-Fujifilm_Fujinon_XF_14_mm_f_2.8_R.html",
+      lenstip:
+        "https://www.lenstip.com/387.1-Lens_review-Fujifilm_Fujinon_XF_14_mm_f_2.8_R.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf14mmf28-r/",
   },
@@ -501,11 +546,23 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 0.5,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 4, sport: 3, wildlife: 3, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/449.1-Lens_review-Fujifilm_Fujinon_XF_16_mm_f_1.4_R_WR-Introduction.html",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 3,
+      portrait: 2,
+      street: 4,
+      travel: 4,
+      sport: 3,
+      wildlife: 3,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf16mmf14-r-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/449.1-Lens_review-Fujifilm_Fujinon_XF_16_mm_f_1.4_R_WR-Introduction.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf16mmf14-r-wr/",
   },
   {
     brand: "Fujifilm",
@@ -546,11 +603,23 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.0,
     price: 1250,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 3, portrait: 4, street: 4.5, travel: 4, sport: 5, wildlife: 5, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/611.1-Lens_review-Fujifilm_Fujinon_XF_18_mm_f_1.4_R_LM_WR.html",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 3,
+      portrait: 4,
+      street: 4.5,
+      travel: 4,
+      sport: 5,
+      wildlife: 5,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf18mmf14-r-lm-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/611.1-Lens_review-Fujifilm_Fujinon_XF_18_mm_f_1.4_R_LM_WR.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf18mmf14-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -589,9 +658,20 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 1, portrait: 3, street: 4, travel: 4.5, sport: 3, wildlife: 3, macro: 1 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 1,
+      portrait: 3,
+      street: 4,
+      travel: 4.5,
+      sport: 3,
+      wildlife: 3,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/349.1-Lens_review-Fujifilm_Fujinon_XF_18_mm_f_2_R.html",
+      lenstip:
+        "https://www.lenstip.com/349.1-Lens_review-Fujifilm_Fujinon_XF_18_mm_f_2_R.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf18mmf2-r/",
   },
@@ -634,9 +714,20 @@ const lenses: Lens[] = [
     bokeh: 2.0,
     flareResistance: 1.5,
     price: 1250,
-    genreMarks: { nightscape: 2, landscape: 4, architecture: 4, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 4,
+      architecture: 4,
+      portrait: 4,
+      street: 4,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/398.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_1.4_R.html",
+      lenstip:
+        "https://www.lenstip.com/398.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_1.4_R.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf23mmf14-r/",
   },
@@ -679,13 +770,27 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 0.5,
-    genreMarks: { nightscape: 3, landscape: 4, architecture: 2, portrait: 4, street: 4.5, travel: 4, sport: 4, wildlife: 4, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/628.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_1.4_R_LM_WR.html",
-      opticallimits: "https://opticallimits.com/fujifilm/fujinon-xf-23mm-1-4-r-lm-wr-review/",
-      dustinabbott: "https://dustinabbott.net/2023/08/fujinon-xf-23mm-f1-4-r-lm-wr-review/",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 4,
+      architecture: 2,
+      portrait: 4,
+      street: 4.5,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf23mmf14-r-lm-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/628.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_1.4_R_LM_WR.html",
+      opticallimits:
+        "https://opticallimits.com/fujifilm/fujinon-xf-23mm-1-4-r-lm-wr-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2023/08/fujinon-xf-23mm-f1-4-r-lm-wr-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf23mmf14-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -726,9 +831,20 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 0.5,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 4.5, sport: 3, wildlife: 3, macro: 1 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      portrait: 2,
+      street: 4,
+      travel: 4.5,
+      sport: 3,
+      wildlife: 3,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/489.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_2_R_WR.html",
+      lenstip:
+        "https://www.lenstip.com/489.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_2_R_WR.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf23mmf2-r-wr/",
   },
@@ -770,9 +886,20 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.0,
     price: 500,
-    genreMarks: { nightscape: 2, landscape: 4, architecture: 3, portrait: 4, street: 3, travel: 5, sport: 4.5, wildlife: 5, macro: 1 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 4,
+      architecture: 3,
+      portrait: 4,
+      street: 3,
+      travel: 5,
+      sport: 4.5,
+      wildlife: 5,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/385.1-Lens_review-Fujifilm_Fujinon_XF_27_mm_f_2.8_Introduction.html",
+      lenstip:
+        "https://www.lenstip.com/385.1-Lens_review-Fujifilm_Fujinon_XF_27_mm_f_2.8_Introduction.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf27mmf28/",
   },
@@ -811,11 +938,22 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 3, architecture: 3, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 4.5 },
-    reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2023/01/fujinon-xf-30mm-f2-8-lm-wr-macro-review/",
+    genreMarks: {
+      landscape: 3,
+      architecture: 3,
+      portrait: 3,
+      street: 3,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 4.5,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf30mmf28-r-lm-wr-macro/",
+    reviewSources: {
+      dustinabbott:
+        "https://dustinabbott.net/2023/01/fujinon-xf-30mm-f2-8-lm-wr-macro-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf30mmf28-r-lm-wr-macro/",
   },
   {
     brand: "Fujifilm",
@@ -855,11 +993,23 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 3, landscape: 4, architecture: 3, portrait: 3, street: 4.5, travel: 4, sport: 3, wildlife: 3, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/622.1-Lens_review-Fujifilm_Fujinon_XF_33_mm_f_1.4_R_LM_WR.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 4,
+      architecture: 3,
+      portrait: 3,
+      street: 4.5,
+      travel: 4,
+      sport: 3,
+      wildlife: 3,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf33mmf14-r-lm-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/622.1-Lens_review-Fujifilm_Fujinon_XF_33_mm_f_1.4_R_LM_WR.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf33mmf14-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -899,9 +1049,20 @@ const lenses: Lens[] = [
     bokeh: 1.0,
     flareResistance: 1.5,
     price: 750,
-    genreMarks: { nightscape: 1, landscape: 4, architecture: 4, portrait: 3, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: {
+      nightscape: 1,
+      landscape: 4,
+      architecture: 4,
+      portrait: 3,
+      street: 4,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 2,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/348.1-Lens_review-Fujifilm_Fujinon_XF_35_mm_f_1.4_R_Introduction.html",
+      lenstip:
+        "https://www.lenstip.com/348.1-Lens_review-Fujifilm_Fujinon_XF_35_mm_f_1.4_R_Introduction.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf35mmf14-r/",
   },
@@ -944,9 +1105,20 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.5,
     price: 500,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 2, portrait: 3.5, street: 4, travel: 4, sport: 3.5, wildlife: 4, macro: 1 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 2,
+      portrait: 3.5,
+      street: 4,
+      travel: 4,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/456.1-Lens_review-Fujifilm_Fujinon_XF_35_mm_f_2_R_WR.html",
+      lenstip:
+        "https://www.lenstip.com/456.1-Lens_review-Fujifilm_Fujinon_XF_35_mm_f_2_R_WR.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf35mmf2-r-wr/",
   },
@@ -989,9 +1161,20 @@ const lenses: Lens[] = [
     bokeh: 2.0,
     flareResistance: 0.5,
     price: 1750,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 2, sport: 2, wildlife: 2, macro: 1 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 3,
+      portrait: 2,
+      street: 4,
+      travel: 2,
+      sport: 2,
+      wildlife: 2,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/596.1-Lens_review-Fujifilm_Fujinon_XF_50_mm_f_1.0_R_WR-Introduction.html",
+      lenstip:
+        "https://www.lenstip.com/596.1-Lens_review-Fujifilm_Fujinon_XF_50_mm_f_1.0_R_WR-Introduction.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf50mmf1-r-wr/",
   },
@@ -1034,9 +1217,20 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.5,
     price: 750,
-    genreMarks: { nightscape: 4, landscape: 3, architecture: 3, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4.5, macro: 2 },
+    genreMarks: {
+      nightscape: 4,
+      landscape: 3,
+      architecture: 3,
+      portrait: 4,
+      street: 4,
+      travel: 4,
+      sport: 4,
+      wildlife: 4.5,
+      macro: 2,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/499.1-Lens_review-Fujifilm_Fujinon_XF_50_mm_f_2_R_WR.html",
+      lenstip:
+        "https://www.lenstip.com/499.1-Lens_review-Fujifilm_Fujinon_XF_50_mm_f_2_R_WR.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf50mmf2-r-wr/",
   },
@@ -1079,9 +1273,20 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 0.5,
     price: 1000,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 4, sport: 2, wildlife: 2, macro: 1 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      portrait: 2,
+      street: 4,
+      travel: 4,
+      sport: 2,
+      wildlife: 2,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/420.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R.html",
+      lenstip:
+        "https://www.lenstip.com/420.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r/",
   },
@@ -1123,11 +1328,23 @@ const lenses: Lens[] = [
     bokeh: 1.0,
     flareResistance: 0.5,
     price: 1000,
-    genreMarks: { nightscape: 3, landscape: 4, architecture: 2, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 4 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/352.1-Lens_review-Fujifilm_Fujinon_XF_60_mm_f_2.4_R_Macro.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 4,
+      architecture: 2,
+      portrait: 3,
+      street: 3,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 4,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf60mmf24-r-macro/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/352.1-Lens_review-Fujifilm_Fujinon_XF_60_mm_f_2.4_R_Macro.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf60mmf24-r-macro/",
   },
   {
     brand: "Fujifilm",
@@ -1169,11 +1386,23 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 4, street: 3, travel: 2, sport: 4.5, wildlife: 5, macro: 5 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/519.1-Lens_review-Fujifilm_Fujinon_XF_80_mm_f_2.8_LM_OIS_WR_Macro-Introduction.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      portrait: 4,
+      street: 3,
+      travel: 2,
+      sport: 4.5,
+      wildlife: 5,
+      macro: 5,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf80mmf28-r-lm-ois-wr-macro/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/519.1-Lens_review-Fujifilm_Fujinon_XF_80_mm_f_2.8_LM_OIS_WR_Macro-Introduction.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf80mmf28-r-lm-ois-wr-macro/",
   },
   {
     brand: "Fujifilm",
@@ -1214,12 +1443,25 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 0.5,
-    genreMarks: { nightscape: 4, landscape: 4, architecture: 4, portrait: 4, street: 4, travel: 3, sport: 4.5, wildlife: 5, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/446.1-Lens_review-Fujifilm_Fujinon_XF_90_mm_f_2_R_LM_WR.html",
-      dustinabbott: "https://dustinabbott.net/2019/12/fujinon-xf-90mm-f2-lm-wr-review/",
+    genreMarks: {
+      nightscape: 4,
+      landscape: 4,
+      architecture: 4,
+      portrait: 4,
+      street: 4,
+      travel: 3,
+      sport: 4.5,
+      wildlife: 5,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf90mmf2-r-lm-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/446.1-Lens_review-Fujifilm_Fujinon_XF_90_mm_f_2_R_LM_WR.html",
+      dustinabbott:
+        "https://dustinabbott.net/2019/12/fujinon-xf-90mm-f2-lm-wr-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf90mmf2-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -1261,12 +1503,24 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 2.0,
     flareResistance: 1.0,
-    genreMarks: { landscape: 5, architecture: 5, portrait: 5, street: 4, travel: 1, sport: 5, wildlife: 5, macro: 1 },
-    reviewSources: {
-      ephotozine: "https://www.ephotozine.com/article/fujinon-xf-200mm-f-2-r-lm-ois-wr-lens-review-33098/performance",
-      dustinabbott: "https://dustinabbott.net/2018/12/fujinon-xf-200mm-f2-ois-review/",
+    genreMarks: {
+      landscape: 5,
+      architecture: 5,
+      portrait: 5,
+      street: 4,
+      travel: 1,
+      sport: 5,
+      wildlife: 5,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf200mmf2-r-lm-ois-wr/",
+    reviewSources: {
+      ephotozine:
+        "https://www.ephotozine.com/article/fujinon-xf-200mm-f-2-r-lm-ois-wr-lens-review-33098/performance",
+      dustinabbott:
+        "https://dustinabbott.net/2018/12/fujinon-xf-200mm-f2-ois-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf200mmf2-r-lm-ois-wr/",
   },
   // Fujifilm zooms
   {
@@ -1306,11 +1560,22 @@ const lenses: Lens[] = [
     sphericalAberration: 1.5,
     bokeh: 1.0,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 3, landscape: 4, architecture: 4, street: 3, travel: 2, sport: 4.5, wildlife: 4.5, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/546.1-Lens_review-Fujifilm_Fujinon_XF_8-16_mm_f_2.8_R_LM_WR.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 4,
+      architecture: 4,
+      street: 3,
+      travel: 2,
+      sport: 4.5,
+      wildlife: 4.5,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf8-16mmf28-r-lm-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/546.1-Lens_review-Fujifilm_Fujinon_XF_8-16_mm_f_2.8_R_LM_WR.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf8-16mmf28-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -1351,11 +1616,23 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 0.5,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 2, landscape: 4, architecture: 3, portrait: 2, street: 2, travel: 4, sport: 3.5, wildlife: 4, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/413.1-Lens_review-Fujifilm_Fujinon_XF_10-24_mm_f_4R_OIS.html",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 4,
+      architecture: 3,
+      portrait: 2,
+      street: 2,
+      travel: 4,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf10-24mmf4-r-ois-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/413.1-Lens_review-Fujifilm_Fujinon_XF_10-24_mm_f_4R_OIS.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf10-24mmf4-r-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -1395,11 +1672,22 @@ const lenses: Lens[] = [
     sphericalAberration: 1.5,
     flareResistance: 1.5,
     price: 750,
-    genreMarks: { nightscape: 2, landscape: 4, architecture: 3, street: 2, travel: 3, sport: 4, wildlife: 4.5, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/413.1-Lens_review-Fujifilm_Fujinon_XF_10-24_mm_f_4R_OIS.html",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 4,
+      architecture: 3,
+      street: 2,
+      travel: 3,
+      sport: 4,
+      wildlife: 4.5,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf10-24mmf4-r-ois/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/413.1-Lens_review-Fujifilm_Fujinon_XF_10-24_mm_f_4R_OIS.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf10-24mmf4-r-ois/",
   },
   {
     brand: "Fujifilm",
@@ -1439,11 +1727,23 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 0.5,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 2, portrait: 2, street: 3, travel: 3, sport: 4, wildlife: 4, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/433.1-Lens_review-Fujifilm_Fujinon_XF_16-55_mm_f_2.8_R_LM_WR.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 2,
+      portrait: 2,
+      street: 3,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf16-55mmf28-r-lm-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/433.1-Lens_review-Fujifilm_Fujinon_XF_16-55_mm_f_2.8_R_LM_WR.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf16-55mmf28-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -1481,11 +1781,23 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.5,
     price: 1000,
-    genreMarks: { nightscape: 3, landscape: 4, architecture: 4, portrait: 3, street: 3, travel: 4, sport: 3, wildlife: 3, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/383.1-Lens_review-Fujifilm_Fujinon_XF_18-55_mm_f_2.8-4_OIS.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 4,
+      architecture: 4,
+      portrait: 3,
+      street: 3,
+      travel: 4,
+      sport: 3,
+      wildlife: 3,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf18-55mmf28-4-r-lm-ois/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/383.1-Lens_review-Fujifilm_Fujinon_XF_18-55_mm_f_2.8-4_OIS.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf18-55mmf28-4-r-lm-ois/",
   },
   {
     brand: "Fujifilm",
@@ -1520,11 +1832,21 @@ const lenses: Lens[] = [
     distortion: 1.5,
     vignettingWideOpen: 1.0,
     vignettingStopped: 2.0,
-    genreMarks: { landscape: 3, architecture: 3, street: 2, travel: 3, sport: 3.5, wildlife: 4, macro: 3 },
-    reviewSources: {
-      ephotozine: "https://www.ephotozine.com/article/fujifilm-xf-18-135mm-f-3-5-5-6-r-lm-lens-review-25914",
+    genreMarks: {
+      landscape: 3,
+      architecture: 3,
+      street: 2,
+      travel: 3,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 3,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf18-135mmf35-56-r-lm-ois-wr/",
+    reviewSources: {
+      ephotozine:
+        "https://www.ephotozine.com/article/fujifilm-xf-18-135mm-f-3-5-5-6-r-lm-lens-review-25914",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf18-135mmf35-56-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -1565,11 +1887,23 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 4, street: 3, travel: 2, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/421.1-Lens_review-Fujifilm_Fujinon_XF_50-140_mm_f_2.8_R_LM_OIS_WR_-Introduction.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      portrait: 4,
+      street: 3,
+      travel: 2,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf50-140mmf28-r-lm-ois-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/421.1-Lens_review-Fujifilm_Fujinon_XF_50-140_mm_f_2.8_R_LM_OIS_WR_-Introduction.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf50-140mmf28-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -1602,11 +1936,21 @@ const lenses: Lens[] = [
     distortion: 1.5,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
-    genreMarks: { landscape: 4, architecture: 4, street: 2, travel: 3, sport: 3, wildlife: 3, macro: 2 },
-    reviewSources: {
-      ephotozine: "https://www.ephotozine.com/article/fujifilm-xf-55-200mm-f-3-5-4-8-r-lm-ois-review-22332",
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      street: 2,
+      travel: 3,
+      sport: 3,
+      wildlife: 3,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf55-200mmf35-48-r-lm-ois/",
+    reviewSources: {
+      ephotozine:
+        "https://www.ephotozine.com/article/fujifilm-xf-55-200mm-f-3-5-4-8-r-lm-ois-review-22332",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf55-200mmf35-48-r-lm-ois/",
   },
   {
     brand: "Fujifilm",
@@ -1647,12 +1991,25 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.0,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 1, landscape: 3, architecture: 2, portrait: 3, street: 1, travel: 1, sport: 3.5, wildlife: 4, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/475.1-Lens_review-Fujifilm_Fujinon_XF_100-400_mm_f_4.5-5.6_R_LM_OIS-Introduction.html",
-      dustinabbott: "https://dustinabbott.net/2023/01/fujinon-xf-100-400mm-f4-5-5-6-r-lm-wr-ois-review/",
+    genreMarks: {
+      nightscape: 1,
+      landscape: 3,
+      architecture: 2,
+      portrait: 3,
+      street: 1,
+      travel: 1,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf100-400mmf45-56-r-lm-ois-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/475.1-Lens_review-Fujifilm_Fujinon_XF_100-400_mm_f_4.5-5.6_R_LM_OIS-Introduction.html",
+      dustinabbott:
+        "https://dustinabbott.net/2023/01/fujinon-xf-100-400mm-f4-5-5-6-r-lm-wr-ois-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf100-400mmf45-56-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -1688,11 +2045,22 @@ const lenses: Lens[] = [
     bokeh: 0.0,
     flareResistance: 0.0,
     price: 500,
-    genreMarks: { landscape: 3, architecture: 3, portrait: 1, street: 2, travel: 4, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/552.1-Lens_review-Fujifilm_Fujinon_XC_15-45_mm_f_3.5-5.6_OIS_PZ.html",
+    genreMarks: {
+      landscape: 3,
+      architecture: 3,
+      portrait: 1,
+      street: 2,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xc15-45mmf35-56-ois-pz/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/552.1-Lens_review-Fujifilm_Fujinon_XC_15-45_mm_f_3.5-5.6_OIS_PZ.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xc15-45mmf35-56-ois-pz/",
   },
   {
     brand: "Fujifilm",
@@ -1729,11 +2097,22 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     flareResistance: 0.5,
     price: 500,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 3, street: 2, travel: 3.5, sport: 4, wildlife: 4, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/409.1-Lens_review-Fujifilm_Fujinon_XC_16-50_mm_f_3.5-5.6_OIS.html",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 3,
+      street: 2,
+      travel: 3.5,
+      sport: 4,
+      wildlife: 4,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/discontinued-lenses/xc16-50mmf35-56-ois-2/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/409.1-Lens_review-Fujifilm_Fujinon_XC_16-50_mm_f_3.5-5.6_OIS.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/discontinued-lenses/xc16-50mmf35-56-ois-2/",
   },
   {
     brand: "Fujifilm",
@@ -1757,7 +2136,8 @@ const lenses: Lens[] = [
     filterThread: 58,
     minFocusDistance: 1100,
     price: 500,
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xc50-230mmf45-67-ois-ii/",
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xc50-230mmf45-67-ois-ii/",
   },
   // Handevision
   {
@@ -1794,7 +2174,8 @@ const lenses: Lens[] = [
     filterThread: 49,
     price: 750,
     minFocusDistance: 450,
-    officialUrl: "https://kipon.com/product/2022-version-elegant-35mm-f2-4-for-fuji-x/",
+    officialUrl:
+      "https://kipon.com/product/2022-version-elegant-35mm-f2-4-for-fuji-x/",
   },
   {
     brand: "Handevision",
@@ -1867,7 +2248,8 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 250,
     minFocusDistance: 200,
-    officialUrl: "https://www.kamlan.com.tw/page/product/show.aspx?num=59&lang=TW",
+    officialUrl:
+      "https://www.kamlan.com.tw/page/product/show.aspx?num=59&lang=TW",
   },
   {
     brand: "Kamlan",
@@ -1885,7 +2267,8 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 250,
     minFocusDistance: 500,
-    officialUrl: "https://www.kamlan.com.tw/page/product/show.aspx?num=61&lang=TW",
+    officialUrl:
+      "https://www.kamlan.com.tw/page/product/show.aspx?num=61&lang=TW",
   },
   {
     brand: "Kamlan",
@@ -1904,7 +2287,8 @@ const lenses: Lens[] = [
     length: 94,
     price: 250,
     minFocusDistance: 400,
-    officialUrl: "https://www.kamlan.com.tw/page/product/show.aspx?num=60&lang=TW",
+    officialUrl:
+      "https://www.kamlan.com.tw/page/product/show.aspx?num=60&lang=TW",
   },
   // Meike — discontinued
   {
@@ -2085,7 +2469,8 @@ const lenses: Lens[] = [
     filterThread: 49,
     price: 250,
     minFocusDistance: 350,
-    officialUrl: "https://meikeglobal.com/products/meike-35mm-f-1-7-large-aperture-manual-focus-aps-c-lens-for-fujifilm-x-mount-mirrorless-camera-x-t3-x-h1-x-pro2-x-e3-x-t1-x-t2-x-t10-x-t20-x-a2-x-e2-x-e2s-x-e1-x30-x70-x-m1-x-a1-xpro1-etc-1",
+    officialUrl:
+      "https://meikeglobal.com/products/meike-35mm-f-1-7-large-aperture-manual-focus-aps-c-lens-for-fujifilm-x-mount-mirrorless-camera-x-t3-x-h1-x-pro2-x-e3-x-t1-x-t2-x-t10-x-t20-x-a2-x-e2-x-e2s-x-e1-x30-x70-x-m1-x-a1-xpro1-etc-1",
   },
   {
     brand: "Meike",
@@ -2176,7 +2561,8 @@ const lenses: Lens[] = [
     filterThread: 37,
     price: 1500,
     minFocusDistance: 400,
-    officialUrl: "https://www.meyer-optik-goerlitz.com/en/lenses/primoplan-58-f1.9-ii",
+    officialUrl:
+      "https://www.meyer-optik-goerlitz.com/en/lenses/primoplan-58-f1.9-ii",
   },
   {
     brand: "Meyer Optik",
@@ -2194,7 +2580,8 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 2250,
     minFocusDistance: 600,
-    officialUrl: "https://www.meyer-optik-goerlitz.com/en/lenses/primoplan-75-f1.9-ii",
+    officialUrl:
+      "https://www.meyer-optik-goerlitz.com/en/lenses/primoplan-75-f1.9-ii",
   },
   {
     brand: "Meyer Optik",
@@ -2212,7 +2599,8 @@ const lenses: Lens[] = [
     filterThread: 36,
     price: 1750,
     minFocusDistance: 350,
-    officialUrl: "https://www.meyer-optik-goerlitz.com/en/lenses/trioplan-50-f2.8-ii",
+    officialUrl:
+      "https://www.meyer-optik-goerlitz.com/en/lenses/trioplan-50-f2.8-ii",
   },
   {
     brand: "Meyer Optik",
@@ -2230,7 +2618,8 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 2000,
     minFocusDistance: 900,
-    officialUrl: "https://www.meyer-optik-goerlitz.com/en/lenses/trioplan-100-f2.8-ii",
+    officialUrl:
+      "https://www.meyer-optik-goerlitz.com/en/lenses/trioplan-100-f2.8-ii",
   },
   // Samyang
   {
@@ -2249,7 +2638,8 @@ const lenses: Lens[] = [
     weight: 200,
     price: 500,
     minFocusDistance: 300,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=339",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=339",
   },
   {
     brand: "Samyang",
@@ -2267,7 +2657,8 @@ const lenses: Lens[] = [
     weight: 400,
     price: 500,
     minFocusDistance: 300,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=335",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=335",
   },
   {
     brand: "Samyang",
@@ -2285,7 +2676,8 @@ const lenses: Lens[] = [
     weight: 600,
     price: 750,
     minFocusDistance: 240,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=343",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=343",
   },
   {
     brand: "Samyang",
@@ -2322,12 +2714,25 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 0.5,
-    genreMarks: { nightscape: 4, landscape: 3, architecture: 3, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/404.1-Lens_review-Samyang_12_mm_f_2.0_NCS_CS.html",
-      dustinabbott: "https://dustinabbott.net/2014/10/rokinon-12mm-f2-ncs-review/",
+    genreMarks: {
+      nightscape: 4,
+      landscape: 3,
+      architecture: 3,
+      portrait: 4,
+      street: 4,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=351",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/404.1-Lens_review-Samyang_12_mm_f_2.0_NCS_CS.html",
+      dustinabbott:
+        "https://dustinabbott.net/2014/10/rokinon-12mm-f2-ncs-review/",
+    },
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=351",
   },
   {
     brand: "Samyang",
@@ -2345,7 +2750,8 @@ const lenses: Lens[] = [
     weight: 500,
     price: 750,
     minFocusDistance: 200,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=190",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=190",
   },
   {
     brand: "Samyang",
@@ -2363,7 +2769,8 @@ const lenses: Lens[] = [
     weight: 600,
     price: 500,
     minFocusDistance: 280,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=194",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=194",
   },
   {
     brand: "Samyang",
@@ -2382,7 +2789,8 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 500,
     minFocusDistance: 200,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=347",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=347",
   },
   {
     brand: "Samyang",
@@ -2401,7 +2809,8 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 750,
     minFocusDistance: 200,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=182",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=182",
   },
   {
     brand: "Samyang",
@@ -2420,7 +2829,8 @@ const lenses: Lens[] = [
     filterThread: 58,
     price: 500,
     minFocusDistance: 280,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=367",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=367",
   },
   {
     brand: "Samyang",
@@ -2439,7 +2849,8 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 500,
     minFocusDistance: 380,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=186",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=186",
   },
   {
     brand: "Samyang",
@@ -2458,7 +2869,8 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 750,
     minFocusDistance: 300,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=287",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=287",
   },
   {
     brand: "Samyang",
@@ -2477,7 +2889,8 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 500,
     minFocusDistance: 500,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=363",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=363",
   },
   {
     brand: "Samyang",
@@ -2496,7 +2909,8 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 500,
     minFocusDistance: 450,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=299",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=299",
   },
   {
     brand: "Samyang",
@@ -2515,7 +2929,8 @@ const lenses: Lens[] = [
     filterThread: 72,
     price: 500,
     minFocusDistance: 1000,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=311",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=311",
   },
   {
     brand: "Samyang",
@@ -2535,7 +2950,8 @@ const lenses: Lens[] = [
     filterThread: 67,
     price: 750,
     minFocusDistance: 307,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=331",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=331",
   },
   {
     brand: "Samyang",
@@ -2554,7 +2970,8 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 250,
     minFocusDistance: 800,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=323",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=323",
   },
   {
     brand: "Samyang",
@@ -2574,7 +2991,8 @@ const lenses: Lens[] = [
     hasTripodMount: true,
     price: 500,
     minFocusDistance: 900,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=355",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=355",
   },
   {
     brand: "Samyang",
@@ -2594,7 +3012,8 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 200,
     isTiltShift: true,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=266",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=266",
   },
   // Samyang AF
   {
@@ -2618,7 +3037,8 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 500,
     minFocusDistance: 190,
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=543",
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=543",
   },
   {
     brand: "Samyang",
@@ -2655,11 +3075,23 @@ const lenses: Lens[] = [
     vignettingWideOpen: 2.0,
     vignettingStopped: 2.0,
     bokeh: 2.0,
-    genreMarks: { nightscape: 2, landscape: 4, architecture: 4, portrait: 4, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/594.1-Lens_review-Samyang_AF_75_mm_f_1.8_FE_Introduction.html",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 4,
+      architecture: 4,
+      portrait: 4,
+      street: 4,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://www.lksamyang.com/en/product/product-view.php?seq=617",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/594.1-Lens_review-Samyang_AF_75_mm_f_1.8_FE_Introduction.html",
+    },
+    officialUrl:
+      "https://www.lksamyang.com/en/product/product-view.php?seq=617",
   },
   // Venus Laowa
   {
@@ -2691,9 +3123,17 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.0,
     vignettingStopped: 0.5,
     flareResistance: 0.5,
-    genreMarks: { landscape: 3, architecture: 3, street: 3, travel: 4, sport: 4.5, wildlife: 4.5 },
+    genreMarks: {
+      landscape: 3,
+      architecture: 3,
+      street: 3,
+      travel: 4,
+      sport: 4.5,
+      wildlife: 4.5,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/529.1-Lens_review-Venus_Optics_LAOWA_9_mm_f_2.8_ZERO-D_Introduction.html",
+      lenstip:
+        "https://www.lenstip.com/529.1-Lens_review-Venus_Optics_LAOWA_9_mm_f_2.8_ZERO-D_Introduction.html",
     },
     officialUrl: "https://www.venuslens.net/product/9mm/",
   },
@@ -2715,7 +3155,8 @@ const lenses: Lens[] = [
     minFocusDistance: 250,
     isTiltShift: true,
     shiftRange: 10,
-    officialUrl: "https://www.venuslens.net/product/laowa-12-24mm-f-5-6-zoom-shift-cf/",
+    officialUrl:
+      "https://www.venuslens.net/product/laowa-12-24mm-f-5-6-zoom-shift-cf/",
   },
   {
     brand: "Venus Laowa",
@@ -2746,11 +3187,22 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 0.5,
-    genreMarks: { landscape: 4.5, architecture: 4.5, portrait: 4, street: 3, travel: 4, sport: 4.5, wildlife: 5, macro: 5 },
-    reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2020/02/laowa-65mm-f2-8-ultra-2x-macro-review/",
+    genreMarks: {
+      landscape: 4.5,
+      architecture: 4.5,
+      portrait: 4,
+      street: 3,
+      travel: 4,
+      sport: 4.5,
+      wildlife: 5,
+      macro: 5,
     },
-    officialUrl: "https://www.venuslens.net/product/laowa-65mm-f-2-8-2x-ultra-macro-apo/",
+    reviewSources: {
+      dustinabbott:
+        "https://dustinabbott.net/2020/02/laowa-65mm-f2-8-ultra-2x-macro-review/",
+    },
+    officialUrl:
+      "https://www.venuslens.net/product/laowa-65mm-f-2-8-2x-ultra-macro-apo/",
   },
   // Additional Venus Laowa (X-Mount)
   {
@@ -2805,7 +3257,8 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 750,
     minFocusDistance: 350,
-    officialUrl: "https://www.venuslens.net/product/laowa-argus-33mm-f-0-95-cf-apo/",
+    officialUrl:
+      "https://www.venuslens.net/product/laowa-argus-33mm-f-0-95-cf-apo/",
   },
   // TTartisan
   {
@@ -2864,7 +3317,8 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 250,
     isTiltShift: true,
-    officialUrl: "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
+    officialUrl:
+      "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
   },
   {
     brand: "TTartisan",
@@ -2991,7 +3445,8 @@ const lenses: Lens[] = [
     filterThread: 46,
     price: 250,
     minFocusDistance: 500,
-    officialUrl: "https://www.ttartisan.com/?full-frame-lenses/TTArtisan-50-F2.html",
+    officialUrl:
+      "https://www.ttartisan.com/?full-frame-lenses/TTArtisan-50-F2.html",
   },
   {
     brand: "TTartisan",
@@ -3047,9 +3502,20 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 2.0,
     bokeh: 1.5,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 2, portrait: 3, street: 4, travel: 3, sport: 3, wildlife: 3, macro: 1 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 2,
+      portrait: 3,
+      street: 4,
+      travel: 3,
+      sport: 3,
+      wildlife: 3,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/522.1-Lens_review-Sigma_C_16_mm_f_1.4_DC_DN.html",
+      lenstip:
+        "https://www.lenstip.com/522.1-Lens_review-Sigma_C_16_mm_f_1.4_DC_DN.html",
     },
     officialUrl: "https://www.sigma-global.com/en/lenses/c017_16_14/",
   },
@@ -3087,9 +3553,20 @@ const lenses: Lens[] = [
     distortion: 1.0,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 3, landscape: 4, architecture: 3, portrait: 3, street: 4.5, travel: 4, sport: 3, wildlife: 3, macro: 1 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 4,
+      architecture: 3,
+      portrait: 3,
+      street: 4.5,
+      travel: 4,
+      sport: 3,
+      wildlife: 3,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/477.1-Lens_review-Sigma_C_30_mm_f_1.4_DC_DN_Introduction.html",
+      lenstip:
+        "https://www.lenstip.com/477.1-Lens_review-Sigma_C_30_mm_f_1.4_DC_DN_Introduction.html",
     },
     officialUrl: "https://www.sigma-global.com/en/lenses/c016_30_14/",
   },
@@ -3128,9 +3605,20 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
     bokeh: 1.0,
-    genreMarks: { nightscape: 3, landscape: 2, architecture: 2, portrait: 3, street: 4.5, travel: 4, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 2,
+      architecture: 2,
+      portrait: 3,
+      street: 4.5,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/550.1-Lens_review-Sigma_C_56_mm_f_1.4_DC_DN.html",
+      lenstip:
+        "https://www.lenstip.com/550.1-Lens_review-Sigma_C_56_mm_f_1.4_DC_DN.html",
     },
     officialUrl: "https://www.sigma-global.com/en/lenses/c018_56_14/",
   },
@@ -3169,9 +3657,20 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 2, portrait: 3, street: 3, travel: 4, sport: 3.5, wildlife: 4, macro: 3 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 2,
+      portrait: 3,
+      street: 3,
+      travel: 4,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 3,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2023/12/sigma-18-50mm-f2-8-dn-x-mount-review-40mp/",
+      dustinabbott:
+        "https://dustinabbott.net/2023/12/sigma-18-50mm-f2-8-dn-x-mount-review-40mp/",
     },
     officialUrl: "https://www.sigma-global.com/en/lenses/c021_18_50_28/",
   },
@@ -3209,9 +3708,19 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.0,
     flareResistance: 2.0,
-    genreMarks: { landscape: 3, architecture: 2, portrait: 3, street: 4, travel: 3, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: {
+      landscape: 3,
+      architecture: 2,
+      portrait: 3,
+      street: 4,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 2,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2025/08/sigma-12mm-f1-4-dc-contemporary-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2025/08/sigma-12mm-f1-4-dc-contemporary-review/",
     },
     officialUrl: "https://www.sigma-global.com/en/lenses/c025_12_14/",
   },
@@ -3250,9 +3759,20 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 4, landscape: 3, architecture: 1, portrait: 3, street: 4, travel: 3, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: {
+      nightscape: 4,
+      landscape: 3,
+      architecture: 1,
+      portrait: 3,
+      street: 4,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2026/02/sigma-15mm-f1-4-dc-contemporary-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2026/02/sigma-15mm-f1-4-dc-contemporary-review/",
     },
     officialUrl: "https://www.sigma-global.com/en/lenses/c026_15_14/",
   },
@@ -3292,9 +3812,20 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 2.0,
-    genreMarks: { nightscape: 3, landscape: 4, architecture: 2, portrait: 4, street: 4.5, travel: 4, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 4,
+      architecture: 2,
+      portrait: 4,
+      street: 4.5,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 2,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/670.1-Lens_review-Sigma_C_23_mm_f_1.4_DC_DN-Introduction.html",
+      lenstip:
+        "https://www.lenstip.com/670.1-Lens_review-Sigma_C_23_mm_f_1.4_DC_DN-Introduction.html",
     },
     officialUrl: "https://www.sigma-global.com/en/lenses/c023_23_14/",
   },
@@ -3331,9 +3862,19 @@ const lenses: Lens[] = [
     vignettingStopped: 0.5,
     bokeh: 1.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 4, architecture: 2, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 3 },
+    genreMarks: {
+      landscape: 4,
+      architecture: 2,
+      portrait: 3,
+      street: 3,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 3,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2023/12/sigma-10-18mm-f2-8-dn-x-mount-40mp-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2023/12/sigma-10-18mm-f2-8-dn-x-mount-40mp-review/",
     },
     officialUrl: "https://www.sigma-global.com/en/lenses/c023_10_18_28/",
   },
@@ -3419,9 +3960,19 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { landscape: 4, architecture: 4, portrait: 4, street: 1, travel: 1, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      portrait: 4,
+      street: 1,
+      travel: 1,
+      sport: 4,
+      wildlife: 4,
+      macro: 2,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2023/09/sigma-100-400mm-f5-6-3-dg-dn-os-x-mount-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2023/09/sigma-100-400mm-f5-6-3-dg-dn-os-x-mount-review/",
     },
     officialUrl: "https://www.sigma-global.com/en/lenses/c020_100_400_5_63/",
   },
@@ -3463,10 +4014,22 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 3, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 3 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 3,
+      portrait: 3,
+      street: 3,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 3,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2023/06/tamron-11-20mm-f2-8-rxd-for-fuji-x-mount-review/",
-      "the-digital-picture": "https://www.the-digital-picture.com/Reviews/Tamron-11-20mm-F2-8-Di-III-A-RXD-Lens.aspx",
+      dustinabbott:
+        "https://dustinabbott.net/2023/06/tamron-11-20mm-f2-8-rxd-for-fuji-x-mount-review/",
+      "the-digital-picture":
+        "https://www.the-digital-picture.com/Reviews/Tamron-11-20mm-F2-8-Di-III-A-RXD-Lens.aspx",
     },
     officialUrl: "https://www.tamron.com/global/consumer/lenses/b060/",
   },
@@ -3506,9 +4069,20 @@ const lenses: Lens[] = [
     distortion: 0.5,
     bokeh: 0.5,
     flareResistance: 0.5,
-    genreMarks: { nightscape: 3, landscape: 4, architecture: 2, portrait: 2, street: 3, travel: 3, sport: 4, wildlife: 4, macro: 2 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 4,
+      architecture: 2,
+      portrait: 2,
+      street: 3,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 2,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/625.1-Lens_review-Tamron_17-70_mm_f_2.8_Di_III-A_VC_RXD_Introduction.html",
+      lenstip:
+        "https://www.lenstip.com/625.1-Lens_review-Tamron_17-70_mm_f_2.8_Di_III-A_VC_RXD_Introduction.html",
     },
     officialUrl: "https://www.tamron.com/global/consumer/lenses/b070/",
   },
@@ -3547,9 +4121,19 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { landscape: 3, architecture: 2, portrait: 4, street: 2, travel: 3, sport: 4, wildlife: 4, macro: 4 },
+    genreMarks: {
+      landscape: 3,
+      architecture: 2,
+      portrait: 4,
+      street: 2,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 4,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2021/10/tamron-18-300mm-f3-5-6-3-vc-vxd-b061-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2021/10/tamron-18-300mm-f3-5-6-3-vc-vxd-b061-review/",
     },
     officialUrl: "https://www.tamron.com/global/consumer/lenses/b061/",
   },
@@ -3590,9 +4174,19 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 2.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 3, architecture: 3, portrait: 4, street: 1, travel: 1, sport: 4, wildlife: 4, macro: 3 },
+    genreMarks: {
+      landscape: 3,
+      architecture: 3,
+      portrait: 4,
+      street: 1,
+      travel: 1,
+      sport: 4,
+      wildlife: 4,
+      macro: 3,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2023/08/tamron-150-500mm-f5-6-7-di-ii-vc-vxd-x-mount-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2023/08/tamron-150-500mm-f5-6-7-di-ii-vc-vxd-x-mount-review/",
     },
     officialUrl: "https://www.tamron.com/global/consumer/lenses/a057/",
   },
@@ -3633,11 +4227,23 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 0.5,
-    genreMarks: { nightscape: 2, landscape: 4, architecture: 4, portrait: 3, street: 4.5, travel: 3, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/657.1-Lens_review-Viltrox_AF_13_mm_f_1.4_XF-Introduction.html",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 4,
+      architecture: 4,
+      portrait: 3,
+      street: 4.5,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/657.1-Lens_review-Viltrox_AF_13_mm_f_1.4_XF-Introduction.html",
+    },
+    officialUrl:
+      "https://viltrox.com/products/13mm-f14-af-lens-for-fujifilm-x-mount-camera-models",
   },
   {
     brand: "Viltrox",
@@ -3674,9 +4280,20 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
     bokeh: 1.5,
-    genreMarks: { nightscape: 2, landscape: 2, architecture: 2, portrait: 2, street: 4, travel: 4, sport: 2, wildlife: 2, macro: 1 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 2,
+      architecture: 2,
+      portrait: 2,
+      street: 4,
+      travel: 4,
+      sport: 2,
+      wildlife: 2,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/592.1-Lens_review-Viltrox_AF_23_mm_f_1.4_XF.html",
+      lenstip:
+        "https://www.lenstip.com/592.1-Lens_review-Viltrox_AF_23_mm_f_1.4_XF.html",
     },
     officialUrl: "https://viltrox.com/products/viltrox-23mm-f14-xf-mount",
   },
@@ -3710,11 +4327,21 @@ const lenses: Lens[] = [
     distortion: 1.5,
     vignettingWideOpen: 1.5,
     vignettingStopped: 2.0,
-    genreMarks: { landscape: 3, architecture: 3, street: 4, travel: 4, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      opticallimits: "https://opticallimits.com/fujifilm/viltrox-af-33mm-f-1-4-xf-review/",
+    genreMarks: {
+      landscape: 3,
+      architecture: 3,
+      street: 4,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://viltrox.com/products/viltrox-af-33mm-f14-xf-aps-c-lens",
+    reviewSources: {
+      opticallimits:
+        "https://opticallimits.com/fujifilm/viltrox-af-33mm-f-1-4-xf-review/",
+    },
+    officialUrl:
+      "https://viltrox.com/products/viltrox-af-33mm-f14-xf-aps-c-lens",
   },
   {
     brand: "Viltrox",
@@ -3738,9 +4365,11 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 600,
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2020/10/viltrox-af-56mm-f1-4-review-and-image-gallery/",
+      dustinabbott:
+        "https://dustinabbott.net/2020/10/viltrox-af-56mm-f1-4-review-and-image-gallery/",
     },
-    officialUrl: "https://viltrox.com/products/viltrox-af-56mm-f14-x-mount-lens",
+    officialUrl:
+      "https://viltrox.com/products/viltrox-af-56mm-f14-x-mount-lens",
   },
   {
     brand: "Viltrox",
@@ -3779,11 +4408,23 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 2.0,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 4, street: 4.5, travel: 3, sport: 4, wildlife: 4, macro: 2 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/689.1-Lens_review-Viltrox_AF_27_mm_f_1.2.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      portrait: 4,
+      street: 4.5,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 2,
     },
-    officialUrl: "https://viltrox.com/products/viltrox-af-27mm-f-1-2-pro-xf-mount",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/689.1-Lens_review-Viltrox_AF_27_mm_f_1.2.html",
+    },
+    officialUrl:
+      "https://viltrox.com/products/viltrox-af-27mm-f-1-2-pro-xf-mount",
   },
   {
     brand: "Viltrox",
@@ -3822,9 +4463,20 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 2.0,
     flareResistance: 0.0,
-    genreMarks: { nightscape: 4, landscape: 4, architecture: 4, portrait: 4, street: 4.5, travel: 3, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: {
+      nightscape: 4,
+      landscape: 4,
+      architecture: 4,
+      portrait: 4,
+      street: 4.5,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/659.1-Lens_review-Viltrox_AF_75_mm_f_1.2-Introduction.html",
+      lenstip:
+        "https://www.lenstip.com/659.1-Lens_review-Viltrox_AF_75_mm_f_1.2-Introduction.html",
     },
     officialUrl: "https://viltrox.com/products/75mm-f12-xf-lens",
   },
@@ -3879,9 +4531,19 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 4, landscape: 3, architecture: 3, portrait: 3, street: 4, travel: 4, sport: 4, wildlife: 4 },
+    genreMarks: {
+      nightscape: 4,
+      landscape: 3,
+      architecture: 3,
+      portrait: 3,
+      street: 4,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/705.1-Lens_review-Viltrox_AF_15_mm_f_1.7_Air_review.html",
+      lenstip:
+        "https://www.lenstip.com/705.1-Lens_review-Viltrox_AF_15_mm_f_1.7_Air_review.html",
     },
     officialUrl: "https://viltrox.com/products/af-15mm-f1-7-xf",
   },
@@ -3913,9 +4575,17 @@ const lenses: Lens[] = [
     lateralCA: 1.5,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
-    genreMarks: { nightscape: 3, landscape: 3, street: 4, travel: 5, sport: 3, wildlife: 3 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      street: 4,
+      travel: 5,
+      sport: 3,
+      wildlife: 3,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/706.1-Lens_review-Viltrox_AF_25_mm_f_1.7_Air.html",
+      lenstip:
+        "https://www.lenstip.com/706.1-Lens_review-Viltrox_AF_25_mm_f_1.7_Air.html",
     },
     officialUrl: "https://viltrox.com/products/af-25mm-f1-7-x",
   },
@@ -3955,7 +4625,8 @@ const lenses: Lens[] = [
     weight: 160,
     filterThread: 46,
     price: 250,
-    officialUrl: "https://viltrox.com/products/viltrox-af-35mm-f1-7-aps-c-lens-for-fujifilm-x-mount",
+    officialUrl:
+      "https://viltrox.com/products/viltrox-af-35mm-f1-7-aps-c-lens-for-fujifilm-x-mount",
   },
   {
     brand: "Viltrox",
@@ -3988,9 +4659,19 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 3, street: 4, travel: 4, sport: 3, wildlife: 3 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      portrait: 3,
+      street: 4,
+      travel: 4,
+      sport: 3,
+      wildlife: 3,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/712.1-Lens_review-Viltrox_AF_56_mm_f_1.7_Air_review.html",
+      lenstip:
+        "https://www.lenstip.com/712.1-Lens_review-Viltrox_AF_56_mm_f_1.7_Air_review.html",
     },
     officialUrl: "https://viltrox.com/products/viltrox-af-56mm-f1-7-xf-z",
   },
@@ -4015,7 +4696,8 @@ const lenses: Lens[] = [
     filterThread: 72,
     price: 500,
     minFocusDistance: 800,
-    officialUrl: "https://viltrox.com/products/viltrox-85mm-f1-8-lens-of-lighter-weight-for-fuji-x-mount",
+    officialUrl:
+      "https://viltrox.com/products/viltrox-85mm-f1-8-lens-of-lighter-weight-for-fuji-x-mount",
   },
   // Sirui Sniper (AF)
   {
@@ -4039,7 +4721,8 @@ const lenses: Lens[] = [
     filterThread: 58,
     price: 500,
     minFocusDistance: 280,
-    officialUrl: "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set?variant=44732249571554",
+    officialUrl:
+      "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set?variant=44732249571554",
   },
   {
     brand: "Sirui",
@@ -4062,7 +4745,8 @@ const lenses: Lens[] = [
     filterThread: 58,
     price: 500,
     minFocusDistance: 350,
-    officialUrl: "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set?variant=44732249866466",
+    officialUrl:
+      "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set?variant=44732249866466",
   },
   {
     brand: "Sirui",
@@ -4085,7 +4769,8 @@ const lenses: Lens[] = [
     filterThread: 58,
     price: 500,
     minFocusDistance: 500,
-    officialUrl: "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set?variant=44732250161378",
+    officialUrl:
+      "https://store.sirui.com/products/sirui-sniper-series-f1-2-aps-c-autofocus-lens-set?variant=44732250161378",
   },
   // Tokina atx-m (AF)
   {
@@ -4119,7 +4804,15 @@ const lenses: Lens[] = [
     distortion: 2.0,
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
-    genreMarks: { landscape: 4, architecture: 4, street: 4, travel: 4, sport: 3.5, wildlife: 4, macro: 2 },
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      street: 4,
+      travel: 4,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 2,
+    },
     reviewSources: {
       opticallimits: "https://opticallimits.com/sony/3705/",
     },
@@ -4161,9 +4854,20 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 2.0,
     flareResistance: 0.5,
-    genreMarks: { nightscape: 2, landscape: 2, architecture: 2, portrait: 1, street: 4, travel: 4, sport: 1, wildlife: 1, macro: 2 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 2,
+      architecture: 2,
+      portrait: 1,
+      street: 4,
+      travel: 4,
+      sport: 1,
+      wildlife: 1,
+      macro: 2,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/634.1-Lens_review-Tokina_ATX-M_33_mm_f_1.4_X.html",
+      lenstip:
+        "https://www.lenstip.com/634.1-Lens_review-Tokina_ATX-M_33_mm_f_1.4_X.html",
     },
     officialUrl: "https://tokinalens.com/product/atx-m-33mm-f1-4-x/",
   },
@@ -4198,9 +4902,18 @@ const lenses: Lens[] = [
     distortion: 1.0,
     vignettingWideOpen: 1.5,
     vignettingStopped: 2.0,
-    genreMarks: { landscape: 3.5, architecture: 3, street: 4, travel: 4, sport: 3.5, wildlife: 4, macro: 1 },
+    genreMarks: {
+      landscape: 3.5,
+      architecture: 3,
+      street: 4,
+      travel: 4,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      opticallimits: "https://opticallimits.com/fujifilm/tokina-atx-m-56mm-f-1-4-x/",
+      opticallimits:
+        "https://opticallimits.com/fujifilm/tokina-atx-m-56mm-f-1-4-x/",
     },
     officialUrl: "https://tokinalens.com/product/atx-m-56mm-f1-4-x/",
   },
@@ -4239,9 +4952,20 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.0,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 3 },
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      portrait: 3,
+      street: 3,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 3,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2025/02/tokina-atx-m-11-18mm-f2-8-x-mount-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2025/02/tokina-atx-m-11-18mm-f2-8-x-mount-review/",
     },
     officialUrl: "https://tokinalens.com/product/atx-m-11-18mm-f2-8-x/",
   },
@@ -4340,7 +5064,8 @@ const lenses: Lens[] = [
     filterThread: 46,
     price: 750,
     minFocusDistance: 200,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/23-mm-11-2-nokton/?lang=en",
+    officialUrl:
+      "https://www.voigtlaender.de/lenses/x-mount/23-mm-11-2-nokton/?lang=en",
   },
   {
     brand: "Voigtlander",
@@ -4373,11 +5098,22 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 2.0,
     flareResistance: 0.5,
-    genreMarks: { nightscape: 1, landscape: 1, architecture: 1, portrait: 1, street: 4, travel: 4.5, sport: 1, wildlife: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/638.1-Lens_review-Voigtlander_Nokton_35_mm_f_1.2_X___Z.html",
+    genreMarks: {
+      nightscape: 1,
+      landscape: 1,
+      architecture: 1,
+      portrait: 1,
+      street: 4,
+      travel: 4.5,
+      sport: 1,
+      wildlife: 1,
     },
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/35-mm-11-2-nokton/?lang=en",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/638.1-Lens_review-Voigtlander_Nokton_35_mm_f_1.2_X___Z.html",
+    },
+    officialUrl:
+      "https://www.voigtlaender.de/lenses/x-mount/35-mm-11-2-nokton/?lang=en",
   },
   {
     brand: "Voigtlander",
@@ -4395,7 +5131,8 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 1000,
     minFocusDistance: 450,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/50mm-11-2-nokton/?lang=en",
+    officialUrl:
+      "https://www.voigtlaender.de/lenses/x-mount/50mm-11-2-nokton/?lang=en",
   },
   {
     brand: "Voigtlander",
@@ -4413,7 +5150,8 @@ const lenses: Lens[] = [
     filterThread: 39,
     price: 750,
     minFocusDistance: 250,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/27-mm-12-0-nokton/?lang=en",
+    officialUrl:
+      "https://www.voigtlaender.de/lenses/x-mount/27-mm-12-0-nokton/?lang=en",
   },
   // Additional Voigtlander
   {
@@ -4432,7 +5170,8 @@ const lenses: Lens[] = [
     filterThread: 46,
     price: 750,
     minFocusDistance: 170,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/18-mm-128-color-skopar/?lang=en",
+    officialUrl:
+      "https://www.voigtlaender.de/lenses/x-mount/18-mm-128-color-skopar/?lang=en",
   },
   {
     brand: "Voigtlander",
@@ -4469,7 +5208,8 @@ const lenses: Lens[] = [
     filterThread: 49,
     price: 750,
     minFocusDistance: 155,
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/35-mm-12-macro-apo-ultron/?lang=en",
+    officialUrl:
+      "https://www.voigtlaender.de/lenses/x-mount/35-mm-12-macro-apo-ultron/?lang=en",
   },
   // NiSi
   {
@@ -4525,7 +5265,8 @@ const lenses: Lens[] = [
     filterThread: 55,
     price: 750,
     minFocusDistance: 350,
-    officialUrl: "https://zyoptics.net/product/mitakon-speedmaster-35mm-f-0-95/",
+    officialUrl:
+      "https://zyoptics.net/product/mitakon-speedmaster-35mm-f-0-95/",
   },
   {
     brand: "Mitakon",
@@ -4543,7 +5284,8 @@ const lenses: Lens[] = [
     filterThread: 55,
     price: 750,
     minFocusDistance: 500,
-    officialUrl: "https://zyoptics.net/product/mitakon-speedmaster-50mm-f-0-95-iii/",
+    officialUrl:
+      "https://zyoptics.net/product/mitakon-speedmaster-50mm-f-0-95-iii/",
   },
   {
     brand: "Mitakon",
@@ -4598,7 +5340,8 @@ const lenses: Lens[] = [
     weight: 70,
     price: 250,
     minFocusDistance: 100,
-    officialUrl: "https://www.pergear.com/products/pergear-10mm-f8-pancake-lens-fuji",
+    officialUrl:
+      "https://www.pergear.com/products/pergear-10mm-f8-pancake-lens-fuji",
   },
   {
     brand: "Pergear",
@@ -4724,7 +5467,8 @@ const lenses: Lens[] = [
     weight: 40,
     filterThread: 39,
     price: 250,
-    officialUrl: "https://thingyfy.com/products/pinhole-pro-x-professional-pinhole-2x-zoom-lens-for-dslr-mirrorless-cameras",
+    officialUrl:
+      "https://thingyfy.com/products/pinhole-pro-x-professional-pinhole-2x-zoom-lens-for-dslr-mirrorless-cameras",
   },
   // AstrHori (X-Mount)
   {
@@ -4744,7 +5488,8 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 200,
     isTiltShift: true,
-    officialUrl: "https://www.astrhori.cn/products/18mm-f5-6-aps-c-shift-lens-for-e-fx-l-z",
+    officialUrl:
+      "https://www.astrhori.cn/products/18mm-f5-6-aps-c-shift-lens-for-e-fx-l-z",
   },
   {
     brand: "AstrHori",
@@ -4764,7 +5509,8 @@ const lenses: Lens[] = [
     minFocusDistance: 500,
     isTiltShift: true,
     tiltAngle: 15,
-    officialUrl: "https://www.astrhori.cn/products/astrhori-50mm-f1-4-large-aperture-full-frame-portrait-manual-lens",
+    officialUrl:
+      "https://www.astrhori.cn/products/astrhori-50mm-f1-4-large-aperture-full-frame-portrait-manual-lens",
   },
   {
     brand: "AstrHori",
@@ -4784,7 +5530,8 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 250,
     isTiltShift: true,
-    officialUrl: "https://www.astrhori.cn/products/astrhori-85mm-f2-8-macro-tilt-manual-full-frame-lens",
+    officialUrl:
+      "https://www.astrhori.cn/products/astrhori-85mm-f2-8-macro-tilt-manual-full-frame-lens",
   },
   // Missing XF / XC
   {
@@ -4826,9 +5573,20 @@ const lenses: Lens[] = [
     bokeh: 0.5,
     flareResistance: 1.0,
     price: 500,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 1, portrait: 2, street: 2, travel: 4, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 1,
+      portrait: 2,
+      street: 2,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/656.1-Lens_review-Fujifilm_Fujinon_XF_8_mm_f_3.5_R_WR-Introduction.html",
+      lenstip:
+        "https://www.lenstip.com/656.1-Lens_review-Fujifilm_Fujinon_XF_8_mm_f_3.5_R_WR-Introduction.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf8mmf35-r-wr/",
   },
@@ -4869,11 +5627,23 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 0.5,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 1, portrait: 2, street: 3, travel: 4.5, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/563.1-Lens_review-Fujifilm_Fujinon_XF_16_mm_f_2.8_R_WR.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 1,
+      portrait: 2,
+      street: 3,
+      travel: 4.5,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf16mmf28-r-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/563.1-Lens_review-Fujifilm_Fujinon_XF_16_mm_f_2.8_R_WR.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf16mmf28-r-wr/",
   },
   {
     brand: "Fujifilm",
@@ -4913,11 +5683,23 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 3, landscape: 4, architecture: 2, portrait: 4, street: 3, travel: 4.5, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/713.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_2.8_R_WR.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 4,
+      architecture: 2,
+      portrait: 4,
+      street: 3,
+      travel: 4.5,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf23mmf28-r-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/713.1-Lens_review-Fujifilm_Fujinon_XF_23_mm_f_2.8_R_WR.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf23mmf28-r-wr/",
   },
   {
     brand: "Fujifilm",
@@ -4957,12 +5739,25 @@ const lenses: Lens[] = [
     vignettingStopped: 1.5,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 2, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/385.1-Lens_review-Fujifilm_Fujinon_XF_27_mm_f_2.8_Introduction.html",
-      admiringlight: "https://admiringlight.com/blog/review-fujifilm-fujinon-xf-27mm-f2-8/",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      portrait: 2,
+      street: 3,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf27mmf28-r-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/385.1-Lens_review-Fujifilm_Fujinon_XF_27_mm_f_2.8_Introduction.html",
+      admiringlight:
+        "https://admiringlight.com/blog/review-fujifilm-fujinon-xf-27mm-f2-8/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf27mmf28-r-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5003,14 +5798,28 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 2.0,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 4.5, landscape: 5, architecture: 5, portrait: 4.5, street: 5, travel: 3, sport: 5, wildlife: 5, macro: 1 },
+    genreMarks: {
+      nightscape: 4.5,
+      landscape: 5,
+      architecture: 5,
+      portrait: 4.5,
+      street: 5,
+      travel: 3,
+      sport: 5,
+      wildlife: 5,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/647.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R_WR.html",
-      opticallimits: "https://opticallimits.com/fujifilm/fujinon-xf-56mm-1-2-r-wr-review/",
-      dustinabbott: "https://dustinabbott.net/2024/05/fujinon-xf-56mm-f1-2-r-wr-review/",
+      lenstip:
+        "https://www.lenstip.com/647.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R_WR.html",
+      opticallimits:
+        "https://opticallimits.com/fujifilm/fujinon-xf-56mm-1-2-r-wr-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2024/05/fujinon-xf-56mm-f1-2-r-wr-review/",
       fujivsfuji: "https://www.fujivsfuji.com/xf-56mm-f12-r-wr",
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r-wr/",
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5048,9 +5857,20 @@ const lenses: Lens[] = [
     bokeh: 1.5,
     flareResistance: 1.5,
     price: 250,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 1, portrait: 3, street: 4, travel: 4.5, sport: 3, wildlife: 3, macro: 1 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 1,
+      portrait: 3,
+      street: 4,
+      travel: 4.5,
+      sport: 3,
+      wildlife: 3,
+      macro: 1,
+    },
     reviewSources: {
-      lenstip: "https://www.lenstip.com/583.1-Lens_review-Fujifilm_Fujinon_XC_35_mm_f_2.html",
+      lenstip:
+        "https://www.lenstip.com/583.1-Lens_review-Fujifilm_Fujinon_XC_35_mm_f_2.html",
     },
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xc35mmf2/",
   },
@@ -5090,11 +5910,22 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     sphericalAberration: 2.0,
     price: 1000,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, street: 3, travel: 4, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/684.1-Lens_review-Fujifilm_Fujinon_XF_16-50_mm_f_2.8-4.8_R_LM_WR.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      street: 3,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf16-50mmf28-48-r-lm-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/684.1-Lens_review-Fujifilm_Fujinon_XF_16-50_mm_f_2.8-4.8_R_LM_WR.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf16-50mmf28-48-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5134,11 +5965,23 @@ const lenses: Lens[] = [
     bokeh: 0.5,
     flareResistance: 0.5,
     price: 750,
-    genreMarks: { nightscape: 2, landscape: 3, architecture: 2, portrait: 2, street: 2, travel: 3, sport: 4, wildlife: 4, macro: 3 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/571.1-Lens_review-Fujifilm_Fujinon_XF_16-80_mm_f_4_R_OIS_WR_Introduction.html",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 3,
+      architecture: 2,
+      portrait: 2,
+      street: 2,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 3,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf16-80mmf4-r-ois-wr/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/571.1-Lens_review-Fujifilm_Fujinon_XF_16-80_mm_f_4_R_OIS_WR_Introduction.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf16-80mmf4-r-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5174,11 +6017,22 @@ const lenses: Lens[] = [
     vignettingStopped: 1.0,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { landscape: 3, architecture: 2, portrait: 4, street: 2, travel: 3, sport: 3.5, wildlife: 4, macro: 2 },
-    reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2023/07/fujinon-xf-18-120mm-f4-lm-pz-wr-review/",
+    genreMarks: {
+      landscape: 3,
+      architecture: 2,
+      portrait: 4,
+      street: 2,
+      travel: 3,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf18-120mmf4-lm-pz-wr/",
+    reviewSources: {
+      dustinabbott:
+        "https://dustinabbott.net/2023/07/fujinon-xf-18-120mm-f4-lm-pz-wr-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf18-120mmf4-lm-pz-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5213,12 +6067,24 @@ const lenses: Lens[] = [
     distortion: 0.5,
     vignettingWideOpen: 0.5,
     bokeh: 1.0,
-    genreMarks: { landscape: 3, architecture: 2, portrait: 3, street: 2, travel: 3, sport: 3.5, wildlife: 3.5, macro: 3 },
-    reviewSources: {
-      opticallimits: "https://opticallimits.com/fujifilm/fujinon-fujifilm-xf-70-300mm-f-4-5-6-r-lm-ois-wr-review/",
-      dustinabbott: "https://dustinabbott.net/2022/05/fujinon-xf-70-300mm-f4-5-6-ois-lm-wr-review/",
+    genreMarks: {
+      landscape: 3,
+      architecture: 2,
+      portrait: 3,
+      street: 2,
+      travel: 3,
+      sport: 3.5,
+      wildlife: 3.5,
+      macro: 3,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf70-300mmf4-56-r-lm-ois-wr/",
+    reviewSources: {
+      opticallimits:
+        "https://opticallimits.com/fujifilm/fujinon-fujifilm-xf-70-300mm-f-4-5-6-r-lm-ois-wr-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2022/05/fujinon-xf-70-300mm-f4-5-6-ois-lm-wr-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf70-300mmf4-56-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5257,11 +6123,22 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 4, architecture: 4, portrait: 3, street: 1, travel: 1, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2023/01/fujinon-xf-150-600mm-f5-6-8-r-lm-ois-wr-review/",
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      portrait: 3,
+      street: 1,
+      travel: 1,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf150-600mmf56-8-r-lm-ois-wr/",
+    reviewSources: {
+      dustinabbott:
+        "https://dustinabbott.net/2023/01/fujinon-xf-150-600mm-f5-6-8-r-lm-ois-wr-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf150-600mmf56-8-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5288,7 +6165,8 @@ const lenses: Lens[] = [
     hasTripodMount: true,
     minFocusDistance: 3000,
     price: 4000,
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf500mmf56-r-lm-ois-wr/",
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf500mmf56-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5312,7 +6190,8 @@ const lenses: Lens[] = [
     filterThread: 49,
     minFocusDistance: 200,
     price: 500,
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xc13-33mmf35-63-ois/",
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xc13-33mmf35-63-ois/",
   },
   {
     brand: "Fujifilm",
@@ -5360,7 +6239,8 @@ const lenses: Lens[] = [
     filterThread: 82,
     minFocusDistance: 1200,
     price: 2500,
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/mkx50-135mmt29/",
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/mkx50-135mmt29/",
   },
   // Additional XF / XC / GF
   {
@@ -5402,11 +6282,23 @@ const lenses: Lens[] = [
     sphericalAberration: 1.5,
     bokeh: 2.0,
     flareResistance: 0.5,
-    genreMarks: { nightscape: 3, landscape: 3, architecture: 3, portrait: 2, street: 4, travel: 3, sport: 2, wildlife: 2, macro: 1 },
-    reviewSources: {
-      lenstip: "https://www.lenstip.com/420.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R.html",
+    genreMarks: {
+      nightscape: 3,
+      landscape: 3,
+      architecture: 3,
+      portrait: 2,
+      street: 4,
+      travel: 3,
+      sport: 2,
+      wildlife: 2,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r-apd/",
+    reviewSources: {
+      lenstip:
+        "https://www.lenstip.com/420.1-Lens_review-Fujifilm_Fujinon_XF_56_mm_f_1.2_R.html",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r-apd/",
   },
   {
     brand: "Fujifilm",
@@ -5441,11 +6333,21 @@ const lenses: Lens[] = [
     lateralCA: 2.0,
     bokeh: 1.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 4, portrait: 3, street: 3, travel: 3, sport: 4, wildlife: 4, macro: 2 },
-    reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2025/01/fujinon-xf-16-55mm-f2-8-r-lm-wr-ii-review/",
+    genreMarks: {
+      landscape: 4,
+      portrait: 3,
+      street: 3,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/global/products/lenses/xf16-55mmf28-r-lm-wr-ii/",
+    reviewSources: {
+      dustinabbott:
+        "https://dustinabbott.net/2025/01/fujinon-xf-16-55mm-f2-8-r-lm-wr-ii-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/global/products/lenses/xf16-55mmf28-r-lm-wr-ii/",
   },
   {
     brand: "Fujifilm",
@@ -5484,11 +6386,22 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { landscape: 5, architecture: 5, portrait: 4, street: 2, travel: 2, sport: 4.5, wildlife: 4.5, macro: 4 },
-    reviewSources: {
-      "imaging-resource": "https://www.imaging-resource.com/lenses/fujinon/gf-120mm-f4-r-lm-ois-wr-macro/review/",
+    genreMarks: {
+      landscape: 5,
+      architecture: 5,
+      portrait: 4,
+      street: 2,
+      travel: 2,
+      sport: 4.5,
+      wildlife: 4.5,
+      macro: 4,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf120mmf4-r-lm-ois-wr-macro/",
+    reviewSources: {
+      "imaging-resource":
+        "https://www.imaging-resource.com/lenses/fujinon/gf-120mm-f4-r-lm-ois-wr-macro/review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf120mmf4-r-lm-ois-wr-macro/",
   },
   // GF / G-Mount (Medium Format, crop 0.79x)
   {
@@ -5528,11 +6441,22 @@ const lenses: Lens[] = [
     astigmatism: 1.0,
     coma: 1.0,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 2, landscape: 4, architecture: 4, street: 2, travel: 2, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      "imaging-resource": "https://www.imaging-resource.com/lenses/fujinon/gf-23mm-f4-r-lm-wr/review/",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 4,
+      architecture: 4,
+      street: 2,
+      travel: 2,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf23mmf4-r-lm-wr/",
+    reviewSources: {
+      "imaging-resource":
+        "https://www.imaging-resource.com/lenses/fujinon/gf-23mm-f4-r-lm-wr/review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf23mmf4-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5568,9 +6492,18 @@ const lenses: Lens[] = [
     vignettingWideOpen: 1.0,
     vignettingStopped: 2.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 4, architecture: 4, street: 2, travel: 3, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      street: 2,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      "imaging-resource": "https://www.imaging-resource.com/lenses/fujinon/gf-30mm-f3.5-r-wr/review/",
+      "imaging-resource":
+        "https://www.imaging-resource.com/lenses/fujinon/gf-30mm-f3.5-r-wr/review/",
     },
     officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf30mmf35-r-wr/",
   },
@@ -5610,9 +6543,19 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.0,
     flareResistance: 1.0,
-    genreMarks: { landscape: 4.5, architecture: 5, portrait: 3, street: 3, travel: 3, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: {
+      landscape: 4.5,
+      architecture: 5,
+      portrait: 3,
+      street: 3,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2021/03/fujinon-gf-45mm-f2-8-wr-review/",
+      dustinabbott:
+        "https://dustinabbott.net/2021/03/fujinon-gf-45mm-f2-8-wr-review/",
     },
     officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf45mmf28-r-wr/",
   },
@@ -5650,11 +6593,21 @@ const lenses: Lens[] = [
     vignettingWideOpen: 1.0,
     vignettingStopped: 1.5,
     flareResistance: 1.5,
-    genreMarks: { landscape: 4, architecture: 4, street: 2, travel: 4, sport: 4, wildlife: 4, macro: 1 },
-    reviewSources: {
-      "imaging-resource": "https://www.imaging-resource.com/lenses/fujinon/gf-50mm-f3.5-r-lm-wr/review/",
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      street: 2,
+      travel: 4,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf50mmf35-r-lm-wr/",
+    reviewSources: {
+      "imaging-resource":
+        "https://www.imaging-resource.com/lenses/fujinon/gf-50mm-f3.5-r-lm-wr/review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf50mmf35-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5694,10 +6647,22 @@ const lenses: Lens[] = [
     coma: 1.0,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { nightscape: 2, landscape: 4.5, architecture: 5, portrait: 3.5, street: 4, travel: 3, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: {
+      nightscape: 2,
+      landscape: 4.5,
+      architecture: 5,
+      portrait: 3.5,
+      street: 4,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2023/10/fujinon-gf-55mm-f1-7-r-wr-review/",
-      ephotozine: "https://www.ephotozine.com/article/fujifilm-fujinon-gf-55mm-f-1-7-r-wr-lens-review-36814",
+      dustinabbott:
+        "https://dustinabbott.net/2023/10/fujinon-gf-55mm-f1-7-r-wr-review/",
+      ephotozine:
+        "https://www.ephotozine.com/article/fujifilm-fujinon-gf-55mm-f-1-7-r-wr-lens-review-36814",
     },
     officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf55mmf17-r-wr/",
   },
@@ -5737,9 +6702,19 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 4, architecture: 4, portrait: 3, street: 3, travel: 3, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      portrait: 3,
+      street: 3,
+      travel: 3,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      "imaging-resource": "https://www.imaging-resource.com/lenses/fujinon/gf-63mm-f2.8-r-wr/review/",
+      "imaging-resource":
+        "https://www.imaging-resource.com/lenses/fujinon/gf-63mm-f2.8-r-wr/review/",
     },
     officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf63mmf28-r-wr/",
   },
@@ -5779,10 +6754,21 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 1.0,
-    genreMarks: { landscape: 4.5, architecture: 5, portrait: 4, street: 4, travel: 2, sport: 4, wildlife: 4, macro: 1 },
+    genreMarks: {
+      landscape: 4.5,
+      architecture: 5,
+      portrait: 4,
+      street: 4,
+      travel: 2,
+      sport: 4,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2021/03/fujinon-gf-80mm-f1-7-wr-review/",
-      ephotozine: "https://www.ephotozine.com/article/fujifilm-fujinon-gf-80mm-f-1-7-r-wr-lens-review-35460",
+      dustinabbott:
+        "https://dustinabbott.net/2021/03/fujinon-gf-80mm-f1-7-wr-review/",
+      ephotozine:
+        "https://www.ephotozine.com/article/fujifilm-fujinon-gf-80mm-f-1-7-r-wr-lens-review-35460",
     },
     officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf80mmf17-r-wr/",
   },
@@ -5821,11 +6807,22 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 2.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 5, architecture: 5, portrait: 4.5, street: 4, travel: 2, sport: 4.5, wildlife: 5, macro: 1 },
-    reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2022/03/fujinon-gf-110mm-f2-wr-lm-review/",
+    genreMarks: {
+      landscape: 5,
+      architecture: 5,
+      portrait: 4.5,
+      street: 4,
+      travel: 2,
+      sport: 4.5,
+      wildlife: 5,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf110mmf2-r-lm-wr/",
+    reviewSources: {
+      dustinabbott:
+        "https://dustinabbott.net/2022/03/fujinon-gf-110mm-f2-wr-lm-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf110mmf2-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5863,11 +6860,21 @@ const lenses: Lens[] = [
     vignettingWideOpen: 1.0,
     vignettingStopped: 2.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 5, architecture: 5, street: 2, travel: 1, sport: 4.5, wildlife: 4.5, macro: 1 },
-    reviewSources: {
-      "imaging-resource": "https://www.imaging-resource.com/lenses/fujinon/gf-250mm-f4-r-lm-ois-wr/review/",
+    genreMarks: {
+      landscape: 5,
+      architecture: 5,
+      street: 2,
+      travel: 1,
+      sport: 4.5,
+      wildlife: 4.5,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf250mmf4-r-lm-ois-wr/",
+    reviewSources: {
+      "imaging-resource":
+        "https://www.imaging-resource.com/lenses/fujinon/gf-250mm-f4-r-lm-ois-wr/review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf250mmf4-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5907,11 +6914,22 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { landscape: 4, architecture: 4, portrait: 4, street: 1, travel: 1, sport: 4.5, wildlife: 4.5, macro: 1 },
-    reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2024/09/fujinon-gf-500mm-f5-6-r-lm-ois-wr-review/",
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      portrait: 4,
+      street: 1,
+      travel: 1,
+      sport: 4.5,
+      wildlife: 4.5,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf500mmf56-r-lm-ois-wr/",
+    reviewSources: {
+      dustinabbott:
+        "https://dustinabbott.net/2024/09/fujinon-gf-500mm-f5-6-r-lm-ois-wr-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf500mmf56-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5950,12 +6968,24 @@ const lenses: Lens[] = [
     astigmatism: 1.0,
     coma: 1.5,
     flareResistance: 2.0,
-    genreMarks: { nightscape: 2, landscape: 4, architecture: 4, street: 2, travel: 3, sport: 4, wildlife: 4.5, macro: 1 },
-    reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2022/11/fujinon-gf-20-35mm-f4-wr-review/",
-      ephotozine: "https://www.ephotozine.com/article/fujifilm-fujinon-gf-20-35mm-f-4-r-wr-lens-review-36364",
+    genreMarks: {
+      nightscape: 2,
+      landscape: 4,
+      architecture: 4,
+      street: 2,
+      travel: 3,
+      sport: 4,
+      wildlife: 4.5,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf20-35mmf4-r-wr/",
+    reviewSources: {
+      dustinabbott:
+        "https://dustinabbott.net/2022/11/fujinon-gf-20-35mm-f4-wr-review/",
+      ephotozine:
+        "https://www.ephotozine.com/article/fujifilm-fujinon-gf-20-35mm-f-4-r-wr-lens-review-36364",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf20-35mmf4-r-wr/",
   },
   {
     brand: "Fujifilm",
@@ -5992,11 +7022,21 @@ const lenses: Lens[] = [
     vignettingWideOpen: 1.0,
     vignettingStopped: 2.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 4, architecture: 4, street: 2, travel: 2, sport: 3.5, wildlife: 4, macro: 1 },
-    reviewSources: {
-      "imaging-resource": "https://www.imaging-resource.com/lenses/fujinon/gf-32-64mm-f4-r-lm-wr/review/",
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      street: 2,
+      travel: 2,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf32-64mmf4-r-lm-wr/",
+    reviewSources: {
+      "imaging-resource":
+        "https://www.imaging-resource.com/lenses/fujinon/gf-32-64mm-f4-r-lm-wr/review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf32-64mmf4-r-lm-wr/",
   },
   {
     brand: "Fujifilm",
@@ -6031,11 +7071,21 @@ const lenses: Lens[] = [
     vignettingWideOpen: 0.5,
     vignettingStopped: 1.5,
     flareResistance: 2.0,
-    genreMarks: { landscape: 4, architecture: 4, street: 1, travel: 4, sport: 3.5, wildlife: 4, macro: 1 },
-    reviewSources: {
-      dustinabbott: "https://dustinabbott.net/2022/02/fujinon-gf-35-70mm-f4-5-5-6-wr-review/",
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      street: 1,
+      travel: 4,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf35-70mmf45-56-wr/",
+    reviewSources: {
+      dustinabbott:
+        "https://dustinabbott.net/2022/02/fujinon-gf-35-70mm-f4-5-5-6-wr-review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf35-70mmf45-56-wr/",
   },
   {
     brand: "Fujifilm",
@@ -6073,11 +7123,22 @@ const lenses: Lens[] = [
     vignettingStopped: 2.0,
     bokeh: 1.5,
     flareResistance: 1.5,
-    genreMarks: { landscape: 5, architecture: 5, portrait: 4, street: 2, travel: 1, sport: 4.5, wildlife: 4.5, macro: 1 },
-    reviewSources: {
-      ephotozine: "https://www.ephotozine.com/article/fujinon-gf-45-100mm-f-4-r-lm-ois-lens-review-34537",
+    genreMarks: {
+      landscape: 5,
+      architecture: 5,
+      portrait: 4,
+      street: 2,
+      travel: 1,
+      sport: 4.5,
+      wildlife: 4.5,
+      macro: 1,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf45-100mmf4-r-lm-ois-wr/",
+    reviewSources: {
+      ephotozine:
+        "https://www.ephotozine.com/article/fujinon-gf-45-100mm-f-4-r-lm-ois-lens-review-34537",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf45-100mmf4-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -6114,11 +7175,21 @@ const lenses: Lens[] = [
     vignettingWideOpen: 1.0,
     vignettingStopped: 1.5,
     flareResistance: 1.5,
-    genreMarks: { landscape: 4, architecture: 4, street: 1, travel: 1, sport: 3.5, wildlife: 4, macro: 2 },
-    reviewSources: {
-      "imaging-resource": "https://www.imaging-resource.com/lenses/fujinon/gf-100-200mm-f5.6-r-lm-ois-wr/review/",
+    genreMarks: {
+      landscape: 4,
+      architecture: 4,
+      street: 1,
+      travel: 1,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 2,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf100-200mmf56-r-lm-ois-wr/",
+    reviewSources: {
+      "imaging-resource":
+        "https://www.imaging-resource.com/lenses/fujinon/gf-100-200mm-f5.6-r-lm-ois-wr/review/",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf100-200mmf56-r-lm-ois-wr/",
   },
   {
     brand: "Fujifilm",
@@ -6157,9 +7228,18 @@ const lenses: Lens[] = [
     vignettingWideOpen: 1.5,
     vignettingStopped: 2.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 5, architecture: 4, street: 1, travel: 2, sport: 3.5, wildlife: 4, macro: 1 },
+    genreMarks: {
+      landscape: 5,
+      architecture: 4,
+      street: 1,
+      travel: 2,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 1,
+    },
     reviewSources: {
-      ephotozine: "https://www.ephotozine.com/article/fujifilm-fujinon-gf-30mm-f-5-6-t-s-lens-review-36819",
+      ephotozine:
+        "https://www.ephotozine.com/article/fujifilm-fujinon-gf-30mm-f-5-6-t-s-lens-review-36819",
     },
     officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf30mmf56-ts/",
   },
@@ -6200,11 +7280,21 @@ const lenses: Lens[] = [
     vignettingWideOpen: 1.5,
     vignettingStopped: 2.0,
     flareResistance: 1.5,
-    genreMarks: { landscape: 5, architecture: 5, street: 1, travel: 1, sport: 3.5, wildlife: 4, macro: 4 },
-    reviewSources: {
-      ephotozine: "https://www.ephotozine.com/article/fujifilm-fujinon-gf-110mm-f-5-6-t-s-macro-lens-review-36826",
+    genreMarks: {
+      landscape: 5,
+      architecture: 5,
+      street: 1,
+      travel: 1,
+      sport: 3.5,
+      wildlife: 4,
+      macro: 4,
     },
-    officialUrl: "https://fujifilm-x.com/en-us/products/lenses/gf110mmf56-ts-macro/",
+    reviewSources: {
+      ephotozine:
+        "https://www.ephotozine.com/article/fujifilm-fujinon-gf-110mm-f-5-6-t-s-macro-lens-review-36826",
+    },
+    officialUrl:
+      "https://fujifilm-x.com/en-us/products/lenses/gf110mmf56-ts-macro/",
   },
   // Third-party GFX (G-Mount)
   {
@@ -6242,7 +7332,8 @@ const lenses: Lens[] = [
     price: 1250,
     minFocusDistance: 170,
     isTiltShift: true,
-    officialUrl: "https://www.venuslens.net/product/laowa-55mm-f-2-8-tilt-shift-1x-macro/",
+    officialUrl:
+      "https://www.venuslens.net/product/laowa-55mm-f-2-8-tilt-shift-1x-macro/",
   },
   {
     brand: "Venus Laowa",
@@ -6262,7 +7353,8 @@ const lenses: Lens[] = [
     price: 1500,
     minFocusDistance: 247,
     isTiltShift: true,
-    officialUrl: "https://www.venuslens.net/product/laowa-100mm-f-2-8-tilt-shift-1x-macro/",
+    officialUrl:
+      "https://www.venuslens.net/product/laowa-100mm-f-2-8-tilt-shift-1x-macro/",
   },
   {
     brand: "Venus Laowa",
@@ -6282,7 +7374,8 @@ const lenses: Lens[] = [
     price: 1250,
     minFocusDistance: 140,
     isTiltShift: true,
-    officialUrl: "https://www.venuslens.net/product/the-laowa-35mm-f-2-8-zero-d-tilt-shift-0-5x-macro/",
+    officialUrl:
+      "https://www.venuslens.net/product/the-laowa-35mm-f-2-8-zero-d-tilt-shift-0-5x-macro/",
   },
   {
     brand: "Mitakon",
@@ -6373,7 +7466,8 @@ const lenses: Lens[] = [
     filterThread: 67,
     price: 500,
     minFocusDistance: 260,
-    officialUrl: "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
+    officialUrl:
+      "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
   },
   {
     brand: "AstrHori",
@@ -6391,7 +7485,8 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 500,
     minFocusDistance: 350,
-    officialUrl: "https://www.astrhori.cn/products/55mm-f5-6-medium-format-manual-prime-lens",
+    officialUrl:
+      "https://www.astrhori.cn/products/55mm-f5-6-medium-format-manual-prime-lens",
   },
   {
     brand: "AstrHori",
@@ -6409,7 +7504,8 @@ const lenses: Lens[] = [
     filterThread: 67,
     price: 500,
     minFocusDistance: 500,
-    officialUrl: "https://www.astrhori.cn/products/75mm-f4-0-medium-format-manual-portrait-prime-lens",
+    officialUrl:
+      "https://www.astrhori.cn/products/75mm-f4-0-medium-format-manual-portrait-prime-lens",
   },
   {
     brand: "Kipon",
@@ -6427,7 +7523,8 @@ const lenses: Lens[] = [
     filterThread: 49,
     price: 500,
     minFocusDistance: 700,
-    officialUrl: "https://www.kipon-global.com/product-page/kipon-75mm-f2-4-medium-format-lens-for-fuji-g-gfx-mount-camera",
+    officialUrl:
+      "https://www.kipon-global.com/product-page/kipon-75mm-f2-4-medium-format-lens-for-fuji-g-gfx-mount-camera",
   },
   // Additional Third-party GFX
   {
@@ -6447,7 +7544,8 @@ const lenses: Lens[] = [
     minFocusDistance: 200,
     isTiltShift: true,
     shiftRange: 11,
-    officialUrl: "https://www.venuslens.net/product/laowa-15mm-f-4-5r-zero-d-shift/",
+    officialUrl:
+      "https://www.venuslens.net/product/laowa-15mm-f-4-5r-zero-d-shift/",
   },
   {
     brand: "Venus Laowa",
@@ -6465,7 +7563,8 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 1000,
     minFocusDistance: 200,
-    officialUrl: "https://www.venuslens.net/product/laowa-19mm-f-2-8-zero-d-gfx/",
+    officialUrl:
+      "https://www.venuslens.net/product/laowa-19mm-f-2-8-zero-d-gfx/",
   },
   {
     brand: "Venus Laowa",
@@ -6485,7 +7584,8 @@ const lenses: Lens[] = [
     minFocusDistance: 250,
     isTiltShift: true,
     shiftRange: 10,
-    officialUrl: "https://www.venuslens.net/product/laowa-20mm-f-4-zero-d-shift/",
+    officialUrl:
+      "https://www.venuslens.net/product/laowa-20mm-f-4-zero-d-shift/",
   },
   {
     brand: "Venus Laowa",
@@ -6517,7 +7617,8 @@ const lenses: Lens[] = [
     isFocusByWire: false,
     weight: 50,
     price: 250,
-    officialUrl: "https://zyoptics.net/product/mitakon-creator-28mm-f-5-6-lens/",
+    officialUrl:
+      "https://zyoptics.net/product/mitakon-creator-28mm-f-5-6-lens/",
   },
   {
     brand: "Mitakon",
@@ -6554,7 +7655,8 @@ const lenses: Lens[] = [
     filterThread: 72,
     price: 500,
     minFocusDistance: 500,
-    officialUrl: "https://zyoptics.net/product/mitakon-200mm-f-4-1x-macro-lens/",
+    officialUrl:
+      "https://zyoptics.net/product/mitakon-200mm-f-4-1x-macro-lens/",
   },
   {
     brand: "TTartisan",
@@ -6589,7 +7691,8 @@ const lenses: Lens[] = [
     weight: 350,
     price: 250,
     minFocusDistance: 100,
-    officialUrl: "https://www.astrhori.cn/products/astrhori-12mm-f2-8-full-frame-manual-fisheye-lens",
+    officialUrl:
+      "https://www.astrhori.cn/products/astrhori-12mm-f2-8-full-frame-manual-fisheye-lens",
   },
   {
     brand: "AstrHori",
@@ -6605,7 +7708,8 @@ const lenses: Lens[] = [
     weight: 80,
     price: 250,
     minFocusDistance: 350,
-    officialUrl: "https://www.astrhori.cn/products/40mm-f5-6-medium-format-manual-prime-lens",
+    officialUrl:
+      "https://www.astrhori.cn/products/40mm-f5-6-medium-format-manual-prime-lens",
   },
   // NiSi Athena Prime Cinema (G-Mount)
   {

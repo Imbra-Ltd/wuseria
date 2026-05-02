@@ -35,12 +35,9 @@ function useUrlFilters(keys: FilterConfig): {
     history.replaceState(null, "", url);
   }, [state, keys]);
 
-  const set = useCallback(
-    (key: string, value: string) => {
-      setState((prev) => ({ ...prev, [key]: value }));
-    },
-    [],
-  );
+  const set = useCallback((key: string, value: string) => {
+    setState((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   const clear = useCallback(() => {
     setState(Object.fromEntries(keys.map((k) => [k, ""])));

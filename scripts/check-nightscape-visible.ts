@@ -1,7 +1,9 @@
 import { lenses } from "../src/data/lenses";
 
 const nightscape = lenses.filter((l) => {
-  const marks = (l as unknown as Record<string, unknown>).genreMarks as Record<string, number> | undefined;
+  const marks = (l as unknown as Record<string, unknown>).genreMarks as
+    | Record<string, number>
+    | undefined;
   return marks?.nightscape != null;
 });
 

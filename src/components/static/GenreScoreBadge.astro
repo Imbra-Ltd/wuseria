@@ -4,7 +4,14 @@ interface Props {
 }
 
 const { mark } = Astro.props;
-const palette = ["", "var(--color-mark-1)", "var(--color-mark-2)", "var(--color-mark-3)", "var(--color-mark-4)", "var(--color-mark-5)"];
+const palette = [
+  "",
+  "var(--color-mark-1)",
+  "var(--color-mark-2)",
+  "var(--color-mark-3)",
+  "var(--color-mark-4)",
+  "var(--color-mark-5)",
+];
 const color = palette[mark] || "var(--color-mark-fallback)";
 const dots = "●".repeat(mark);
 ---

@@ -24,20 +24,20 @@ to other pages.
 
 ### Inventory
 
-| Element | Classes | Duplicated across |
-|---------|---------|-------------------|
-| Chip groups | `.chip`, `.chipOn`, `.chipGroup`, `.chipLabel` | 3 explorers + GenreGuide |
-| Sort buttons | `.sortButton`, `.sortIndicator` | 3 explorers + GenreGuide |
-| Clear buttons | `.clearButton` | 3 explorers |
-| Filter selects | `.filterSelect`, `.filterActive` | 3 explorers |
-| Search input | `.searchInput` | 3 explorers |
-| Show all button | `.showAllButton` | 3 explorers |
-| Genre tabs | `.genreTab`, `.genreTabActive` | GenreGuide only |
-| Scene list | `.sceneItem`, `.sceneItemActive` | GenreGuide only |
-| Link buttons | `.link-button` | 3 detail pages (scoped) |
-| Genre cards | `.genre-card` | Lens detail page (scoped) |
-| Learn more | `.learnMoreBtn` | GenreGuide only |
-| Back links | `.back-link` | 3 detail pages (scoped) |
+| Element         | Classes                                        | Duplicated across         |
+| --------------- | ---------------------------------------------- | ------------------------- |
+| Chip groups     | `.chip`, `.chipOn`, `.chipGroup`, `.chipLabel` | 3 explorers + GenreGuide  |
+| Sort buttons    | `.sortButton`, `.sortIndicator`                | 3 explorers + GenreGuide  |
+| Clear buttons   | `.clearButton`                                 | 3 explorers               |
+| Filter selects  | `.filterSelect`, `.filterActive`               | 3 explorers               |
+| Search input    | `.searchInput`                                 | 3 explorers               |
+| Show all button | `.showAllButton`                               | 3 explorers               |
+| Genre tabs      | `.genreTab`, `.genreTabActive`                 | GenreGuide only           |
+| Scene list      | `.sceneItem`, `.sceneItemActive`               | GenreGuide only           |
+| Link buttons    | `.link-button`                                 | 3 detail pages (scoped)   |
+| Genre cards     | `.genre-card`                                  | Lens detail page (scoped) |
+| Learn more      | `.learnMoreBtn`                                | GenreGuide only           |
+| Back links      | `.back-link`                                   | 3 detail pages (scoped)   |
 
 ## Decision
 

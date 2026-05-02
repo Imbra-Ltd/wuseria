@@ -1,15 +1,8 @@
-
-
 {
   "ci": {
     "collect": {
       "staticDistDir": "dist",
-      "url": [
-        "/",
-        "/lenses/",
-        "/cameras/",
-        "/genre/"
-      ]
+      "url": ["/", "/lenses/", "/cameras/", "/genre/"]
     },
     "assert": {
       "assertions": {

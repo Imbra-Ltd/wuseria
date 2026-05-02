@@ -7,7 +7,10 @@ interface Props {
   description?: string;
 }
 
-const { title, description = "Fujifilm lens and camera explorer with genre-based scoring." } = Astro.props;
+const {
+  title,
+  description = "Fujifilm lens and camera explorer with genre-based scoring.",
+} = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 
 const navLinks = [
@@ -27,7 +30,10 @@ const navLinks = [
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="google-site-verification" content="1ugJGoBcr4hQDeFWbY8hh7IkpXcjSNOzJy4DV2Ad3TQ" />
+    <meta
+      name="google-site-verification"
+      content="1ugJGoBcr4hQDeFWbY8hh7IkpXcjSNOzJy4DV2Ad3TQ"
+    />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -40,7 +46,11 @@ const navLinks = [
     <ClientRouter />
     <slot name="head" />
     <!-- Privacy-friendly analytics by Umami -->
-    <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id="f2aa0edb-3e74-4cc7-9a64-2a583aa8a53e"></script>
+    <script
+      is:inline
+      defer
+      src="https://cloud.umami.is/script.js"
+      data-website-id="f2aa0edb-3e74-4cc7-9a64-2a583aa8a53e"></script>
   </head>
   <body>
     <header class="site-header">
@@ -53,43 +63,79 @@ const navLinks = [
           aria-expanded="false"
           aria-controls="nav-menu"
         >
-          <svg class="nav-toggle-icon" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-            <line class="bar bar1" x1="3" y1="5" x2="17" y2="5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-            <line class="bar bar2" x1="3" y1="10" x2="17" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-            <line class="bar bar3" x1="3" y1="15" x2="17" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+          <svg
+            class="nav-toggle-icon"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            aria-hidden="true"
+          >
+            <line
+              class="bar bar1"
+              x1="3"
+              y1="5"
+              x2="17"
+              y2="5"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"></line>
+            <line
+              class="bar bar2"
+              x1="3"
+              y1="10"
+              x2="17"
+              y2="10"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"></line>
+            <line
+              class="bar bar3"
+              x1="3"
+              y1="15"
+              x2="17"
+              y2="15"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"></line>
           </svg>
         </button>
         <ul class="nav-links" id="nav-menu" role="list">
-          {navLinks.map((link) => (
-            <li>
-              <a
-                href={link.href}
-                class:list={["nav-link", { active: Astro.url.pathname.startsWith(link.href) }]}
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
+          {
+            navLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class:list={[
+                    "nav-link",
+                    { active: Astro.url.pathname.startsWith(link.href) },
+                  ]}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
         </ul>
       </nav>
     </header>
     <script is:inline>
       function initNavToggle() {
-        var toggle = document.querySelector('.nav-toggle');
-        var menu = document.querySelector('.nav-links');
+        var toggle = document.querySelector(".nav-toggle");
+        var menu = document.querySelector(".nav-links");
         if (!toggle || !menu) return;
         toggle.replaceWith(toggle.cloneNode(true));
-        var fresh = document.querySelector('.nav-toggle');
-        fresh.addEventListener('click', function () {
-          var expanded = this.getAttribute('aria-expanded') === 'true';
-          this.setAttribute('aria-expanded', String(!expanded));
-          menu.classList.toggle('open');
+        var fresh = document.querySelector(".nav-toggle");
+        fresh.addEventListener("click", function () {
+          var expanded = this.getAttribute("aria-expanded") === "true";
+          this.setAttribute("aria-expanded", String(!expanded));
+          menu.classList.toggle("open");
         });
-        fresh.setAttribute('aria-expanded', 'false');
-        menu.classList.remove('open');
+        fresh.setAttribute("aria-expanded", "false");
+        menu.classList.remove("open");
       }
       initNavToggle();
-      document.addEventListener('astro:page-load', initNavToggle);
+      document.addEventListener("astro:page-load", initNavToggle);
     </script>
 
     <main class="main">
@@ -98,7 +144,9 @@ const navLinks = [
 
     <footer class="site-footer">
       <p class="footer-text">
-        Wuseria — Fujifilm lens &amp; camera explorer by <a href="https://braboj.me">braboj.me</a>
+        Wuseria — Fujifilm lens &amp; camera explorer by <a
+          href="https://braboj.me">braboj.me</a
+        >
       </p>
       <p class="footer-feedback">
         <a href="mailto:contact@imbra.io?subject=Wuseria Feedback">Feedback</a>
@@ -154,7 +202,9 @@ const navLinks = [
   }
 
   .nav-toggle-icon .bar {
-    transition: transform 0.2s, opacity 0.2s;
+    transition:
+      transform 0.2s,
+      opacity 0.2s;
     transform-origin: center;
   }
 

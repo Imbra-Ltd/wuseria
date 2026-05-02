@@ -11,8 +11,15 @@ const genreLenses = lenses.map(pickGenreFields);
 
 export const getStaticPaths = (() => {
   const genres: ScoredGenre[] = [
-    "nightscape", "landscape", "architecture", "street",
-    "travel", "portrait", "sport", "wildlife", "macro",
+    "nightscape",
+    "landscape",
+    "architecture",
+    "street",
+    "travel",
+    "portrait",
+    "sport",
+    "wildlife",
+    "macro",
   ];
   return genres.map((genre) => ({
     params: { genre },

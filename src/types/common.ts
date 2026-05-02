@@ -71,4 +71,13 @@ type BatteryType = "NP-W126" | "NP-W126S" | "NP-W235" | "NP-T125";
 // EXPORTS
 // =============================================================================
 
-export type { Mount, Brand, FlCategory, EvScene, MemoryCardType, CardSpeedClass, StorageType, BatteryType };
+export type {
+  Mount,
+  Brand,
+  FlCategory,
+  EvScene,
+  MemoryCardType,
+  CardSpeedClass,
+  StorageType,
+  BatteryType,
+};

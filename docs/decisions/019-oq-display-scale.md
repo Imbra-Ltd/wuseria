@@ -29,11 +29,11 @@ OQ filter ranges in the Lens Explorer updated to match (1.5+, 1.0-1.4,
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
-| Keep 0-10 with color thresholds | Two scales on one site; thresholds require back-conversion |
-| Switch everything to 0-5 | Arbitrary multiplier, no alignment with source data |
-| Switch everything to 0-10 | Would require changing all optical field displays site-wide |
+| Alternative                     | Why rejected                                                |
+| ------------------------------- | ----------------------------------------------------------- |
+| Keep 0-10 with color thresholds | Two scales on one site; thresholds require back-conversion  |
+| Switch everything to 0-5        | Arbitrary multiplier, no alignment with source data         |
+| Switch everything to 0-10       | Would require changing all optical field displays site-wide |
 
 ## Consequences
 

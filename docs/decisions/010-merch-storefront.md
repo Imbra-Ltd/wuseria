@@ -13,10 +13,10 @@ Use Gumroad.
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
-| Shopify | Full e-commerce platform; overkill for 10-15 orders/month |
-| Custom checkout (Stripe) | Requires backend; maintenance overhead |
+| Alternative              | Why rejected                                              |
+| ------------------------ | --------------------------------------------------------- |
+| Shopify                  | Full e-commerce platform; overkill for 10-15 orders/month |
+| Custom checkout (Stripe) | Requires backend; maintenance overhead                    |
 
 ## Consequences
 

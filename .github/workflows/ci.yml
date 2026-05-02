@@ -21,7 +21,7 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm run check:all
+      - run: npm run validate
 
   changes:
     runs-on: ubuntu-latest

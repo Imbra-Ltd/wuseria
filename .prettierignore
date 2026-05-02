@@ -1,0 +1,5 @@
+dist/
+.astro/
+node_modules/
+docs/solid-ai-templates/
+docs/prototype/

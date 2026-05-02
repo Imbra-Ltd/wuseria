@@ -37,26 +37,26 @@ scoring inputs — they are features, not physical or optical properties.
 
 From MTF charts (0–2 scale):
 
-| Field | What it measures |
-|-------|-----------------|
-| `centerStopped` | Center resolution at optimal aperture |
-| `cornerStopped` | Corner resolution at optimal aperture |
-| `centerWideOpen` | Center resolution at maximum aperture |
-| `cornerWideOpen` | Corner resolution at maximum aperture |
-| `astigmatism` | Point-source elongation across the field |
+| Field            | What it measures                         |
+| ---------------- | ---------------------------------------- |
+| `centerStopped`  | Center resolution at optimal aperture    |
+| `cornerStopped`  | Corner resolution at optimal aperture    |
+| `centerWideOpen` | Center resolution at maximum aperture    |
+| `cornerWideOpen` | Corner resolution at maximum aperture    |
+| `astigmatism`    | Point-source elongation across the field |
 
 From lab tests and field reports (0–2 scale):
 
-| Field | What it measures |
-|-------|-----------------|
-| `coma` | Off-axis point-source distortion |
-| `longitudinalCA` | Axial colour fringing |
-| `lateralCA` | Transverse colour fringing |
-| `distortion` | Barrel/pincushion geometric distortion |
-| `vignettingWideOpen` | Corner light loss at max aperture |
-| `vignettingStopped` | Corner light loss at f/5.6-f/8 |
-| `bokeh` | Out-of-focus rendering quality |
-| `flareResistance` | Resistance to flare and ghosting |
+| Field                | What it measures                       |
+| -------------------- | -------------------------------------- |
+| `coma`               | Off-axis point-source distortion       |
+| `longitudinalCA`     | Axial colour fringing                  |
+| `lateralCA`          | Transverse colour fringing             |
+| `distortion`         | Barrel/pincushion geometric distortion |
+| `vignettingWideOpen` | Corner light loss at max aperture      |
+| `vignettingStopped`  | Corner light loss at f/5.6-f/8         |
+| `bokeh`              | Out-of-focus rendering quality         |
+| `flareResistance`    | Resistance to flare and ghosting       |
 
 Additional scoring inputs: `maxAperture` (light gathering), `minFocusDistance`,
 `isTiltShift`, `shiftRange`, `tiltAngle`, `imageCircle`.
@@ -64,6 +64,7 @@ Additional scoring inputs: `maxAperture` (light gathering), `minFocusDistance`,
 ### Genre suitability — what each formula prioritises
 
 Each genre formula uses **primary floor + weighted average**:
+
 - Primary fields (w=3) determine the tier — mark cannot exceed floor
   (min of all primary values)
 - Secondary fields (w=1) determine rank within tier
@@ -71,19 +72,20 @@ Each genre formula uses **primary floor + weighted average**:
 - Mark mapping: capped × 2 + 1, rounded to nearest 0.5, clamped 1–5
 - Primary fields must all be present; 50% of all optical fields required
 
-| Genre | Primary (w=3) | Secondary (w=1) |
-|-------|--------------|-----------------|
-| **Nightscape** | coma, astigmatism, apertureScore | lateralCA, centerWideOpen, cornerWideOpen, longitudinalCA, vignettingWideOpen, sphericalAberration |
-| **Landscape** | cornerStopped, centerStopped | distortion, lateralCA, longitudinalCA, vignettingStopped, flareResistance, astigmatism, coma |
-| **Architecture** | cornerStopped, centerStopped, distortion | lateralCA, vignettingStopped, flareResistance |
-| **Portrait** | bokeh, centerWideOpen | longitudinalCA, sphericalAberration, vignettingWideOpen |
-| **Street** | centerStopped, apertureScore | centerWideOpen, flareResistance, longitudinalCA, coma |
-| **Travel** | centerStopped, weightScore | apertureScore, flareResistance, longitudinalCA |
-| **Sport** | centerWideOpen | apertureScore, longitudinalCA, lateralCA |
-| **Wildlife** | centerWideOpen, centerStopped | apertureScore, longitudinalCA, lateralCA |
-| **Macro** | centerStopped, magnificationScore | distortion, lateralCA, longitudinalCA, sphericalAberration, bokeh |
+| Genre            | Primary (w=3)                            | Secondary (w=1)                                                                                    |
+| ---------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Nightscape**   | coma, astigmatism, apertureScore         | lateralCA, centerWideOpen, cornerWideOpen, longitudinalCA, vignettingWideOpen, sphericalAberration |
+| **Landscape**    | cornerStopped, centerStopped             | distortion, lateralCA, longitudinalCA, vignettingStopped, flareResistance, astigmatism, coma       |
+| **Architecture** | cornerStopped, centerStopped, distortion | lateralCA, vignettingStopped, flareResistance                                                      |
+| **Portrait**     | bokeh, centerWideOpen                    | longitudinalCA, sphericalAberration, vignettingWideOpen                                            |
+| **Street**       | centerStopped, apertureScore             | centerWideOpen, flareResistance, longitudinalCA, coma                                              |
+| **Travel**       | centerStopped, weightScore               | apertureScore, flareResistance, longitudinalCA                                                     |
+| **Sport**        | centerWideOpen                           | apertureScore, longitudinalCA, lateralCA                                                           |
+| **Wildlife**     | centerWideOpen, centerStopped            | apertureScore, longitudinalCA, lateralCA                                                           |
+| **Macro**        | centerStopped, magnificationScore        | distortion, lateralCA, longitudinalCA, sphericalAberration, bokeh                                  |
 
 **Physical property scores** (computed from lens specs, not reviews):
+
 - `apertureScore`: f/1.4+=2.0, f/2=1.5, f/2.8=1.0, f/4=0.5, f/4.5+=0.0
 - `weightScore`: <200g=2.0, ≤400g=1.5, ≤700g=1.0, ≤1000g=0.5, >1000g=0.0
 - `magnificationScore`: ≥1.0x=2.0, ≥0.5x=1.5, ≥0.25x=1.0, ≥0.15x=0.5, <0.15x=0.0
@@ -105,6 +107,7 @@ required optical fields for a genre's formula are missing, the lens is excluded
 from that genre entirely.
 
 This means:
+
 - ~80–100 lenses from established brands (Fujifilm, Sigma, Tamron, Viltrox,
   Samyang, Voigtlander) will be scored
 - ~140 obscure lenses without published optical data are excluded from
@@ -126,13 +129,13 @@ full rule.
 
 ### Mark scale
 
-| Mark | Meaning |
-|------|---------|
-| 5 | Excellent optical fit — reference-level performance for this genre |
-| 4 | Very good — strong performer, minor compromises |
-| 3 | Good — capable, noticeable weaknesses |
-| 2 | Adequate — usable but clearly outperformed |
-| 1 | Poor optical fit — significant weaknesses for this genre |
+| Mark | Meaning                                                            |
+| ---- | ------------------------------------------------------------------ |
+| 5    | Excellent optical fit — reference-level performance for this genre |
+| 4    | Very good — strong performer, minor compromises                    |
+| 3    | Good — capable, noticeable weaknesses                              |
+| 2    | Adequate — usable but clearly outperformed                         |
+| 1    | Poor optical fit — significant weaknesses for this genre           |
 
 ### Current state
 
@@ -151,13 +154,13 @@ optical quality mark.
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
-| **Single MTF number** | Different genres value different optical properties; a single number flattens the judgment |
-| **Hand-assigned marks only** | Does not scale; not reproducible; no transparency |
-| **Score all lenses with defaults** | Guessing optical quality is worse than showing nothing |
-| **User-submitted scores** | No user system; introduces moderation burden |
-| **ML model** | Scoring formulas are explicit weighted sums; ML adds opacity for no accuracy gain |
+| Alternative                        | Why rejected                                                                               |
+| ---------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Single MTF number**              | Different genres value different optical properties; a single number flattens the judgment |
+| **Hand-assigned marks only**       | Does not scale; not reproducible; no transparency                                          |
+| **Score all lenses with defaults** | Guessing optical quality is worse than showing nothing                                     |
+| **User-submitted scores**          | No user system; introduces moderation burden                                               |
+| **ML model**                       | Scoring formulas are explicit weighted sums; ML adds opacity for no accuracy gain          |
 
 ## Consequences
 

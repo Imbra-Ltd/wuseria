@@ -1,4 +1,8 @@
-import { MATRIX_FL_COLS_X, MATRIX_FL_COLS_GFX, MATRIX_APERTURES } from "../../../data/genres";
+import {
+  MATRIX_FL_COLS_X,
+  MATRIX_FL_COLS_GFX,
+  MATRIX_APERTURES,
+} from "../../../data/genres";
 import styles from "./GenreGuide.module.css";
 
 interface HandheldMatrixProps {
@@ -10,9 +14,18 @@ interface HandheldMatrixProps {
   magnification?: number;
 }
 
-function HandheldMatrix({ cropFactor, iso, ev, selectedFl, genre, magnification = 1.0 }: HandheldMatrixProps) {
-  const MATRIX_FL_COLS = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
-  const fallback = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
+function HandheldMatrix({
+  cropFactor,
+  iso,
+  ev,
+  selectedFl,
+  genre,
+  magnification = 1.0,
+}: HandheldMatrixProps) {
+  const MATRIX_FL_COLS =
+    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
+  const fallback =
+    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
   const cols = MATRIX_FL_COLS[selectedFl] || fallback;
   const apertures = MATRIX_APERTURES;
 
@@ -44,7 +57,9 @@ function HandheldMatrix({ cropFactor, iso, ev, selectedFl, genre, magnification 
             <tr>
               <th className={styles.matrixCorner}>f/</th>
               {cols.map((fl) => (
-                <th key={fl} className={styles.matrixColHead}>{fl}mm</th>
+                <th key={fl} className={styles.matrixColHead}>
+                  {fl}mm
+                </th>
               ))}
             </tr>
           </thead>
@@ -54,10 +69,15 @@ function HandheldMatrix({ cropFactor, iso, ev, selectedFl, genre, magnification 
                 <td className={styles.matrixRowHead}>{ap}</td>
                 {cols.map((fl) => {
                   const minS = minShutter(fl);
-                  const needed = Math.round((ap * ap * 100) / (minS * Math.pow(2, ev)));
+                  const needed = Math.round(
+                    (ap * ap * 100) / (minS * Math.pow(2, ev)),
+                  );
                   const viable = needed <= iso;
                   const marginal = !viable && needed <= iso * 2;
-                  const label = minS >= 1 ? `${Math.round(minS)}s` : `1/${Math.round(1 / minS)}`;
+                  const label =
+                    minS >= 1
+                      ? `${Math.round(minS)}s`
+                      : `1/${Math.round(1 / minS)}`;
                   const cls = viable
                     ? styles.matrixViable
                     : marginal
@@ -80,9 +100,9 @@ function HandheldMatrix({ cropFactor, iso, ev, selectedFl, genre, magnification 
         <span className={styles.matrixOverText}>●</span> needs more ISO
       </div>
       <p className={styles.matrixExplain}>
-        Each cell shows the minimum shutter speed to avoid camera shake at
-        that focal length. Green means your ISO is enough. Amber means
-        recoverable with exposure push and noise reduction.
+        Each cell shows the minimum shutter speed to avoid camera shake at that
+        focal length. Green means your ISO is enough. Amber means recoverable
+        with exposure push and noise reduction.
       </p>
     </div>
   );

@@ -189,7 +189,10 @@
   cursor: pointer;
   white-space: nowrap;
   text-align: center;
-  transition: background-color 0.1s, color 0.1s, border-color 0.1s;
+  transition:
+    background-color 0.1s,
+    color 0.1s,
+    border-color 0.1s;
 }
 
 @media (max-width: 639px) {

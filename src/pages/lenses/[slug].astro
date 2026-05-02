@@ -47,11 +47,13 @@ const fieldCount = opticalFieldCount(lens);
 const totalFields = OPTICAL_FIELDS.length;
 
 const genreEntries = lens.genreMarks
-  ? (Object.entries(lens.genreMarks) as [ScoredGenre, number][])
-      .sort((a, b) => b[1] - a[1])
+  ? (Object.entries(lens.genreMarks) as [ScoredGenre, number][]).sort(
+      (a, b) => b[1] - a[1],
+    )
   : [];
 
-const isTiltShift = lens.isTiltShift && (lens.shiftRange || lens.tiltAngle || lens.imageCircle);
+const isTiltShift =
+  lens.isTiltShift && (lens.shiftRange || lens.tiltAngle || lens.imageCircle);
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -72,8 +74,15 @@ const jsonLd = {
 };
 ---
 
-<Base title={`${lens.brand} ${lens.model} Review Data — Wuseria`} description={`Is the ${lens.brand} ${lens.model} right for your genre? Optical quality scores, specs, and lab-tested performance data.`}>
-  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<Base
+  title={`${lens.brand} ${lens.model} Review Data — Wuseria`}
+  description={`Is the ${lens.brand} ${lens.model} right for your genre? Optical quality scores, specs, and lab-tested performance data.`}
+>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(jsonLd)}
+  />
 
   <div class="detail">
     {/* ── Header ── */}
@@ -88,104 +97,279 @@ const jsonLd = {
         <h2>Specifications</h2>
         <table class="spec-table">
           <tbody>
-            <tr><td>Focal length</td><td>{formatFL(lens.focalLengthMin, lens.focalLengthMax)}</td></tr>
+            <tr
+              ><td>Focal length</td><td
+                >{formatFL(lens.focalLengthMin, lens.focalLengthMax)}</td
+              ></tr
+            >
             <tr><td>Max aperture</td><td>f/{lens.maxAperture}</td></tr>
-            {lens.sweetSpotAperture && <tr><td>Sweet spot</td><td>f/{lens.sweetSpotAperture}</td></tr>}
-            {lens.apertureBlades && <tr><td>Aperture blades</td><td>{lens.apertureBlades}{lens.hasCircularAperture ? " (circular)" : ""}</td></tr>}
-            {lens.apertureBlades && <tr><td>Sunstar points</td><td>{lens.apertureBlades % 2 === 0 ? lens.apertureBlades : lens.apertureBlades * 2}{lens.hasCircularAperture ? " (soft — circular blades)" : " (sharp — straight blades)"}</td></tr>}
-            {lens.maxMagnification && <tr><td>Max magnification</td><td>{lens.maxMagnification}x</td></tr>}
-            {lens.minFocusDistance && <tr><td>Min focus distance</td><td>{lens.minFocusDistance}mm</td></tr>}
+            {
+              lens.sweetSpotAperture && (
+                <tr>
+                  <>
+                    <td>Sweet spot</td>
+                    <td>f/{lens.sweetSpotAperture}</td>
+                  </>
+                </tr>
+              )
+            }
+            {
+              lens.apertureBlades && (
+                <tr>
+                  <>
+                    <td>Aperture blades</td>
+                    <td>
+                      {lens.apertureBlades}
+                      {lens.hasCircularAperture ? " (circular)" : ""}
+                    </td>
+                  </>
+                </tr>
+              )
+            }
+            {
+              lens.apertureBlades && (
+                <tr>
+                  <>
+                    <td>Sunstar points</td>
+                    <td>
+                      {lens.apertureBlades % 2 === 0
+                        ? lens.apertureBlades
+                        : lens.apertureBlades * 2}
+                      {lens.hasCircularAperture
+                        ? " (soft — circular blades)"
+                        : " (sharp — straight blades)"}
+                    </td>
+                  </>
+                </tr>
+              )
+            }
+            {
+              lens.maxMagnification && (
+                <tr>
+                  <>
+                    <td>Max magnification</td>
+                    <td>{lens.maxMagnification}x</td>
+                  </>
+                </tr>
+              )
+            }
+            {
+              lens.minFocusDistance && (
+                <tr>
+                  <>
+                    <td>Min focus distance</td>
+                    <td>{lens.minFocusDistance}mm</td>
+                  </>
+                </tr>
+              )
+            }
             <tr><td>AF motor</td><td>{lens.afMotor ?? "Manual focus"}</td></tr>
             <tr><td>OIS</td><td>{yesNo(lens.hasOis)}</td></tr>
-            <tr><td>Weather sealed</td><td>{yesNo(lens.isWeatherSealed)}</td></tr>
-            {lens.hasApertureRing != null && <tr><td>Aperture ring</td><td>{yesNo(lens.hasApertureRing)}</td></tr>}
+            <tr
+              ><td>Weather sealed</td><td>{yesNo(lens.isWeatherSealed)}</td></tr
+            >
+            {
+              lens.hasApertureRing != null && (
+                <tr>
+                  <>
+                    <td>Aperture ring</td>
+                    <td>{yesNo(lens.hasApertureRing)}</td>
+                  </>
+                </tr>
+              )
+            }
             <tr><td>Weight</td><td>{lens.weight}g</td></tr>
-            {lens.diameter && <tr><td>Diameter</td><td>{lens.diameter}mm</td></tr>}
-            {lens.length && <tr><td>Length</td><td>{lens.length}mm</td></tr>}
-            {lens.filterThread && <tr><td>Filter thread</td><td>{lens.filterThread}mm</td></tr>}
-            {lens.year && <tr><td>Year</td><td>{lens.year}</td></tr>}
+            {
+              lens.diameter && (
+                <tr>
+                  <>
+                    <td>Diameter</td>
+                    <td>{lens.diameter}mm</td>
+                  </>
+                </tr>
+              )
+            }
+            {
+              lens.length && (
+                <tr>
+                  <>
+                    <td>Length</td>
+                    <td>{lens.length}mm</td>
+                  </>
+                </tr>
+              )
+            }
+            {
+              lens.filterThread && (
+                <tr>
+                  <>
+                    <td>Filter thread</td>
+                    <td>{lens.filterThread}mm</td>
+                  </>
+                </tr>
+              )
+            }
+            {
+              lens.year && (
+                <tr>
+                  <>
+                    <td>Year</td>
+                    <td>{lens.year}</td>
+                  </>
+                </tr>
+              )
+            }
           </tbody>
         </table>
 
-        {isTiltShift && (
-          <>
-            <h3>Tilt-Shift</h3>
-            <table class="spec-table">
-              <tbody>
-                {lens.shiftRange && <tr><td>Shift range</td><td>{lens.shiftRange}mm</td></tr>}
-                {lens.tiltAngle && <tr><td>Tilt angle</td><td>{lens.tiltAngle}deg</td></tr>}
-                {lens.imageCircle && <tr><td>Image circle</td><td>{lens.imageCircle}mm</td></tr>}
-                {lens.isTiltShiftIndependent != null && <tr><td>Independent T/S</td><td>{yesNo(lens.isTiltShiftIndependent)}</td></tr>}
-              </tbody>
-            </table>
-          </>
-        )}
+        {
+          isTiltShift && (
+            <>
+              <h3>Tilt-Shift</h3>
+              <table class="spec-table">
+                <tbody>
+                  {lens.shiftRange && (
+                    <tr>
+                      <td>Shift range</td>
+                      <td>{lens.shiftRange}mm</td>
+                    </tr>
+                  )}
+                  {lens.tiltAngle && (
+                    <tr>
+                      <td>Tilt angle</td>
+                      <td>{lens.tiltAngle}deg</td>
+                    </tr>
+                  )}
+                  {lens.imageCircle && (
+                    <tr>
+                      <td>Image circle</td>
+                      <td>{lens.imageCircle}mm</td>
+                    </tr>
+                  )}
+                  {lens.isTiltShiftIndependent != null && (
+                    <tr>
+                      <td>Independent T/S</td>
+                      <td>{yesNo(lens.isTiltShiftIndependent)}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </>
+          )
+        }
       </section>
 
-      {hasOptical && (
-        <section class="card">
-          <h2>Optical Quality <span class="field-count">{fieldCount}/{totalFields}</span></h2>
-          <table class="spec-table">
-            <tbody>
-              {opticalFields.map(([label, val]) =>
-                val != null && (
-                  <tr>
-                    <td>{label}</td>
-                    <td>
-                      <div class="pip-row">
-                        <span class="pips">
-                          {[0.5, 1.0, 1.5, 2.0].map((threshold) => (
-                            <span class={`pip ${val >= threshold ? "pip-on" : "pip-off"}`} />
-                          ))}
-                        </span>
-                        <span class="pip-val">{val.toFixed(1)}</span>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              )}
-            </tbody>
-          </table>
-          <p class="footnote">0-2 scale. See <a href="/wiki/scoring-methodology">scoring methodology</a>.</p>
-        </section>
-      )}
+      {
+        hasOptical && (
+          <section class="card">
+            <h2>
+              Optical Quality{" "}
+              <span class="field-count">
+                {fieldCount}/{totalFields}
+              </span>
+            </h2>
+            <table class="spec-table">
+              <tbody>
+                {opticalFields.map(
+                  ([label, val]) =>
+                    val != null && (
+                      <tr>
+                        <td>{label}</td>
+                        <td>
+                          <div class="pip-row">
+                            <span class="pips">
+                              {[0.5, 1.0, 1.5, 2.0].map((threshold) => (
+                                <span
+                                  class={`pip ${val >= threshold ? "pip-on" : "pip-off"}`}
+                                />
+                              ))}
+                            </span>
+                            <span class="pip-val">{val.toFixed(1)}</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ),
+                )}
+              </tbody>
+            </table>
+            <p class="footnote">
+              0-2 scale. See{" "}
+              <a href="/wiki/scoring-methodology">scoring methodology</a>.
+            </p>
+          </section>
+        )
+      }
 
-      {!hasOptical && (
-        <section class="card card-empty">
-          <h2>Optical Quality <span class="field-count">{fieldCount}/{totalFields}</span></h2>
-          <p class="empty-text">Not yet scored. Optical data from trusted review sources is required before scoring.</p>
-        </section>
-      )}
+      {
+        !hasOptical && (
+          <section class="card card-empty">
+            <h2>
+              Optical Quality{" "}
+              <span class="field-count">
+                {fieldCount}/{totalFields}
+              </span>
+            </h2>
+            <p class="empty-text">
+              Not yet scored. Optical data from trusted review sources is
+              required before scoring.
+            </p>
+          </section>
+        )
+      }
     </div>
 
     {/* ── Genre Scores ── */}
-    {genreEntries.length > 0 && (
-      <section class="card">
-        <h2>Genre Scores</h2>
-        <div class="genre-grid">
-          {genreEntries.map(([genre, mark]) => (
-            <a href={`/genre/${genre}`} class="genre-card">
-              <span class="genre-name">{genreConfigs[genre].name}</span>
-              <span class="genre-mark">{mark}/5</span>
-            </a>
-          ))}
-        </div>
-        {lens.editorialPicks && lens.editorialPicks.length > 0 && (
-          <p class="editorial">Editorial pick for: {lens.editorialPicks.map((g) => genreConfigs[g].name).join(", ")}</p>
-        )}
-      </section>
-    )}
+    {
+      genreEntries.length > 0 && (
+        <section class="card">
+          <h2>Genre Scores</h2>
+          <div class="genre-grid">
+            {genreEntries.map(([genre, mark]) => (
+              <a href={`/genre/${genre}`} class="genre-card">
+                <span class="genre-name">{genreConfigs[genre].name}</span>
+                <span class="genre-mark">{mark}/5</span>
+              </a>
+            ))}
+          </div>
+          {lens.editorialPicks && lens.editorialPicks.length > 0 && (
+            <p class="editorial">
+              Editorial pick for:{" "}
+              {lens.editorialPicks.map((g) => genreConfigs[g].name).join(", ")}
+            </p>
+          )}
+        </section>
+      )
+    }
 
     {/* ── Links ── */}
     <section class="card">
       <h2>Links</h2>
       <div class="link-row">
-        {lens.officialUrl && (
-          <a href={lens.officialUrl} target="_blank" rel="noopener noreferrer" class="link-button">Official product page</a>
-        )}
-        {lens.reviewSources && Object.entries(lens.reviewSources).map(([source, url]) => (
-          <a href={url} target="_blank" rel="nofollow sponsored" class="link-button">{source}</a>
-        ))}
+        {
+          lens.officialUrl && (
+            <a
+              href={lens.officialUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-button"
+            >
+              Official product page
+            </a>
+          )
+        }
+        {
+          lens.reviewSources &&
+            Object.entries(lens.reviewSources).map(([source, url]) => (
+              <a
+                href={url}
+                target="_blank"
+                rel="nofollow sponsored"
+                class="link-button"
+              >
+                {source}
+              </a>
+            ))
+        }
       </div>
     </section>
 
@@ -280,7 +464,8 @@ const jsonLd = {
 
   .spec-table td {
     padding: var(--space-xs) 0;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--color-border) 50%, transparent);
   }
 
   .spec-table tr:last-child td {

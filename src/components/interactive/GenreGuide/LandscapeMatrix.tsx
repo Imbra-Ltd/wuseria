@@ -1,4 +1,8 @@
-import { MATRIX_FL_COLS_X, MATRIX_FL_COLS_GFX, MATRIX_APERTURES } from "../../../data/genres";
+import {
+  MATRIX_FL_COLS_X,
+  MATRIX_FL_COLS_GFX,
+  MATRIX_APERTURES,
+} from "../../../data/genres";
 import { formatShutter } from "../../../utils/formatting";
 import styles from "./GenreGuide.module.css";
 
@@ -11,9 +15,18 @@ interface LandscapeMatrixProps {
   title?: string;
 }
 
-function LandscapeMatrix({ cropFactor, iso, ev, nd, selectedFl, title }: LandscapeMatrixProps) {
-  const MATRIX_FL_COLS = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
-  const fallback = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
+function LandscapeMatrix({
+  cropFactor,
+  iso,
+  ev,
+  nd,
+  selectedFl,
+  title,
+}: LandscapeMatrixProps) {
+  const MATRIX_FL_COLS =
+    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
+  const fallback =
+    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
   const cols = MATRIX_FL_COLS[selectedFl] || fallback;
   const ndFactor = nd.reduce((acc, f) => acc * f, 1);
   const apertures = MATRIX_APERTURES;
@@ -21,7 +34,8 @@ function LandscapeMatrix({ cropFactor, iso, ev, nd, selectedFl, title }: Landsca
   return (
     <div className={styles.matrix}>
       <div className={styles.matrixTitle}>
-        {title || `EV Matrix · Tripod · ${cropFactor === 0.79 ? "Diffraction f/16+" : "Diffraction f/11+"} · Capture the beauty`}
+        {title ||
+          `EV Matrix · Tripod · ${cropFactor === 0.79 ? "Diffraction f/16+" : "Diffraction f/11+"} · Capture the beauty`}
       </div>
       <div className={styles.matrixScroll}>
         <table className={styles.matrixTable}>
@@ -29,7 +43,9 @@ function LandscapeMatrix({ cropFactor, iso, ev, nd, selectedFl, title }: Landsca
             <tr>
               <th className={styles.matrixCorner}>f/</th>
               {cols.map((fl) => (
-                <th key={fl} className={styles.matrixColHead}>{fl}mm</th>
+                <th key={fl} className={styles.matrixColHead}>
+                  {fl}mm
+                </th>
               ))}
             </tr>
           </thead>
@@ -37,17 +53,18 @@ function LandscapeMatrix({ cropFactor, iso, ev, nd, selectedFl, title }: Landsca
             {apertures.map((ap) => {
               return (
                 <tr key={ap}>
-                  <td className={styles.matrixRowHead}>
-                    {ap}
-                  </td>
+                  <td className={styles.matrixRowHead}>{ap}</td>
                   {cols.map((fl) => {
-                    const t = ((ap * ap * 100) / (iso * Math.pow(2, ev))) * ndFactor;
-                    const cat = t < 1 ? "static" : t <= 30 ? "silk" : "dramatic";
-                    const cls = cat === "static"
-                      ? styles.lsStatic
-                      : cat === "silk"
-                        ? styles.lsSilk
-                        : styles.lsDramatic;
+                    const t =
+                      ((ap * ap * 100) / (iso * Math.pow(2, ev))) * ndFactor;
+                    const cat =
+                      t < 1 ? "static" : t <= 30 ? "silk" : "dramatic";
+                    const cls =
+                      cat === "static"
+                        ? styles.lsStatic
+                        : cat === "silk"
+                          ? styles.lsSilk
+                          : styles.lsDramatic;
                     return (
                       <td key={fl} className={`${styles.matrixCell} ${cls}`}>
                         {formatShutter(t)}
@@ -67,9 +84,9 @@ function LandscapeMatrix({ cropFactor, iso, ev, nd, selectedFl, title }: Landsca
       </div>
       <p className={styles.matrixExplain}>
         Each cell shows the shutter speed at that aperture. On a tripod, shutter
-        speed depends on aperture and light, not focal length. Blue freezes motion.
-        Green gives silky water and cloud streaks. Teal creates dramatic long
-        exposures where moving objects disappear.
+        speed depends on aperture and light, not focal length. Blue freezes
+        motion. Green gives silky water and cloud streaks. Teal creates dramatic
+        long exposures where moving objects disappear.
       </p>
     </div>
   );

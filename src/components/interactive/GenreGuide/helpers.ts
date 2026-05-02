@@ -6,11 +6,19 @@ function sceneLabel(genre: ScoredGenre, sceneEv: number): string {
   if (genre === "nightscape") {
     return evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
   }
-  return genreEvLabels[genre]?.[sceneEv] ?? evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
+  return (
+    genreEvLabels[genre]?.[sceneEv] ??
+    evScenes.find((s) => s.ev === sceneEv)?.short ??
+    ""
+  );
 }
 
 function evHeaderLabel(genre: ScoredGenre, sceneEv: number): string {
-  return genreEvLabels[genre]?.[sceneEv] ?? evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
+  return (
+    genreEvLabels[genre]?.[sceneEv] ??
+    evScenes.find((s) => s.ev === sceneEv)?.short ??
+    ""
+  );
 }
 
 function fmtIso(v: number | null): string {
@@ -19,7 +27,11 @@ function fmtIso(v: number | null): string {
   return v.toLocaleString();
 }
 
-function sortIndicator(sortBy: SortKey, sortAsc: boolean, key: SortKey): string {
+function sortIndicator(
+  sortBy: SortKey,
+  sortAsc: boolean,
+  key: SortKey,
+): string {
   return sortBy === key ? (sortAsc ? "\u2191" : "\u2193") : "\u2195";
 }
 

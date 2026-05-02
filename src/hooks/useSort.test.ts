@@ -17,7 +17,11 @@ const items: Item[] = [
 describe("useSort", () => {
   it("sorts by default key ascending", () => {
     const { result } = renderHook(() => useSort(items, "name"));
-    expect(result.current.sorted.map((i) => i.name)).toEqual(["Alpha", "Bravo", "Charlie"]);
+    expect(result.current.sorted.map((i) => i.name)).toEqual([
+      "Alpha",
+      "Bravo",
+      "Charlie",
+    ]);
     expect(result.current.sortKey).toBe("name");
     expect(result.current.sortDirection).toBe("asc");
   });
@@ -49,9 +53,13 @@ describe("useSort", () => {
       { name: "A", price: 2, year: 2021, disc: false },
       { name: "C", price: 3, year: 2022, disc: false },
     ];
-    const prefix = (a: typeof withDiscontinued[0], b: typeof withDiscontinued[0]) =>
-      Number(a.disc) - Number(b.disc);
-    const { result } = renderHook(() => useSort(withDiscontinued, "name", "asc", prefix));
+    const prefix = (
+      a: (typeof withDiscontinued)[0],
+      b: (typeof withDiscontinued)[0],
+    ) => Number(a.disc) - Number(b.disc);
+    const { result } = renderHook(() =>
+      useSort(withDiscontinued, "name", "asc", prefix),
+    );
     expect(result.current.sorted.map((i) => i.name)).toEqual(["A", "C", "B"]);
   });
 

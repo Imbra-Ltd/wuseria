@@ -24,7 +24,9 @@ const lensesWithOQ = lenses.map((l) => ({
 }));
 ---
 
-<Base title="Fujifilm Lenses Compared — Wuseria" description="Filter Fujifilm lenses by specs, price, and genre score. Find the right lens for your style of shooting.">
+<Base
+  title="Fujifilm Lenses Compared — Wuseria"
+  description="Filter Fujifilm lenses by specs, price, and genre score. Find the right lens for your style of shooting."
+>
   <LensExplorer client:load lenses={lensesWithOQ} />
 </Base>
-

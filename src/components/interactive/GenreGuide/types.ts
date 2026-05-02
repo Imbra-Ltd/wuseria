@@ -36,11 +36,27 @@ interface GenreGuideProps {
 }
 
 type SortKey =
-  | "mark" | "brand" | "idealIso" | "weight" | "price"
-  | "fl" | "aperture" | "rule500" | "coma" | "astigmatism" | "wr"
-  | "ois" | "cornerStopped" | "centerStopped" | "centerWideOpen"
-  | "distortion" | "flareResistance" | "bokeh" | "longitudinalCA"
-  | "lateralCA" | "magnification";
+  | "mark"
+  | "brand"
+  | "idealIso"
+  | "weight"
+  | "price"
+  | "fl"
+  | "aperture"
+  | "rule500"
+  | "coma"
+  | "astigmatism"
+  | "wr"
+  | "ois"
+  | "cornerStopped"
+  | "centerStopped"
+  | "centerWideOpen"
+  | "distortion"
+  | "flareResistance"
+  | "bokeh"
+  | "longitudinalCA"
+  | "lateralCA"
+  | "magnification";
 
 interface EnrichedLens {
   lens: GenreLens;
@@ -52,8 +68,15 @@ interface EnrichedLens {
 }
 
 const SCORED_GENRES: ScoredGenre[] = [
-  "nightscape", "landscape", "architecture", "street",
-  "travel", "portrait", "sport", "wildlife", "macro",
+  "nightscape",
+  "landscape",
+  "architecture",
+  "street",
+  "travel",
+  "portrait",
+  "sport",
+  "wildlife",
+  "macro",
 ];
 
 export type { GenreLens, GenreGuideProps, SortKey, EnrichedLens };

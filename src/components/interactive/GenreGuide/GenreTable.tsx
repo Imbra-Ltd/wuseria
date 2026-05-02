@@ -13,7 +13,8 @@ interface GenreTableProps {
 }
 
 function GenreTable({ state, enrichedLenses }: GenreTableProps) {
-  const { genre, sortBy, sortAsc, handleSort, isNightscape, isLandscape } = state;
+  const { genre, sortBy, sortAsc, handleSort, isNightscape, isLandscape } =
+    state;
   const columns = getColumnDefs(genre);
 
   return (
@@ -25,11 +26,23 @@ function GenreTable({ state, enrichedLenses }: GenreTableProps) {
               <th
                 key={`${key}-${label}`}
                 className={primary ? styles.primaryCol : ""}
-                aria-sort={sortBy === key ? (sortAsc ? "ascending" : "descending") : "none"}
+                aria-sort={
+                  sortBy === key
+                    ? sortAsc
+                      ? "ascending"
+                      : "descending"
+                    : "none"
+                }
               >
-                <button type="button" className={styles.sortButton} onClick={() => handleSort(key)}>
+                <button
+                  type="button"
+                  className={styles.sortButton}
+                  onClick={() => handleSort(key)}
+                >
                   {label}
-                  <span className={styles.sortIndicator}>{sortIndicator(sortBy, sortAsc, key)}</span>
+                  <span className={styles.sortIndicator}>
+                    {sortIndicator(sortBy, sortAsc, key)}
+                  </span>
                 </button>
               </th>
             ))}
@@ -38,12 +51,27 @@ function GenreTable({ state, enrichedLenses }: GenreTableProps) {
         <tbody>
           {enrichedLenses.map((el) => (
             <tr key={`${el.lens.brand}-${el.lens.model}`}>
-              <td><MarkPips mark={el.mark} /></td>
+              <td>
+                <MarkPips mark={el.mark} />
+              </td>
               <td>{el.lens.brand}</td>
-              <td><a className={styles.lensLink} href={`/lenses/${toSlug(`${el.lens.brand} ${el.lens.model}`)}`}>{el.lens.model}</a></td>
+              <td>
+                <a
+                  className={styles.lensLink}
+                  href={`/lenses/${toSlug(`${el.lens.brand} ${el.lens.model}`)}`}
+                >
+                  {el.lens.model}
+                </a>
+              </td>
               <GenreRowCells el={el} genre={genre} />
               {(isNightscape || isLandscape) && (
-                <td><span className={el.lens.isWeatherSealed ? styles.dotOn : styles.dotOff} /></td>
+                <td>
+                  <span
+                    className={
+                      el.lens.isWeatherSealed ? styles.dotOn : styles.dotOff
+                    }
+                  />
+                </td>
               )}
               <td>~${el.lens.price}</td>
             </tr>

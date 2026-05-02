@@ -8,9 +8,9 @@ on:
 
 # Minimum permissions needed for GitHub Pages deployment
 permissions:
-  contents: read       # read repo contents
-  pages: write         # publish to GitHub Pages
-  id-token: write      # verify the deployment originates from this repo
+  contents: read # read repo contents
+  pages: write # publish to GitHub Pages
+  id-token: write # verify the deployment originates from this repo
 
 # Only one deployment at a time — don't cancel in-progress deploys
 concurrency:
@@ -32,9 +32,9 @@ jobs:
           node-version: 22
           cache: npm
 
-      # Clean install from lock file, then run full quality gate (lint + check + test + build)
+      # Clean install from lock file, then run full quality gate (lint + format + check + test + build)
       - run: npm ci
-      - run: npm run check:all
+      - run: npm run validate
 
       # Package dist/ as a GitHub Pages artifact for the deploy job
       - uses: actions/upload-pages-artifact@v3
@@ -42,7 +42,7 @@ jobs:
           path: dist/
 
   deploy:
-    needs: build           # wait for build to finish
+    needs: build # wait for build to finish
     runs-on: ubuntu-latest
     environment:
       name: github-pages

@@ -70,9 +70,7 @@ function handheldExposure(
     minShutter = 1 / (crop * fl);
   }
 
-  const idealIso = Math.round(
-    (ap * ap * 100) / (minShutter * Math.pow(2, ev)),
-  );
+  const idealIso = Math.round((ap * ap * 100) / (minShutter * Math.pow(2, ev)));
   const idealIsoRef = Math.round(
     (fRef * fRef * 100) / (minShutter * Math.pow(2, ev)),
   );

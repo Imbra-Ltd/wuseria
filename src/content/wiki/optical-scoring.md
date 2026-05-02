@@ -25,13 +25,13 @@ OQ is a single 0-10 number summarizing overall optical performance across all ge
 
 ## Mark scale
 
-| Mark | Meaning |
-|------|---------|
-| 5.0 | Exceptional — top-tier for the genre |
-| 4.0-4.5 | Very good — strong performer |
-| 3.0-3.5 | Good — competent for the genre |
+| Mark    | Meaning                                 |
+| ------- | --------------------------------------- |
+| 5.0     | Exceptional — top-tier for the genre    |
+| 4.0-4.5 | Very good — strong performer            |
+| 3.0-3.5 | Good — competent for the genre          |
 | 2.0-2.5 | Below average — usable with limitations |
-| 1.0-1.5 | Poor — not recommended for this genre |
+| 1.0-1.5 | Poor — not recommended for this genre   |
 
 ## Editorial picks
 

@@ -71,20 +71,11 @@ const genreFormulas: Record<ScoredGenre, GenreFormula> = {
   },
   portrait: {
     primary: ["bokeh", "centerWideOpen"],
-    secondary: [
-      "longitudinalCA",
-      "sphericalAberration",
-      "vignettingWideOpen",
-    ],
+    secondary: ["longitudinalCA", "sphericalAberration", "vignettingWideOpen"],
   },
   street: {
     primary: ["centerStopped", "_apertureScore"],
-    secondary: [
-      "centerWideOpen",
-      "flareResistance",
-      "longitudinalCA",
-      "coma",
-    ],
+    secondary: ["centerWideOpen", "flareResistance", "longitudinalCA", "coma"],
   },
   travel: {
     primary: ["centerStopped", "_weightScore"],
@@ -187,10 +178,7 @@ interface ScoreResult {
  * Compute the genre mark for a lens using the primary floor + weighted
  * average algorithm. Returns null if the lens lacks sufficient data.
  */
-function computeGenreMark(
-  lens: Lens,
-  genre: ScoredGenre,
-): ScoreResult | null {
+function computeGenreMark(lens: Lens, genre: ScoredGenre): ScoreResult | null {
   // Must have optical data at all
   if (lens.centerStopped == null) return null;
 
