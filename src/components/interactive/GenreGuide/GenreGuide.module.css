@@ -583,7 +583,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  border: 1.5px solid var(--color-border);
+  border: 1.5px solid var(--color-text-muted);
 }
 
 .pipFull {
