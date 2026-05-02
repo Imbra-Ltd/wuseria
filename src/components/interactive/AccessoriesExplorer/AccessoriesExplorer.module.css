@@ -2,43 +2,115 @@
    Re-export shared styles — component code uses styles.className unchanged
    ========================================================================== */
 
-.hero { composes: hero from '../shared/shared.module.css'; }
-.heroTitle { composes: heroTitle from '../shared/shared.module.css'; }
-.heroSub { composes: heroSub from '../shared/shared.module.css'; }
-.filters { composes: filters from '../shared/shared.module.css'; }
-.filterTop { composes: filterTop from '../shared/shared.module.css'; }
-.filterRow { composes: filterRow from '../shared/shared.module.css'; }
-.searchInput { composes: searchInput from '../shared/shared.module.css'; }
-.filterSelect { composes: filterSelect from '../shared/shared.module.css'; }
-.filterActive { composes: filterActive from '../shared/shared.module.css'; }
-.clearButton { composes: clearButton from '../shared/shared.module.css'; }
-.chipGroup { composes: chipGroup from '../shared/shared.module.css'; }
-.chipLabel { composes: chipLabel from '../shared/shared.module.css'; }
-.chip { composes: chip from '../shared/shared.module.css'; }
-.chipButtons { composes: chipButtons from '../shared/shared.module.css'; }
-.chipOn { composes: chipOn from '../shared/shared.module.css'; }
-.emptyState { composes: emptyState from '../shared/shared.module.css'; }
-.tableWrap { composes: tableWrap from '../shared/shared.module.css'; }
-.table { composes: table from '../shared/shared.module.css'; }
-.sortButton { composes: sortButton from '../shared/shared.module.css'; }
-.sortIndicator { composes: sortIndicator from '../shared/shared.module.css'; }
-.rowDiscontinued { composes: rowDiscontinued from '../shared/shared.module.css'; }
-.cardDiscontinued { composes: cardDiscontinued from '../shared/shared.module.css'; }
-.cards { composes: cards from '../shared/shared.module.css'; }
-.card { composes: card from '../shared/shared.module.css'; }
-.cardHeader { composes: cardHeader from '../shared/shared.module.css'; }
-.cardPrice { composes: cardPrice from '../shared/shared.module.css'; }
-.cardSpecs { composes: cardSpecs from '../shared/shared.module.css'; }
-.cardBadges { composes: cardBadges from '../shared/shared.module.css'; }
-.badge { composes: badge from '../shared/shared.module.css'; }
-.footnote { composes: footnote from '../shared/shared.module.css'; }
-.lensLink { composes: lensLink from '../shared/shared.module.css'; }
+.hero {
+  composes: hero from "../shared/shared.module.css";
+}
+.heroTitle {
+  composes: heroTitle from "../shared/shared.module.css";
+}
+.heroSub {
+  composes: heroSub from "../shared/shared.module.css";
+}
+.filters {
+  composes: filters from "../shared/shared.module.css";
+}
+.filterTop {
+  composes: filterTop from "../shared/shared.module.css";
+}
+.filterRow {
+  composes: filterRow from "../shared/shared.module.css";
+}
+.searchInput {
+  composes: searchInput from "../shared/shared.module.css";
+}
+.filterSelect {
+  composes: filterSelect from "../shared/shared.module.css";
+}
+.filterActive {
+  composes: filterActive from "../shared/shared.module.css";
+}
+.clearButton {
+  composes: clearButton from "../shared/shared.module.css";
+}
+.chipGroup {
+  composes: chipGroup from "../shared/shared.module.css";
+}
+.chipLabel {
+  composes: chipLabel from "../shared/shared.module.css";
+}
+.chip {
+  composes: chip from "../shared/shared.module.css";
+}
+.chipButtons {
+  composes: chipButtons from "../shared/shared.module.css";
+}
+.chipOn {
+  composes: chipOn from "../shared/shared.module.css";
+}
+.emptyState {
+  composes: emptyState from "../shared/shared.module.css";
+}
+.tableWrap {
+  composes: tableWrap from "../shared/shared.module.css";
+}
+.table {
+  composes: table from "../shared/shared.module.css";
+}
+.sortButton {
+  composes: sortButton from "../shared/shared.module.css";
+}
+.sortIndicator {
+  composes: sortIndicator from "../shared/shared.module.css";
+}
+.rowDiscontinued {
+  composes: rowDiscontinued from "../shared/shared.module.css";
+}
+.cardDiscontinued {
+  composes: cardDiscontinued from "../shared/shared.module.css";
+}
+.cards {
+  composes: cards from "../shared/shared.module.css";
+}
+.card {
+  composes: card from "../shared/shared.module.css";
+}
+.cardHeader {
+  composes: cardHeader from "../shared/shared.module.css";
+}
+.cardPrice {
+  composes: cardPrice from "../shared/shared.module.css";
+}
+.cardSpecs {
+  composes: cardSpecs from "../shared/shared.module.css";
+}
+.cardBadges {
+  composes: cardBadges from "../shared/shared.module.css";
+}
+.badge {
+  composes: badge from "../shared/shared.module.css";
+}
+.footnote {
+  composes: footnote from "../shared/shared.module.css";
+}
+.lensLink {
+  composes: lensLink from "../shared/shared.module.css";
+}
 
-.chipRow { composes: chipRow from '../shared/shared.module.css'; }
-.mobileSort { composes: mobileSort from '../shared/shared.module.css'; }
-.mobileSortLabel { composes: mobileSortLabel from '../shared/shared.module.css'; }
-.mobileSortSelect { composes: mobileSortSelect from '../shared/shared.module.css'; }
-.mobileSortDirection { composes: mobileSortDirection from '../shared/shared.module.css'; }
+.chipRow {
+  composes: chipRow from "../shared/shared.module.css";
+}
+.mobileSort {
+  composes: mobileSort from "../shared/shared.module.css";
+}
+.mobileSortLabel {
+  composes: mobileSortLabel from "../shared/shared.module.css";
+}
+.mobileSortSelect {
+  composes: mobileSortSelect from "../shared/shared.module.css";
+}
+.mobileSortDirection {
+  composes: mobileSortDirection from "../shared/shared.module.css";
+}
 
 /* ==========================================================================
    Accessories-specific styles

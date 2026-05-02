@@ -101,15 +101,17 @@ function getColumnDefs(genre: ScoredGenre): ColumnDef[] {
     ],
   };
 
-  return genreColumns[genre] ?? [
-    ["mark", "Mark"],
+  return (
+    genreColumns[genre] ?? [
+      ["mark", "Mark"],
 
-    ["brand", "Brand"],
-    ["fl", "Model"],
-    ["idealIso", "Ideal ISO"],
-    ["weight", "Weight"],
-    ["price", "Price"],
-  ];
+      ["brand", "Brand"],
+      ["fl", "Model"],
+      ["idealIso", "Ideal ISO"],
+      ["weight", "Weight"],
+      ["price", "Price"],
+    ]
+  );
 }
 
 export { getColumnDefs };

@@ -1,9 +1,17 @@
 import type { ColumnAlign } from "../shared/table";
 
 type CameraSortKey =
-  | "model" | "year" | "megapixels" | "sensor" | "hasIbis"
-  | "isWeatherSealed" | "mechanicalBurstFps" | "videoSpec"
-  | "batteryLife" | "weight" | "price";
+  | "model"
+  | "year"
+  | "megapixels"
+  | "sensor"
+  | "hasIbis"
+  | "isWeatherSealed"
+  | "mechanicalBurstFps"
+  | "videoSpec"
+  | "batteryLife"
+  | "weight"
+  | "price";
 
 const COLUMNS: { key: CameraSortKey; label: string; align: ColumnAlign }[] = [
   { key: "model", label: "Model", align: "left" },
@@ -20,15 +28,20 @@ const COLUMNS: { key: CameraSortKey; label: string; align: ColumnAlign }[] = [
 ];
 
 const YEAR_RANGES: Record<string, [number, number]> = {
-  "2022+": [2022, Infinity], "2019-2021": [2019, 2021],
-  "2016-2018": [2016, 2018], "2012-2015": [2012, 2015],
+  "2022+": [2022, Infinity],
+  "2019-2021": [2019, 2021],
+  "2016-2018": [2016, 2018],
+  "2012-2015": [2012, 2015],
 };
 
 const VIDEO_OPTIONS = ["8K", "6.2K", "4K", "1080p"];
 
 const PRICE_RANGES: Record<string, [number, number]> = {
-  "0-500": [0, 500], "500-1000": [500, 1000], "1000-2000": [1000, 2000],
-  "2000-4000": [2000, 4000], "4000+": [4000, Infinity],
+  "0-500": [0, 500],
+  "500-1000": [500, 1000],
+  "1000-2000": [1000, 2000],
+  "2000-4000": [2000, 4000],
+  "4000+": [4000, Infinity],
 };
 
 export type { CameraSortKey };

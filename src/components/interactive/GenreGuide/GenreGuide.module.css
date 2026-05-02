@@ -70,7 +70,6 @@
   color: var(--color-bg);
 }
 
-
 /* ==========================================================================
    Two-column layout
    ========================================================================== */
@@ -339,7 +338,10 @@
   min-height: 32px;
   cursor: pointer;
   border-radius: var(--radius);
-  transition: background-color 0.1s, color 0.1s, border-color 0.1s;
+  transition:
+    background-color 0.1s,
+    color 0.1s,
+    border-color 0.1s;
 }
 
 @media (max-width: 639px) {
@@ -590,7 +592,11 @@
 }
 
 .pipHalf {
-  background: linear-gradient(to right, var(--color-accent) 50%, transparent 50%);
+  background: linear-gradient(
+    to right,
+    var(--color-accent) 50%,
+    transparent 50%
+  );
   border-color: var(--color-accent);
 }
 
@@ -600,15 +606,15 @@
 
 /* Field value colors — traffic-light scale for optical scores (0-2) */
 .fieldViable {
-  color: #6aaa70;  /* green — good optical performance */
+  color: #6aaa70; /* green — good optical performance */
 }
 
 .fieldMarginal {
-  color: #b09040;  /* amber — acceptable */
+  color: #b09040; /* amber — acceptable */
 }
 
 .fieldOver {
-  color: #905030;  /* red — poor */
+  color: #905030; /* red — poor */
 }
 
 .fieldMono {
@@ -825,4 +831,3 @@
   font-size: 11px;
   color: var(--color-text-muted);
 }
-

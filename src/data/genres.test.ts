@@ -7,8 +7,15 @@ import type { ScoredGenre } from "../types/genre";
 // =============================================================================
 
 const ALL_GENRES: ScoredGenre[] = [
-  "nightscape", "landscape", "architecture", "street",
-  "travel", "portrait", "sport", "wildlife", "macro",
+  "nightscape",
+  "landscape",
+  "architecture",
+  "street",
+  "travel",
+  "portrait",
+  "sport",
+  "wildlife",
+  "macro",
 ];
 
 describe("genreConfigs", () => {

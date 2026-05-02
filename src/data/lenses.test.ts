@@ -27,7 +27,9 @@ describe("required fields", () => {
       expect(l.type, `${id}: type`).toMatch(/^(prime|zoom)$/);
       expect(l.mount, `${id}: mount`).toMatch(/^(X|GFX)$/);
       expect(l.focalLengthMin, `${id}: focalLengthMin`).toBeGreaterThan(0);
-      expect(l.focalLengthMax, `${id}: focalLengthMax`).toBeGreaterThanOrEqual(l.focalLengthMin);
+      expect(l.focalLengthMax, `${id}: focalLengthMax`).toBeGreaterThanOrEqual(
+        l.focalLengthMin,
+      );
       expect(l.maxAperture, `${id}: maxAperture`).toBeGreaterThan(0);
       expect(l.weight, `${id}: weight`).toBeGreaterThan(0);
       expect(l.price, `${id}: price`).toBeGreaterThan(0);
@@ -158,10 +160,9 @@ describe("reviewSources", () => {
     for (const l of withReviews) {
       const id = `${l.brand} ${l.model}`;
       for (const [source, url] of Object.entries(l.reviewSources!)) {
-        expect(
-          url,
-          `${id}.reviewSources.${source}: not an HTTPS URL`,
-        ).toMatch(/^https:\/\//);
+        expect(url, `${id}.reviewSources.${source}: not an HTTPS URL`).toMatch(
+          /^https:\/\//,
+        );
       }
     }
   });

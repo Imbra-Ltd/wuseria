@@ -35,14 +35,23 @@ const jsonLd = {
 };
 ---
 
-<Base title={`${entry.data.title} — Wiki — Wuseria`} description={entry.data.summary}>
-  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<Base
+  title={`${entry.data.title} — Wiki — Wuseria`}
+  description={entry.data.summary}
+>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(jsonLd)}
+  />
   <article class="wiki-article">
     <div class="title-row">
       <h1>{entry.data.title}</h1>
-      {entry.data.fullTitle && entry.data.fullTitle !== entry.data.title && (
-        <span class="full-title">{entry.data.fullTitle}</span>
-      )}
+      {
+        entry.data.fullTitle && entry.data.fullTitle !== entry.data.title && (
+          <span class="full-title">{entry.data.fullTitle}</span>
+        )
+      }
       <span class="category-badge">{entry.data.categories.join(" / ")}</span>
     </div>
     <p class="summary">{entry.data.summary}</p>
@@ -51,18 +60,20 @@ const jsonLd = {
       <Content />
     </div>
 
-    {relatedEntries.length > 0 && (
-      <nav class="related" aria-label="Related articles">
-        <h2>Related</h2>
-        <ul class="related-list">
-          {relatedEntries.map((r) => (
-            <li>
-              <a href={`/wiki/${r.id}`}>{r.data.title}</a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    )}
+    {
+      relatedEntries.length > 0 && (
+        <nav class="related" aria-label="Related articles">
+          <h2>Related</h2>
+          <ul class="related-list">
+            {relatedEntries.map((r) => (
+              <li>
+                <a href={`/wiki/${r.id}`}>{r.data.title}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
 
     <a href="/wiki" class="back-link">Back to Wiki</a>
   </article>

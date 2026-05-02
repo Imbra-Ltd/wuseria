@@ -1,10 +1,12 @@
 ## Lens databases
+
 - https://lens-db.com/system/fujifilm-x/full-list/
 - https://lens-db.com/system/fujifilm-g/full-list/
 - https://alikgriffin.com/a-complete-list-of-fujifilm-x-mount-lenses/
 - https://fujifilm-x.com/global/products/x-mount-lens-roadmap/
 
 ## Reviews and comparisons — trusted sources (matches ReviewSource type)
+
 - https://www.lensrentals.com/blog/ — Roger Cicala; optical bench MTF testing (most rigorous)
 - https://www.lenstip.com/ — lab MTF charts, resolution measurements
 - https://www.opticallimits.com/ — lab MTF, formerly photozone.de
@@ -21,6 +23,7 @@
 - https://www.digitalcameraworld.com/ — buyer's guide oriented
 
 ## Other photography resources
+
 - https://www.photozone.de/ — redirects to opticallimits.com
 - https://www.neocamera.com/
 - https://cameradecision.com/
@@ -32,6 +35,7 @@
 - https://lenspire.zeiss.com/photo/en/article/making-sense-of-sensors-full-frame-vs-aps-c
 
 ## Fujifilm-specific
+
 - https://fujilove.com/
 - https://fujixweekly.com/
 - https://www.fujirumors.com/
@@ -55,11 +59,13 @@
 - https://www.fujix-forum.com/
 
 ## Fujifilm batteries and power
+
 - https://ultralightphotography.net/gear/fuji-cameras/fujifilm-batteries-charging-usb-solar-powerbanks/
 - https://ultralightphotography.net/gear/fuji-cameras/everything-you-wanted-to-know-about-np-w126-batteries/
 - https://www.fujirumors.com/fuji-guys-explain-which-battery-power-banks-are-best-for-your-fujifilm-cameras/
 
 ## Technique and tutorials
+
 - https://photographylife.com/rating-each-focal-length-as-a-landscape-photographer
 - https://photographylife.com/post-processing-tips-for-better-workflow
 - https://photographylife.com/best-non-destructive-editing-software-for-photography
@@ -85,6 +91,7 @@
 - https://iceland-photo-tours.com/articles/camera-and-gear-reviews/must-have-filters-for-landscape-photography
 
 ## Tools
+
 - https://dofsimulator.net/en/
 - https://www.photopills.com/
 - https://www.everypixel.com/aesthetics
@@ -93,6 +100,7 @@
 - https://lightpollutionmap.app/
 
 ## Gear and accessories
+
 - https://www.dpreview.com/reviews/four-travel-tripods-for-every-budget-tested-in-the-real-world
 - https://lensvid.com/gear/polaris-robotic-tripod-head/
 - https://shuttermuse.com/shimoda-top-loader-review-great-rugged-camera-holster/
@@ -100,14 +108,17 @@
 - https://magazin.photosynthesis.bg/bg/20602-aksesoar-fujifilm-ec-xt-l-long-eyecup.html
 
 ## Used market
+
 - https://www.mpb.com/en-eu/
 - https://www.srsmicrosystems.co.uk/
 
 ## Product photography
+
 - https://www.youtube.com/watch?v=2XQ0gtW5lFA
 - https://www.youtube.com/watch?v=tN-owU-oLd0
 
 ## Photographers and inspiration
+
 - https://www.bjornmoerman.com/Portfolio/AERIALS/
 - https://www.alexanderkhokhlov.com/
 - https://huxleyparlour.com/artists/sebastiao-salgado/
@@ -124,6 +135,7 @@
 - https://www.youtube.com/channel/UCpOb6-cE8oyxyV2GOnuDRwQ
 
 ## Scoring methodology references
+
 - https://www.lonelyspeck.com/lenses-for-milky-way-photography/ — Lonely Speck; astro lens scoring formula (aperture area × FOV × max shutter)
 - https://www.kenrockwell.com/fuji/ — Ken Rockwell; competitor reference only (NOT a trusted data source)
 - https://www.lenstip.com/ — (see Reviews section) primary MTF chart source
@@ -146,34 +158,34 @@
 - https://sonyalpha.blog/2025/10/14/astrhori-18mm-f5-6/ — AstrHori 18mm shift review
 - https://alwinkok.com/2025/05/09/ttartisan-35mm-f1-4-tilt-tilting-my-point-of-view-2/ — TTArtisan 35mm tilt review
 
-## Manufacturers 
+## Manufacturers
 
-| Brand | Website | Notes |
-|---|---|---|
-| 7Artisans | https://7artisans.com | Chinese manual-focus lenses |
-| AstrHori | https://astrhori.com | Manual-focus and tilt lenses |
-| Carl Zeiss | https://www.zeiss.com/photonics-and-optics/en/photography/products/lenses-for-mirrorless-system-cameras/touit-lenses.html | Touit line (discontinued, AF) |
-| Fujifilm | https://fujifilm-x.com/global/products/lenses/ | Official X-mount and GFX lineup |
-| Handevision / Kipon | https://kipon.com | IBERIT compact MF lenses |
-| Irix | https://www.irixlens.com | Swiss-designed MF primes |
-| Kamlan | https://www.kamlan.com.tw | Budget MF lenses |
-| Lensbaby | https://lensbaby.com | Creative/selective-focus optics |
-| Meike | https://www.meikeglobal.com | Third-party lenses and accessories |
-| Meyer Optik Görlitz | https://www.meyer-optik-goerlitz.com | Revived German heritage brand, MF art lenses |
-| Mitakon / Zhongyi | https://zyoptics.net | Speedmaster ultra-fast MF lenses |
-| NiSi | https://www.nisioptics.com | Filters + MF lenses |
-| Pergear | https://www.pergear.com | Budget MF lenses |
-| SLR Magic | https://www.slrmagic.com | MF cine and photo lenses |
-| Samyang / Rokinon | https://www.lksamyang.com | Korean; Rokinon is US brand name |
-| Sigma | https://www.sigma-global.com | Contemporary and Art lines, X-mount |
-| Sirui | https://store.sirui.com | Anamorphic and AF lenses |
-| TTArtisan | https://www.ttartisan.com | Chinese MF lenses |
-| Tamron | https://www.tamron.com | X-mount AF lenses |
-| Thingyfy | https://www.thingyfy.com | Pinhole and specialty lenses |
-| Tokina | https://tokinalens.com | atx-m line, X-mount |
-| Venus Laowa | https://www.venuslens.net | Ultra-wide and macro specialists |
-| Viltrox | https://www.viltrox.com | AF lenses for X-mount and GFX |
-| Voigtländer / Cosina | https://www.cosina.co.jp | MF lenses in X-mount |
+| Brand                | Website                                                                                                                   | Notes                                        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| 7Artisans            | https://7artisans.com                                                                                                     | Chinese manual-focus lenses                  |
+| AstrHori             | https://astrhori.com                                                                                                      | Manual-focus and tilt lenses                 |
+| Carl Zeiss           | https://www.zeiss.com/photonics-and-optics/en/photography/products/lenses-for-mirrorless-system-cameras/touit-lenses.html | Touit line (discontinued, AF)                |
+| Fujifilm             | https://fujifilm-x.com/global/products/lenses/                                                                            | Official X-mount and GFX lineup              |
+| Handevision / Kipon  | https://kipon.com                                                                                                         | IBERIT compact MF lenses                     |
+| Irix                 | https://www.irixlens.com                                                                                                  | Swiss-designed MF primes                     |
+| Kamlan               | https://www.kamlan.com.tw                                                                                                 | Budget MF lenses                             |
+| Lensbaby             | https://lensbaby.com                                                                                                      | Creative/selective-focus optics              |
+| Meike                | https://www.meikeglobal.com                                                                                               | Third-party lenses and accessories           |
+| Meyer Optik Görlitz  | https://www.meyer-optik-goerlitz.com                                                                                      | Revived German heritage brand, MF art lenses |
+| Mitakon / Zhongyi    | https://zyoptics.net                                                                                                      | Speedmaster ultra-fast MF lenses             |
+| NiSi                 | https://www.nisioptics.com                                                                                                | Filters + MF lenses                          |
+| Pergear              | https://www.pergear.com                                                                                                   | Budget MF lenses                             |
+| SLR Magic            | https://www.slrmagic.com                                                                                                  | MF cine and photo lenses                     |
+| Samyang / Rokinon    | https://www.lksamyang.com                                                                                                 | Korean; Rokinon is US brand name             |
+| Sigma                | https://www.sigma-global.com                                                                                              | Contemporary and Art lines, X-mount          |
+| Sirui                | https://store.sirui.com                                                                                                   | Anamorphic and AF lenses                     |
+| TTArtisan            | https://www.ttartisan.com                                                                                                 | Chinese MF lenses                            |
+| Tamron               | https://www.tamron.com                                                                                                    | X-mount AF lenses                            |
+| Thingyfy             | https://www.thingyfy.com                                                                                                  | Pinhole and specialty lenses                 |
+| Tokina               | https://tokinalens.com                                                                                                    | atx-m line, X-mount                          |
+| Venus Laowa          | https://www.venuslens.net                                                                                                 | Ultra-wide and macro specialists             |
+| Viltrox              | https://www.viltrox.com                                                                                                   | AF lenses for X-mount and GFX                |
+| Voigtländer / Cosina | https://www.cosina.co.jp                                                                                                  | MF lenses in X-mount                         |
 
 Not listed: Jaray (no official site), Sainsonic (electronics reseller, not a lens manufacturer).
 Links verified: 2026-04-06.
@@ -181,6 +193,7 @@ Links verified: 2026-04-06.
 ## Affiliate marketing
 
 ### Programs (photography/camera gear)
+
 - https://www.mpb.com/en-eu/affiliates — MPB used camera marketplace; strong fit for wuseria
 - https://www.bhphotovideo.com/find/affiliateProgram.jsp — B&H Photo; major US retailer
 - https://www.amazon.com/gp/associates — Amazon Associates; broadest product range
@@ -189,12 +202,14 @@ Links verified: 2026-04-06.
 - https://www.cameraworld.co.uk/affiliates — Camera World UK
 
 ### Affiliate networks
+
 - https://www.awin.com — Awin; hosts many photography retailer programs
 - https://www.shareasale.com — ShareASale; mid-tier retailers
 - https://www.cj.com — CJ Affiliate (Commission Junction); enterprise programs
 - https://impact.com — Impact; B&H and others hosted here
 
 ### Bulgarian photography retailers
+
 - https://magazin.photosynthesis.bg — ФотоСинтезис; largest BG photo retailer
 - https://pro.ozone.bg — OzonePro (formerly photopavilion.bg); studio and pro gear
 - https://www.dynaphos.com — Dynaphos; Bulgarian lighting brand + shop
@@ -205,16 +220,19 @@ Links verified: 2026-04-06.
 - https://photo-forum.net — Photo-Forum.net; BG photography community + secondhand bazar
 
 ### Aggregators and deal sites
+
 - https://www.skimlinks.com/ — Skimlinks; affiliate link aggregator (many retailers, one integration)
 
 No public affiliate programs found (2026-04-06). Contact ФотоСинтезис and Dynaphos directly for referral deals.
 
 ### Price comparison / deal aggregation
+
 - https://www.idealo.de — Idealo; EU price comparison
 - https://www.camelcamelcamel.com — Amazon price history tracker
 - https://www.skinflint.co.uk — Skinflint (formerly Geizhals UK); EU price aggregator
 
 ## Photo sharing sites
+
 - www.unsplash.com
 - www.flickr.com
 - www.500px.com

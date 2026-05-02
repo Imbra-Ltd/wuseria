@@ -3,19 +3,30 @@ import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
 
 const entries = await getCollection("wiki");
-const sorted = [...entries].sort((a, b) => a.data.title.localeCompare(b.data.title));
-const categories = [...new Set(entries.flatMap((e) => e.data.categories))].sort();
+const sorted = [...entries].sort((a, b) =>
+  a.data.title.localeCompare(b.data.title),
+);
+const categories = [
+  ...new Set(entries.flatMap((e) => e.data.categories)),
+].sort();
 ---
 
-<Base title="Photography Wiki — Wuseria" description="Aperture, bokeh, depth of field — photography concepts explained so you can choose the right lens with confidence.">
+<Base
+  title="Photography Wiki — Wuseria"
+  description="Aperture, bokeh, depth of field — photography concepts explained so you can choose the right lens with confidence."
+>
   <h1>Wiki</h1>
   <p class="subtitle">{entries.length} photography terms and concepts.</p>
 
   <div class="category-chips">
     <button class="chip active" data-cat="All">All</button>
-    {categories.map((cat) => (
-      <button class="chip" data-cat={cat}>{cat}</button>
-    ))}
+    {
+      categories.map((cat) => (
+        <button class="chip" data-cat={cat}>
+          {cat}
+        </button>
+      ))
+    }
   </div>
 
   <input
@@ -29,16 +40,26 @@ const categories = [...new Set(entries.flatMap((e) => e.data.categories))].sort(
   <p class="count" id="wiki-count">{sorted.length} / {entries.length} terms</p>
 
   <div class="wiki-grid" id="wiki-grid">
-    {sorted.map((entry) => (
-      <a href={`/wiki/${entry.id}`} class="wiki-card" data-cats={entry.data.categories.join(",")} data-search={`${entry.data.title} ${entry.data.fullTitle ?? ""} ${entry.data.summary}`.toLowerCase()}>
-        <div class="card-header">
-          <span class="card-title">{entry.data.title}</span>
-          {entry.data.fullTitle && entry.data.fullTitle !== entry.data.title && <span class="card-full">{entry.data.fullTitle}</span>}
-          <span class="card-cat">{entry.data.categories.join(" / ")}</span>
-        </div>
-        <p class="card-summary">{entry.data.summary}</p>
-      </a>
-    ))}
+    {
+      sorted.map((entry) => (
+        <a
+          href={`/wiki/${entry.id}`}
+          class="wiki-card"
+          data-cats={entry.data.categories.join(",")}
+          data-search={`${entry.data.title} ${entry.data.fullTitle ?? ""} ${entry.data.summary}`.toLowerCase()}
+        >
+          <div class="card-header">
+            <span class="card-title">{entry.data.title}</span>
+            {entry.data.fullTitle &&
+              entry.data.fullTitle !== entry.data.title && (
+                <span class="card-full">{entry.data.fullTitle}</span>
+              )}
+            <span class="card-cat">{entry.data.categories.join(" / ")}</span>
+          </div>
+          <p class="card-summary">{entry.data.summary}</p>
+        </a>
+      ))
+    }
   </div>
 </Base>
 
@@ -46,7 +67,9 @@ const categories = [...new Set(entries.flatMap((e) => e.data.categories))].sort(
   function initWikiFilter() {
     const chips = document.querySelectorAll<HTMLButtonElement>(".chip");
     const cards = document.querySelectorAll<HTMLAnchorElement>(".wiki-card");
-    const search = document.getElementById("wiki-search") as HTMLInputElement | null;
+    const search = document.getElementById(
+      "wiki-search",
+    ) as HTMLInputElement | null;
     const count = document.getElementById("wiki-count");
     const total = cards.length;
     let activeCat = "All";

@@ -13,11 +13,11 @@ Use Astro scoped `<style>` blocks for `.astro` page components and CSS Modules c
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
-| Tailwind | Utility class overhead; harder to scan in data-dense table layouts |
-| Inline styles | No hover/media query support; not maintainable |
-| styled-components | Ships JS runtime; unnecessary for mostly-static pages |
+| Alternative       | Why rejected                                                       |
+| ----------------- | ------------------------------------------------------------------ |
+| Tailwind          | Utility class overhead; harder to scan in data-dense table layouts |
+| Inline styles     | No hover/media query support; not maintainable                     |
+| styled-components | Ships JS runtime; unnecessary for mostly-static pages              |
 
 ## Consequences
 

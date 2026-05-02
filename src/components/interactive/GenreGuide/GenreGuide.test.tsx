@@ -68,12 +68,16 @@ const testLenses: GenreLens[] = [
 describe("GenreGuide", () => {
   it("renders with default genre (street)", () => {
     render(<GenreGuide lenses={testLenses} />);
-    expect(screen.getByRole("tab", { name: /street/i, selected: true })).toBeInTheDocument();
+    expect(
+      screen.getByRole("tab", { name: /street/i, selected: true }),
+    ).toBeInTheDocument();
   });
 
   it("renders with a specified default genre", () => {
     render(<GenreGuide lenses={testLenses} defaultGenre="nightscape" />);
-    expect(screen.getByRole("tab", { name: /nightscape/i, selected: true })).toBeInTheDocument();
+    expect(
+      screen.getByRole("tab", { name: /nightscape/i, selected: true }),
+    ).toBeInTheDocument();
   });
 
   it("shows genre tabs for all 9 genres", () => {
@@ -88,7 +92,9 @@ describe("GenreGuide", () => {
     render(<GenreGuide lenses={testLenses} />);
 
     await user.click(screen.getByRole("tab", { name: /portrait/i }));
-    expect(screen.getByRole("tab", { name: /portrait/i, selected: true })).toBeInTheDocument();
+    expect(
+      screen.getByRole("tab", { name: /portrait/i, selected: true }),
+    ).toBeInTheDocument();
   });
 
   it("shows mark pips for scored lenses", () => {
@@ -105,9 +111,7 @@ describe("GenreGuide", () => {
 
   it("displays footnote about scoring methodology", () => {
     render(<GenreGuide lenses={testLenses} />);
-    expect(
-      screen.getByText(/FL is a creative choice/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/FL is a creative choice/)).toBeInTheDocument();
   });
 
   it("shows mount toggle (X-Mount / GFX)", () => {
@@ -132,7 +136,9 @@ describe("GenreGuide", () => {
     render(<GenreGuide lenses={testLenses} />);
 
     await user.click(screen.getByRole("tab", { name: /landscape/i }));
-    expect(screen.getByRole("tab", { name: /landscape/i, selected: true })).toBeInTheDocument();
+    expect(
+      screen.getByRole("tab", { name: /landscape/i, selected: true }),
+    ).toBeInTheDocument();
   });
 
   it("shows landscape scoring explanation when landscape is selected", async () => {

@@ -11,9 +11,5 @@ const genreLenses = lenses.map(pickGenreFields);
   title="Which Lens for Your Genre? — Wuseria"
   description="Landscape, portrait, street, astro — see which Fujifilm lenses score highest for the genres you shoot."
 >
-  <GenreGuide
-    client:load
-    lenses={genreLenses}
-    defaultGenre="nightscape"
-  />
+  <GenreGuide client:load lenses={genreLenses} defaultGenre="nightscape" />
 </Base>

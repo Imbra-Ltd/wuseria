@@ -12,6 +12,7 @@ it commercial in nature. This creates trademark risk.
 ## Risk assessment
 
 **UDRP (domain dispute):** To take the domain, Fujifilm would need to prove:
+
 1. Domain is confusingly similar to their trademark — likely yes
 2. Registrant has no legitimate interest — debatable (informational site)
 3. Registered in bad faith — weak argument (not cybersquatting)
@@ -36,24 +37,25 @@ for the X Series.
 
 ## Domain name candidates
 
-| Domain | Pros | Cons |
-|--------|------|------|
-| fujime.app | Memorable, direct | Trademark risk (contains "fuji") |
-| **lenspip.me** | Zero risk, unique, short, "pip" nods to scoring visualization, multi-system ready, fits me! series | Needs brand awareness from scratch |
-| **lensing.me** | Zero risk, short, elegant, real cinematography term, fits me! series | Lens-specific — cameras/accessories are secondary |
-| wisteria.me | Zero risk, elegant, "fuji" = wisteria in Japanese | Subtle, doesn't scale to multi-system |
-| **wuseria.com** | Zero risk, short, playful twist on "wisteria", .com availability | Invented word, no immediate meaning |
-| **wuseria.app** | Same as .com but signals web app, modern TLD | Invented word, .app forces HTTPS |
-| **wuseria.io** | Same base, developer/tech-forward TLD | .io trending but pricier |
-| **wuseria.me** | Zero risk, playful twist on "wisteria", fits me! series (.me TLD) | Invented word, no immediate meaning |
-| lensgrade.me | Clear, describes scoring, multi-system ready | Generic |
-| xmount.me | Recognizable to Fuji shooters | "X" prefix associations, Fuji-specific |
+| Domain          | Pros                                                                                               | Cons                                              |
+| --------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| fujime.app      | Memorable, direct                                                                                  | Trademark risk (contains "fuji")                  |
+| **lenspip.me**  | Zero risk, unique, short, "pip" nods to scoring visualization, multi-system ready, fits me! series | Needs brand awareness from scratch                |
+| **lensing.me**  | Zero risk, short, elegant, real cinematography term, fits me! series                               | Lens-specific — cameras/accessories are secondary |
+| wisteria.me     | Zero risk, elegant, "fuji" = wisteria in Japanese                                                  | Subtle, doesn't scale to multi-system             |
+| **wuseria.com** | Zero risk, short, playful twist on "wisteria", .com availability                                   | Invented word, no immediate meaning               |
+| **wuseria.app** | Same as .com but signals web app, modern TLD                                                       | Invented word, .app forces HTTPS                  |
+| **wuseria.io**  | Same base, developer/tech-forward TLD                                                              | .io trending but pricier                          |
+| **wuseria.me**  | Zero risk, playful twist on "wisteria", fits me! series (.me TLD)                                  | Invented word, no immediate meaning               |
+| lensgrade.me    | Clear, describes scoring, multi-system ready                                                       | Generic                                           |
+| xmount.me       | Recognizable to Fuji shooters                                                                      | "X" prefix associations, Fuji-specific            |
 
 ## Decision
 
 **wuseria.com** — rename from fujime.app before launch.
 
 Rationale:
+
 - Zero trademark risk — invented word, no existing brand conflicts
 - `.com` is the strongest TLD for global reach, SEO, and user trust
 - Short (7 letters), unique, fully ownable — will dominate search results

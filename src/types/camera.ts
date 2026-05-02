@@ -1,4 +1,9 @@
-import type { Mount, BatteryType, MemoryCardType, CardSpeedClass } from "./common";
+import type {
+  Mount,
+  BatteryType,
+  MemoryCardType,
+  CardSpeedClass,
+} from "./common";
 import type { ReviewSource } from "./review";
 
 // =============================================================================
@@ -42,7 +47,14 @@ type SensorType =
 
 type UsbType = "micro-USB" | "USB-C";
 
-type SubjectDetect = "animal" | "bird" | "car" | "motorcycle" | "bicycle" | "airplane" | "train";
+type SubjectDetect =
+  | "animal"
+  | "bird"
+  | "car"
+  | "motorcycle"
+  | "bicycle"
+  | "airplane"
+  | "train";
 
 type VideoSpec = "1080p" | "4K" | "6.2K" | "8K";
 
@@ -51,7 +63,6 @@ type VideoSpec = "1080p" | "4K" | "6.2K" | "8K";
 // =============================================================================
 
 interface Camera {
-
   // ===========================================================================
   // IDENTITY — all cameras are Fujifilm
   // ===========================================================================
@@ -70,9 +81,9 @@ interface Camera {
 
   sensor: SensorType;
   megapixels: number;
-  sensorWidth?: number;              // mm
-  sensorHeight?: number;             // mm
-  isBsi?: boolean;                    // back-side illuminated
+  sensorWidth?: number; // mm
+  sensorHeight?: number; // mm
+  isBsi?: boolean; // back-side illuminated
   isoMin?: number;
   isoMax?: number;
 
@@ -88,9 +99,9 @@ interface Camera {
   // ===========================================================================
 
   evfType?: EvfType;
-  evfResolution?: number;             // dots
+  evfResolution?: number; // dots
   screenType?: ScreenType;
-  screenResolution?: number;          // dots
+  screenResolution?: number; // dots
   hasTouchscreen?: boolean;
 
   // ===========================================================================
@@ -101,13 +112,13 @@ interface Camera {
   shutterType?: ShutterType;
   afType?: AfSystemType;
   afPoints?: number;
-  pdafCoverage?: number;              // % of sensor area
+  pdafCoverage?: number; // % of sensor area
   hasFaceDetectAF?: boolean;
   subjectDetectAF?: SubjectDetect[];
-  bufferDepth?: number;               // frames
+  bufferDepth?: number; // frames
   electronicBurstFps?: number;
   hasPixelShift?: boolean;
-  batteryLife?: number;               // CIPA shots per charge
+  batteryLife?: number; // CIPA shots per charge
   batteryType?: BatteryType;
 
   // ===========================================================================
@@ -147,16 +158,16 @@ interface Camera {
   // PHYSICAL
   // ===========================================================================
 
-  weight: number;                     // grams, body only
-  width?: number;                     // mm
-  height?: number;                    // mm
-  depth?: number;                     // mm
+  weight: number; // grams, body only
+  width?: number; // mm
+  height?: number; // mm
+  depth?: number; // mm
 
   // ===========================================================================
   // PRICE
   // ===========================================================================
 
-  price: number;                      // USD, rounded to nearest $250
+  price: number; // USD, rounded to nearest $250
 
   // ===========================================================================
   // REVIEW SOURCES

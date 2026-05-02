@@ -85,11 +85,18 @@ function useGenreState(defaultGenre: ScoredGenre) {
     if (!el) return;
     const cRect = container.getBoundingClientRect();
     const eRect = el.getBoundingClientRect();
-    const offset = eRect.top - cRect.top + container.scrollTop - cRect.height / 2 + eRect.height / 2;
+    const offset =
+      eRect.top -
+      cRect.top +
+      container.scrollTop -
+      cRect.height / 2 +
+      eRect.height / 2;
     container.scrollTop = Math.max(0, offset);
   }, [ev]);
 
-  useEffect(() => { scrollToEv(); }, [ev, genre, scrollToEv]);
+  useEffect(() => {
+    scrollToEv();
+  }, [ev, genre, scrollToEv]);
 
   const visibleScenes = useMemo(
     () => evScenes.filter((s) => genreSceneFilter[genre](s.ev)),
@@ -101,13 +108,21 @@ function useGenreState(defaultGenre: ScoredGenre) {
       setSortAsc(!sortAsc);
     } else {
       setSortBy(key);
-      setSortAsc(key === "brand" || key === "fl" || key === "price" || key === "weight" || key === "idealIso");
+      setSortAsc(
+        key === "brand" ||
+          key === "fl" ||
+          key === "price" ||
+          key === "weight" ||
+          key === "idealIso",
+      );
     }
   }
 
   function toggleNd(factor: number): void {
     setNd((prev) =>
-      prev.includes(factor) ? prev.filter((f) => f !== factor) : [...prev, factor],
+      prev.includes(factor)
+        ? prev.filter((f) => f !== factor)
+        : [...prev, factor],
     );
   }
 
@@ -129,27 +144,89 @@ function useGenreState(defaultGenre: ScoredGenre) {
     setLatcaFilter("");
   }
 
-  const hasFilters = !!(brandFilter || markFilter || priceFilter || weightFilter || apertureFilter || comaFilter || astigFilter || typeFilter || wrFilter || cornerFilter || distFilter || flareFilter || bokehFilter || locaFilter || latcaFilter);
+  const hasFilters = !!(
+    brandFilter ||
+    markFilter ||
+    priceFilter ||
+    weightFilter ||
+    apertureFilter ||
+    comaFilter ||
+    astigFilter ||
+    typeFilter ||
+    wrFilter ||
+    cornerFilter ||
+    distFilter ||
+    flareFilter ||
+    bokehFilter ||
+    locaFilter ||
+    latcaFilter
+  );
 
   const flChips = FL_CHIPS.default;
 
   return {
-    genre, ev, setEv, iso, setIso, nd, cropFactor, setCropFactor,
-    selectedFl, setSelectedFl, magnification, setMagnification,
-    sortBy, sortAsc,
-    brandFilter, setBrandFilter, markFilter, setMarkFilter,
-    priceFilter, setPriceFilter, weightFilter, setWeightFilter,
-    apertureFilter, setApertureFilter, comaFilter, setComaFilter,
-    astigFilter, setAstigFilter, typeFilter, setTypeFilter,
-    wrFilter, setWrFilter, cornerFilter, setCornerFilter,
-    distFilter, setDistFilter, flareFilter, setFlareFilter,
-    bokehFilter, setBokehFilter, locaFilter, setLocaFilter,
-    latcaFilter, setLatcaFilter,
-    sceneListRef, visibleScenes, flChips,
-    isNightscape, isLandscape, isArchitecture, isPortrait,
-    isStreet, isSport, isWildlife, isTravel,
-    FL_CHIPS, FL_RANGES,
-    handleGenreChange, handleSort, toggleNd, clearFilters, hasFilters,
+    genre,
+    ev,
+    setEv,
+    iso,
+    setIso,
+    nd,
+    cropFactor,
+    setCropFactor,
+    selectedFl,
+    setSelectedFl,
+    magnification,
+    setMagnification,
+    sortBy,
+    sortAsc,
+    brandFilter,
+    setBrandFilter,
+    markFilter,
+    setMarkFilter,
+    priceFilter,
+    setPriceFilter,
+    weightFilter,
+    setWeightFilter,
+    apertureFilter,
+    setApertureFilter,
+    comaFilter,
+    setComaFilter,
+    astigFilter,
+    setAstigFilter,
+    typeFilter,
+    setTypeFilter,
+    wrFilter,
+    setWrFilter,
+    cornerFilter,
+    setCornerFilter,
+    distFilter,
+    setDistFilter,
+    flareFilter,
+    setFlareFilter,
+    bokehFilter,
+    setBokehFilter,
+    locaFilter,
+    setLocaFilter,
+    latcaFilter,
+    setLatcaFilter,
+    sceneListRef,
+    visibleScenes,
+    flChips,
+    isNightscape,
+    isLandscape,
+    isArchitecture,
+    isPortrait,
+    isStreet,
+    isSport,
+    isWildlife,
+    isTravel,
+    FL_CHIPS,
+    FL_RANGES,
+    handleGenreChange,
+    handleSort,
+    toggleNd,
+    clearFilters,
+    hasFilters,
     NIGHTSCAPE_ISO_BY_EV,
   };
 }

@@ -1,6 +1,8 @@
 import { lenses } from "../src/data/lenses";
 
-const scored = lenses.filter((l) => (l as unknown as Record<string, unknown>).centerStopped != null);
+const scored = lenses.filter(
+  (l) => (l as unknown as Record<string, unknown>).centerStopped != null,
+);
 
 for (const l of scored) {
   const lens = l as unknown as Record<string, unknown>;

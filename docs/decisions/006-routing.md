@@ -13,10 +13,10 @@ Use Astro's built-in file-based routing. Dynamic routes via `getStaticPaths()` g
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
+| Alternative     | Why rejected                                              |
+| --------------- | --------------------------------------------------------- |
 | React Router v6 | Client-side only; requires SPA; no static page generation |
-| TanStack Router | Same — designed for SPAs, not static sites |
+| TanStack Router | Same — designed for SPAs, not static sites                |
 
 ## Consequences
 

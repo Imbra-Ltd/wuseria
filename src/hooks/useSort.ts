@@ -62,7 +62,12 @@ function useSort<T, K extends string & keyof T>(
     }));
   }
 
-  return { sorted, sortKey: sort.key, sortDirection: sort.direction, toggleSort };
+  return {
+    sorted,
+    sortKey: sort.key,
+    sortDirection: sort.direction,
+    toggleSort,
+  };
 }
 
 export { useSort };

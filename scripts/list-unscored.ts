@@ -1,7 +1,11 @@
 import { lenses } from "../src/data/lenses";
 
-const unscored = lenses.filter((l) => (l as unknown as Record<string, unknown>).centerStopped == null);
-const scored = lenses.filter((l) => (l as unknown as Record<string, unknown>).centerStopped != null);
+const unscored = lenses.filter(
+  (l) => (l as unknown as Record<string, unknown>).centerStopped == null,
+);
+const scored = lenses.filter(
+  (l) => (l as unknown as Record<string, unknown>).centerStopped != null,
+);
 
 console.log("Scored: " + scored.length + " / " + lenses.length);
 console.log("Unscored: " + unscored.length);

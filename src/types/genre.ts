@@ -34,8 +34,4 @@ interface GenreConfig {
 // EXPORTS
 // =============================================================================
 
-export type {
-  Genre,
-  ScoredGenre,
-  GenreConfig,
-};
+export type { Genre, ScoredGenre, GenreConfig };

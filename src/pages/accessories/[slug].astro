@@ -14,20 +14,23 @@ export const getStaticPaths = (() => {
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { accessory } = Astro.props as Props;
 
-const canonicalUrl = new URL(`/accessories/${toSlug(`${accessory.brand} ${accessory.model}`)}`, Astro.site);
+const canonicalUrl = new URL(
+  `/accessories/${toSlug(`${accessory.brand} ${accessory.model}`)}`,
+  Astro.site,
+);
 
 function formatCategory(cat: string): string {
   const labels: Record<string, string> = {
-    "flash": "Flash",
+    flash: "Flash",
     "battery-grip": "Battery Grip",
     "hand-grip": "Hand Grip",
-    "battery": "Battery",
-    "charger": "Charger",
+    battery: "Battery",
+    charger: "Charger",
     "lens-accessory": "Lens Accessory",
-    "adapter": "Adapter",
-    "remote": "Remote",
-    "audio": "Audio",
-    "cooling": "Cooling",
+    adapter: "Adapter",
+    remote: "Remote",
+    audio: "Audio",
+    cooling: "Cooling",
     "body-accessory": "Body Accessory",
   };
   return labels[cat] ?? cat;
@@ -51,21 +54,37 @@ const jsonLd = {
   },
 };
 
-const compat = "compatibleWith" in accessory && Array.isArray(accessory.compatibleWith)
-  ? accessory.compatibleWith as string[]
-  : [];
+const compat =
+  "compatibleWith" in accessory && Array.isArray(accessory.compatibleWith)
+    ? (accessory.compatibleWith as string[])
+    : [];
 ---
 
-<Base title={`${accessory.brand} ${accessory.model} — Wuseria`} description={accessory.description}>
-  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+<Base
+  title={`${accessory.brand} ${accessory.model} — Wuseria`}
+  description={accessory.description}
+>
+  <script
+    slot="head"
+    type="application/ld+json"
+    set:html={JSON.stringify(jsonLd)}
+  />
 
   <div class="detail">
     <header class="header">
       <h1>{accessory.brand} {accessory.model}</h1>
       <div class="badges">
         <span class="badge">{formatCategory(accessory.category)}</span>
-        {"mount" in accessory && accessory.mount && <span class="badge">{accessory.mount}</span>}
-        {accessory.isDiscontinued && <span class="badge badge-warn">Discontinued</span>}
+        {
+          "mount" in accessory && accessory.mount && (
+            <span class="badge">{accessory.mount}</span>
+          )
+        }
+        {
+          accessory.isDiscontinued && (
+            <span class="badge badge-warn">Discontinued</span>
+          )
+        }
       </div>
     </header>
 
@@ -76,31 +95,63 @@ const compat = "compatibleWith" in accessory && Array.isArray(accessory.compatib
         <h2>Details</h2>
         <table class="spec-table">
           <tbody>
-            <tr><td>Category</td><td>{formatCategory(accessory.category)}</td></tr>
+            <tr
+              ><td>Category</td><td>{formatCategory(accessory.category)}</td
+              ></tr
+            >
             <tr><td>Brand</td><td>{accessory.brand}</td></tr>
-            {accessory.weight && <tr><td>Weight</td><td>{accessory.weight}g</td></tr>}
+            {
+              accessory.weight && (
+                <tr>
+                  <>
+                    <td>Weight</td>
+                    <td>{accessory.weight}g</td>
+                  </>
+                </tr>
+              )
+            }
             <tr><td>Price</td><td>~${accessory.price}</td></tr>
-            {accessory.year && <tr><td>Year</td><td>{accessory.year}</td></tr>}
+            {
+              accessory.year && (
+                <tr>
+                  <>
+                    <td>Year</td>
+                    <td>{accessory.year}</td>
+                  </>
+                </tr>
+              )
+            }
           </tbody>
         </table>
       </section>
 
-      {compat.length > 0 && (
-        <section>
-          <h2>Compatible With</h2>
-          <div class="compat-list">
-            {compat.map((c) => (
-              <span class="compat-badge">{c}</span>
-            ))}
-          </div>
-        </section>
-      )}
+      {
+        compat.length > 0 && (
+          <section>
+            <h2>Compatible With</h2>
+            <div class="compat-list">
+              {compat.map((c) => (
+                <span class="compat-badge">{c}</span>
+              ))}
+            </div>
+          </section>
+        )
+      }
     </div>
 
     <section class="links">
-      {accessory.officialUrl && (
-        <a href={accessory.officialUrl} target="_blank" rel="noopener noreferrer" class="link-button">Official product page</a>
-      )}
+      {
+        accessory.officialUrl && (
+          <a
+            href={accessory.officialUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link-button"
+          >
+            Official product page
+          </a>
+        )
+      }
       <a href="/accessories" class="back-link">Back to Accessories</a>
     </section>
   </div>

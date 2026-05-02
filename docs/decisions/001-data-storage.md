@@ -13,12 +13,12 @@ Store all data in `src/data/*.ts` files, imported at build time. TypeScript rath
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
-| JSON files | No compile-time type checking; missing fields are runtime surprises |
-| REST API | Data changes monthly; API adds infrastructure for no benefit |
-| CMS (Contentful, Sanity) | Adds complexity, cost, and a second system to maintain |
-| Database (SQLite, Postgres) | Requires a backend; overkill for static data |
+| Alternative                 | Why rejected                                                        |
+| --------------------------- | ------------------------------------------------------------------- |
+| JSON files                  | No compile-time type checking; missing fields are runtime surprises |
+| REST API                    | Data changes monthly; API adds infrastructure for no benefit        |
+| CMS (Contentful, Sanity)    | Adds complexity, cost, and a second system to maintain              |
+| Database (SQLite, Postgres) | Requires a backend; overkill for static data                        |
 
 ## Consequences
 

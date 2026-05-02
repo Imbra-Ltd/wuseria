@@ -13,11 +13,11 @@ Use Buttondown.
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
-| Substack | Opinionated platform; less control over branding |
-| ConvertKit | More expensive; features beyond current needs |
-| Mailchimp | Complex UI; expensive at scale |
+| Alternative | Why rejected                                     |
+| ----------- | ------------------------------------------------ |
+| Substack    | Opinionated platform; less control over branding |
+| ConvertKit  | More expensive; features beyond current needs    |
+| Mailchimp   | Complex UI; expensive at scale                   |
 
 ## Consequences
 

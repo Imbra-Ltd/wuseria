@@ -14,11 +14,11 @@ Use Astro as the framework with React islands for interactive components. Static
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
+| Alternative      | Why rejected                                                                             |
+| ---------------- | ---------------------------------------------------------------------------------------- |
 | Vite + React SPA | Ships all JS to the browser; poor SEO without SSR; was the original choice but abandoned |
-| Next.js | Heavier than needed; SSR not required for static data |
-| Plain Hugo | No React ecosystem; harder to build interactive sort/filter tables |
+| Next.js          | Heavier than needed; SSR not required for static data                                    |
+| Plain Hugo       | No React ecosystem; harder to build interactive sort/filter tables                       |
 
 ## Consequences
 

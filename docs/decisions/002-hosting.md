@@ -13,11 +13,11 @@ Deploy to GitHub Pages via GitHub Actions. Custom domain: wuseria.com.
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
-| Vercel | Requires a second account; free tier is sufficient but GitHub Pages is simpler |
-| Cloudflare Pages | Same — additional account for no current benefit |
-| Netlify | Same tier; no advantage over GitHub Pages at current scale |
+| Alternative      | Why rejected                                                                   |
+| ---------------- | ------------------------------------------------------------------------------ |
+| Vercel           | Requires a second account; free tier is sufficient but GitHub Pages is simpler |
+| Cloudflare Pages | Same — additional account for no current benefit                               |
+| Netlify          | Same tier; no advantage over GitHub Pages at current scale                     |
 
 ## Consequences
 

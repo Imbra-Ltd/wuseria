@@ -11,10 +11,18 @@ interface MobileSortProps<K extends string> {
   styles: Record<string, string>;
 }
 
-function MobileSort<K extends string>({ columns, sortKey, sortDirection, toggleSort, styles }: MobileSortProps<K>) {
+function MobileSort<K extends string>({
+  columns,
+  sortKey,
+  sortDirection,
+  toggleSort,
+  styles,
+}: MobileSortProps<K>) {
   return (
     <div className={styles.mobileSort}>
-      <label className={styles.mobileSortLabel} htmlFor="mobile-sort">Sort</label>
+      <label className={styles.mobileSortLabel} htmlFor="mobile-sort">
+        Sort
+      </label>
       <select
         id="mobile-sort"
         className={styles.mobileSortSelect}
@@ -22,7 +30,9 @@ function MobileSort<K extends string>({ columns, sortKey, sortDirection, toggleS
         onChange={(e) => toggleSort(e.target.value as K)}
       >
         {columns.map((col) => (
-          <option key={col.key} value={col.key}>{col.label}</option>
+          <option key={col.key} value={col.key}>
+            {col.label}
+          </option>
         ))}
       </select>
       <button

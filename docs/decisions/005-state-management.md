@@ -13,11 +13,11 @@ Use `useState` and `useMemo` within React islands. No global state library.
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
-| Zustand | No shared state across unrelated components; adds a dependency for no benefit |
-| Redux | Same — massive overhead for local filter state |
-| React Query | No server state to cache or sync |
+| Alternative | Why rejected                                                                  |
+| ----------- | ----------------------------------------------------------------------------- |
+| Zustand     | No shared state across unrelated components; adds a dependency for no benefit |
+| Redux       | Same — massive overhead for local filter state                                |
+| React Query | No server state to cache or sync                                              |
 
 ## Consequences
 

@@ -90,13 +90,13 @@ wrong data.
 See `src/data/reviews.ts` for the full directory with methodology
 (lab/field) and trust (1-3) ratings. Top sources:
 
-| Trust 3 | Methodology |
-|---------|-------------|
-| LensRentals | Lab — optical bench MTF |
-| LensTip | Lab — Imatest MTF charts |
-| OpticalLimits | Lab — Imatest MTF |
+| Trust 3       | Methodology                     |
+| ------------- | ------------------------------- |
+| LensRentals   | Lab — optical bench MTF         |
+| LensTip       | Lab — Imatest MTF charts        |
+| OpticalLimits | Lab — Imatest MTF               |
 | Dustin Abbott | Field — systematic + lab hybrid |
-| DPReview | Field — comprehensive |
+| DPReview      | Field — comprehensive           |
 | Phillip Reeve | Field — manual focus specialist |
 
 **Do not use:** Ken Rockwell — not a trusted data source.
@@ -120,22 +120,22 @@ cached data even when direct fetch times out.
 
 Fields to collect (all 0-2 scale, 0.5 steps):
 
-| Field | Source type | How to score |
-|-------|-----------|--------------|
-| centerStopped | lpmm at sweet spot | % of sensor max (see ADR-014) |
-| cornerStopped | lpmm at sweet spot | % of sensor max |
-| centerWideOpen | lpmm at max aperture | % of sensor max |
-| cornerWideOpen | lpmm at max aperture | % of sensor max (often missing) |
-| astigmatism | % S/T difference | < 5% = 2.0, 5-10% = 1.5, etc. |
-| coma | Point-source test only | Qualitative word mapping |
-| sphericalAberration | Focus shift test | Qualitative word mapping |
-| longitudinalCA | Colour fringing test | Qualitative word mapping |
-| lateralCA | % at 70% from center | LensTip scale (< 0.04% = 2.0) |
-| distortion | % RAW uncorrected | < 0.3% = 2.0, 0.3-1.0% = 1.5, etc. |
-| vignettingWideOpen | EV at max aperture, RAW | < 0.5 = 2.0, 0.5-1.0 = 1.5, etc. |
-| vignettingStopped | EV at f/5.6-f/8, RAW | Same scale |
-| bokeh | Qualitative assessment | Word mapping |
-| flareResistance | Qualitative assessment | Word mapping |
+| Field               | Source type             | How to score                       |
+| ------------------- | ----------------------- | ---------------------------------- |
+| centerStopped       | lpmm at sweet spot      | % of sensor max (see ADR-014)      |
+| cornerStopped       | lpmm at sweet spot      | % of sensor max                    |
+| centerWideOpen      | lpmm at max aperture    | % of sensor max                    |
+| cornerWideOpen      | lpmm at max aperture    | % of sensor max (often missing)    |
+| astigmatism         | % S/T difference        | < 5% = 2.0, 5-10% = 1.5, etc.      |
+| coma                | Point-source test only  | Qualitative word mapping           |
+| sphericalAberration | Focus shift test        | Qualitative word mapping           |
+| longitudinalCA      | Colour fringing test    | Qualitative word mapping           |
+| lateralCA           | % at 70% from center    | LensTip scale (< 0.04% = 2.0)      |
+| distortion          | % RAW uncorrected       | < 0.3% = 2.0, 0.3-1.0% = 1.5, etc. |
+| vignettingWideOpen  | EV at max aperture, RAW | < 0.5 = 2.0, 0.5-1.0 = 1.5, etc.   |
+| vignettingStopped   | EV at f/5.6-f/8, RAW    | Same scale                         |
+| bokeh               | Qualitative assessment  | Word mapping                       |
+| flareResistance     | Qualitative assessment  | Word mapping                       |
 
 Red flags: fast lenses (f/2 or wider) should have longitudinalCA,
 sphericalAberration, and coma data. Wide-angle lenses should have
@@ -175,12 +175,12 @@ Lighthouse runs automatically on every PR against 4 key pages
 (`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
 `lighthouserc.json`.
 
-| Category | Threshold | Level |
-|----------|-----------|-------|
-| Performance | >= 80 | error |
-| Accessibility | >= 90 | warn |
-| SEO | >= 90 | warn |
-| Best Practices | >= 90 | warn |
+| Category       | Threshold | Level |
+| -------------- | --------- | ----- |
+| Performance    | >= 80     | error |
+| Accessibility  | >= 90     | warn  |
+| SEO            | >= 90     | warn  |
+| Best Practices | >= 90     | warn  |
 
 Results are uploaded as GitHub Actions artifacts. To run locally:
 

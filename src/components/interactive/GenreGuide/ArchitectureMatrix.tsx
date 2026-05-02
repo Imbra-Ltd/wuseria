@@ -1,4 +1,8 @@
-import { MATRIX_FL_COLS_X, MATRIX_FL_COLS_GFX, MATRIX_APERTURES } from "../../../data/genres";
+import {
+  MATRIX_FL_COLS_X,
+  MATRIX_FL_COLS_GFX,
+  MATRIX_APERTURES,
+} from "../../../data/genres";
 import { formatShutter } from "../../../utils/formatting";
 import styles from "./GenreGuide.module.css";
 
@@ -10,9 +14,17 @@ interface ArchitectureMatrixProps {
   selectedFl: number;
 }
 
-function ArchitectureMatrix({ cropFactor, iso, ev, nd, selectedFl }: ArchitectureMatrixProps) {
-  const MATRIX_FL_COLS = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
-  const fallback = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
+function ArchitectureMatrix({
+  cropFactor,
+  iso,
+  ev,
+  nd,
+  selectedFl,
+}: ArchitectureMatrixProps) {
+  const MATRIX_FL_COLS =
+    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
+  const fallback =
+    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
   const cols = MATRIX_FL_COLS[selectedFl] || fallback;
   const ndFactor = nd.reduce((acc, f) => acc * f, 1);
   const apertures = MATRIX_APERTURES;
@@ -20,7 +32,8 @@ function ArchitectureMatrix({ cropFactor, iso, ev, nd, selectedFl }: Architectur
   return (
     <div className={styles.matrix}>
       <div className={styles.matrixTitle}>
-        EV Matrix · Tripod · Maximize depth of field · Capture perfect pixel to pixel
+        EV Matrix · Tripod · Maximize depth of field · Capture perfect pixel to
+        pixel
       </div>
       <div className={styles.matrixScroll}>
         <table className={styles.matrixTable}>
@@ -28,7 +41,9 @@ function ArchitectureMatrix({ cropFactor, iso, ev, nd, selectedFl }: Architectur
             <tr>
               <th className={styles.matrixCorner}>f/</th>
               {cols.map((fl) => (
-                <th key={fl} className={styles.matrixColHead}>{fl}mm</th>
+                <th key={fl} className={styles.matrixColHead}>
+                  {fl}mm
+                </th>
               ))}
             </tr>
           </thead>
@@ -36,18 +51,19 @@ function ArchitectureMatrix({ cropFactor, iso, ev, nd, selectedFl }: Architectur
             {apertures.map((ap) => {
               return (
                 <tr key={ap}>
-                  <td className={styles.matrixRowHead}>
-                    {ap}
-                  </td>
+                  <td className={styles.matrixRowHead}>{ap}</td>
                   {cols.map((fl) => {
-                    const t = ((ap * ap * 100) / (iso * Math.pow(2, ev))) * ndFactor;
+                    const t =
+                      ((ap * ap * 100) / (iso * Math.pow(2, ev))) * ndFactor;
                     // Architecture: frozen (≤1/60s), blur (≤30s), vanish (>30s)
-                    const cat = t <= 1 / 60 ? "frozen" : t <= 30 ? "blur" : "vanish";
-                    const cls = cat === "frozen"
-                      ? styles.lsStatic
-                      : cat === "blur"
-                        ? styles.lsSilk
-                        : styles.lsDramatic;
+                    const cat =
+                      t <= 1 / 60 ? "frozen" : t <= 30 ? "blur" : "vanish";
+                    const cls =
+                      cat === "frozen"
+                        ? styles.lsStatic
+                        : cat === "blur"
+                          ? styles.lsSilk
+                          : styles.lsDramatic;
                     return (
                       <td key={fl} className={`${styles.matrixCell} ${cls}`}>
                         {formatShutter(t)}
@@ -68,8 +84,8 @@ function ArchitectureMatrix({ cropFactor, iso, ev, nd, selectedFl }: Architectur
       <p className={styles.matrixExplain}>
         Each cell shows the shutter speed at that aperture. On a tripod, shutter
         speed depends on aperture and light, not focal length. Blue freezes
-        people sharply. Amber blurs movement. Teal makes people disappear
-        from long exposures — ideal for empty architecture shots.
+        people sharply. Amber blurs movement. Teal makes people disappear from
+        long exposures — ideal for empty architecture shots.
       </p>
     </div>
   );

@@ -5,11 +5,26 @@ const genre = process.argv[2] || "landscape";
 const genres: Record<string, { primary: string[]; secondary: string[] }> = {
   nightscape: {
     primary: ["coma", "astigmatism", "_apertureScore"],
-    secondary: ["lateralCA", "centerWideOpen", "cornerWideOpen", "longitudinalCA", "vignettingWideOpen", "sphericalAberration"],
+    secondary: [
+      "lateralCA",
+      "centerWideOpen",
+      "cornerWideOpen",
+      "longitudinalCA",
+      "vignettingWideOpen",
+      "sphericalAberration",
+    ],
   },
   landscape: {
     primary: ["cornerStopped", "centerStopped"],
-    secondary: ["distortion", "lateralCA", "longitudinalCA", "vignettingStopped", "flareResistance", "astigmatism", "coma"],
+    secondary: [
+      "distortion",
+      "lateralCA",
+      "longitudinalCA",
+      "vignettingStopped",
+      "flareResistance",
+      "astigmatism",
+      "coma",
+    ],
   },
   travel: {
     primary: ["centerStopped", "_weightScore"],
@@ -37,7 +52,13 @@ const genres: Record<string, { primary: string[]; secondary: string[] }> = {
   },
   macro: {
     primary: ["centerStopped", "_magnificationScore"],
-    secondary: ["distortion", "lateralCA", "longitudinalCA", "sphericalAberration", "bokeh"],
+    secondary: [
+      "distortion",
+      "lateralCA",
+      "longitudinalCA",
+      "sphericalAberration",
+      "bokeh",
+    ],
   },
 };
 
@@ -52,10 +73,20 @@ const W_P = 3;
 const W_S = 1;
 
 const allOptical = [
-  "centerStopped", "cornerStopped", "centerWideOpen", "cornerWideOpen",
-  "astigmatism", "coma", "sphericalAberration", "longitudinalCA",
-  "lateralCA", "distortion", "vignettingWideOpen", "vignettingStopped",
-  "bokeh", "flareResistance",
+  "centerStopped",
+  "cornerStopped",
+  "centerWideOpen",
+  "cornerWideOpen",
+  "astigmatism",
+  "coma",
+  "sphericalAberration",
+  "longitudinalCA",
+  "lateralCA",
+  "distortion",
+  "vignettingWideOpen",
+  "vignettingStopped",
+  "bokeh",
+  "flareResistance",
 ];
 
 console.log(genre.toUpperCase());
@@ -102,19 +133,39 @@ for (const lens of lenses) {
   const name = String(l.model);
 
   // Compute derived scores
-  if (config.primary.includes("_apertureScore") || config.secondary.includes("_apertureScore")) {
-    (l as unknown as Record<string, unknown>)._apertureScore = apertureScore(l.maxAperture as number);
+  if (
+    config.primary.includes("_apertureScore") ||
+    config.secondary.includes("_apertureScore")
+  ) {
+    (l as unknown as Record<string, unknown>)._apertureScore = apertureScore(
+      l.maxAperture as number,
+    );
   }
-  if (config.primary.includes("_weightScore") || config.secondary.includes("_weightScore")) {
-    (l as unknown as Record<string, unknown>)._weightScore = weightScore(l.weight as number);
+  if (
+    config.primary.includes("_weightScore") ||
+    config.secondary.includes("_weightScore")
+  ) {
+    (l as unknown as Record<string, unknown>)._weightScore = weightScore(
+      l.weight as number,
+    );
   }
-  if (config.primary.includes("_magnificationScore") || config.secondary.includes("_magnificationScore")) {
+  if (
+    config.primary.includes("_magnificationScore") ||
+    config.secondary.includes("_magnificationScore")
+  ) {
     const mag = l.maxMagnification as number | undefined;
-    if (mag != null) (l as unknown as Record<string, unknown>)._magnificationScore = magnificationScore(mag);
+    if (mag != null)
+      (l as unknown as Record<string, unknown>)._magnificationScore =
+        magnificationScore(mag);
   }
-  if (config.primary.includes("_focusDistanceScore") || config.secondary.includes("_focusDistanceScore")) {
+  if (
+    config.primary.includes("_focusDistanceScore") ||
+    config.secondary.includes("_focusDistanceScore")
+  ) {
     const mfd = l.minFocusDistance as number | undefined;
-    if (mfd != null) (l as unknown as Record<string, unknown>)._focusDistanceScore = focusDistanceScore(mfd);
+    if (mfd != null)
+      (l as unknown as Record<string, unknown>)._focusDistanceScore =
+        focusDistanceScore(mfd);
   }
 
   // Check primaries
@@ -172,9 +223,14 @@ for (const lens of lenses) {
 
   console.log(
     name.padEnd(40) +
-    "mark=" + markFinal +
-    "  raw=" + raw.toFixed(2) +
-    "  floor=" + floor +
-    "  [" + vals + "]"
+      "mark=" +
+      markFinal +
+      "  raw=" +
+      raw.toFixed(2) +
+      "  floor=" +
+      floor +
+      "  [" +
+      vals +
+      "]",
   );
 }

@@ -1,8 +1,14 @@
 import { lenses } from "../src/data/lenses";
 
-const scored = lenses.filter((l) => (l as unknown as Record<string, unknown>).centerStopped != null);
-const missingMag = scored.filter((l) => (l as unknown as Record<string, unknown>).maxMagnification == null);
-const missingMfd = scored.filter((l) => (l as unknown as Record<string, unknown>).minFocusDistance == null);
+const scored = lenses.filter(
+  (l) => (l as unknown as Record<string, unknown>).centerStopped != null,
+);
+const missingMag = scored.filter(
+  (l) => (l as unknown as Record<string, unknown>).maxMagnification == null,
+);
+const missingMfd = scored.filter(
+  (l) => (l as unknown as Record<string, unknown>).minFocusDistance == null,
+);
 
 console.log("Scored lenses: " + scored.length);
 console.log("Missing maxMagnification: " + missingMag.length);
@@ -32,8 +38,19 @@ for (const l of scored) {
   const mfd = a.minFocusDistance as number;
   console.log(
     String(a.model).padEnd(40) +
-    "mag=" + String(mag).padEnd(6) +
-    " mfd=" + String(mfd).padEnd(6) +
-    " magScore=" + (mag >= 1.0 ? "2.0" : mag >= 0.5 ? "1.5" : mag >= 0.25 ? "1.0" : mag >= 0.15 ? "0.5" : "0.0")
+      "mag=" +
+      String(mag).padEnd(6) +
+      " mfd=" +
+      String(mfd).padEnd(6) +
+      " magScore=" +
+      (mag >= 1.0
+        ? "2.0"
+        : mag >= 0.5
+          ? "1.5"
+          : mag >= 0.25
+            ? "1.0"
+            : mag >= 0.15
+              ? "0.5"
+              : "0.0"),
   );
 }

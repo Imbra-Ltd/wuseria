@@ -1,4 +1,8 @@
-import { MATRIX_FL_COLS_X, MATRIX_FL_COLS_GFX, MATRIX_APERTURES } from "../../../data/genres";
+import {
+  MATRIX_FL_COLS_X,
+  MATRIX_FL_COLS_GFX,
+  MATRIX_APERTURES,
+} from "../../../data/genres";
 import styles from "./GenreGuide.module.css";
 
 interface SportMatrixProps {
@@ -9,16 +13,25 @@ interface SportMatrixProps {
   genre: "sport" | "wildlife";
 }
 
-function SportMatrix({ cropFactor, iso, ev, selectedFl, genre }: SportMatrixProps) {
-  const MATRIX_FL_COLS = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
-  const fallback = cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[63] : MATRIX_FL_COLS_X[135];
+function SportMatrix({
+  cropFactor,
+  iso,
+  ev,
+  selectedFl,
+  genre,
+}: SportMatrixProps) {
+  const MATRIX_FL_COLS =
+    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
+  const fallback =
+    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[63] : MATRIX_FL_COLS_X[135];
   const cols = MATRIX_FL_COLS[selectedFl] || fallback;
   const apertures = MATRIX_APERTURES.filter((ap) => ap <= 11);
 
   return (
     <div className={styles.matrix}>
       <div className={styles.matrixTitle}>
-        EV Matrix · Tripod/Monopod · 1/4×FL rule · {genre === "wildlife" ? "Capture the wild" : "Capture the action"}
+        EV Matrix · Tripod/Monopod · 1/4×FL rule ·{" "}
+        {genre === "wildlife" ? "Capture the wild" : "Capture the action"}
       </div>
       <div className={styles.matrixScroll}>
         <table className={styles.matrixTable}>
@@ -26,7 +39,9 @@ function SportMatrix({ cropFactor, iso, ev, selectedFl, genre }: SportMatrixProp
             <tr>
               <th className={styles.matrixCorner}>f/</th>
               {cols.map((fl) => (
-                <th key={fl} className={styles.matrixColHead}>{fl}mm</th>
+                <th key={fl} className={styles.matrixColHead}>
+                  {fl}mm
+                </th>
               ))}
             </tr>
           </thead>
@@ -40,7 +55,10 @@ function SportMatrix({ cropFactor, iso, ev, selectedFl, genre }: SportMatrixProp
                   const t = (ap * ap * 100) / (iso * Math.pow(2, ev));
                   const viable = t <= minS;
                   const marginal = !viable && t <= minS * 2;
-                  const label = minS >= 1 ? `${Math.round(minS)}s` : `1/${Math.round(1 / minS)}`;
+                  const label =
+                    minS >= 1
+                      ? `${Math.round(minS)}s`
+                      : `1/${Math.round(1 / minS)}`;
                   const cls = viable
                     ? styles.matrixViable
                     : marginal

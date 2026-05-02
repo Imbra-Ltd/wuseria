@@ -13,11 +13,11 @@ Scoring formulas are pure TypeScript functions. Scores are computed at render ti
 
 ## Alternatives considered
 
-| Alternative | Why rejected |
-|---|---|
+| Alternative                             | Why rejected                                                                          |
+| --------------------------------------- | ------------------------------------------------------------------------------------- |
 | Pre-computed score arrays in data files | Two things to keep in sync — if a lens field changes, stored scores go stale silently |
-| ML model | Scoring formulas are simple arithmetic; ML adds complexity for no accuracy gain |
-| Database-driven rules | No database in the architecture |
+| ML model                                | Scoring formulas are simple arithmetic; ML adds complexity for no accuracy gain       |
+| Database-driven rules                   | No database in the architecture                                                       |
 
 ## Consequences
 

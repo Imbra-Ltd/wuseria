@@ -5,9 +5,34 @@ import CameraExplorer from "./CameraExplorer";
 import { makeCamera } from "../../../test/factories";
 
 const cameras = [
-  makeCamera({ model: "X-T5", year: 2022, megapixels: 40, weight: 557, price: 1500, hasIbis: true, isWeatherSealed: true }),
-  makeCamera({ model: "X-T4", year: 2020, megapixels: 26, weight: 607, price: 1000, hasIbis: true, isWeatherSealed: true, isDiscontinued: true }),
-  makeCamera({ model: "X-S10", year: 2020, megapixels: 26, weight: 465, price: 750, hasIbis: true, series: "X-S" }),
+  makeCamera({
+    model: "X-T5",
+    year: 2022,
+    megapixels: 40,
+    weight: 557,
+    price: 1500,
+    hasIbis: true,
+    isWeatherSealed: true,
+  }),
+  makeCamera({
+    model: "X-T4",
+    year: 2020,
+    megapixels: 26,
+    weight: 607,
+    price: 1000,
+    hasIbis: true,
+    isWeatherSealed: true,
+    isDiscontinued: true,
+  }),
+  makeCamera({
+    model: "X-S10",
+    year: 2020,
+    megapixels: 26,
+    weight: 465,
+    price: 750,
+    hasIbis: true,
+    series: "X-S",
+  }),
 ];
 
 describe("CameraExplorer", () => {
@@ -43,8 +68,13 @@ describe("CameraExplorer", () => {
   it("shows empty state when no matches", async () => {
     const user = userEvent.setup();
     render(<CameraExplorer cameras={cameras} />);
-    await user.type(screen.getByRole("textbox", { name: /search/i }), "nonexistent");
-    expect(screen.getByText("No cameras match the current filters.")).toBeInTheDocument();
+    await user.type(
+      screen.getByRole("textbox", { name: /search/i }),
+      "nonexistent",
+    );
+    expect(
+      screen.getByText("No cameras match the current filters."),
+    ).toBeInTheDocument();
   });
 
   it("sorts by price when Price header is clicked", async () => {
@@ -57,13 +87,17 @@ describe("CameraExplorer", () => {
     // Click once — ascending (X-T4 is discontinued, so it sorts last via stablePrefix)
     await user.click(priceButton);
     const rowsAsc = within(table).getAllByRole("row").slice(1);
-    const modelsAsc = rowsAsc.map((row) => within(row).getByRole("link").textContent);
+    const modelsAsc = rowsAsc.map(
+      (row) => within(row).getByRole("link").textContent,
+    );
     expect(modelsAsc).toEqual(["X-S10", "X-T5", "X-T4"]);
 
     // Click again — descending (discontinued still last)
     await user.click(priceButton);
     const rowsDesc = within(table).getAllByRole("row").slice(1);
-    const modelsDesc = rowsDesc.map((row) => within(row).getByRole("link").textContent);
+    const modelsDesc = rowsDesc.map(
+      (row) => within(row).getByRole("link").textContent,
+    );
     expect(modelsDesc).toEqual(["X-T5", "X-S10", "X-T4"]);
   });
 });

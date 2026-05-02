@@ -195,10 +195,7 @@ describe("computeGenreMark", () => {
 
   it("floors mark by worst primary field", () => {
     // XF 14mm f/2.8: cornerStopped=1, centerStopped=2 → floor=1
-    const result = computeGenreMark(
-      findLens("XF 14mm f/2.8 R"),
-      "landscape",
-    );
+    const result = computeGenreMark(findLens("XF 14mm f/2.8 R"), "landscape");
     expect(result).not.toBeNull();
     expect(result!.floor).toBe(1);
     expect(result!.mark).toBe(3);
@@ -226,10 +223,7 @@ describe("computeGenreMark", () => {
 
   it("gates non-macro lenses in macro genre", () => {
     // XF 56mm f/1.2 R LM WR: mag=0.09 → magnificationScore=0 → floor=0 → mark=1
-    const result = computeGenreMark(
-      findLens("XF 56mm f/1.2 R LM WR"),
-      "macro",
-    );
+    const result = computeGenreMark(findLens("XF 56mm f/1.2 R LM WR"), "macro");
     expect(result).not.toBeNull();
     expect(result!.mark).toBe(1);
     expect(result!.floor).toBe(0);
@@ -306,7 +300,11 @@ describe("genre mark snapshots", () => {
     { model: "XF 56mm f/1.2 R LM WR", genre: "nightscape", mark: 4.5 },
     { model: "XF 90mm f/2.0 R LM WR", genre: "nightscape", mark: 4 },
     { model: "12mm f/2", genre: "nightscape", mark: 4 },
-    { model: "XF 100-400mm f/4.5-5.6 R LM OIS WR", genre: "nightscape", mark: 1 },
+    {
+      model: "XF 100-400mm f/4.5-5.6 R LM OIS WR",
+      genre: "nightscape",
+      mark: 1,
+    },
 
     // Macro
     { model: "XF 80mm f/2.8 R LM OIS WR Macro", genre: "macro", mark: 5 },
@@ -401,8 +399,15 @@ describe("lensesForGenre", () => {
 describe("isScoredGenre", () => {
   it("returns true for all 9 genres", () => {
     const genres: Genre[] = [
-      "nightscape", "landscape", "architecture", "street",
-      "travel", "portrait", "sport", "wildlife", "macro",
+      "nightscape",
+      "landscape",
+      "architecture",
+      "street",
+      "travel",
+      "portrait",
+      "sport",
+      "wildlife",
+      "macro",
     ];
     for (const g of genres) {
       expect(isScoredGenre(g)).toBe(true);

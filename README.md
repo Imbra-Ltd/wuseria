@@ -94,6 +94,7 @@ npm run check:all # lint + check + test + build -- full CI suite
 ## Conventions
 
 See [CLAUDE.md](CLAUDE.md) for full project conventions:
+
 - Conventional commits (`feat:`, `fix:`, `chore:`, etc.)
 - Always work on a branch, never commit to main
 - Run `npm run check:all` before every commit

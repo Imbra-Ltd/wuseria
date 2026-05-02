@@ -22,7 +22,14 @@ type HeadType = "ball" | "geared" | "gimbal" | "pan-tilt" | "video";
 
 type PlateType = "arca-swiss" | "manfrotto-rc2" | "proprietary";
 
-type FilterType = "CPL" | "ND" | "GND" | "UV" | "black-mist" | "IR" | "light-pollution";
+type FilterType =
+  | "CPL"
+  | "ND"
+  | "GND"
+  | "UV"
+  | "black-mist"
+  | "IR"
+  | "light-pollution";
 
 type BagType = "backpack" | "sling" | "shoulder" | "holster" | "rolling";
 
@@ -30,7 +37,12 @@ type StrapType = "neck" | "sling" | "wrist" | "harness";
 
 type StrapMaterial = "nylon" | "leather" | "neoprene" | "paracord" | "silk";
 
-type ConnectionType = "wired-2.5mm" | "wired-usb" | "bluetooth" | "radio" | "wifi";
+type ConnectionType =
+  | "wired-2.5mm"
+  | "wired-usb"
+  | "bluetooth"
+  | "radio"
+  | "wifi";
 
 type MicPattern = "stereo" | "shotgun" | "omni" | "cardioid";
 

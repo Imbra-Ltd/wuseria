@@ -14,9 +14,19 @@ interface GenreControlsProps {
 
 function GenreControls({ state }: GenreControlsProps) {
   const {
-    genre, iso, setIso, nd, cropFactor, setCropFactor,
-    selectedFl, setSelectedFl, magnification, setMagnification,
-    isNightscape, flChips, toggleNd,
+    genre,
+    iso,
+    setIso,
+    nd,
+    cropFactor,
+    setCropFactor,
+    selectedFl,
+    setSelectedFl,
+    magnification,
+    setMagnification,
+    isNightscape,
+    flChips,
+    toggleNd,
   } = state;
 
   return (

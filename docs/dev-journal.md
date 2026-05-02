@@ -33,39 +33,37 @@ Phase 4 — Multi-system (if phase 3 gate passes):
   -> No backend needed
 ```
 
-
 ## Migration from Prototype
 
 The prototype is a single 3400-line JSX file with inline styles and embedded data.
 
-| Step | What | Status |
-|---|---|---|
-| 1 | TypeScript interfaces for all data types | Done |
-| 2 | Extract lens data into `src/data/lenses.ts` | Done — 242 lenses |
-| 3 | Extract camera data into `src/data/cameras.ts` | Done — 39 bodies, 46 fields |
-| 4 | Scaffold Astro + React islands | Pending (#57) |
-| 5 | Extract wiki, accessories data | Done — accessories migrated, wiki pending (#4) |
-| 6 | Split into Astro pages + React islands | Pending |
-| 7 | Replace inline styles with Astro scoped styles + CSS Modules | Pending |
-| 8 | Add affiliate link data and Trade Deals integration | Pending |
-| 9 | Deploy to GitHub Pages with custom domain (CNAME) | Pending |
+| Step | What                                                         | Status                                         |
+| ---- | ------------------------------------------------------------ | ---------------------------------------------- |
+| 1    | TypeScript interfaces for all data types                     | Done                                           |
+| 2    | Extract lens data into `src/data/lenses.ts`                  | Done — 242 lenses                              |
+| 3    | Extract camera data into `src/data/cameras.ts`               | Done — 39 bodies, 46 fields                    |
+| 4    | Scaffold Astro + React islands                               | Pending (#57)                                  |
+| 5    | Extract wiki, accessories data                               | Done — accessories migrated, wiki pending (#4) |
+| 6    | Split into Astro pages + React islands                       | Pending                                        |
+| 7    | Replace inline styles with Astro scoped styles + CSS Modules | Pending                                        |
+| 8    | Add affiliate link data and Trade Deals integration          | Pending                                        |
+| 9    | Deploy to GitHub Pages with custom domain (CNAME)            | Pending                                        |
 
 ### Field renames (prototype to production)
 
-| Prototype | Production | Reason |
-|---|---|---|
-| `type: "P" \| "Z"` | `type: "prime" \| "zoom"` | Self-documenting |
-| `format` | `mount` | Correct term for lens compatibility |
-| `flMin` / `flMax` | `focalLengthMin` / `focalLengthMax` | Readable without comment |
-| `ap` | `maxAperture` | Unambiguous |
-| `mtf` | Split into `sweetSpotSharpness`, `wideOpenSharpness`, `cornerSharpness`, `astigmatism`, `fieldCurvature`, `comaRating` | Single number replaced by individual MTF-sourced readings |
-| `lm` | `afMotor` | Three tiers: DC, STM, LM instead of boolean |
-| `wr` | `isWeatherSealed` | Standard industry term |
-| `kg` | `weight` | Grams for both Lens and Camera; no unit in name |
-| `thread` | `filterThread` | Distinguishes from mechanical threads |
-| `est` | `priceEstimated` | Readable as boolean (later removed — all prices are estimates) |
-| `af` (optional) | `hasAutofocus` (required) | Default false for MF lenses |
-
+| Prototype          | Production                                                                                                             | Reason                                                         |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `type: "P" \| "Z"` | `type: "prime" \| "zoom"`                                                                                              | Self-documenting                                               |
+| `format`           | `mount`                                                                                                                | Correct term for lens compatibility                            |
+| `flMin` / `flMax`  | `focalLengthMin` / `focalLengthMax`                                                                                    | Readable without comment                                       |
+| `ap`               | `maxAperture`                                                                                                          | Unambiguous                                                    |
+| `mtf`              | Split into `sweetSpotSharpness`, `wideOpenSharpness`, `cornerSharpness`, `astigmatism`, `fieldCurvature`, `comaRating` | Single number replaced by individual MTF-sourced readings      |
+| `lm`               | `afMotor`                                                                                                              | Three tiers: DC, STM, LM instead of boolean                    |
+| `wr`               | `isWeatherSealed`                                                                                                      | Standard industry term                                         |
+| `kg`               | `weight`                                                                                                               | Grams for both Lens and Camera; no unit in name                |
+| `thread`           | `filterThread`                                                                                                         | Distinguishes from mechanical threads                          |
+| `est`              | `priceEstimated`                                                                                                       | Readable as boolean (later removed — all prices are estimates) |
+| `af` (optional)    | `hasAutofocus` (required)                                                                                              | Default false for MF lenses                                    |
 
 ## Session Log
 
@@ -204,6 +202,7 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 **Tool:** Claude Code (Opus 4.6)
 
 Genre guide implementation:
+
 - Vitest + testing-library setup (vitest.config.ts, src/test/setup.ts)
 - GenreGuide React island (mobile-first cards/table, EV scene selector, ISO/ND/FL controls)
 - Exposure calculations (astroExposure, handheldExposure) co-located with component
@@ -212,6 +211,7 @@ Genre guide implementation:
 - ADR-013: curated genre scoring (supersedes ADR-007)
 
 Data model deep review and cleanup:
+
 - Lens: added genreMarks, editorialPicks, reviewSources; merged scoring onto Lens as single source of truth; removed separate GenreLensScore/genreLensScores; moved minFocusDistance to OPTICAL SPECS; created TILT-SHIFT section; renamed hasSmoothFocusRing to hasDampedFocusRing
 - Genre: stripped GenreConfig to essentials (removed rule500, minShutter, scoringMethod, benchmarkLens, referenceFl); renamed label to tagline; recommendedFlRange → typicalFl: FlCategory[]; removed dead ScoreResult/ScoreBreakdown types; moved EvScene to common.ts, GenreDefault to component, AstroResult/HandheldResult to exposure.ts
 - Camera: all booleans optional (absent=false); FormFactor slr→traditional, dslr-grip→grip; burstFps→mechanicalBurstFps, electronicShutterFps→electronicBurstFps; removed unused FilmSimulation type; added reviewSources
@@ -226,6 +226,7 @@ Data model deep review and cleanup:
 **Tool:** Claude Code (Opus 4.6)
 
 Scoring engine (src/utils/scoring.ts):
+
 - Primary floor + weighted average algorithm — primary fields (w=3) set the tier via floor, secondary fields (w=1) rank within tier
 - 9 genre formulas: astro, landscape, architecture, portrait, street, travel, sport, wildlife, macro
 - Physical property scores: apertureScore, weightScore, magnificationScore — computed from lens specs for genres where they enable/prevent the work
@@ -233,6 +234,7 @@ Scoring engine (src/utils/scoring.ts):
 - 81 tests passing (snapshot tests against real lens data)
 
 Optical quality data — 52 lenses scored:
+
 - LensTip as primary source (trust 3, lab methodology), supplemented by OpticalLimits, Dustin Abbott, ePHOTOzine, Lonely Speck
 - 14 optical fields per lens (0-2 scale): center/corner sharpness (stopped/wide open), astigmatism, coma, sphericalAberration, longitudinalCA, lateralCA, distortion, vignetting (wide open/stopped), bokeh, flareResistance
 - ADR-014: optical quality rubric with per-field thresholds, sensor-normalized resolution, qualitative word-to-score mapping
@@ -242,6 +244,7 @@ Optical quality data — 52 lenses scored:
 - XF 80mm f/2.8 Macro cornerStopped upgraded from 0.5 to 1.0 (summary PRO: "good image quality on the edge")
 
 Genre formulas validated:
+
 - Astro: coma + astigmatism + apertureScore (lateralCA moved to secondary — correctable in post)
 - Landscape: cornerStopped + centerStopped
 - Architecture: cornerStopped + centerStopped + distortion
@@ -253,6 +256,7 @@ Genre formulas validated:
 - Macro: centerStopped + magnificationScore (cornerStopped excluded — infinity test data doesn't reflect macro distances; focusDistance dropped — working distance depends on FL)
 
 Key design decisions:
+
 - FL is never a scoring input (creative choice, shown as filter presets)
 - OIS, WR, AF are display attributes, not scoring inputs
 - Weight and aperture ARE scoring inputs where they directly enable/prevent the work
@@ -268,6 +272,7 @@ PRs: #114 (scoring engine), #115 (macro genre integration)
 **Tool:** Claude Code (Opus 4.6)
 
 Genre Guide UX:
+
 - Two-column layout: sidebar (EV scenes + equipment) | main (controls + matrix + lenses)
 - Lens table spans full width below the grid
 - Exposure matrix ported from prototype (Rule of 500, color-coded ISO viability)
@@ -275,6 +280,7 @@ Genre Guide UX:
 - Genre index page replaced with direct screener (no card page)
 
 Astro-specific screener:
+
 - Dedicated columns: Mark, Brand, Model, FL, f/, Coma, Astig, Rule 500, Ideal ISO, WR, Price
 - Filters matching columns 1:1: Mark, Type, Brand, f/, Coma, Astig, WR, Price
 - Dynamic FL for zooms (shortest FL in overlap with selected range)
@@ -284,6 +290,7 @@ Astro-specific screener:
 - Astro-specific footnote explaining primary/secondary scoring factors
 
 EV scenes research and refinement:
+
 - EV-to-Bortle mapping researched from Patat (2003), Benn & Ellison (1998), Leinert et al. (1998)
 - Scene names updated: City center, Bright suburb, Suburb, Full moon, Rural town, Rural, Dark rural, Dark site, Excellent dark site, Pristine dark site
 - Bortle scale shown in EV header for astro (genre-specific label override)
@@ -293,6 +300,7 @@ EV scenes research and refinement:
 - Natural sky brightness floor: ~22.0 mag/arcsec² (EV -9 to -10), EV -8 confirmed achievable
 
 Exposure matrix improvements:
+
 - Standard f-stop scale: f/1.0, 1.4, 2.0, 2.8, 4.0, 5.6, 8, 11
 - FL columns use actual Fuji X-mount focal lengths (not FF equivalents)
 - FL ranges corrected: Ultra-wide 6-15mm, Wide 16-27mm, Standard 28-56mm, Tele 57-150mm, Super-tele 151+
@@ -300,6 +308,7 @@ Exposure matrix improvements:
 - Matrix explanation text below legend
 
 Visual polish:
+
 - Mark pips: CSS circles (full + half), chip color scheme (accent fill)
 - All table columns left-aligned
 - Controls compact inline with labels
@@ -307,10 +316,12 @@ Visual polish:
 - Footer: one line with links first, then FL disclaimer
 
 Data quality:
+
 - Lens data validation tests (94 tests passing)
 - XF 80mm cornerStopped corrected 0.5→1.0 (LensTip summary: "good edge quality")
 
 Wiki and issues:
+
 - Wiki pages created for all 9 genres (#193-#202)
 - Optical scoring explainer page planned (#205)
 - Sample images for mark levels (#203)
@@ -320,6 +331,7 @@ Wiki and issues:
 - Reusable genre screener epic (#122)
 
 Key design insight:
+
 - The screener is a planning tool, not a shopping page
 - Workflow: Scene → Matrix → FL → Lens → Field reference
 - Each element earns its place in the top-to-bottom decision funnel
@@ -332,6 +344,7 @@ PRs: #117-#212 (35+ PRs for screener build-out)
 **Tool:** Claude Code (Opus 4.6)
 
 Rebrand:
+
 - Full rebrand from Fuji.me! to Wuseria across 26 files (PR #247, closes #242)
 - Brand name: Wuseria (no trademark conflict with Fujifilm)
 - Domain: wuseria.com (registered on Namecheap, DNS configured for GitHub Pages)
@@ -340,6 +353,7 @@ Rebrand:
 - Historical files (ADR-012, prototype) left untouched as decision records
 
 Deploy:
+
 - GitHub Actions deploy workflow added (PR #248, closes #241)
 - Build: checkout with submodules → Node 22 → npm ci → npm run build → upload artifact
 - Deploy: official GitHub Pages deploy-pages@v4 action
@@ -347,18 +361,22 @@ Deploy:
 - Node upgraded from 20 to 22 in CI (Astro 6 requirement)
 
 Homepage:
+
 - Homepage redirects to /lenses via meta refresh (blog content planned for later)
 - Nav brand links directly to /lenses (avoids redirect flash)
 
 DNS:
+
 - 4x A records pointing to GitHub Pages IPs
 - CNAME www → imbra-ltd.github.io
 - HTTPS enforced in GitHub Pages settings
 
 Issues created:
+
 - #249 — OQ filter for Lens Explorer (Phase 2)
 
 Key decisions:
+
 - Full rebrand (not hybrid) to avoid Fujifilm trademark risk
 - wuseria.com confirmed after evaluating alternatives (Wusi, LensAtlas, Visu, etc.)
 - TS 5.9 over dropping @astrojs/check or using .npmrc workaround
@@ -369,6 +387,7 @@ Key decisions:
 **Tool:** Claude Code (Opus 4.6)
 
 Mobile nav:
+
 - Added hamburger menu for screens < 640px (CSS + inline script, no React island)
 - Brand + toggle on mobile, full horizontal nav on desktop
 - Animated hamburger-to-X icon with aria-expanded for accessibility
@@ -376,24 +395,29 @@ Mobile nav:
 - Increased brand-to-links spacing with gap: 2rem
 
 Filter layout:
+
 - Replaced flex-wrap with CSS Grid (2-col on mobile, auto-fit on desktop)
 - Applied to filter dropdowns and chip rows across all 3 explorers
 - Deterministic stacking — no more unpredictable wrap behaviour
 
 Redirect flash:
+
 - Styled index.astro redirect page with dark background (#0f1117)
 - Removed visible "Redirecting..." text — instant dark-to-dark transition
 
 Lens explorer cards:
+
 - Replaced focal length with filter thread using Φ symbol in mobile cards
 
 Lint / type fixes:
+
 - Removed unused imports (ScoredGenre, OPTICAL_FIELDS, MIN_OPTICAL_FIELDS)
 - Added missing FL_RANGES to useMemo dependency array
 - Fixed 26 TypeScript errors in scripts: double-cast through unknown
 - Removed stale git worktree that was polluting lint results
 
 Wiki cleanup:
+
 - Removed 10 academic/lab entries: angular-resolution, diffraction-limited-system,
   integrating-sphere, ulbricht-sphere, siemens-star, sitf, strehl-ratio,
   superlens, optical-resolution, aliasing
@@ -405,6 +429,7 @@ Wiki cleanup:
   what to shoot and which lens to buy — no lab-only or theoretical content
 
 Issues created:
+
 - #254-#258 — Aberration wiki entries (astigmatism, distortion, chromatic
   aberration, spherical aberration, vignetting)
 - #259 — Create Aberrations category and migrate entries
@@ -412,6 +437,7 @@ Issues created:
   star stacking, panorama stitching)
 
 Key decisions:
+
 - Hamburger menu over horizontal scroll — users can't discover hidden links
 - CSS Grid over flex-wrap for filters — deterministic 2-col on mobile
 - Wiki rationale: beginner-friendly, decision-oriented, not academic
@@ -423,6 +449,7 @@ Key decisions:
 **Date:** 2026-04-18
 
 #### Issue reorganization
+
 - Split Phase 2 catch-all milestone (58 issues) into 5 focused milestones:
   Phase 2 — SEO & Discovery, UI & UX, Wiki & Content, Equipment Database,
   Developer Tooling, Performance
@@ -430,6 +457,7 @@ Key decisions:
 - Fixed 10 issue titles and 12 labels per base/issues.md
 
 #### Code review + structure audit (PR #299, merged)
+
 - Full code review against quality/SOLID/TypeScript/frontend conventions
 - Full structure audit against base/docs, base/readme, base/git, etc.
 - Created 11 issues (#288–#298) for findings
@@ -444,17 +472,20 @@ Key decisions:
 Theme: clear all technical debt from the code review before Phase 2.
 
 #### #295 — FL parameter in tripod matrices (PR #301)
+
 - Investigated: shutter speed on a tripod is genuinely FL-independent
 - Not a bug — added explanatory note to landscape/architecture matrices
 - Created #300 for hyperfocal matrix tab (Phase 2 feature)
 
 #### #290 — Extract duplicated types and helpers (PR #302)
+
 - ColumnAlign type + makeAlignClasses() → shared/table.ts (3 consumers)
 - formatFL() → utils/formatting.ts (3 consumers)
 - makeLens() test factory → test/factories.ts (3 consumers)
 - Net: +58 −93 lines
 
 #### #288 — Split GenreGuide.tsx (PR #303)
+
 - 1,041 lines → 13 focused modules
 - Largest file: useGenreState.ts at 160 (pure state declarations)
 - Orchestrator: GenreGuide.tsx at 109 lines
@@ -463,11 +494,13 @@ Theme: clear all technical debt from the code review before Phase 2.
 - All 13 existing tests passed unchanged
 
 #### #289 — Split LensExplorer and CameraExplorer (PR #304)
+
 - LensExplorer: 375 → 4 files (max 121 lines)
 - CameraExplorer: 326 → 4 files (max 115 lines)
 - Same pattern: constants, filters, results, orchestrator
 
 #### #291 — Add missing tests (PR #305)
+
 - formatting.test.ts — formatShutter + formatFL
 - slug.test.ts — toSlug edge cases
 - useSort.test.ts — direction, key switch, stable prefix, nulls
@@ -477,6 +510,7 @@ Theme: clear all technical debt from the code review before Phase 2.
 - Test suite: 10 files, 132 tests, all passing
 
 Key decisions:
+
 - Tripod shutter speed is FL-independent — correct physics, not a bug
 - Hyperfocal matrix is a new feature (#300), not a fix for #295
 - CSS modules passed as props to sub-components (ChipGroup pattern)
@@ -491,6 +525,7 @@ Key decisions:
 **Tool:** Claude Code (Opus 4.6)
 
 360-degree analysis:
+
 - Updated solid-ai-templates submodule (30 new commits, PR #312)
 - Ran code review, structure audit, and 4-perspective 360 analysis in parallel
 - Scores: Value B+, Quality B+, Viability B+, Discovery D+, Overall D+
@@ -499,6 +534,7 @@ Key decisions:
 - Identified code review agent error: misread genreColumns.ts line 10
 
 Pre-launch fixes (P1s resolved):
+
 - #317 — Removed Trade Deals stub page and links from 3 explorers (PR #339)
 - #315 — Added OG image (dark/light variants) + summary_large_image Twitter card (PR #341)
 - #314 — Landing page: hero punchline, stats strip (build-time computed), scoring explanation, origin story (PR #343)
@@ -510,27 +546,33 @@ Pre-launch fixes (P1s resolved):
 - #279 — JSON-LD validation: structurally valid, image field blocked on #337
 
 Infrastructure:
+
 - Added CI workflow for PRs (.github/workflows/ci.yml) — required by branch protection
 - Cleaned 18 stale branches (11 merged local, 11 merged remote, 7 squash-merged local)
 - Triaged 76 issues with priority labels (P1–P4)
 - Closed 4 duplicates (#73, #250, #278, #310)
 
 Feature:
+
 - #348 — Added "Not scored" option to OQ filter in Lens Explorer (PR #348)
 
 CLAUDE.md updates:
+
 - Added rule: never hardcode derived counts — compute from data at build time
 
 Upstream (solid-ai-templates):
+
 - #78 — Structure audit should decompose compound sections into individual sub-clauses
 - #79 — Add rule against hardcoded derived counts and statistics
 
 User feedback captured:
+
 - #336 — Light theme option (from photographers)
 - #337 — Product images for equipment (from photographers)
 - #342 — Review scoring methodology wiki (outdated content)
 
 Key decisions:
+
 - Umami over Plausible — free tier allows 3 sites
 - Landing page: stats strip over feature cards (avoids nav duplication)
 - Hero punchline: weight + accent alternation inspired by imbra.io
@@ -546,38 +588,45 @@ Key decisions:
 **Tool:** Claude Code (Opus 4.6)
 
 Accessibility fixes:
+
 - #349 — Contrast ratio: bumped --color-text-muted from #8a8fa8 to #9a9fb6 (PR #354)
   - Badge on bg-hover: 4.59:1 → 5.59:1, card text on bg-surface: 5.26:1 → 6.41:1
 - #330 — Added global :focus-visible styles for all anchor elements (PR #358)
   - 2px solid accent outline, consistent with existing sort button focus styles
 
 Performance:
+
 - #350 — LCP on Lens Explorer: limit initial render to 50 lenses (PR #355)
   - "Show all N lenses" button expands full list
   - Filters active: all matching results shown immediately (no pagination)
 
 SEO:
+
 - #321 — Added rel="nofollow sponsored" on review source links (PR #357)
   - Only lens detail pages have review source links (cameras/accessories confirmed clean)
 
 Housekeeping:
+
 - Updated solid-ai-templates submodule (10 commits behind → current) (PR #356)
 - Removed hardcoded counts from README (240+, 38, 46, 115) per no-hardcoded-counts rule (PR #356)
 - #328 — Removed stale affiliates.ts reference from CLAUDE.md (PR #359)
   - Updated "affiliate links" rule to "review source links" to match actual usage
 
 Session protocol consolidation:
+
 - Aligned CLAUDE.md session protocol with upstream formats/agents.md (section 0 → section 6) (PR #363)
 - Added base/scope.md to key references (PR #362)
 - End-of-session now references base/scope.md 10-step audit instead of incomplete local checklist (PR #361, #362)
 - Removed "commit before switching" rule (covered by base/scope.md)
 
 Upstream issues created (solid-ai-templates):
+
 - #104 — Add focus-visible rule to frontend/ux.md
 - #105 — Align formats/agents.md session protocol with base/scope.md
 - #106 — Add startup hygiene and build-after-change rules to base/scope.md
 
 Key decisions:
+
 - "Show all" button over pagination — explorer users sort/filter and need full list access
 - Contrast fix via single CSS custom property — all 80+ usages updated automatically
 - focus-visible (not focus) — mouse clicks don't trigger outline
@@ -591,6 +640,7 @@ Key decisions:
 **Tool:** Claude Code (Opus 4.6)
 
 License:
+
 - Added LICENSE file to repo root (PR #365, closes #322)
 - Initially proprietary, then switched to CC-BY-NC-ND-4.0 (PR #366)
 - Researched GitHub license detection: only 13 "featured" licenses + a few CC variants
@@ -599,17 +649,20 @@ License:
 - Audited solid-ai-templates (CC-BY-4.0, detected) and tutorial-git (CC-BY-NC-SA-4.0, not detected — created braboj/tutorial-git#236)
 
 Meta SEO (PR #365, closes #329):
+
 - Rewrote meta titles across 8 page templates with intent signals and differentiators
 - Rewrote meta descriptions as pitches, not feature statements
 - Index pages: "Fujifilm Lenses Compared", "Which Lens for Your Genre?"
 - Detail pages: "Review Data", "Specs", "Best Lenses for [Genre]"
 
 OG images (PR #365, closes #340):
+
 - Resized both variants from 1731x909 to 1280x640 (2:1 ratio)
 - Center-cropped to improve composition balance
 - File sizes reduced: dark 1.2MB→641KB, light 877KB→516KB
 
 Key decisions:
+
 - CC-BY-NC-ND-4.0 over proprietary — legal protection + allows public repo on free tier
 - Stay public — scoring data is derived from public sources, niche risk is low, portfolio value is high
 - Meta descriptions as pitches per solid-ai-templates/frontend/static-site.md SEO rules
@@ -622,19 +675,23 @@ Key decisions:
 **Tool:** Claude Code (Opus 4.6)
 
 Docs:
+
 - Fixed phase numbering in dev journal — milestones were renumbered in session 14 but overview never updated (PR #369)
 - Phase 2 is now "Polish & Foundation" (6 workstreams), Phase 3 "Revenue", Phase 4 "Multi-system"
 
 SEO & Discovery (epic #48 closed):
+
 - #281 — Heading hierarchy audit: all pages pass, genre screener had zero H1 (PR #371)
 - Genre H1 initially dynamic per tab, caused CLS — changed to static "Genre Screener"
 - Epic fully complete, all 11 tasks checked off
 
 Release:
+
 - Tagged v0.2.0 — bumped package.json from 0.0.0 (Astro scaffold default)
 - Discovered release process gap: base/git.md doesn't mention package version bump
 
 Performance (#229, PR #373):
+
 - Trimmed serialized data across all explorers:
   - LensExplorer: 40+ → 16 fields, gzip 26KB → 17KB (-35%)
   - CameraExplorer: 46 → 15 fields, raw 125KB → 88KB (-30%)
@@ -647,6 +704,7 @@ Performance (#229, PR #373):
 - Created pickGenreFields utility
 
 Infrastructure:
+
 - #382 — Lighthouse CI added to PR workflow (PR #383)
   - Runs on 4 key pages: /, /lenses/, /cameras/, /genre/
   - Thresholds: Performance >= 80 (error), A11y/SEO/BP >= 90 (warn)
@@ -655,14 +713,17 @@ Infrastructure:
 - Created 3 issues (#380-#382) for remaining performance tasks
 
 Upstream issues created:
+
 - solid-ai-templates #108 — Keep dev journal phases in sync with milestones
 - solid-ai-templates #109 — Add package version bump to release process
 
 CI improvements:
+
 - #370 — Skip Lighthouse on docs-only changes via dorny/paths-filter (PR #386)
 - #387 — Enforce item-by-item scope.md audit in CLAUDE.md session protocol
 
 Issues created:
+
 - #370 — Skip CI on docs-only changes (done)
 - #375-#379 — Retroactive issues for completed performance work (closed)
 - #380 — Externalize data to JSON (spike, open)
@@ -670,9 +731,11 @@ Issues created:
 - #382 — Lighthouse CI (done)
 
 Upstream issues created:
+
 - solid-ai-templates #110 — Add 'check each item independently' to end-of-session audit
 
 Key decisions:
+
 - Don't sacrifice perceived performance for Lighthouse scores — hero extraction caused visible flash
 - Static H1 with variable-length text causes CLS on tab switch — use fixed text
 - Data trimming is invisible to users — pure win
@@ -690,6 +753,7 @@ Key decisions:
 Theme: evaluate performance spikes #380 and #381.
 
 Spike evaluation:
+
 - #380 — Externalize data to static JSON: **rejected** (ADR-016)
   - 17-19 KB gzip payloads are tiny; externalizing adds fetch waterfall
   - AppShell approach already tried and reverted in session 16
@@ -700,6 +764,7 @@ Spike evaluation:
   - ~244 bytes gzip overhead per page — negligible
 
 Implementation (#389, PR #391):
+
 - Added `<ClientRouter />` from `astro:transitions` to Base.astro
 - Updated hamburger menu script to re-init on `astro:page-load`
 - Used `cloneNode` to prevent duplicate event listeners
@@ -708,12 +773,14 @@ Implementation (#389, PR #391):
 Epic #229 (Performance Optimization) closed — all 9 tasks complete.
 
 PRs merged:
+
 - #390 — ADRs for spikes #380 and #381
 - #391 — View Transitions implementation
 
 Issues closed: #380, #381, #389, #229 (epic)
 
 Key decisions:
+
 - View Transitions improve perceived speed, not Lighthouse metrics — UX quality over benchmark scores
 - Data externalization is the wrong direction for a static site with small payloads
 - 13 lines of change is acceptable complexity for instant navigation
@@ -723,6 +790,7 @@ Key decisions:
 ### Session 21 — UI & UX Quick Wins & CSS Consolidation
 
 PRs merged:
+
 - #395 — aria-sort on GenreTable, About page, workflow sections on homepage
 - #402 — ADR-018 clickable styles consolidation (spike)
 - #403 — Extract shared interactive styles into shared.module.css
@@ -734,6 +802,7 @@ Issues created: #394, #396, #397, #398, #399, #400, #401, #405
 Upstream issues: solid-ai-templates #111, #112, #113, #114
 
 Key changes:
+
 - 458 pages (added About page)
 - Shared CSS module eliminates 568 lines of duplication across explorers
 - All interactive elements have consistent focus-visible (WCAG 2.1 AA)
@@ -741,6 +810,7 @@ Key changes:
 - Wiki chips bug fixed (DOMContentLoaded → astro:page-load for View Transitions)
 
 Key decisions:
+
 - ADR-018: Extract shared CSS module, keep two button families (accent-primary for actions, link-primary for navigation)
 - Defer affiliate disclosure and feedback button until traffic/affiliates exist
 - DRY, KISS, YAGNI flagged as missing core principles in solid-ai-templates
@@ -750,6 +820,7 @@ Key decisions:
 ### Session 22 — UI & UX Polish, URL Params, Detail Page
 
 PRs merged:
+
 - #408 — Polish chip group design across explorers and genre guide
 - #409 — Persist Lens Explorer filters in URL params
 - #411 — Show sunstar points on lens detail page
@@ -760,6 +831,7 @@ Issues created: #410 (wiki sunstars), #412 (mobile sort), #413 (OQ coloring), #4
 Issues deferred: #271 → Phase 2 Wiki & Content (needs UX rethink)
 
 Key changes:
+
 - Chip groups: 44px touch targets on mobile, label-above-buttons layout, 2-column grid, hover/focus-visible polish, removed ~50 lines duplicated CSS from AccessoriesExplorer
 - ChipGroup component: added chipButtons wrapper for layout control
 - Genre controls: column stack on mobile, consistent sizing with explorers
@@ -769,6 +841,7 @@ Key changes:
 - Genre marks show "/5" scale for context
 
 Key decisions:
+
 - Genre scoring formula breakdown prototyped but reverted — too detailed for the card format, needs different UX approach
 - Keep genre chip sizing compact (content-width) vs explorer chips (equal-width grid) — different interaction contexts
 - URL param names kept short: q, mount, type, brand, ois, wr, af, status, fl, aperture, thread, oq, price
@@ -778,6 +851,7 @@ Key decisions:
 ### Session 23 — UI & UX Milestone Closure
 
 PRs merged:
+
 - #419 — Mobile sort, OQ color coding, feedback link, remove price footnote
 
 Issues closed: #320 (already done), #412, #413, #265, #418, #246 (wontdo), #46 (epic)
@@ -787,6 +861,7 @@ Milestone closed: Phase 2 — UI & UX (27/27)
 Triage: moved #394, #270, #410 to Wiki & Content; #269 to Revenue; #251, #266, #272, #300, #336 to Phase 4; closed #246 as wontdo.
 
 Key changes:
+
 - Mobile sort controls: new shared MobileSort component (generic, reusable), integrated in all 3 explorers inside the filter box
 - OQ scale changed from 0-10 to 0-2 (raw weighted average, no x5 multiplier) — single scale across the entire site
 - OQ color coding: traffic-light colors matching FieldVal thresholds (green 1.5+, amber 1.0+, red <1.0)
@@ -796,6 +871,7 @@ Key changes:
 - CLAUDE.md updated: removed price footnote rule
 
 Key decisions:
+
 - ADR-019: Display OQ on native 0-2 scale for consistency with optical field scores
 - Feedback in footer, not nav — nav reserved for content pages
 - Mobile sort inside filter box, not floating — visually grouped with other controls

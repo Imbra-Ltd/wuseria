@@ -1,7 +1,4 @@
-import type {
-  ReviewSource,
-  ReviewSourceInfo,
-} from "../types/review";
+import type { ReviewSource, ReviewSourceInfo } from "../types/review";
 
 // =============================================================================
 // REVIEW SOURCE DIRECTORY — methodology and trust per source
@@ -9,19 +6,19 @@ import type {
 
 const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
   // --- lab, trust 3 ---
-  "lensrentals": {
+  lensrentals: {
     methodology: "lab",
     trust: 3,
     name: "LensRentals",
     site: "lensrentals.com",
   },
-  "lenstip": {
+  lenstip: {
     methodology: "lab",
     trust: 3,
     name: "LensTip",
     site: "lenstip.com",
   },
-  "opticallimits": {
+  opticallimits: {
     methodology: "lab",
     trust: 3,
     name: "OpticalLimits",
@@ -29,7 +26,7 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
   },
 
   // --- lab, trust 2 ---
-  "dxomark": {
+  dxomark: {
     methodology: "lab",
     trust: 2,
     name: "DxOMark",
@@ -47,7 +44,7 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
     name: "Imaging Resource",
     site: "imaging-resource.com",
   },
-  "ephotozine": {
+  ephotozine: {
     methodology: "lab",
     trust: 2,
     name: "ePHOTOzine",
@@ -55,19 +52,19 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
   },
 
   // --- field, trust 3 ---
-  "dustinabbott": {
+  dustinabbott: {
     methodology: "field",
     trust: 3,
     name: "Dustin Abbott",
     site: "dustinabbott.net",
   },
-  "dpreview": {
+  dpreview: {
     methodology: "field",
     trust: 3,
     name: "DPReview",
     site: "dpreview.com",
   },
-  "phillipreeve": {
+  phillipreeve: {
     methodology: "field",
     trust: 3,
     name: "Phillip Reeve",
@@ -75,37 +72,37 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
   },
 
   // --- field, trust 2 ---
-  "admiringlight": {
+  admiringlight: {
     methodology: "field",
     trust: 2,
     name: "Admiring Light",
     site: "admiringlight.com",
   },
-  "photographylife": {
+  photographylife: {
     methodology: "field",
     trust: 2,
     name: "Photography Life",
     site: "photographylife.com",
   },
-  "cameralabs": {
+  cameralabs: {
     methodology: "field",
     trust: 2,
     name: "Camera Labs",
     site: "cameralabs.com",
   },
-  "christopherfrost": {
+  christopherfrost: {
     methodology: "field",
     trust: 2,
     name: "Christopher Frost",
     site: "christopherfrost.co.uk",
   },
-  "fujivsfuji": {
+  fujivsfuji: {
     methodology: "field",
     trust: 2,
     name: "Fuji vs Fuji",
     site: "fujivsfuji.com",
   },
-  "sansmirror": {
+  sansmirror: {
     methodology: "field",
     trust: 2,
     name: "Thom Hogan (Sans Mirror)",

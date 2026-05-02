@@ -60,12 +60,12 @@ achieves the same perceived speed with a fraction of the complexity.
 
 ## Risks
 
-| Risk | Likelihood | Mitigation |
-|------|-----------|------------|
-| Hamburger menu breaks after transition | High | Use `astro:page-load` event listener |
-| React hydration timing issues | Medium | Test all islands; fallback is `transition:animate="none"` |
-| Inline scripts run twice or not at all | Medium | Audit all inline scripts in Base.astro |
-| Browser without View Transitions API | Low | Graceful degradation to full reload (built-in) |
+| Risk                                   | Likelihood | Mitigation                                                |
+| -------------------------------------- | ---------- | --------------------------------------------------------- |
+| Hamburger menu breaks after transition | High       | Use `astro:page-load` event listener                      |
+| React hydration timing issues          | Medium     | Test all islands; fallback is `transition:animate="none"` |
+| Inline scripts run twice or not at all | Medium     | Audit all inline scripts in Base.astro                    |
+| Browser without View Transitions API   | Low        | Graceful degradation to full reload (built-in)            |
 
 ## Consequences
 

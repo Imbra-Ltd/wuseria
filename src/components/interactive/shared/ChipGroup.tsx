@@ -6,7 +6,13 @@ interface ChipGroupProps {
   styles: Record<string, string>;
 }
 
-function ChipGroup({ label, value, options, onChange, styles }: ChipGroupProps) {
+function ChipGroup({
+  label,
+  value,
+  options,
+  onChange,
+  styles,
+}: ChipGroupProps) {
   return (
     <div className={styles.chipGroup}>
       <span className={styles.chipLabel}>{label}</span>

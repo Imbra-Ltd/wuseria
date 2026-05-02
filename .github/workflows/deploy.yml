@@ -8,9 +8,9 @@ on:
 
 # Minimum permissions needed for GitHub Pages deployment
 permissions:
-  contents: read       # read repo contents
-  pages: write         # publish to GitHub Pages
-  id-token: write      # verify the deployment originates from this repo
+  contents: read # read repo contents
+  pages: write # publish to GitHub Pages
+  id-token: write # verify the deployment originates from this repo
 
 # Only one deployment at a time — don't cancel in-progress deploys
 concurrency:
@@ -42,7 +42,7 @@ jobs:
           path: dist/
 
   deploy:
-    needs: build           # wait for build to finish
+    needs: build # wait for build to finish
     runs-on: ubuntu-latest
     environment:
       name: github-pages

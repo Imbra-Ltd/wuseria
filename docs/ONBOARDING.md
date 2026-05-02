@@ -37,16 +37,16 @@ npm run lint
 
 ## 4. Key files
 
-| File | Purpose |
-|------|---------|
-| `CLAUDE.md` | AI agent context and project conventions |
-| `docs/decisions/` | Architecture Decision Records |
-| `docs/dev-journal.md` | Development history and migration tracking |
-| `docs/PLAYBOOK.md` | Operational reference — git workflow, data ops, release |
-| `docs/solid-ai-templates/` | Quality convention templates (submodule) |
-| `src/types/` | TypeScript interfaces for all domain entities |
-| `src/data/` | Static data files imported at build time |
-| `docs/prototype/` | Original single-file prototype (reference only) |
+| File                       | Purpose                                                 |
+| -------------------------- | ------------------------------------------------------- |
+| `CLAUDE.md`                | AI agent context and project conventions                |
+| `docs/decisions/`          | Architecture Decision Records                           |
+| `docs/dev-journal.md`      | Development history and migration tracking              |
+| `docs/PLAYBOOK.md`         | Operational reference — git workflow, data ops, release |
+| `docs/solid-ai-templates/` | Quality convention templates (submodule)                |
+| `src/types/`               | TypeScript interfaces for all domain entities           |
+| `src/data/`                | Static data files imported at build time                |
+| `docs/prototype/`          | Original single-file prototype (reference only)         |
 
 ## 5. Project context
 
@@ -56,6 +56,7 @@ street, astro, etc.) using MTF chart data from trusted review sources. See
 `src/types/` for the data model.
 
 Key domain concepts:
+
 - **Lens Explorer** — shows all lenses, filterable by specs
 - **Genre Guide** — shows only lenses with optical data, scored per genre
 - **Scoring** — computed from measurable optical properties, not subjective reviews
@@ -64,6 +65,7 @@ Key domain concepts:
 ## 6. Daily workflow
 
 See [PLAYBOOK.md](PLAYBOOK.md) for all operations:
+
 - Section 1 — Git workflow (branch, commit, PR, merge)
 - Section 2 — Data operations (add lenses, cameras, accessories)
 - Section 3 — Maintenance (quality conventions, ADRs, prototype)

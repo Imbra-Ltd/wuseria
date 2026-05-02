@@ -1,12 +1,18 @@
 import { lenses } from "../src/data/lenses";
 
-const scored = lenses.filter((l) => (l as unknown as Record<string, unknown>).centerStopped != null);
+const scored = lenses.filter(
+  (l) => (l as unknown as Record<string, unknown>).centerStopped != null,
+);
 const nightscape = scored.filter((l) => {
-  const marks = (l as unknown as Record<string, unknown>).genreMarks as Record<string, number> | undefined;
+  const marks = (l as unknown as Record<string, unknown>).genreMarks as
+    | Record<string, number>
+    | undefined;
   return marks?.nightscape != null;
 });
 const missing = scored.filter((l) => {
-  const marks = (l as unknown as Record<string, unknown>).genreMarks as Record<string, number> | undefined;
+  const marks = (l as unknown as Record<string, unknown>).genreMarks as
+    | Record<string, number>
+    | undefined;
   return marks?.nightscape == null;
 });
 
@@ -24,7 +30,8 @@ for (const l of missing) {
   if (astig == null) reasons.push("astigmatism");
   console.log(
     String(a.brand).padEnd(12) +
-    String(a.model).padEnd(42) +
-    "missing: " + (reasons.length > 0 ? reasons.join(", ") : "unknown")
+      String(a.model).padEnd(42) +
+      "missing: " +
+      (reasons.length > 0 ? reasons.join(", ") : "unknown"),
   );
 }

@@ -16,7 +16,6 @@ type AfMotor = "DC" | "STM" | "LM";
 // =============================================================================
 
 interface Lens {
-
   // ===========================================================================
   // IDENTITY
   // ===========================================================================
@@ -103,8 +102,8 @@ interface Lens {
   longitudinalCA?: number;
   lateralCA?: number;
   distortion?: number;
-  vignettingWideOpen?: number;   // at max aperture
-  vignettingStopped?: number;    // at f/5.6 or f/8
+  vignettingWideOpen?: number; // at max aperture
+  vignettingStopped?: number; // at f/5.6 or f/8
   bokeh?: number;
   flareResistance?: number;
 
