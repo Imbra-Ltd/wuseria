@@ -13,6 +13,12 @@ export default defineConfig({
       provider: "v8",
       include: ["src/utils/**", "src/hooks/**"],
       reporter: ["text", "lcov"],
+      thresholds: {
+        statements: 85,
+        branches: 80,
+        functions: 90,
+        lines: 85,
+      },
     },
   },
 });
