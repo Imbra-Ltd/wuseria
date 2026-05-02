@@ -23,6 +23,7 @@ function MarkPips({ mark }: { mark: number | null }) {
   if (mark == null) return <span className={styles.markDash}>&ndash;</span>;
   const full = Math.floor(mark);
   const half = mark % 1 >= 0.5;
+  const filled = full + (half ? 1 : 0);
   const pips: React.ReactNode[] = [];
   for (let i = 0; i < full; i++) {
     pips.push(<span key={i} className={`${styles.pip} ${styles.pipFull}`} />);
@@ -31,6 +32,9 @@ function MarkPips({ mark }: { mark: number | null }) {
     pips.push(
       <span key="half" className={`${styles.pip} ${styles.pipHalf}`} />,
     );
+  }
+  for (let i = filled; i < 5; i++) {
+    pips.push(<span key={`empty-${i}`} className={styles.pip} />);
   }
   return (
     <span className={styles.markDots} aria-label={`Mark ${mark} of 5`}>
