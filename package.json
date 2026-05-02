@@ -1,7 +1,7 @@
 {
   "name": "wuseria",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "scripts": {
     "dev": "astro dev",
@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "validate": "npm run lint && npm run format && npm run check && npm run test && npm run build",
+    "release": "bash scripts/release.sh",
     "prepare": "husky"
   },
   "dependencies": {

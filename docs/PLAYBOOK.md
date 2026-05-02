@@ -229,13 +229,15 @@ only. Do not commit the copied files.
 ### 4.1 Release
 
 ```bash
-git checkout -b chore/release-vA.B.C
-# Bump version in package.json to A.B.C
-git add package.json
-git commit -m "chore: release vA.B.C"
-git push -u origin chore/release-vA.B.C
-gh pr create --title "chore: release vA.B.C" --body "Release vA.B.C"
-gh pr merge --merge
+# From main, with clean working directory:
+npm run release -- A.B.C
+```
+
+The script validates preconditions (on main, clean tree, valid semver),
+bumps `package.json`, commits, pushes, and creates a PR. After the PR
+merges:
+
+```bash
 git checkout main && git pull
 git tag vA.B.C && git push origin vA.B.C
 git branch -d chore/release-vA.B.C
