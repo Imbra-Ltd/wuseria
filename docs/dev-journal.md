@@ -928,3 +928,4 @@ Changes:
 - #273 — Added missing P3 priority label
 - #336 — Light theme demoted from P2 to P3 (Phase 4, not urgent)
 - #337 — Converted from task to spike (image sourcing needs research first)
+- Enabled auto-merge on the repository
