@@ -1,5 +1,8 @@
 # Wuseria
 
+[![CI](https://github.com/Imbra-Ltd/wuseria/actions/workflows/ci.yml/badge.svg)](https://github.com/Imbra-Ltd/wuseria/actions/workflows/ci.yml)
+[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+
 Fujifilm lens and camera explorer with genre-based scoring.
 
 **Domain:** [wuseria.com](https://wuseria.com)
