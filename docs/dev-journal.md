@@ -883,7 +883,7 @@ Key decisions:
 
 PRs: #428
 Issues closed: #325 (pending merge)
-Issues created: #427 (resolve astro check warnings), solid-ai-templates#126 (standard npm script conventions)
+Issues created: #427 (resolve astro check warnings), solid-ai-templates#126, #127
 
 Key changes:
 
@@ -901,3 +901,6 @@ Key decisions:
 - Script naming: short verbs without namespace prefix for primary commands (lint, format, check, test); colon variants for modes (test:watch); `validate` for the full gate
 - Two-commit strategy: formatting-only commit separate from functional changes to keep git blame useful
 - Upstream issue created for standardizing npm scripts in solid-ai-templates
+- Upstream: added testability as first-class quality attribute (pure functions, boundary architecture, SOLID-to-testing connection)
+- Upstream: replaced cherry-picked design patterns with principle statement — all patterns enable testability
+- Submodule bumped to pick up upstream changes (PRs #128, #129)
