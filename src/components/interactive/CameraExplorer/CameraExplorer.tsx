@@ -36,7 +36,9 @@ function passesRangeFilter(
   ranges: Record<string, [number, number]>,
 ): boolean {
   if (!filter) return true;
-  const [min, max] = ranges[filter];
+  const range = ranges[filter];
+  if (!range) return true;
+  const [min, max] = range;
   return value >= min && value <= max;
 }
 

@@ -83,12 +83,22 @@ describe("useSort", () => {
     expect(result.current.sorted.map((i) => i.name)).toEqual(["B", "A", "C"]);
   });
 
-  it("handles null values by sorting them last", () => {
+  it("handles null values by sorting them last ascending", () => {
     const withNulls = [
       { name: "A", price: null as unknown as number, year: 2020 },
       { name: "B", price: 100, year: 2021 },
     ];
     const { result } = renderHook(() => useSort(withNulls, "price"));
     expect(result.current.sorted.map((i) => i.name)).toEqual(["B", "A"]);
+  });
+
+  it("handles null values by sorting them last descending", () => {
+    const withNulls = [
+      { name: "A", price: null as unknown as number, year: 2020 },
+      { name: "B", price: 300, year: 2021 },
+      { name: "C", price: 100, year: 2022 },
+    ];
+    const { result } = renderHook(() => useSort(withNulls, "price", "desc"));
+    expect(result.current.sorted.map((i) => i.name)).toEqual(["B", "C", "A"]);
   });
 });

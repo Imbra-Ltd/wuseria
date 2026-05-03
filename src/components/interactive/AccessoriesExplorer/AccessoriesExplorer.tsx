@@ -71,7 +71,9 @@ interface AccessoryFilterValues {
 
 function passesRangeFilter(value: number, filter: string): boolean {
   if (!filter) return true;
-  const [min, max] = PRICE_RANGES[filter];
+  const range = PRICE_RANGES[filter];
+  if (!range) return true;
+  const [min, max] = range;
   return value >= min && value <= max;
 }
 
