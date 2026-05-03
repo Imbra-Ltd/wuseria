@@ -1,0 +1,37 @@
+name: Link Check
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - name: Check internal links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --offline --no-progress dist/
+          fail: true
+
+      - name: Check external links (non-blocking)
+        if: always()
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --no-progress --exclude-path node_modules dist/
+          fail: false

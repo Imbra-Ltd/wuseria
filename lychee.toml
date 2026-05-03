@@ -1,0 +1,13 @@
+exclude_path = ["node_modules", "dist/404.html"]
+
+# Accept 200 and 403 (sites that block bots)
+accept = [200, 403]
+
+# Skip external links — check only internal
+include_mail = false
+
+# Timeout per request
+timeout = 30
+
+# Max concurrent requests
+max_concurrency = 4
