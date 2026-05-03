@@ -70,6 +70,7 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 ### Session 1 — Foundation
 
 **Date:** 2026-04-02
+**Tool:** Claude.ai (prototype)
 **Chat:** [TypeScript prototype from Excel workbook](https://claude.ai/chat/6f050216-4961-498f-a4ef-e27dab2a0f5b)
 
 - Bootstrapped from an Excel workbook with X-Mount lens data
@@ -85,6 +86,7 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 ### Session 2 — Genre Guide & UI Polish
 
 **Date:** 2026-04-03
+**Tool:** Claude.ai (prototype)
 **Chat:** [Fuji.me changelog: lens and camera database expansion](https://claude.ai/chat/54e23966-1869-49e6-96b8-fdb4e58aeaff)
 
 - Fixed critical missing closing brace bug in `handheldSuitability`
@@ -101,6 +103,7 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 ### Session 3 — Wiki, Accessories & Genre Equipment
 
 **Date:** 2026-04-05
+**Tool:** Claude.ai (prototype)
 **Chat:** [Session priorities and pending items](https://claude.ai/chat/b4f9f5b9-2582-4221-9c4a-694320e1dfdb)
 
 - ISO chip fix — display full number (1600 not 1.6k)
@@ -114,6 +117,7 @@ The prototype is a single 3400-line JSX file with inline styles and embedded dat
 ### Session 4 — Third-party GFX Lenses & UI Fixes
 
 **Date:** 2026-04-06
+**Tool:** Claude.ai (prototype)
 
 - Added 19 native G-Mount third-party lenses (Venus Laowa, Mitakon, Irix, TTartisan, AstrHori, Kipon, NiSi Athena Cinema)
 - Tokina atx-m 11-18mm f/2.8 X added
@@ -447,6 +451,7 @@ Key decisions:
 ### Session 14 — Issue Organization & Code Review
 
 **Date:** 2026-04-18
+**Tool:** Claude Code (Opus 4.6)
 
 #### Issue reorganization
 
@@ -468,6 +473,7 @@ Key decisions:
 ### Session 15 — Code Review Fixes
 
 **Date:** 2026-04-18
+**Tool:** Claude Code (Opus 4.6)
 
 Theme: clear all technical debt from the code review before Phase 2.
 
@@ -789,6 +795,9 @@ Key decisions:
 
 ### Session 21 — UI & UX Quick Wins & CSS Consolidation
 
+**Date:** 2026-05-01
+**Tool:** Claude Code (Opus 4.6)
+
 PRs merged:
 
 - #395 — aria-sort on GenreTable, About page, workflow sections on homepage
@@ -818,6 +827,9 @@ Key decisions:
 ---
 
 ### Session 22 — UI & UX Polish, URL Params, Detail Page
+
+**Date:** 2026-05-01
+**Tool:** Claude Code (Opus 4.6)
 
 PRs merged:
 
@@ -850,6 +862,9 @@ Key decisions:
 
 ### Session 23 — UI & UX Milestone Closure
 
+**Date:** 2026-05-01
+**Tool:** Claude Code (Opus 4.6)
+
 PRs merged:
 
 - #419 — Mobile sort, OQ color coding, feedback link, remove price footnote
@@ -881,6 +896,9 @@ Key decisions:
 
 ### Session 25 — Pre-commit Hooks and Script Conventions
 
+**Date:** 2026-05-02
+**Tool:** Claude Code (Opus 4.6)
+
 PRs: #428
 Issues closed: #325 (pending merge)
 Issues created: #427 (resolve astro check warnings), solid-ai-templates#126, #127
@@ -909,6 +927,9 @@ Key decisions:
 
 ### Session 26 — Ticket Reassessment
 
+**Date:** 2026-05-02
+**Tool:** Claude Code (Opus 4.6)
+
 Housekeeping pass across all open issues (49 → 46).
 
 Closed issues:
@@ -933,6 +954,9 @@ Changes:
 ---
 
 ### Session 27 — Dependency Housekeeping
+
+**Date:** 2026-05-03
+**Tool:** Claude Code (Opus 4.6)
 
 Resolved all `astro check` warnings and processed first batch of Dependabot PRs.
 
@@ -965,6 +989,9 @@ Upstream feedback for solid-ai-templates:
 
 ### Session 28 — Resolve Sonarjs Warnings
 
+**Date:** 2026-05-03
+**Tool:** Claude Code (Opus 4.6)
+
 PRs merged:
 
 - #465 — Resolve all sonarjs warnings and fix boolean sorting
@@ -993,6 +1020,9 @@ Key decisions:
 ---
 
 ### Session 29 — Developer Tooling + Bug Fixes
+
+**Date:** 2026-05-03
+**Tool:** Claude Code (Opus 4.6)
 
 PRs merged:
 
@@ -1042,6 +1072,9 @@ Upstream flagged (solid-ai-templates):
 
 ### Session 30 — Phase 2 UI & UX Closeout
 
+**Date:** 2026-05-03
+**Tool:** Claude Code (Opus 4.6)
+
 PRs merged: #484 (table column stability + URL filters), #486 (column width tuning)
 Issues closed: #483, #478
 Issues created: #485 (homepage redesign epic)
@@ -1064,6 +1097,9 @@ Key decisions:
 ---
 
 ### Session 31 — Test Suite Improvements and Developer Tooling
+
+**Date:** 2026-05-03
+**Tool:** Claude Code (Opus 4.6)
 
 PRs: #492 (open)
 Issues closed: #475, #474 (on merge)
