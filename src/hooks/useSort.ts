@@ -35,6 +35,7 @@ function useSort<T, K extends string & keyof T>(
   defaultKey: K,
   defaultDirection: SortDirection = "asc",
   stablePrefix?: (a: T, b: T) => number,
+  descFirstKeys?: ReadonlySet<K>,
 ): UseSortResult<T, K> {
   const [sort, setSort] = useState<SortState<K>>({
     key: defaultKey,
@@ -50,8 +51,14 @@ function useSort<T, K extends string & keyof T>(
         if (pre !== 0) return pre;
       }
 
-      const aVal = a[sort.key as keyof T];
-      const bVal = b[sort.key as keyof T];
+      let aVal = a[sort.key as keyof T];
+      let bVal = b[sort.key as keyof T];
+
+      // Treat undefined booleans as false so they sort with the group
+      if (descFirstKeys?.has(sort.key)) {
+        aVal = (aVal ?? false) as typeof aVal;
+        bVal = (bVal ?? false) as typeof bVal;
+      }
 
       // Nulls always last, regardless of direction
       if (aVal == null && bVal == null) return 0;
@@ -65,10 +72,16 @@ function useSort<T, K extends string & keyof T>(
   }, [items, sort.key, sort.direction, stablePrefix]);
 
   function toggleSort(key: K): void {
-    setSort((prev) => ({
-      key,
-      direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
-    }));
+    setSort((prev) => {
+      if (prev.key === key) {
+        return {
+          key,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
+      }
+      const startDesc = descFirstKeys?.has(key) ?? false;
+      return { key, direction: startDesc ? "desc" : "asc" };
+    });
   }
 
   return {

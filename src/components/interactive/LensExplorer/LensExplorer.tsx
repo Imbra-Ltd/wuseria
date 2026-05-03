@@ -157,10 +157,14 @@ function LensExplorer({ lenses }: LensExplorerProps) {
       Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false),
     [],
   );
+  const descFirst = useMemo(
+    () => new Set<LensSortKey>(["hasOis", "isWeatherSealed"]),
+    [],
+  );
   const { sorted, sortKey, sortDirection, toggleSort } = useSort<
     ExplorerLens,
     LensSortKey
-  >(filtered, "focalLengthMin", "asc", availableFirst);
+  >(filtered, "focalLengthMin", "asc", availableFirst, descFirst);
 
   function handleMountChange(value: string): void {
     set("mount", value);
@@ -226,7 +230,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         <>
           <LensResults
             sorted={
-              showAll || hasFilters || sortKey !== "focalLengthMin"
+              showAll || hasFilters
                 ? sorted
                 : sorted.slice(0, INITIAL_PAGE_SIZE)
             }
@@ -235,18 +239,15 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             sortDirection={sortDirection}
             toggleSort={toggleSort}
           />
-          {!showAll &&
-            !hasFilters &&
-            sortKey === "focalLengthMin" &&
-            sorted.length > INITIAL_PAGE_SIZE && (
-              <button
-                type="button"
-                className={styles.showAllButton}
-                onClick={() => setShowAll(true)}
-              >
-                Show all {sorted.length} lenses
-              </button>
-            )}
+          {!showAll && !hasFilters && sorted.length > INITIAL_PAGE_SIZE && (
+            <button
+              type="button"
+              className={styles.showAllButton}
+              onClick={() => setShowAll(true)}
+            >
+              Show all {sorted.length} lenses
+            </button>
+          )}
         </>
       )}
     </div>
