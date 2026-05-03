@@ -14,6 +14,22 @@ interface UseSortResult<T, K extends string> {
   toggleSort: (key: K) => void;
 }
 
+function compareValues(aVal: unknown, bVal: unknown): number {
+  if (aVal == null && bVal == null) return 0;
+  if (aVal == null) return 1;
+  if (bVal == null) return -1;
+  if (typeof aVal === "string" && typeof bVal === "string") {
+    return aVal.localeCompare(bVal);
+  }
+  if (typeof aVal === "boolean" && typeof bVal === "boolean") {
+    return Number(aVal) - Number(bVal);
+  }
+  if (typeof aVal === "number" && typeof bVal === "number") {
+    return aVal - bVal;
+  }
+  return 0;
+}
+
 function useSort<T, K extends string & keyof T>(
   items: T[],
   defaultKey: K,
@@ -34,23 +50,8 @@ function useSort<T, K extends string & keyof T>(
         if (pre !== 0) return pre;
       }
 
-      const aVal = a[sort.key as keyof T];
-      const bVal = b[sort.key as keyof T];
-
-      if (aVal == null && bVal == null) return 0;
-      if (aVal == null) return 1;
-      if (bVal == null) return -1;
-
-      if (typeof aVal === "string" && typeof bVal === "string") {
-        const cmp = aVal.localeCompare(bVal);
-        return sort.direction === "asc" ? cmp : -cmp;
-      }
-
-      if (typeof aVal === "number" && typeof bVal === "number") {
-        return sort.direction === "asc" ? aVal - bVal : bVal - aVal;
-      }
-
-      return 0;
+      const cmp = compareValues(a[sort.key as keyof T], b[sort.key as keyof T]);
+      return sort.direction === "asc" ? cmp : -cmp;
     });
     return copy;
   }, [items, sort.key, sort.direction, stablePrefix]);
