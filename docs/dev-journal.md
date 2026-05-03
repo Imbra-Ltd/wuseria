@@ -929,3 +929,30 @@ Changes:
 - #336 — Light theme demoted from P2 to P3 (Phase 4, not urgent)
 - #337 — Converted from task to spike (image sourcing needs research first)
 - Enabled auto-merge on the repository
+
+---
+
+### Session 27 — Dependency Housekeeping
+
+Resolved all `astro check` warnings and processed first batch of Dependabot PRs.
+
+PRs merged:
+
+- #451 — Resolve all astro check hints and warnings (closes #427)
+- #453 — Bump GitHub Actions to latest major versions (checkout v6, setup-node v6, upload-pages-artifact v5, deploy-pages v5)
+- Dependabot auto-merged: dorny/paths-filter v4, astro 6.2.1, @astrojs/react 5.0.4, react-dom 19.2.5, typescript-eslint 8.59.1, eslint-plugin-react-hooks 7.1.1, jsdom 29.1.1
+
+Issues:
+
+- #427 closed (astro check warnings resolved)
+- #452 created — track ESLint 9→10 and TypeScript 5→6 major upgrades (blocked on downstream peer deps)
+- Closed Dependabot PRs #447, #449, #450 (peer dependency conflicts)
+
+Key decisions:
+
+- Combined 4 GitHub Actions Dependabot PRs into one PR to avoid cascading rebase delays
+- ESLint 10 requires coordinated upgrade with @eslint/js 10; TypeScript 6 blocked until @astrojs/check and @typescript-eslint support it
+
+Upstream feedback for solid-ai-templates:
+
+- `platform/github.md` SHOULD recommend Dependabot for automated dependency monitoring
