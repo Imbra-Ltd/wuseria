@@ -1059,3 +1059,4 @@ Key decisions:
 - Homepage changelog (#477) deferred — user wants a broader homepage redesign with three-column layout and feature voting (#485), changelog will be part of that
 - `table-layout: fixed` chosen over `min-width` approach — fully prevents width shifts vs only reducing them
 - Percentage-based colgroup widths — totals intentionally under 100% (90%) to let browser distribute remaining space as padding
+- ONBOARDING.md — fixed stale homepage description (was "redirected to Lens Explorer", now shows actual homepage)
