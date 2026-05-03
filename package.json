@@ -12,7 +12,7 @@
     "check": "astro check",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
-    "test:report": "vitest run --coverage --reporter=default --reporter=json --outputFile=reports/tests/results.json",
+    "test:report": "vitest run --coverage --reporter=default --reporter=html --outputFile=reports/tests/index.html",
     "validate": "npm run lint && npm run format && npm run check && npm run test && npm run build",
     "release": "bash scripts/release.sh",
     "prepare": "husky"
@@ -36,6 +36,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitest/coverage-v8": "^4.1.5",
+    "@vitest/ui": "^4.1.5",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",

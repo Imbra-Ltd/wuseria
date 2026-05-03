@@ -214,10 +214,10 @@ npm run test:report
 
 Generates:
 
-- `reports/coverage/index.html` — interactive HTML coverage map (open in browser)
-- `reports/tests/results.json` — machine-readable test results
+- `reports/tests/index.html` — interactive HTML test report (pass/fail, timing, filter by file)
+- `reports/coverage/index.html` — interactive HTML coverage map (click into files, see uncovered lines)
 
-The `reports/` directory is gitignored.
+Open either in a browser. The `reports/` directory is gitignored.
 
 **Writing tests:**
 
