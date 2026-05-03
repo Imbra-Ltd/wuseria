@@ -4,10 +4,25 @@ New contributor guide for Wuseria
 
 ## 1. Prerequisites
 
+**Required:**
+
 - Node.js 20+
 - npm 10+
 - Git
 - [GitHub CLI](https://cli.github.com/) (`gh`) — used for PRs and issues
+
+**Optional (for full local quality gate):**
+
+- [lychee](https://github.com/lycheeverse/lychee) — broken link checker
+  ```bash
+  choco install lychee        # Windows
+  brew install lychee         # macOS
+  ```
+- [gitleaks](https://github.com/gitleaks/gitleaks) — secret scanner
+  ```bash
+  choco install gitleaks      # Windows
+  brew install gitleaks       # macOS
+  ```
 
 ## 2. First-time setup
 

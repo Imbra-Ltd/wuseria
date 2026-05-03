@@ -192,7 +192,32 @@ This builds the site and runs Lighthouse against all 4 pages (3 runs each).
 HTML reports are written to `reports/lighthouse/` — open any `.report.html`
 in a browser for full scores, diagnostics, and opportunities.
 
-### 2.8 Testing
+### 2.8 Link checker (lychee)
+
+Lychee checks for broken internal links in the built site. Runs in CI on
+every PR. Requires [lychee](https://github.com/lycheeverse/lychee) installed
+locally (see ONBOARDING prerequisites).
+
+```bash
+npm run build
+lychee --offline --no-progress --root-dir dist dist/
+```
+
+Checks all internal links in the static output. Exits non-zero on broken links.
+
+### 2.9 Secret scanning (gitleaks)
+
+Gitleaks scans for accidentally committed secrets. Runs in CI on every PR.
+Requires [gitleaks](https://github.com/gitleaks/gitleaks) installed locally
+(see ONBOARDING prerequisites).
+
+```bash
+gitleaks detect --source . --config .gitleaks.toml
+```
+
+Scans the full repo history. Exits non-zero if secrets are found.
+
+### 2.10 Testing
 
 **Run tests (single run with coverage):**
 
