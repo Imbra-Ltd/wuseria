@@ -1,4 +1,4 @@
-import type { ColumnAlign } from "../shared/table";
+import type { ColumnDef } from "../shared/table";
 
 type CameraSortKey =
   | "model"
@@ -13,18 +13,18 @@ type CameraSortKey =
   | "weight"
   | "price";
 
-const COLUMNS: { key: CameraSortKey; label: string; align: ColumnAlign }[] = [
-  { key: "model", label: "Model", align: "left" },
-  { key: "year", label: "Year", align: "right" },
-  { key: "megapixels", label: "MP", align: "right" },
-  { key: "sensor", label: "Sensor", align: "left" },
-  { key: "hasIbis", label: "IBIS", align: "center" },
-  { key: "isWeatherSealed", label: "WR", align: "center" },
-  { key: "mechanicalBurstFps", label: "FPS", align: "right" },
-  { key: "videoSpec", label: "Video", align: "center" },
-  { key: "batteryLife", label: "Battery", align: "right" },
-  { key: "weight", label: "Weight", align: "right" },
-  { key: "price", label: "Price", align: "right" },
+const COLUMNS: ColumnDef<CameraSortKey>[] = [
+  { key: "model", label: "Model", align: "left", width: "22%" },
+  { key: "year", label: "Year", align: "right", width: "7%" },
+  { key: "megapixels", label: "MP", align: "right", width: "6%" },
+  { key: "sensor", label: "Sensor", align: "left", width: "12%" },
+  { key: "hasIbis", label: "IBIS", align: "center", width: "6%" },
+  { key: "isWeatherSealed", label: "WR", align: "center", width: "5%" },
+  { key: "mechanicalBurstFps", label: "FPS", align: "right", width: "6%" },
+  { key: "videoSpec", label: "Video", align: "center", width: "8%" },
+  { key: "batteryLife", label: "Battery", align: "right", width: "8%" },
+  { key: "weight", label: "Weight", align: "right", width: "8%" },
+  { key: "price", label: "Price", align: "right", width: "8%" },
 ];
 
 const YEAR_RANGES: Record<string, [number, number]> = {

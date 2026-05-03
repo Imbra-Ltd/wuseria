@@ -5,7 +5,7 @@ import { toSlug } from "../../../utils/slug";
 import { ChipGroup } from "../shared/ChipGroup";
 import { RESET_VALUE, resetValue } from "../shared/constants";
 import { MobileSort } from "../shared/MobileSort";
-import type { ColumnAlign } from "../shared/table";
+import type { ColumnDef } from "../shared/table";
 import {
   makeAlignClasses,
   ariaSortValue,
@@ -24,14 +24,13 @@ type AccessorySortKey =
   | "description"
   | "price";
 
-const COLUMNS: { key: AccessorySortKey; label: string; align: ColumnAlign }[] =
-  [
-    { key: "category", label: "Category", align: "left" },
-    { key: "brand", label: "Brand", align: "left" },
-    { key: "model", label: "Model", align: "left" },
-    { key: "description", label: "Description", align: "left" },
-    { key: "price", label: "Price", align: "right" },
-  ];
+const COLUMNS: ColumnDef<AccessorySortKey>[] = [
+  { key: "category", label: "Category", align: "left", width: "14%" },
+  { key: "brand", label: "Brand", align: "left", width: "12%" },
+  { key: "model", label: "Model", align: "left", width: "24%" },
+  { key: "description", label: "Description", align: "left", width: "40%" },
+  { key: "price", label: "Price", align: "right", width: "10%" },
+];
 
 const ALIGN_CLASSES = makeAlignClasses(styles);
 
@@ -280,6 +279,11 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
           {/* Table — desktop */}
           <div className={styles.tableWrap}>
             <table className={styles.table}>
+              <colgroup>
+                {COLUMNS.map((col) => (
+                  <col key={col.key} style={{ width: col.width }} />
+                ))}
+              </colgroup>
               <thead>
                 <tr>
                   {COLUMNS.map((col) => (

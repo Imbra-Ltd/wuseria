@@ -36,6 +36,11 @@ function LensResults({
     <>
       <div className={styles.tableWrap}>
         <table className={styles.table}>
+          <colgroup>
+            {COLUMNS.map((col) => (
+              <col key={col.key} style={{ width: col.width }} />
+            ))}
+          </colgroup>
           <thead>
             <tr>
               {COLUMNS.map((col) => (
