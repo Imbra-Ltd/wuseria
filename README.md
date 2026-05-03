@@ -86,9 +86,9 @@ npm run validate     # lint + format + check + test + build -- full CI suite
 
 Visit [wuseria.com](https://wuseria.com):
 
-- **Find a lens** -- open Lenses, filter by mount/aperture/price, sort by any column → filterable table of 241 lenses with specs, prices, and links to detail pages
-- **Pick a genre lens** -- open Genre Guide, select a genre tab, compare scored lenses → ranked list of lenses scored 0-10 for your chosen genre with EV matrix and FL recommendations
-- **Learn a concept** -- open Wiki, browse by category or search for a term → 115 photography articles organized by category (optics, exposure, composition, technique)
+- **Find a lens** -- open Lenses, filter by mount/aperture/price, sort by any column → filterable table with specs, prices, and links to detail pages
+- **Pick a genre lens** -- open Genre Guide, select a genre tab, compare scored lenses → ranked list scored 0-10 for your chosen genre with EV matrix and FL recommendations
+- **Learn a concept** -- open Wiki, browse by category or search for a term → photography articles organized by category (optics, exposure, composition, technique)
 
 For contributor workflows (adding lenses, cameras, wiki entries), see
 [docs/PLAYBOOK.md](docs/PLAYBOOK.md) section 2.
