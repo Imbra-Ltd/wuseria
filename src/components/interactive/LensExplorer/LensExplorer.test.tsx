@@ -190,6 +190,59 @@ describe("LensExplorer", () => {
     expect(modelsAsc).not.toEqual(modelsDesc);
   });
 
+  it("filters by mount chip", async () => {
+    const user = userEvent.setup();
+    const testLenses = [
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 23mm f/1.4 R",
+        mount: "X",
+        price: 950,
+      }),
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "GF 63mm f/2.8 R WR",
+        mount: "GFX",
+        price: 1500,
+      }),
+    ];
+    render(<LensExplorer lenses={testLenses} />);
+    // Mount chips: "All", "X", "GFX"
+    const gfxButtons = screen.getAllByRole("button", { name: "GFX" });
+    await user.click(gfxButtons[0]);
+    expect(screen.getAllByText("GF 63mm f/2.8 R WR").length).toBeGreaterThan(0);
+    expect(screen.queryByText("XF 23mm f/1.4 R")).not.toBeInTheDocument();
+  });
+
+  it("filters by focal length select", async () => {
+    const user = userEvent.setup();
+    const testLenses = [
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 14mm f/2.8 R",
+        focalLengthMin: 14,
+        focalLengthMax: 14,
+        price: 800,
+      }),
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 90mm f/2 R LM WR",
+        focalLengthMin: 90,
+        focalLengthMax: 90,
+        price: 800,
+      }),
+    ];
+    render(<LensExplorer lenses={testLenses} />);
+    const flSelect = screen.getByRole("combobox", {
+      name: /focal length/i,
+    });
+    await user.selectOptions(flSelect, "36-100");
+    expect(screen.getAllByText("XF 90mm f/2 R LM WR").length).toBeGreaterThan(
+      0,
+    );
+    expect(screen.queryByText("XF 14mm f/2.8 R")).not.toBeInTheDocument();
+  });
+
   it("sorts by price when Price header is clicked", async () => {
     const user = userEvent.setup();
     render(<LensExplorer lenses={lenses} />);
