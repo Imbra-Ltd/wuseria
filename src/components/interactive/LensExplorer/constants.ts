@@ -38,17 +38,17 @@ type LensSortKey =
   | "price";
 
 const COLUMNS: ColumnDef<LensSortKey>[] = [
-  { key: "brand", label: "Brand", align: "left", width: "9%" },
-  { key: "model", label: "Model", align: "left", width: "20%" },
-  { key: "year", label: "Year", align: "left", width: "6%" },
-  { key: "focalLengthMin", label: "FL", align: "right", width: "7%" },
+  { key: "brand", label: "Brand", align: "left", width: "12%" },
+  { key: "model", label: "Model", align: "left", width: "22%" },
+  { key: "year", label: "Year", align: "left", width: "5%" },
+  { key: "focalLengthMin", label: "FL", align: "right", width: "8%" },
   { key: "maxAperture", label: "f/", align: "right", width: "5%" },
   { key: "filterThread", label: "\u03A6", align: "right", width: "5%" },
-  { key: "hasOis", label: "OIS", align: "center", width: "5%" },
-  { key: "isWeatherSealed", label: "WR", align: "center", width: "5%" },
-  { key: "afMotor", label: "AF", align: "center", width: "6%" },
-  { key: "weight", label: "Weight", align: "right", width: "8%" },
-  { key: "opticalQuality", label: "OQ", align: "right", width: "6%" },
+  { key: "hasOis", label: "OIS", align: "center", width: "4%" },
+  { key: "isWeatherSealed", label: "WR", align: "center", width: "4%" },
+  { key: "afMotor", label: "AF", align: "center", width: "5%" },
+  { key: "weight", label: "Weight", align: "right", width: "7%" },
+  { key: "opticalQuality", label: "OQ", align: "right", width: "5%" },
   { key: "price", label: "Price", align: "right", width: "8%" },
 ];
 
