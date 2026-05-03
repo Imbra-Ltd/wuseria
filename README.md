@@ -82,19 +82,16 @@ npm run test:watch   # run tests in watch mode (development)
 npm run validate     # lint + format + check + test + build -- full CI suite
 ```
 
-## How to add a new lens
+## Usage
 
-1. Open `src/data/lenses.ts`
-2. Add a new entry to the `lenses` array following the `Lens` interface in `src/types/lens.ts`
-3. All fields are type-checked at build time -- the compiler will catch missing required fields
-4. Run `npm run validate` before committing
+Visit [wuseria.com](https://wuseria.com):
 
-## How to add a wiki entry
+- **Find a lens** -- open Lenses, filter by mount/aperture/price, sort by any column
+- **Pick a genre lens** -- open Genre Guide, select a genre tab, compare scored lenses
+- **Learn a concept** -- open Wiki, browse by category or search for a term
 
-1. Create a new `.md` file in `src/content/wiki/` (e.g. `my-topic.md`)
-2. Add frontmatter: `title`, `category`, `summary`, and optionally `fullTitle` and `related`
-3. Write the body in Markdown -- headings, lists, tables, links all work
-4. The schema in `src/content.config.ts` validates your frontmatter at build time
+For contributor workflows (adding lenses, cameras, wiki entries), see
+[docs/PLAYBOOK.md](docs/PLAYBOOK.md) section 2.
 
 ## Conventions
 
