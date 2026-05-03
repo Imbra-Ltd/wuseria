@@ -1092,3 +1092,9 @@ Key decisions:
 - Coverage only tracks `src/utils/` and `src/hooks/` (component test coverage not enforced by thresholds)
 - Lighthouse reports go to `reports/lighthouse/` (filesystem upload target in lighthouserc.json)
 - lychee and gitleaks are optional local tools (not npm packages, need system install)
+
+Upstream candidates for solid-ai-templates:
+
+- `test:report` as a MAY command in stack templates (HTML coverage + test results)
+- `it.fails` pattern for known data gaps (expected failures that auto-flag when fixed)
+- Local report generation convention for CI-only tools (Lighthouse, lychee, gitleaks)
