@@ -157,10 +157,14 @@ function LensExplorer({ lenses }: LensExplorerProps) {
       Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false),
     [],
   );
+  const descFirst = useMemo(
+    () => new Set<LensSortKey>(["hasOis", "isWeatherSealed"]),
+    [],
+  );
   const { sorted, sortKey, sortDirection, toggleSort } = useSort<
     ExplorerLens,
     LensSortKey
-  >(filtered, "focalLengthMin", "asc", availableFirst);
+  >(filtered, "focalLengthMin", "asc", availableFirst, descFirst);
 
   function handleMountChange(value: string): void {
     set("mount", value);

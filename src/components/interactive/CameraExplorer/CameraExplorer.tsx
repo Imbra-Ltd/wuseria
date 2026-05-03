@@ -136,10 +136,14 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
       Number(a.isDiscontinued ?? false) - Number(b.isDiscontinued ?? false),
     [],
   );
+  const descFirst = useMemo(
+    () => new Set<CameraSortKey>(["hasIbis", "isWeatherSealed"]),
+    [],
+  );
   const { sorted, sortKey, sortDirection, toggleSort } = useSort<
     ExplorerCamera,
     CameraSortKey
-  >(filtered, "year", "asc", availableFirst);
+  >(filtered, "year", "asc", availableFirst, descFirst);
 
   function handleMountChange(value: string): void {
     setMount(value);

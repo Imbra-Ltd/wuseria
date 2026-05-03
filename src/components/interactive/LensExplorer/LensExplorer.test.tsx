@@ -181,24 +181,21 @@ describe("LensExplorer", () => {
     const table = screen.getAllByRole("table")[0];
     const oisButton = within(table).getByRole("button", { name: /OIS/i });
 
-    // First click → ascending (false before true)
-    await user.click(oisButton);
-    const rowsAsc = within(table).getAllByRole("row").slice(1);
-    const modelsAsc = rowsAsc.map(
-      (row) => within(row).getByRole("link").textContent,
-    );
-
-    // Second click → descending (true before false)
+    // First click → descending (true/green before false)
     await user.click(oisButton);
     const rowsDesc = within(table).getAllByRole("row").slice(1);
     const modelsDesc = rowsDesc.map(
       (row) => within(row).getByRole("link").textContent,
     );
-
-    // The OIS lens should be in different positions
-    expect(modelsAsc).not.toEqual(modelsDesc);
-    // Descending: the OIS=true lens should be first
     expect(modelsDesc[0]).toBe("XF 18-120mm f/4 LM PZ WR");
+
+    // Second click → ascending (false before true)
+    await user.click(oisButton);
+    const rowsAsc = within(table).getAllByRole("row").slice(1);
+    const modelsAsc = rowsAsc.map(
+      (row) => within(row).getByRole("link").textContent,
+    );
+    expect(modelsAsc).not.toEqual(modelsDesc);
   });
 
   it("sorts by price when Price header is clicked", async () => {
