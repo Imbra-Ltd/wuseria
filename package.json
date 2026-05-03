@@ -12,6 +12,7 @@
     "check": "astro check",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
+    "test:report": "vitest run --coverage --reporter=default --reporter=json --outputFile=reports/tests/results.json",
     "validate": "npm run lint && npm run format && npm run check && npm run test && npm run build",
     "release": "bash scripts/release.sh",
     "prepare": "husky"

@@ -189,6 +189,62 @@ npm run build
 npx @lhci/cli autorun --config lighthouserc.json
 ```
 
+### 2.8 Testing
+
+**Run tests (single run with coverage):**
+
+```bash
+npm test
+```
+
+Coverage text summary prints to the console. Threshold enforcement: statements
+85%, branches 80%, functions 90%, lines 85%.
+
+**Watch mode (development):**
+
+```bash
+npm run test:watch
+```
+
+**Generate local reports (coverage + test results):**
+
+```bash
+npm run test:report
+```
+
+Generates:
+
+- `reports/coverage/index.html` — interactive HTML coverage map (open in browser)
+- `reports/tests/results.json` — machine-readable test results
+
+The `reports/` directory is gitignored.
+
+**Writing tests:**
+
+- Test factories in `src/test/factories.ts` — use `makeLens`, `makeExplorerLens`,
+  `makeCamera` instead of inline objects
+- `makeExplorerLens` mirrors the `ExplorerLens` shape (booleans default to
+  `undefined`, matching real data)
+- Use `getAllByText` for explorer content (table + cards both render)
+- Use `getByRole("combobox", { name: /label/i })` for select filters
+- Use `screen.getAllByRole("button", { name: "Yes" })` for boolean chip filters
+
+**Test structure:**
+
+| File                                                                | Covers                                         |
+| ------------------------------------------------------------------- | ---------------------------------------------- |
+| `src/utils/scoring.test.ts`                                         | Genre scoring, OQ, helpers, field picker       |
+| `src/utils/formatting.test.ts`                                      | Shutter + FL formatting                        |
+| `src/utils/slug.test.ts`                                            | URL slug generation                            |
+| `src/hooks/useSort.test.ts`                                         | Sort hook (strings, numbers, booleans, nulls)  |
+| `src/hooks/useUrlFilters.test.ts`                                   | URL filter sync hook                           |
+| `src/data/lenses.test.ts`                                           | Data validation (uniqueness, ranges, booleans) |
+| `src/data/genres.test.ts`                                           | Genre config validation                        |
+| `src/components/interactive/LensExplorer/LensExplorer.test.tsx`     | Lens filters + sort                            |
+| `src/components/interactive/CameraExplorer/CameraExplorer.test.tsx` | Camera filters + sort                          |
+| `src/components/interactive/GenreGuide/GenreGuide.test.tsx`         | Genre tabs, filters, matrices                  |
+| `src/components/interactive/GenreGuide/exposure.test.ts`            | Exposure calculations                          |
+
 ## 3. Maintenance
 
 ### 3.1 Update quality conventions
