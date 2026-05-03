@@ -3,6 +3,7 @@ import type { Lens } from "../types/lens";
 import type { Genre } from "../types/genre";
 import { lenses } from "../data/lenses";
 import { makeLens } from "../test/factories";
+import { pickGenreFields } from "./pickGenreFields";
 import {
   computeGenreMark,
   computeAllGenreMarks,
@@ -413,6 +414,27 @@ describe("isGenre", () => {
     for (const g of genres) {
       expect(isGenre(g)).toBe(true);
     }
+  });
+});
+
+// =============================================================================
+// pickGenreFields
+// =============================================================================
+
+describe("pickGenreFields", () => {
+  it("picks only genre-relevant fields from a full Lens", () => {
+    const lens = findLens("XF 56mm f/1.2 R LM WR");
+    const picked = pickGenreFields(lens);
+    expect(picked.brand).toBe(lens.brand);
+    expect(picked.model).toBe(lens.model);
+    expect(picked.mount).toBe(lens.mount);
+    expect(picked.weight).toBe(lens.weight);
+    expect(picked.price).toBe(lens.price);
+    expect(picked.genreMarks).toBe(lens.genreMarks);
+    expect(picked.centerStopped).toBe(lens.centerStopped);
+    // Should NOT contain fields outside GenreLens
+    expect("officialUrl" in picked).toBe(false);
+    expect("reviewSources" in picked).toBe(false);
   });
 });
 
