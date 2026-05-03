@@ -226,7 +226,7 @@ function LensExplorer({ lenses }: LensExplorerProps) {
         <>
           <LensResults
             sorted={
-              showAll || hasFilters
+              showAll || hasFilters || sortKey !== "focalLengthMin"
                 ? sorted
                 : sorted.slice(0, INITIAL_PAGE_SIZE)
             }
@@ -235,15 +235,18 @@ function LensExplorer({ lenses }: LensExplorerProps) {
             sortDirection={sortDirection}
             toggleSort={toggleSort}
           />
-          {!showAll && !hasFilters && sorted.length > INITIAL_PAGE_SIZE && (
-            <button
-              type="button"
-              className={styles.showAllButton}
-              onClick={() => setShowAll(true)}
-            >
-              Show all {sorted.length} lenses
-            </button>
-          )}
+          {!showAll &&
+            !hasFilters &&
+            sortKey === "focalLengthMin" &&
+            sorted.length > INITIAL_PAGE_SIZE && (
+              <button
+                type="button"
+                className={styles.showAllButton}
+                onClick={() => setShowAll(true)}
+              >
+                Show all {sorted.length} lenses
+              </button>
+            )}
         </>
       )}
     </div>
