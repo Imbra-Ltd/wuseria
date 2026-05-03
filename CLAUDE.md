@@ -279,6 +279,6 @@ execution prevents missed steps.
 [ ] 8. ONBOARDING.md — update if prerequisites or setup changed
 [ ] 9. PLAYBOOK.md — update if commands, workflows, or release process changed
 [ ] 10. Submodules — check if upstream needs update
-[ ] 11. Flag conventions for solid-ai-templates upstream
+[ ] 11. Flag conventions for solid-ai-templates upstream — for each new pattern/convention introduced, explicitly state whether it's project-specific or reusable; if reusable, name the upstream template file it would go in
 [ ] 12. Summarize what was done and what's next
 ```
