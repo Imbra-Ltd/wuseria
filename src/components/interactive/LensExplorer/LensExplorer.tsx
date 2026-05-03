@@ -33,7 +33,9 @@ function passesStatusFilter(
 
 function passesFlFilter(lens: ExplorerLens, fl: string): boolean {
   if (!fl) return true;
-  const [min, max] = FL_RANGES[fl];
+  const range = FL_RANGES[fl];
+  if (!range) return true;
+  const [min, max] = range;
   return lens.focalLengthMax >= min && lens.focalLengthMin <= max;
 }
 
@@ -52,7 +54,9 @@ function passesOqFilter(
 ): boolean {
   if (!filter) return true;
   if (filter === "not-scored") return oq == null;
-  const [min, max] = OQ_RANGES[filter];
+  const range = OQ_RANGES[filter];
+  if (!range) return true;
+  const [min, max] = range;
   return oq != null && oq >= min && oq <= max;
 }
 
@@ -62,7 +66,9 @@ function passesRangeFilter(
   ranges: Record<string, [number, number]>,
 ): boolean {
   if (!filter) return true;
-  const [min, max] = ranges[filter];
+  const range = ranges[filter];
+  if (!range) return true;
+  const [min, max] = range;
   return value >= min && value <= max;
 }
 

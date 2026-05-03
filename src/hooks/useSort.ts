@@ -50,7 +50,15 @@ function useSort<T, K extends string & keyof T>(
         if (pre !== 0) return pre;
       }
 
-      const cmp = compareValues(a[sort.key as keyof T], b[sort.key as keyof T]);
+      const aVal = a[sort.key as keyof T];
+      const bVal = b[sort.key as keyof T];
+
+      // Nulls always last, regardless of direction
+      if (aVal == null && bVal == null) return 0;
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+
+      const cmp = compareValues(aVal, bVal);
       return sort.direction === "asc" ? cmp : -cmp;
     });
     return copy;
