@@ -17,7 +17,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@astrojs/react": "^5.0.3",
+    "@astrojs/react": "^5.0.4",
     "@astrojs/sitemap": "^3.7.2",
     "astro": "^6.2.1",
     "react": "^19.2.4",
