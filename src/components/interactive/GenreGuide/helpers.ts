@@ -1,8 +1,8 @@
-import type { ScoredGenre } from "../../../types/genre";
+import type { Genre } from "../../../types/genre";
 import { evScenes, genreEvLabels } from "../../../data/genres";
 import type { SortKey } from "./types";
 
-function sceneLabel(genre: ScoredGenre, sceneEv: number): string {
+function sceneLabel(genre: Genre, sceneEv: number): string {
   if (genre === "nightscape") {
     return evScenes.find((s) => s.ev === sceneEv)?.short ?? "";
   }
@@ -13,7 +13,7 @@ function sceneLabel(genre: ScoredGenre, sceneEv: number): string {
   );
 }
 
-function evHeaderLabel(genre: ScoredGenre, sceneEv: number): string {
+function evHeaderLabel(genre: Genre, sceneEv: number): string {
   return (
     genreEvLabels[genre]?.[sceneEv] ??
     evScenes.find((s) => s.ev === sceneEv)?.short ??
@@ -32,7 +32,36 @@ function sortIndicator(
   sortAsc: boolean,
   key: SortKey,
 ): string {
-  return sortBy === key ? (sortAsc ? "\u2191" : "\u2193") : "\u2195";
+  if (sortBy !== key) return "\u2195";
+  return sortAsc ? "\u2191" : "\u2193";
 }
 
-export { sceneLabel, evHeaderLabel, fmtIso, sortIndicator };
+function viabilityClass(
+  isViable: boolean,
+  isMarginal: boolean,
+  styles: Record<string, string>,
+): string {
+  if (isViable) return styles.matrixViable;
+  if (isMarginal) return styles.matrixMarginal;
+  return styles.matrixOver;
+}
+
+function landscapeCatClass(
+  t: number,
+  frozenThreshold: number,
+  silkThreshold: number,
+  styles: Record<string, string>,
+): string {
+  if (t <= frozenThreshold) return styles.lsStatic;
+  if (t <= silkThreshold) return styles.lsSilk;
+  return styles.lsDramatic;
+}
+
+export {
+  sceneLabel,
+  evHeaderLabel,
+  fmtIso,
+  sortIndicator,
+  viabilityClass,
+  landscapeCatClass,
+};

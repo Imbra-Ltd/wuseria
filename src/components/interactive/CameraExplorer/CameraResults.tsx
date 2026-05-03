@@ -1,6 +1,10 @@
 import type { ExplorerCamera } from "./types";
 import { toSlug } from "../../../utils/slug";
-import { makeAlignClasses } from "../shared/table";
+import {
+  makeAlignClasses,
+  ariaSortValue,
+  sortIndicatorChar,
+} from "../shared/table";
 import type { CameraSortKey } from "./constants";
 import { COLUMNS } from "./constants";
 import styles from "./CameraExplorer.module.css";
@@ -30,13 +34,7 @@ function CameraResults({
                 <th
                   key={col.key}
                   className={ALIGN_CLASSES[col.align]}
-                  aria-sort={
-                    sortKey === col.key
-                      ? sortDirection === "asc"
-                        ? "ascending"
-                        : "descending"
-                      : "none"
-                  }
+                  aria-sort={ariaSortValue(col.key, sortKey, sortDirection)}
                 >
                   <button
                     type="button"
@@ -45,11 +43,7 @@ function CameraResults({
                   >
                     {col.label}
                     <span className={styles.sortIndicator}>
-                      {sortKey === col.key
-                        ? sortDirection === "asc"
-                          ? "\u2191"
-                          : "\u2193"
-                        : "\u2195"}
+                      {sortIndicatorChar(col.key, sortKey, sortDirection)}
                     </span>
                   </button>
                 </th>

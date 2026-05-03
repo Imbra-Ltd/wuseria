@@ -4,6 +4,108 @@ import { getGenreMark, isEditorialPick } from "../../../utils/scoring";
 import { astroExposure, handheldExposure } from "./exposure";
 import type { EnrichedLens } from "./types";
 import type { GenreState } from "./useGenreState";
+import type { SortKey } from "./types";
+
+type LensGetter = (el: EnrichedLens) => number;
+
+const SORT_GETTERS: Record<string, LensGetter> = {
+  mark: (el) => el.mark,
+  idealIso: (el) => el.idealIso ?? 99999,
+  weight: (el) => el.lens.weight,
+  price: (el) => el.lens.price,
+  fl: (el) => el.lens.focalLengthMin,
+  aperture: (el) => el.lens.maxAperture,
+  rule500: (el) => el.rule500 ?? 0,
+  coma: (el) => el.lens.coma ?? -1,
+  astigmatism: (el) => el.lens.astigmatism ?? -1,
+  wr: (el) => (el.lens.isWeatherSealed ? 1 : 0),
+  ois: (el) => (el.lens.hasOis ? 1 : 0),
+  cornerStopped: (el) => el.lens.cornerStopped ?? -1,
+  centerStopped: (el) => el.lens.centerStopped ?? -1,
+  centerWideOpen: (el) => el.lens.centerWideOpen ?? -1,
+  distortion: (el) => el.lens.distortion ?? -1,
+  flareResistance: (el) => el.lens.flareResistance ?? -1,
+  bokeh: (el) => el.lens.bokeh ?? -1,
+  longitudinalCA: (el) => el.lens.longitudinalCA ?? -1,
+  lateralCA: (el) => el.lens.lateralCA ?? -1,
+  magnification: (el) => el.lens.maxMagnification ?? 0,
+};
+
+function compareLenses(
+  a: EnrichedLens,
+  b: EnrichedLens,
+  sortBy: SortKey,
+): number {
+  if (sortBy === "brand") return a.lens.brand.localeCompare(b.lens.brand);
+  const getter = SORT_GETTERS[sortBy];
+  if (!getter) return 0;
+  const v = getter(a) - getter(b);
+  if (sortBy === "mark" && v === 0) {
+    return (a.isPick ? 1 : 0) - (b.isPick ? 1 : 0);
+  }
+  return v;
+}
+
+interface GenreFilters {
+  brandFilter: string;
+  markFilter: string;
+  priceFilter: string;
+  weightFilter: string;
+  apertureFilter: string;
+  comaFilter: string;
+  astigFilter: string;
+  typeFilter: string;
+  wrFilter: string;
+  cornerFilter: string;
+  distFilter: string;
+  flareFilter: string;
+  bokehFilter: string;
+  locaFilter: string;
+  latcaFilter: string;
+}
+
+function passesMinFilter(value: number | undefined, filter: string): boolean {
+  if (!filter) return true;
+  return value != null && value >= Number(filter);
+}
+
+function passesMaxFilter(value: number, filter: string): boolean {
+  if (!filter) return true;
+  return value <= Number(filter);
+}
+
+function passesExactFilter(value: string, filter: string): boolean {
+  return !filter || value === filter;
+}
+
+function passesBooleanFilter(
+  value: boolean | undefined,
+  filter: string,
+): boolean {
+  if (filter === "yes") return !!value;
+  if (filter === "no") return !value;
+  return true;
+}
+
+function matchesGenreFilters(el: EnrichedLens, f: GenreFilters): boolean {
+  return (
+    passesExactFilter(el.lens.brand, f.brandFilter) &&
+    passesMinFilter(el.mark, f.markFilter) &&
+    passesMaxFilter(el.lens.price, f.priceFilter) &&
+    passesMaxFilter(el.lens.weight, f.weightFilter) &&
+    passesMaxFilter(el.lens.maxAperture, f.apertureFilter) &&
+    passesMinFilter(el.lens.coma, f.comaFilter) &&
+    passesMinFilter(el.lens.astigmatism, f.astigFilter) &&
+    passesExactFilter(el.lens.type, f.typeFilter) &&
+    passesBooleanFilter(el.lens.isWeatherSealed, f.wrFilter) &&
+    passesMinFilter(el.lens.cornerStopped, f.cornerFilter) &&
+    passesMinFilter(el.lens.distortion, f.distFilter) &&
+    passesMinFilter(el.lens.flareResistance, f.flareFilter) &&
+    passesMinFilter(el.lens.bokeh, f.bokehFilter) &&
+    passesMinFilter(el.lens.longitudinalCA, f.locaFilter) &&
+    passesMinFilter(el.lens.lateralCA, f.latcaFilter)
+  );
+}
 
 function useEnrichedLenses(
   lenses: GenreLens[],
@@ -60,6 +162,7 @@ function useEnrichedLenses(
         if (range && l.type === "zoom") {
           effectiveFl = Math.max(l.focalLengthMin, range[0]);
         }
+        const macroMag = genre === "macro" ? magnification : undefined;
         const idealIso = isNightscape
           ? astroExposure(
               { ...l, focalLengthMin: effectiveFl } as GenreLens,
@@ -67,13 +170,7 @@ function useEnrichedLenses(
               iso,
               cropFactor,
             ).idealIso
-          : handheldExposure(
-              l,
-              genre,
-              ev,
-              cropFactor,
-              genre === "macro" ? magnification : undefined,
-            ).idealIso;
+          : handheldExposure(l, genre, ev, cropFactor, macroMag).idealIso;
         const rule500 = isNightscape
           ? Math.round(500 / (cropFactor * effectiveFl))
           : null;
@@ -82,134 +179,28 @@ function useEnrichedLenses(
       });
 
     enriched.sort((a, b) => {
-      let v = 0;
-      switch (sortBy) {
-        case "mark":
-          v = a.mark - b.mark;
-          if (v === 0) v = (a.isPick ? 1 : 0) - (b.isPick ? 1 : 0);
-          break;
-
-        case "brand":
-          v = a.lens.brand.localeCompare(b.lens.brand);
-          break;
-        case "idealIso":
-          v = (a.idealIso ?? 99999) - (b.idealIso ?? 99999);
-          break;
-        case "weight":
-          v = a.lens.weight - b.lens.weight;
-          break;
-        case "price":
-          v = a.lens.price - b.lens.price;
-          break;
-        case "fl":
-          v = a.lens.focalLengthMin - b.lens.focalLengthMin;
-          break;
-        case "aperture":
-          v = a.lens.maxAperture - b.lens.maxAperture;
-          break;
-        case "rule500":
-          v = (a.rule500 ?? 0) - (b.rule500 ?? 0);
-          break;
-        case "coma":
-          v = (a.lens.coma ?? -1) - (b.lens.coma ?? -1);
-          break;
-        case "astigmatism":
-          v = (a.lens.astigmatism ?? -1) - (b.lens.astigmatism ?? -1);
-          break;
-        case "wr":
-          v =
-            (a.lens.isWeatherSealed ? 1 : 0) - (b.lens.isWeatherSealed ? 1 : 0);
-          break;
-        case "ois":
-          v = (a.lens.hasOis ? 1 : 0) - (b.lens.hasOis ? 1 : 0);
-          break;
-        case "cornerStopped":
-          v = (a.lens.cornerStopped ?? -1) - (b.lens.cornerStopped ?? -1);
-          break;
-        case "centerStopped":
-          v = (a.lens.centerStopped ?? -1) - (b.lens.centerStopped ?? -1);
-          break;
-        case "centerWideOpen":
-          v = (a.lens.centerWideOpen ?? -1) - (b.lens.centerWideOpen ?? -1);
-          break;
-        case "distortion":
-          v = (a.lens.distortion ?? -1) - (b.lens.distortion ?? -1);
-          break;
-        case "flareResistance":
-          v = (a.lens.flareResistance ?? -1) - (b.lens.flareResistance ?? -1);
-          break;
-        case "bokeh":
-          v = (a.lens.bokeh ?? -1) - (b.lens.bokeh ?? -1);
-          break;
-        case "longitudinalCA":
-          v = (a.lens.longitudinalCA ?? -1) - (b.lens.longitudinalCA ?? -1);
-          break;
-        case "lateralCA":
-          v = (a.lens.lateralCA ?? -1) - (b.lens.lateralCA ?? -1);
-          break;
-        case "magnification":
-          v = (a.lens.maxMagnification ?? 0) - (b.lens.maxMagnification ?? 0);
-          break;
-      }
+      const v = compareLenses(a, b, sortBy);
       return sortAsc ? v : -v;
     });
 
-    return enriched.filter((el) => {
-      if (brandFilter && el.lens.brand !== brandFilter) return false;
-      if (markFilter && el.mark < Number(markFilter)) return false;
-      if (priceFilter && el.lens.price > Number(priceFilter)) return false;
-      if (weightFilter && el.lens.weight > Number(weightFilter)) return false;
-      if (apertureFilter && el.lens.maxAperture > Number(apertureFilter))
-        return false;
-      if (
-        comaFilter &&
-        (el.lens.coma == null || el.lens.coma < Number(comaFilter))
-      )
-        return false;
-      if (
-        astigFilter &&
-        (el.lens.astigmatism == null ||
-          el.lens.astigmatism < Number(astigFilter))
-      )
-        return false;
-      if (typeFilter && el.lens.type !== typeFilter) return false;
-      if (wrFilter === "yes" && !el.lens.isWeatherSealed) return false;
-      if (wrFilter === "no" && el.lens.isWeatherSealed) return false;
-      if (
-        cornerFilter &&
-        (el.lens.cornerStopped == null ||
-          el.lens.cornerStopped < Number(cornerFilter))
-      )
-        return false;
-      if (
-        distFilter &&
-        (el.lens.distortion == null || el.lens.distortion < Number(distFilter))
-      )
-        return false;
-      if (
-        flareFilter &&
-        (el.lens.flareResistance == null ||
-          el.lens.flareResistance < Number(flareFilter))
-      )
-        return false;
-      if (
-        bokehFilter &&
-        (el.lens.bokeh == null || el.lens.bokeh < Number(bokehFilter))
-      )
-        return false;
-      if (
-        locaFilter &&
-        (el.lens.longitudinalCA == null ||
-          el.lens.longitudinalCA < Number(locaFilter))
-      )
-        return false;
-      if (
-        latcaFilter &&
-        (el.lens.lateralCA == null || el.lens.lateralCA < Number(latcaFilter))
-      )
-        return false;
-      return true;
-    });
+    const filters: GenreFilters = {
+      brandFilter,
+      markFilter,
+      priceFilter,
+      weightFilter,
+      apertureFilter,
+      comaFilter,
+      astigFilter,
+      typeFilter,
+      wrFilter,
+      cornerFilter,
+      distFilter,
+      flareFilter,
+      bokehFilter,
+      locaFilter,
+      latcaFilter,
+    };
+    return enriched.filter((el) => matchesGenreFilters(el, filters));
   }, [
     lenses,
     genre,

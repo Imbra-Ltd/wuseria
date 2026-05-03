@@ -15,15 +15,12 @@ type Genre =
   | "architecture"
   | "macro";
 
-// All genres now have scoring formulas
-type ScoredGenre = Genre;
-
 // =============================================================================
 // GENRE CONFIG
 // =============================================================================
 
 interface GenreConfig {
-  genre: ScoredGenre;
+  genre: Genre;
   name: string;
   tagline: string;
   description: string;
@@ -34,4 +31,4 @@ interface GenreConfig {
 // EXPORTS
 // =============================================================================
 
-export type { Genre, ScoredGenre, GenreConfig };
+export type { Genre, GenreConfig };

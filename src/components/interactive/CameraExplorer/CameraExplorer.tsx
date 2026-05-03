@@ -7,6 +7,71 @@ import { CameraResults } from "./CameraResults";
 import type { ExplorerCamera } from "./types";
 import styles from "./CameraExplorer.module.css";
 
+interface CameraFilterValues {
+  search: string;
+  mount: string;
+  series: string;
+  yearRange: string;
+  sensorType: string;
+  formFactor: string;
+  ibis: string;
+  wr: string;
+  discontinued: string;
+  videoSpec: string;
+  priceRange: string;
+}
+
+function passesBooleanFilter(
+  filter: string,
+  value: boolean | undefined,
+): boolean {
+  if (filter === "yes") return !!value;
+  if (filter === "no") return !value;
+  return true;
+}
+
+function passesRangeFilter(
+  value: number,
+  filter: string,
+  ranges: Record<string, [number, number]>,
+): boolean {
+  if (!filter) return true;
+  const [min, max] = ranges[filter];
+  return value >= min && value <= max;
+}
+
+function passesExactFilter(value: string, filter: string): boolean {
+  return !filter || value === filter;
+}
+
+function passesStatusFilter(
+  filter: string,
+  isDiscontinued: boolean | undefined,
+): boolean {
+  if (filter === "available") return !isDiscontinued;
+  if (filter === "discontinued") return !!isDiscontinued;
+  return true;
+}
+
+function matchesCameraFilters(
+  cam: ExplorerCamera,
+  f: CameraFilterValues,
+): boolean {
+  return (
+    passesExactFilter(cam.mount, f.mount) &&
+    passesExactFilter(cam.series, f.series) &&
+    passesRangeFilter(cam.year, f.yearRange, YEAR_RANGES) &&
+    passesExactFilter(cam.sensor, f.sensorType) &&
+    passesExactFilter(cam.formFactor, f.formFactor) &&
+    passesBooleanFilter(f.ibis, cam.hasIbis) &&
+    passesBooleanFilter(f.wr, cam.isWeatherSealed) &&
+    passesStatusFilter(f.discontinued, cam.isDiscontinued) &&
+    passesExactFilter(cam.videoSpec, f.videoSpec) &&
+    passesRangeFilter(cam.price, f.priceRange, PRICE_RANGES) &&
+    (!f.search || cam.model.toLowerCase().includes(f.search.toLowerCase()))
+  );
+}
+
 interface CameraExplorerProps {
   cameras: ExplorerCamera[];
 }
@@ -35,30 +100,20 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
   }, [cameras, mount]);
 
   const filtered = useMemo(() => {
-    const q = search.toLowerCase();
-    return cameras.filter((cam) => {
-      if (mount && cam.mount !== mount) return false;
-      if (series && cam.series !== series) return false;
-      if (yearRange) {
-        const [min, max] = YEAR_RANGES[yearRange];
-        if (cam.year < min || cam.year > max) return false;
-      }
-      if (sensorType && cam.sensor !== sensorType) return false;
-      if (formFactor && cam.formFactor !== formFactor) return false;
-      if (ibis === "yes" && !cam.hasIbis) return false;
-      if (ibis === "no" && cam.hasIbis) return false;
-      if (wr === "yes" && !cam.isWeatherSealed) return false;
-      if (wr === "no" && cam.isWeatherSealed) return false;
-      if (discontinued === "available" && cam.isDiscontinued) return false;
-      if (discontinued === "discontinued" && !cam.isDiscontinued) return false;
-      if (videoSpec && cam.videoSpec !== videoSpec) return false;
-      if (priceRange) {
-        const [min, max] = PRICE_RANGES[priceRange];
-        if (cam.price < min || cam.price > max) return false;
-      }
-      if (q && !cam.model.toLowerCase().includes(q)) return false;
-      return true;
-    });
+    const f: CameraFilterValues = {
+      search,
+      mount,
+      series,
+      yearRange,
+      sensorType,
+      formFactor,
+      ibis,
+      wr,
+      discontinued,
+      videoSpec,
+      priceRange,
+    };
+    return cameras.filter((cam) => matchesCameraFilters(cam, f));
   }, [
     cameras,
     search,

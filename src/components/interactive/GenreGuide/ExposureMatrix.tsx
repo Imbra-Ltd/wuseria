@@ -3,6 +3,7 @@ import {
   MATRIX_FL_COLS_GFX,
   MATRIX_APERTURES,
 } from "../../../data/genres";
+import { viabilityClass } from "./helpers";
 import styles from "./GenreGuide.module.css";
 
 interface ExposureMatrixProps {
@@ -54,11 +55,7 @@ function ExposureMatrix({
                   const marginal = !viable && needed <= iso * 2;
                   const label =
                     maxT >= 60 ? `${Math.round(maxT / 60)}m` : `${maxT}s`;
-                  const cls = viable
-                    ? styles.matrixViable
-                    : marginal
-                      ? styles.matrixMarginal
-                      : styles.matrixOver;
+                  const cls = viabilityClass(viable, marginal, styles);
                   return (
                     <td key={fl} className={`${styles.matrixCell} ${cls}`}>
                       {label}

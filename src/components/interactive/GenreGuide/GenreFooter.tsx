@@ -1,8 +1,8 @@
-import type { ScoredGenre } from "../../../types/genre";
+import type { Genre } from "../../../types/genre";
 import styles from "./GenreGuide.module.css";
 
 interface GenreFooterProps {
-  genre: ScoredGenre;
+  genre: Genre;
 }
 
 function GenreFooter({ genre }: GenreFooterProps): React.JSX.Element {

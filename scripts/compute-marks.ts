@@ -1,9 +1,9 @@
 import { lenses } from "../src/data/lenses";
 import { computeAllGenreMarks } from "../src/utils/scoring";
-import type { ScoredGenre } from "../src/types/genre";
+import type { Genre } from "../src/types/genre";
 import * as fs from "fs";
 
-const GENRES: ScoredGenre[] = [
+const GENRES: Genre[] = [
   "nightscape",
   "landscape",
   "architecture",
@@ -21,7 +21,7 @@ const mode = process.argv[2] || "print";
 const results: Array<{
   brand: string;
   model: string;
-  marks: Partial<Record<ScoredGenre, number>>;
+  marks: Partial<Record<Genre, number>>;
 }> = [];
 
 for (const lens of lenses) {

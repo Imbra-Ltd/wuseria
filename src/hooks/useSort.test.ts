@@ -63,6 +63,26 @@ describe("useSort", () => {
     expect(result.current.sorted.map((i) => i.name)).toEqual(["A", "C", "B"]);
   });
 
+  it("sorts booleans ascending (false before true)", () => {
+    const boolItems = [
+      { name: "A", price: 1, year: 2020, hasOis: true },
+      { name: "B", price: 2, year: 2021, hasOis: false },
+      { name: "C", price: 3, year: 2022, hasOis: true },
+    ];
+    const { result } = renderHook(() => useSort(boolItems, "hasOis"));
+    expect(result.current.sorted.map((i) => i.name)).toEqual(["B", "A", "C"]);
+  });
+
+  it("sorts booleans descending (true before false)", () => {
+    const boolItems = [
+      { name: "A", price: 1, year: 2020, hasOis: false },
+      { name: "B", price: 2, year: 2021, hasOis: true },
+      { name: "C", price: 3, year: 2022, hasOis: false },
+    ];
+    const { result } = renderHook(() => useSort(boolItems, "hasOis", "desc"));
+    expect(result.current.sorted.map((i) => i.name)).toEqual(["B", "A", "C"]);
+  });
+
   it("handles null values by sorting them last", () => {
     const withNulls = [
       { name: "A", price: null as unknown as number, year: 2020 },

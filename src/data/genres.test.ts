@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 import { genreConfigs } from "./genres";
-import type { ScoredGenre } from "../types/genre";
+import type { Genre } from "../types/genre";
 
 // =============================================================================
 // GENRE CONFIGS
 // =============================================================================
 
-const ALL_GENRES: ScoredGenre[] = [
+const ALL_GENRES: Genre[] = [
   "nightscape",
   "landscape",
   "architecture",

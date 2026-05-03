@@ -1,4 +1,4 @@
-import type { ScoredGenre } from "../../../types/genre";
+import type { Genre } from "../../../types/genre";
 import type { Brand, Mount } from "../../../types/common";
 
 interface GenreLens {
@@ -16,8 +16,8 @@ interface GenreLens {
   isDiscontinued?: boolean;
   weight: number;
   price: number;
-  genreMarks?: Partial<Record<ScoredGenre, number>>;
-  editorialPicks?: ScoredGenre[];
+  genreMarks?: Partial<Record<Genre, number>>;
+  editorialPicks?: Genre[];
   centerStopped?: number;
   cornerStopped?: number;
   centerWideOpen?: number;
@@ -32,7 +32,7 @@ interface GenreLens {
 
 interface GenreGuideProps {
   lenses: GenreLens[];
-  defaultGenre?: ScoredGenre;
+  defaultGenre?: Genre;
 }
 
 type SortKey =
@@ -67,7 +67,7 @@ interface EnrichedLens {
   effectiveFl: number;
 }
 
-const SCORED_GENRES: ScoredGenre[] = [
+const SCORED_GENRES: Genre[] = [
   "nightscape",
   "landscape",
   "architecture",

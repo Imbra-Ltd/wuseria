@@ -4,15 +4,19 @@ import styles from "../GenreGuide/GenreGuide.module.css";
 // FIELD VALUE — 0-2 scale with traffic-light color
 // =============================================================================
 
+function fieldValClass(value: number): string {
+  if (value >= 1.5) return styles.fieldViable; // green — good optical performance
+  if (value >= 1.0) return styles.fieldMarginal; // amber — acceptable
+  return styles.fieldOver; // red — poor
+}
+
 function FieldVal({ value }: { value: number | undefined }) {
   if (value == null) return <span className={styles.markDash}>&ndash;</span>;
-  const cls =
-    value >= 1.5
-      ? styles.fieldViable // green — good optical performance
-      : value >= 1.0
-        ? styles.fieldMarginal // amber — acceptable
-        : styles.fieldOver; // red — poor
-  return <span className={`${cls} ${styles.fieldMono}`}>{value}</span>;
+  return (
+    <span className={`${fieldValClass(value)} ${styles.fieldMono}`}>
+      {value}
+    </span>
+  );
 }
 
 // =============================================================================

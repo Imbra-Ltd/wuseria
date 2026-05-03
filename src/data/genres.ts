@@ -1,11 +1,11 @@
-import type { ScoredGenre, GenreConfig } from "../types/genre";
+import type { Genre, GenreConfig } from "../types/genre";
 import type { EvScene } from "../types/common";
 
 // =============================================================================
 // GENRE CONFIGS — ported from prototype GENRE_PARAMS (App.jsx:427-436)
 // =============================================================================
 
-const genreConfigs: Record<ScoredGenre, GenreConfig> = {
+const genreConfigs: Record<Genre, GenreConfig> = {
   nightscape: {
     genre: "nightscape",
     name: "Nightscape Photography",
@@ -118,7 +118,7 @@ const evScenes: EvScene[] = [
 // GENRE EV LABELS — per-genre overrides (App.jsx:339-424)
 // =============================================================================
 
-const genreEvLabels: Partial<Record<ScoredGenre, Record<number, string>>> = {
+const genreEvLabels: Partial<Record<Genre, Record<number, string>>> = {
   nightscape: {
     1: "City center (Bortle 8-9)",
     0: "Bright suburb (Bortle 7)",
@@ -233,7 +233,7 @@ const genreEvLabels: Partial<Record<ScoredGenre, Record<number, string>>> = {
 // GENRE SCENE FILTER — EV range per genre (App.jsx:1964-1973)
 // =============================================================================
 
-const genreSceneFilter: Record<ScoredGenre, (ev: number) => boolean> = {
+const genreSceneFilter: Record<Genre, (ev: number) => boolean> = {
   nightscape: (ev) => ev <= 1,
   landscape: (ev) => ev >= 7 && ev <= 16,
   architecture: (ev) => ev >= 3 && ev <= 12,
@@ -359,10 +359,7 @@ const FL_RANGES_GFX: Record<number, [number, number]> = {
 // GENRE DEFAULTS — initial EV, ISO, FL per genre
 // =============================================================================
 
-const GENRE_DEFAULTS: Record<
-  ScoredGenre,
-  { ev: number; iso: number; fl: number }
-> = {
+const GENRE_DEFAULTS: Record<Genre, { ev: number; iso: number; fl: number }> = {
   nightscape: { ev: -7, iso: 3200, fl: 12 },
   landscape: { ev: 9, iso: 100, fl: 24 },
   architecture: { ev: 7, iso: 200, fl: 12 },

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import type { ScoredGenre } from "../../../types/genre";
+import type { Genre } from "../../../types/genre";
 import {
   evScenes,
   genreSceneFilter,
@@ -12,8 +12,8 @@ import {
 } from "../../../data/genres";
 import type { SortKey } from "./types";
 
-function useGenreState(defaultGenre: ScoredGenre) {
-  const [genre, setGenre] = useState<ScoredGenre>(defaultGenre);
+function useGenreState(defaultGenre: Genre) {
+  const [genre, setGenre] = useState<Genre>(defaultGenre);
   const defaults = GENRE_DEFAULTS[genre];
   const [ev, setEv] = useState(defaults.ev);
   const [iso, setIso] = useState(defaults.iso);
@@ -51,7 +51,7 @@ function useGenreState(defaultGenre: ScoredGenre) {
   const FL_CHIPS = cropFactor === 0.79 ? FL_CHIPS_GFX : FL_CHIPS_X;
   const FL_RANGES = cropFactor === 0.79 ? FL_RANGES_GFX : FL_RANGES_X;
 
-  function handleGenreChange(g: ScoredGenre): void {
+  function handleGenreChange(g: Genre): void {
     setGenre(g);
     const d = GENRE_DEFAULTS[g];
     setEv(d.ev);

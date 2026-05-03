@@ -1,7 +1,7 @@
 import { lenses } from "../src/data/lenses";
-import type { ScoredGenre } from "../src/types/genre";
+import type { Genre } from "../src/types/genre";
 
-const genres: ScoredGenre[] = [
+const genres: Genre[] = [
   "nightscape",
   "landscape",
   "architecture",
