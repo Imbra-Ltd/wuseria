@@ -1037,3 +1037,25 @@ Upstream flagged (solid-ai-templates):
 - #135 — Lychee needs --root-dir for static sites
 - #136 — Three code review checks from post-mortem
 - #137 — Post-mortem convention for P0/P1 bugs and incidents
+
+---
+
+### Session 30 — Phase 2 UI & UX Closeout
+
+PRs merged: #484 (table column stability + URL filters), #486 (column width tuning)
+Issues closed: #483, #478
+Issues created: #485 (homepage redesign epic)
+Issues deferred: #477 (changelog → folded into #485)
+
+Key changes:
+
+- Stabilized explorer table column widths using `table-layout: fixed` with `<colgroup>` percentage widths — eliminates layout shift on sort
+- Added `ColumnDef<K>` interface to shared table utilities — centralizes key, label, align, and width per column
+- Replaced 11 `useState` calls in CameraExplorer and 6 in AccessoriesExplorer with `useUrlFilters` hook — filter state now syncs to URL for shareable links, matching LensExplorer pattern
+- Tuned lens table column proportions: Brand 12%, Model 22%, FL 8% — prevents clipping on zoom focal lengths and long brand names
+
+Key decisions:
+
+- Homepage changelog (#477) deferred — user wants a broader homepage redesign with three-column layout and feature voting (#485), changelog will be part of that
+- `table-layout: fixed` chosen over `min-width` approach — fully prevents width shifts vs only reducing them
+- Percentage-based colgroup widths — totals intentionally under 100% (90%) to let browser distribute remaining space as padding
