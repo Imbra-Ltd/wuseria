@@ -1134,3 +1134,30 @@ Upstream candidates for solid-ai-templates:
 - `test:report` as a MAY command in stack templates (HTML coverage + test results)
 - `it.fails` pattern for known data gaps (expected failures that auto-flag when fixed)
 - Local report generation convention for CI-only tools (Lighthouse, lychee, gitleaks)
+
+---
+
+### Session 32 — Developer Tooling Refactors
+
+**Date:** 2026-05-03
+**Tool:** Claude Code (Opus 4.6)
+
+PRs merged: #495 (shared utils + MarkPips styles), #496 (journal metadata)
+Issues closed: #318, #319, #417, #479
+Issues moved: #491 → Phase 4
+
+Key changes:
+
+- Extracted `formatCategory` + `CATEGORY_LABELS` to `src/utils/formatting.ts` — eliminated duplication between AccessoriesExplorer and [slug].astro
+- Moved MarkPips styles to `shared/MarkPips.module.css` — no longer imports sibling's CSS module
+- Removed dead `.sweetSpot` CSS class from GenreGuide.module.css
+- Added `formatCategory` tests (175 total, 94.9% coverage)
+- Added PLAYBOOK section 2.11 — Umami analytics verification checklist (4-step manual test)
+- Retroactively added `**Date:**` and `**Tool:**` metadata to all 31 session entries
+- Manually verified Umami tracking: script loads, page views register, no duplicates with View Transitions
+
+Key decisions:
+
+- MarkPips gets its own CSS module (not styles-as-prop) — simpler than threading styles through all consumers; convention satisfied by owning the module rather than importing a sibling's
+- Umami integration is structurally sound — `is:inline` + `defer` in head, auto-tracks SPA navigations
+- developer.md (#491) deferred to Phase 4 — not needed until contributors join
