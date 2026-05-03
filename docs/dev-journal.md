@@ -960,3 +960,32 @@ Upstream feedback for solid-ai-templates:
 
 - `platform/github.md` SHOULD recommend Dependabot (solid-ai-templates#131)
 - Stack quality gates SHOULD include `eslint-plugin-sonarjs` for cognitive complexity (solid-ai-templates#130)
+
+---
+
+### Session 28 — Resolve Sonarjs Warnings
+
+PRs merged:
+
+- #465 — Resolve all sonarjs warnings and fix boolean sorting
+
+Issues closed: #460, #463
+Issues created: #463 (bug: boolean sort), #464 (task: home page redesign)
+
+Key changes:
+
+- Resolved all 33 sonarjs warnings across 34 files
+- Promoted 4 sonarjs rules from `warn` to `error` in eslint config
+- Removed redundant `ScoredGenre` type alias — replaced with `Genre` everywhere
+- Extracted shared helpers: `ariaSortValue`, `sortIndicatorChar` (table.ts), `viabilityClass`, `landscapeCatClass` (helpers.ts)
+- Extracted filter predicates (`passesExactFilter`, `passesBooleanFilter`, `passesRangeFilter`, etc.) to reduce cognitive complexity in all 3 explorers and genre guide
+- Replaced `compareLenses` switch with data-driven `SORT_GETTERS` lookup
+- Converted `GenreRowCells` if-chain to switch, extracted `dotClass` and `formatSweetSpot` helpers
+- Extracted `compareValues` in `useSort` hook — fixed pre-existing bug where boolean columns (OIS, WR) were not sortable
+- 134 tests passing (132 + 2 new boolean sort tests), 458 pages built
+
+Key decisions:
+
+- Data-driven sort comparator over switch — eliminates cognitive complexity from case proliferation
+- Composable filter predicates over inline conditionals — each predicate is independently testable and reduces `&&` operator complexity
+- `ScoredGenre` removal — all genres now have scoring formulas, the alias served no purpose
