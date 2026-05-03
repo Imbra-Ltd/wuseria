@@ -51,8 +51,14 @@ function useSort<T, K extends string & keyof T>(
         if (pre !== 0) return pre;
       }
 
-      const aVal = a[sort.key as keyof T];
-      const bVal = b[sort.key as keyof T];
+      let aVal = a[sort.key as keyof T];
+      let bVal = b[sort.key as keyof T];
+
+      // Treat undefined booleans as false so they sort with the group
+      if (descFirstKeys?.has(sort.key)) {
+        aVal = (aVal ?? false) as typeof aVal;
+        bVal = (bVal ?? false) as typeof bVal;
+      }
 
       // Nulls always last, regardless of direction
       if (aVal == null && bVal == null) return 0;
