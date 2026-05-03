@@ -273,6 +273,56 @@ Open either in a browser. The `reports/` directory is gitignored.
 | `src/components/interactive/GenreGuide/GenreGuide.test.tsx`         | Genre tabs, filters, matrices                  |
 | `src/components/interactive/GenreGuide/exposure.test.ts`            | Exposure calculations                          |
 
+### 2.11 Analytics verification (Umami)
+
+Umami Cloud tracks page views with zero cookies and no consent banner.
+The script loads from `cloud.umami.is` via the base layout. Run this
+manual check after changes to navigation, View Transitions, or the
+analytics integration.
+
+**Prerequisites:**
+
+- Access to https://cloud.umami.is/ (login credentials)
+- Chrome DevTools (or equivalent)
+
+**Step 1 — Script loads:**
+
+1. Open https://wuseria.com
+2. DevTools → Network → filter `script.js`
+3. Refresh the page
+
+Expected: `cloud.umami.is/script.js` returns **200 OK**, ~5-6 KB.
+No console errors.
+
+**Step 2 — Page views register:**
+
+1. Open the Umami dashboard → select wuseria.com → Realtime view
+2. Navigate through several pages: Lenses → Cameras → Genre → Wiki →
+   any individual lens detail page
+3. Check the dashboard
+
+Expected: each page path appears (`/lenses/`, `/cameras/`, `/genre/`,
+`/wiki/`, `/lenses/[slug]`). Count matches pages visited.
+
+**Step 3 — No duplicate events:**
+
+1. DevTools → Network → clear the log
+2. Click one navigation link (e.g. Cameras)
+3. Filter by `cloud.umami.is`
+
+Expected: exactly **1 `send`** request per navigation. If 2+ fire
+for a single click, that's a duplicate event bug.
+
+**Step 4 — Fresh page load:**
+
+1. Clear the Network log
+2. Type `wuseria.com` in the address bar and press Enter (full load)
+3. Filter by `cloud.umami.is`
+
+Expected: `script.js` + exactly **1 `send`** request.
+
+**Last verified:** 2026-05-03 — all checks pass.
+
 ## 3. Maintenance
 
 ### 3.1 Update quality conventions
