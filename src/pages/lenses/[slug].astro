@@ -79,6 +79,7 @@ const jsonLd = {
   description={`Is the ${lens.brand} ${lens.model} right for your genre? Optical quality scores, specs, and lab-tested performance data.`}
 >
   <script
+    is:inline
     slot="head"
     type="application/ld+json"
     set:html={JSON.stringify(jsonLd)}

@@ -49,6 +49,7 @@ const jsonLd = {
   description={`Everything you need to know about the Fujifilm ${camera.model}. Sensor, resolution, weight, and key features at a glance.`}
 >
   <script
+    is:inline
     slot="head"
     type="application/ld+json"
     set:html={JSON.stringify(jsonLd)}

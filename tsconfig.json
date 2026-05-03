@@ -1,4 +1,4 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "exclude": ["coverage", "dist"]
+  "exclude": ["coverage", "dist", "docs/prototype"]
 }
