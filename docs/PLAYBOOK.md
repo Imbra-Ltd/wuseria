@@ -182,12 +182,15 @@ Lighthouse runs automatically on every PR against 4 key pages
 | SEO            | >= 90     | warn  |
 | Best Practices | >= 90     | warn  |
 
-Results are uploaded as GitHub Actions artifacts. To run locally:
+**Run locally:**
 
 ```bash
-npm run build
-npx @lhci/cli autorun --config lighthouserc.json
+npm run lighthouse
 ```
+
+This builds the site and runs Lighthouse against all 4 pages (3 runs each).
+HTML reports are written to `reports/lighthouse/` — open any `.report.html`
+in a browser for full scores, diagnostics, and opportunities.
 
 ### 2.8 Testing
 
