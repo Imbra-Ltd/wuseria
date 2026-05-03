@@ -13,6 +13,94 @@ import { LensFilters } from "./LensFilters";
 import { LensResults } from "./LensResults";
 import styles from "./LensExplorer.module.css";
 
+function passesBooleanFilter(
+  filter: string,
+  value: boolean | undefined,
+): boolean {
+  if (filter === "yes") return !!value;
+  if (filter === "no") return !value;
+  return true;
+}
+
+function passesStatusFilter(
+  filter: string,
+  isDiscontinued: boolean | undefined,
+): boolean {
+  if (filter === "available") return !isDiscontinued;
+  if (filter === "discontinued") return !!isDiscontinued;
+  return true;
+}
+
+function passesFlFilter(lens: ExplorerLens, fl: string): boolean {
+  if (!fl) return true;
+  const [min, max] = FL_RANGES[fl];
+  return lens.focalLengthMax >= min && lens.focalLengthMin <= max;
+}
+
+function passesThreadFilter(
+  filterThread: number | null | undefined,
+  thread: string,
+): boolean {
+  if (!thread) return true;
+  if (thread === "none") return filterThread == null;
+  return filterThread === Number(thread);
+}
+
+function passesOqFilter(
+  oq: number | null | undefined,
+  filter: string,
+): boolean {
+  if (!filter) return true;
+  if (filter === "not-scored") return oq == null;
+  const [min, max] = OQ_RANGES[filter];
+  return oq != null && oq >= min && oq <= max;
+}
+
+function passesRangeFilter(
+  value: number,
+  filter: string,
+  ranges: Record<string, [number, number]>,
+): boolean {
+  if (!filter) return true;
+  const [min, max] = ranges[filter];
+  return value >= min && value <= max;
+}
+
+function passesExactFilter(value: string, filter: string): boolean {
+  return !filter || value === filter;
+}
+
+function passesMaxFilter(value: number, filter: string): boolean {
+  if (!filter) return true;
+  return value <= parseFloat(filter);
+}
+
+function passesSearchFilter(text: string, query: string): boolean {
+  if (!query) return true;
+  return text.toLowerCase().includes(query.toLowerCase());
+}
+
+function matchesLensFilters(
+  lens: ExplorerLens,
+  f: Record<string, string>,
+): boolean {
+  return (
+    passesExactFilter(lens.mount, f.mount) &&
+    passesExactFilter(lens.type, f.type) &&
+    passesExactFilter(lens.brand, f.brand) &&
+    passesBooleanFilter(f.ois, lens.hasOis) &&
+    passesBooleanFilter(f.wr, lens.isWeatherSealed) &&
+    passesBooleanFilter(f.af, !!lens.afMotor) &&
+    passesStatusFilter(f.status, lens.isDiscontinued) &&
+    passesFlFilter(lens, f.fl) &&
+    passesMaxFilter(lens.maxAperture, f.aperture) &&
+    passesThreadFilter(lens.filterThread, f.thread) &&
+    passesOqFilter(lens.opticalQuality, f.oq) &&
+    passesRangeFilter(lens.price, f.price, PRICE_RANGES) &&
+    passesSearchFilter(`${lens.brand} ${lens.model}`, f.q)
+  );
+}
+
 const FILTER_KEYS = [
   "q",
   "mount",
@@ -53,53 +141,10 @@ function LensExplorer({ lenses }: LensExplorerProps) {
     return [...new Set(pool.map((l) => l.brand))].sort();
   }, [lenses, f.mount]);
 
-  const filtered = useMemo(() => {
-    const q = f.q.toLowerCase();
-    return lenses.filter((lens) => {
-      if (f.mount && lens.mount !== f.mount) return false;
-      if (f.type && lens.type !== f.type) return false;
-      if (f.brand && lens.brand !== f.brand) return false;
-      if (f.ois === "yes" && !lens.hasOis) return false;
-      if (f.ois === "no" && lens.hasOis) return false;
-      if (f.wr === "yes" && !lens.isWeatherSealed) return false;
-      if (f.wr === "no" && lens.isWeatherSealed) return false;
-      if (f.af === "yes" && !lens.afMotor) return false;
-      if (f.af === "no" && lens.afMotor) return false;
-      if (f.status === "available" && lens.isDiscontinued) return false;
-      if (f.status === "discontinued" && !lens.isDiscontinued) return false;
-      if (f.fl) {
-        const [min, max] = FL_RANGES[f.fl];
-        if (lens.focalLengthMax < min || lens.focalLengthMin > max)
-          return false;
-      }
-      if (f.aperture && lens.maxAperture > parseFloat(f.aperture)) return false;
-      if (f.thread === "none" && lens.filterThread != null) return false;
-      if (
-        f.thread &&
-        f.thread !== "none" &&
-        lens.filterThread !== Number(f.thread)
-      )
-        return false;
-      if (f.oq === "not-scored") {
-        if (lens.opticalQuality != null) return false;
-      } else if (f.oq) {
-        const [min, max] = OQ_RANGES[f.oq];
-        if (
-          lens.opticalQuality == null ||
-          lens.opticalQuality < min ||
-          lens.opticalQuality > max
-        )
-          return false;
-      }
-      if (f.price) {
-        const [min, max] = PRICE_RANGES[f.price];
-        if (lens.price < min || lens.price > max) return false;
-      }
-      if (q && !`${lens.brand} ${lens.model}`.toLowerCase().includes(q))
-        return false;
-      return true;
-    });
-  }, [lenses, f]);
+  const filtered = useMemo(
+    () => lenses.filter((lens) => matchesLensFilters(lens, f)),
+    [lenses, f],
+  );
 
   const availableFirst = useCallback(
     (a: ExplorerLens, b: ExplorerLens) =>

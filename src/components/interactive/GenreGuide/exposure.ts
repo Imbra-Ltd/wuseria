@@ -1,5 +1,5 @@
 import type { GenreLens } from "./types";
-import type { ScoredGenre } from "../../../types/genre";
+import type { Genre } from "../../../types/genre";
 
 // =============================================================================
 // RESULT TYPES
@@ -49,7 +49,7 @@ function astroExposure(
 
 function handheldExposure(
   lens: GenreLens,
-  genre: ScoredGenre,
+  genre: Genre,
   ev: number,
   crop: number,
   magnification?: number,

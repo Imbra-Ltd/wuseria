@@ -31,6 +31,14 @@ if (missingMfd.length > 0) {
   }
 }
 
+function magScore(mag: number): string {
+  if (mag >= 1.0) return "2.0";
+  if (mag >= 0.5) return "1.5";
+  if (mag >= 0.25) return "1.0";
+  if (mag >= 0.15) return "0.5";
+  return "0.0";
+}
+
 console.log("=== All scored lenses mag/mfd ===");
 for (const l of scored) {
   const a = l as unknown as Record<string, unknown>;
@@ -43,14 +51,6 @@ for (const l of scored) {
       " mfd=" +
       String(mfd).padEnd(6) +
       " magScore=" +
-      (mag >= 1.0
-        ? "2.0"
-        : mag >= 0.5
-          ? "1.5"
-          : mag >= 0.25
-            ? "1.0"
-            : mag >= 0.15
-              ? "0.5"
-              : "0.0"),
+      magScore(mag),
   );
 }

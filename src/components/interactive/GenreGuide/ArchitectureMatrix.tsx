@@ -4,6 +4,7 @@ import {
   MATRIX_APERTURES,
 } from "../../../data/genres";
 import { formatShutter } from "../../../utils/formatting";
+import { landscapeCatClass } from "./helpers";
 import styles from "./GenreGuide.module.css";
 
 interface ArchitectureMatrixProps {
@@ -56,14 +57,7 @@ function ArchitectureMatrix({
                     const t =
                       ((ap * ap * 100) / (iso * Math.pow(2, ev))) * ndFactor;
                     // Architecture: frozen (≤1/60s), blur (≤30s), vanish (>30s)
-                    const cat =
-                      t <= 1 / 60 ? "frozen" : t <= 30 ? "blur" : "vanish";
-                    const cls =
-                      cat === "frozen"
-                        ? styles.lsStatic
-                        : cat === "blur"
-                          ? styles.lsSilk
-                          : styles.lsDramatic;
+                    const cls = landscapeCatClass(t, 1 / 60, 30, styles);
                     return (
                       <td key={fl} className={`${styles.matrixCell} ${cls}`}>
                         {formatShutter(t)}

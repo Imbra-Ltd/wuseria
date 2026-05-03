@@ -3,6 +3,7 @@ import {
   MATRIX_FL_COLS_GFX,
   MATRIX_APERTURES,
 } from "../../../data/genres";
+import { viabilityClass } from "./helpers";
 import styles from "./GenreGuide.module.css";
 
 interface HandheldMatrixProps {
@@ -78,11 +79,7 @@ function HandheldMatrix({
                     minS >= 1
                       ? `${Math.round(minS)}s`
                       : `1/${Math.round(1 / minS)}`;
-                  const cls = viable
-                    ? styles.matrixViable
-                    : marginal
-                      ? styles.matrixMarginal
-                      : styles.matrixOver;
+                  const cls = viabilityClass(viable, marginal, styles);
                   return (
                     <td key={fl} className={`${styles.matrixCell} ${cls}`}>
                       {label}

@@ -1,9 +1,9 @@
-import type { ScoredGenre } from "../../../types/genre";
+import type { Genre } from "../../../types/genre";
 import type { SortKey } from "./types";
 
 type ColumnDef = [SortKey, string, boolean?];
 
-function getColumnDefs(genre: ScoredGenre): ColumnDef[] {
+function getColumnDefs(genre: Genre): ColumnDef[] {
   const common: ColumnDef[] = [
     ["mark", "Mark"],
 

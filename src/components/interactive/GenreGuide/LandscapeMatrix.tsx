@@ -4,6 +4,7 @@ import {
   MATRIX_APERTURES,
 } from "../../../data/genres";
 import { formatShutter } from "../../../utils/formatting";
+import { landscapeCatClass } from "./helpers";
 import styles from "./GenreGuide.module.css";
 
 interface LandscapeMatrixProps {
@@ -57,14 +58,7 @@ function LandscapeMatrix({
                   {cols.map((fl) => {
                     const t =
                       ((ap * ap * 100) / (iso * Math.pow(2, ev))) * ndFactor;
-                    const cat =
-                      t < 1 ? "static" : t <= 30 ? "silk" : "dramatic";
-                    const cls =
-                      cat === "static"
-                        ? styles.lsStatic
-                        : cat === "silk"
-                          ? styles.lsSilk
-                          : styles.lsDramatic;
+                    const cls = landscapeCatClass(t, 1, 30, styles);
                     return (
                       <td key={fl} className={`${styles.matrixCell} ${cls}`}>
                         {formatShutter(t)}

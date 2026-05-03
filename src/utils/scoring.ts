@@ -1,5 +1,5 @@
 import type { Lens } from "../types/lens";
-import type { Genre, ScoredGenre } from "../types/genre";
+import type { Genre } from "../types/genre";
 import { genreConfigs } from "../data/genres";
 
 // =============================================================================
@@ -41,7 +41,7 @@ interface GenreFormula {
   secondary: ScoringField[];
 }
 
-const genreFormulas: Record<ScoredGenre, GenreFormula> = {
+const genreFormulas: Record<Genre, GenreFormula> = {
   nightscape: {
     primary: ["coma", "astigmatism", "_apertureScore"],
     secondary: [
@@ -178,7 +178,7 @@ interface ScoreResult {
  * Compute the genre mark for a lens using the primary floor + weighted
  * average algorithm. Returns null if the lens lacks sufficient data.
  */
-function computeGenreMark(lens: Lens, genre: ScoredGenre): ScoreResult | null {
+function computeGenreMark(lens: Lens, genre: Genre): ScoreResult | null {
   // Must have optical data at all
   if (lens.centerStopped == null) return null;
 
@@ -224,11 +224,9 @@ function computeGenreMark(lens: Lens, genre: ScoredGenre): ScoreResult | null {
  * Compute genre marks for all genres that a lens qualifies for.
  * Returns a partial record of genre → mark.
  */
-function computeAllGenreMarks(
-  lens: Lens,
-): Partial<Record<ScoredGenre, number>> {
-  const marks: Partial<Record<ScoredGenre, number>> = {};
-  for (const genre of Object.keys(genreFormulas) as ScoredGenre[]) {
+function computeAllGenreMarks(lens: Lens): Partial<Record<Genre, number>> {
+  const marks: Partial<Record<Genre, number>> = {};
+  for (const genre of Object.keys(genreFormulas) as Genre[]) {
     const result = computeGenreMark(lens, genre);
     if (result != null) {
       marks[genre] = result.mark;
@@ -242,24 +240,24 @@ function computeAllGenreMarks(
 // =============================================================================
 
 /** Get the genre mark for a lens. Returns null if not scored. */
-function getGenreMark(lens: Lens, genre: ScoredGenre): number | null {
+function getGenreMark(lens: Lens, genre: Genre): number | null {
   return lens.genreMarks?.[genre] ?? null;
 }
 
 /** Is this lens an editorial pick for the genre? */
-function isEditorialPick(lens: Lens, genre: ScoredGenre): boolean {
+function isEditorialPick(lens: Lens, genre: Genre): boolean {
   return lens.editorialPicks?.includes(genre) ?? false;
 }
 
 /** All lenses scored for a genre, sorted by mark descending. */
-function lensesForGenre(lenses: Lens[], genre: ScoredGenre): Lens[] {
+function lensesForGenre(lenses: Lens[], genre: Genre): Lens[] {
   return lenses
     .filter((l) => l.genreMarks?.[genre] != null)
     .sort((a, b) => b.genreMarks![genre]! - a.genreMarks![genre]!);
 }
 
 /** Check whether a genre has scoring data. */
-function isScoredGenre(genre: Genre): genre is ScoredGenre {
+function isGenre(genre: Genre): genre is Genre {
   return genre in genreConfigs;
 }
 
@@ -337,7 +335,7 @@ export {
   getGenreMark,
   isEditorialPick,
   lensesForGenre,
-  isScoredGenre,
+  isGenre,
 };
 
 export type { ScoreResult, GenreFormula, ScoringField, OpticalField };

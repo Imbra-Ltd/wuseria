@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { Lens } from "../types/lens";
-import type { Genre, ScoredGenre } from "../types/genre";
+import type { Genre } from "../types/genre";
 import { lenses } from "../data/lenses";
 import { makeLens } from "../test/factories";
 import {
@@ -16,7 +16,7 @@ import {
   getGenreMark,
   isEditorialPick,
   lensesForGenre,
-  isScoredGenre,
+  isGenre,
 } from "./scoring";
 
 function findLens(model: string): Lens {
@@ -257,7 +257,7 @@ describe("computeAllGenreMarks", () => {
 describe("genre mark snapshots", () => {
   const snapshots: Array<{
     model: string;
-    genre: ScoredGenre;
+    genre: Genre;
     mark: number;
   }> = [
     // Landscape
@@ -396,7 +396,7 @@ describe("lensesForGenre", () => {
   });
 });
 
-describe("isScoredGenre", () => {
+describe("isGenre", () => {
   it("returns true for all 9 genres", () => {
     const genres: Genre[] = [
       "nightscape",
@@ -410,7 +410,7 @@ describe("isScoredGenre", () => {
       "macro",
     ];
     for (const g of genres) {
-      expect(isScoredGenre(g)).toBe(true);
+      expect(isGenre(g)).toBe(true);
     }
   });
 });

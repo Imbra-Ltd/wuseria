@@ -1,5 +1,5 @@
 import type { Mount, Brand } from "./common";
-import type { ScoredGenre } from "./genre";
+import type { Genre } from "./genre";
 import type { ReviewSource } from "./review";
 
 // =============================================================================
@@ -128,8 +128,8 @@ interface Lens {
   // GENRE SCORING
   // ===========================================================================
 
-  genreMarks?: Partial<Record<ScoredGenre, number>>;
-  editorialPicks?: ScoredGenre[];
+  genreMarks?: Partial<Record<Genre, number>>;
+  editorialPicks?: Genre[];
 
   // ===========================================================================
   // REVIEW SOURCES — URLs keyed by source, highest-rigour source was used
