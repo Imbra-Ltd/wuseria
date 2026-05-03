@@ -989,3 +989,51 @@ Key decisions:
 - Data-driven sort comparator over switch — eliminates cognitive complexity from case proliferation
 - Composable filter predicates over inline conditionals — each predicate is independently testable and reduces `&&` operator complexity
 - `ScoredGenre` removal — all genres now have scoring formulas, the alias served no purpose
+
+---
+
+### Session 29 — Developer Tooling + Bug Fixes
+
+PRs merged:
+
+- #467 — Add gitleaks, CodeQL, lychee link checking; upgrade ESLint 9→10, TS 5→6; ADR-020
+- #468 — Sort nulls last regardless of direction; guard range filters against invalid URL params
+- #469 — Preserve Astro history state in useUrlFilters replaceState
+- #470 — Show all lenses on sort (reverted in #472 — pagination workaround, not the real fix)
+- #472 — Boolean columns start descending on first click; coerce undefined to false for sort
+
+Issues closed: #452, #455, #456, #457, #458, #459, #471
+Issues created: #471 (bug: boolean sort default direction), #473 (task: fill missing OIS/WR data), #474 (task: data distribution tests), #475 (task: factory defaults)
+
+Key changes:
+
+- CI: gitleaks secret detection (CLI, not paid action), CodeQL SAST, lychee link checking with --root-dir
+- Toolchain: ESLint 9→10, TypeScript 5→6, @astrojs/check 0.9.8→0.9.9
+- ADR-020: defer code quality platform (SonarCloud) until 3+ contributors
+- useSort: nulls always last (direction-independent), descFirstKeys for boolean columns, undefined→false coercion
+- useUrlFilters: replaceState preserves Astro's ClientRouter history.state
+- Range filters: guard against invalid URL params across all three explorers
+
+Bug post-mortem — #471 (OIS/WR column sort not toggling):
+
+- Symptom: clicking OIS column header twice showed same order both times
+- Root cause: zero lenses had hasOis: false — only true or undefined. Null-last logic put undefined at end regardless of direction, making asc/desc identical
+- Why missed: test factories used explicit false values that didn't exist in production data; compareValues refactoring (#465) moved null checks inside function but test only covered ascending
+- Fix: coerce undefined to false for boolean sort columns (descFirstKeys); start boolean columns descending
+- Prevention: #474 (data distribution tests), #475 (factory defaults mirror real data), solid-ai-templates#136 (review checks)
+
+Key decisions:
+
+- Gitleaks CLI over gitleaks-action — action requires paid license for org repos
+- Test coverage threshold (#457) already enforced — closed without changes
+- Pagination expansion on sort reverted — undefined→false coercion is the real fix; expansion won't scale to thousands of lenses
+- descFirstKeys parameter on useSort — boolean columns start true-first, matching user intent
+
+Upstream flagged (solid-ai-templates):
+
+- #132 — Factory defaults + data validation conventions
+- #133 — Boolean columns sort descending first
+- #134 — Pagination expands on sort (closed — workaround, not convention)
+- #135 — Lychee needs --root-dir for static sites
+- #136 — Three code review checks from post-mortem
+- #137 — Post-mortem convention for P0/P1 bugs and incidents
