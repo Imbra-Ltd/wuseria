@@ -1161,3 +1161,36 @@ Key decisions:
 - MarkPips gets its own CSS module (not styles-as-prop) — simpler than threading styles through all consumers; convention satisfied by owning the module rather than importing a sibling's
 - Umami integration is structurally sound — `is:inline` + `defer` in head, auto-tracks SPA navigations
 - developer.md (#491) deferred to Phase 4 — not needed until contributors join
+
+---
+
+### Session 33 — Developer Tooling Milestone Closure
+
+**Date:** 2026-05-03
+**Tool:** Claude Code (Opus 4.6)
+
+PRs:
+
+- #498 — ADR-021: set:html exception for JSON-LD injection (closes #324)
+- #499 — Replace README contributor workflows with user-facing Usage section (closes #338)
+
+Issues closed (wontdo):
+
+- #40 — Lens template snippet (TypeScript strict mode provides the guardrail)
+- #332 — CONTRIBUTING.md (YAGNI — solo maintainer)
+- #480 — Commit hash in footer (information disclosure concern)
+- #481 — Release process / manual testing gates (CI gates sufficient)
+- #482 — Deploy pipeline on/off switch (YAGNI)
+
+Key changes:
+
+- Epic #47 (Developer Tooling) completed and closed
+- Phase 2 — Developer Tooling milestone closed (39 issues total)
+- Bundle size monitoring marked as covered by Lighthouse CI performance gate
+- README now has proper user-facing Usage section per base/readme.md
+
+Key decisions:
+
+- ADR-021: set:html allowed exclusively for JSON-LD via JSON.stringify() of server-controlled data
+- Commit hash in footer rejected on security grounds (unnecessary information disclosure)
+- Deploy switch, release gates, CONTRIBUTING.md all rejected as YAGNI for solo-maintained static site
