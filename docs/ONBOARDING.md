@@ -26,8 +26,9 @@ already cloned without it, run `git submodule update --init`.
 npm run dev
 ```
 
-Open [http://localhost:4321](http://localhost:4321). You should be redirected
-to the Lens Explorer page. Confirm the dev server starts without errors.
+Open [http://localhost:4321](http://localhost:4321). You should see the homepage
+with stats, workflow cards, and scoring overview. Confirm the dev server starts
+without errors.
 
 To verify linting:
 
