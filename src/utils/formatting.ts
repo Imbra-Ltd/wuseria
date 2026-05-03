@@ -21,4 +21,22 @@ function formatFL(focalLengthMin: number, focalLengthMax: number): string {
   return `${focalLengthMin}-${focalLengthMax}mm`;
 }
 
-export { formatShutter, formatFL };
+const CATEGORY_LABELS: Record<string, string> = {
+  flash: "Flash",
+  "battery-grip": "Battery Grip",
+  "hand-grip": "Hand Grip",
+  battery: "Battery",
+  charger: "Charger",
+  "lens-accessory": "Lens Accessory",
+  adapter: "Adapter",
+  remote: "Remote",
+  audio: "Audio",
+  cooling: "Cooling",
+  "body-accessory": "Body Accessory",
+};
+
+function formatCategory(category: string): string {
+  return CATEGORY_LABELS[category] ?? category;
+}
+
+export { formatShutter, formatFL, formatCategory };

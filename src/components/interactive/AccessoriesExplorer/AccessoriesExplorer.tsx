@@ -1,8 +1,9 @@
 import { useMemo, useCallback } from "react";
-import type { Accessory, AccessoryCategory } from "../../../types/accessory";
+import type { Accessory } from "../../../types/accessory";
 import { useSort } from "../../../hooks/useSort";
 import { useUrlFilters } from "../../../hooks/useUrlFilters";
 import { toSlug } from "../../../utils/slug";
+import { formatCategory } from "../../../utils/formatting";
 import { ChipGroup } from "../shared/ChipGroup";
 import { RESET_VALUE, resetValue } from "../shared/constants";
 import { MobileSort } from "../shared/MobileSort";
@@ -34,24 +35,6 @@ const COLUMNS: ColumnDef<AccessorySortKey>[] = [
 ];
 
 const ALIGN_CLASSES = makeAlignClasses(styles);
-
-const CATEGORY_LABELS: Record<string, string> = {
-  flash: "Flash",
-  "battery-grip": "Battery Grip",
-  "hand-grip": "Hand Grip",
-  battery: "Battery",
-  charger: "Charger",
-  "lens-accessory": "Lens Accessory",
-  adapter: "Adapter",
-  remote: "Remote",
-  audio: "Audio",
-  cooling: "Cooling",
-  "body-accessory": "Body Accessory",
-};
-
-function formatCategory(category: AccessoryCategory): string {
-  return CATEGORY_LABELS[category] ?? category;
-}
 
 const PRICE_RANGES: Record<string, [number, number]> = {
   "0-250": [0, 250],

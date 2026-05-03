@@ -3,6 +3,7 @@ import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import Base from "../../layouts/Base.astro";
 import accessories from "../../data/accessories";
 import { toSlug } from "../../utils/slug";
+import { formatCategory } from "../../utils/formatting";
 
 export const getStaticPaths = (() => {
   return accessories.map((accessory) => ({
@@ -18,23 +19,6 @@ const canonicalUrl = new URL(
   `/accessories/${toSlug(`${accessory.brand} ${accessory.model}`)}`,
   Astro.site,
 );
-
-function formatCategory(cat: string): string {
-  const labels: Record<string, string> = {
-    flash: "Flash",
-    "battery-grip": "Battery Grip",
-    "hand-grip": "Hand Grip",
-    battery: "Battery",
-    charger: "Charger",
-    "lens-accessory": "Lens Accessory",
-    adapter: "Adapter",
-    remote: "Remote",
-    audio: "Audio",
-    cooling: "Cooling",
-    "body-accessory": "Body Accessory",
-  };
-  return labels[cat] ?? cat;
-}
 
 const jsonLd = {
   "@context": "https://schema.org",
