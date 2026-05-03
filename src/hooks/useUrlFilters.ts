@@ -32,7 +32,7 @@ function useUrlFilters(keys: FilterConfig): {
     const url = search
       ? `${window.location.pathname}?${search}`
       : window.location.pathname;
-    history.replaceState(null, "", url);
+    history.replaceState(history.state, "", url);
   }, [state, keys]);
 
   const set = useCallback((key: string, value: string) => {
