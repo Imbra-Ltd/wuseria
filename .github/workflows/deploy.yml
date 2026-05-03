@@ -22,12 +22,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Check out the repo, including the solid-ai-templates submodule
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           submodules: true
 
       # Set up Node.js with npm cache for faster installs
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -37,7 +37,7 @@ jobs:
       - run: npm run validate
 
       # Package dist/ as a GitHub Pages artifact for the deploy job
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist/
 
@@ -50,4 +50,4 @@ jobs:
     steps:
       # Deploy the uploaded artifact to GitHub Pages
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
