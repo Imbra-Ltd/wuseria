@@ -26,12 +26,5 @@ jobs:
       - name: Check internal links
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --offline --no-progress dist/
+          args: --offline --no-progress --root-dir dist dist/
           fail: true
-
-      - name: Check external links (non-blocking)
-        if: always()
-        uses: lycheeverse/lychee-action@v2
-        with:
-          args: --no-progress --exclude-path node_modules dist/
-          fail: false
