@@ -274,11 +274,11 @@ execution prevents missed steps.
 [ ] 3. Update epic checklists if relevant
 [ ] 4. Dev journal entry (### heading, --- separator, PRs, issues, key changes, key decisions with ADR refs)
 [ ] 5. ADRs — record any architectural decisions in docs/decisions/
-[ ] 6. CLAUDE.md — update if conventions or architecture changed
-[ ] 7. README.md — update if public-facing info changed
-[ ] 8. ONBOARDING.md — update if prerequisites or setup changed
-[ ] 9. PLAYBOOK.md — update if commands, workflows, or release process changed
+[ ] 6. CLAUDE.md — for each new convention/rule introduced, does it belong here? Name the section.
+[ ] 7. README.md — for each new command, dependency, or structural change, is it reflected? Name the section.
+[ ] 8. ONBOARDING.md — for each new tool, prerequisite, or setup step, is it documented? Name the section.
+[ ] 9. PLAYBOOK.md — for each new command/script/workflow added, is it documented? Name the section.
 [ ] 10. Submodules — check if upstream needs update
-[ ] 11. Flag conventions for solid-ai-templates upstream
+[ ] 11. Flag conventions for solid-ai-templates upstream — for each new pattern/convention introduced, explicitly state whether it's project-specific or reusable; if reusable, name the upstream template file it would go in
 [ ] 12. Summarize what was done and what's next
 ```
