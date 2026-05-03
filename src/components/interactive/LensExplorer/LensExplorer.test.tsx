@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LensExplorer from "./LensExplorer";
-import { makeLens } from "../../../test/factories";
+import { makeExplorerLens } from "../../../test/factories";
 
 const lenses = [
-  makeLens({
+  makeExplorerLens({
     brand: "Fujifilm",
     model: "XF 23mm f/1.4 R",
     focalLengthMin: 23,
@@ -13,11 +13,8 @@ const lenses = [
     maxAperture: 1.4,
     weight: 300,
     price: 950,
-    mount: "X",
-    hasOis: false,
-    isWeatherSealed: false,
   }),
-  makeLens({
+  makeExplorerLens({
     brand: "Fujifilm",
     model: "XF 56mm f/1.2 R",
     focalLengthMin: 56,
@@ -25,11 +22,8 @@ const lenses = [
     maxAperture: 1.2,
     weight: 405,
     price: 1000,
-    mount: "X",
-    hasOis: false,
-    isWeatherSealed: false,
   }),
-  makeLens({
+  makeExplorerLens({
     brand: "Fujifilm",
     model: "XF 16-55mm f/2.8 R LM WR",
     type: "zoom",
@@ -38,8 +32,6 @@ const lenses = [
     maxAperture: 2.8,
     weight: 655,
     price: 1200,
-    mount: "X",
-    hasOis: false,
     isWeatherSealed: true,
   }),
 ];
@@ -107,14 +99,14 @@ describe("LensExplorer", () => {
   it("OIS filter works after sorting", async () => {
     const user = userEvent.setup();
     const testLenses = [
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 16mm f/1.4 R WR",
         hasOis: false,
         isWeatherSealed: true,
         price: 1000,
       }),
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 18-120mm f/4 LM PZ WR",
         type: "zoom",
@@ -124,7 +116,7 @@ describe("LensExplorer", () => {
         isWeatherSealed: true,
         price: 900,
       }),
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 50mm f/2 R WR",
         hasOis: false,
@@ -154,13 +146,13 @@ describe("LensExplorer", () => {
   it("OIS column sort toggles between asc and desc", async () => {
     const user = userEvent.setup();
     const testLenses = [
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 16mm f/1.4 R WR",
         hasOis: false,
         price: 1000,
       }),
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 18-120mm f/4 LM PZ WR",
         type: "zoom",
@@ -169,7 +161,7 @@ describe("LensExplorer", () => {
         hasOis: true,
         price: 900,
       }),
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 50mm f/2 R WR",
         hasOis: false,

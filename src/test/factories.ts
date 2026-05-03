@@ -1,5 +1,6 @@
 import type { Lens } from "../types/lens";
 import type { Camera } from "../types/camera";
+import type { ExplorerLens } from "../components/interactive/LensExplorer/constants";
 
 function makeLens(
   overrides: Partial<Lens> & Pick<Lens, "brand" | "model">,
@@ -14,6 +15,22 @@ function makeLens(
     price: 600,
     ...overrides,
   };
+}
+
+const EXPLORER_DEFAULTS: Omit<ExplorerLens, "brand" | "model"> = {
+  type: "prime",
+  mount: "X",
+  focalLengthMin: 35,
+  focalLengthMax: 35,
+  maxAperture: 1.4,
+  weight: 200,
+  price: 600,
+};
+
+function makeExplorerLens(
+  overrides: Partial<ExplorerLens> & Pick<ExplorerLens, "brand" | "model">,
+): ExplorerLens {
+  return { ...EXPLORER_DEFAULTS, ...overrides };
 }
 
 function makeCamera(
@@ -34,4 +51,4 @@ function makeCamera(
   };
 }
 
-export { makeLens, makeCamera };
+export { makeLens, makeExplorerLens, makeCamera };
