@@ -1,4 +1,4 @@
-import styles from "../GenreGuide/GenreGuide.module.css";
+import styles from "./MarkPips.module.css";
 
 // =============================================================================
 // FIELD VALUE — 0-2 scale with traffic-light color

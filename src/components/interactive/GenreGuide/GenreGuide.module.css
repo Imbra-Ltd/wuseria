@@ -568,69 +568,7 @@
   line-height: 1.5;
 }
 
-/* ==========================================================================
-   Mark pips
-   ========================================================================== */
-
-.markDots {
-  display: inline-flex;
-  gap: 3px;
-  align-items: center;
-}
-
-.pip {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 1.5px solid var(--color-text-muted);
-}
-
-.pipFull {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
-}
-
-.pipHalf {
-  background: linear-gradient(
-    to right,
-    var(--color-accent) 50%,
-    transparent 50%
-  );
-  border-color: var(--color-accent);
-}
-
-.markDash {
-  color: #8a8070;
-}
-
-/* Field value colors — traffic-light scale for optical scores (0-2) */
-.fieldViable {
-  color: #6aaa70; /* green — good optical performance */
-}
-
-.fieldMarginal {
-  color: #b09040; /* amber — acceptable */
-}
-
-.fieldOver {
-  color: #905030; /* red — poor */
-}
-
-.fieldMono {
-  font-family: var(--font-mono);
-}
-
-.topStar {
-  color: var(--color-accent);
-  font-size: var(--font-size-sm);
-}
-
-.sweetSpot {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  margin-left: var(--space-xs);
-}
+/* Mark pips, field values, and pick star styles are in shared/MarkPips.module.css */
 
 .dotOn,
 .dotOff {

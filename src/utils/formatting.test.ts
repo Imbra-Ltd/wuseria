@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatShutter, formatFL } from "./formatting";
+import { formatShutter, formatFL, formatCategory } from "./formatting";
 
 describe("formatShutter", () => {
   it("formats hours", () => {
@@ -40,5 +40,18 @@ describe("formatFL", () => {
 
   it("formats zoom (min !== max)", () => {
     expect(formatFL(18, 55)).toBe("18-55mm");
+  });
+});
+
+describe("formatCategory", () => {
+  it("formats known categories", () => {
+    expect(formatCategory("battery-grip")).toBe("Battery Grip");
+    expect(formatCategory("lens-accessory")).toBe("Lens Accessory");
+    expect(formatCategory("body-accessory")).toBe("Body Accessory");
+    expect(formatCategory("flash")).toBe("Flash");
+  });
+
+  it("returns unknown categories as-is", () => {
+    expect(formatCategory("unknown")).toBe("unknown");
   });
 });
