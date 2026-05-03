@@ -7,6 +7,16 @@
 
 Several features and architectural options were considered during design but intentionally deferred. Recording the rationale prevents revisiting settled decisions.
 
+## Decision
+
+Defer all items listed below. The architecture stays fully static through all
+phases; each item can be reconsidered independently if demand signals change.
+
+## Alternatives considered
+
+No alternatives — this ADR records rationale for deferring features, not
+choosing between them. Each item stands alone.
+
 ## Deferred items
 
 | Item                            | Why deferred                                                 |

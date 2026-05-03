@@ -1,8 +1,7 @@
 # ADR-020: Code Quality Platform
 
-## Status
-
-Decided — defer adoption until multi-contributor
+**Status:** Accepted (deferred until multi-contributor)
+**Date:** 2026-05-01
 
 ## Context
 
@@ -10,7 +9,7 @@ Decided — defer adoption until multi-contributor
 For solo development, `eslint-plugin-sonarjs` covers this. The question is whether
 a full platform (SonarCloud, Codacy, CodeClimate) is needed now or later.
 
-## Options Considered
+## Alternatives considered
 
 | Criteria                   | SonarCloud                        | Codacy              | CodeClimate       |
 | -------------------------- | --------------------------------- | ------------------- | ----------------- |

@@ -11,6 +11,12 @@ Per-lens search queries ("fuji xf 23mm f1.4 review") are high-intent. Competitor
 
 Auto-generate one page per lens at build time via `getStaticPaths()`. Each page targets a specific high-intent search query.
 
+## Alternatives considered
+
+- **Single-page table only** — simple but cannot rank for per-lens queries
+- **Manual page authoring** — high effort, does not scale to 200+ lenses
+- **Client-side rendering** — bad for SEO; search engines may not index
+
 ## Approach
 
 - Astro native head management for per-page titles and descriptions
