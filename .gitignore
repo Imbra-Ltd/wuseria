@@ -7,3 +7,5 @@ dist/
 *.log
 .claude/
 coverage/
+reports/
+.lighthouseci/

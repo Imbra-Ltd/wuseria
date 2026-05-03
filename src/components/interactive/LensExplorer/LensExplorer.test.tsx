@@ -2,10 +2,10 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LensExplorer from "./LensExplorer";
-import { makeLens } from "../../../test/factories";
+import { makeExplorerLens } from "../../../test/factories";
 
 const lenses = [
-  makeLens({
+  makeExplorerLens({
     brand: "Fujifilm",
     model: "XF 23mm f/1.4 R",
     focalLengthMin: 23,
@@ -13,11 +13,8 @@ const lenses = [
     maxAperture: 1.4,
     weight: 300,
     price: 950,
-    mount: "X",
-    hasOis: false,
-    isWeatherSealed: false,
   }),
-  makeLens({
+  makeExplorerLens({
     brand: "Fujifilm",
     model: "XF 56mm f/1.2 R",
     focalLengthMin: 56,
@@ -25,11 +22,8 @@ const lenses = [
     maxAperture: 1.2,
     weight: 405,
     price: 1000,
-    mount: "X",
-    hasOis: false,
-    isWeatherSealed: false,
   }),
-  makeLens({
+  makeExplorerLens({
     brand: "Fujifilm",
     model: "XF 16-55mm f/2.8 R LM WR",
     type: "zoom",
@@ -38,8 +32,6 @@ const lenses = [
     maxAperture: 2.8,
     weight: 655,
     price: 1200,
-    mount: "X",
-    hasOis: false,
     isWeatherSealed: true,
   }),
 ];
@@ -107,14 +99,14 @@ describe("LensExplorer", () => {
   it("OIS filter works after sorting", async () => {
     const user = userEvent.setup();
     const testLenses = [
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 16mm f/1.4 R WR",
         hasOis: false,
         isWeatherSealed: true,
         price: 1000,
       }),
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 18-120mm f/4 LM PZ WR",
         type: "zoom",
@@ -124,7 +116,7 @@ describe("LensExplorer", () => {
         isWeatherSealed: true,
         price: 900,
       }),
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 50mm f/2 R WR",
         hasOis: false,
@@ -154,13 +146,13 @@ describe("LensExplorer", () => {
   it("OIS column sort toggles between asc and desc", async () => {
     const user = userEvent.setup();
     const testLenses = [
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 16mm f/1.4 R WR",
         hasOis: false,
         price: 1000,
       }),
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 18-120mm f/4 LM PZ WR",
         type: "zoom",
@@ -169,7 +161,7 @@ describe("LensExplorer", () => {
         hasOis: true,
         price: 900,
       }),
-      makeLens({
+      makeExplorerLens({
         brand: "Fujifilm",
         model: "XF 50mm f/2 R WR",
         hasOis: false,
@@ -196,6 +188,126 @@ describe("LensExplorer", () => {
       (row) => within(row).getByRole("link").textContent,
     );
     expect(modelsAsc).not.toEqual(modelsDesc);
+  });
+
+  it("filters by mount chip", async () => {
+    const user = userEvent.setup();
+    const testLenses = [
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 23mm f/1.4 R",
+        mount: "X",
+        price: 950,
+      }),
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "GF 63mm f/2.8 R WR",
+        mount: "GFX",
+        price: 1500,
+      }),
+    ];
+    render(<LensExplorer lenses={testLenses} />);
+    // Mount chips: "All", "X", "GFX"
+    const gfxButtons = screen.getAllByRole("button", { name: "GFX" });
+    await user.click(gfxButtons[0]);
+    expect(screen.getAllByText("GF 63mm f/2.8 R WR").length).toBeGreaterThan(0);
+    expect(screen.queryByText("XF 23mm f/1.4 R")).not.toBeInTheDocument();
+  });
+
+  it("filters by focal length select", async () => {
+    const user = userEvent.setup();
+    const testLenses = [
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 14mm f/2.8 R",
+        focalLengthMin: 14,
+        focalLengthMax: 14,
+        price: 800,
+      }),
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 90mm f/2 R LM WR",
+        focalLengthMin: 90,
+        focalLengthMax: 90,
+        price: 800,
+      }),
+    ];
+    render(<LensExplorer lenses={testLenses} />);
+    const flSelect = screen.getByRole("combobox", {
+      name: /focal length/i,
+    });
+    await user.selectOptions(flSelect, "36-100");
+    expect(screen.getAllByText("XF 90mm f/2 R LM WR").length).toBeGreaterThan(
+      0,
+    );
+    expect(screen.queryByText("XF 14mm f/2.8 R")).not.toBeInTheDocument();
+  });
+
+  it("filters by price range select", async () => {
+    const user = userEvent.setup();
+    const testLenses = [
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 27mm f/2.8 R WR",
+        price: 500,
+      }),
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 200mm f/2 R LM OIS WR",
+        price: 5000,
+      }),
+    ];
+    render(<LensExplorer lenses={testLenses} />);
+    const priceSelect = screen.getByRole("combobox", { name: /price/i });
+    await user.selectOptions(priceSelect, "250-500");
+    expect(screen.getAllByText("XF 27mm f/2.8 R WR").length).toBeGreaterThan(0);
+    expect(
+      screen.queryByText("XF 200mm f/2 R LM OIS WR"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("filters by WR chip", async () => {
+    const user = userEvent.setup();
+    const testLenses = [
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 35mm f/2 R WR",
+        isWeatherSealed: true,
+        price: 500,
+      }),
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 35mm f/1.4 R",
+        price: 600,
+      }),
+    ];
+    render(<LensExplorer lenses={testLenses} />);
+    // WR "Yes" button — OIS Yes is first, WR Yes is second
+    const yesButtons = screen.getAllByRole("button", { name: "Yes" });
+    await user.click(yesButtons[1]);
+    expect(screen.getAllByText("XF 35mm f/2 R WR").length).toBeGreaterThan(0);
+    expect(screen.queryByText("XF 35mm f/1.4 R")).not.toBeInTheDocument();
+  });
+
+  it("filters by status chip (discontinued)", async () => {
+    const user = userEvent.setup();
+    const testLenses = [
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 18mm f/2 R",
+        isDiscontinued: true,
+        price: 500,
+      }),
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 18mm f/1.4 R LM WR",
+        price: 1000,
+      }),
+    ];
+    render(<LensExplorer lenses={testLenses} />);
+    await user.click(screen.getByRole("button", { name: "Discontinued" }));
+    expect(screen.getAllByText("XF 18mm f/2 R").length).toBeGreaterThan(0);
+    expect(screen.queryByText("XF 18mm f/1.4 R LM WR")).not.toBeInTheDocument();
   });
 
   it("sorts by price when Price header is clicked", async () => {

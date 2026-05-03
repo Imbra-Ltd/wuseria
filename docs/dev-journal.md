@@ -1060,3 +1060,35 @@ Key decisions:
 - `table-layout: fixed` chosen over `min-width` approach — fully prevents width shifts vs only reducing them
 - Percentage-based colgroup widths — totals intentionally under 100% (90%) to let browser distribute remaining space as padding
 - ONBOARDING.md — fixed stale homepage description (was "redirected to Lens Explorer", now shows actual homepage)
+
+---
+
+### Session 31 — Test Suite Improvements and Developer Tooling
+
+PRs: #492 (open)
+Issues closed: #475, #474 (on merge)
+Issues progressed: #417 (partial — audit complete, coverage excellent)
+Issues created: #490 (rulesets spike), #491 (developer.md guide)
+
+Key changes:
+
+- Test suite: 139 → 173 tests across 11 files
+- Coverage: 86.5% → 94.9% statements, 89.4% → 98.6% lines
+- Added `makeExplorerLens` factory — booleans default to undefined, matching real data shape
+- Added boolean field distribution validation with `it.fails` for known data gaps (#473)
+- Added `useUrlFilters` hook tests, `computeOpticalQuality` tests, `pickGenreFields` test
+- Added filter behavior tests for all three explorers (mount, FL, price, WR, status, IBIS, series, mark)
+- Added regression tests for bugs #313 (brand sort key) and #434 (empty pips)
+- Added `npm run test:report` — HTML test results + coverage map in reports/
+- Added `npm run lighthouse` — local Lighthouse CI with HTML reports in reports/
+- Installed `@vitest/ui` and `@lhci/cli` as devDeps
+- Updated ONBOARDING with test verification steps and optional tools (lychee, gitleaks)
+- Updated PLAYBOOK with sections 2.8-2.10 (link checker, secret scanning, testing)
+- Added SEO/discovery bookmarks to docs/bookmarks.md
+
+Key decisions:
+
+- Boolean distribution tests use `it.fails` for known data gaps — auto-flags when #473 fixes the data
+- Coverage only tracks `src/utils/` and `src/hooks/` (component test coverage not enforced by thresholds)
+- Lighthouse reports go to `reports/lighthouse/` (filesystem upload target in lighthouserc.json)
+- lychee and gitleaks are optional local tools (not npm packages, need system install)

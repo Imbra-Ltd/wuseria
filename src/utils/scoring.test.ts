@@ -3,9 +3,11 @@ import type { Lens } from "../types/lens";
 import type { Genre } from "../types/genre";
 import { lenses } from "../data/lenses";
 import { makeLens } from "../test/factories";
+import { pickGenreFields } from "./pickGenreFields";
 import {
   computeGenreMark,
   computeAllGenreMarks,
+  computeOpticalQuality,
   toMark,
   apertureScore,
   weightScore,
@@ -412,5 +414,117 @@ describe("isGenre", () => {
     for (const g of genres) {
       expect(isGenre(g)).toBe(true);
     }
+  });
+});
+
+// =============================================================================
+// pickGenreFields
+// =============================================================================
+
+describe("pickGenreFields", () => {
+  it("picks only genre-relevant fields from a full Lens", () => {
+    const lens = findLens("XF 56mm f/1.2 R LM WR");
+    const picked = pickGenreFields(lens);
+    expect(picked.brand).toBe(lens.brand);
+    expect(picked.model).toBe(lens.model);
+    expect(picked.mount).toBe(lens.mount);
+    expect(picked.weight).toBe(lens.weight);
+    expect(picked.price).toBe(lens.price);
+    expect(picked.genreMarks).toBe(lens.genreMarks);
+    expect(picked.centerStopped).toBe(lens.centerStopped);
+    // Should NOT contain fields outside GenreLens
+    expect("officialUrl" in picked).toBe(false);
+    expect("reviewSources" in picked).toBe(false);
+  });
+});
+
+// =============================================================================
+// computeOpticalQuality
+// =============================================================================
+
+describe("computeOpticalQuality", () => {
+  it("returns null for unscored lens (fewer than 7 fields)", () => {
+    const lens = makeLens({ brand: "Fujifilm", model: "Empty" });
+    expect(computeOpticalQuality(lens)).toBeNull();
+  });
+
+  it("returns null when exactly 6 optical fields (below threshold)", () => {
+    const lens = makeLens({
+      brand: "Fujifilm",
+      model: "Sparse",
+      centerStopped: 2.0,
+      cornerStopped: 1.5,
+      centerWideOpen: 2.0,
+      astigmatism: 1.5,
+      coma: 1.0,
+      lateralCA: 1.5,
+    });
+    expect(computeOpticalQuality(lens)).toBeNull();
+  });
+
+  it("returns a number when 7+ optical fields are present", () => {
+    const lens = makeLens({
+      brand: "Fujifilm",
+      model: "Scored",
+      centerStopped: 2.0,
+      cornerStopped: 1.5,
+      centerWideOpen: 2.0,
+      astigmatism: 1.5,
+      coma: 1.0,
+      lateralCA: 1.5,
+      longitudinalCA: 1.5,
+    });
+    const result = computeOpticalQuality(lens);
+    expect(result).not.toBeNull();
+    expect(result).toBeGreaterThanOrEqual(0);
+    expect(result).toBeLessThanOrEqual(2);
+  });
+
+  it("returns max score (2.0) for a perfect lens", () => {
+    const lens = makeLens({
+      brand: "Fujifilm",
+      model: "Perfect",
+      centerStopped: 2.0,
+      cornerStopped: 2.0,
+      centerWideOpen: 2.0,
+      cornerWideOpen: 2.0,
+      astigmatism: 2.0,
+      coma: 2.0,
+      sphericalAberration: 2.0,
+      longitudinalCA: 2.0,
+      lateralCA: 2.0,
+      distortion: 2.0,
+      vignettingWideOpen: 2.0,
+      vignettingStopped: 2.0,
+      bokeh: 2.0,
+      flareResistance: 2.0,
+    });
+    expect(computeOpticalQuality(lens)).toBe(2.0);
+  });
+
+  it("matches known lens score from data", () => {
+    const lens = findLens("XF 56mm f/1.2 R LM WR");
+    const result = computeOpticalQuality(lens);
+    expect(result).not.toBeNull();
+    expect(result).toBeGreaterThan(1.5);
+  });
+
+  it("result is rounded to one decimal", () => {
+    const lens = makeLens({
+      brand: "Fujifilm",
+      model: "Mixed",
+      centerStopped: 2.0,
+      cornerStopped: 1.0,
+      centerWideOpen: 1.5,
+      astigmatism: 2.0,
+      coma: 0.5,
+      lateralCA: 1.0,
+      longitudinalCA: 1.5,
+      distortion: 1.0,
+    });
+    const result = computeOpticalQuality(lens);
+    expect(result).not.toBeNull();
+    const decimalPart = result!.toString().split(".")[1];
+    expect(!decimalPart || decimalPart.length <= 1).toBe(true);
   });
 });

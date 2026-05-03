@@ -169,6 +169,64 @@ describe("reviewSources", () => {
 });
 
 // =============================================================================
+// BOOLEAN FIELD DISTRIBUTION
+// =============================================================================
+
+describe("boolean field distribution", () => {
+  const POPULATED_BOOLEAN_FIELDS = [
+    "hasCircularAperture",
+    "isFocusByWire",
+    "hasDistanceScale",
+  ] as const;
+
+  // Fields with known data gaps — tracked by #473.
+  // Uses it.fails: test is expected to fail now; when #473 fills in the
+  // data, the test will unexpectedly pass and Vitest will flag it —
+  // move the field to POPULATED_BOOLEAN_FIELDS at that point.
+  const PENDING_BOOLEAN_FIELDS = [
+    "hasOis",
+    "isWeatherSealed",
+    "hasApertureRing",
+  ] as const;
+
+  it.each(POPULATED_BOOLEAN_FIELDS)(
+    "%s has at least one explicit false value",
+    (field) => {
+      const falseCount = lenses.filter(
+        (l) => l[field as keyof typeof l] === false,
+      ).length;
+      expect(
+        falseCount,
+        `${field} has zero explicit false values — likely a data gap`,
+      ).toBeGreaterThan(0);
+    },
+  );
+
+  it.fails.each(PENDING_BOOLEAN_FIELDS)(
+    "%s has at least one explicit false value (pending #473)",
+    (field) => {
+      const falseCount = lenses.filter(
+        (l) => l[field as keyof typeof l] === false,
+      ).length;
+      expect(
+        falseCount,
+        `${field} has zero explicit false values — data gap tracked by #473`,
+      ).toBeGreaterThan(0);
+    },
+  );
+
+  it("isFocusByWire has no undefined values (fully populated)", () => {
+    const undefCount = lenses.filter(
+      (l) => l.isFocusByWire === undefined,
+    ).length;
+    expect(
+      undefCount,
+      "isFocusByWire should be fully populated (true or false for every lens)",
+    ).toBe(0);
+  });
+});
+
+// =============================================================================
 // PRICE ROUNDING
 // =============================================================================
 

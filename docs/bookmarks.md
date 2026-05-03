@@ -231,6 +231,63 @@ No public affiliate programs found (2026-04-06). Contact ФотоСинтези�
 - https://www.camelcamelcamel.com — Amazon price history tracker
 - https://www.skinflint.co.uk — Skinflint (formerly Geizhals UK); EU price aggregator
 
+## Framework and hosting
+
+- https://docs.astro.build/en/getting-started/ — Astro docs
+- https://pagespeed.web.dev/ — PageSpeed Insights
+
+## Analytics
+
+- https://cloud.umami.is/ — Umami Cloud (current)
+- https://plausible.io/sites — Plausible
+- https://www.goatcounter.com/ — GoatCounter
+
+## Fujifilm community forums
+
+- https://www.dpreview.com/forums/forums/fujifilm-x-system-slr-talk.1020/ — DPReview Fujifilm X forum
+- https://www.reddit.com/r/fujifilm/ — Reddit r/fujifilm
+
+## Discovery and SEO
+
+### Google
+
+- https://developers.google.com/search/docs/fundamentals/seo-starter-guide — Official Google SEO starter guide
+- https://web.dev/learn/performance — Web.dev performance learning path
+
+### Ahrefs
+
+- https://ahrefs.com/blog/find-a-niche/ — How to find a niche
+- https://ahrefs.com/blog/keyword-research/ — Keyword research guide
+- https://ahrefs.com/blog/long-tail-keywords/ — Long-tail keywords strategy
+- https://ahrefs.com/blog/topical-authority/ — Building topical authority
+- https://ahrefs.com/blog/link-building/ — Link building strategies
+- https://ahrefs.com/blog/content-marketing-strategy/ — Content marketing strategy
+- https://ahrefs.com/blog/how-to-drive-traffic-to-your-website/ — Traffic growth tactics
+- https://ahrefs.com/blog/affiliate-marketing/ — Affiliate marketing guide
+- https://ahrefs.com/blog/seo-tips/ — SEO tips
+
+### Moz
+
+- https://moz.com/beginners-guide-to-seo — Beginner's guide to SEO
+- https://moz.com/learn/seo/on-site-seo — On-site SEO guide
+
+### Backlinko
+
+- https://backlinko.com/seo-strategy — SEO strategy guide
+- https://backlinko.com/seo-this-year — SEO trends current year
+- https://backlinko.com/link-building — Link building guide
+
+### Semrush
+
+- https://www.semrush.com/blog/keyword-research/ — Keyword research
+- https://www.semrush.com/blog/topical-authority/ — Topical authority
+- https://www.semrush.com/blog/affiliate-marketing/ — Affiliate marketing
+
+### Search Engine Land
+
+- https://searchengineland.com/guide/what-is-seo — What is SEO
+- https://searchengineland.com/guide/seo/types-of-search-engine-ranking-factors — Ranking factors
+
 ## Photo sharing sites
 
 - www.unsplash.com

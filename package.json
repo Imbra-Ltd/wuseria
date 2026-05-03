@@ -12,6 +12,8 @@
     "check": "astro check",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
+    "test:report": "vitest run --coverage --reporter=default --reporter=html --outputFile=reports/tests/index.html",
+    "lighthouse": "npm run build && npx @lhci/cli autorun --config lighthouserc.json",
     "validate": "npm run lint && npm run format && npm run check && npm run test && npm run build",
     "release": "bash scripts/release.sh",
     "prepare": "husky"
@@ -27,6 +29,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@eslint/js": "^10.0.1",
+    "@lhci/cli": "^0.15.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -35,6 +38,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitest/coverage-v8": "^4.1.5",
+    "@vitest/ui": "^4.1.5",
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
