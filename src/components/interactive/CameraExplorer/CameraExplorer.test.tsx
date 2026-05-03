@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CameraExplorer from "./CameraExplorer";
@@ -36,6 +36,10 @@ const cameras = [
 ];
 
 describe("CameraExplorer", () => {
+  beforeEach(() => {
+    window.history.replaceState(null, "", window.location.pathname);
+  });
+
   it("renders all cameras", () => {
     render(<CameraExplorer cameras={cameras} />);
     expect(screen.getAllByText("X-T5").length).toBeGreaterThan(0);

@@ -1,4 +1,4 @@
-import type { ColumnAlign } from "../shared/table";
+import type { ColumnDef } from "../shared/table";
 
 interface ExplorerLens {
   brand: string;
@@ -37,19 +37,19 @@ type LensSortKey =
   | "opticalQuality"
   | "price";
 
-const COLUMNS: { key: LensSortKey; label: string; align: ColumnAlign }[] = [
-  { key: "brand", label: "Brand", align: "left" },
-  { key: "model", label: "Model", align: "left" },
-  { key: "year", label: "Year", align: "left" },
-  { key: "focalLengthMin", label: "FL", align: "right" },
-  { key: "maxAperture", label: "f/", align: "right" },
-  { key: "filterThread", label: "\u03A6", align: "right" },
-  { key: "hasOis", label: "OIS", align: "center" },
-  { key: "isWeatherSealed", label: "WR", align: "center" },
-  { key: "afMotor", label: "AF", align: "center" },
-  { key: "weight", label: "Weight", align: "right" },
-  { key: "opticalQuality", label: "OQ", align: "right" },
-  { key: "price", label: "Price", align: "right" },
+const COLUMNS: ColumnDef<LensSortKey>[] = [
+  { key: "brand", label: "Brand", align: "left", width: "9%" },
+  { key: "model", label: "Model", align: "left", width: "20%" },
+  { key: "year", label: "Year", align: "left", width: "6%" },
+  { key: "focalLengthMin", label: "FL", align: "right", width: "7%" },
+  { key: "maxAperture", label: "f/", align: "right", width: "5%" },
+  { key: "filterThread", label: "\u03A6", align: "right", width: "5%" },
+  { key: "hasOis", label: "OIS", align: "center", width: "5%" },
+  { key: "isWeatherSealed", label: "WR", align: "center", width: "5%" },
+  { key: "afMotor", label: "AF", align: "center", width: "6%" },
+  { key: "weight", label: "Weight", align: "right", width: "8%" },
+  { key: "opticalQuality", label: "OQ", align: "right", width: "6%" },
+  { key: "price", label: "Price", align: "right", width: "8%" },
 ];
 
 const INITIAL_PAGE_SIZE = 50;

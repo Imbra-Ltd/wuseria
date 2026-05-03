@@ -1,11 +1,12 @@
-import { useState, useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import type { Accessory, AccessoryCategory } from "../../../types/accessory";
 import { useSort } from "../../../hooks/useSort";
+import { useUrlFilters } from "../../../hooks/useUrlFilters";
 import { toSlug } from "../../../utils/slug";
 import { ChipGroup } from "../shared/ChipGroup";
 import { RESET_VALUE, resetValue } from "../shared/constants";
 import { MobileSort } from "../shared/MobileSort";
-import type { ColumnAlign } from "../shared/table";
+import type { ColumnDef } from "../shared/table";
 import {
   makeAlignClasses,
   ariaSortValue,
@@ -24,14 +25,13 @@ type AccessorySortKey =
   | "description"
   | "price";
 
-const COLUMNS: { key: AccessorySortKey; label: string; align: ColumnAlign }[] =
-  [
-    { key: "category", label: "Category", align: "left" },
-    { key: "brand", label: "Brand", align: "left" },
-    { key: "model", label: "Model", align: "left" },
-    { key: "description", label: "Description", align: "left" },
-    { key: "price", label: "Price", align: "right" },
-  ];
+const COLUMNS: ColumnDef<AccessorySortKey>[] = [
+  { key: "category", label: "Category", align: "left", width: "14%" },
+  { key: "brand", label: "Brand", align: "left", width: "12%" },
+  { key: "model", label: "Model", align: "left", width: "24%" },
+  { key: "description", label: "Description", align: "left", width: "40%" },
+  { key: "price", label: "Price", align: "right", width: "10%" },
+];
 
 const ALIGN_CLASSES = makeAlignClasses(styles);
 
@@ -60,15 +60,6 @@ const PRICE_RANGES: Record<string, [number, number]> = {
   "1000+": [1000, Infinity],
 };
 
-interface AccessoryFilterValues {
-  search: string;
-  category: string;
-  mount: string;
-  compatible: string;
-  discontinued: string;
-  priceRange: string;
-}
-
 function passesRangeFilter(value: number, filter: string): boolean {
   if (!filter) return true;
   const range = PRICE_RANGES[filter];
@@ -86,7 +77,7 @@ function getCompatibleWith(acc: Accessory): string[] {
 
 function matchesAccessoryFilters(
   acc: Accessory,
-  f: AccessoryFilterValues,
+  f: Record<string, string>,
 ): boolean {
   if (f.category && acc.category !== f.category) return false;
   if (f.mount && (!("mount" in acc) || acc.mount !== f.mount)) return false;
@@ -95,10 +86,10 @@ function matchesAccessoryFilters(
     if (!getCompatibleWith(acc).some((c) => c.toLowerCase().includes(cq)))
       return false;
   }
-  if (f.discontinued === "available" && acc.isDiscontinued) return false;
-  if (f.discontinued === "discontinued" && !acc.isDiscontinued) return false;
-  if (!passesRangeFilter(acc.price, f.priceRange)) return false;
-  const q = f.search.toLowerCase();
+  if (f.status === "available" && acc.isDiscontinued) return false;
+  if (f.status === "discontinued" && !acc.isDiscontinued) return false;
+  if (!passesRangeFilter(acc.price, f.price)) return false;
+  const q = f.q.toLowerCase();
   if (
     q &&
     !`${acc.brand} ${acc.model} ${acc.description}`.toLowerCase().includes(q)
@@ -107,38 +98,32 @@ function matchesAccessoryFilters(
   return true;
 }
 
+const FILTER_KEYS = [
+  "q",
+  "category",
+  "mount",
+  "compatible",
+  "status",
+  "price",
+] as const;
+
 function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("");
-  const [mount, setMount] = useState("");
-  const [compatible, setCompatible] = useState("");
-  const [discontinued, setDiscontinued] = useState("");
-  const [priceRange, setPriceRange] = useState("");
+  const {
+    values: f,
+    set,
+    clear: clearFilters,
+    hasFilters,
+  } = useUrlFilters(FILTER_KEYS);
 
   const categories = useMemo(() => {
     const cats = [...new Set(accessories.map((a) => a.category))].sort();
     return cats;
   }, [accessories]);
 
-  const filtered = useMemo(() => {
-    const f: AccessoryFilterValues = {
-      search,
-      category,
-      mount,
-      compatible,
-      discontinued,
-      priceRange,
-    };
-    return accessories.filter((acc) => matchesAccessoryFilters(acc, f));
-  }, [
-    accessories,
-    search,
-    category,
-    mount,
-    compatible,
-    discontinued,
-    priceRange,
-  ]);
+  const filtered = useMemo(
+    () => accessories.filter((acc) => matchesAccessoryFilters(acc, f)),
+    [accessories, f],
+  );
 
   const availableFirst = useCallback(
     (a: Accessory, b: Accessory) =>
@@ -149,18 +134,6 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
     Accessory,
     AccessorySortKey
   >(filtered, "category", "asc", availableFirst);
-
-  const hasFilters =
-    search || category || mount || compatible || discontinued || priceRange;
-
-  function clearFilters(): void {
-    setSearch("");
-    setCategory("");
-    setMount("");
-    setCompatible("");
-    setDiscontinued("");
-    setPriceRange("");
-  }
 
   return (
     <div>
@@ -177,8 +150,8 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
             className={styles.searchInput}
             type="text"
             placeholder="Search accessories..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={f.q}
+            onChange={(e) => set("q", e.target.value)}
             aria-label="Search accessories"
           />
           {hasFilters && (
@@ -195,18 +168,18 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
 
         <div className={styles.filterRow}>
           <input
-            className={`${styles.searchInput} ${compatible ? styles.filterActive : ""}`}
+            className={`${styles.searchInput} ${f.compatible ? styles.filterActive : ""}`}
             type="text"
             placeholder="Compatible with... (e.g. X-T5)"
-            value={compatible}
-            onChange={(e) => setCompatible(e.target.value)}
+            value={f.compatible}
+            onChange={(e) => set("compatible", e.target.value)}
             aria-label="Filter by compatible model"
           />
 
           <select
-            className={`${styles.filterSelect} ${category ? styles.filterActive : ""}`}
-            value={category}
-            onChange={(e) => setCategory(resetValue(e.target.value))}
+            className={`${styles.filterSelect} ${f.category ? styles.filterActive : ""}`}
+            value={f.category}
+            onChange={(e) => set("category", resetValue(e.target.value))}
             aria-label="Filter by category"
           >
             <option value="" hidden>
@@ -221,9 +194,9 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
           </select>
 
           <select
-            className={`${styles.filterSelect} ${priceRange ? styles.filterActive : ""}`}
-            value={priceRange}
-            onChange={(e) => setPriceRange(resetValue(e.target.value))}
+            className={`${styles.filterSelect} ${f.price ? styles.filterActive : ""}`}
+            value={f.price}
+            onChange={(e) => set("price", resetValue(e.target.value))}
             aria-label="Filter by price"
           >
             <option value="" hidden>
@@ -240,8 +213,8 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
         <div className={styles.chipRow}>
           <ChipGroup
             label="Mount"
-            value={mount}
-            onChange={setMount}
+            value={f.mount}
+            onChange={(v) => set("mount", v)}
             styles={styles}
             options={[
               { label: "All", value: "" },
@@ -251,8 +224,8 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
           />
           <ChipGroup
             label="Status"
-            value={discontinued}
-            onChange={setDiscontinued}
+            value={f.status}
+            onChange={(v) => set("status", v)}
             styles={styles}
             options={[
               { label: "All", value: "" },
@@ -280,6 +253,11 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
           {/* Table — desktop */}
           <div className={styles.tableWrap}>
             <table className={styles.table}>
+              <colgroup>
+                {COLUMNS.map((col) => (
+                  <col key={col.key} style={{ width: col.width }} />
+                ))}
+              </colgroup>
               <thead>
                 <tr>
                   {COLUMNS.map((col) => (

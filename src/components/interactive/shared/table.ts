@@ -1,5 +1,12 @@
 type ColumnAlign = "left" | "right" | "center";
 
+interface ColumnDef<K extends string> {
+  key: K;
+  label: string;
+  align: ColumnAlign;
+  width: string;
+}
+
 function makeAlignClasses(
   styles: Record<string, string>,
 ): Record<ColumnAlign, string | undefined> {
@@ -30,5 +37,5 @@ function sortIndicatorChar(
   return "\u2193";
 }
 
-export type { ColumnAlign };
+export type { ColumnAlign, ColumnDef };
 export { makeAlignClasses, ariaSortValue, sortIndicatorChar };

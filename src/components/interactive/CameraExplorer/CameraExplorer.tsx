@@ -1,25 +1,12 @@
-import { useState, useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import { useSort } from "../../../hooks/useSort";
+import { useUrlFilters } from "../../../hooks/useUrlFilters";
 import type { CameraSortKey } from "./constants";
 import { YEAR_RANGES, PRICE_RANGES } from "./constants";
 import { CameraFilters } from "./CameraFilters";
 import { CameraResults } from "./CameraResults";
 import type { ExplorerCamera } from "./types";
 import styles from "./CameraExplorer.module.css";
-
-interface CameraFilterValues {
-  search: string;
-  mount: string;
-  series: string;
-  yearRange: string;
-  sensorType: string;
-  formFactor: string;
-  ibis: string;
-  wr: string;
-  discontinued: string;
-  videoSpec: string;
-  priceRange: string;
-}
 
 function passesBooleanFilter(
   filter: string,
@@ -57,20 +44,20 @@ function passesStatusFilter(
 
 function matchesCameraFilters(
   cam: ExplorerCamera,
-  f: CameraFilterValues,
+  f: Record<string, string>,
 ): boolean {
   return (
     passesExactFilter(cam.mount, f.mount) &&
     passesExactFilter(cam.series, f.series) &&
-    passesRangeFilter(cam.year, f.yearRange, YEAR_RANGES) &&
-    passesExactFilter(cam.sensor, f.sensorType) &&
-    passesExactFilter(cam.formFactor, f.formFactor) &&
+    passesRangeFilter(cam.year, f.year, YEAR_RANGES) &&
+    passesExactFilter(cam.sensor, f.sensor) &&
+    passesExactFilter(cam.formFactor, f.form) &&
     passesBooleanFilter(f.ibis, cam.hasIbis) &&
     passesBooleanFilter(f.wr, cam.isWeatherSealed) &&
-    passesStatusFilter(f.discontinued, cam.isDiscontinued) &&
-    passesExactFilter(cam.videoSpec, f.videoSpec) &&
-    passesRangeFilter(cam.price, f.priceRange, PRICE_RANGES) &&
-    (!f.search || cam.model.toLowerCase().includes(f.search.toLowerCase()))
+    passesStatusFilter(f.status, cam.isDiscontinued) &&
+    passesExactFilter(cam.videoSpec, f.video) &&
+    passesRangeFilter(cam.price, f.price, PRICE_RANGES) &&
+    (!f.q || cam.model.toLowerCase().includes(f.q.toLowerCase()))
   );
 }
 
@@ -78,58 +65,42 @@ interface CameraExplorerProps {
   cameras: ExplorerCamera[];
 }
 
+const FILTER_KEYS = [
+  "q",
+  "mount",
+  "series",
+  "year",
+  "sensor",
+  "form",
+  "ibis",
+  "wr",
+  "status",
+  "video",
+  "price",
+] as const;
+
 function CameraExplorer({ cameras }: CameraExplorerProps) {
-  const [search, setSearch] = useState("");
-  const [mount, setMount] = useState("");
-  const [series, setSeries] = useState("");
-  const [yearRange, setYearRange] = useState("");
-  const [sensorType, setSensorType] = useState("");
-  const [ibis, setIbis] = useState("");
-  const [wr, setWr] = useState("");
-  const [formFactor, setFormFactor] = useState("");
-  const [discontinued, setDiscontinued] = useState("");
-  const [videoSpec, setVideoSpec] = useState("");
-  const [priceRange, setPriceRange] = useState("");
+  const {
+    values: f,
+    set,
+    clear: clearFilters,
+    hasFilters,
+  } = useUrlFilters(FILTER_KEYS);
 
   const seriesOptions = useMemo(() => {
-    const pool = mount ? cameras.filter((c) => c.mount === mount) : cameras;
+    const pool = f.mount ? cameras.filter((c) => c.mount === f.mount) : cameras;
     return [...new Set(pool.map((c) => c.series))].sort();
-  }, [cameras, mount]);
+  }, [cameras, f.mount]);
 
   const sensorOptions = useMemo(() => {
-    const pool = mount ? cameras.filter((c) => c.mount === mount) : cameras;
+    const pool = f.mount ? cameras.filter((c) => c.mount === f.mount) : cameras;
     return [...new Set(pool.map((c) => c.sensor))].sort();
-  }, [cameras, mount]);
+  }, [cameras, f.mount]);
 
-  const filtered = useMemo(() => {
-    const f: CameraFilterValues = {
-      search,
-      mount,
-      series,
-      yearRange,
-      sensorType,
-      formFactor,
-      ibis,
-      wr,
-      discontinued,
-      videoSpec,
-      priceRange,
-    };
-    return cameras.filter((cam) => matchesCameraFilters(cam, f));
-  }, [
-    cameras,
-    search,
-    mount,
-    series,
-    yearRange,
-    sensorType,
-    formFactor,
-    discontinued,
-    ibis,
-    wr,
-    videoSpec,
-    priceRange,
-  ]);
+  const filtered = useMemo(
+    () => cameras.filter((cam) => matchesCameraFilters(cam, f)),
+    [cameras, f],
+  );
 
   const availableFirst = useCallback(
     (a: ExplorerCamera, b: ExplorerCamera) =>
@@ -146,41 +117,13 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
   >(filtered, "year", "asc", availableFirst, descFirst);
 
   function handleMountChange(value: string): void {
-    setMount(value);
-    if (series) {
+    set("mount", value);
+    if (f.series) {
       const seriesExistsInMount = cameras.some(
-        (c) => c.series === series && (!value || c.mount === value),
+        (c) => c.series === f.series && (!value || c.mount === value),
       );
-      if (!seriesExistsInMount) setSeries("");
+      if (!seriesExistsInMount) set("series", "");
     }
-  }
-
-  const hasFilters = !!(
-    search ||
-    mount ||
-    series ||
-    yearRange ||
-    sensorType ||
-    formFactor ||
-    discontinued ||
-    ibis ||
-    wr ||
-    videoSpec ||
-    priceRange
-  );
-
-  function clearFilters(): void {
-    setSearch("");
-    setMount("");
-    setSeries("");
-    setYearRange("");
-    setSensorType("");
-    setFormFactor("");
-    setDiscontinued("");
-    setIbis("");
-    setWr("");
-    setVideoSpec("");
-    setPriceRange("");
   }
 
   return (
@@ -193,28 +136,28 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
       </div>
 
       <CameraFilters
-        search={search}
-        setSearch={setSearch}
-        mount={mount}
+        search={f.q}
+        setSearch={(v) => set("q", v)}
+        mount={f.mount}
         onMountChange={handleMountChange}
-        series={series}
-        setSeries={setSeries}
-        yearRange={yearRange}
-        setYearRange={setYearRange}
-        sensorType={sensorType}
-        setSensorType={setSensorType}
-        ibis={ibis}
-        setIbis={setIbis}
-        wr={wr}
-        setWr={setWr}
-        formFactor={formFactor}
-        setFormFactor={setFormFactor}
-        discontinued={discontinued}
-        setDiscontinued={setDiscontinued}
-        videoSpec={videoSpec}
-        setVideoSpec={setVideoSpec}
-        priceRange={priceRange}
-        setPriceRange={setPriceRange}
+        series={f.series}
+        setSeries={(v) => set("series", v)}
+        yearRange={f.year}
+        setYearRange={(v) => set("year", v)}
+        sensorType={f.sensor}
+        setSensorType={(v) => set("sensor", v)}
+        ibis={f.ibis}
+        setIbis={(v) => set("ibis", v)}
+        wr={f.wr}
+        setWr={(v) => set("wr", v)}
+        formFactor={f.form}
+        setFormFactor={(v) => set("form", v)}
+        discontinued={f.status}
+        setDiscontinued={(v) => set("status", v)}
+        videoSpec={f.video}
+        setVideoSpec={(v) => set("video", v)}
+        priceRange={f.price}
+        setPriceRange={(v) => set("price", v)}
         seriesOptions={seriesOptions}
         sensorOptions={sensorOptions}
         hasFilters={hasFilters}
