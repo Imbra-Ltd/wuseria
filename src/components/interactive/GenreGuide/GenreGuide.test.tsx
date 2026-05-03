@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import GenreGuide from "./GenreGuide";
 import type { GenreLens } from "./types";
 import { makeLens } from "../../../test/factories";
+import { getColumnDefs } from "./genreColumns";
 
 const testLenses: GenreLens[] = [
   makeLens({
@@ -209,6 +210,23 @@ describe("GenreGuide", () => {
 
     expect(screen.queryByText("XF 23mm f/1.4")).not.toBeInTheDocument();
     expect(screen.queryByText("XF 16mm f/1.4")).not.toBeInTheDocument();
+  });
+
+  it("renders 5 pips total for any mark value (#434)", () => {
+    render(<GenreGuide lenses={testLenses} defaultGenre="street" />);
+    const pipContainers = screen.getAllByLabelText(/Mark \d/);
+    for (const container of pipContainers) {
+      const pips = container.querySelectorAll("span");
+      expect(pips.length).toBe(5);
+    }
+  });
+
+  it("genreColumns maps Brand to brand sort key, not fl (#313)", () => {
+    // Regression: genreColumns.ts had ["fl", "Brand"] instead of ["brand", "Brand"]
+    const columns = getColumnDefs("street");
+    const brandCol = columns.find((col) => col[1] === "Brand");
+    expect(brandCol).toBeDefined();
+    expect(brandCol![0]).toBe("brand");
   });
 
   it("filters by type (prime/zoom)", async () => {
