@@ -952,3 +952,11 @@ Key decisions:
 
 - Combined 4 GitHub Actions Dependabot PRs into one PR to avoid cascading rebase delays
 - ESLint 10 requires coordinated upgrade with @eslint/js 10; TypeScript 6 blocked until @astrojs/check and @typescript-eslint support it
+- Added `eslint-plugin-sonarjs` for cognitive complexity and code smell enforcement
+- Added `max-depth` (3) and `no-console` ESLint rules; scripts/ exempted (CLI tools)
+- Added `.editorconfig` for UTF-8 + LF enforcement across editors
+
+Upstream feedback for solid-ai-templates:
+
+- `platform/github.md` SHOULD recommend Dependabot (solid-ai-templates#131)
+- Stack quality gates SHOULD include `eslint-plugin-sonarjs` for cognitive complexity (solid-ai-templates#130)
