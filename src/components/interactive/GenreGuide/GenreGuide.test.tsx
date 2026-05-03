@@ -168,4 +168,63 @@ describe("GenreGuide", () => {
     await user.click(screen.getByRole("tab", { name: /landscape/i }));
     expect(screen.getByText(/EV Matrix.*Tripod/)).toBeInTheDocument();
   });
+
+  it("filters by mark threshold", async () => {
+    const user = userEvent.setup();
+    // Street default FL=24, range [16,27] → XF 23mm (mark 4) + XF 16mm (mark 4) visible
+    // Filter mark >= 5 should exclude both (marks are 4)
+    render(<GenreGuide lenses={testLenses} defaultGenre="street" />);
+
+    // Verify lenses render before filtering
+    expect(screen.getAllByText("XF 23mm f/1.4").length).toBeGreaterThan(0);
+
+    const selects = screen.getAllByRole("combobox");
+    const markSelect = selects.find(
+      (s) => s.querySelector("option[value='4.5']") !== null,
+    );
+    expect(markSelect).toBeDefined();
+    await user.selectOptions(markSelect!, "5");
+
+    // Both have mark=4, so neither passes >= 5
+    expect(screen.queryByText("XF 23mm f/1.4")).not.toBeInTheDocument();
+    expect(screen.queryByText("XF 16mm f/1.4")).not.toBeInTheDocument();
+  });
+
+  it("filters by price threshold", async () => {
+    const user = userEvent.setup();
+    // Street default FL=24, range [16,27] → XF 23mm ($950) + XF 16mm ($1000)
+    render(<GenreGuide lenses={testLenses} defaultGenre="street" />);
+
+    // Verify lenses render before filtering
+    expect(screen.getAllByText("XF 23mm f/1.4").length).toBeGreaterThan(0);
+
+    // Price filter "≤ ~$500" should exclude both ($950 and $1000)
+    // Use value='4000' to identify the price select (unique to PRICE_THRESHOLDS)
+    const selects = screen.getAllByRole("combobox");
+    const priceSelect = selects.find(
+      (s) => s.querySelector("option[value='4000']") !== null,
+    );
+    expect(priceSelect).toBeDefined();
+    await user.selectOptions(priceSelect!, "500");
+
+    expect(screen.queryByText("XF 23mm f/1.4")).not.toBeInTheDocument();
+    expect(screen.queryByText("XF 16mm f/1.4")).not.toBeInTheDocument();
+  });
+
+  it("filters by type (prime/zoom)", async () => {
+    const user = userEvent.setup();
+    render(<GenreGuide lenses={testLenses} defaultGenre="street" />);
+
+    // All test lenses are primes — filter for zoom should show empty
+    const selects = screen.getAllByRole("combobox");
+    const typeSelect = selects.find(
+      (s) => s.querySelector("option[value='zoom']") !== null,
+    );
+    expect(typeSelect).toBeDefined();
+    await user.selectOptions(typeSelect!, "zoom");
+
+    // No lenses match — cards/table should be empty
+    expect(screen.queryByText("XF 23mm f/1.4")).not.toBeInTheDocument();
+    expect(screen.queryByText("XF 16mm f/1.4")).not.toBeInTheDocument();
+  });
 });

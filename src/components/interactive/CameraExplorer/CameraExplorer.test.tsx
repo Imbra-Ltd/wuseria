@@ -81,6 +81,37 @@ describe("CameraExplorer", () => {
     ).toBeInTheDocument();
   });
 
+  it("filters by IBIS chip", async () => {
+    const user = userEvent.setup();
+    const testCameras = [
+      makeCamera({ model: "X-T5", hasIbis: true, price: 1500 }),
+      makeCamera({ model: "X-E4", hasIbis: false, price: 850 }),
+    ];
+    render(<CameraExplorer cameras={testCameras} />);
+    const yesButtons = screen.getAllByRole("button", { name: "Yes" });
+    await user.click(yesButtons[0]);
+    expect(screen.getAllByText("X-T5").length).toBeGreaterThan(0);
+    expect(screen.queryByText("X-E4")).not.toBeInTheDocument();
+  });
+
+  it("filters by status chip (discontinued)", async () => {
+    const user = userEvent.setup();
+    render(<CameraExplorer cameras={cameras} />);
+    await user.click(screen.getByRole("button", { name: "Discontinued" }));
+    expect(screen.getAllByText("X-T4").length).toBeGreaterThan(0);
+    expect(screen.queryByText("X-T5")).not.toBeInTheDocument();
+    expect(screen.queryByText("X-S10")).not.toBeInTheDocument();
+  });
+
+  it("filters by series select", async () => {
+    const user = userEvent.setup();
+    render(<CameraExplorer cameras={cameras} />);
+    const seriesSelect = screen.getByRole("combobox", { name: /series/i });
+    await user.selectOptions(seriesSelect, "X-S");
+    expect(screen.getAllByText("X-S10").length).toBeGreaterThan(0);
+    expect(screen.queryByText("X-T5")).not.toBeInTheDocument();
+  });
+
   it("sorts by price when Price header is clicked", async () => {
     const user = userEvent.setup();
     render(<CameraExplorer cameras={cameras} />);

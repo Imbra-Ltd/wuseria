@@ -243,6 +243,73 @@ describe("LensExplorer", () => {
     expect(screen.queryByText("XF 14mm f/2.8 R")).not.toBeInTheDocument();
   });
 
+  it("filters by price range select", async () => {
+    const user = userEvent.setup();
+    const testLenses = [
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 27mm f/2.8 R WR",
+        price: 500,
+      }),
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 200mm f/2 R LM OIS WR",
+        price: 5000,
+      }),
+    ];
+    render(<LensExplorer lenses={testLenses} />);
+    const priceSelect = screen.getByRole("combobox", { name: /price/i });
+    await user.selectOptions(priceSelect, "250-500");
+    expect(screen.getAllByText("XF 27mm f/2.8 R WR").length).toBeGreaterThan(0);
+    expect(
+      screen.queryByText("XF 200mm f/2 R LM OIS WR"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("filters by WR chip", async () => {
+    const user = userEvent.setup();
+    const testLenses = [
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 35mm f/2 R WR",
+        isWeatherSealed: true,
+        price: 500,
+      }),
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 35mm f/1.4 R",
+        price: 600,
+      }),
+    ];
+    render(<LensExplorer lenses={testLenses} />);
+    // WR "Yes" button — OIS Yes is first, WR Yes is second
+    const yesButtons = screen.getAllByRole("button", { name: "Yes" });
+    await user.click(yesButtons[1]);
+    expect(screen.getAllByText("XF 35mm f/2 R WR").length).toBeGreaterThan(0);
+    expect(screen.queryByText("XF 35mm f/1.4 R")).not.toBeInTheDocument();
+  });
+
+  it("filters by status chip (discontinued)", async () => {
+    const user = userEvent.setup();
+    const testLenses = [
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 18mm f/2 R",
+        isDiscontinued: true,
+        price: 500,
+      }),
+      makeExplorerLens({
+        brand: "Fujifilm",
+        model: "XF 18mm f/1.4 R LM WR",
+        price: 1000,
+      }),
+    ];
+    render(<LensExplorer lenses={testLenses} />);
+    await user.click(screen.getByRole("button", { name: "Discontinued" }));
+    expect(screen.getAllByText("XF 18mm f/2 R").length).toBeGreaterThan(0);
+    expect(screen.queryByText("XF 18mm f/1.4 R LM WR")).not.toBeInTheDocument();
+  });
+
   it("sorts by price when Price header is clicked", async () => {
     const user = userEvent.setup();
     render(<LensExplorer lenses={lenses} />);
