@@ -1194,3 +1194,44 @@ Key decisions:
 - ADR-021: set:html allowed exclusively for JSON-LD via JSON.stringify() of server-controlled data
 - Commit hash in footer rejected on security grounds (unnecessary information disclosure)
 - Deploy switch, release gates, CONTRIBUTING.md all rejected as YAGNI for solo-maintained static site
+
+---
+
+### Session 34 — Solid-AI-Templates Convention Sweep
+
+**Date:** 2026-05-04
+**Tool:** Claude Code (Opus 4.6, 1M context)
+
+PRs (wuseria):
+
+- #518 — Add docs/360-audit.md to track audit score history (closes #517)
+- #519 — Remove duplicate score scale, bump submodule
+- #520 — Add gate job for fast docs-only merges
+- #521 — Bump solid-ai-templates submodule (4 upstream PRs)
+
+PRs (solid-ai-templates):
+
+- #141 — 360 audit tracking section
+- #142 — Grading scale +/- modifiers
+- #143 — CI/CD patterns (8 patterns)
+- #144 — Testing, frontend, security patterns (24 patterns)
+- #145 — Security rules + pipeline patterns split
+- #148 — Batch quick wins (11 issues)
+- #152 — Dev journal entry
+
+Issues closed: #517 (wuseria), 12 upstream issues
+
+Key changes:
+
+- New `docs/360-audit.md` — persists audit scores in the repo
+- Gate job pattern in CI — docs-only PRs merge in ~10s instead of ~2min
+- 40 reusable patterns added upstream (CI/CD, testing, frontend, security)
+- New `base/security.md` — 12-section application security rules
+- 11 quick wins batch: focus-visible, Dependabot, lychee, review checks, post-mortems, test factories, sonarjs, boolean sort, explicit audit steps
+
+Key decisions:
+
+- 360 audit scores stored in repo, not agent memory (upstream convention)
+- Gate job as single required CI check — conditional jobs skip for irrelevant paths
+- Pattern files separate from rules files (different purpose, different audience)
+- Architecture spikes created: composition over inheritance (#151), pattern resolution (#149, #150)
