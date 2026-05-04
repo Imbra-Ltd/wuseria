@@ -112,6 +112,7 @@ files, type-checked at build time.
 
 - [Architecture decisions](docs/decisions/)
 - [Development journal](docs/dev-journal.md)
+- [360-degree audit history](docs/360-audit.md)
 - [Quality conventions](docs/solid-ai-templates/)
 - [GitHub Issues](https://github.com/Imbra-Ltd/wuseria/issues)
 
