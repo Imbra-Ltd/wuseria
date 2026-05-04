@@ -8,21 +8,6 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          submodules: true
-
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: npm
-
-      - run: npm ci
-      - run: npm run validate
-
   changes:
     runs-on: ubuntu-latest
     outputs:
@@ -42,6 +27,23 @@ jobs:
               - 'package-lock.json'
               - 'lighthouserc.json'
               - '.github/workflows/**'
+
+  build:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          submodules: true
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run validate
 
   lighthouse:
     runs-on: ubuntu-latest
@@ -65,3 +67,15 @@ jobs:
         with:
           configPath: lighthouserc.json
           uploadArtifacts: true
+
+  gate:
+    runs-on: ubuntu-latest
+    needs: [build, lighthouse]
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          if [[ "${{ needs.build.result }}" == "failure" || "${{ needs.lighthouse.result }}" == "failure" ]]; then
+            echo "CI failed"
+            exit 1
+          fi
