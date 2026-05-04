@@ -1,5 +1,5 @@
 import type { Lens } from "../types/lens";
-import type { GenreLens } from "../components/interactive/GenreGuide/types";
+import type { GenreLens } from "../types/genre-lens";
 
 function pickGenreFields(l: Lens): GenreLens {
   return {

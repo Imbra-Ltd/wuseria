@@ -61,7 +61,7 @@ src/
   utils/            # Scoring, formatting, slug utilities
   styles/           # Global CSS custom properties, dark theme
 docs/
-  decisions/        # Architecture Decision Records (ADR-001 to ADR-015)
+  decisions/        # Architecture Decision Records (ADRs)
   dev-journal.md    # Development history
   prototype/        # Original single-file prototype (reference only)
   solid-ai-templates/  # Quality convention templates (submodule)
@@ -82,19 +82,16 @@ npm run test:watch   # run tests in watch mode (development)
 npm run validate     # lint + format + check + test + build -- full CI suite
 ```
 
-## How to add a new lens
+## Usage
 
-1. Open `src/data/lenses.ts`
-2. Add a new entry to the `lenses` array following the `Lens` interface in `src/types/lens.ts`
-3. All fields are type-checked at build time -- the compiler will catch missing required fields
-4. Run `npm run validate` before committing
+Visit [wuseria.com](https://wuseria.com):
 
-## How to add a wiki entry
+- **Find a lens** -- open Lenses, filter by mount/aperture/price, sort by any column → filterable table with specs, prices, and links to detail pages
+- **Pick a genre lens** -- open Genre Guide, select a genre tab, compare scored lenses → ranked list scored 0-10 for your chosen genre with EV matrix and FL recommendations
+- **Learn a concept** -- open Wiki, browse by category or search for a term → photography articles organized by category (optics, exposure, composition, technique)
 
-1. Create a new `.md` file in `src/content/wiki/` (e.g. `my-topic.md`)
-2. Add frontmatter: `title`, `category`, `summary`, and optionally `fullTitle` and `related`
-3. Write the body in Markdown -- headings, lists, tables, links all work
-4. The schema in `src/content.config.ts` validates your frontmatter at build time
+For contributor workflows (adding lenses, cameras, wiki entries), see
+[docs/PLAYBOOK.md](docs/PLAYBOOK.md) section 2.
 
 ## Conventions
 

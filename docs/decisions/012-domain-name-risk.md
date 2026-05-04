@@ -29,7 +29,7 @@ and lawsuits.
 manner without the express prior written consent." Brand guidelines exist
 for the X Series.
 
-## Options
+## Alternatives considered
 
 1. **Keep fujime.app** — accept risk, add disclaimers, hope for no enforcement
 2. **Rename to a brand-neutral domain** — eliminates risk entirely
