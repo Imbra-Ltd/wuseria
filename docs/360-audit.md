@@ -1,17 +1,8 @@
 # 360-Degree Audit History
 
 Score history from periodic 360-degree audits. Each audit evaluates four
-dimensions: Value, Quality, Viability, and Discovery.
-
-## Score scale
-
-| Grade  | Meaning                            |
-| ------ | ---------------------------------- |
-| A / A- | Strong — minor polish only         |
-| B+ / B | Solid — some gaps to address       |
-| C+ / C | Adequate — clear improvement areas |
-| D+ / D | Weak — significant gaps            |
-| F      | Failing — blocking issues          |
+dimensions: Value, Quality, Viability, and Discovery. See
+`docs/solid-ai-templates/base/360.md` for methodology and grading scale.
 
 ## Audit history
 
