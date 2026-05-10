@@ -7,18 +7,18 @@
 > skip, or defer. These files contain binding conventions that this CLAUDE.md
 > inherits. If you respond without reading them, you are violating project rules.
 >
-> 1. `docs/solid-ai-templates/base/quality.md`
-> 2. `docs/solid-ai-templates/base/typescript.md`
-> 3. `docs/solid-ai-templates/base/review.md`
-> 4. `docs/solid-ai-templates/base/scope.md`
-> 5. `docs/solid-ai-templates/base/git.md`
-> 6. `docs/solid-ai-templates/base/docs.md`
-> 7. `docs/solid-ai-templates/base/readme.md`
-> 8. `docs/solid-ai-templates/base/issues.md`
-> 9. `docs/solid-ai-templates/frontend/quality.md`
-> 10. `docs/solid-ai-templates/frontend/ux.md`
-> 11. `docs/solid-ai-templates/frontend/static-site.md`
-> 12. `docs/solid-ai-templates/stack/static-site-astro.md`
+> 1. `docs/solid-ai-templates/templates/base/core/quality.md`
+> 2. `docs/solid-ai-templates/templates/base/language/typescript.md`
+> 3. `docs/solid-ai-templates/templates/base/core/review.md`
+> 4. `docs/solid-ai-templates/templates/base/workflow/scope.md`
+> 5. `docs/solid-ai-templates/templates/base/core/git.md`
+> 6. `docs/solid-ai-templates/templates/base/core/docs.md`
+> 7. `docs/solid-ai-templates/templates/base/core/readme.md`
+> 8. `docs/solid-ai-templates/templates/base/workflow/issues.md`
+> 9. `docs/solid-ai-templates/templates/frontend/quality.md`
+> 10. `docs/solid-ai-templates/templates/frontend/ux.md`
+> 11. `docs/solid-ai-templates/templates/frontend/static-site.md`
+> 12. `docs/solid-ai-templates/templates/stack/static-site-astro.md`
 
 Fujifilm lens and camera explorer with genre-based scoring.
 Domain: wuseria.com. By braboj.me.
@@ -85,7 +85,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Do not commit `node_modules/`, `dist/`, `.env`, `.env.local`
 - Lock file (`package-lock.json`) is committed
 - Run `npm run validate` before committing
-- When creating GitHub issues, follow the formats in `docs/solid-ai-templates/base/issues.md` — use the correct label (`epic`, `bug`, `incident`, `question`) and body structure for each type
+- When creating GitHub issues, follow the formats in `docs/solid-ai-templates/templates/base/workflow/issues.md` — use the correct label (`epic`, `bug`, `incident`, `question`) and body structure for each type
 
 ### 2.2 TypeScript
 
@@ -244,7 +244,7 @@ Run after: new project setup, framework migration, adding a major layer
 
 ## 6. Session Protocol
 
-Follow `docs/solid-ai-templates/base/scope.md` for scope guard and end-of-session audit.
+Follow `docs/solid-ai-templates/templates/base/workflow/scope.md` for scope guard and end-of-session audit.
 **The agent MUST enforce this protocol. If the user deviates, remind them.**
 
 ### 6.1 Start of session
