@@ -1294,3 +1294,34 @@ Key decisions:
 - React and react-dom must be bumped together — Dependabot's separate PRs cause test failures due to version mismatch enforcement in React 19
 - lint-staged 17 requires Node 22.22.1+ — CI uses latest 22.x (fine), local dev machine at 22.13.1 (warning only)
 - Also committed session 35 journal entry and submodule bump that were left uncommitted
+
+---
+
+### Session 37 — Milestone Restructure and Trailing Slash Fix
+
+Tool: Claude Code (Opus 4.6)
+
+PRs merged:
+
+- #537 — fix: enforce trailing slash to resolve GSC redirect indexing issues
+
+Issues closed:
+
+- #535 — GSC "Page with redirect" indexing issue
+
+Issues created:
+
+- #538 — Add CI check for trailing slash consistency in internal links
+
+Key changes:
+
+- Restructured milestones: collapsed 6 phase-based milestones into Backlog + Expedite + v0.5.0 (sprint)
+- Set `trailingSlash: "always"` in Astro config
+- Fixed all internal links (static, dynamic, nav, canonical URLs) to use trailing slashes
+- Defined v0.5.0 sprint: "Complete optical scores for all lenses" (7 issues)
+
+Key decisions:
+
+- Milestones follow sprint model: version-named sprints (v0.5.0), Backlog for future work, Expedite for bugs/incidents
+- Milestone strategy is project-specific, not upstream to solid-ai-templates
+- GSC redirect root cause: GitHub Pages 301-redirects /path to /path/, Astro's default `trailingSlash: "ignore"` allowed inconsistent links
