@@ -77,7 +77,7 @@ function LensResults({
                   <td>
                     <a
                       className={styles.lensLink}
-                      href={`/lenses/${slugMap.get(key)}`}
+                      href={`/lenses/${slugMap.get(key)}/`}
                     >
                       {lens.model}
                     </a>
@@ -130,7 +130,7 @@ function LensResults({
               <div className={styles.cardHeader}>
                 <a
                   className={styles.lensLink}
-                  href={`/lenses/${slugMap.get(key)}`}
+                  href={`/lenses/${slugMap.get(key)}/`}
                 >
                   {lens.brand} {lens.model}
                 </a>

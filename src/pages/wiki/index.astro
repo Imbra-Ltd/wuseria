@@ -43,7 +43,7 @@ const categories = [
     {
       sorted.map((entry) => (
         <a
-          href={`/wiki/${entry.id}`}
+          href={`/wiki/${entry.id}/`}
           class="wiki-card"
           data-cats={entry.data.categories.join(",")}
           data-search={`${entry.data.title} ${entry.data.fullTitle ?? ""} ${entry.data.summary}`.toLowerCase()}

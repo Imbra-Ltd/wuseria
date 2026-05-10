@@ -19,7 +19,7 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { lens } = Astro.props as Props;
 
 const slug = toSlug(`${lens.brand} ${lens.model}`);
-const canonicalUrl = new URL(`/lenses/${slug}`, Astro.site);
+const canonicalUrl = new URL(`/lenses/${slug}/`, Astro.site);
 
 function yesNo(val?: boolean): string {
   return val ? "Yes" : "No";
@@ -326,7 +326,7 @@ const jsonLd = {
           <h2>Genre Scores</h2>
           <div class="genre-grid">
             {genreEntries.map(([genre, mark]) => (
-              <a href={`/genre/${genre}`} class="genre-card">
+              <a href={`/genre/${genre}/`} class="genre-card">
                 <span class="genre-name">{genreConfigs[genre].name}</span>
                 <span class="genre-mark">{mark}/5</span>
               </a>

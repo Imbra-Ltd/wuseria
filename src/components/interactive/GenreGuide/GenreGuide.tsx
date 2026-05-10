@@ -187,7 +187,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
               How marks work
             </a>
             <a
-              href={`/wiki/${genre}-photography`}
+              href={`/wiki/${genre}-photography/`}
               className={styles.learnMoreBtn}
             >
               {genreConfigs[genre].name.replace(" Photography", "")} guide

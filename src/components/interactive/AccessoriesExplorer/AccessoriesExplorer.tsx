@@ -282,7 +282,7 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
                       <td className={styles.modelCell}>
                         <a
                           className={styles.lensLink}
-                          href={`/accessories/${slug}`}
+                          href={`/accessories/${slug}/`}
                         >
                           {acc.model}
                         </a>
@@ -320,7 +320,7 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
                   <div className={styles.cardHeader}>
                     <a
                       className={styles.lensLink}
-                      href={`/accessories/${slug}`}
+                      href={`/accessories/${slug}/`}
                     >
                       {acc.brand} {acc.model}
                     </a>

@@ -53,7 +53,7 @@ function GenreTable({ state, enrichedLenses }: GenreTableProps) {
                 </td>
                 <td>{el.lens.brand}</td>
                 <td>
-                  <a className={styles.lensLink} href={`/lenses/${slug}`}>
+                  <a className={styles.lensLink} href={`/lenses/${slug}/`}>
                     {el.lens.model}
                   </a>
                 </td>
