@@ -1325,3 +1325,36 @@ Key decisions:
 - Milestones follow sprint model: version-named sprints (v0.5.0), Backlog for future work, Expedite for bugs/incidents
 - Milestone strategy is project-specific, not upstream to solid-ai-templates
 - GSC redirect root cause: GitHub Pages 301-redirects /path to /path/, Astro's default `trailingSlash: "ignore"` allowed inconsistent links
+
+---
+
+### Session 38 — SEO and Indexing
+
+Tool: Claude Code (Opus 4.6)
+
+PRs merged:
+
+- #540 — feat: add trailing slash CI check and fix twitter:image meta
+- #541 — feat: add beta version indicator under the Wuseria logo
+
+Issues closed:
+
+- #538 — Add CI check for trailing slash consistency in internal links
+- #507 — Fix missing twitter:image meta tag
+- #534 — Add beta version indicator under the Wuseria logo
+
+Key changes:
+
+- Added `scripts/check-trailing-slashes.ts` — scans `dist/**/*.html` for internal hrefs missing trailing slashes
+- Integrated as `npm run check:links` into the `validate` pipeline
+- Added `twitter:image`, `og:image:width`, `og:image:height` meta tags to base layout
+- Added subtle "beta" pill badge next to Wuseria brand name in nav header
+- Created `docs/seo-test-plan.md` — manual SEO test plan covering GSC, Umami, Lighthouse, and technical checks
+- Submitted sitemap to Google Search Console (manual action)
+- Moved #507 and #534 into v0.5.0 milestone
+
+Key decisions:
+
+- ~100/458 pages indexed is likely crawl pace on a young site, not a mass thin content issue (only 1 page flagged as "Crawled - not indexed")
+- Thin content analysis: camera pages are weakest (zero prose), but not blocking indexing yet — revisit if GSC flags more pages
+- SEO test plan frequency: weekly GSC checks until 400+ indexed, then monthly
