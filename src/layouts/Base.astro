@@ -61,7 +61,9 @@ const navLinks = [
   <body>
     <header class="site-header">
       <nav class="nav" aria-label="Main navigation">
-        <a href="/" class="nav-brand">Wuseria</a>
+        <a href="/" class="nav-brand"
+          >Wuseria<span class="beta-badge">beta</span></a
+        >
         <button
           class="nav-toggle"
           type="button"
@@ -190,6 +192,21 @@ const navLinks = [
 
   .nav-brand:hover {
     color: var(--color-accent);
+  }
+
+  .beta-badge {
+    display: inline-block;
+    margin-left: var(--space-xs);
+    padding: 0.0625rem var(--space-xs);
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    vertical-align: super;
+    line-height: 1;
   }
 
   /* Hamburger toggle — mobile only */
