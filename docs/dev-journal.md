@@ -1235,3 +1235,36 @@ Key decisions:
 - Gate job as single required CI check — conditional jobs skip for irrelevant paths
 - Pattern files separate from rules files (different purpose, different audience)
 - Architecture spikes created: composition over inheritance (#151), pattern resolution (#149, #150)
+
+---
+
+### Session 35 — Solid-AI-Templates Architecture Spikes
+
+PRs: none (decisions only, no code changes)
+Issues closed: braboj/solid-ai-templates#151, #149, #150
+Issues created: braboj/solid-ai-templates#154 (implementation task), #155 (repo org spike)
+
+Resolved three architecture spikes for the solid-ai-templates dependency model:
+
+- **#151 — Composition over inheritance**: ADR-004 drafted. Remove devsecops
+  and cicd from quality-gates depends_on. Core tier (5 files: quality, git,
+  docs, readme, testing) always loaded. Stacks compose opt-in tiers explicitly.
+  Stack classification: deployed services need devsecops + cicd, static sites
+  and libraries do not. Platform templates are facades (no devsecops dep).
+- **#149 — Pattern file integration**: Pattern files (~1700 lines) removed
+  from dependency graph entirely. Moved to docs/patterns/ as human reference.
+  Rules files keep one-line pattern summaries. LLMs already know standard
+  patterns from training data — agent context needs conventions, not tutorials.
+- **#150 — Agent-side resolution**: Resolution algorithm is build-time
+  (tools/sync.py), not runtime. Generates explicit file lists for CLAUDE.md
+  startup blocks. Agents read the list as-is — no manifest parsing needed.
+  Algorithm: core → stack deps → extras → platform, all recursive.
+
+Key decisions (all in ADR-004):
+
+- Manifest `core:` top-level list as single source of truth for core tier
+- File headers must match manifest (direct deps only, no transitive expansion)
+- 3 stale headers found: astro (8→2), hugo (6→1), tutorial (10→3)
+- Extras use RESOLVE_DEPS (recursive) for safety
+- Full IDs everywhere (explicit over implicit)
+- No profiles, no auto-convention, no pattern resolution logic
