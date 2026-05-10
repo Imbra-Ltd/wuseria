@@ -183,7 +183,7 @@ function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
           )}
 
           <div className={styles.learnMoreLinks}>
-            <a href="/wiki/optical-scoring" className={styles.learnMoreBtn}>
+            <a href="/wiki/optical-scoring/" className={styles.learnMoreBtn}>
               How marks work
             </a>
             <a
