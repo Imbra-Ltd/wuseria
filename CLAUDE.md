@@ -8,17 +8,22 @@
 > inherits. If you respond without reading them, you are violating project rules.
 >
 > 1. `docs/solid-ai-templates/templates/base/core/quality.md`
-> 2. `docs/solid-ai-templates/templates/base/language/typescript.md`
+> 2. `docs/solid-ai-templates/templates/base/core/testing.md`
 > 3. `docs/solid-ai-templates/templates/base/core/review.md`
-> 4. `docs/solid-ai-templates/templates/base/workflow/scope.md`
-> 5. `docs/solid-ai-templates/templates/base/core/git.md`
-> 6. `docs/solid-ai-templates/templates/base/core/docs.md`
-> 7. `docs/solid-ai-templates/templates/base/core/readme.md`
-> 8. `docs/solid-ai-templates/templates/base/workflow/issues.md`
-> 9. `docs/solid-ai-templates/templates/frontend/quality.md`
-> 10. `docs/solid-ai-templates/templates/frontend/ux.md`
-> 11. `docs/solid-ai-templates/templates/frontend/static-site.md`
-> 12. `docs/solid-ai-templates/templates/stack/static-site-astro.md`
+> 4. `docs/solid-ai-templates/templates/base/core/git.md`
+> 5. `docs/solid-ai-templates/templates/base/core/docs.md`
+> 6. `docs/solid-ai-templates/templates/base/core/readme.md`
+> 7. `docs/solid-ai-templates/templates/base/core/config.md`
+> 8. `docs/solid-ai-templates/templates/base/language/typescript.md`
+> 9. `docs/solid-ai-templates/templates/base/security/security.md`
+> 10. `docs/solid-ai-templates/templates/base/workflow/scope.md`
+> 11. `docs/solid-ai-templates/templates/base/workflow/issues.md`
+> 12. `docs/solid-ai-templates/templates/base/workflow/quality-gates.md`
+> 13. `docs/solid-ai-templates/templates/frontend/quality.md`
+> 14. `docs/solid-ai-templates/templates/frontend/ux.md`
+> 15. `docs/solid-ai-templates/templates/frontend/static-site.md`
+> 16. `docs/solid-ai-templates/templates/stack/static-site-astro.md`
+> 17. `docs/solid-ai-templates/templates/platform/github.md`
 
 Fujifilm lens and camera explorer with genre-based scoring.
 Domain: wuseria.com. By braboj.me.
