@@ -2,7 +2,7 @@
 
 Score history from periodic 360-degree audits. Each audit evaluates four
 dimensions: Value, Quality, Viability, and Discovery. See
-`docs/solid-ai-templates/base/360.md` for methodology and grading scale.
+`docs/solid-ai-templates/templates/base/workflow/360.md` for methodology and grading scale.
 
 ## Audit history
 
