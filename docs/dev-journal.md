@@ -1268,3 +1268,29 @@ Key decisions (all in ADR-004):
 - Extras use RESOLVE_DEPS (recursive) for safety
 - Full IDs everywhere (explicit over implicit)
 - No profiles, no auto-convention, no pattern resolution logic
+
+---
+
+### Session 36 — Dependency Update Sweep
+
+PRs merged: #523, #524, #525, #526, #527, #529, #530, #531, #532
+Issues closed: none
+Issues created: none
+
+Merged all 9 pending Dependabot PRs plus one manual fix:
+
+- **astro** 6.2.1 → 6.3.1
+- **github/codeql-action** 3 → 4
+- **typescript-eslint** 8.59.1 → 8.59.2
+- **react-dom** 19.2.5 → 19.2.6
+- **lint-staged** 16.4.0 → 17.0.4 (major — drops Node 20, requires 22.22.1+)
+- **@types/node** 24.12.2 → 25.6.2 (major — type definitions only)
+- **globals** 17.4.0 → 17.6.0
+- **zod** 4.4.2 → 4.4.3
+- **react** 19.2.5 → 19.2.6 (manual PR #532 — Dependabot bumped react and react-dom separately causing version mismatch)
+
+Key decisions:
+
+- React and react-dom must be bumped together — Dependabot's separate PRs cause test failures due to version mismatch enforcement in React 19
+- lint-staged 17 requires Node 22.22.1+ — CI uses latest 22.x (fine), local dev machine at 22.13.1 (warning only)
+- Also committed session 35 journal entry and submodule bump that were left uncommitted
