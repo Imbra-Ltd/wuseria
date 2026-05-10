@@ -16,7 +16,7 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { accessory } = Astro.props as Props;
 
 const canonicalUrl = new URL(
-  `/accessories/${toSlug(`${accessory.brand} ${accessory.model}`)}`,
+  `/accessories/${toSlug(`${accessory.brand} ${accessory.model}`)}/`,
   Astro.site,
 );
 
@@ -137,7 +137,7 @@ const compat =
           </a>
         )
       }
-      <a href="/accessories" class="back-link">Back to Accessories</a>
+      <a href="/accessories/" class="back-link">Back to Accessories</a>
     </section>
   </div>
 </Base>

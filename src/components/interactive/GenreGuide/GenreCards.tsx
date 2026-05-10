@@ -29,7 +29,7 @@ function GenreCards({ state, enrichedLenses }: GenreCardsProps) {
               <span className={styles.cardPrice}>~${el.lens.price}</span>
             </div>
             <div className={styles.cardName}>
-              <a className={styles.lensLink} href={`/lenses/${slug}`}>
+              <a className={styles.lensLink} href={`/lenses/${slug}/`}>
                 {el.lens.brand} {el.lens.model}
               </a>
             </div>

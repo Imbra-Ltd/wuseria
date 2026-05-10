@@ -66,7 +66,7 @@ function CameraResults({
                 <td>
                   <a
                     className={styles.lensLink}
-                    href={`/cameras/${toSlug(cam.model)}`}
+                    href={`/cameras/${toSlug(cam.model)}/`}
                   >
                     {cam.model}
                   </a>
@@ -110,7 +110,7 @@ function CameraResults({
             <div className={styles.cardHeader}>
               <a
                 className={styles.lensLink}
-                href={`/cameras/${toSlug(cam.model)}`}
+                href={`/cameras/${toSlug(cam.model)}/`}
               >
                 {cam.model}
               </a>

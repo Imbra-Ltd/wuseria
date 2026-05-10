@@ -19,7 +19,7 @@ const relatedEntries = entry.data.related
   ? allEntries.filter((e) => entry.data.related!.includes(e.id))
   : [];
 
-const canonicalUrl = new URL(`/wiki/${entry.id}`, Astro.site);
+const canonicalUrl = new URL(`/wiki/${entry.id}/`, Astro.site);
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -68,7 +68,7 @@ const jsonLd = {
           <ul class="related-list">
             {relatedEntries.map((r) => (
               <li>
-                <a href={`/wiki/${r.id}`}>{r.data.title}</a>
+                <a href={`/wiki/${r.id}/`}>{r.data.title}</a>
               </li>
             ))}
           </ul>
@@ -76,7 +76,7 @@ const jsonLd = {
       )
     }
 
-    <a href="/wiki" class="back-link">Back to Wiki</a>
+    <a href="/wiki/" class="back-link">Back to Wiki</a>
   </article>
 </Base>
 

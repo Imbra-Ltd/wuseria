@@ -5,6 +5,7 @@ import sitemap from "@astrojs/sitemap";
 export default defineConfig({
   site: "https://wuseria.com",
   output: "static",
+  trailingSlash: "always",
   build: {
     inlineStylesheets: "always",
   },
