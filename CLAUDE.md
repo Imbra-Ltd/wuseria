@@ -288,6 +288,6 @@ execution prevents missed steps.
 [ ] 8. ONBOARDING.md — for each new tool, prerequisite, or setup step, is it documented? Name the section.
 [ ] 9. PLAYBOOK.md — for each new command/script/workflow added, is it documented? Name the section.
 [ ] 10. Submodules — check if upstream needs update
-[ ] 11. Flag conventions for solid-ai-templates upstream — for each new pattern/convention introduced, explicitly state whether it's project-specific or reusable; if reusable, name the upstream template file it would go in
+[ ] 11. Flag conventions for solid-ai-templates upstream — list each new convention/decision by name and evaluate individually. No blanket "nothing reusable." For each: state project-specific or reusable; if reusable, name the upstream template file and create an issue
 [ ] 12. Summarize what was done and what's next
 ```
