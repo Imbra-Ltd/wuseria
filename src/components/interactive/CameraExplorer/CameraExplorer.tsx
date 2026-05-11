@@ -57,7 +57,7 @@ function matchesCameraFilters(
     passesStatusFilter(f.status, cam.isDiscontinued) &&
     passesExactFilter(cam.videoSpec, f.video) &&
     passesRangeFilter(cam.price, f.price, PRICE_RANGES) &&
-    (!f.q || cam.model.toLowerCase().includes(f.q.toLowerCase()))
+    (!f.q.trim() || cam.model.toLowerCase().includes(f.q.trim().toLowerCase()))
   );
 }
 
