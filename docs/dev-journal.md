@@ -1406,3 +1406,26 @@ Key decisions:
 Upstream:
 
 - solid-ai-templates#312 — ADR trigger rule for structural changes (reusable convention)
+
+---
+
+### Session 40 — Score Sigma Lenses and Fix Search Trim
+
+PRs: #561 (open), merged #558 (Viltrox from session 39)
+Issues: #559 (search trim bug, created + fixed), #560 (backfill scoring log, created)
+
+Key changes:
+
+- Merged PR #558 from session 39 (Viltrox scoring)
+- Scored Sigma 17-40mm f/1.8 DC Art from LensTip + Dustin Abbott (full 15 optical fields)
+- Added astigmatism from official MTF charts for 3 Sigma lenses missing the field (12mm, 10-18mm, 100-400mm)
+- Downloaded and analyzed official MTF charts for all 11 Sigma lenses with companion .md files
+- Backfilled scoring log entries for all 10 scored Sigma lenses (traceability per ADR-022)
+- Fixed bug: search filters return no results when query has trailing spaces (#559)
+- Sigma 16-300mm f/3.5-6.7 remains unscored — no trusted review data available yet
+- Identified 6 scorable Samyang lenses for next session
+
+Key decisions:
+
+- Backfilling scoring log for 60+ Fujifilm lenses deferred to #560 (P3) — documentation, not scoring
+- Official MTF chart S/M divergence used as astigmatism fallback per ADR-014 (3 lenses benefited)
