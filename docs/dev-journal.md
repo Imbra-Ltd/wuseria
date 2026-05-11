@@ -1399,3 +1399,10 @@ Key decisions:
 - MTF chart images stored in repo with companion analysis documenting readings and scoring rationale
 - CineD not added as review source — cinema methodology doesn't map to still photography rubric (spike #555)
 - Bot-blocked review sites (ePHOTOzine, DCW) need a workflow solution (spike #556)
+- ADR-022: scoring log extraction, MTF chart storage, genre mark completeness
+- New CLAUDE.md rule: new directory or doc restructuring = write ADR before creating files
+- Genre mark consistency test added — catches stored vs computed mismatches at build time
+
+Upstream:
+
+- solid-ai-templates#312 — ADR trigger rule for structural changes (reusable convention)
