@@ -162,6 +162,8 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Review source directory in `src/data/reviews.ts` — methodology and trust per source
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
 - Review source links use `rel="nofollow sponsored"` and `target="_blank"`
+- All computed `genreMarks` MUST be stored on the lens — no omissions, even low scores (e.g. macro=1). Transparency over curation.
+- Creating a new directory or moving content between documents is an architectural decision — write the ADR at the moment of the decision, not as an afterthought
 
 ## 3. Quality
 

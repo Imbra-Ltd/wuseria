@@ -108,8 +108,16 @@ source. See ADR-014 for the full rubric and reference scorings.
 
 **Step 1 — Identify sources**
 
-Search for LensTip, OpticalLimits, and Dustin Abbott reviews of
-the lens. Check if the optical formula changed between versions
+Search ALL trust 3 sources for the lens before proceeding:
+
+- Lab (trust 3): LensRentals, LensTip, OpticalLimits
+- Field (trust 3): Dustin Abbott, DPReview, Phillip Reeve
+
+Do not skip sources — missing one can leave scoreable fields empty
+(e.g. Dustin Abbott provided astigmatism + bokeh data for the
+Viltrox 9mm that two other sources missed).
+
+Check if the optical formula changed between versions
 (e.g. XF 27mm f/2.8 R WR uses the same optics as the original).
 
 **Step 2 — Collect data per field**
