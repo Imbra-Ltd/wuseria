@@ -162,7 +162,9 @@ infer from related fields or optical construction alone.
 1. Add optical fields + `sweetSpotAperture` + `reviewSources` to the
    lens entry in `src/data/lenses.ts`
 2. Add reference scoring table to `docs/scoring-log.md`, sorted by brand then focal length
-3. Run `npm run validate` to verify
+3. If astigmatism was scored from an official MTF chart, save the chart
+   image and a companion `.md` analysis in `docs/mtf-charts/`
+4. Run `npm run validate` to verify
 
 **Step 6 — Verify**
 

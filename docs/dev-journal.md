@@ -1358,3 +1358,44 @@ Key decisions:
 - ~100/458 pages indexed is likely crawl pace on a young site, not a mass thin content issue (only 1 page flagged as "Crawled - not indexed")
 - Thin content analysis: camera pages are weakest (zero prose), but not blocking indexing yet — revisit if GSC flags more pages
 - SEO test plan frequency: weekly GSC checks until 400+ indexed, then monthly
+
+---
+
+### Session 39 — Lens Scoring by Brand (Viltrox)
+
+Tool: Claude Code (Opus 4.6)
+
+PRs:
+
+- #558 — feat: score Viltrox lenses and restructure scoring docs
+
+Issues closed:
+
+- #548 — Score remaining Fujifilm lenses (no trusted data; MKX deferred)
+- #549 — Score remaining Viltrox lenses (all 5 scored)
+- #10, #11, #12, #13, #14 — Superseded by brand-based scoring epic
+
+Issues created:
+
+- #554 — Epic: lens optical quality and genre scoring by brand
+- #555 — Spike: evaluate scoring methodology for cinema lenses (MKX)
+- #556 — Spike: find efficient workflow for extracting review data from bot-blocked sites
+- #557 — Bug: audit and fix genre mark mismatches across all scored lenses
+
+Key changes:
+
+- Scored 5 Viltrox lenses: AF 9mm f/2.8 Air (OQ 1.6), AF 28mm f/4.5 (OQ 1.2), AF 35mm f/1.7 (OQ 1.6), AF 56mm f/1.4 STM (OQ 1.3), AF 85mm f/1.8 II (OQ 1.4)
+- Extracted scoring log from ADR-014 into `docs/scoring-log.md` — ADR now contains rubric rules only
+- Added `docs/mtf-charts/` — official MTF chart images with companion `.md` analysis files
+- Consolidated old per-field issues (#10-14, #514) into brand-priority epic (#554)
+- Updated PLAYBOOK step 5 to reference `scoring-log.md` instead of ADR-014
+- Scoring coverage: 94 → 99 lenses (39% → 41%)
+
+Key decisions:
+
+- Scoring by brand priority (Fujifilm → Viltrox → Sigma → Samyang → ...) instead of by optical field
+- All computed genre marks must be stored, even low scores (transparency over curation)
+- Official MTF charts can be used as fallback for astigmatism (S/M divergence)
+- MTF chart images stored in repo with companion analysis documenting readings and scoring rationale
+- CineD not added as review source — cinema methodology doesn't map to still photography rubric (spike #555)
+- Bot-blocked review sites (ePHOTOzine, DCW) need a workflow solution (spike #556)

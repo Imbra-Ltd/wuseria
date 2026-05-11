@@ -64,6 +64,8 @@ Project-specific overrides and additions follow below.
 - `src/styles/global.css` — CSS custom properties, base styles, dark theme
 - `src/test/` — Vitest setup and test factories
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
+- `docs/scoring-log.md` — per-lens scoring justifications (source data → rubric → score)
+- `docs/mtf-charts/` — official MTF chart images with companion `.md` analysis files
 
 ### 1.3 Commands
 
