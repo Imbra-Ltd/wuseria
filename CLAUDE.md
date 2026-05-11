@@ -64,6 +64,8 @@ Project-specific overrides and additions follow below.
 - `src/styles/global.css` — CSS custom properties, base styles, dark theme
 - `src/test/` — Vitest setup and test factories
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
+- `docs/scoring-log.md` — per-lens scoring justifications (source data → rubric → score)
+- `docs/mtf-charts/` — official MTF chart images with companion `.md` analysis files
 
 ### 1.3 Commands
 
@@ -91,6 +93,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Lock file (`package-lock.json`) is committed
 - Run `npm run validate` before committing
 - When creating GitHub issues, follow the formats in `docs/solid-ai-templates/templates/base/workflow/issues.md` — use the correct label (`epic`, `bug`, `incident`, `question`) and body structure for each type
+- Creating a new directory or moving content between documents is an architectural decision — write the ADR **at the moment of the decision**, before creating the files
 
 ### 2.2 TypeScript
 
@@ -160,6 +163,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Review source directory in `src/data/reviews.ts` — methodology and trust per source
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
 - Review source links use `rel="nofollow sponsored"` and `target="_blank"`
+- All computed `genreMarks` MUST be stored on the lens — no omissions, even low scores (e.g. macro=1). Transparency over curation.
 
 ## 3. Quality
 
@@ -278,12 +282,12 @@ execution prevents missed steps.
 [ ] 2. Close completed issues (verify auto-close worked)
 [ ] 3. Update epic checklists if relevant
 [ ] 4. Dev journal entry (### heading, --- separator, PRs, issues, key changes, key decisions with ADR refs)
-[ ] 5. ADRs — record any architectural decisions in docs/decisions/
+[ ] 5. ADRs — record any architectural decisions in docs/decisions/. Check: were any new directories created or content moved between documents? Each one needs an ADR.
 [ ] 6. CLAUDE.md — for each new convention/rule introduced, does it belong here? Name the section.
 [ ] 7. README.md — for each new command, dependency, or structural change, is it reflected? Name the section.
 [ ] 8. ONBOARDING.md — for each new tool, prerequisite, or setup step, is it documented? Name the section.
 [ ] 9. PLAYBOOK.md — for each new command/script/workflow added, is it documented? Name the section.
 [ ] 10. Submodules — check if upstream needs update
-[ ] 11. Flag conventions for solid-ai-templates upstream — for each new pattern/convention introduced, explicitly state whether it's project-specific or reusable; if reusable, name the upstream template file it would go in
+[ ] 11. Flag conventions for solid-ai-templates upstream — list each new convention/decision by name and evaluate individually. No blanket "nothing reusable." For each: state project-specific or reusable; if reusable, name the upstream template file and create an issue
 [ ] 12. Summarize what was done and what's next
 ```

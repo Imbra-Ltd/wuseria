@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { lenses } from "./lenses";
-import { OPTICAL_FIELDS, genreFormulas } from "../utils/scoring";
+import {
+  OPTICAL_FIELDS,
+  genreFormulas,
+  computeAllGenreMarks,
+} from "../utils/scoring";
 
 // =============================================================================
 // UNIQUENESS
@@ -135,6 +139,27 @@ describe("genreMarks", () => {
         l.centerStopped,
         `${l.brand} ${l.model}: has genreMarks but no centerStopped`,
       ).toBeDefined();
+    }
+  });
+
+  it("stored genreMarks match computeAllGenreMarks output", () => {
+    for (const l of withMarks) {
+      const id = `${l.brand} ${l.model}`;
+      const computed = computeAllGenreMarks(l);
+
+      for (const [genre, mark] of Object.entries(computed)) {
+        expect(
+          l.genreMarks![genre as keyof typeof l.genreMarks],
+          `${id}: ${genre} stored=${l.genreMarks![genre as keyof typeof l.genreMarks]} computed=${mark}`,
+        ).toBe(mark);
+      }
+
+      for (const genre of Object.keys(l.genreMarks!)) {
+        expect(
+          computed[genre as keyof typeof computed],
+          `${id}: ${genre} stored but not computed — stale mark?`,
+        ).toBeDefined();
+      }
     }
   });
 });
