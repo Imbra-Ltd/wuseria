@@ -82,8 +82,9 @@ function passesMaxFilter(value: number, filter: string): boolean {
 }
 
 function passesSearchFilter(text: string, query: string): boolean {
-  if (!query) return true;
-  return text.toLowerCase().includes(query.toLowerCase());
+  const q = query.trim();
+  if (!q) return true;
+  return text.toLowerCase().includes(q.toLowerCase());
 }
 
 function matchesLensFilters(

@@ -72,7 +72,7 @@ function matchesAccessoryFilters(
   if (f.status === "available" && acc.isDiscontinued) return false;
   if (f.status === "discontinued" && !acc.isDiscontinued) return false;
   if (!passesRangeFilter(acc.price, f.price)) return false;
-  const q = f.q.toLowerCase();
+  const q = f.q.trim().toLowerCase();
   if (
     q &&
     !`${acc.brand} ${acc.model} ${acc.description}`.toLowerCase().includes(q)
