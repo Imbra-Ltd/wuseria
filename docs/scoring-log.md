@@ -459,8 +459,12 @@ Phillip Reeve (field, trust 3), Dustin Abbott (field, trust 3).
 | bokeh              | 1.0   | Dustin Abbott: "a little busy", "more outlining than preferred."               | "average"    |
 | flareResistance    | 0.5   | Phillip Reeve: "weak performance." Dustin Abbott: "fairly good." Conservative. | "poor"       |
 
+MTF chart: [viltrox-af-9mm-f2-8-air.jpg](../mtf-charts/viltrox-af-9mm-f2-8-air.jpg)
+([analysis](../mtf-charts/viltrox-af-9mm-f2-8-air.md))
+
 Note: sphericalAberration left undefined — no data. OpticalLimits tested
-on Sony E-mount APS-C; same optical design as X-mount version.
+on Sony E-mount APS-C; same optical design as X-mount version. Official
+MTF chart confirms astigmatism score of 1.5 (moderate edge divergence).
 
 ### AF 35mm f/1.7 Air
 
