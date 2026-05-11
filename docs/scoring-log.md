@@ -383,6 +383,189 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 
 ## Sigma
 
+### 10-18mm f/2.8 DC DN C
+
+Compact ultra-wide zoom. Sources: Dustin Abbott (field, trust 3).
+Astigmatism from official MTF chart (fallback). Backfilled.
+
+| Field              | Score | Source data                                                                         | Rubric rule   |
+| ------------------ | ----- | ----------------------------------------------------------------------------------- | ------------- |
+| centerStopped      | 2.0   | Dustin Abbott: excellent center sharpness stopped down across zoom range.           | "excellent"   |
+| cornerStopped      | 1.5   | Dustin Abbott: good edge performance, solid for an ultra-wide zoom.                 | "very good"   |
+| centerWideOpen     | 1.5   | Dustin Abbott: sharp center at f/2.8, slight improvement on stopping down.          | "very good"   |
+| cornerWideOpen     | 1.0   | Dustin Abbott: corners softer wide open, improve stopped down.                      | "average"     |
+| astigmatism        | 1.5   | Official MTF chart: moderate S/M divergence at edges, tight through mid-frame.      | MTF fallback  |
+| longitudinalCA     | 1.5   | Dustin Abbott: well controlled for an f/2.8 zoom.                                   | "low"         |
+| lateralCA          | 2.0   | Dustin Abbott: negligible lateral CA.                                               | "negligible"  |
+| distortion         | 0.5   | Dustin Abbott: significant barrel distortion at 10mm, requires software correction. | "significant" |
+| vignettingWideOpen | 0.0   | Dustin Abbott: very heavy vignetting at 10mm f/2.8, pronounced light falloff.       | "very heavy"  |
+| vignettingStopped  | 0.5   | Dustin Abbott: improves but still noticeable stopped down.                          | "significant" |
+| bokeh              | 1.0   | Dustin Abbott: acceptable for a wide zoom, not a primary use case.                  | "average"     |
+| flareResistance    | 1.5   | Dustin Abbott: good flare control with multi-coating.                               | "very good"   |
+
+### 12mm f/1.4 DC DN C
+
+Ultra-wide fast prime. Sources: Dustin Abbott (field, trust 3).
+Astigmatism from official MTF chart (fallback). Backfilled.
+
+| Field              | Score | Source data                                                                  | Rubric rule   |
+| ------------------ | ----- | ---------------------------------------------------------------------------- | ------------- |
+| centerStopped      | 1.5   | Dustin Abbott: good center sharpness, peaks around f/2.8.                    | "very good"   |
+| cornerStopped      | 1.0   | Dustin Abbott: edges lag behind center, acceptable for ultra-wide.           | "average"     |
+| centerWideOpen     | 1.5   | Dustin Abbott: sharp center at f/1.4, usable wide open.                      | "very good"   |
+| cornerWideOpen     | 1.0   | Dustin Abbott: corners softer wide open but reasonable for 12mm f/1.4.       | "average"     |
+| astigmatism        | 1.5   | Official MTF chart: near-overlap with slight divergence at extreme edge.     | MTF fallback  |
+| longitudinalCA     | 1.5   | Dustin Abbott: well controlled longitudinal CA for an f/1.4 lens.            | "low"         |
+| lateralCA          | 2.0   | Dustin Abbott: negligible lateral CA.                                        | "negligible"  |
+| distortion         | 0.5   | Dustin Abbott: significant barrel distortion, relies on software correction. | "significant" |
+| vignettingWideOpen | 0.5   | Dustin Abbott: noticeable vignetting at f/1.4, expected for fast ultra-wide. | "significant" |
+| vignettingStopped  | 1.5   | Dustin Abbott: clears up well by f/2.8.                                      | "low"         |
+| bokeh              | 1.0   | Dustin Abbott: acceptable bokeh, not a primary use case for 12mm.            | "average"     |
+| flareResistance    | 2.0   | Dustin Abbott: excellent flare resistance, well-controlled ghosting.         | "excellent"   |
+
+### 15mm f/1.4 DC DN C
+
+Fast wide prime for astro/landscape. Sources: Dustin Abbott (field, trust 3).
+Astigmatism from official MTF chart (fallback). Backfilled.
+
+| Field              | Score | Source data                                                                           | Rubric rule   |
+| ------------------ | ----- | ------------------------------------------------------------------------------------- | ------------- |
+| centerStopped      | 1.5   | Dustin Abbott: very good center sharpness, peaks around f/2.8-4.                      | "very good"   |
+| cornerStopped      | 1.0   | Dustin Abbott: edges weaker, typical for fast wide prime.                             | "average"     |
+| centerWideOpen     | 1.5   | Dustin Abbott: sharp center at f/1.4, strong for astro use.                           | "very good"   |
+| cornerWideOpen     | 0.5   | Dustin Abbott: notable corner softness wide open.                                     | "poor"        |
+| astigmatism        | 2.0   | Dustin Abbott: well controlled. Official MTF chart confirms: near-overlap S/M lines.  | "excellent"   |
+| coma               | 1.5   | Dustin Abbott: well-controlled coma, good star rendering for astro.                   | "low"         |
+| longitudinalCA     | 0.5   | Dustin Abbott: noticeable purple/green fringing on high-contrast edges at f/1.4.      | "significant" |
+| lateralCA          | 2.0   | Dustin Abbott: negligible lateral CA.                                                 | "negligible"  |
+| distortion         | 0.0   | Dustin Abbott: very heavy barrel distortion, requires aggressive software correction. | > 4.0%        |
+| vignettingWideOpen | 0.0   | Dustin Abbott: very heavy vignetting at f/1.4.                                        | "very heavy"  |
+| vignettingStopped  | 1.0   | Dustin Abbott: improves but still moderate stopped down.                              | "moderate"    |
+| bokeh              | 1.0   | Dustin Abbott: acceptable, some onion ring from aspherical elements.                  | "average"     |
+| flareResistance    | 1.5   | Dustin Abbott: good flare control.                                                    | "very good"   |
+
+### 16mm f/1.4 DC DN C
+
+Fast wide prime. Sources: LensTip (lab, trust 3).
+Sensor: X-Trans III (X-T2), max ~78 lpmm. Backfilled.
+
+| Field               | Score | Source data                                                   | Rubric rule   |
+| ------------------- | ----- | ------------------------------------------------------------- | ------------- |
+| centerStopped       | 2.0   | LensTip: excellent center resolution at f/2.8-4.              | >= 90%        |
+| cornerStopped       | 1.0   | LensTip: edges lag significantly behind center.               | 60-74%        |
+| centerWideOpen      | 1.0   | LensTip: center at f/1.4 noticeably softer than stopped down. | 60-74%        |
+| cornerWideOpen      | 0.5   | LensTip: soft corners wide open.                              | 50-59%        |
+| astigmatism         | 1.0   | LensTip: moderate astigmatism.                                | 10-18%        |
+| coma                | 0.5   | LensTip: significant coma at f/1.4, star points stretched.    | "significant" |
+| sphericalAberration | 1.0   | LensTip: moderate spherical aberration, some focus shift.     | "moderate"    |
+| longitudinalCA      | 0.5   | LensTip: noticeable longitudinal CA at f/1.4.                 | "significant" |
+| lateralCA           | 1.5   | LensTip: low lateral CA.                                      | 0.04-0.08%    |
+| distortion          | 0.5   | LensTip: significant barrel distortion.                       | 2.0-4.0%      |
+| vignettingWideOpen  | 0.5   | LensTip: heavy vignetting at f/1.4.                           | 1.5-2.5 EV    |
+| vignettingStopped   | 2.0   | LensTip: clears up very well stopped down.                    | < 0.5 EV      |
+| bokeh               | 1.5   | LensTip: good bokeh quality, smooth rendering.                | "very good"   |
+
+### 18-50mm f/2.8 DC DN C
+
+Compact standard zoom. Sources: Dustin Abbott (field, trust 3).
+Astigmatism from official MTF chart (fallback). Scored at mid-range. Backfilled.
+
+| Field              | Score | Source data                                                                         | Rubric rule   |
+| ------------------ | ----- | ----------------------------------------------------------------------------------- | ------------- |
+| centerStopped      | 1.5   | Dustin Abbott: good center sharpness stopped down, not exceptional.                 | "very good"   |
+| cornerStopped      | 1.0   | Dustin Abbott: corners lag behind center across zoom range.                         | "average"     |
+| centerWideOpen     | 1.5   | Dustin Abbott: good center at f/2.8 across range.                                   | "very good"   |
+| cornerWideOpen     | 0.5   | Dustin Abbott: soft corners wide open, especially at wider focal lengths.           | "poor"        |
+| astigmatism        | 1.0   | Dustin Abbott: moderate. Official MTF chart shows heavy S/M divergence from early.  | "moderate"    |
+| coma               | 1.0   | Dustin Abbott: moderate coma, acceptable for a zoom.                                | "moderate"    |
+| longitudinalCA     | 1.5   | Dustin Abbott: well controlled for an f/2.8 zoom.                                   | "low"         |
+| lateralCA          | 1.0   | Dustin Abbott: some lateral CA at frame edges.                                      | "moderate"    |
+| distortion         | 0.5   | Dustin Abbott: noticeable barrel at 18mm, pincushion at 50mm. Relies on correction. | "significant" |
+| vignettingWideOpen | 0.0   | Dustin Abbott: very heavy vignetting at f/2.8, especially at 18mm.                  | "very heavy"  |
+| vignettingStopped  | 1.0   | Dustin Abbott: improves but still moderate.                                         | "moderate"    |
+| bokeh              | 1.0   | Dustin Abbott: acceptable for a standard zoom, some nervousness in backgrounds.     | "average"     |
+| flareResistance    | 1.5   | Dustin Abbott: good multi-coating, controlled flare.                                | "very good"   |
+
+### 23mm f/1.4 DC DN C
+
+Fast standard prime. Sources: LensTip (lab, trust 3). Backfilled.
+
+| Field               | Score | Source data                                               | Rubric rule  |
+| ------------------- | ----- | --------------------------------------------------------- | ------------ |
+| centerStopped       | 2.0   | LensTip: excellent center resolution at f/2.8.            | >= 90%       |
+| cornerStopped       | 1.5   | LensTip: good edge performance.                           | 75-89%       |
+| centerWideOpen      | 1.5   | LensTip: good center at f/1.4, improves on stopping down. | 75-89%       |
+| cornerWideOpen      | 1.0   | LensTip: edges softer wide open but usable.               | 60-74%       |
+| astigmatism         | 2.0   | LensTip: low astigmatism.                                 | < 5%         |
+| coma                | 1.0   | LensTip: noticeable coma at f/1.4, improves stopped down. | "noticeable" |
+| sphericalAberration | 2.0   | LensTip: well corrected, negligible focus shift.          | "negligible" |
+| longitudinalCA      | 2.0   | LensTip: very well corrected longitudinal CA.             | "negligible" |
+| lateralCA           | 2.0   | LensTip: negligible lateral CA.                           | < 0.04%      |
+| distortion          | 0.5   | LensTip: notable barrel distortion.                       | 2.0-4.0%     |
+| vignettingWideOpen  | 0.5   | LensTip: heavy vignetting at f/1.4.                       | 1.5-2.5 EV   |
+| vignettingStopped   | 1.5   | LensTip: clears up well by f/2.8.                         | 0.5-1.0 EV   |
+| bokeh               | 1.5   | LensTip: good bokeh, smooth rendering.                    | "very good"  |
+| flareResistance     | 2.0   | LensTip: excellent flare resistance.                      | "excellent"  |
+
+### 30mm f/1.4 DC DN C
+
+Fast normal prime. Sources: LensTip (lab, trust 3). Backfilled.
+
+| Field               | Score | Source data                                                           | Rubric rule  |
+| ------------------- | ----- | --------------------------------------------------------------------- | ------------ |
+| centerStopped       | 2.0   | LensTip: excellent center resolution at f/2.8.                        | >= 90%       |
+| cornerStopped       | 1.5   | LensTip: good edge performance.                                       | 75-89%       |
+| centerWideOpen      | 1.0   | LensTip: center at f/1.4 softer, improves significantly stopped down. | 60-74%       |
+| cornerWideOpen      | 0.5   | LensTip: soft corners wide open.                                      | 50-59%       |
+| astigmatism         | 1.0   | LensTip: moderate astigmatism.                                        | 10-18%       |
+| coma                | 2.0   | LensTip: negligible coma.                                             | "negligible" |
+| sphericalAberration | 1.0   | LensTip: moderate spherical aberration.                               | "moderate"   |
+| longitudinalCA      | 1.0   | LensTip: moderate longitudinal CA at f/1.4.                           | "moderate"   |
+| lateralCA           | 1.0   | LensTip: moderate lateral CA.                                         | 0.09-0.14%   |
+| distortion          | 1.0   | LensTip: moderate barrel distortion.                                  | 1.0-2.0%     |
+| bokeh               | 1.5   | LensTip: good bokeh quality.                                          | "very good"  |
+| flareResistance     | 1.0   | LensTip: average flare resistance.                                    | "average"    |
+
+### 56mm f/1.4 DC DN C
+
+Fast portrait prime. Sources: LensTip (lab, trust 3). Backfilled.
+
+| Field               | Score | Source data                                                   | Rubric rule  |
+| ------------------- | ----- | ------------------------------------------------------------- | ------------ |
+| centerStopped       | 2.0   | LensTip: excellent center resolution at f/2.8.                | >= 90%       |
+| cornerStopped       | 0.5   | LensTip: weak edge performance, significant drop from center. | 50-59%       |
+| centerWideOpen      | 1.5   | LensTip: good center at f/1.4.                                | 75-89%       |
+| cornerWideOpen      | 0.5   | LensTip: soft corners wide open.                              | 50-59%       |
+| astigmatism         | 1.5   | LensTip: moderate-low astigmatism.                            | 5-10%        |
+| coma                | 1.0   | LensTip: noticeable coma at f/1.4.                            | "noticeable" |
+| sphericalAberration | 2.0   | LensTip: well corrected, no focus shift.                      | "negligible" |
+| longitudinalCA      | 2.0   | LensTip: very well corrected.                                 | "negligible" |
+| lateralCA           | 1.5   | LensTip: low lateral CA.                                      | 0.04-0.08%   |
+| distortion          | 0.5   | LensTip: notable pincushion distortion.                       | 2.0-4.0%     |
+| vignettingWideOpen  | 0.5   | LensTip: heavy vignetting at f/1.4.                           | 1.5-2.5 EV   |
+| vignettingStopped   | 1.5   | LensTip: clears up well by f/2.8.                             | 0.5-1.0 EV   |
+| bokeh               | 1.0   | LensTip: average bokeh, some outlining.                       | "average"    |
+
+### 100-400mm f/5-6.3 DG DN OS C
+
+Super-telephoto zoom. Sources: Dustin Abbott (field, trust 3).
+Astigmatism from official MTF chart (fallback). Scored at mid-range. Backfilled.
+
+| Field              | Score | Source data                                                               | Rubric rule  |
+| ------------------ | ----- | ------------------------------------------------------------------------- | ------------ |
+| centerStopped      | 1.5   | Dustin Abbott: good center sharpness, solid for a super-tele zoom.        | "very good"  |
+| cornerStopped      | 1.5   | Dustin Abbott: surprisingly good edge performance for the class.          | "very good"  |
+| centerWideOpen     | 1.5   | Dustin Abbott: good center at f/5-6.3, usable wide open.                  | "very good"  |
+| cornerWideOpen     | 1.0   | Dustin Abbott: edges acceptable wide open.                                | "average"    |
+| astigmatism        | 1.0   | Official MTF chart: moderate-to-heavy S/M divergence at edges.            | MTF fallback |
+| longitudinalCA     | 2.0   | Dustin Abbott: very well corrected longitudinal CA.                       | "negligible" |
+| lateralCA          | 2.0   | Dustin Abbott: negligible lateral CA.                                     | "negligible" |
+| distortion         | 1.5   | Dustin Abbott: low distortion across zoom range.                          | 0.3-1.0%     |
+| vignettingWideOpen | 1.0   | Dustin Abbott: moderate vignetting at max aperture.                       | 1.0-1.5 EV   |
+| vignettingStopped  | 1.5   | Dustin Abbott: clears up well stopped down.                               | 0.5-1.0 EV   |
+| bokeh              | 1.5   | Dustin Abbott: good bokeh for a tele zoom, smooth rendering.              | "very good"  |
+| flareResistance    | 1.0   | Dustin Abbott: average flare resistance, some ghosting with sun in frame. | "average"    |
+
 ### 17-40mm f/1.8 DC Art
 
 Fast standard zoom. Sources: LensTip (lab, trust 3), Dustin Abbott (field, trust 3).
