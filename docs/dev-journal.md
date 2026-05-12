@@ -1507,3 +1507,28 @@ Key decisions:
 - Lab-quality lens testing is concentrated in ~15 sites globally (Europe + USA). No Chinese, Korean, or Russian lab sites exist. Japanese sites are qualitative only despite Cosina being Japanese
 - Nokton 50mm f/1.2 X-mount is a completely different optical design from VM/SE versions — data from other mounts does not apply
 - Macro APO-Ultron 35mm f/2 reached 6 of 7 fields from trust-2 aggregation (Fujiya + KASYAPA) but falls 1 short of MIN_OPTICAL_FIELDS; composite scoring rule (#575) could unlock it
+
+---
+
+### Session 44 — Lens Model Name Audit
+
+Tool: Claude Code. PRs [#579](https://github.com/Imbra-Ltd/wuseria/pull/579), [#580](https://github.com/Imbra-Ltd/wuseria/pull/580).
+
+- Full audit of all 243 lens model names against B&H Photo and official manufacturer sites
+- Normalized aperture format to `f/X.X` across 16 lenses (7Artisans, Handevision, Kamlan, Meyer Optik, Samyang, Laowa)
+- Added missing optical suffixes to 15 Samyang lenses (ED, AS, IF, UMC, NCS, CS) to match scoring log
+- Fixed Fujifilm names: removed spurious LM from XF 16/2.8, XF 23/2.8, XF 56/1.2 R WR
+- Fixed 7Artisans: 10mm AF not a fisheye (rectilinear); 18mm is UFO not Cap; added Fisheye to 7.5mm
+- Fixed Mitakon 20mm aperture f/2.4→f/2, added "Super Macro"
+- Fixed AstrHori 18mm: Shift not Tilt-Shift; 40mm GFX dropped M suffix
+- NiSi: added ASPH to Sunstar lenses; renamed Athena→Athena Prime (8 GFX cine lenses)
+- Added Laowa APO suffix to 65mm, Viltrox Air suffix to AF 35mm f/1.7, Laowa Argus prefix to 33mm
+- Removed phantom Mitakon Speedmaster 50mm f/0.95 — never existed for X-mount (full-frame only)
+- Added generation markers: 7Artisans 7.5mm Fisheye II, 60mm Macro Mark II, all 4 Meyer Optik lenses (II)
+- Fixed Trioplan 50mm aperture f/2.9→f/2.8 (Mark II changed it)
+- Added 7Artisans 35mm f/1.2 Mark II and 55mm f/1.4 Mark II as separate entries
+- Fixed 7Artisans Mark I weights: 35mm 200→150g, 55mm 300→272g
+- Confirmed Meike 25mm f/0.95 and 60mm f/2.8 Macro valid (meikeglobal.com, B&H gap)
+- Total: 57+ naming fixes, 1 lens removed, 2 lenses added. DB now 244 lenses, 461 pages
+
+Issues created: #577 (7Artisans Mark II audit — closed), #578 (questionable mount availability — closed)
