@@ -287,7 +287,7 @@ execution prevents missed steps.
 [ ] 3. Update epic checklists if relevant
 [ ] 4. Dev journal entry (### heading, --- separator, PRs, issues, key changes, key decisions with ADR refs)
 [ ] 5. ADRs — record any architectural decisions in docs/decisions/. Check: were any new directories created or content moved between documents? Each one needs an ADR.
-[ ] 6. CLAUDE.md — for each new convention/rule introduced, does it belong here? Name the section.
+[ ] 6. CLAUDE.md — list each new convention/rule by name, then evaluate individually: does it belong here? Name the section. Do not batch-dismiss.
 [ ] 7. README.md — for each new command, dependency, or structural change, is it reflected? Name the section.
 [ ] 8. ONBOARDING.md — for each new tool, prerequisite, or setup step, is it documented? Name the section.
 [ ] 9. PLAYBOOK.md — for each new command/script/workflow added, is it documented? Name the section.
