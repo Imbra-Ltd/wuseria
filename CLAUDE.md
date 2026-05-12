@@ -168,6 +168,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Scoring log format and field completeness rules are defined in `docs/decisions/022-scoring-log-and-mtf-charts.md` — every entry must list all 14 optical fields with explicit undefined markers
 - When scoring lenses, always save official MTF charts to `docs/mtf-charts/` with companion `.md` analysis files per ADR-022
 - Samyang lenses are sold under multiple brand aliases (Rokinon, Bower, Walimex Pro, Vivitar) — search all aliases when looking for reviews
+- optyczne.pl and lenstip.com are the same company (CO-NET Robert Olech) — never count as separate sources for trust-2 aggregation
 - Verify lens mount availability before adding to the database — check official manufacturer pages and third-party lens lists; do not assume a lens exists in X-mount or GFX just because it exists in other mounts
 
 ## 3. Quality
