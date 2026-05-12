@@ -35,7 +35,15 @@ type ReviewSource =
   | "provideocoalition"
   | "diglloyd"
   | "lonelyspeck"
-  | "nightscapephotographer";
+  | "nightscapephotographer"
+  | "digitalkamera-de"
+  | "fotomagazin"
+  | "focus-review"
+  | "fotografidigitali"
+  | "asobinet"
+  | "fujiyacamera"
+  | "mapcamera"
+  | "radojuva";
 
 // =============================================================================
 // METHODOLOGY & TRUST

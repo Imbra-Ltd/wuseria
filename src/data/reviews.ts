@@ -211,6 +211,58 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
     name: "ProVideo Coalition",
     site: "provideocoalition.com",
   },
+
+  // --- lab, trust 2 (multilingual) ---
+  "digitalkamera-de": {
+    methodology: "lab",
+    trust: 2,
+    name: "digitalkamera.de",
+    site: "digitalkamera.de",
+  },
+  fotomagazin: {
+    methodology: "lab",
+    trust: 2,
+    name: "fotoMAGAZIN",
+    site: "fotomagazin.de",
+  },
+  "focus-review": {
+    methodology: "lab",
+    trust: 2,
+    name: "Focus Review",
+    site: "focus-review.com",
+  },
+  fotografidigitali: {
+    methodology: "lab",
+    trust: 2,
+    name: "Fotografi Digitali",
+    site: "fotografidigitali.it",
+  },
+
+  // --- field, trust 2 (multilingual) ---
+  asobinet: {
+    methodology: "field",
+    trust: 2,
+    name: "Asobinet (とるなら)",
+    site: "asobinet.com",
+  },
+  fujiyacamera: {
+    methodology: "field",
+    trust: 2,
+    name: "Fujiya Camera",
+    site: "fujiya-camera.co.jp",
+  },
+  mapcamera: {
+    methodology: "field",
+    trust: 2,
+    name: "Map Camera KASYAPA",
+    site: "news.mapcamera.com",
+  },
+  radojuva: {
+    methodology: "field",
+    trust: 2,
+    name: "Radojuva",
+    site: "radojuva.com",
+  },
 };
 
 export { reviewSourceDirectory };
