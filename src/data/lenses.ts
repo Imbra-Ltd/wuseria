@@ -4,7 +4,7 @@ const lenses: Lens[] = [
   // 7Artisans
   {
     brand: "7Artisans",
-    model: "7.5mm F2.8",
+    model: "7.5mm f/2.8",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -21,7 +21,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "7Artisans",
-    model: "25mm f1.8",
+    model: "25mm f/1.8",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -39,7 +39,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "7Artisans",
-    model: "35mm f1.2",
+    model: "35mm f/1.2",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -76,7 +76,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "7Artisans",
-    model: "50mm f1.8",
+    model: "50mm f/1.8",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -114,7 +114,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "7Artisans",
-    model: "55mm f1.4",
+    model: "55mm f/1.4",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -2143,7 +2143,7 @@ const lenses: Lens[] = [
   // Handevision
   {
     brand: "Handevision",
-    model: "IBERIT 24mm f2.4",
+    model: "IBERIT 24mm f/2.4",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -2161,7 +2161,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Handevision",
-    model: "IBERIT 35mm f2.4",
+    model: "IBERIT 35mm f/2.4",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -2180,7 +2180,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Handevision",
-    model: "IBERIT 50mm f2.4",
+    model: "IBERIT 50mm f/2.4",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -2198,7 +2198,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Handevision",
-    model: "IBERIT 75mm f2.4",
+    model: "IBERIT 75mm f/2.4",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -2235,7 +2235,7 @@ const lenses: Lens[] = [
   // Kamlan
   {
     brand: "Kamlan",
-    model: "28mm f1.4",
+    model: "28mm f/1.4",
     type: "prime",
     mount: "X",
     year: 2018,
@@ -2254,7 +2254,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Kamlan",
-    model: "50mm f1.1",
+    model: "50mm f/1.1",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -2548,7 +2548,7 @@ const lenses: Lens[] = [
   // Meyer Optik
   {
     brand: "Meyer Optik",
-    model: "Primoplan 58mm f1.9",
+    model: "Primoplan 58mm f/1.9",
     type: "prime",
     mount: "X",
     year: 2019,
@@ -2567,7 +2567,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Meyer Optik",
-    model: "Primoplan 75mm f1.9",
+    model: "Primoplan 75mm f/1.9",
     type: "prime",
     mount: "X",
     year: 2020,
@@ -2605,7 +2605,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Meyer Optik",
-    model: "Trioplan 100mm f2.8",
+    model: "Trioplan 100mm f/2.8",
     type: "prime",
     mount: "X",
     year: 2019,
@@ -2987,7 +2987,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "21mm F1.4",
+    model: "21mm f/1.4",
     type: "prime",
     mount: "X",
     year: 2016,
@@ -3584,7 +3584,7 @@ const lenses: Lens[] = [
   // Venus Laowa
   {
     brand: "Venus Laowa",
-    model: "9mm f2.8 ZeroD",
+    model: "9mm f/2.8 Zero-D",
     type: "prime",
     mount: "X",
     year: 2018,
