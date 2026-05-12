@@ -43,6 +43,22 @@ Official manufacturer MTF charts used for scoring are stored in
 
 Slug follows the lens data convention: `viltrox-af-56mm-f1-4-stm`.
 
+### Field completeness
+
+Every scoring log entry MUST list all 14 optical fields. Fields without
+data use one of three explicit markers instead of being omitted:
+
+| Marker                       | Meaning                                             |
+| ---------------------------- | --------------------------------------------------- |
+| `undefined — not tested`     | Source reviewed the lens but didn't test this field |
+| `undefined — no data`        | No trusted source has data for this field           |
+| `undefined — not applicable` | Field doesn't apply (e.g. bokeh for fisheye)        |
+
+This turns the scoring log into a complete audit — every field is
+accounted for. Agents can identify gaps, target searches for missing
+fields when new sources become available, and avoid re-searching
+fields confirmed as untestable.
+
 ### Genre mark completeness
 
 All computed genre marks must be stored on the lens, including low scores

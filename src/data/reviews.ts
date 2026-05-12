@@ -25,19 +25,20 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
     site: "opticallimits.com",
   },
 
-  // --- lab, trust 2 ---
+  // --- lab, trust 3 (upgraded) ---
   dxomark: {
     methodology: "lab",
-    trust: 2,
+    trust: 3,
     name: "DxOMark",
     site: "dxomark.com",
   },
   "the-digital-picture": {
     methodology: "lab",
-    trust: 2,
+    trust: 3,
     name: "The Digital Picture",
     site: "the-digital-picture.com",
   },
+  // --- lab, trust 2 ---
   "imaging-resource": {
     methodology: "lab",
     trust: 2,
@@ -69,6 +70,24 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
     trust: 3,
     name: "Phillip Reeve",
     site: "phillipreeve.net",
+  },
+  diglloyd: {
+    methodology: "field",
+    trust: 3,
+    name: "Lloyd Chambers",
+    site: "diglloyd.com",
+  },
+  lonelyspeck: {
+    methodology: "field",
+    trust: 3,
+    name: "Lonely Speck",
+    site: "lonelyspeck.com",
+  },
+  nightscapephotographer: {
+    methodology: "field",
+    trust: 2,
+    name: "Nightscape Photographer",
+    site: "nightscapephotographer.com",
   },
 
   // --- field, trust 2 ---
@@ -107,6 +126,90 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
     trust: 2,
     name: "Thom Hogan (Sans Mirror)",
     site: "sansmirror.com",
+  },
+  whatdigitalcamera: {
+    methodology: "lab",
+    trust: 2,
+    name: "What Digital Camera",
+    site: "whatdigitalcamera.com",
+  },
+  photographyblog: {
+    methodology: "lab",
+    trust: 2,
+    name: "Photography Blog",
+    site: "photographyblog.com",
+  },
+  amateurphotographer: {
+    methodology: "lab",
+    trust: 2,
+    name: "Amateur Photographer",
+    site: "amateurphotographer.com",
+  },
+  digitalcameraworld: {
+    methodology: "lab",
+    trust: 2,
+    name: "Digital Camera World",
+    site: "digitalcameraworld.com",
+  },
+  objektivtest: {
+    methodology: "lab",
+    trust: 2,
+    name: "Objektivtest",
+    site: "objektivtest.se",
+  },
+  mirrorlessons: {
+    methodology: "field",
+    trust: 2,
+    name: "MirrorLessons",
+    site: "mirrorlessons.com",
+  },
+  thephoblographer: {
+    methodology: "field",
+    trust: 2,
+    name: "The Phoblographer",
+    site: "thephoblographer.com",
+  },
+  lesnumeriques: {
+    methodology: "lab",
+    trust: 2,
+    name: "Les Numériques",
+    site: "lesnumeriques.com",
+  },
+  colorfoto: {
+    methodology: "lab",
+    trust: 2,
+    name: "ColorFoto",
+    site: "connect-living.de/colorfoto",
+  },
+  kamerabild: {
+    methodology: "lab",
+    trust: 2,
+    name: "Kamera & Bild",
+    site: "kamerabild.se",
+  },
+  dcwatch: {
+    methodology: "field",
+    trust: 2,
+    name: "DC.Watch",
+    site: "dc.watch.impress.co.jp",
+  },
+  dcfever: {
+    methodology: "field",
+    trust: 2,
+    name: "DCFever",
+    site: "dcfever.com",
+  },
+  cined: {
+    methodology: "lab",
+    trust: 2,
+    name: "CineD",
+    site: "cined.com",
+  },
+  provideocoalition: {
+    methodology: "field",
+    trust: 2,
+    name: "ProVideo Coalition",
+    site: "provideocoalition.com",
   },
 };
 

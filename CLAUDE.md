@@ -164,6 +164,10 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
 - Review source links use `rel="nofollow sponsored"` and `target="_blank"`
 - All computed `genreMarks` MUST be stored on the lens — no omissions, even low scores (e.g. macro=1). Transparency over curation.
+- Scoring methodology and fallback rules are defined in `docs/decisions/014-optical-quality-rubric.md` — trust hierarchy, rubric thresholds, trust-2 aggregation, community consensus fallback, optical construction inference
+- Scoring log format and field completeness rules are defined in `docs/decisions/022-scoring-log-and-mtf-charts.md` — every entry must list all 14 optical fields with explicit undefined markers
+- When scoring lenses, always save official MTF charts to `docs/mtf-charts/` with companion `.md` analysis files per ADR-022
+- Samyang lenses are sold under multiple brand aliases (Rokinon, Bower, Walimex Pro, Vivitar) — search all aliases when looking for reviews
 
 ## 3. Quality
 
@@ -283,7 +287,7 @@ execution prevents missed steps.
 [ ] 3. Update epic checklists if relevant
 [ ] 4. Dev journal entry (### heading, --- separator, PRs, issues, key changes, key decisions with ADR refs)
 [ ] 5. ADRs — record any architectural decisions in docs/decisions/. Check: were any new directories created or content moved between documents? Each one needs an ADR.
-[ ] 6. CLAUDE.md — for each new convention/rule introduced, does it belong here? Name the section.
+[ ] 6. CLAUDE.md — list each new convention/rule by name, then evaluate individually: does it belong here? Name the section. Do not batch-dismiss.
 [ ] 7. README.md — for each new command, dependency, or structural change, is it reflected? Name the section.
 [ ] 8. ONBOARDING.md — for each new tool, prerequisite, or setup step, is it documented? Name the section.
 [ ] 9. PLAYBOOK.md — for each new command/script/workflow added, is it documented? Name the section.

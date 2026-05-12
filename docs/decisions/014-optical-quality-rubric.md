@@ -169,6 +169,45 @@ Used by: street (primary), travel (secondary).
 
 Used by: travel (primary).
 
+### Trust-2 source aggregation
+
+Two trust-2 sources providing non-contradictory data for the same
+field are treated as equivalent to one trust-3 source for that field.
+"Non-contradictory" means scores within 0.5 of each other on the
+0–2 scale; use the lower (conservative) value.
+
+This applies per-field, not per-lens — field A might qualify via
+two trust-2 sources while field B does not. Each aggregated field
+must document both sources in the scoring log.
+
+### Community consensus fallback
+
+When independent non-trust sources provide non-contradictory
+assessments for a field, and no trust source contradicts, the field
+may be scored using a tiered cap based on source count.
+"Non-contradictory" means all sources agree within 0.5 of each other.
+
+This is the weakest fallback — weaker than trust-2 aggregation and
+optical construction inference. It applies only when no trust source
+covers the field at all.
+
+| Sources               | Cap | Confidence                             |
+| --------------------- | --- | -------------------------------------- |
+| 3                     | 1.0 | Minimum threshold — conservative       |
+| 5+                    | 1.5 | Strong consensus — moderate confidence |
+| 5+ with measured data | 2.0 | Overwhelming consensus with evidence   |
+
+"Measured data" means quantitative results (FWHM, pixel-level crops,
+controlled comparison tests), not just qualitative descriptions.
+
+Requirements:
+
+- 3+ independent sources (different authors, not cross-referencing)
+- Non-contradictory assessments
+- No trust source provides contradicting data
+- Score capped per tier above
+- Each source documented in the scoring log with URL and quote
+
 ### Fallback sources
 
 Independent lab data (LensTip, OpticalLimits) is the primary source.

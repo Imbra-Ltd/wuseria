@@ -18,7 +18,24 @@ type ReviewSource =
   | "christopherfrost"
   | "fujivsfuji"
   | "sansmirror"
-  | "photographylife";
+  | "photographylife"
+  | "whatdigitalcamera"
+  | "photographyblog"
+  | "amateurphotographer"
+  | "digitalcameraworld"
+  | "objektivtest"
+  | "mirrorlessons"
+  | "thephoblographer"
+  | "lesnumeriques"
+  | "colorfoto"
+  | "kamerabild"
+  | "dcwatch"
+  | "dcfever"
+  | "cined"
+  | "provideocoalition"
+  | "diglloyd"
+  | "lonelyspeck"
+  | "nightscapephotographer";
 
 // =============================================================================
 // METHODOLOGY & TRUST

@@ -1429,3 +1429,30 @@ Key decisions:
 
 - Backfilling scoring log for 60+ Fujifilm lenses deferred to #560 (P3) — documentation, not scoring
 - Official MTF chart S/M divergence used as astigmatism fallback per ADR-014 (3 lenses benefited)
+
+---
+
+### Session 41 — Samyang Lens Scoring
+
+PRs: #567 (open)
+Issues closed: #551 (via PR)
+Issues created: #562 (model name audit), #563 (MTF scraper), #564 (scoring log backfill), #565 (optical construction fields), #566 (image-based inference spike)
+Issues updated: #554 (epic — Samyang checked off), #560 (Samyang backfill complete)
+
+Key changes:
+
+- Scored 16 new Samyang lenses (100 -> 116 total, 18/20 Samyang scored, 97.6% field coverage)
+- Added 20 MTF chart images + companion analysis files to docs/mtf-charts/
+- Expanded review source directory from 17 to 32 sources (international: France, Germany, Sweden, Japan, Hong Kong)
+- Upgraded DxOMark + The Digital Picture to trust-3; added Lloyd Chambers + Lonely Speck as trust-3
+- Created scripts/fetch-page.py (Playwright) for bot-blocked sites
+
+Key decisions:
+
+- Trust-2 source aggregation rule added to ADR-014: 2 trust-2 sources = 1 trust-3 per field
+- Community consensus fallback added to ADR-014: tiered cap (3 sources=1.0, 5+=1.5, 5+ with data=2.0)
+- Optical construction inference applied for SA: aspherical elements + zero complaints = 1.5 (conservative)
+- ADR-022 updated: scoring log entries must list all 14 fields with explicit undefined markers
+- MTF chart astigmatism fallback validated: chart-derived scores applied to 135mm f/2 (2.0) and AF 12mm (0.5)
+- Coma-corner correlation tested empirically: 14% outlier rate, not reliable for scoring (ADR rule preserved)
+- Fisheye distortion scored 0.0 by design (intentional barrel distortion)
