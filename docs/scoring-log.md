@@ -93,7 +93,7 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 | bokeh               | 0.5   | "Lighter rim on edge and noticeable onion ring", "not exactly pleasant."                       | "poor"                   |
 | flareResistance     | 1.0   | Summary: "good; it wasn't very good." Artifacts when stopped down with sun near edge.          | "good" (not "very good") |
 
-### XF 16mm f/2.8 R LM WR
+### XF 16mm f/2.8 R WR
 
 Compact wide prime. Sources: LensTip (lab, trust 3).
 Sensor: X-Trans III, max ~78 lpmm.
@@ -237,7 +237,7 @@ Sensor: X-Trans IV, max ~85 lpmm.
 | bokeh               | 1.5   | "Very slight trace of onion ring bokeh" from aspherical elements.                                      | "very good"                |
 | flareResistance     | 1.5   | "Good performance against bright light."                                                               | "very good"                |
 
-### XF 56mm f/1.2 R LM WR
+### XF 56mm f/1.2 R WR
 
 Fast portrait prime. Sources: LensTip (lab, trust 3),
 OpticalLimits (lab, trust 3), Dustin Abbott (field, trust 3),

@@ -4,7 +4,7 @@ const lenses: Lens[] = [
   // 7Artisans
   {
     brand: "7Artisans",
-    model: "7.5mm f/2.8",
+    model: "7.5mm f/2.8 Fisheye",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -152,7 +152,7 @@ const lenses: Lens[] = [
   // Additional 7Artisans
   {
     brand: "7Artisans",
-    model: "10mm f/2.8 AF Fisheye",
+    model: "10mm f/2.8 AF",
     type: "prime",
     mount: "X",
     year: 2023,
@@ -190,7 +190,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "7Artisans",
-    model: "18mm f/6.3 Cap",
+    model: "18mm f/6.3 UFO",
     type: "prime",
     mount: "X",
     year: 2019,
@@ -3648,7 +3648,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Venus Laowa",
-    model: "65mm f/2.8 2x Ultra Macro",
+    model: "65mm f/2.8 2x Ultra Macro APO",
     type: "prime",
     mount: "X",
     year: 2019,
@@ -6034,7 +6034,7 @@ const lenses: Lens[] = [
   // NiSi
   {
     brand: "NiSi",
-    model: "9mm f/2.8 Sunstar",
+    model: "9mm f/2.8 Sunstar ASPH",
     type: "prime",
     mount: "X",
     year: 2023,
@@ -6053,7 +6053,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "NiSi",
-    model: "15mm f/4 Sunstar",
+    model: "15mm f/4 Sunstar ASPH",
     type: "prime",
     mount: "X",
     year: 2024,
@@ -6109,7 +6109,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Mitakon",
-    model: "20mm f/2.4 4.5x Macro",
+    model: "20mm f/2 4.5x Super Macro",
     type: "prime",
     mount: "X",
     year: 2020,
@@ -6293,7 +6293,7 @@ const lenses: Lens[] = [
   // AstrHori (X-Mount)
   {
     brand: "AstrHori",
-    model: "18mm f/5.6 Tilt-Shift",
+    model: "18mm f/5.6 Shift",
     type: "prime",
     mount: "X",
     year: 2022,
@@ -6412,7 +6412,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Fujifilm",
-    model: "XF 16mm f/2.8 R LM WR",
+    model: "XF 16mm f/2.8 R WR",
     type: "prime",
     mount: "X",
     year: 2019,
@@ -6467,7 +6467,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Fujifilm",
-    model: "XF 23mm f/2.8 R LM WR",
+    model: "XF 23mm f/2.8 R WR",
     type: "prime",
     mount: "X",
     year: 2024,
@@ -6581,7 +6581,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Fujifilm",
-    model: "XF 56mm f/1.2 R LM WR",
+    model: "XF 56mm f/1.2 R WR",
     type: "prime",
     mount: "X",
     year: 2022,
@@ -8516,7 +8516,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "AstrHori",
-    model: "40mm f/5.6 M GFX",
+    model: "40mm f/5.6 GFX",
     type: "prime",
     mount: "GFX",
     year: 2023,
@@ -8534,7 +8534,7 @@ const lenses: Lens[] = [
   // NiSi Athena Prime Cinema (G-Mount)
   {
     brand: "NiSi",
-    model: "Athena 14mm T2.4 GFX",
+    model: "Athena Prime 14mm T2.4 GFX",
     type: "prime",
     mount: "GFX",
     year: 2023,
@@ -8550,7 +8550,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "NiSi",
-    model: "Athena 18mm T2.2 GFX",
+    model: "Athena Prime 18mm T2.2 GFX",
     type: "prime",
     mount: "GFX",
     year: 2023,
@@ -8567,7 +8567,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "NiSi",
-    model: "Athena 25mm T1.9 GFX",
+    model: "Athena Prime 25mm T1.9 GFX",
     type: "prime",
     mount: "GFX",
     year: 2023,
@@ -8584,7 +8584,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "NiSi",
-    model: "Athena 35mm T1.9 GFX",
+    model: "Athena Prime 35mm T1.9 GFX",
     type: "prime",
     mount: "GFX",
     year: 2023,
@@ -8601,7 +8601,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "NiSi",
-    model: "Athena 40mm T1.9 GFX",
+    model: "Athena Prime 40mm T1.9 GFX",
     type: "prime",
     mount: "GFX",
     year: 2023,
@@ -8618,7 +8618,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "NiSi",
-    model: "Athena 50mm T1.9 GFX",
+    model: "Athena Prime 50mm T1.9 GFX",
     type: "prime",
     mount: "GFX",
     year: 2023,
@@ -8635,7 +8635,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "NiSi",
-    model: "Athena 85mm T1.9 GFX",
+    model: "Athena Prime 85mm T1.9 GFX",
     type: "prime",
     mount: "GFX",
     year: 2023,
@@ -8652,7 +8652,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "NiSi",
-    model: "Athena 135mm T2.2 GFX",
+    model: "Athena Prime 135mm T2.2 GFX",
     type: "prime",
     mount: "GFX",
     year: 2023,
