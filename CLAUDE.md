@@ -161,6 +161,8 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - All prices are approximate estimates — no `priceEstimated` flag needed
 - UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`) — no separate footnote needed
 - Review source directory in `src/data/reviews.ts` — methodology and trust per source
+- Lens model names MUST match official manufacturer naming — include all optical suffixes (ED, UMC, AS IF, APO, etc.), generation markers (II, Mark II), and series names (Argus, Athena Prime, Sniper)
+- Aperture in model names always uses `f/X.X` format — never `fX.X`, `FX.X`, or `f/X` (omitting trailing `.0`)
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
 - Review source links use `rel="nofollow sponsored"` and `target="_blank"`
 - All computed `genreMarks` MUST be stored on the lens — no omissions, even low scores (e.g. macro=1). Transparency over curation.
