@@ -1456,3 +1456,30 @@ Key decisions:
 - MTF chart astigmatism fallback validated: chart-derived scores applied to 135mm f/2 (2.0) and AF 12mm (0.5)
 - Coma-corner correlation tested empirically: 14% outlier rate, not reliable for scoring (ADR rule preserved)
 - Fisheye distortion scored 0.0 by design (intentional barrel distortion)
+
+---
+
+### Session 42 — Laowa Lens Scoring
+
+PRs: #568 (merged — restore fetch script), #570 (open — Laowa scoring)
+Issues closed: #552 (via PR #570)
+Issues created: #569 (spike — scoring feasibility for budget Chinese brands)
+Issues updated: #554 (epic — Laowa checked off)
+
+Key changes:
+
+- Scored Laowa Argus 33mm f/0.95 CF APO (14 optical fields, 8 genre marks, 3 trust-3 sources)
+- Removed 2 lenses from database: 10mm f/2 Zero-D (MFT only), 15mm f/2 Zero-D (no X-mount)
+- Added 4 missing X-mount lenses: 4mm f/2.8 Fisheye, 8-16mm f/3.5-5 Zoom CF, 10mm f/4 Cookie, Argus 25mm f/0.95 CF APO
+- Fixed existing data: 12-24mm year (2022→2024), weight (497→575g), shift (10→7mm), price (1250→750); 33mm blades (14→9), year (2020→2021)
+- Restored lost scripts/fetch-samyang-mtf.py with --dry-run, --seq, --temp flags
+- Added temp/ to .gitignore
+- All 8 GFX Laowa lenses remain unscorable (no trusted lab data)
+- Scoring log entry added for 33mm f/0.95 with conflict resolution notes
+- Scoring coverage: 117/243 lenses (net +2 lenses in DB from add/remove)
+
+Key decisions:
+
+- 12-24mm f/5.6 Zoom Shift CF left unscored: too new (2024), only proxy data from C-Dreamer (different optical formula)
+- GFX third-party lenses are a data desert: zero trust-3 quantitative reviews across all 8 lenses
+- Verified complete Laowa X-mount lineup against multiple sources; corrected database accordingly

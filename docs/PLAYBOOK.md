@@ -179,7 +179,33 @@ infer from related fields or optical construction alone.
 Check that the scored lens appears in the Genre Guide for relevant
 genres (once genre formulas are implemented).
 
-### 2.7 Lighthouse CI
+### 2.7 Utility scripts
+
+**Fetch a web page (bot-blocked sites):**
+
+```bash
+py scripts/fetch-page.py <url>              # text content
+py scripts/fetch-page.py <url> --html       # raw HTML
+py scripts/fetch-page.py <url> --wait 5000  # wait N ms after load
+```
+
+**Fetch Samyang MTF charts:**
+
+```bash
+py scripts/fetch-samyang-mtf.py             # fetch all to docs/mtf-charts/
+py scripts/fetch-samyang-mtf.py --seq 351   # fetch one by product seq
+py scripts/fetch-samyang-mtf.py --dry-run   # list without downloading
+py scripts/fetch-samyang-mtf.py --temp      # download to temp/ (testing)
+```
+
+**Compute genre marks:**
+
+```bash
+npx tsx scripts/compute-marks.ts print      # print all computed marks
+npx tsx scripts/compute-marks.ts patch      # patch lenses.ts with marks
+```
+
+### 2.8 Lighthouse CI
 
 Lighthouse runs automatically on every PR against 4 key pages
 (`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
@@ -202,7 +228,7 @@ This builds the site and runs Lighthouse against all 4 pages (3 runs each).
 HTML reports are written to `reports/lighthouse/` — open any `.report.html`
 in a browser for full scores, diagnostics, and opportunities.
 
-### 2.8 Link checker (lychee)
+### 2.9 Link checker (lychee)
 
 Lychee checks for broken internal links in the built site. Runs in CI on
 every PR. Requires [lychee](https://github.com/lycheeverse/lychee) installed
@@ -215,7 +241,7 @@ lychee --offline --no-progress --root-dir dist dist/
 
 Checks all internal links in the static output. Exits non-zero on broken links.
 
-### 2.9 Secret scanning (gitleaks)
+### 2.10 Secret scanning (gitleaks)
 
 Gitleaks scans for accidentally committed secrets. Runs in CI on every PR.
 Requires [gitleaks](https://github.com/gitleaks/gitleaks) installed locally
@@ -227,7 +253,7 @@ gitleaks detect --source . --config .gitleaks.toml
 
 Scans the full repo history. Exits non-zero if secrets are found.
 
-### 2.10 Testing
+### 2.11 Testing
 
 **Run tests (single run with coverage):**
 
@@ -283,7 +309,7 @@ Open either in a browser. The `reports/` directory is gitignored.
 | `src/components/interactive/GenreGuide/GenreGuide.test.tsx`         | Genre tabs, filters, matrices                  |
 | `src/components/interactive/GenreGuide/exposure.test.ts`            | Exposure calculations                          |
 
-### 2.11 Analytics verification (Umami)
+### 2.12 Analytics verification (Umami)
 
 Umami Cloud tracks page views with zero cookies and no consent banner.
 The script loads from `cloud.umami.is` via the base layout. Run this
