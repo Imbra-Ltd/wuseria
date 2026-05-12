@@ -1483,3 +1483,27 @@ Key decisions:
 - 12-24mm f/5.6 Zoom Shift CF left unscored: too new (2024), only proxy data from C-Dreamer (different optical formula)
 - GFX third-party lenses are a data desert: zero trust-3 quantitative reviews across all 8 lenses
 - Verified complete Laowa X-mount lineup against multiple sources; corrected database accordingly
+
+---
+
+### Session 43 — Voigtlander Scoring and Global Source Scan
+
+Tool: Claude Code. PR [#571](https://github.com/Imbra-Ltd/wuseria/pull/571).
+
+- Scored 2 Voigtlander lenses from LensTip: Ultron 27mm f/2, Nokton 35mm f/0.9 Aspherical
+- Added scoring log entries for all 7 Voigtlander lenses (including existing Nokton 35mm f/1.2)
+- Documented 4 lenses as unscorable: Nokton 23mm f/1.2, Nokton 50mm f/1.2, Color-Skopar 18mm f/2.8, Macro APO-Ultron 35mm f/2
+- Fixed Nokton 50mm f/1.2 X-mount specs: discovered it's an exclusive APS-C Sonnar design (290g, 9 elem/8 groups), not a rehoused SE. Weight 492→290g, filter 52→58mm, MFD 450→390mm
+- Deep scan of 40+ review sources across 10+ languages (German, French, Italian, Japanese, Chinese, Korean, Russian, Nordic, Dutch, Czech)
+- Added 8 new review sources: digitalkamera.de, fotoMAGAZIN, Focus Review, Fotografi Digitali (lab trust-2); Asobinet, Fujiya Camera, Map Camera KASYAPA, Radojuva (field trust-2). Total: 40 sources (10 trust-3, 30 trust-2)
+- Confirmed optyczne.pl = lenstip.com (same company, must never count as separate sources)
+- Epic #554 completed — all 6 brand scoring tasks done
+- Scoring coverage: 119/243 (49%)
+
+Issues created: #572 (lens page SEO spike), #573 (evaluate new sources), #574 (in-house testing spike), #575 (composite trust-2 scoring rule spike)
+
+Key decisions:
+
+- Lab-quality lens testing is concentrated in ~15 sites globally (Europe + USA). No Chinese, Korean, or Russian lab sites exist. Japanese sites are qualitative only despite Cosina being Japanese
+- Nokton 50mm f/1.2 X-mount is a completely different optical design from VM/SE versions — data from other mounts does not apply
+- Macro APO-Ultron 35mm f/2 reached 6 of 7 fields from trust-2 aggregation (Fujiya + KASYAPA) but falls 1 short of MIN_OPTICAL_FIELDS; composite scoring rule (#575) could unlock it
