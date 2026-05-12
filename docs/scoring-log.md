@@ -1114,3 +1114,97 @@ OpticalLimits (lab, trust 3, Fuji X-mount).
 
 Note: Mk II shares identical optical design with PFU RBMH (10 elements,
 7 groups, 1 ELD). Mk II is lighter (340g vs 490g) with improved AF.
+
+---
+
+## Voigtlander
+
+### Color-Skopar 18mm f/2.8
+
+Not scored — no trust-3 reviews available. Released January 2024. LensTip has
+specs page only, no lab review. No coverage from OpticalLimits, DxOMark,
+LensRentals, The Digital Picture, Dustin Abbott, DPReview (editorial),
+Phillip Reeve, Lloyd Chambers, or Lonely Speck.
+
+### Nokton 23mm f/1.2
+
+Not scored — no trust-3 reviews available. LensTip has specs page only, no lab
+review. No coverage from any other trust-3 source. Community data
+(DPReview forums, Digital Camera World Z-mount proxy) is qualitative only,
+insufficient for rubric scoring.
+
+### Nokton 35mm f/0.9 Aspherical
+
+Sources: LensTip (lab, trust 3). Sensor: X-Trans III (X-T2), max ~85 lpmm.
+
+| Field               | Score | Source data                                                                  | Rubric rule         |
+| ------------------- | ----- | ---------------------------------------------------------------------------- | ------------------- |
+| centerStopped       | 2.0   | 82-83 lpmm at f/2.8-f/4. "Excellent."                                        | 82/85 = 96%, >= 90% |
+| cornerStopped       | 1.0   | ~55 lpmm at f/5.6. "Medium results."                                         | 55/85 = 65%, 60-74% |
+| centerWideOpen      | 0.0   | ~40 lpmm at f/0.9. "Just slightly exceeding 40 lpmm."                        | 40/85 = 47%, < 50%  |
+| cornerWideOpen      | 0.0   | "Weak" up to f/2.0.                                                          | < 50%               |
+| astigmatism         | 0.5   | 22.5%. "A significant value."                                                | 18-25%              |
+| coma                | 0.0   | "Seriously deformed", "huge wings." Summary: "very high coma."               | "severe"            |
+| sphericalAberration | 0.5   | Summary: "weak correction of spherical aberration." Focus shift f/0.9-f/1.4. | "poor"              |
+| longitudinalCA      | 2.0   | "Almost imperceptible." Summary: "imperceptible."                            | "negligible"        |
+| lateralCA           | 1.5   | 0.08%. "Borderline between low and medium."                                  | 0.04-0.08%          |
+| distortion          | 1.0   | RAW -1.27% barrel. "Lack of any serious problems."                           | 1.0-2.0%            |
+| vignettingWideOpen  | 0.5   | -2.10 EV RAW at f/0.9. "Distinct vignetting."                                | 1.5-2.5 EV          |
+| vignettingStopped   | 2.0   | -0.41 EV RAW at f/5.6.                                                       | < 0.5 EV            |
+| bokeh               | 0.5   | Diode: "noticeable onion ring bokeh", angular polygons stopped down.         | "problematic"       |
+| flareResistance     | 1.0   | "Manages to avoid serious slip-ups", "acceptable but unremarkable."          | "acceptable"        |
+
+### Nokton 35mm f/1.2
+
+Sources: LensTip (lab, trust 3). Sensor: X-Trans III (X-T2), max ~85 lpmm.
+
+| Field               | Score | Source data                                                              | Rubric rule         |
+| ------------------- | ----- | ------------------------------------------------------------------------ | ------------------- |
+| centerStopped       | 2.0   | >80 lpmm at f/4. "Exceeds 80 lpmm."                                      | 80/85 = 94%, >= 90% |
+| cornerStopped       | 0.0   | "Decent quality only at f/8-f/11." ~44 lpmm at best.                     | 44/85 = 52%, ~50%   |
+| centerWideOpen      | 0.0   | "Images are of weak quality" at f/1.2-f/1.4.                             | < 50%               |
+| cornerWideOpen      | 0.0   | Worse than center wide open.                                             | < 50%               |
+| astigmatism         | 1.0   | 12.8%. "Borderline between medium and high level."                       | 10-18%              |
+| coma                | 0.0   | "Really huge." "Long wings." Summary: con.                               | "severe"            |
+| sphericalAberration | 0.0   | "Some problems", "characteristic mist", "badly corrected."               | "very poor"         |
+| longitudinalCA      | 2.0   | "Rather doesn't experience any problems."                                | "negligible"        |
+| lateralCA           | 1.5   | 0.05-0.07%. "Low."                                                       | 0.04-0.08%          |
+| distortion          | 1.0   | RAW -1.53% barrel. "Not a serious flaw."                                 | 1.0-2.0%            |
+| vignettingWideOpen  | 0.0   | -2.67 EV RAW at f/1.2. "Very high."                                      | > 2.5 EV            |
+| vignettingStopped   | 1.5   | -0.56 EV at f/5.6.                                                       | 0.5-1.0 EV          |
+| bokeh               | 2.0   | Diode: "very even, without any local extremes or onion ring bokeh."      | "excellent"         |
+| flareResistance     | 0.5   | "Failed completely", "really hopeless", "big intensive light artifacts." | "poor"              |
+
+### Nokton 50mm f/1.2
+
+Not scored — X-mount SE design (8 elements/6 groups) differs from reviewed VM
+Aspherical (9 elements/6 groups). LensTip reviewed only the VM on full frame.
+Phillip Reeve reviewed the SE on full frame (E-mount) but vignetting and
+resolution data does not transfer to APS-C.
+
+### Macro APO-Ultron 35mm f/2
+
+Not scored — no trust-3 reviews available. LensTip has specs page only.
+Not reviewed by any of the 10 trust-3 sources. Only community impressions
+(DPReview forum mini-review, FujiFanBoys) with no quantitative data.
+
+### Ultron 27mm f/2
+
+Sources: LensTip (lab, trust 3). Sensor: X-Trans III (X-T2), max ~85 lpmm.
+
+| Field               | Score | Source data                                                                                 | Rubric rule          |
+| ------------------- | ----- | ------------------------------------------------------------------------------------------- | -------------------- |
+| centerStopped       | 2.0   | >80 lpmm at f/4. "Excellent."                                                               | 80/85 = 94%, >= 90%  |
+| cornerStopped       | 0.5   | ~50 lpmm at f/4-f/8. "Medium results."                                                      | 50/85 = 59%, 50-59%  |
+| centerWideOpen      | 1.5   | >64 lpmm at f/2. "Excellent image quality in the frame centre."                             | 64/85 = 75%, 75-89%  |
+| cornerWideOpen      | 0.0   | 36.6 lpmm at f/2. "Simply blurry."                                                          | 36.6/85 = 43%, < 50% |
+| astigmatism         | 1.5   | 6%. "Borderline between low and very low level." Summary: "slight."                         | 5-10%                |
+| coma                | 0.0   | "Very high" at f/2. "First big slip-up." Summary: con.                                      | "severe"             |
+| sphericalAberration | 1.5   | "Not a huge problem." "No noticeable focus shift." Summary: "lack of any serious problems." | "well corrected"     |
+| longitudinalCA      | 2.0   | "Performed here very well, no issues." Summary: "imperceptible."                            | "negligible"         |
+| lateralCA           | 2.0   | ~0.01%. "Negligible value." Summary: "slight."                                              | < 0.04%              |
+| distortion          | 2.0   | +0.18% RAW. "Brushing against zero." Summary: "practically zero."                           | < 0.3%               |
+| vignettingWideOpen  | 0.5   | -2.16 EV RAW at f/2. "Distinct." Summary: con.                                              | 1.5-2.5 EV           |
+| vignettingStopped   | 1.5   | -0.79 EV RAW at f/4.                                                                        | 0.5-1.0 EV           |
+| bokeh               | 1.5   | "Even light distribution", "no onion-ring effect." Summary: "sensibly-looking."             | "very good"          |
+| flareResistance     | 1.5   | "Pretty well", "few and far between." Summary: "decent performance."                        | "very good"          |
