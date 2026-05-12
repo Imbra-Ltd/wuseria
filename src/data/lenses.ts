@@ -5886,11 +5886,11 @@ const lenses: Lens[] = [
     apertureBlades: 12,
     hasApertureRing: true,
     isFocusByWire: false,
-    weight: 492,
-    filterThread: 52,
+    weight: 290,
+    filterThread: 58,
     price: 1000,
-    minFocusDistance: 450,
-    // Not scored — SE design (8 elem) differs from reviewed VM (9 elem); no APS-C lab data
+    minFocusDistance: 390,
+    // Not scored — X-mount exclusive Sonnar design; no trust-3 reviews
     officialUrl:
       "https://www.voigtlaender.de/lenses/x-mount/50mm-11-2-nokton/?lang=en",
   },

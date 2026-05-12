@@ -1177,10 +1177,12 @@ Sources: LensTip (lab, trust 3). Sensor: X-Trans III (X-T2), max ~85 lpmm.
 
 ### Nokton 50mm f/1.2
 
-Not scored — X-mount SE design (8 elements/6 groups) differs from reviewed VM
-Aspherical (9 elements/6 groups). LensTip reviewed only the VM on full frame.
-Phillip Reeve reviewed the SE on full frame (E-mount) but vignetting and
-resolution data does not transfer to APS-C.
+Not scored — X-mount version is an exclusive APS-C Sonnar design (290g, 58mm
+filter), different from both the VM Aspherical (8 elem/6 groups, 347g) and the
+SE E-mount (8 elem/6 groups, 434g). No trust-3 or trust-2 reviews exist for
+the X-mount design. DCFever (trust-2) has a brief X-mount article in Chinese
+with qualitative impressions only. Database specs corrected: 492g→290g,
+filterThread 52→58, MFD 450→390mm.
 
 ### Macro APO-Ultron 35mm f/2
 
