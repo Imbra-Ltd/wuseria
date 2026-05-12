@@ -2672,7 +2672,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "8mm f/3.5",
+    model: "8mm f/3.5 Aspherical IF MC Fish-eye",
     type: "prime",
     mount: "X",
     year: 2014,
@@ -2716,7 +2716,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "10mm f/2.8",
+    model: "10mm f/2.8 ED AS NCS CS",
     type: "prime",
     mount: "X",
     year: 2014,
@@ -2764,7 +2764,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "12mm f/2",
+    model: "12mm f/2.0 NCS CS",
     type: "prime",
     mount: "X",
     year: 2014,
@@ -2819,7 +2819,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "12mm f/2.8",
+    model: "12mm f/2.8 ED AS NCS Fish-eye",
     type: "prime",
     mount: "X",
     year: 2015,
@@ -2867,7 +2867,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "14mm f/2.8",
+    model: "14mm f/2.8 ED AS IF UMC",
     type: "prime",
     mount: "X",
     year: 2014,
@@ -2918,7 +2918,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "16mm f/2",
+    model: "16mm f/2.0 ED AS UMC CS",
     type: "prime",
     mount: "X",
     year: 2015,
@@ -2987,7 +2987,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "21mm f/1.4",
+    model: "21mm f/1.4 ED AS UMC CS",
     type: "prime",
     mount: "X",
     year: 2016,
@@ -3037,7 +3037,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "35mm f/1.2",
+    model: "35mm f/1.2 ED AS UMC CS",
     type: "prime",
     mount: "X",
     year: 2018,
@@ -3086,7 +3086,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "35mm f/1.4",
+    model: "35mm f/1.4 AS UMC",
     type: "prime",
     mount: "X",
     year: 2014,
@@ -3137,7 +3137,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "50mm f/1.2",
+    model: "50mm f/1.2 AS UMC CS",
     type: "prime",
     mount: "X",
     year: 2017,
@@ -3194,7 +3194,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "50mm f/1.4",
+    model: "50mm f/1.4 AS UMC",
     type: "prime",
     mount: "X",
     year: 2014,
@@ -3245,7 +3245,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "85mm f/1.4",
+    model: "85mm f/1.4 AS IF UMC",
     type: "prime",
     mount: "X",
     year: 2014,
@@ -3296,7 +3296,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "100mm f/2.8 Macro",
+    model: "100mm f/2.8 ED UMC Macro",
     type: "prime",
     mount: "X",
     year: 2016,
@@ -3347,7 +3347,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "135mm f/2",
+    model: "135mm f/2 ED UMC",
     type: "prime",
     mount: "X",
     year: 2015,
@@ -3420,7 +3420,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "Tilt/Shift 24mm f/3.5",
+    model: "Tilt/Shift 24mm f/3.5 ED AS UMC",
     type: "prime",
     mount: "X",
     year: 2014,
@@ -3768,7 +3768,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Venus Laowa",
-    model: "33mm f/0.95 CF APO",
+    model: "Argus 33mm f/0.95 CF APO",
     type: "prime",
     mount: "X",
     year: 2021,
@@ -5298,7 +5298,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Viltrox",
-    model: "AF 35mm f/1.7",
+    model: "AF 35mm f/1.7 Air",
     type: "prime",
     mount: "X",
     year: 2024,

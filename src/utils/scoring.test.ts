@@ -301,7 +301,7 @@ describe("genre mark snapshots", () => {
     // Nightscape
     { model: "XF 56mm f/1.2 R LM WR", genre: "nightscape", mark: 4.5 },
     { model: "XF 90mm f/2.0 R LM WR", genre: "nightscape", mark: 4 },
-    { model: "12mm f/2", genre: "nightscape", mark: 4 },
+    { model: "12mm f/2.0 NCS CS", genre: "nightscape", mark: 4 },
     {
       model: "XF 100-400mm f/4.5-5.6 R LM OIS WR",
       genre: "nightscape",
