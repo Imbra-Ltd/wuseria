@@ -152,7 +152,7 @@ No lab review yet.
 | bokeh               | 1.0   | "Fairly good for a standard zoom", "busier", inner outlining.                            | "average"                                 |
 | flareResistance     | 1.5   | "Holds up to bright sun." Minor ghosting stopped down.                                   | "very good"                               |
 
-### XF 18mm f/2 R
+### XF 18mm f/2.0 R
 
 Pancake wide prime. Sources: LensTip (lab, trust 3).
 Sensor: X-Trans I (X-Pro1), per-review max 66 lpmm.
@@ -282,7 +282,7 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 | bokeh               | 1.5   | "Nice, very even light spread, slight rim on edge." Mechanical vignetting truncates at max aperture.                                                                            | "very good"  |
 | flareResistance     | 1.0   | "Doesn't perform the best", "purple coloring and bright radial beams" in some positions. "Not abysmal."                                                                         | "average"    |
 
-### XF 90mm f/2 R LM WR
+### XF 90mm f/2.0 R LM WR
 
 Tele portrait prime. Sources: LensTip (lab, trust 3),
 Dustin Abbott (field, trust 3).
@@ -326,7 +326,7 @@ Sensor: X-Trans I (X-E1), per-review max 74 lpmm. Scored at 200mm mid-range.
 | bokeh               | 1.0   | LensTip: "quite nice for a zoom, rim on edge." Dustin Abbott: "average."                      | "average"                |
 | flareResistance     | 1.0   | "Flares, ghosting, and contrast decrease are easy to spot."                                   | "noticeable"             |
 
-### XF 200mm f/2 R LM OIS WR
+### XF 200mm f/2.0 R LM OIS WR
 
 Flagship super-tele prime.
 Sources: ePHOTOzine (lab, trust 2), Dustin Abbott (field, trust 3),

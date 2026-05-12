@@ -99,7 +99,7 @@ describe("magnificationScore", () => {
 // =============================================================================
 
 describe("resolveField", () => {
-  const lens = findLens("XF 56mm f/1.2 R LM WR");
+  const lens = findLens("XF 56mm f/1.2 R WR");
 
   it("returns optical fields directly", () => {
     expect(resolveField(lens, "centerStopped")).toBe(2.0);
@@ -134,7 +134,7 @@ describe("resolveField", () => {
 
 describe("opticalFieldCount", () => {
   it("counts populated optical fields", () => {
-    const lens = findLens("XF 56mm f/1.2 R LM WR");
+    const lens = findLens("XF 56mm f/1.2 R WR");
     expect(opticalFieldCount(lens)).toBe(14);
   });
 
@@ -187,7 +187,7 @@ describe("computeGenreMark", () => {
 
   it("computes mark 5 for perfect lens (landscape)", () => {
     const result = computeGenreMark(
-      findLens("XF 56mm f/1.2 R LM WR"),
+      findLens("XF 56mm f/1.2 R WR"),
       "landscape",
     );
     expect(result).not.toBeNull();
@@ -205,10 +205,7 @@ describe("computeGenreMark", () => {
 
   it("includes derived fields in scoring", () => {
     // Street uses _apertureScore as primary
-    const result = computeGenreMark(
-      findLens("XF 56mm f/1.2 R LM WR"),
-      "street",
-    );
+    const result = computeGenreMark(findLens("XF 56mm f/1.2 R WR"), "street");
     expect(result).not.toBeNull();
     expect(result!.mark).toBe(5);
   });
@@ -224,8 +221,8 @@ describe("computeGenreMark", () => {
   });
 
   it("gates non-macro lenses in macro genre", () => {
-    // XF 56mm f/1.2 R LM WR: mag=0.09 → magnificationScore=0 → floor=0 → mark=1
-    const result = computeGenreMark(findLens("XF 56mm f/1.2 R LM WR"), "macro");
+    // XF 56mm f/1.2 R WR: mag=0.09 → magnificationScore=0 → floor=0 → mark=1
+    const result = computeGenreMark(findLens("XF 56mm f/1.2 R WR"), "macro");
     expect(result).not.toBeNull();
     expect(result!.mark).toBe(1);
     expect(result!.floor).toBe(0);
@@ -238,7 +235,7 @@ describe("computeGenreMark", () => {
 
 describe("computeAllGenreMarks", () => {
   it("computes marks for all qualifying genres", () => {
-    const marks = computeAllGenreMarks(findLens("XF 56mm f/1.2 R LM WR"));
+    const marks = computeAllGenreMarks(findLens("XF 56mm f/1.2 R WR"));
     expect(Object.keys(marks).length).toBeGreaterThan(0);
     expect(marks.landscape).toBe(5);
     expect(marks.street).toBe(5);
@@ -263,13 +260,13 @@ describe("genre mark snapshots", () => {
     mark: number;
   }> = [
     // Landscape
-    { model: "XF 56mm f/1.2 R LM WR", genre: "landscape", mark: 5 },
+    { model: "XF 56mm f/1.2 R WR", genre: "landscape", mark: 5 },
     { model: "XF 200mm f/2.0 R LM OIS WR", genre: "landscape", mark: 5 },
     { model: "XF 90mm f/2.0 R LM WR", genre: "landscape", mark: 4 },
     { model: "XF 14mm f/2.8 R", genre: "landscape", mark: 3 },
 
     // Architecture
-    { model: "XF 56mm f/1.2 R LM WR", genre: "architecture", mark: 5 },
+    { model: "XF 56mm f/1.2 R WR", genre: "architecture", mark: 5 },
     { model: "XF 90mm f/2.0 R LM WR", genre: "architecture", mark: 4 },
     { model: "XF 8-16mm f/2.8 R LM WR", genre: "architecture", mark: 4 },
 
@@ -279,29 +276,29 @@ describe("genre mark snapshots", () => {
     { model: "XF 80mm f/2.8 R LM OIS WR Macro", genre: "portrait", mark: 4 },
 
     // Street
-    { model: "XF 56mm f/1.2 R LM WR", genre: "street", mark: 5 },
+    { model: "XF 56mm f/1.2 R WR", genre: "street", mark: 5 },
     { model: "XF 33mm f/1.4 R LM WR", genre: "street", mark: 4.5 },
     { model: "XF 23mm f/1.4 R LM WR", genre: "street", mark: 4.5 },
 
     // Travel
-    { model: "XF 16mm f/2.8 R LM WR", genre: "travel", mark: 4.5 },
+    { model: "XF 16mm f/2.8 R WR", genre: "travel", mark: 4.5 },
     { model: "XF 23mm f/2.0 R WR", genre: "travel", mark: 4.5 },
     { model: "XF 200mm f/2.0 R LM OIS WR", genre: "travel", mark: 1 }, // too heavy
 
     // Sport
-    { model: "XF 56mm f/1.2 R LM WR", genre: "sport", mark: 5 },
+    { model: "XF 56mm f/1.2 R WR", genre: "sport", mark: 5 },
     { model: "XF 200mm f/2.0 R LM OIS WR", genre: "sport", mark: 5 },
     { model: "XF 90mm f/2.0 R LM WR", genre: "sport", mark: 4.5 },
 
     // Wildlife
-    { model: "XF 56mm f/1.2 R LM WR", genre: "wildlife", mark: 5 },
+    { model: "XF 56mm f/1.2 R WR", genre: "wildlife", mark: 5 },
     { model: "XF 200mm f/2.0 R LM OIS WR", genre: "wildlife", mark: 5 },
     { model: "XF 90mm f/2.0 R LM WR", genre: "wildlife", mark: 5 },
 
     // Nightscape
-    { model: "XF 56mm f/1.2 R LM WR", genre: "nightscape", mark: 4.5 },
+    { model: "XF 56mm f/1.2 R WR", genre: "nightscape", mark: 4.5 },
     { model: "XF 90mm f/2.0 R LM WR", genre: "nightscape", mark: 4 },
-    { model: "12mm f/2", genre: "nightscape", mark: 4 },
+    { model: "12mm f/2.0 NCS CS", genre: "nightscape", mark: 4 },
     {
       model: "XF 100-400mm f/4.5-5.6 R LM OIS WR",
       genre: "nightscape",
@@ -311,7 +308,7 @@ describe("genre mark snapshots", () => {
     // Macro
     { model: "XF 80mm f/2.8 R LM OIS WR Macro", genre: "macro", mark: 5 },
     { model: "XF 60mm f/2.4 R Macro", genre: "macro", mark: 4 },
-    { model: "XF 56mm f/1.2 R LM WR", genre: "macro", mark: 1 },
+    { model: "XF 56mm f/1.2 R WR", genre: "macro", mark: 1 },
   ];
 
   for (const { model, genre, mark } of snapshots) {
@@ -423,7 +420,7 @@ describe("isGenre", () => {
 
 describe("pickGenreFields", () => {
   it("picks only genre-relevant fields from a full Lens", () => {
-    const lens = findLens("XF 56mm f/1.2 R LM WR");
+    const lens = findLens("XF 56mm f/1.2 R WR");
     const picked = pickGenreFields(lens);
     expect(picked.brand).toBe(lens.brand);
     expect(picked.model).toBe(lens.model);
@@ -503,7 +500,7 @@ describe("computeOpticalQuality", () => {
   });
 
   it("matches known lens score from data", () => {
-    const lens = findLens("XF 56mm f/1.2 R LM WR");
+    const lens = findLens("XF 56mm f/1.2 R WR");
     const result = computeOpticalQuality(lens);
     expect(result).not.toBeNull();
     expect(result).toBeGreaterThan(1.5);
