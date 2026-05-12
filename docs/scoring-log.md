@@ -357,6 +357,91 @@ inference (Super ED + aspherical) confirmed by field reports.
 
 ## Samyang
 
+### 8mm f/3.5 Aspherical IF MC Fish-eye
+
+Full-frame fisheye. Distortion intentional, scored 0.0.
+Sources: LensTip (lab, trust 3, Nikon D200 APS-C).
+Sensor: Nikon D200, max ~38-39 lpmm (estimated).
+
+| Field               | Score | Source data                                                                                                     | Rubric rule     |
+| ------------------- | ----- | --------------------------------------------------------------------------------------------------------------- | --------------- |
+| centerStopped       | 2.0   | Peak near sensor max stopped down.                                                                              | >= 90%          |
+| cornerStopped       | 1.5   | "Very good side-of-the-frame image quality."                                                                    | 75-89%          |
+| centerWideOpen      | 1.5   | ~34 lpmm at f/3.5 (87-89% of max). "Very much useful."                                                          | 75-89%          |
+| cornerWideOpen      | 1.5   | Edge described as "very good" for a fisheye at f/3.5.                                                           | "very good"     |
+| astigmatism         | 1.5   | 6.3%. "Not bothersome."                                                                                         | 5-10%           |
+| coma                | 1.0   | Visible at f/3.5, marginal at f/5.6.                                                                            | "noticeable"    |
+| sphericalAberration | 1.5   | Optical construction: aspherical elements + 0 SA complaints from 2+ reviewers. ADR-014 inference. Conservative. |                 |
+| longitudinalCA      | —     | undefined — not tested (only lateral CA covered in this review)                                                 |                 |
+| lateralCA           | 0.5   | ~0.16% at max aperture. "High level."                                                                           | 0.15-0.20%      |
+| distortion          | 0.0   | Fisheye — intentional extreme barrel distortion.                                                                | > 4.0% (design) |
+| vignettingWideOpen  | 1.5   | ~-0.6 EV at f/3.5. Low for a fisheye.                                                                           | 0.5-1.0 EV      |
+| vignettingStopped   | —     | undefined — not tested (180° FOV prevents chart capture)                                                        |                 |
+| bokeh               | —     | undefined — not applicable (fisheye, depth of field too large)                                                  |                 |
+| flareResistance     | 1.5   | "Difficult to spot any ghosting or flares." Positively surprised.                                               | "very good"     |
+
+### 8mm f/2.8 ED AS IF UMC Fisheye
+
+Diagonal fisheye. Distortion is intentional (by design), scored 0.0.
+Sources: LensTip (lab, trust 3, Samsung NX10 APS-C).
+Sensor: Samsung NX10, max ~50 lpmm.
+
+| Field               | Score | Source data                                                                                                     | Rubric rule        |
+| ------------------- | ----- | --------------------------------------------------------------------------------------------------------------- | ------------------ |
+| centerStopped       | 2.0   | >52 lpmm at f/4 (>100%). "Sensational image quality in frame centre."                                           | >= 90%             |
+| cornerStopped       | 1.5   | ~43 lpmm (86%). PRO: "excellent image quality on edge."                                                         | 75-89%             |
+| centerWideOpen      | 2.0   | ~50 lpmm at f/2.8 (100%). "Outstandingly sharp."                                                                | >= 90%             |
+| cornerWideOpen      | 1.5   | ~43 lpmm at f/2.8 (86%). Sharp across frame from wide open.                                                     | 75-89%             |
+| astigmatism         | 2.0   | 1.3%. "Simply an excellent result." PRO: "negligible astigmatism."                                              | < 5%               |
+| coma                | 1.0   | "Not perfect but certainly can't call its level high."                                                          | "noticeable"       |
+| sphericalAberration | 1.5   | Optical construction: aspherical elements + 0 SA complaints from 2+ reviewers. ADR-014 inference. Conservative. |                    |
+| longitudinalCA      | 1.0   | "Not perfectly corrected, but level is not very high."                                                          | "moderate"         |
+| lateralCA           | 1.0   | "Borderline between low and medium values."                                                                     | 0.09-0.14%         |
+| distortion          | 0.0   | Fisheye — extreme barrel distortion is intentional by design.                                                   | > 4.0% (by design) |
+| vignettingWideOpen  | 0.5   | ~1.7 EV at f/2.8. CON: "noticeable vignetting."                                                                 | 1.5-2.5 EV         |
+| vignettingStopped   | —     | undefined — not tested (fisheye, vignetting measurement impractical)                                            |                    |
+| bokeh               | —     | undefined — not applicable (fisheye, depth of field too large)                                                  |                    |
+| flareResistance     | 1.0   | Issues with sun in frame but "positive" given fisheye design constraints.                                       | "average"          |
+
+### 10mm f/2.8 ED AS NCS CS
+
+Rectilinear ultra-wide APS-C. Not a fisheye — distortion scored normally.
+Sources: LensTip (lab, trust 3, Canon 50D APS-C).
+Sensor: Canon 50D, max 52-55 lpmm.
+
+| Field              | Score | Source data                                                                     | Rubric rule  |
+| ------------------ | ----- | ------------------------------------------------------------------------------- | ------------ |
+| centerStopped      | 2.0   | 52 lpmm (97% of max). PRO: "sensational image quality in frame centre."         | >= 90%       |
+| cornerStopped      | 1.0   | 36 lpmm at f/8 (67%). CON: "weak image quality on edge."                        | 60-74%       |
+| centerWideOpen     | 2.0   | 50 lpmm at f/2.8 (93%).                                                         | >= 90%       |
+| cornerWideOpen     | 0.0   | "Not useful" at f/2.8 and f/4. Below decency.                                   | < 50%        |
+| astigmatism        | 1.5   | 8%. "Moderate astigmatism."                                                     | 5-10%        |
+| coma               | 2.0   | "We don't have any reservations concerning the coma correction."                | "negligible" |
+| lateralCA          | 1.0   | 0.10-0.12%. "Average."                                                          | 0.09-0.14%   |
+| distortion         | 0.0   | -4.19% barrel. CON: "too high distortion."                                      | > 4.0%       |
+| vignettingWideOpen | 0.5   | -1.95 EV at f/2.8. CON: "distinct vignetting."                                  | 1.5-2.5 EV   |
+| vignettingStopped  | 2.0   | -0.38 EV at f/5.6.                                                              | < 0.5 EV     |
+| flareResistance    | 0.5   | "Can hardly be called good." CON: "work against bright light should be better." | "poor"       |
+
+### 12mm f/2.8 ED AS NCS Fish-eye
+
+Full-frame fisheye. Distortion intentional, scored 0.0.
+Sources: LensTip (lab, trust 3, Canon 5D III FF).
+Sensor: Canon 5D III, max 44-47 lpmm. APS-C vignetting data available.
+
+| Field              | Score | Source data                                                        | Rubric rule     |
+| ------------------ | ----- | ------------------------------------------------------------------ | --------------- |
+| centerStopped      | 2.0   | ~47 lpmm at f/4 (103%, sensor limited). PRO: "sensational centre." | >= 90%          |
+| cornerStopped      | 1.0   | CON: "weak image quality on edge." FF edges weak.                  | "average"       |
+| centerWideOpen     | 2.0   | 43 lpmm at f/2.8 (94%).                                            | >= 90%          |
+| cornerWideOpen     | 0.5   | FF edges weak at f/2.8.                                            | "poor"          |
+| astigmatism        | 1.5   | 6.6%. "A moderate value."                                          | 5-10%           |
+| lateralCA          | 0.5   | "High" at f/2.8. CON: "too high level of lateral CA."              | "poor"          |
+| distortion         | 0.0   | Fisheye — intentional (-18% APS-C, -35% FF).                       | > 4.0% (design) |
+| vignettingWideOpen | 1.5   | APS-C: -0.64 EV. PRO: "negligible vignetting on APS-C/DX."         | 0.5-1.0 EV      |
+| vignettingStopped  | 2.0   | APS-C: -0.19 EV at f/5.6.                                          | < 0.5 EV        |
+| flareResistance    | 1.5   | PRO: "very good work against bright light."                        | "very good"     |
+
 ### 12mm f/2.0 NCS CS
 
 Third-party ultra-wide prime. Popular astro lens.
@@ -378,6 +463,281 @@ Sensor: X-Trans I (X-E1), max ~66 lpmm.
 | vignettingStopped   | 1.5   | -0.87 EV at f/4.                                                                                                                                                                                                       | 0.5-1.0 EV             |
 | bokeh               | 1.5   | "Nice to look at, even light spread, no noticeable extremes."                                                                                                                                                          | "very good"            |
 | flareResistance     | 0.5   | "A lot of problems against bright light", deteriorates stopped down.                                                                                                                                                   | "poor"                 |
+
+### 14mm f/2.8 ED AS IF UMC
+
+Classic ultra-wide manual prime. FF design on APS-C crop.
+Sources: LensTip (lab, trust 3, Nikon D3x FF), OpticalLimits (lab, trust 3, Canon 5D II FF),
+Dustin Abbott (field, trust 3). Phillip Reeve partial (blocked site).
+FF lens — resolution qualitative descriptions used; corners benefit from APS-C crop.
+
+| Field               | Score | Source data                                                                                                     | Rubric rule       |
+| ------------------- | ----- | --------------------------------------------------------------------------------------------------------------- | ----------------- |
+| centerStopped       | 2.0   | LensTip: 46-47 lpmm = ~100% of D3x max. All 4 sources: excellent.                                               | >= 90%            |
+| cornerStopped       | 1.5   | LensTip: ~40 lpmm on APS-C edges (~85%). OL/DA both 1.5.                                                        | 75-89%            |
+| centerWideOpen      | 2.0   | LensTip: 44 lpmm = ~94%. DA: "resolves more detail than any wide angle."                                        | >= 90%            |
+| cornerWideOpen      | 1.0   | LensTip: "decency level" on FF (0.5), APS-C crop improves. OL: 1.0.                                             | "average" (APS-C) |
+| astigmatism         | 2.0   | LensTip: 1%. "A standing ovation!"                                                                              | < 5%              |
+| coma                | 1.5   | LensTip: "well-corrected", "visible but far from bothersome." DA: 2.0. LensTip primary.                         | "low"             |
+| sphericalAberration | 1.5   | Optical construction: aspherical elements + 0 SA complaints from 2+ reviewers. ADR-014 inference. Conservative. |                   |
+| longitudinalCA      | —     | undefined — not tested (only lateral CA covered in this review)                                                 |                   |
+| lateralCA           | 1.0   | LensTip: 0.08-0.13% on APS-C crop area.                                                                         | 0.09-0.14%        |
+| distortion          | 0.0   | All sources: 5-7% barrel with moustache pattern. Universal 0.0.                                                 | > 4.0%            |
+| vignettingWideOpen  | 0.5   | LensTip: -2.31 EV FF. OL: >3 EV. APS-C less but still heavy.                                                    | 1.5-2.5 EV        |
+| vignettingStopped   | 1.5   | LensTip: ~0.8-1.0 EV at f/5.6. DA: 1.5.                                                                         | 0.5-1.0 EV        |
+| bokeh               | 1.0   | OL: "very decent" (1.5). DA: "fairly decent" (1.0). Conservative.                                               | "average"         |
+| flareResistance     | 1.0   | LensTip: "moderate" improvement. Contested: DA says excellent, OL says problematic. LensTip primary.            | "average"         |
+
+### 16mm f/2.0 ED AS UMC CS
+
+APS-C wide prime. Tested directly on Nikon D7000.
+Sources: LensTip (lab, trust 3, Nikon D7000 APS-C).
+Sensor: Nikon D7000, max 55-58 lpmm.
+
+| Field               | Score | Source data                                                                   | Rubric rule      |
+| ------------------- | ----- | ----------------------------------------------------------------------------- | ---------------- |
+| centerStopped       | 2.0   | 58 lpmm at f/4 (100% of max). PRO: "excellent image quality in frame centre." | >= 90%           |
+| cornerStopped       | 1.5   | Edge "good to very good" from f/2.8. ~50 lpmm = ~86%.                         | 75-89%           |
+| centerWideOpen      | 1.5   | ~50 lpmm at f/2 (86% of max).                                                 | 75-89%           |
+| cornerWideOpen      | 0.5   | Edge "approaching decency level" at f/2.                                      | "poor"           |
+| astigmatism         | 2.0   | 3%. PRO: "negligible astigmatism."                                            | < 5%             |
+| coma                | 1.0   | "Not corrected in a perfect way" but not severe.                              | "noticeable"     |
+| sphericalAberration | 1.5   | "Corrected in a proper way." No focus shift. PRO: "good SA correction."       | "well corrected" |
+| longitudinalCA      | 1.5   | PRO: "slight chromatic aberration — both lateral and longitudinal."           | "low"            |
+| lateralCA           | 1.5   | 0.060-0.065%. PRO: "slight CA."                                               | 0.04-0.08%       |
+| distortion          | 0.5   | -2.53% barrel.                                                                | 2.0-4.0%         |
+| vignettingWideOpen  | 0.5   | -1.58 EV at f/2. CON: "distinct vignetting at maximum aperture."              | 1.5-2.5 EV       |
+| vignettingStopped   | 2.0   | -0.47 EV at f/4.                                                              | < 0.5 EV         |
+| flareResistance     | 0.5   | CON: "weak performance against bright light."                                 | "poor"           |
+
+### 21mm f/1.4 ED AS UMC CS
+
+APS-C fast wide prime. Tested directly on Fuji X-E1.
+Sources: LensTip (lab, trust 3, X-E1), Dustin Abbott (field, trust 3, X-T1).
+Sensor: X-Trans I (X-E1), max ~76 lpmm.
+
+| Field               | Score | Source data                                                                               | Rubric rule  |
+| ------------------- | ----- | ----------------------------------------------------------------------------------------- | ------------ |
+| centerStopped       | 2.0   | ~77 lpmm at f/4 (101% of max). "Record-breaking values."                                  | >= 90%       |
+| cornerStopped       | 1.5   | "From f/5.6 the performance on both sides becomes similarly high."                        | "very good"  |
+| centerWideOpen      | 1.0   | "Can certainly be called decent" at f/1.4. Above decency but not impressive.              | "average"    |
+| cornerWideOpen      | 0.5   | "Near maximum relative aperture the MTFs are weak." Summary CON: "too weak edge."         | "poor"       |
+| astigmatism         | 1.0   | ~15% average. Escalates to 25% at f/2.0.                                                  | 10-18%       |
+| coma                | 1.5   | "Not bad at all... visible both by f/1.4 and f/2.0 but deformations not very pronounced." | "low"        |
+| sphericalAberration | 2.0   | "Imperceptible spherical aberration." No focus shift.                                     | "negligible" |
+| longitudinalCA      | 1.0   | "At maximum aperture seems to be a bit bothersome, level can be described as medium."     | "moderate"   |
+| lateralCA           | 1.5   | 0.05-0.06%. "Low lateral chromatic aberration."                                           | 0.04-0.08%   |
+| distortion          | 1.5   | -0.57% barrel. "Low and completely praiseworthy."                                         | 0.3-1.0%     |
+| vignettingWideOpen  | 0.5   | -2.00 EV RAW at f/1.4. "Significantly high."                                              | 1.5-2.5 EV   |
+| vignettingStopped   | 1.5   | -0.87 EV at f/2.8, -0.83 EV at f/4-5.6.                                                   | 0.5-1.0 EV   |
+| bokeh               | 1.0   | "Defocused light circles look sensibly well" BUT "distinct onion ring bokeh."             | "average"    |
+| flareResistance     | 2.0   | "Excellent performance against bright light." "Mastered to perfection."                   | "excellent"  |
+
+### Tilt/Shift 24mm f/3.5 ED AS UMC
+
+Budget tilt-shift. FF design. Scored in normal (non-shifted) mode.
+Sources: LensTip (lab, trust 3, Canon 1Ds III FF), Dustin Abbott (field, trust 3).
+Sensor: Canon 1Ds III, max 44-46 lpmm.
+
+| Field               | Score | Source data                                                                                                         | Rubric rule  |
+| ------------------- | ----- | ------------------------------------------------------------------------------------------------------------------- | ------------ |
+| centerStopped       | 2.0   | "Beyond reproach" at f/5.6-8. PRO: "very good image quality in frame centre."                                       | "excellent"  |
+| cornerStopped       | 1.5   | PRO: "good image quality on edge." APS-C: "very good and fully useful."                                             | "very good"  |
+| centerWideOpen      | 1.5   | "Fully useful" at f/3.5. PRO: "very good centre."                                                                   | "very good"  |
+| cornerWideOpen      | 1.5   | APS-C edge "very good and fully useful across all apertures."                                                       | "very good"  |
+| astigmatism         | 1.5   | <8%. "Borderline between low and medium levels."                                                                    | 5-10%        |
+| coma                | 1.5   | PRO: "slight coma." "Almost exactly the same as centre" on APS-C.                                                   | "low"        |
+| sphericalAberration | 1.5   | Optical construction: 2 aspherical elements + 0 SA complaints from LensTip and DA. ADR-014 inference. Conservative. |              |
+| longitudinalCA      | 2.0   | "Difficult to notice even the slightest colouring." PRO: "excellent CA control."                                    | "negligible" |
+| lateralCA           | 2.0   | PRO: "excellent control of CA." "Practically imperceptible" in normal mode.                                         | < 0.04%      |
+| distortion          | 1.5   | APS-C: -0.59%. (FF: -1.98%). Using APS-C value.                                                                     | 0.3-1.0%     |
+| vignettingWideOpen  | 1.5   | -0.83 EV at f/3.5 (normal mode). PRO: "low vignetting in normal working mode."                                      | 0.5-1.0 EV   |
+| vignettingStopped   | 2.0   | -0.40 EV at f/8.                                                                                                    | < 0.5 EV     |
+| flareResistance     | 0.5   | CON: "weak work against bright light."                                                                              | "poor"       |
+
+### 35mm f/1.2 ED AS UMC CS
+
+Fast APS-C prime. Tested directly on Fujifilm X-T2.
+Sources: LensTip (lab, trust 3, X-T2).
+Sensor: X-Trans III (X-T2), max ~80 lpmm.
+
+| Field               | Score | Source data                                                                    | Rubric rule  |
+| ------------------- | ----- | ------------------------------------------------------------------------------ | ------------ |
+| centerStopped       | 2.0   | ~75+ lpmm at f/4 (94% of max). PRO: "excellent image quality in frame centre." | >= 90%       |
+| cornerStopped       | 1.5   | PRO: "good image quality on edge from f/2.0 aperture."                         | "very good"  |
+| centerWideOpen      | 1.0   | SA softens center at f/1.2. Center peaks at f/4, wide open estimated 60-74%.   | 60-74%       |
+| cornerWideOpen      | 0.5   | CON: "weak image quality on edge near maximum aperture."                       | "poor"       |
+| astigmatism         | 1.0   | 17.6%. CON: "distinct astigmatism."                                            | 10-18%       |
+| coma                | 1.0   | "Medium" level deformations. Stars "deformed in frame corners."                | "noticeable" |
+| sphericalAberration | 0.5   | "Distinct differences." Focus shifts when stopping down. CON: "noticeable SA." | "poor"       |
+| longitudinalCA      | 1.5   | "Slight tint, completely acceptable." PRO: "low longitudinal CA."              | "low"        |
+| lateralCA           | 2.0   | ~0.02%. PRO: "negligible lateral CA." "Corrected in a perfect way."            | < 0.04%      |
+| distortion          | 2.0   | -0.21% RAW. PRO: "practically zero distortion."                                | < 0.3%       |
+| vignettingWideOpen  | 0.5   | -1.86 EV at f/1.2. CON: "huge vignetting."                                     | 1.5-2.5 EV   |
+| vignettingStopped   | 1.5   | -0.67 EV at f/2.8.                                                             | 0.5-1.0 EV   |
+| bokeh               | 1.0   | "Distinct concentric circles" (onion rings). "Hardly perfect."                 | "average"    |
+| flareResistance     | 2.0   | "Praised for performance against bright light." Artifacts "small and few."     | "excellent"  |
+
+### 35mm f/1.4 AS UMC
+
+Fast standard prime. FF design on APS-C crop.
+Sources: LensTip (lab, trust 3, Nikon D3x FF), OpticalLimits (lab, trust 3, Canon 5D II FF).
+FF lens — qualitative descriptions used for resolution.
+
+| Field               | Score | Source data                                                                                                     | Rubric rule       |
+| ------------------- | ----- | --------------------------------------------------------------------------------------------------------------- | ----------------- |
+| centerStopped       | 2.0   | LensTip: "very good, even splendid quality" at f/4-5.6. OL: "outstanding" at f/4-8.                             | "excellent"       |
+| cornerStopped       | 1.5   | LensTip: "sharp images even on FF edge" from f/2.2. OL: "excellent outer zones." APS-C better.                  | "very good"       |
+| centerWideOpen      | 1.0   | LensTip: ~57% of D3x max. OL: "very good at f/1.4" with "slightly reduced contrast."                            | "average"         |
+| cornerWideOpen      | 1.0   | LensTip: "good or even very good" on FF edges. APS-C crop uses mid-field.                                       | "average" (APS-C) |
+| astigmatism         | 2.0   | LensTip: 2.5%. "A splendid result."                                                                             | < 5%              |
+| coma                | 1.0   | LensTip: "visible, although not very distinct" on APS-C, "pronounced" on FF corners.                            | "noticeable"      |
+| sphericalAberration | 1.5   | Optical construction: aspherical elements + 0 SA complaints from 2+ reviewers. ADR-014 inference. Conservative. |                   |
+| longitudinalCA      | 0.5   | LensTip: "huge problem." OL: "purple halos" persist to f/2.8. Both agree.                                       | "poor"            |
+| lateralCA           | 2.0   | LensTip: "always low, never reaching medium level." OL: <0.6px.                                                 | < 0.04%           |
+| distortion          | 1.0   | LensTip: -1.58% FF barrel. OL: ~1.6%.                                                                           | 1.0-2.0%          |
+| vignettingWideOpen  | 0.5   | LensTip: -1.90 EV FF. OL: >2.2 EV.                                                                              | 1.5-2.5 EV        |
+| vignettingStopped   | 1.5   | LensTip: ~0.6 EV by f/2.8. "Problem becomes insignificant."                                                     | 0.5-1.0 EV        |
+| bokeh               | 1.0   | OL: "rather busy", "slightly nervous inner zone." Not assessed by LensTip.                                      | "average"         |
+| flareResistance     | 1.5   | LensTip: "above average", "not perfect but not bad either."                                                     | "very good"       |
+
+### 50mm f/1.2 AS UMC CS
+
+Fast APS-C portrait prime. No trust-3 lab data exists.
+Sources: Dustin Abbott (field, trust 3, Canon EOS M3), ePHOTOzine (lab, trust 2, Sony A6000),
+What Digital Camera (lab, trust 2), Photography Blog (lab, trust 2, Sony A6000).
+Trust-2 aggregation applied for centerStopped, cornerStopped, vignettingWideOpen.
+
+| Field               | Score | Source data                                                                                                                                                                                                                                                                | Rubric rule                  |
+| ------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| centerStopped       | 2.0   | ePHOTOzine: "excellent f/2.8-f/8." Photography Blog: "outstanding f/2-f/8." (2x trust-2 aggregate)                                                                                                                                                                         | "excellent" (agg)            |
+| cornerStopped       | 1.5   | ePHOTOzine: "edges impressively close to central." Photography Blog: "best f/4-f/8." (2x trust-2)                                                                                                                                                                          | "very good" (agg)            |
+| centerWideOpen      | 1.0   | DA: "surprisingly strong at f/1.2" but "not sky-high", "bit more haze due to CA."                                                                                                                                                                                          | "average"                    |
+| cornerWideOpen      | 1.0   | AP: "at f/1.2 corner sharpness virtually identical to centre" (both soft). WDC agrees. (2x trust-2)                                                                                                                                                                        | "average" (agg)              |
+| astigmatism         | 2.0   | Official MTF chart: S/M lines nearly overlapping throughout frame. Gap < 0.03 everywhere.                                                                                                                                                                                  | MTF fallback                 |
+| coma                | 1.0   | Community consensus (3 sources, all CS version): Alik Griffin "very well controlled", DPReview tradesmith45 "slight coma in corners" (tracked astro on Fuji X), DPReview user 2 chose Samyang over XF56 for less coma (Cygnus field on X-T100). Capped at 1.0 per ADR-014. | "noticeable" (consensus cap) |
+| sphericalAberration | 1.0   | DA: "haze at f/1.2, improves by f/2." AP: "improves considerably f/2-f/2.8." No focus shift reported. Conservative.                                                                                                                                                        | "noticeable" (conservative)  |
+| longitudinalCA      | 1.0   | DA: "isn't too bad, bit of purple/green fringing." "Marked improvement by f/2."                                                                                                                                                                                            | "moderate"                   |
+| lateralCA           | 1.5   | DA: "well controlled", "pixel width quite small." ePHOTOzine: "controlled very well." Consistent.                                                                                                                                                                          | "low"                        |
+| distortion          | 2.0   | DA: "minor pincushion, minimal." ePHOTOzine Imatest: -0.156%. WDC: SMIA TV = -0.0%.                                                                                                                                                                                        | < 0.3%                       |
+| vignettingWideOpen  | 1.5   | WDC: ~0.7 EV at f/1.2. Photography Blog: "very noticeable" but clears by f/5.6. (2x trust-2)                                                                                                                                                                               | 0.5-1.0 EV (agg)             |
+| vignettingStopped   | 2.0   | AP: 0.3 EV at f/2, "no issue f/2.8-f/16." WDC: same. (2x trust-2 aggregate)                                                                                                                                                                                                | < 0.5 EV (agg)               |
+| bokeh               | 1.0   | DA: "onion bokeh" in highlights, "nice real-world bokeh." Conservative per lab-authority rule.                                                                                                                                                                             | "average"                    |
+| flareResistance     | 0.5   | DA: "fairly pronounced ghosting", "strongly colored", "difficult to remove in post."                                                                                                                                                                                       | "poor"                       |
+
+### 50mm f/1.4 AS UMC
+
+Budget fast normal prime. FF design on APS-C crop.
+Sources: LensTip (lab, trust 3, Canon 5D III FF + Canon 50D APS-C).
+APS-C distortion and coma values used where available.
+
+| Field               | Score | Source data                                                                              | Rubric rule      |
+| ------------------- | ----- | ---------------------------------------------------------------------------------------- | ---------------- |
+| centerStopped       | 2.0   | ~44 lpmm at f/4 (94% of max). PRO: "very good image quality in frame centre."            | >= 90%           |
+| cornerStopped       | 1.0   | "Edge becomes completely useful around f/2.8." Qualitative.                              | "average"        |
+| centerWideOpen      | 0.5   | "Notably under the decency level" at f/1.4 (<30 lpmm). CON: "could be better."           | 50-59%           |
+| cornerWideOpen      | 0.5   | "Full-frame edges are poor until f/2.8." APS-C slightly better.                          | "poor"           |
+| astigmatism         | 2.0   | 3.8%. "A low value." PRO: "low astigmatism."                                             | < 5%             |
+| coma                | 1.5   | APS-C: "corrects coma very well." PRO: "slight coma in corners of APS-C/DX."             | "low" (APS-C)    |
+| sphericalAberration | 0.5   | "A very distinct ring — darker in front, lighter behind." Stops being bothersome at f/2. | "poor"           |
+| lateralCA           | 2.0   | "Almost no problems whatsoever." PRO: "sensibly corrected chromatic aberration."         | < 0.04%          |
+| distortion          | 1.5   | APS-C: -0.87% pincushion. (FF: -2.11%). Using APS-C value.                               | 0.3-1.0% (APS-C) |
+| vignettingWideOpen  | 0.5   | FF: -1.94 EV at f/1.4. CON: "noticeable vignetting."                                     | 1.5-2.5 EV       |
+| vignettingStopped   | 1.5   | FF: -0.69 EV at f/2.8. Improves to -0.33 EV at f/4.                                      | 0.5-1.0 EV       |
+| bokeh               | 0.5   | "Onion ring bokeh." Does not look "very well."                                           | "poor"           |
+| flareResistance     | 0.0   | "Flares clearly visible." CON: "unacceptable performance against bright light."          | "very poor"      |
+
+### 85mm f/1.4 AS IF UMC
+
+Portrait prime. FF design on APS-C crop.
+Sources: LensTip (lab, trust 3, Nikon D3x + D200), OpticalLimits (lab, trust 3, Canon 5D II).
+FF lens — qualitative descriptions used for resolution.
+
+| Field               | Score | Source data                                                                                                     | Rubric rule  |
+| ------------------- | ----- | --------------------------------------------------------------------------------------------------------------- | ------------ |
+| centerStopped       | 1.5   | LensTip: "under 40 lpmm" (~85% D3x). "Rather low maximum." OL: "excellent (just)" at f/5.6.                     | "very good"  |
+| cornerStopped       | 1.0   | LensTip: "30 lpmm at FF edges" (64%). APS-C mid-field better. OL: "very good" at f/5.6.                         | "average"    |
+| centerWideOpen      | 1.0   | LensTip: "slightly exceeds 30 lpmm" (64%). OL: "only very good (just)."                                         | "average"    |
+| cornerWideOpen      | 0.5   | Both sources: "soft" at f/1.4 corners.                                                                          | "poor"       |
+| astigmatism         | 1.0   | LensTip: 10.4%.                                                                                                 | 10-18%       |
+| coma                | 1.0   | LensTip: "doesn't cause problems on DX" but noticeable on FF.                                                   | "noticeable" |
+| sphericalAberration | 1.5   | Optical construction: aspherical elements + 0 SA complaints from 2+ reviewers. ADR-014 inference. Conservative. |              |
+| longitudinalCA      | 0.5   | Both sources: visible purple/green fringing f/1.4-f/2.8. OL: "starts to fade from f/4."                         | "poor"       |
+| lateralCA           | 2.0   | LensTip: "minimal, goes unnoticed." OL: ~0.6px, "not field relevant."                                           | < 0.04%      |
+| distortion          | 1.5   | LensTip: -0.33% FF. OL: 0.4% barrel. Borderline. Conservative.                                                  | 0.3-1.0%     |
+| vignettingWideOpen  | 1.0   | LensTip: -1.39 EV FF. OL: 1.8 EV. Using LensTip primary.                                                        | 1.0-1.5 EV   |
+| vignettingStopped   | 2.0   | LensTip: ~0.4 EV at f/2.8. OL: "basically gone from f/2.8."                                                     | < 0.5 EV     |
+| bokeh               | 1.5   | Both sources: "impressive"/"super smooth" bokeh quality.                                                        | "very good"  |
+| flareResistance     | 0.5   | LensTip: "must give way to rivals." Ghosting "hard to ignore."                                                  | "poor"       |
+
+### 100mm f/2.8 ED UMC Macro
+
+True macro (1:1 magnification). FF design, APS-C vignetting data available.
+Sources: LensTip (lab, trust 3, Canon 5D III FF + Canon 50D APS-C).
+Sensor: Canon 5D III, max ~44-47 lpmm. APS-C vignetting used where available.
+
+| Field               | Score | Source data                                                                    | Rubric rule      |
+| ------------------- | ----- | ------------------------------------------------------------------------------ | ---------------- |
+| centerStopped       | 2.0   | "Above 45 lpmm" (95.7% of max). PRO: "sensational resolution in frame centre." | >= 90%           |
+| cornerStopped       | 1.5   | PRO: "good image quality on edge of APS-C/DX."                                 | "very good"      |
+| centerWideOpen      | 1.5   | "Over 35 lpmm... very good, excellent even" at f/2.8.                          | "very good"      |
+| cornerWideOpen      | 0.5   | "Hardly sharp" at f/2.8. CON: "edge near max aperture worse than rivals."      | "poor"           |
+| astigmatism         | 2.0   | 4.1%. PRO: "low astigmatism."                                                  | < 5%             |
+| coma                | 1.0   | "No reasons to complain but hardly perfect." PRO: "moderate coma."             | "noticeable"     |
+| sphericalAberration | 2.0   | "No problems whatsoever." PRO: "lack of SA problems."                          | "negligible"     |
+| longitudinalCA      | 2.0   | "No problems whatsoever." PRO: "imperceptible longitudinal CA."                | "negligible"     |
+| lateralCA           | 1.5   | ~0.05%. "Slight." PRO: "low lateral CA."                                       | 0.04-0.08%       |
+| distortion          | 2.0   | APS-C: +0.22%. "Negligible." PRO: "practically zero distortion."               | < 0.3%           |
+| vignettingWideOpen  | 2.0   | APS-C: -0.48 EV at f/2.8. PRO: "low vignetting on APS-C/DX."                   | < 0.5 EV (APS-C) |
+| vignettingStopped   | 2.0   | APS-C: -0.12 EV at f/4. Negligible.                                            | < 0.5 EV (APS-C) |
+| bokeh               | 1.5   | "Pleasing to the eye." PRO: "nice appearance of blurry areas."                 | "very good"      |
+| flareResistance     | 1.0   | "Averagely good. Far from perfection."                                         | "average"        |
+
+### 135mm f/2 ED UMC
+
+Legendary fast tele prime. FF design on APS-C crop. APO-quality CA correction.
+Sources: Dustin Abbott (field, trust 3, Canon 6D), Phillip Reeve (field, trust 3, Sony A7II).
+Both sources confirm exceptional optical quality.
+
+| Field               | Score | Source data                                                                                                                                                                                                                                                                                                                   | Rubric rule       |
+| ------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------- |
+| centerStopped       | 2.0   | DA: "stunningly good resolution." PR: "ridiculously sharp from f/2."                                                                                                                                                                                                                                                          | "excellent"       |
+| cornerStopped       | 2.0   | PR: "ridiculously sharp across the frame from f/2 on." No difference center/corner.                                                                                                                                                                                                                                           | "excellent"       |
+| centerWideOpen      | 2.0   | DA: "incredibly sharp and full of rich contrast wide open." PR: sharp from f/2, no improvement.                                                                                                                                                                                                                               | "excellent"       |
+| cornerWideOpen      | 1.5   | DA: "texture detail from corner to corner is very good." PR: "corners very sharp wide open."                                                                                                                                                                                                                                  | "very good"       |
+| astigmatism         | 2.0   | Official MTF chart: S/M lines nearly overlapping at all positions. Max divergence ~4% at edge.                                                                                                                                                                                                                                | MTF fallback      |
+| coma                | 1.5   | Community consensus (5+ with measured data): Cloudy Nights "tightest stars in any astro optic" (FWHM 2.1px), AstroBackyard "pinpoint stars at f/2", CameraLabs "almost no coma, matched Zeiss APO", Galactic Hunter "coma hard to find", Astrojolo "almost invisible elongation." Per ADR-014 tiered cap: 5+ with data = 1.5. | "low" (consensus) |
+| sphericalAberration | 2.0   | PR: "I didn't notice any focus shift." DA: "I didn't really notice any optical flaws."                                                                                                                                                                                                                                        | "negligible"      |
+| lateralCA           | 2.0   | PR: "no lateral CA." "True APO-qualities." DA: "less CA than Canon 135L."                                                                                                                                                                                                                                                     | "negligible"      |
+| longitudinalCA      | 2.0   | PR: "only negligible hint of longitudinal CA." "APO qualities."                                                                                                                                                                                                                                                               | "negligible"      |
+| distortion          | 2.0   | PR: "virtually distortion-free", 0 to -1 in Lightroom.                                                                                                                                                                                                                                                                        | < 0.3%            |
+| vignettingWideOpen  | 0.5   | PR: 1.67 EV at f/2. "Worth noting although typical for a fast FF lens."                                                                                                                                                                                                                                                       | 1.5-2.5 EV        |
+| vignettingStopped   | 2.0   | PR: "virtually gone at f/8."                                                                                                                                                                                                                                                                                                  | < 0.5 EV          |
+| bokeh               | 1.5   | DA: "beautifully creamy" (2.0). PR: "very good" close but "harsh at long distance" (1.0). Avg.                                                                                                                                                                                                                                | "very good"       |
+| flareResistance     | 1.0   | DA: "better controlled than many" (1.5). PR: ghosting "can be disturbing", contrast OK. Avg 1.0.                                                                                                                                                                                                                              | "average"         |
+
+### AF 12mm f/2.0
+
+Modern AF ultra-wide. APS-C native (same optics across E/X mount).
+Sources: OpticalLimits (lab, trust 3, Sony APS-C), Dustin Abbott (field, trust 3, Sony APS-C).
+No astigmatism or spherical aberration data — nightscape not scorable.
+
+| Field               | Score | Source data                                                                                                       | Rubric rule  |
+| ------------------- | ----- | ----------------------------------------------------------------------------------------------------------------- | ------------ |
+| centerStopped       | 2.0   | OL: "excellent center quality" at f/4-5.6. DA: "nice sharpness" at f/5.6-8.                                       | "excellent"  |
+| cornerStopped       | 1.5   | OL: "very good corners/borders." DA: "corners never quite pin-sharp." OL lab primary.                             | "very good"  |
+| centerWideOpen      | 1.5   | OL: "excellent" center at f/2. DA: "fairly good, not sky-high." OL lab primary.                                   | "very good"  |
+| cornerWideOpen      | 1.0   | OL: "just Okay" at f/2. DA: "significant drop-off."                                                               | "average"    |
+| astigmatism         | 0.5   | Official MTF chart: heavy S/M divergence. At APS-C edge (~10mm), ~30% split at 30 lp/mm.                          | MTF fallback |
+| coma                | 1.5   | DA: "quite good, star points stay crisp and precise even towards edge." OL: not tested.                           | "low"        |
+| sphericalAberration | 1.5   | Optical construction: 1 H-ASP + 1 ASP elements + 0 SA complaints from OL and DA. ADR-014 inference. Conservative. |              |
+| longitudinalCA      | 1.0   | DA: "isn't too bad, a bit of purple/green fringing." OL: not tested.                                              | "moderate"   |
+| lateralCA           | 1.0   | OL: "1.8px at corners" (~0.10-0.14%). DA: "much less, didn't find it."                                            | 0.09-0.14%   |
+| distortion          | 1.0   | OL: 1.5% barrel. DA: ~1-1.5%. Both agree.                                                                         | 1.0-2.0%     |
+| vignettingWideOpen  | 0.0   | OL: ">3 EV" RAW at f/2. DA: "right over two stops" (~2.1 EV). OL lab measurement.                                 | > 2.5 EV     |
+| vignettingStopped   | 1.0   | OL: ">1 EV even at f/8." Persistent.                                                                              | 1.0-1.5 EV   |
+| bokeh               | 0.5   | OL: "rather rough." DA: mixed — "quite nice" but "jittery transition zone."                                       | "poor"       |
+| flareResistance     | 0.5   | OL: "somewhat worse than average." DA: "mostly quite good." OL lab primary.                                       | "poor"       |
 
 ---
 

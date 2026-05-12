@@ -202,17 +202,14 @@ describe("boolean field distribution", () => {
     "hasCircularAperture",
     "isFocusByWire",
     "hasDistanceScale",
+    "hasApertureRing",
   ] as const;
 
   // Fields with known data gaps — tracked by #473.
   // Uses it.fails: test is expected to fail now; when #473 fills in the
   // data, the test will unexpectedly pass and Vitest will flag it —
   // move the field to POPULATED_BOOLEAN_FIELDS at that point.
-  const PENDING_BOOLEAN_FIELDS = [
-    "hasOis",
-    "isWeatherSealed",
-    "hasApertureRing",
-  ] as const;
+  const PENDING_BOOLEAN_FIELDS = ["hasOis", "isWeatherSealed"] as const;
 
   it.each(POPULATED_BOOLEAN_FIELDS)(
     "%s has at least one explicit false value",
