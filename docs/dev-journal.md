@@ -1532,3 +1532,19 @@ Tool: Claude Code. PRs [#579](https://github.com/Imbra-Ltd/wuseria/pull/579), [#
 - Total: 57+ naming fixes, 1 lens removed, 2 lenses added. DB now 244 lenses, 461 pages
 
 Issues created: #577 (7Artisans Mark II audit — closed), #578 (questionable mount availability — closed)
+
+---
+
+### Session 45 — Homepage SEO
+
+**Date:** 2026-05-13
+Tool: Claude Code. PR [#582](https://github.com/Imbra-Ltd/wuseria/pull/582).
+
+- Reinforced H1 keywords ("Fujifilm", "lens", "scored", "genre") in homepage body sections (#544)
+- Increased homepage word count past 250-word SEO minimum (#545)
+- Removed overpromising lens count from subtitle — was claiming all 244 lenses "rated against genres" when only ~48% are scored
+- Subtitle now count-free: "Fujifilm lenses scored for your genre"
+- Merged PR #580 (model name audit followup from session 44)
+- Cleaned up stale local branches
+
+Issues created: #581 (Lighthouse a11y 0.85 on /genre/), #583 (evaluate removing stats bar), #584 (update meta description)
