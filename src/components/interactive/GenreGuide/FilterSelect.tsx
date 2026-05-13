@@ -22,6 +22,7 @@ function FilterSelect({
         className={styles.controlSelect}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        aria-label={label}
       >
         <option value="">{allLabel}</option>
         {options.map((opt) => (
