@@ -1585,3 +1585,31 @@ Tool: Claude Code. PRs [#585](https://github.com/Imbra-Ltd/wuseria/pull/585), [#
 - Removed non-conformant MTF file (sigma-16-300mm wrong slug + free-form prose)
 - All 34 MTF companion files verified conformant
 - Trust-3 sources: 8 lab + 5 field = 13 total (up from 5 lab + 5 field = 10)
+
+---
+
+### Session 47 — Complete Priority Brand Scoring
+
+- Tool: Claude Code (Opus 4.6)
+- PR #592
+- Issues created: #590 (officialUrl validation tests), #591 (genre page verification after renames)
+- Moved #569, #572 from v0.5.0 to Backlog
+- Epic #554 ready to close on merge
+
+Key changes:
+
+- Researched all trust sources for 6 remaining priority brand lenses (Voigtlander 4, Samyang 2)
+- All 4 Voigtlander X-mount lenses unscorable — zero trusted review coverage
+- Samyang 20mm f/1.8: partially scored (3/14 fields from ePHOTOzine + Lonely Speck), below genre mark threshold
+- Samyang 300mm f/6.3: unscorable mirror lens, zero trust-3 reviews
+- Documented all 18 remaining priority brand lenses (+ Fujifilm 5, Venus Laowa 13) with not-scored comments and scoring log entries
+- All scoring log entries expanded with full 14-field tables per ADR-022
+
+Spec fixes:
+
+- Samyang 20mm: model name 20mm f/1.8 → 20mm f/1.8 ED AS UMC, apertureBlades 8 → 7, year 2018 → 2016
+- Samyang 300mm: model name → 300mm f/6.3 ED UMC CS Reflex, apertureBlades 8 → 0 (mirror lens), hasApertureRing → false
+- Laowa 15mm f/4.5R Shift GFX: fixed broken officialUrl
+- Laowa 8-15mm f/2.8 GFX: fixed officialUrl pointing to wrong product variant
+
+Key finding: Voigtlander Nokton 50mm f/1.2 X-mount is a completely different optical design (9 elem/8 groups Sonnar) from the E-mount/VM versions (8 elem/6 groups aspherical) — existing reviews cannot be applied
