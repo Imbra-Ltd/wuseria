@@ -8,7 +8,7 @@ related:
   - "coma"
 ---
 
-Wuseria scores lenses on a 0-100 scale for each photography genre. Scores are calculated from optical performance data, not marketing specs or subjective reviews. The goal is to answer: "How well does this lens perform for this specific genre?"
+Wuseria scores lenses for each photography genre using marks from 1 to 5 (in half-star steps). Scores are calculated from optical performance data, not marketing specs or subjective reviews. The goal is to answer: "How well does this lens perform for this specific genre?"
 
 Each genre uses a weighted formula that emphasizes the optical qualities most important for that type of photography. For example, nightscape scoring heavily weights coma and wide-open corner sharpness, while portrait scoring emphasizes bokeh and center sharpness wide open.
 

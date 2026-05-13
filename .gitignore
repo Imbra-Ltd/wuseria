@@ -4,9 +4,15 @@ dist/
 .env
 .env.local
 .idea/
+.vscode/
 *.log
+*.swp
+*.swo
 .claude/
 coverage/
 reports/
 .lighthouseci/
 temp/
+.DS_Store
+Thumbs.db
+desktop.ini
