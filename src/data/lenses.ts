@@ -8433,8 +8433,7 @@ const lenses: Lens[] = [
     isTiltShift: true,
     shiftRange: 11,
     // Not scored — GFX shift specialty; no trusted reviews
-    officialUrl:
-      "https://www.venuslens.net/product/laowa-15mm-f-4-5r-zero-d-shift/",
+    officialUrl: "https://www.venuslens.net/product/15mm-f-4-5-zero-d-shift/",
   },
   {
     brand: "Venus Laowa",
@@ -8494,7 +8493,8 @@ const lenses: Lens[] = [
     price: 1500,
     minFocusDistance: 150,
     // Not scored — GFX fisheye zoom; no trusted reviews
-    officialUrl: "https://www.venuslens.net/product/laowa-8-15mm-f2-8-ff-zoom/",
+    officialUrl:
+      "https://www.venuslens.net/product/laowa-8-15mm-f-2-8-ff-zoom-fisheye-2/",
   },
   {
     brand: "Mitakon",
