@@ -3457,6 +3457,7 @@ const lenses: Lens[] = [
     hasTripodMount: true,
     price: 500,
     minFocusDistance: 900,
+    // Not scored — mirror lens; zero trust-3 reviews, only 1 trust-2
     officialUrl:
       "https://www.lksamyang.com/en/product/product-view.php?seq=355",
   },
