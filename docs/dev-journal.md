@@ -1613,3 +1613,32 @@ Spec fixes:
 - Laowa 8-15mm f/2.8 GFX: fixed officialUrl pointing to wrong product variant
 
 Key finding: Voigtlander Nokton 50mm f/1.2 X-mount is a completely different optical design (9 elem/8 groups Sonnar) from the E-mount/VM versions (8 elem/6 groups aspherical) — existing reviews cannot be applied
+
+---
+
+### Session 48 — Pre-release Review and v0.5.0 Tag
+
+- Tool: Claude Code (Opus 4.6)
+- PR #598
+- Tagged v0.5.0, closed milestone
+- Closed #593 (deep review), #594-#597 (code quality fixes)
+- Created #599 (negative conditions), #600 (glossary vs wiki spike), #601 (lens suffix guide), #602 (brand name discoverability), #603 (search visibility audit), #604 (Bing Webmaster Tools)
+- Created v0.6.0 milestone: content depth and SEO
+
+Deep review findings and fixes:
+
+- Stale scale references (0-10, 0-100) corrected across README, scoring.ts, 2 wiki articles — all now reflect 0-2/1-5 scale per ADR-019
+- .gitignore: added .DS_Store, Thumbs.db, desktop.ini, .vscode/, \*.swp
+- Magic numbers: extracted X_CROP_FACTOR, GFX_CROP_FACTOR, RULE_OF_500_FACTOR, NIGHTSCAPE_DEFAULT_ISO_X/GFX, OQ_THRESHOLD_HIGH/MID — 17+ occurrences across 9 files replaced
+- DRY: extracted passesBooleanFilter, passesExactFilter, passesMaxFilter, passesMinFilter, passesRangeFilter, passesStatusFilter, passesSearchFilter to src/utils/filters.ts — removed from 3 consumer files
+- Bug: added descFirstKeys to useMemo dependency array in useSort.ts
+- CSS: moved all hardcoded hex colors from MarkPips.module.css and GenreGuide.module.css to CSS custom properties in global.css
+
+360 analysis update:
+
+- Value: B+ → A- (all 9 genres live, 120/244 scored, 461 pages)
+- Quality: B+ → A- (176 tests, all MUST violations fixed)
+- Viability: B+ → A- (24 ADRs, CI solid, scoring methodology formalized)
+- Discovery: D+ → C (canonical URLs, sitemap, OG tags, but only 106/461 pages indexed, 201 total impressions)
+
+GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ratio", "bortle scale"). Lens pages not indexed — thin content confirmed as root cause. v0.6.0 reprioritized: #603 (search audit P1) and #572 (lens page SEO P1) are the top priorities
