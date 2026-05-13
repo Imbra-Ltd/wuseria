@@ -739,6 +739,59 @@ No astigmatism or spherical aberration data — nightscape not scorable.
 | bokeh               | 0.5   | OL: "rather rough." DA: mixed — "quite nice" but "jittery transition zone."                                       | "poor"       |
 | flareResistance     | 0.5   | OL: "somewhat worse than average." DA: "mostly quite good." OL lab primary.                                       | "poor"       |
 
+### 20mm f/1.8 ED AS UMC
+
+Partial scoring from limited trust sources. Full-frame lens on APS-C crop.
+Sources: ePHOTOzine (lab, trust 3, Canon 6D), Lonely Speck (field, trust 3, astro context).
+Trust-2: Digital Camera World (Canon 6D), The Phoblographer (Sony E).
+No LensTip, OpticalLimits, or Dustin Abbott reviews exist.
+
+Note: All lab measurements are from full-frame sensors. Resolution fields cannot be
+scored — no APS-C X-Trans lpmm data exists to normalize against the rubric.
+
+| Field               | Score | Source data                                                                                   | Rubric rule    |
+| ------------------- | ----- | --------------------------------------------------------------------------------------------- | -------------- |
+| centerStopped       | —     | undefined — no APS-C lab data (ePHOTOzine tested on Canon 6D full-frame)                      |                |
+| cornerStopped       | —     | undefined — no APS-C lab data                                                                 |                |
+| centerWideOpen      | —     | undefined — no APS-C lab data                                                                 |                |
+| cornerWideOpen      | —     | undefined — no APS-C lab data                                                                 |                |
+| astigmatism         | —     | undefined — no data (Lonely Speck mentions sagittal aberration but no % measurement)          |                |
+| coma                | 1.0   | Lonely Speck (trust-3): "corners show a little bit of aberration", "clears up by f/2.8."      | "noticeable"   |
+| sphericalAberration | —     | undefined — no trusted data (2 ASP elements in design but no confirmation from trust sources) |                |
+| longitudinalCA      | —     | undefined — no trusted data                                                                   |                |
+| lateralCA           | —     | undefined — not tested (ePHOTOzine: "edges show some fringing" but no measured %)             |                |
+| distortion          | 0.5   | ePHOTOzine (trust-3): -2.26% barrel. "Really quite moderate" for 20mm.                        | 2.0-4.0% → 0.5 |
+| vignettingWideOpen  | —     | undefined — no EV measurement (Lonely Speck: "strong vignetting" but no number)               |                |
+| vignettingStopped   | —     | undefined — no EV measurement                                                                 |                |
+| bokeh               | —     | undefined — no lab diode test (ePHOTOzine: "good but slightly busy"; per ADR-014 bokeh rule)  |                |
+| flareResistance     | 1.5   | ePHOTOzine (trust-3): "remarkably flare free." DCW (trust-2): "good." Trust-3 primary.        | "very good"    |
+
+### 300mm f/6.3 ED UMC CS Reflex
+
+Not scored — catadioptric (mirror) lens with fixed f/6.3 aperture and no diaphragm.
+Zero trust-3 reviews. Only one trust-2 review (The Phoblographer, Sony NEX) — need two
+for trust-2 aggregation. Non-trust sources provide qualitative impressions only.
+
+Database corrections applied: apertureBlades 8 → 0 (no diaphragm), hasApertureRing → false,
+model name updated to include "Reflex" per official Samyang naming.
+
+| Field               | Score | Source data                                                     | Rubric rule |
+| ------------------- | ----- | --------------------------------------------------------------- | ----------- |
+| centerStopped       | —     | undefined — not applicable (fixed aperture mirror lens)         |             |
+| cornerStopped       | —     | undefined — not applicable (fixed aperture mirror lens)         |             |
+| centerWideOpen      | —     | undefined — no trusted data                                     |             |
+| cornerWideOpen      | —     | undefined — no trusted data                                     |             |
+| astigmatism         | —     | undefined — no data                                             |             |
+| coma                | —     | undefined — no data                                             |             |
+| sphericalAberration | —     | undefined — no data                                             |             |
+| longitudinalCA      | —     | undefined — no data (mirror design eliminates CA in principle)  |             |
+| lateralCA           | —     | undefined — no data (mirror design eliminates CA in principle)  |             |
+| distortion          | —     | undefined — no data                                             |             |
+| vignettingWideOpen  | —     | undefined — not applicable (fixed aperture)                     |             |
+| vignettingStopped   | —     | undefined — not applicable (fixed aperture)                     |             |
+| bokeh               | —     | undefined — no lab data (donut bokeh inherent to mirror design) |             |
+| flareResistance     | —     | undefined — no trusted data (contradictory non-trust reports)   |             |
+
 ---
 
 ## Sigma
@@ -1144,17 +1197,57 @@ Note: Mk II shares identical optical design with PFU RBMH (10 elements,
 
 ### Color-Skopar 18mm f/2.8
 
-Not scored — no trust-3 reviews available. Released January 2024. LensTip has
-specs page only, no lab review. No coverage from OpticalLimits, DxOMark,
-LensRentals, The Digital Picture, Dustin Abbott, DPReview (editorial),
-Phillip Reeve, Lloyd Chambers, or Lonely Speck.
+Not scored — no trust-3 or trust-2 reviews available. Released February 2024.
+LensTip has specs page only, no lab review. No coverage from OpticalLimits,
+DxOMark, LensRentals, The Digital Picture, ePHOTOzine, ColorFoto, Dustin Abbott,
+DPReview (editorial), Phillip Reeve, Lloyd Chambers, or Lonely Speck.
+Only non-trust impressions (Fstoppers, Qimago, FujiFanBoys) with no
+quantitative data. Map Camera KASYAPA has a photo gallery but no optical assessment.
+
+| Field               | Score | Source data                 | Rubric rule |
+| ------------------- | ----- | --------------------------- | ----------- |
+| centerStopped       | —     | undefined — no trusted data |             |
+| cornerStopped       | —     | undefined — no trusted data |             |
+| centerWideOpen      | —     | undefined — no trusted data |             |
+| cornerWideOpen      | —     | undefined — no trusted data |             |
+| astigmatism         | —     | undefined — no data         |             |
+| coma                | —     | undefined — no data         |             |
+| sphericalAberration | —     | undefined — no data         |             |
+| longitudinalCA      | —     | undefined — no data         |             |
+| lateralCA           | —     | undefined — no data         |             |
+| distortion          | —     | undefined — no data         |             |
+| vignettingWideOpen  | —     | undefined — no data         |             |
+| vignettingStopped   | —     | undefined — no data         |             |
+| bokeh               | —     | undefined — no data         |             |
+| flareResistance     | —     | undefined — no data         |             |
 
 ### Nokton 23mm f/1.2
 
-Not scored — no trust-3 reviews available. LensTip has specs page only, no lab
-review. No coverage from any other trust-3 source. Community data
-(DPReview forums, Digital Camera World Z-mount proxy) is qualitative only,
-insufficient for rubric scoring.
+Not scored — no trust-3 or trust-2 reviews available for X-mount version.
+LensTip has specs page only, no lab review. No coverage from OpticalLimits,
+LensRentals, DxOMark, The Digital Picture, ePHOTOzine, ColorFoto, Dustin Abbott,
+DPReview (editorial), Phillip Reeve, Lloyd Chambers, or Lonely Speck.
+Digital Camera World reviewed the Z-mount variant (same optics) but
+qualitative only. Fujiya Camera and Map Camera KASYAPA have Japanese
+photo reviews without lab measurements. Non-trust sources (JO GEIER,
+FujiFanBoys) provide impressions only.
+
+| Field               | Score | Source data                                                    | Rubric rule |
+| ------------------- | ----- | -------------------------------------------------------------- | ----------- |
+| centerStopped       | —     | undefined — no trusted data                                    |             |
+| cornerStopped       | —     | undefined — no trusted data                                    |             |
+| centerWideOpen      | —     | undefined — no trusted data                                    |             |
+| cornerWideOpen      | —     | undefined — no trusted data                                    |             |
+| astigmatism         | —     | undefined — no data (no MTF chart available)                   |             |
+| coma                | —     | undefined — no data (no point-source test)                     |             |
+| sphericalAberration | —     | undefined — no data                                            |             |
+| longitudinalCA      | —     | undefined — no data (2 APD elements in design but unconfirmed) |             |
+| lateralCA           | —     | undefined — no data                                            |             |
+| distortion          | —     | undefined — no data (non-trust: "moderate barrel" but no %)    |             |
+| vignettingWideOpen  | —     | undefined — no data (non-trust: "significant" but no EV)       |             |
+| vignettingStopped   | —     | undefined — no data                                            |             |
+| bokeh               | —     | undefined — no lab diode test                                  |             |
+| flareResistance     | —     | undefined — no data (non-trust: mixed reports)                 |             |
 
 ### Nokton 35mm f/0.9 Aspherical
 
@@ -1200,18 +1293,57 @@ Sources: LensTip (lab, trust 3). Sensor: X-Trans III (X-T2), max ~85 lpmm.
 
 ### Nokton 50mm f/1.2
 
-Not scored — X-mount version is an exclusive APS-C Sonnar design (290g, 58mm
-filter), different from both the VM Aspherical (8 elem/6 groups, 347g) and the
-SE E-mount (8 elem/6 groups, 434g). No trust-3 or trust-2 reviews exist for
-the X-mount design. DCFever (trust-2) has a brief X-mount article in Chinese
-with qualitative impressions only. Database specs corrected: 492g→290g,
-filterThread 52→58, MFD 450→390mm.
+Not scored — X-mount version is an exclusive APS-C Sonnar design (9 elem/8 groups,
+290g, 58mm filter), fundamentally different from both the VM Aspherical
+(8 elem/6 groups, 2 double aspherical, 347g) and the SE E-mount (8 elem/6 groups,
+434g). Existing trust-3 reviews (LensTip, ePHOTOzine, Phillip Reeve) all test
+the E-mount/VM aspherical design — their numerical data cannot be applied to the
+X-mount Sonnar. No trust-3 or trust-2 reviews exist for the X-mount design. No
+official MTF chart published by Cosina. Database specs previously corrected:
+492g→290g, filterThread 52→58, MFD 450→390mm.
+
+| Field               | Score | Source data                                                         | Rubric rule |
+| ------------------- | ----- | ------------------------------------------------------------------- | ----------- |
+| centerStopped       | —     | undefined — no trusted data (E-mount reviews test different optics) |             |
+| cornerStopped       | —     | undefined — no trusted data                                         |             |
+| centerWideOpen      | —     | undefined — no trusted data                                         |             |
+| cornerWideOpen      | —     | undefined — no trusted data                                         |             |
+| astigmatism         | —     | undefined — no data (no MTF chart for X-mount version)              |             |
+| coma                | —     | undefined — no data                                                 |             |
+| sphericalAberration | —     | undefined — no data                                                 |             |
+| longitudinalCA      | —     | undefined — no data                                                 |             |
+| lateralCA           | —     | undefined — no data                                                 |             |
+| distortion          | —     | undefined — no data                                                 |             |
+| vignettingWideOpen  | —     | undefined — no data                                                 |             |
+| vignettingStopped   | —     | undefined — no data                                                 |             |
+| bokeh               | —     | undefined — no lab diode test                                       |             |
+| flareResistance     | —     | undefined — no data                                                 |             |
 
 ### Macro APO-Ultron 35mm f/2
 
-Not scored — no trust-3 reviews available. LensTip has specs page only.
-Not reviewed by any of the 10 trust-3 sources. Only community impressions
-(DPReview forum mini-review, FujiFanBoys) with no quantitative data.
+Not scored — no trust-3 or trust-2 reviews available. LensTip has specs page
+only, no lab review. Not reviewed by any of the 12 trust-3 sources or any
+trust-2 source. Only community impressions (DPReview forum mini-review,
+FujiFanBoys) with no quantitative data. APO designation (3 anomalous
+partial dispersion elements) suggests strong CA correction but no independent
+verification exists.
+
+| Field               | Score | Source data                                                             | Rubric rule |
+| ------------------- | ----- | ----------------------------------------------------------------------- | ----------- |
+| centerStopped       | —     | undefined — no trusted data                                             |             |
+| cornerStopped       | —     | undefined — no trusted data                                             |             |
+| centerWideOpen      | —     | undefined — no trusted data                                             |             |
+| cornerWideOpen      | —     | undefined — no trusted data                                             |             |
+| astigmatism         | —     | undefined — no data (no MTF chart available)                            |             |
+| coma                | —     | undefined — no data                                                     |             |
+| sphericalAberration | —     | undefined — no data                                                     |             |
+| longitudinalCA      | —     | undefined — no data (APO design but unconfirmed by independent testing) |             |
+| lateralCA           | —     | undefined — no data                                                     |             |
+| distortion          | —     | undefined — no data                                                     |             |
+| vignettingWideOpen  | —     | undefined — no data                                                     |             |
+| vignettingStopped   | —     | undefined — no data                                                     |             |
+| bokeh               | —     | undefined — no lab diode test                                           |             |
+| flareResistance     | —     | undefined — no data                                                     |             |
 
 ### Ultron 27mm f/2
 
