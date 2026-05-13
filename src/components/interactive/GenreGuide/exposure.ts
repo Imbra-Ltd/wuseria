@@ -1,5 +1,6 @@
 import type { GenreLens } from "./types";
 import type { Genre } from "../../../types/genre";
+import { X_CROP_FACTOR, RULE_OF_500_FACTOR } from "../../../data/genres";
 
 // =============================================================================
 // RESULT TYPES
@@ -30,7 +31,7 @@ function astroExposure(
 ): AstroExposure {
   const fl = lens.focalLengthMin;
   const ap = lens.maxAperture;
-  const maxT = 500 / (crop * fl);
+  const maxT = RULE_OF_500_FACTOR / (crop * fl);
   const idealIso = Math.round((ap * ap * 100) / (maxT * Math.pow(2, ev)));
   const actT = (ap * ap * 100) / (iso * Math.pow(2, ev));
   const ratio = actT / maxT;
@@ -56,7 +57,7 @@ function handheldExposure(
 ): HandheldExposure {
   const fl = lens.focalLengthMin;
   const ap = lens.maxAperture;
-  const fRef = (8 * crop) / 1.5;
+  const fRef = (8 * crop) / X_CROP_FACTOR;
 
   let minShutter: number;
   if (genre === "portrait") {

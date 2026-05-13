@@ -1,4 +1,5 @@
 import {
+  GFX_CROP_FACTOR,
   MATRIX_FL_COLS_X,
   MATRIX_FL_COLS_GFX,
   MATRIX_APERTURES,
@@ -19,10 +20,9 @@ function ExposureMatrix({
   ev,
   selectedFl,
 }: ExposureMatrixProps) {
-  const MATRIX_FL_COLS =
-    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
-  const fallback =
-    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
+  const isGfx = cropFactor === GFX_CROP_FACTOR;
+  const MATRIX_FL_COLS = isGfx ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
+  const fallback = isGfx ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
   const cols = MATRIX_FL_COLS[selectedFl] || fallback;
 
   return (

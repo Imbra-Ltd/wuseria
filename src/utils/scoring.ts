@@ -283,7 +283,7 @@ const OPTICAL_WEIGHTS: Record<OpticalField, number> = {
 };
 
 /**
- * Compute an overall optical quality score (0–10) from a weighted average
+ * Compute an overall optical quality score (0–2) from a weighted average
  * of available optical fields. Returns null if fewer than 7 fields present.
  *
  * Weights are derived from genre formula usage: fields that appear as primary

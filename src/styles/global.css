@@ -23,6 +23,28 @@
   --color-mark-5: #e8a045;
   --color-mark-fallback: #8a8070;
 
+  /* Optical field traffic-light colors (0-2 scale) */
+  --color-field-good: #6aaa70;
+  --color-field-ok: #b09040;
+  --color-field-poor: #bc7454;
+
+  /* Matrix viability colors */
+  --color-matrix-bg-warm: #1e1710;
+  --color-viable-bg: #0e180e;
+  --color-marginal-bg: #181610;
+  --color-over-bg: #180e0e;
+  --color-viable-accent: #5a9060;
+
+  /* EV matrix — exposure viability */
+  --color-ev-fast-bg: #0e1820;
+  --color-ev-fast: #4090d0;
+  --color-ev-ok-bg: #141e14;
+  --color-ev-ok: #6aaa70;
+  --color-ev-slow-bg: #0e1818;
+  --color-ev-slow: #40d0b0;
+  --color-ev-warn-bg: #181610;
+  --color-ev-warn-border: #3a3010;
+
   /* Spacing */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;

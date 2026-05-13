@@ -52,7 +52,7 @@ npm run lint
 npm test
 ```
 
-Expected output: 11 test files, 170+ tests passing, coverage above 85% on
+Expected output: 11 test files, 175+ tests passing, coverage above 85% on
 all metrics. To run the full quality gate (lint + format + types + tests + build):
 
 ```bash

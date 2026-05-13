@@ -2,6 +2,14 @@ import { useState, useMemo, useCallback } from "react";
 import { useSort } from "../../../hooks/useSort";
 import { useUrlFilters } from "../../../hooks/useUrlFilters";
 import { toSlug } from "../../../utils/slug";
+import {
+  passesBooleanFilter,
+  passesExactFilter,
+  passesMaxFilter,
+  passesRangeFilter,
+  passesSearchFilter,
+  passesStatusFilter,
+} from "../../../utils/filters";
 import type { ExplorerLens, LensExplorerProps, LensSortKey } from "./constants";
 import {
   FL_RANGES,
@@ -12,24 +20,6 @@ import {
 import { LensFilters } from "./LensFilters";
 import { LensResults } from "./LensResults";
 import styles from "./LensExplorer.module.css";
-
-function passesBooleanFilter(
-  filter: string,
-  value: boolean | undefined,
-): boolean {
-  if (filter === "yes") return !!value;
-  if (filter === "no") return !value;
-  return true;
-}
-
-function passesStatusFilter(
-  filter: string,
-  isDiscontinued: boolean | undefined,
-): boolean {
-  if (filter === "available") return !isDiscontinued;
-  if (filter === "discontinued") return !!isDiscontinued;
-  return true;
-}
 
 function passesFlFilter(lens: ExplorerLens, fl: string): boolean {
   if (!fl) return true;
@@ -58,33 +48,6 @@ function passesOqFilter(
   if (!range) return true;
   const [min, max] = range;
   return oq != null && oq >= min && oq <= max;
-}
-
-function passesRangeFilter(
-  value: number,
-  filter: string,
-  ranges: Record<string, [number, number]>,
-): boolean {
-  if (!filter) return true;
-  const range = ranges[filter];
-  if (!range) return true;
-  const [min, max] = range;
-  return value >= min && value <= max;
-}
-
-function passesExactFilter(value: string, filter: string): boolean {
-  return !filter || value === filter;
-}
-
-function passesMaxFilter(value: number, filter: string): boolean {
-  if (!filter) return true;
-  return value <= parseFloat(filter);
-}
-
-function passesSearchFilter(text: string, query: string): boolean {
-  const q = query.trim();
-  if (!q) return true;
-  return text.toLowerCase().includes(q.toLowerCase());
 }
 
 function matchesLensFilters(

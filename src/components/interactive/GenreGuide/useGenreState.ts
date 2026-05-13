@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import type { Genre } from "../../../types/genre";
 import {
+  X_CROP_FACTOR,
+  GFX_CROP_FACTOR,
   evScenes,
   genreSceneFilter,
   FL_CHIPS_X,
@@ -18,7 +20,7 @@ function useGenreState(defaultGenre: Genre) {
   const [ev, setEv] = useState(defaults.ev);
   const [iso, setIso] = useState(defaults.iso);
   const [nd, setNd] = useState<number[]>([]);
-  const [cropFactor, setCropFactor] = useState(1.5);
+  const [cropFactor, setCropFactor] = useState(X_CROP_FACTOR);
   const [selectedFl, setSelectedFl] = useState(defaults.fl);
   const [magnification, setMagnification] = useState(1.0);
   const [sortBy, setSortBy] = useState<SortKey>("mark");
@@ -48,8 +50,9 @@ function useGenreState(defaultGenre: Genre) {
   const isSport = genre === "sport";
   const isWildlife = genre === "wildlife";
   const isTravel = genre === "travel";
-  const FL_CHIPS = cropFactor === 0.79 ? FL_CHIPS_GFX : FL_CHIPS_X;
-  const FL_RANGES = cropFactor === 0.79 ? FL_RANGES_GFX : FL_RANGES_X;
+  const isGfx = cropFactor === GFX_CROP_FACTOR;
+  const FL_CHIPS = isGfx ? FL_CHIPS_GFX : FL_CHIPS_X;
+  const FL_RANGES = isGfx ? FL_RANGES_GFX : FL_RANGES_X;
 
   function handleGenreChange(g: Genre): void {
     setGenre(g);
@@ -212,6 +215,7 @@ function useGenreState(defaultGenre: Genre) {
     sceneListRef,
     visibleScenes,
     flChips,
+    isGfx,
     isNightscape,
     isLandscape,
     isArchitecture,

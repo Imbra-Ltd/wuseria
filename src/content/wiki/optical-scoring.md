@@ -9,7 +9,7 @@ related:
   - "mtf-charts"
 ---
 
-Wuseria rates every lens with enough optical data on two scales: a per-genre **mark** (1 to 5 in half-star steps) and an overall **Optical Quality** score (0 to 10).
+Wuseria rates every lens with enough optical data on two scales: a per-genre **mark** (1 to 5 in half-star steps) and an overall **Optical Quality** (OQ) score (0 to 2).
 
 ## Genre marks
 
@@ -21,7 +21,7 @@ A lens must have at least 7 of 14 optical fields populated to receive any genre 
 
 ## Optical Quality (OQ)
 
-OQ is a single 0-10 number summarizing overall optical performance across all genres. It uses the same 14 optical fields but with weights derived from how often each field appears as a primary factor across all genre formulas. Fields important to many genres (like center sharpness stopped down) carry more weight than niche fields.
+OQ is a single 0-2 number summarizing overall optical performance across all genres. It uses the same 14 optical fields but with weights derived from how often each field appears as a primary factor across all genre formulas. Fields important to many genres (like center sharpness stopped down) carry more weight than niche fields. The 0-2 scale matches the individual optical field scale: 0 is poor, 1 is average, 2 is excellent.
 
 ## Mark scale
 
