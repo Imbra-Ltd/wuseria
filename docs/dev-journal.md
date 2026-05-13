@@ -1548,3 +1548,22 @@ Tool: Claude Code. PR [#582](https://github.com/Imbra-Ltd/wuseria/pull/582).
 - Cleaned up stale local branches
 
 Issues created: #581 (Lighthouse a11y 0.85 on /genre/), #583 (evaluate removing stats bar), #584 (update meta description)
+
+---
+
+### Session 46 — Sigma Scoring Completion
+
+**Date:** 2026-05-13
+Tool: Claude Code. PRs [#585](https://github.com/Imbra-Ltd/wuseria/pull/585), [#586](https://github.com/Imbra-Ltd/wuseria/pull/586).
+
+- Merged PR #585 (Lighthouse a11y fix for /genre/ page, #581)
+- Scored last Sigma lens: 16-300mm f/3.5-6.7 DC OS C — 13/14 optical fields from The Digital Picture (trust-3) and ePHOTOzine (trust-2), 8 genre marks
+- Fixed 7 spec errors on the 16-300mm: year, magnification, blades, weight, diameter, length, min focus distance
+- Added 4 official MTF charts + companion analysis for astigmatism inference
+- Closed #559 (search trailing spaces bug — already fixed in prior session)
+- Closed #562 (model name audit — already resolved in PR #579)
+- Moved 5 issues to Backlog milestone: #556, #563, #565, #566, #574
+- Expanded Samyang MTF script from 15→20 lenses (full coverage)
+- Created Sigma MTF scraper script covering all 11 lenses with dual URL pattern support
+- Both scripts now skip existing files by default; `--force` flag to re-download
+- Scoring coverage: 120/244 (49.2%), all 11 Sigma lenses complete
