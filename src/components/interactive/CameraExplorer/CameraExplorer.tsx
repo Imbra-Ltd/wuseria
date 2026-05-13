@@ -1,46 +1,18 @@
 import { useMemo, useCallback } from "react";
 import { useSort } from "../../../hooks/useSort";
 import { useUrlFilters } from "../../../hooks/useUrlFilters";
+import {
+  passesBooleanFilter,
+  passesExactFilter,
+  passesRangeFilter,
+  passesStatusFilter,
+} from "../../../utils/filters";
 import type { CameraSortKey } from "./constants";
 import { YEAR_RANGES, PRICE_RANGES } from "./constants";
 import { CameraFilters } from "./CameraFilters";
 import { CameraResults } from "./CameraResults";
 import type { ExplorerCamera } from "./types";
 import styles from "./CameraExplorer.module.css";
-
-function passesBooleanFilter(
-  filter: string,
-  value: boolean | undefined,
-): boolean {
-  if (filter === "yes") return !!value;
-  if (filter === "no") return !value;
-  return true;
-}
-
-function passesRangeFilter(
-  value: number,
-  filter: string,
-  ranges: Record<string, [number, number]>,
-): boolean {
-  if (!filter) return true;
-  const range = ranges[filter];
-  if (!range) return true;
-  const [min, max] = range;
-  return value >= min && value <= max;
-}
-
-function passesExactFilter(value: string, filter: string): boolean {
-  return !filter || value === filter;
-}
-
-function passesStatusFilter(
-  filter: string,
-  isDiscontinued: boolean | undefined,
-): boolean {
-  if (filter === "available") return !isDiscontinued;
-  if (filter === "discontinued") return !!isDiscontinued;
-  return true;
-}
 
 function matchesCameraFilters(
   cam: ExplorerCamera,

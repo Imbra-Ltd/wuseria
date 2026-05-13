@@ -2,6 +2,23 @@ import type { Genre, GenreConfig } from "../types/genre";
 import type { EvScene } from "../types/common";
 
 // =============================================================================
+// CROP FACTORS
+// =============================================================================
+
+const X_CROP_FACTOR = 1.5;
+const GFX_CROP_FACTOR = 0.79;
+const NIGHTSCAPE_DEFAULT_ISO_X = 1600;
+const NIGHTSCAPE_DEFAULT_ISO_GFX = 3200;
+const RULE_OF_500_FACTOR = 500;
+
+// =============================================================================
+// OPTICAL QUALITY THRESHOLDS
+// =============================================================================
+
+const OQ_THRESHOLD_HIGH = 1.5;
+const OQ_THRESHOLD_MID = 1.0;
+
+// =============================================================================
 // GENRE CONFIGS — ported from prototype GENRE_PARAMS (App.jsx:427-436)
 // =============================================================================
 
@@ -540,6 +557,13 @@ const MATRIX_APERTURES = [1.0, 1.4, 2.0, 2.8, 4.0, 5.6, 8, 11];
 // =============================================================================
 
 export {
+  X_CROP_FACTOR,
+  GFX_CROP_FACTOR,
+  NIGHTSCAPE_DEFAULT_ISO_X,
+  NIGHTSCAPE_DEFAULT_ISO_GFX,
+  RULE_OF_500_FACTOR,
+  OQ_THRESHOLD_HIGH,
+  OQ_THRESHOLD_MID,
   genreConfigs,
   evScenes,
   genreEvLabels,

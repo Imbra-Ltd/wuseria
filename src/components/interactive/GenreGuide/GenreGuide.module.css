@@ -277,7 +277,7 @@
 }
 
 .sceneItemActive {
-  background-color: #1e1710;
+  background-color: var(--color-matrix-bg-warm);
   border-left-color: var(--color-accent);
 }
 
@@ -481,19 +481,19 @@
 }
 
 .matrixViable {
-  background-color: #0e180e;
-  color: #6aaa70;
+  background-color: var(--color-viable-bg);
+  color: var(--color-field-good);
   font-weight: 600;
 }
 
 .matrixMarginal {
-  background-color: #181610;
-  color: #b09040;
+  background-color: var(--color-marginal-bg);
+  color: var(--color-field-ok);
 }
 
 .matrixOver {
-  background-color: #180e0e;
-  color: #bc7454;
+  background-color: var(--color-over-bg);
+  color: var(--color-field-poor);
 }
 
 .matrixLegend {
@@ -504,15 +504,15 @@
 }
 
 .matrixViableText {
-  color: #6aaa70;
+  color: var(--color-field-good);
 }
 
 .matrixMarginalText {
-  color: #b09040;
+  color: var(--color-field-ok);
 }
 
 .matrixOverText {
-  color: #bc7454;
+  color: var(--color-field-poor);
 }
 
 .matrixExplain {
@@ -524,44 +524,44 @@
 
 /* Landscape matrix — shutter speed categories */
 .lsStatic {
-  background-color: #0e1820;
-  color: #4090d0;
+  background-color: var(--color-ev-fast-bg);
+  color: var(--color-ev-fast);
   font-weight: 600;
 }
 
 .lsSilk {
-  background-color: #141e14;
-  color: #6aaa70;
+  background-color: var(--color-ev-ok-bg);
+  color: var(--color-ev-ok);
   font-weight: 600;
 }
 
 .lsDramatic {
-  background-color: #0e1818;
-  color: #40d0b0;
+  background-color: var(--color-ev-slow-bg);
+  color: var(--color-ev-slow);
   font-weight: 600;
 }
 
 .lsStaticText {
-  color: #4090d0;
+  color: var(--color-ev-fast);
 }
 
 .lsSilkText {
-  color: #6aaa70;
+  color: var(--color-ev-ok);
 }
 
 .lsDramaticText {
-  color: #40d0b0;
+  color: var(--color-ev-slow);
 }
 
 .lsDiffWarn {
-  color: #b09040;
+  color: var(--color-field-ok);
 }
 
 .matrixWarn {
   font-size: var(--font-size-sm);
-  color: #b09040;
-  background-color: #181610;
-  border: 1px solid #3a3010;
+  color: var(--color-field-ok);
+  background-color: var(--color-ev-warn-bg);
+  border: 1px solid var(--color-ev-warn-border);
   border-radius: var(--radius);
   padding: var(--space-sm) var(--space-md);
   margin-bottom: var(--space-sm);
@@ -579,7 +579,7 @@
 }
 
 .dotOn {
-  background-color: #5a9060;
+  background-color: var(--color-viable-accent);
 }
 
 .dotOff {

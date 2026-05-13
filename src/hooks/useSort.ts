@@ -69,7 +69,7 @@ function useSort<T, K extends string & keyof T>(
       return sort.direction === "asc" ? cmp : -cmp;
     });
     return copy;
-  }, [items, sort.key, sort.direction, stablePrefix]);
+  }, [items, sort.key, sort.direction, stablePrefix, descFirstKeys]);
 
   function toggleSort(key: K): void {
     setSort((prev) => {

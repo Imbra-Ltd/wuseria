@@ -1,4 +1,5 @@
 import {
+  GFX_CROP_FACTOR,
   MATRIX_FL_COLS_X,
   MATRIX_FL_COLS_GFX,
   MATRIX_APERTURES,
@@ -21,10 +22,9 @@ function SportMatrix({
   selectedFl,
   genre,
 }: SportMatrixProps) {
-  const MATRIX_FL_COLS =
-    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
-  const fallback =
-    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[63] : MATRIX_FL_COLS_X[135];
+  const isGfx = cropFactor === GFX_CROP_FACTOR;
+  const MATRIX_FL_COLS = isGfx ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
+  const fallback = isGfx ? MATRIX_FL_COLS_GFX[63] : MATRIX_FL_COLS_X[135];
   const cols = MATRIX_FL_COLS[selectedFl] || fallback;
   const apertures = MATRIX_APERTURES.filter((ap) => ap <= 11);
 

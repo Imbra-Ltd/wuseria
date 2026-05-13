@@ -1,4 +1,5 @@
 import { formatFL } from "../../../utils/formatting";
+import { OQ_THRESHOLD_HIGH, OQ_THRESHOLD_MID } from "../../../data/genres";
 import {
   makeAlignClasses,
   ariaSortValue,
@@ -12,8 +13,8 @@ const ALIGN_CLASSES = makeAlignClasses(styles);
 
 function oqClass(oq: number | null | undefined): string {
   if (oq == null) return "";
-  if (oq >= 1.5) return styles.oqHigh;
-  if (oq >= 1.0) return styles.oqMid;
+  if (oq >= OQ_THRESHOLD_HIGH) return styles.oqHigh;
+  if (oq >= OQ_THRESHOLD_MID) return styles.oqMid;
   return styles.oqLow;
 }
 

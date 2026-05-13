@@ -1,4 +1,8 @@
 import {
+  X_CROP_FACTOR,
+  GFX_CROP_FACTOR,
+  NIGHTSCAPE_DEFAULT_ISO_X,
+  NIGHTSCAPE_DEFAULT_ISO_GFX,
   ND_OPTIONS,
   FL_CHIPS_X,
   FL_CHIPS_GFX,
@@ -35,12 +39,17 @@ function GenreControls({ state }: GenreControlsProps) {
       <div className={styles.controlGroup}>
         <ChipGroup
           label="Mount"
-          value={cropFactor === 1.5 ? "X" : "GFX"}
+          value={cropFactor === X_CROP_FACTOR ? "X" : "GFX"}
           onChange={(v) => {
-            const c = v === "GFX" ? 0.79 : 1.5;
+            const c = v === "GFX" ? GFX_CROP_FACTOR : X_CROP_FACTOR;
             setCropFactor(c);
-            if (isNightscape) setIso(c === 0.79 ? 3200 : 1600);
-            const chips = c === 0.79 ? FL_CHIPS_GFX : FL_CHIPS_X;
+            if (isNightscape)
+              setIso(
+                c === GFX_CROP_FACTOR
+                  ? NIGHTSCAPE_DEFAULT_ISO_GFX
+                  : NIGHTSCAPE_DEFAULT_ISO_X,
+              );
+            const chips = c === GFX_CROP_FACTOR ? FL_CHIPS_GFX : FL_CHIPS_X;
             setSelectedFl(chips.default[0].fl);
           }}
           styles={styles}

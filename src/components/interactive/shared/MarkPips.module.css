@@ -29,20 +29,20 @@
 }
 
 .markDash {
-  color: #8a8070;
+  color: var(--color-mark-fallback);
 }
 
 /* Field value colors — traffic-light scale for optical scores (0-2) */
 .fieldViable {
-  color: #6aaa70; /* green — good optical performance */
+  color: var(--color-field-good);
 }
 
 .fieldMarginal {
-  color: #b09040; /* amber — acceptable */
+  color: var(--color-field-ok);
 }
 
 .fieldOver {
-  color: #bc7454; /* red — poor */
+  color: var(--color-field-poor);
 }
 
 .fieldMono {

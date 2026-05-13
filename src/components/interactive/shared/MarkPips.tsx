@@ -1,3 +1,4 @@
+import { OQ_THRESHOLD_HIGH, OQ_THRESHOLD_MID } from "../../../data/genres";
 import styles from "./MarkPips.module.css";
 
 // =============================================================================
@@ -5,9 +6,9 @@ import styles from "./MarkPips.module.css";
 // =============================================================================
 
 function fieldValClass(value: number): string {
-  if (value >= 1.5) return styles.fieldViable; // green — good optical performance
-  if (value >= 1.0) return styles.fieldMarginal; // amber — acceptable
-  return styles.fieldOver; // red — poor
+  if (value >= OQ_THRESHOLD_HIGH) return styles.fieldViable;
+  if (value >= OQ_THRESHOLD_MID) return styles.fieldMarginal;
+  return styles.fieldOver;
 }
 
 function FieldVal({ value }: { value: number | undefined }) {

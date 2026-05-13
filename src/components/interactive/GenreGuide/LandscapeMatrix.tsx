@@ -1,4 +1,5 @@
 import {
+  GFX_CROP_FACTOR,
   MATRIX_FL_COLS_X,
   MATRIX_FL_COLS_GFX,
   MATRIX_APERTURES,
@@ -24,10 +25,9 @@ function LandscapeMatrix({
   selectedFl,
   title,
 }: LandscapeMatrixProps) {
-  const MATRIX_FL_COLS =
-    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
-  const fallback =
-    cropFactor === 0.79 ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
+  const isGfx = cropFactor === GFX_CROP_FACTOR;
+  const MATRIX_FL_COLS = isGfx ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
+  const fallback = isGfx ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];
   const cols = MATRIX_FL_COLS[selectedFl] || fallback;
   const ndFactor = nd.reduce((acc, f) => acc * f, 1);
   const apertures = MATRIX_APERTURES;
@@ -36,7 +36,7 @@ function LandscapeMatrix({
     <div className={styles.matrix}>
       <div className={styles.matrixTitle}>
         {title ||
-          `EV Matrix · Tripod · ${cropFactor === 0.79 ? "Diffraction f/16+" : "Diffraction f/11+"} · Capture the beauty`}
+          `EV Matrix · Tripod · ${isGfx ? "Diffraction f/16+" : "Diffraction f/11+"} · Capture the beauty`}
       </div>
       <div className={styles.matrixScroll}>
         <table className={styles.matrixTable}>

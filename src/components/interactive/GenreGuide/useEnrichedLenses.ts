@@ -1,5 +1,12 @@
 import { useMemo } from "react";
 import type { GenreLens } from "./types";
+import { GFX_CROP_FACTOR, RULE_OF_500_FACTOR } from "../../../data/genres";
+import {
+  passesBooleanFilter,
+  passesExactFilter,
+  passesMaxFilter,
+  passesMinFilter,
+} from "../../../utils/filters";
 import { getGenreMark, isEditorialPick } from "../../../utils/scoring";
 import { astroExposure, handheldExposure } from "./exposure";
 import type { EnrichedLens } from "./types";
@@ -10,7 +17,7 @@ type LensGetter = (el: EnrichedLens) => number;
 
 const SORT_GETTERS: Record<string, LensGetter> = {
   mark: (el) => el.mark,
-  idealIso: (el) => el.idealIso ?? 99999,
+  idealIso: (el) => el.idealIso ?? Number.MAX_SAFE_INTEGER,
   weight: (el) => el.lens.weight,
   price: (el) => el.lens.price,
   fl: (el) => el.lens.focalLengthMin,
@@ -64,29 +71,6 @@ interface GenreFilters {
   latcaFilter: string;
 }
 
-function passesMinFilter(value: number | undefined, filter: string): boolean {
-  if (!filter) return true;
-  return value != null && value >= Number(filter);
-}
-
-function passesMaxFilter(value: number, filter: string): boolean {
-  if (!filter) return true;
-  return value <= Number(filter);
-}
-
-function passesExactFilter(value: string, filter: string): boolean {
-  return !filter || value === filter;
-}
-
-function passesBooleanFilter(
-  value: boolean | undefined,
-  filter: string,
-): boolean {
-  if (filter === "yes") return !!value;
-  if (filter === "no") return !value;
-  return true;
-}
-
 function matchesGenreFilters(el: EnrichedLens, f: GenreFilters): boolean {
   return (
     passesExactFilter(el.lens.brand, f.brandFilter) &&
@@ -97,7 +81,7 @@ function matchesGenreFilters(el: EnrichedLens, f: GenreFilters): boolean {
     passesMinFilter(el.lens.coma, f.comaFilter) &&
     passesMinFilter(el.lens.astigmatism, f.astigFilter) &&
     passesExactFilter(el.lens.type, f.typeFilter) &&
-    passesBooleanFilter(el.lens.isWeatherSealed, f.wrFilter) &&
+    passesBooleanFilter(f.wrFilter, el.lens.isWeatherSealed) &&
     passesMinFilter(el.lens.cornerStopped, f.cornerFilter) &&
     passesMinFilter(el.lens.distortion, f.distFilter) &&
     passesMinFilter(el.lens.flareResistance, f.flareFilter) &&
@@ -145,7 +129,9 @@ function useEnrichedLenses(
         const mark = getGenreMark(l, genre);
         if (mark == null) return false;
         if (l.isDiscontinued) return false;
-        if (cropFactor === 0.79 ? l.mount !== "GFX" : l.mount !== "X")
+        if (
+          cropFactor === GFX_CROP_FACTOR ? l.mount !== "GFX" : l.mount !== "X"
+        )
           return false;
         const range = FL_RANGES[selectedFl];
         if (range) {
@@ -172,7 +158,7 @@ function useEnrichedLenses(
             ).idealIso
           : handheldExposure(l, genre, ev, cropFactor, macroMag).idealIso;
         const rule500 = isNightscape
-          ? Math.round(500 / (cropFactor * effectiveFl))
+          ? Math.round(RULE_OF_500_FACTOR / (cropFactor * effectiveFl))
           : null;
 
         return { lens: l, mark, isPick, idealIso, rule500, effectiveFl };
