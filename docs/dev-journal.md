@@ -1567,3 +1567,21 @@ Tool: Claude Code. PRs [#585](https://github.com/Imbra-Ltd/wuseria/pull/585), [#
 - Created Sigma MTF scraper script covering all 11 lenses with dual URL pattern support
 - Both scripts now skip existing files by default; `--force` flag to re-download
 - Scoring coverage: 120/244 (49.2%), all 11 Sigma lenses complete
+
+---
+
+### Session 47 — Scoring Methodology
+
+- PR #589
+- Closed #587 (trust criteria), #575 (composite scoring), #573 (multilingual sources), #588 (MTF format)
+- Moved #560, #564 to Backlog milestone
+- ADR-023: formal trust-level criteria — 3 criteria per methodology type (lab: reproducibility, field coverage, consistency; field: controlled methodology, per-field analysis, domain authority)
+- ADR-024: composite trust-2 field scoring — 3-tier system (dual trust-2 → no cap, trust-2 + trust-1 corroboration → no cap, single trust-2 → cap 1.5)
+- Promoted ePHOTOzine trust-2 → trust-3 (Imatest lab, verified on XF 56mm f/1.2 R and Sigma 15mm f/1.4 DC C)
+- Promoted ColorFoto trust-2 → trust-3 (Image Engineering lab, LP/BH PDFs freely downloadable)
+- Evaluated 5 trust-2 sources for potential trust-3: Photography Blog (no — qualitative only), CineD (no — camera lab, not lenses), Amateur Photographer (no — no numerical data), Les Numeriques (inconclusive — cookie wall), ColorFoto (yes — promoted)
+- Evaluated 4 remaining multilingual candidates: all rejected (Xitek — no methodology, fotoaparat.cz — qualitative/no X-mount, leclaireur.fnac.com — cameras only, Progresso Fotografico — site dead)
+- ADR-022 updated with canonical MTF companion file format
+- Removed non-conformant MTF file (sigma-16-300mm wrong slug + free-form prose)
+- All 34 MTF companion files verified conformant
+- Trust-3 sources: 8 lab + 5 field = 13 total (up from 5 lab + 5 field = 10)
