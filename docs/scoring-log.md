@@ -353,6 +353,31 @@ Note: astigmatism scored from official manufacturer MTF chart (S/M line
 convergence). Spherical aberration scored via optical construction
 inference (Super ED + aspherical) confirmed by field reports.
 
+### XC 13-33mm f/3.5-6.3 OIS
+
+Not scored — released 2025 (X-M5 kit lens). Too new for any reviews.
+
+### XC 50-230mm f/4.5-6.7 OIS II
+
+Not scored — budget kit telephoto zoom. No trust-3 lab or field reviews.
+LensTip reviewed the original XC 50-230mm OIS (2013 version, different
+optical formula) but not the OIS II.
+
+### XF 500mm f/5.6 R LM OIS WR
+
+Not scored — released 2024. No trust-3 reviews published yet.
+
+### MKX 18-55mm T2.9
+
+Not scored — cinema lens. Scoring methodology for cinema lenses deferred
+to spike #555. Traditional still-photography optical rubric does not
+apply (T-stops, cinema coatings, constant aperture).
+
+### MKX 50-135mm T2.9
+
+Not scored — cinema lens. Scoring methodology for cinema lenses deferred
+to spike #555.
+
 ---
 
 ## Samyang
@@ -1055,6 +1080,61 @@ Note: OL distortion (0.27%) conflicts with LensTip (-1.25%). LensTip summary
 ("moderate distortion") takes precedence per summary authority rule. Phillipreeve
 reports "almost complete absence" of SA, contradicting LensTip; summary lists SA
 as con, so LensTip wins.
+
+### 4mm f/2.8 Fisheye
+
+Not scored — niche 210-degree circular fisheye. No trusted reviews for the
+X-mount version.
+
+### 8-16mm f/3.5-5 Zoom CF
+
+Not scored — no trusted reviews. Released 2023.
+
+### 10mm f/4 Cookie
+
+Not scored — no trusted reviews. Released 2022.
+
+### 12-24mm f/5.6 Zoom Shift CF
+
+Not scored — specialty shift zoom. No trusted reviews. Released 2024.
+
+### Argus 25mm f/0.95 CF APO
+
+Not scored — no trusted reviews for the X-mount version. The E-mount Argus
+25mm was reviewed by LensTip but has a different optical formula optimized
+for full-frame; data cannot be applied to this APS-C version.
+
+### 8-15mm f/2.8 GFX
+
+Not scored — GFX fisheye zoom. No trusted reviews. Released 2024.
+
+### 15mm f/4.5R Zero-D Shift GFX
+
+Not scored — GFX shift lens. No trusted reviews for GFX mount.
+
+### 17mm f/4 Zero-D GFX
+
+Not scored — GFX ultra-wide. No trusted reviews for GFX mount.
+
+### 19mm f/2.8 Zero-D GFX
+
+Not scored — GFX wide-angle. No trusted reviews for GFX mount.
+
+### 20mm f/4 Zero-D Shift GFX
+
+Not scored — GFX shift lens. No trusted reviews for GFX mount.
+
+### 35mm f/2.8 Zero-D T/S 0.5x Macro GFX
+
+Not scored — GFX tilt-shift macro. No trusted reviews. Released 2024.
+
+### 55mm f/2.8 T/S Macro GFX
+
+Not scored — GFX tilt-shift macro. No trusted reviews for GFX mount.
+
+### 100mm f/2.8 T/S Macro GFX
+
+Not scored — GFX tilt-shift macro. No trusted reviews for GFX mount.
 
 ---
 

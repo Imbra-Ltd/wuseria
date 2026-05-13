@@ -2174,6 +2174,7 @@ const lenses: Lens[] = [
     filterThread: 58,
     minFocusDistance: 1100,
     price: 500,
+    // Not scored — budget kit telephoto; no trust-3 reviews
     officialUrl:
       "https://fujifilm-x.com/global/products/lenses/xc50-230mmf45-67-ois-ii/",
   },
@@ -3686,6 +3687,7 @@ const lenses: Lens[] = [
     minFocusDistance: 250,
     isTiltShift: true,
     shiftRange: 7,
+    // Not scored — specialty shift zoom; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-12-24mm-f-5-6-zoom-shift-cf/",
   },
@@ -3751,6 +3753,7 @@ const lenses: Lens[] = [
     weight: 135,
     price: 250,
     minFocusDistance: 80,
+    // Not scored — niche 210-degree fisheye; no trusted reviews
     officialUrl: "https://www.venuslens.net/product/laowa-4mm-f-2-8-mft/",
   },
   {
@@ -3769,6 +3772,7 @@ const lenses: Lens[] = [
     filterThread: 86,
     price: 500,
     minFocusDistance: 200,
+    // Not scored — no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-8-16mm-f3-5-5-zoom-cf/",
   },
@@ -3788,6 +3792,7 @@ const lenses: Lens[] = [
     filterThread: 37,
     price: 250,
     minFocusDistance: 100,
+    // Not scored — no trusted reviews
     officialUrl: "https://www.venuslens.net/product/laowa-10mm-f-4-cookie/",
   },
   {
@@ -3806,6 +3811,7 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 500,
     minFocusDistance: 340,
+    // Not scored — no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-argus-25mm-f-0-95-apsc-apo/",
   },
@@ -7039,6 +7045,7 @@ const lenses: Lens[] = [
     hasTripodMount: true,
     minFocusDistance: 3000,
     price: 4000,
+    // Not scored — released 2024; no trust-3 reviews yet
     officialUrl:
       "https://fujifilm-x.com/global/products/lenses/xf500mmf56-r-lm-ois-wr/",
   },
@@ -7064,6 +7071,7 @@ const lenses: Lens[] = [
     filterThread: 49,
     minFocusDistance: 200,
     price: 500,
+    // Not scored — released 2025; no reviews yet
     officialUrl:
       "https://fujifilm-x.com/global/products/lenses/xc13-33mmf35-63-ois/",
   },
@@ -7089,6 +7097,7 @@ const lenses: Lens[] = [
     filterThread: 82,
     minFocusDistance: 360,
     price: 2250,
+    // Not scored — cinema lens; deferred to #555
     officialUrl: "https://fujifilm-x.com/global/products/lenses/mkx18-55mmt29/",
   },
   {
@@ -7113,6 +7122,7 @@ const lenses: Lens[] = [
     filterThread: 82,
     minFocusDistance: 1200,
     price: 2500,
+    // Not scored — cinema lens; deferred to #555
     officialUrl:
       "https://fujifilm-x.com/global/products/lenses/mkx50-135mmt29/",
   },
@@ -8187,6 +8197,7 @@ const lenses: Lens[] = [
     filterThread: 86,
     price: 1250,
     minFocusDistance: 200,
+    // Not scored — GFX niche; no trusted reviews
     officialUrl: "https://www.venuslens.net/product/laowa-17mm-f-4-gfx-zero-d/",
   },
   {
@@ -8206,6 +8217,7 @@ const lenses: Lens[] = [
     price: 1250,
     minFocusDistance: 170,
     isTiltShift: true,
+    // Not scored — GFX T/S specialty; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-55mm-f-2-8-tilt-shift-1x-macro/",
   },
@@ -8227,6 +8239,7 @@ const lenses: Lens[] = [
     price: 1500,
     minFocusDistance: 247,
     isTiltShift: true,
+    // Not scored — GFX T/S specialty; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-100mm-f-2-8-tilt-shift-1x-macro/",
   },
@@ -8248,6 +8261,7 @@ const lenses: Lens[] = [
     price: 1250,
     minFocusDistance: 140,
     isTiltShift: true,
+    // Not scored — GFX T/S specialty; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/the-laowa-35mm-f-2-8-zero-d-tilt-shift-0-5x-macro/",
   },
@@ -8418,6 +8432,7 @@ const lenses: Lens[] = [
     minFocusDistance: 200,
     isTiltShift: true,
     shiftRange: 11,
+    // Not scored — GFX shift specialty; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-15mm-f-4-5r-zero-d-shift/",
   },
@@ -8437,6 +8452,7 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 1000,
     minFocusDistance: 200,
+    // Not scored — GFX niche; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-19mm-f-2-8-zero-d-gfx/",
   },
@@ -8458,6 +8474,7 @@ const lenses: Lens[] = [
     minFocusDistance: 250,
     isTiltShift: true,
     shiftRange: 10,
+    // Not scored — GFX shift specialty; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-20mm-f-4-zero-d-shift/",
   },
@@ -8476,6 +8493,7 @@ const lenses: Lens[] = [
     weight: 900,
     price: 1500,
     minFocusDistance: 150,
+    // Not scored — GFX fisheye zoom; no trusted reviews
     officialUrl: "https://www.venuslens.net/product/laowa-8-15mm-f2-8-ff-zoom/",
   },
   {
