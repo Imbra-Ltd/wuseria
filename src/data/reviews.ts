@@ -38,18 +38,26 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
     name: "The Digital Picture",
     site: "the-digital-picture.com",
   },
+  // --- lab, trust 3 (promoted per ADR-023) ---
+  ephotozine: {
+    methodology: "lab",
+    trust: 3,
+    name: "ePHOTOzine",
+    site: "ephotozine.com",
+  },
+  colorfoto: {
+    methodology: "lab",
+    trust: 3,
+    name: "ColorFoto",
+    site: "connect-living.de/colorfoto",
+  },
+
   // --- lab, trust 2 ---
   "imaging-resource": {
     methodology: "lab",
     trust: 2,
     name: "Imaging Resource",
     site: "imaging-resource.com",
-  },
-  ephotozine: {
-    methodology: "lab",
-    trust: 2,
-    name: "ePHOTOzine",
-    site: "ephotozine.com",
   },
 
   // --- field, trust 3 ---
@@ -174,12 +182,6 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
     trust: 2,
     name: "Les Numériques",
     site: "lesnumeriques.com",
-  },
-  colorfoto: {
-    methodology: "lab",
-    trust: 2,
-    name: "ColorFoto",
-    site: "connect-living.de/colorfoto",
   },
   kamerabild: {
     methodology: "lab",

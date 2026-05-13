@@ -329,7 +329,7 @@ Sensor: X-Trans I (X-E1), per-review max 74 lpmm. Scored at 200mm mid-range.
 ### XF 200mm f/2.0 R LM OIS WR
 
 Flagship super-tele prime.
-Sources: ePHOTOzine (lab, trust 2), Dustin Abbott (field, trust 3),
+Sources: ePHOTOzine (lab, trust 3 per ADR-023), Dustin Abbott (field, trust 3),
 official Fujifilm MTF chart (for astigmatism).
 No LensTip or OpticalLimits review exists.
 
@@ -604,14 +604,14 @@ FF lens — qualitative descriptions used for resolution.
 ### 50mm f/1.2 AS UMC CS
 
 Fast APS-C portrait prime. No trust-3 lab data exists.
-Sources: Dustin Abbott (field, trust 3, Canon EOS M3), ePHOTOzine (lab, trust 2, Sony A6000),
+Sources: Dustin Abbott (field, trust 3, Canon EOS M3), ePHOTOzine (lab, trust 3 per ADR-023, Sony A6000),
 What Digital Camera (lab, trust 2), Photography Blog (lab, trust 2, Sony A6000).
-Trust-2 aggregation applied for centerStopped, cornerStopped, vignettingWideOpen.
+ePHOTOzine now stands alone as trust-3; trust-2 aggregation no longer needed for fields it covers.
 
 | Field               | Score | Source data                                                                                                                                                                                                                                                                | Rubric rule                  |
 | ------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| centerStopped       | 2.0   | ePHOTOzine: "excellent f/2.8-f/8." Photography Blog: "outstanding f/2-f/8." (2x trust-2 aggregate)                                                                                                                                                                         | "excellent" (agg)            |
-| cornerStopped       | 1.5   | ePHOTOzine: "edges impressively close to central." Photography Blog: "best f/4-f/8." (2x trust-2)                                                                                                                                                                          | "very good" (agg)            |
+| centerStopped       | 2.0   | ePHOTOzine (trust 3): "excellent f/2.8-f/8." Photography Blog: "outstanding f/2-f/8." Consistent.                                                                                                                                                                          | "excellent"                  |
+| cornerStopped       | 1.5   | ePHOTOzine (trust 3): "edges impressively close to central." Photography Blog: "best f/4-f/8." Consistent.                                                                                                                                                                 | "very good"                  |
 | centerWideOpen      | 1.0   | DA: "surprisingly strong at f/1.2" but "not sky-high", "bit more haze due to CA."                                                                                                                                                                                          | "average"                    |
 | cornerWideOpen      | 1.0   | AP: "at f/1.2 corner sharpness virtually identical to centre" (both soft). WDC agrees. (2x trust-2)                                                                                                                                                                        | "average" (agg)              |
 | astigmatism         | 2.0   | Official MTF chart: S/M lines nearly overlapping throughout frame. Gap < 0.03 everywhere.                                                                                                                                                                                  | MTF fallback                 |
@@ -951,7 +951,7 @@ Tested on Sony A7R II (42.4 MP). Scored at 28mm mid-range.
 ### 16-300mm f/3.5-6.7 DC OS C
 
 18.8x superzoom. Sources: The Digital Picture (lab, trust 3, Sony A1),
-ePHOTOzine (lab, trust 2, Sony A7R III + Imatest).
+ePHOTOzine (lab, trust 3 per ADR-023, Sony A7R III + Imatest).
 Astigmatism from official MTF chart (fallback). Coma: no trusted data.
 
 | Field               | Score | Source data                                                                                                 | Rubric rule        |

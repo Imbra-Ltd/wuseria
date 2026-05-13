@@ -34,12 +34,44 @@ Official manufacturer MTF charts used for scoring are stored in
 `docs/mtf-charts/` as pairs:
 
 - `<slug>.jpg` — the original chart image
-- `<slug>.md` — companion analysis containing:
-  - Source URL
-  - Chart legend (apertures, line styles, frequencies)
-  - Approximate readings at key positions (center, 4mm, 8mm, 10mm, 14mm)
-  - Astigmatism assessment (S/M divergence interpretation)
-  - Final score with rubric mapping
+- `<slug>.md` — companion analysis in the following canonical format:
+
+```markdown
+# [Lens model] — MTF Chart Analysis
+
+Source: [link to official product page]
+Image: [slug.png](slug.png)
+
+## Chart legend
+
+- At [focal length] (or "APS-C lens" for fixed FL)
+- Solid = Sagittal (S), Dashed = Meridional (M)
+- Red lines = 10 lp/mm (contrast), Blue lines = 30 lp/mm (resolution)
+- X-axis: image height (mm), Y-axis: contrast (0-1)
+
+## Readings
+
+| Position | 10 lp/mm S | 10 lp/mm M | 30 lp/mm S | 30 lp/mm M |
+| -------- | ---------- | ---------- | ---------- | ---------- |
+| Center   | ~0.XX      | ~0.XX      | ~0.XX      | ~0.XX      |
+| ...      | ...        | ...        | ...        | ...        |
+
+## Astigmatism assessment
+
+S/M divergence at 30 lp/mm:
+
+- [Position-by-position analysis of S vs M gap]
+
+**Scoring:** [Summary] → **[score]**
+
+Note: [Lab precedence note if applicable]
+```
+
+Sections are mandatory in this order: title, source/image, chart
+legend, readings table, astigmatism assessment with scoring line.
+Zoom lenses with multiple charts use separate "## Readings — [FL]"
+sections per focal length. When multiple aperture charts exist, use
+separate "## Readings — [aperture]" sections.
 
 Slug follows the lens data convention: `viltrox-af-56mm-f1-4-stm`.
 
