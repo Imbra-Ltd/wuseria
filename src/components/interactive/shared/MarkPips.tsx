@@ -41,7 +41,11 @@ function MarkPips({ mark }: { mark: number | null }) {
     pips.push(<span key={`empty-${i}`} className={styles.pip} />);
   }
   return (
-    <span className={styles.markDots} aria-label={`Mark ${mark} of 5`}>
+    <span
+      className={styles.markDots}
+      role="img"
+      aria-label={`Mark ${mark} of 5`}
+    >
       {pips}
     </span>
   );
