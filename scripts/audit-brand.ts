@@ -46,7 +46,7 @@ const calculatedFields = [
 
 function countField(brandLenses: typeof lenses, field: string): number {
   return brandLenses.filter(
-    (l) => (l as Record<string, unknown>)[field] != null,
+    (l) => (l as unknown as Record<string, unknown>)[field] != null,
   ).length;
 }
 
@@ -73,7 +73,7 @@ function printPerLens(brandLenses: typeof lenses): void {
   console.log("---");
   for (const l of brandLenses) {
     const missing = givenFields.filter(
-      (f) => (l as Record<string, unknown>)[f] == null,
+      (f) => (l as unknown as Record<string, unknown>)[f] == null,
     );
     if (missing.length === 0) {
       console.log(`${l.model}: COMPLETE`);
@@ -115,8 +115,9 @@ if (brand) {
     const filled = bl.reduce((sum, l) => {
       return (
         sum +
-        givenFields.filter((f) => (l as Record<string, unknown>)[f] != null)
-          .length
+        givenFields.filter(
+          (f) => (l as unknown as Record<string, unknown>)[f] != null,
+        ).length
       );
     }, 0);
     const pct = ((filled / totalSlots) * 100).toFixed(0);
