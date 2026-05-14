@@ -215,7 +215,20 @@ npx tsx scripts/compute-marks.ts print      # print all computed marks
 npx tsx scripts/compute-marks.ts patch      # patch lenses.ts with marks
 ```
 
-### 2.8 Lighthouse CI
+### 2.8 Backfill spec fields per brand
+
+1. Run `npx tsx scripts/audit-brand.ts <Brand>` to see gaps
+2. Research from these sources (priority order):
+   - Official manufacturer pages (dimensions, filter thread, build features)
+   - LensTip spec database (`lenstip.com/<id>-<name>-lens_specifications.html`) — best for maxMagnification on budget lenses
+   - digitalkamera.de Datenblatt pages — good for dimensions, rarely has magnification
+   - cameradecision.com via `fetch-page.py` (403s on direct fetch, Playwright bypasses)
+   - Dustin Abbott / Phillip Reeve reviews — trust-3 field measurements
+3. **LensTip page ID caveat:** URL names are ignored; only the numeric ID matters. Always verify `Manufacturer` and `Model` fields on the page — wrong IDs redirect silently to unrelated lenses.
+4. Add fields to `src/data/lenses.ts`, run `npm run validate`
+5. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
+
+### 2.9 Lighthouse CI
 
 Lighthouse runs automatically on every PR against 4 key pages
 (`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
@@ -238,7 +251,7 @@ This builds the site and runs Lighthouse against all 4 pages (3 runs each).
 HTML reports are written to `reports/lighthouse/` — open any `.report.html`
 in a browser for full scores, diagnostics, and opportunities.
 
-### 2.9 Link checker (lychee)
+### 2.10 Link checker (lychee)
 
 Lychee checks for broken internal links in the built site. Runs in CI on
 every PR. Requires [lychee](https://github.com/lycheeverse/lychee) installed
@@ -251,7 +264,7 @@ lychee --offline --no-progress --root-dir dist dist/
 
 Checks all internal links in the static output. Exits non-zero on broken links.
 
-### 2.10 Secret scanning (gitleaks)
+### 2.11 Secret scanning (gitleaks)
 
 Gitleaks scans for accidentally committed secrets. Runs in CI on every PR.
 Requires [gitleaks](https://github.com/gitleaks/gitleaks) installed locally
@@ -263,7 +276,7 @@ gitleaks detect --source . --config .gitleaks.toml
 
 Scans the full repo history. Exits non-zero if secrets are found.
 
-### 2.11 Testing
+### 2.12 Testing
 
 **Run tests (single run with coverage):**
 
@@ -319,7 +332,7 @@ Open either in a browser. The `reports/` directory is gitignored.
 | `src/components/interactive/GenreGuide/GenreGuide.test.tsx`         | Genre tabs, filters, matrices                  |
 | `src/components/interactive/GenreGuide/exposure.test.ts`            | Exposure calculations                          |
 
-### 2.12 Analytics verification (Umami)
+### 2.13 Analytics verification (Umami)
 
 Umami Cloud tracks page views with zero cookies and no consent banner.
 The script loads from `cloud.umami.is` via the base layout. Run this

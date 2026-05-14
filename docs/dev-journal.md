@@ -1684,3 +1684,27 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
   - Content generation plan stored in memory, deferred until data gaps filled (ref #572)
   - hasDampedFocusRing removed — all non-budget lenses have damped rings, field always true
   - Per-brand workflow more efficient than per-field — one pass fills all specs from one source
+
+---
+
+### Session 51 — Backfill Build Fields: Samyang, TTartisan, 7Artisans
+
+- PRs: #646 (Samyang + TTartisan + 7Artisans build fields)
+- Issues closed: #624 (7Artisans build fields, auto-close via PR)
+- Issues created: #644 (score all 19 TTartisan lenses), moved #43 (Equipment Database Completion) to v0.6.0
+- Key changes:
+  - Samyang (20 lenses): diameter 20/20, length 20/20, maxMagnification 16/20, macro genre marks added for 9 lenses
+  - TTartisan (19 lenses): diameter 19/19, length 19/19, maxMagnification 9/19, hasApertureRing fixed for AF 27mm
+  - 7Artisans (18 lenses): diameter 18/18, length 18/18, maxMagnification 16/18, all boolean build fields filled (was 0/18)
+  - Fixed 7Artisans 7.5mm Fisheye II apertureBlades 7->5 (official store spec)
+  - Fixed 7Artisans 18mm UFO hasApertureRing true->false (fixed aperture body cap)
+  - Replaced discontinued 7Artisans 50mm f/1.2 (2020) with Mark II (2025)
+  - Assessed fujixpassion.com as trust-1 (not added to review sources)
+  - Validated thin lens magnification formula against 130 lenses — median 39% error, not usable as fallback
+- Key decisions:
+  - No calculated maxMagnification fallback — formula too unreliable (39% median error across 130 lenses)
+  - LensTip spec database is best source for maxMagnification on budget lenses (7Artisans, TTartisan)
+  - LensTip page IDs don't match URL names — must verify Manufacturer/Model fields on every page
+  - digitalkamera.de useful for dimensions but rarely has magnification
+  - Discontinued lenses removed when unbuyable and replaced by new version
+- Sources used: lksamyang.com, ttartisan.store, 7artisans.store, LensTip spec DB, digitalkamera.de, Dustin Abbott, Phillip Reeve, allphotolenses.com, cameradecision.com, photosynthesis.bg, photozone.de
