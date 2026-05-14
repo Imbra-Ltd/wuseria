@@ -30,6 +30,10 @@
 - https://petapixel.com/
 - https://fstoppers.com/
 - https://lensvid.com/
+- https://radojuva.com/ — Radojuva; lens database with hands-on magnification measurements and detailed optical field data
+- https://www.sansmirror.com/ — Thom Hogan; mirrorless lens spec database with dimensions and DOF data
+- https://www.laowalenses.ca/ — Canadian Laowa distributor; detailed spec tables with mount-specific dimensions
+- https://manuals.plus/ — Detailed product spec sheets and data sheets; useful for budget lens magnification data
 - https://www.pcmag.com/categories/lenses — PCMag; lens reviews and buyer's guides
 - https://petapixel.com/science-of-lens-coatings/
 - https://lenspire.zeiss.com/photo/en/article/making-sense-of-sensors-full-frame-vs-aps-c
