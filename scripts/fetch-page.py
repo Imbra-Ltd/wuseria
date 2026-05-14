@@ -18,10 +18,17 @@ from playwright.sync_api import sync_playwright
 CACHE_DIR = Path(__file__).resolve().parent.parent / ".cache" / "fetch"
 
 
+def url_hash(url: str) -> str:
+    return hashlib.sha256(url.encode()).hexdigest()[:16]
+
+
 def cache_key(url: str, raw_html: bool) -> Path:
     suffix = ".html" if raw_html else ".txt"
-    name = hashlib.sha256(url.encode()).hexdigest()[:16] + suffix
-    return CACHE_DIR / name
+    return CACHE_DIR / (url_hash(url) + suffix)
+
+
+def screenshot_path(url: str) -> Path:
+    return CACHE_DIR / (url_hash(url) + ".png")
 
 
 def read_cache(url: str, raw_html: bool) -> str | None:
@@ -37,7 +44,10 @@ def write_cache(url: str, raw_html: bool, content: str) -> None:
     path.write_text(content, encoding="utf-8")
 
 
-def fetch_page(url: str, raw_html: bool = False, wait_ms: int = 2000) -> str:
+def fetch_page(
+    url: str, raw_html: bool = False, wait_ms: int = 2000
+) -> str:
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         context = browser.new_context(
@@ -55,6 +65,10 @@ def fetch_page(url: str, raw_html: bool = False, wait_ms: int = 2000) -> str:
             content = page.content()
         else:
             content = page.inner_text("body")
+
+        png = screenshot_path(url)
+        if not png.exists():
+            page.screenshot(path=str(png), full_page=True)
 
         browser.close()
         return content
