@@ -36,6 +36,7 @@
 
 ## Fujifilm-specific
 
+- https://www.fujixpassion.com/ — Fuji X community blog; trust-1 (subjective field reviews, no lab data); useful for consensus scoring on Chinese budget brands
 - https://fujilove.com/
 - https://fujixweekly.com/
 - https://www.fujirumors.com/
