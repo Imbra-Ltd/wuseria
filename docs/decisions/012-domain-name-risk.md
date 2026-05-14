@@ -1,6 +1,6 @@
 # ADR-012: Domain name trademark risk (fujime.app)
 
-**Status:** Accepted
+**Status:** Superseded by ADR-025
 **Date:** 2026-04-15 (decided), 2026-04-09 (opened)
 
 ## Context
