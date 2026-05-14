@@ -61,6 +61,19 @@ def fetch_page(
         page.goto(url, wait_until="networkidle", timeout=30000)
         page.wait_for_timeout(wait_ms)
 
+        # Scroll through the page to trigger lazy-loaded images
+        page.evaluate("""async () => {
+            const delay = ms => new Promise(r => setTimeout(r, ms));
+            const height = document.body.scrollHeight;
+            const step = window.innerHeight;
+            for (let y = 0; y < height; y += step) {
+                window.scrollTo(0, y);
+                await delay(200);
+            }
+            window.scrollTo(0, 0);
+            await delay(500);
+        }""")
+
         if raw_html:
             content = page.content()
         else:
