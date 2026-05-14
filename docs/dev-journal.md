@@ -1659,3 +1659,28 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
 - Key decisions:
   - Weather sealing threshold: `true` for any documented sealing (mount gaskets, dust/splash resistant) — consistent with NiSi 9mm precedent
   - 3-level scale deferred to #606 to distinguish partial vs full sealing
+
+---
+
+### Session 50 — SEO Spike and Data Completeness
+
+- PRs: #621 (Fujifilm build fields + ADR-025 + Samyang + TTartisan + tooling)
+- Issues closed: #602 (domain discoverability), #612-#619 (superseded by per-brand approach)
+- Issues created: #611 (epic: fill all given spec fields), #620 (spike: issue age policy), #622-#642 (per-brand data fill tickets)
+- Key changes:
+  - ADR-025: keep wuseria.com despite wisteria search confusion — too early to judge at 2 weeks
+  - Removed `hasDampedFocusRing` from Lens type — does not discriminate meaningfully
+  - Filled build/handling fields for Fujifilm (66), Samyang (20), TTartisan (19) = 105 lenses
+  - All Fujifilm lenses: hasRotatingFront=false, hasFocusRing=true confirmed from photographyblog
+  - All Samyang/TTartisan MF lenses: non-rotating front, distance scale, clicked aperture confirmed from official pages + AI overview
+  - TTartisan AF 75mm f/2 X-mount confirmed via B&H + TTartisan store (official page only listed E/Z/L)
+  - Set hasApertureRing=false for 7 Fujifilm lenses without rings (5 XC, XF 18-120mm PZ, GF 35-70mm)
+  - Added fetch-page.py caching (.cache/fetch/) and full-page screenshots with lazy-load scrolling
+  - Added audit-brand.ts script for comprehensive field coverage reporting
+  - Restructured epic #611 from per-field to per-brand, expanded scope to all given spec fields (not just build)
+- Key decisions:
+  - ADR-025: wuseria.com stays — trademark safety over search disambiguation (ref ADR-012)
+  - Field dependency rules: isApertureClickless absent when hasApertureRing=false; afMotor absent = MF
+  - Content generation plan stored in memory, deferred until data gaps filled (ref #572)
+  - hasDampedFocusRing removed — all non-budget lenses have damped rings, field always true
+  - Per-brand workflow more efficient than per-field — one pass fills all specs from one source
