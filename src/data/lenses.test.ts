@@ -203,13 +203,9 @@ describe("boolean field distribution", () => {
     "isFocusByWire",
     "hasDistanceScale",
     "hasApertureRing",
+    "hasOis",
+    "isWeatherSealed",
   ] as const;
-
-  // Fields with known data gaps — tracked by #473.
-  // Uses it.fails: test is expected to fail now; when #473 fills in the
-  // data, the test will unexpectedly pass and Vitest will flag it —
-  // move the field to POPULATED_BOOLEAN_FIELDS at that point.
-  const PENDING_BOOLEAN_FIELDS = ["hasOis", "isWeatherSealed"] as const;
 
   it.each(POPULATED_BOOLEAN_FIELDS)(
     "%s has at least one explicit false value",
@@ -224,19 +220,6 @@ describe("boolean field distribution", () => {
     },
   );
 
-  it.fails.each(PENDING_BOOLEAN_FIELDS)(
-    "%s has at least one explicit false value (pending #473)",
-    (field) => {
-      const falseCount = lenses.filter(
-        (l) => l[field as keyof typeof l] === false,
-      ).length;
-      expect(
-        falseCount,
-        `${field} has zero explicit false values — data gap tracked by #473`,
-      ).toBeGreaterThan(0);
-    },
-  );
-
   it("isFocusByWire has no undefined values (fully populated)", () => {
     const undefCount = lenses.filter(
       (l) => l.isFocusByWire === undefined,
@@ -245,6 +228,17 @@ describe("boolean field distribution", () => {
       undefCount,
       "isFocusByWire should be fully populated (true or false for every lens)",
     ).toBe(0);
+  });
+
+  it("Fujifilm lenses have explicit hasOis and isWeatherSealed", () => {
+    const fuji = lenses.filter((l) => l.brand === "Fujifilm");
+    for (const l of fuji) {
+      expect(l.hasOis, `${l.model}: hasOis is undefined`).not.toBeUndefined();
+      expect(
+        l.isWeatherSealed,
+        `${l.model}: isWeatherSealed is undefined`,
+      ).not.toBeUndefined();
+    }
   });
 });
 
