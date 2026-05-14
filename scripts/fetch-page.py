@@ -1,13 +1,40 @@
 """Fetch a web page using Playwright (headless Chromium) and print its text content.
 
+Caches responses locally in .cache/fetch/ to avoid repeated HTTP requests.
+
 Usage:
     py scripts/fetch-page.py <url>
     py scripts/fetch-page.py <url> --html        # print raw HTML instead of text
     py scripts/fetch-page.py <url> --wait 5000    # wait N ms after load (for JS rendering)
+    py scripts/fetch-page.py <url> --no-cache     # bypass cache, fetch fresh
 """
 
+import hashlib
 import sys
+from pathlib import Path
+
 from playwright.sync_api import sync_playwright
+
+CACHE_DIR = Path(__file__).resolve().parent.parent / ".cache" / "fetch"
+
+
+def cache_key(url: str, raw_html: bool) -> Path:
+    suffix = ".html" if raw_html else ".txt"
+    name = hashlib.sha256(url.encode()).hexdigest()[:16] + suffix
+    return CACHE_DIR / name
+
+
+def read_cache(url: str, raw_html: bool) -> str | None:
+    path = cache_key(url, raw_html)
+    if path.exists():
+        return path.read_text(encoding="utf-8")
+    return None
+
+
+def write_cache(url: str, raw_html: bool, content: str) -> None:
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    path = cache_key(url, raw_html)
+    path.write_text(content, encoding="utf-8")
 
 
 def fetch_page(url: str, raw_html: bool = False, wait_ms: int = 2000) -> str:
@@ -40,6 +67,7 @@ def main() -> None:
 
     url = sys.argv[1]
     raw_html = "--html" in sys.argv
+    no_cache = "--no-cache" in sys.argv
     wait_ms = 2000
 
     if "--wait" in sys.argv:
@@ -47,7 +75,15 @@ def main() -> None:
         if idx + 1 < len(sys.argv):
             wait_ms = int(sys.argv[idx + 1])
 
+    if not no_cache:
+        cached = read_cache(url, raw_html)
+        if cached is not None:
+            sys.stdout.buffer.write(cached.encode("utf-8", errors="replace"))
+            sys.stdout.buffer.write(b"\n")
+            return
+
     content = fetch_page(url, raw_html, wait_ms)
+    write_cache(url, raw_html, content)
     sys.stdout.buffer.write(content.encode("utf-8", errors="replace"))
     sys.stdout.buffer.write(b"\n")
 

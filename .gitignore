@@ -10,6 +10,7 @@ dist/
 *.swo
 .claude/
 coverage/
+.cache/
 reports/
 .lighthouseci/
 temp/
