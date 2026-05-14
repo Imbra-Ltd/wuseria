@@ -1642,3 +1642,20 @@ Deep review findings and fixes:
 - Discovery: D+ → C (canonical URLs, sitemap, OG tags, but only 106/461 pages indexed, 201 total impressions)
 
 GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ratio", "bortle scale"). Lens pages not indexed — thin content confirmed as root cause. v0.6.0 reprioritized: #603 (search audit P1) and #572 (lens page SEO P1) are the top priorities
+
+---
+
+### Session 49 — Fill Boolean Fields
+
+- PRs: #607 (fill hasOis/isWeatherSealed for all 244 lenses), #608 (set Sigma/Tamron WS to true)
+- Issues closed: #473
+- Issues created: #606 (3-level weatherSealing scale)
+- Key changes:
+  - All 244 lenses now have explicit `hasOis` and `isWeatherSealed` values — zero undefined
+  - hasOis: 27 true (Fujifilm OIS, Sigma OS, Tamron VC), 217 false
+  - isWeatherSealed: 67 true (Fujifilm WR, Sigma dust/splash, Tamron moisture-resistant, NiSi 9mm, Irix), 177 false
+  - Moved fields from PENDING_BOOLEAN_FIELDS to POPULATED_BOOLEAN_FIELDS, removed it.fails block
+  - Added Fujifilm-specific validation test (177 tests, 0 expected failures)
+- Key decisions:
+  - Weather sealing threshold: `true` for any documented sealing (mount gaskets, dust/splash resistant) — consistent with NiSi 9mm precedent
+  - 3-level scale deferred to #606 to distinguish partial vs full sealing
