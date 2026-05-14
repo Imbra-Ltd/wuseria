@@ -1708,3 +1708,21 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
   - digitalkamera.de useful for dimensions but rarely has magnification
   - Discontinued lenses removed when unbuyable and replaced by new version
 - Sources used: lksamyang.com, ttartisan.store, 7artisans.store, LensTip spec DB, digitalkamera.de, Dustin Abbott, Phillip Reeve, allphotolenses.com, cameradecision.com, photosynthesis.bg, photozone.de
+
+---
+
+### Session 52 — Venus Laowa and Meike Build Field Backfill
+
+- PRs: #650
+- Issues closed: #625 (Venus Laowa), #626 (Meike)
+- Epic: #611 (fill all given spec fields)
+- Key changes:
+  - Filled build fields for all 16 Venus Laowa lenses (8 X-mount, 8 GFX) — 100% complete
+  - Filled build fields for all 14 Meike lenses (5 discontinued, 9 current) — 95% (5 discontinued missing maxMagnification)
+  - Data corrections: Venus Laowa 100mm T/S maxMagnification 2.0→1.0, 55mm T/S filterThread 82→77, 15mm f/4.5R apertureBlades 5→14
+  - Data corrections: Meike 85mm Macro maxMagnification 1.0→1.5, apertureBlades fixes on 5 lenses, 12mm f/2.0 filterThread 67→62
+  - Added missing macro genre marks for 9mm f/2.8 and Argus 33mm (triggered by new maxMagnification)
+  - Clarified ADR-002 Cloudflare Pages rejection rationale
+- Key decisions:
+  - Estimated maxMagnification values (calculated from focal length + min focus) are not accepted — only spec-confirmed values
+- Sources used: venuslens.net, laowalenses.ca, meikeglobal.com, LensTip spec DB, Dustin Abbott, Phillip Reeve, OpticalLimits, ePHOTOzine, Thom Hogan/sansmirror, B&H Photo, Radojuva, CameraDecision, Digitec Galaxus

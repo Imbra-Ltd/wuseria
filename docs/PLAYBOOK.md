@@ -221,6 +221,7 @@ npx tsx scripts/compute-marks.ts patch      # patch lenses.ts with marks
 2. Research from these sources (priority order):
    - Official manufacturer pages (dimensions, filter thread, build features)
    - LensTip spec database (`lenstip.com/<id>-<name>-lens_specifications.html`) — best for maxMagnification on budget lenses
+   - Radojuva lens database (`radojuva.com`) — hands-on magnification measurements and detailed optical data
    - digitalkamera.de Datenblatt pages — good for dimensions, rarely has magnification
    - cameradecision.com via `fetch-page.py` (403s on direct fetch, Playwright bypasses)
    - Dustin Abbott / Phillip Reeve reviews — trust-3 field measurements
