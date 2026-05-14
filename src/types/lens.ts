@@ -59,7 +59,6 @@ interface Lens {
   hasFocusRing?: boolean;
   isFocusByWire?: boolean;
   hasDistanceScale?: boolean;
-  hasDampedFocusRing?: boolean;
 
   // Grams
   weight: number;
