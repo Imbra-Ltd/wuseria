@@ -4291,7 +4291,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.1,
     hasOis: false,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4345,7 +4345,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.14,
     hasOis: false,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4398,7 +4398,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.14,
     hasOis: false,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4452,7 +4452,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.35,
     hasOis: false,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4507,7 +4507,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.19,
     hasOis: false,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4559,7 +4559,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.13,
     hasOis: false,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4613,7 +4613,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.15,
     hasOis: false,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4668,7 +4668,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.25,
     hasOis: false,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4720,7 +4720,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.18,
     hasOis: false,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4776,7 +4776,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.5,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
     hasOis: true,
 
     afMotor: "LM",
@@ -4831,7 +4831,7 @@ const lenses: Lens[] = [
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.24,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
     hasOis: true,
 
     afMotor: "LM",
@@ -4886,7 +4886,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.25,
     hasOis: false,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4943,7 +4943,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.2,
     hasOis: true,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -4996,7 +4996,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.5,
     hasOis: true,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -5048,7 +5048,7 @@ const lenses: Lens[] = [
     hasCircularAperture: true,
     maxMagnification: 0.32,
     hasOis: true,
-    isWeatherSealed: false,
+    isWeatherSealed: true,
 
     afMotor: "LM",
     isFocusByWire: true,
