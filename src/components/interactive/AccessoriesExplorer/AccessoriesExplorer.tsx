@@ -99,7 +99,9 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
   } = useUrlFilters(FILTER_KEYS);
 
   const categories = useMemo(() => {
-    const cats = [...new Set(accessories.map((a) => a.category))].sort();
+    const cats = [...new Set(accessories.map((a) => a.category))].sort((a, b) =>
+      a.localeCompare(b),
+    );
     return cats;
   }, [accessories]);
 

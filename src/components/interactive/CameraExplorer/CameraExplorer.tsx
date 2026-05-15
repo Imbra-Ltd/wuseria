@@ -61,12 +61,16 @@ function CameraExplorer({ cameras }: CameraExplorerProps) {
 
   const seriesOptions = useMemo(() => {
     const pool = f.mount ? cameras.filter((c) => c.mount === f.mount) : cameras;
-    return [...new Set(pool.map((c) => c.series))].sort();
+    return [...new Set(pool.map((c) => c.series))].sort((a, b) =>
+      a.localeCompare(b),
+    );
   }, [cameras, f.mount]);
 
   const sensorOptions = useMemo(() => {
     const pool = f.mount ? cameras.filter((c) => c.mount === f.mount) : cameras;
-    return [...new Set(pool.map((c) => c.sensor))].sort();
+    return [...new Set(pool.map((c) => c.sensor))].sort((a, b) =>
+      a.localeCompare(b),
+    );
   }, [cameras, f.mount]);
 
   const filtered = useMemo(

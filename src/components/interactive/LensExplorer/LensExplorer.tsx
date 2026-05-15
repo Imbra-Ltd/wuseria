@@ -108,7 +108,9 @@ function LensExplorer({ lenses }: LensExplorerProps) {
 
   const brands = useMemo(() => {
     const pool = f.mount ? lenses.filter((l) => l.mount === f.mount) : lenses;
-    return [...new Set(pool.map((l) => l.brand))].sort();
+    return [...new Set(pool.map((l) => l.brand))].sort((a, b) =>
+      a.localeCompare(b),
+    );
   }, [lenses, f.mount]);
 
   const filtered = useMemo(
