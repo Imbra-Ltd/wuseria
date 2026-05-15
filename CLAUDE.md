@@ -92,6 +92,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Do not commit `node_modules/`, `dist/`, `.env`, `.env.local`
 - Lock file (`package-lock.json`) is committed
 - Run `npm run validate` before committing
+- Releases MUST follow PLAYBOOK 5.1 — never tag without bumping `package.json` first
 - When creating GitHub issues, follow the formats in `docs/solid-ai-templates/templates/base/workflow/issues.md` — use the correct label (`epic`, `bug`, `incident`, `question`) and body structure for each type
 - Creating a new directory or moving content between documents is an architectural decision — write the ADR **at the moment of the decision**, before creating the files
 
