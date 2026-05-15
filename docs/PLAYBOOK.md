@@ -307,7 +307,27 @@ Open either in a browser. The `reports/` directory is gitignored.
 | `src/components/interactive/GenreGuide/GenreGuide.test.tsx`         | Genre tabs, filters, matrices                  |
 | `src/components/interactive/GenreGuide/exposure.test.ts`            | Exposure calculations                          |
 
-### 3.2 Lighthouse CI
+### 3.2 Code quality (eslint-plugin-sonarjs)
+
+SonarQube-equivalent code smell detection runs via ESLint at all three quality
+gate layers (editor, pre-commit, CI). Configuration is in `eslint.config.js`.
+
+Enforced rules:
+
+| Rule                          | What it catches                            |
+| ----------------------------- | ------------------------------------------ |
+| `cognitive-complexity`        | Functions exceeding complexity threshold   |
+| `no-nested-conditional`       | Deeply nested if/switch statements         |
+| `no-nested-template-literals` | Template literals inside template literals |
+| `redundant-type-aliases`      | Type aliases that add no information       |
+
+Also enforced via ESLint core: `max-depth: 3`, `no-console`.
+
+```bash
+npm run lint
+```
+
+### 3.3 Lighthouse CI
 
 Lighthouse runs automatically on every PR against 4 key pages
 (`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
@@ -330,7 +350,7 @@ This builds the site and runs Lighthouse against all 4 pages (3 runs each).
 HTML reports are written to `reports/lighthouse/` — open any `.report.html`
 in a browser for full scores, diagnostics, and opportunities.
 
-### 3.3 Link checker (lychee)
+### 3.4 Link checker (lychee)
 
 Lychee checks for broken internal links in the built site. Runs in CI on
 every PR. Requires [lychee](https://github.com/lycheeverse/lychee) installed
@@ -343,7 +363,7 @@ lychee --offline --no-progress --root-dir dist dist/
 
 Checks all internal links in the static output. Exits non-zero on broken links.
 
-### 3.4 Secret scanning (gitleaks)
+### 3.5 Secret scanning (gitleaks)
 
 Gitleaks scans for accidentally committed secrets. Runs in CI on every PR.
 Requires [gitleaks](https://github.com/gitleaks/gitleaks) installed locally
@@ -355,14 +375,14 @@ gitleaks detect --source . --config .gitleaks.toml
 
 Scans the full repo history. Exits non-zero if secrets are found.
 
-### 3.5 Static analysis (CodeQL)
+### 3.6 Static analysis (CodeQL)
 
 CodeQL runs automatically on every PR via `.github/workflows/codeql.yml`.
 Scans JavaScript and TypeScript for security vulnerabilities and code quality
 issues. No local setup needed — GitHub-native, results appear in the Security
 tab.
 
-### 3.6 Dependency updates (Dependabot)
+### 3.7 Dependency updates (Dependabot)
 
 Dependabot opens weekly PRs for outdated npm packages and GitHub Actions.
 Configuration is in `.github/dependabot.yml`. PRs are labeled `chore` + `P3`.
@@ -373,7 +393,7 @@ Review Dependabot PRs:
 gh pr list --author app/dependabot
 ```
 
-### 3.7 Analytics verification (Umami)
+### 3.8 Analytics verification (Umami)
 
 Umami Cloud tracks page views with zero cookies and no consent banner.
 The script loads from `cloud.umami.is` via the base layout. Run this
