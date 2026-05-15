@@ -34,6 +34,7 @@ export default [
       "max-depth": ["error", 3],
       "no-console": "error",
       "unicorn/no-zero-fractions": "error",
+      "unicorn/prefer-number-properties": "error",
     },
   },
   {
