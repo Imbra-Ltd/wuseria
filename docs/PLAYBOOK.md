@@ -635,6 +635,53 @@ informational.
 
 **Last verified:** not yet baselined.
 
+### 3.16 Technical SEO crawler (Screaming Frog)
+
+[Screaming Frog SEO Spider](https://www.screamingfrog.co.uk/seo-spider/) is a
+desktop crawler that audits the site like a search engine. Deeper than Seobility
+(3.15) — catches redirect chains, orphan pages, canonical mismatches, and
+structured data errors. Free for up to 500 URLs (site currently has 461 pages).
+
+**Prerequisites:**
+
+- [Screaming Frog SEO Spider](https://www.screamingfrog.co.uk/seo-spider/)
+  installed locally
+
+**Step 1 — Crawl the site:**
+
+1. Open Screaming Frog
+2. Enter `https://wuseria.com/`
+3. Start crawl — wait for completion
+
+**Step 2 — Check key reports:**
+
+| Tab              | What to check                                       |
+| ---------------- | --------------------------------------------------- |
+| Internal         | Response codes — no 3xx chains, no 4xx/5xx          |
+| Page Titles      | No missing, duplicate, or truncated titles          |
+| Meta Description | No missing or duplicate descriptions                |
+| H1               | Exactly one H1 per page, no duplicates across pages |
+| H2               | No skipped heading levels (H1 → H3)                 |
+| Canonicals       | Every page has a self-referencing canonical         |
+| Structured Data  | JSON-LD validates, no errors                        |
+| Images           | No missing alt text on content images               |
+
+**Step 3 — Check for orphan pages:**
+
+1. Crawl Analysis → Orphan Pages
+2. Cross-reference with sitemap (Configuration → Spider → Crawl → check
+   "Crawl linked XML Sitemaps")
+
+Any page in the sitemap but not linked internally is an orphan — fix the
+internal linking or remove from sitemap.
+
+**Step 4 — Export issues:**
+
+Export findings as CSV for tracking. Issues with direct code fixes (missing
+meta, broken canonicals, redirect chains) are bugs.
+
+**Last verified:** not yet baselined.
+
 ## 4. Maintenance
 
 ### 4.1 Update quality conventions
