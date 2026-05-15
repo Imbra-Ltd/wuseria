@@ -118,7 +118,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "7Artisans",
-    model: "35mm f/2",
+    model: "35mm f/2.0",
     type: "prime",
     mount: "X",
     year: 2018,
@@ -4081,7 +4081,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Samyang",
-    model: "135mm f/2 ED UMC",
+    model: "135mm f/2.0 ED UMC",
     type: "prime",
     mount: "X",
     year: 2015,
@@ -4810,7 +4810,7 @@ const lenses: Lens[] = [
   // Additional TTartisan MF
   {
     brand: "TTartisan",
-    model: "7.5mm f/2 Fisheye",
+    model: "7.5mm f/2.0 Fisheye",
     type: "prime",
     mount: "X",
     year: 2020,
@@ -4866,7 +4866,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "TTartisan",
-    model: "25mm f/2",
+    model: "25mm f/2.0",
     type: "prime",
     mount: "X",
     year: 2020,
@@ -4951,7 +4951,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "TTartisan",
-    model: "50mm f/2",
+    model: "50mm f/2.0",
     type: "prime",
     mount: "X",
     year: 2021,
@@ -7036,7 +7036,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "TTartisan",
-    model: "AF 75mm f/2",
+    model: "AF 75mm f/2.0",
     type: "prime",
     mount: "X",
     year: 2024,
@@ -7162,7 +7162,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Voigtlander",
-    model: "Ultron 27mm f/2",
+    model: "Ultron 27mm f/2.0",
     type: "prime",
     mount: "X",
     year: 2022,
@@ -7285,7 +7285,7 @@ const lenses: Lens[] = [
   {
     // Not scored — no trust-3 reviews available
     brand: "Voigtlander",
-    model: "Macro APO-Ultron 35mm f/2",
+    model: "Macro APO-Ultron 35mm f/2.0",
     type: "prime",
     mount: "X",
     year: 2021,
@@ -7388,7 +7388,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Mitakon",
-    model: "20mm f/2 4.5x Super Macro",
+    model: "20mm f/2.0 4.5x Super Macro",
     type: "prime",
     mount: "X",
     year: 2020,
@@ -7974,7 +7974,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Fujifilm",
-    model: "XC 35mm f/2",
+    model: "XC 35mm f/2.0",
     type: "prime",
     mount: "X",
     year: 2020,
@@ -9033,7 +9033,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "Fujifilm",
-    model: "GF 110mm f/2 R LM WR",
+    model: "GF 110mm f/2.0 R LM WR",
     type: "prime",
     mount: "GFX",
     year: 2017,
