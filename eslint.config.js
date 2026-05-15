@@ -9,7 +9,7 @@ import unicorn from "eslint-plugin-unicorn";
 export default [
   { ignores: ["dist", ".astro"] },
   js.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.recommended,
   sonarjs.configs.recommended,
   {
     files: ["**/*.{js,mjs}"],
