@@ -551,6 +551,49 @@ the cause.
 **Last verified:** 2026-05-14 — 106/461 pages indexed (23%), no critical
 coverage issues.
 
+### 3.14 PageSpeed Insights
+
+[PageSpeed Insights](https://pagespeed.web.dev/) complements Lighthouse CI
+(3.7) with real-user field data from the Chrome User Experience Report (CrUX).
+Local Lighthouse runs produce lab data only — PSI adds how actual visitors
+experience the site. Run after layout changes, new page types, or when GSC
+(3.13) flags Core Web Vitals regressions.
+
+**Step 1 — Test key pages:**
+
+Run these URLs through https://pagespeed.web.dev/:
+
+1. `https://wuseria.com/`
+2. `https://wuseria.com/lenses/`
+3. `https://wuseria.com/genre/`
+4. A sample lens detail page (e.g. `https://wuseria.com/lenses/xf-23mm-f1-4-r/`)
+
+**Step 2 — Check field data (CrUX):**
+
+If field data is available, verify Core Web Vitals pass:
+
+| Metric | Good threshold |
+| ------ | -------------- |
+| LCP    | < 2.5s         |
+| INP    | < 200ms        |
+| CLS    | < 0.1          |
+
+If field data shows "Not enough data", rely on lab data only.
+
+**Step 3 — Review lab diagnostics:**
+
+Check the Opportunities and Diagnostics sections for:
+
+- Render-blocking resources
+- Unused JavaScript/CSS
+- Image optimization opportunities
+- Layout shift sources
+
+Any performance score below 80 is a bug — cross-reference with Lighthouse CI
+(3.7) to confirm it reproduces locally before fixing.
+
+**Last verified:** not yet baselined.
+
 ## 4. Maintenance
 
 ### 4.1 Update quality conventions
