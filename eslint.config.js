@@ -43,6 +43,10 @@ export default [
       "no-console": "error",
       "unicorn/no-zero-fractions": "error",
       "unicorn/prefer-number-properties": "error",
+      "unicorn/no-negated-condition": "error",
+      "unicorn/prefer-string-replace-all": "error",
+      "unicorn/prefer-export-from": "error",
+      "unicorn/prefer-global-this": "error",
     },
   },
   {

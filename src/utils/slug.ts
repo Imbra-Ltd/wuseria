@@ -5,9 +5,9 @@
 function toSlug(model: string): string {
   return model
     .toLowerCase()
-    .replace(/\//g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+    .replaceAll("/", "")
+    .replaceAll(/[^a-z0-9]+/g, "-")
+    .replaceAll(/(^-|-$)/g, "");
 }
 
 export { toSlug };

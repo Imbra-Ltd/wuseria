@@ -3,10 +3,10 @@ import { useState, useEffect, useRef, useCallback } from "react";
 type FilterConfig = readonly string[];
 
 function readFromUrl(keys: FilterConfig): Record<string, string> {
-  if (typeof window === "undefined") {
+  if (typeof globalThis.window === "undefined") {
     return Object.fromEntries(keys.map((k) => [k, ""]));
   }
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(globalThis.location.search);
   return Object.fromEntries(keys.map((k) => [k, params.get(k) ?? ""]));
 }
 
@@ -30,8 +30,8 @@ function useUrlFilters(keys: FilterConfig): {
     }
     const search = params.toString();
     const url = search
-      ? `${window.location.pathname}?${search}`
-      : window.location.pathname;
+      ? `${globalThis.location.pathname}?${search}`
+      : globalThis.location.pathname;
     history.replaceState(history.state, "", url);
   }, [state, keys]);
 

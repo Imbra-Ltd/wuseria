@@ -7,8 +7,7 @@ import {
   passesRangeFilter,
   passesStatusFilter,
 } from "../../../utils/filters";
-import type { CameraSortKey } from "./constants";
-import { YEAR_RANGES, PRICE_RANGES } from "./constants";
+import { type CameraSortKey, YEAR_RANGES, PRICE_RANGES } from "./constants";
 import { CameraFilters } from "./CameraFilters";
 import { CameraResults } from "./CameraResults";
 import type { ExplorerCamera } from "./types";

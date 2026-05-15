@@ -5,8 +5,7 @@ import {
   ariaSortValue,
   sortIndicatorChar,
 } from "../shared/table";
-import type { CameraSortKey } from "./constants";
-import { COLUMNS } from "./constants";
+import { type CameraSortKey, COLUMNS } from "./constants";
 import styles from "./CameraExplorer.module.css";
 
 const ALIGN_CLASSES = makeAlignClasses(styles);

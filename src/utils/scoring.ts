@@ -144,9 +144,9 @@ function resolveField(lens: Lens, field: ScoringField): number | undefined {
     case "_weightScore":
       return weightScore(lens.weight);
     case "_magnificationScore":
-      return lens.maxMagnification != null
-        ? magnificationScore(lens.maxMagnification)
-        : undefined;
+      return lens.maxMagnification == null
+        ? undefined
+        : magnificationScore(lens.maxMagnification);
     default:
       return lens[field];
   }

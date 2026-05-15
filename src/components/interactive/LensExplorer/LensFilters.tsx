@@ -1,8 +1,12 @@
 import { ChipGroup } from "../shared/ChipGroup";
 import { MobileSort } from "../shared/MobileSort";
 import { RESET_VALUE, resetValue } from "../shared/constants";
-import type { LensSortKey } from "./constants";
-import { APERTURE_OPTIONS, COLUMNS, FILTER_THREAD_OPTIONS } from "./constants";
+import {
+  type LensSortKey,
+  APERTURE_OPTIONS,
+  COLUMNS,
+  FILTER_THREAD_OPTIONS,
+} from "./constants";
 import styles from "./LensExplorer.module.css";
 
 interface LensFiltersProps {

@@ -10,8 +10,10 @@ import {
   passesSearchFilter,
   passesStatusFilter,
 } from "../../../utils/filters";
-import type { ExplorerLens, LensExplorerProps, LensSortKey } from "./constants";
 import {
+  type ExplorerLens,
+  type LensExplorerProps,
+  type LensSortKey,
   FL_RANGES,
   OQ_RANGES,
   PRICE_RANGES,

@@ -6,7 +6,7 @@ const KEYS = ["type", "mount", "ois"] as const;
 
 describe("useUrlFilters", () => {
   beforeEach(() => {
-    window.history.replaceState(null, "", window.location.pathname);
+    globalThis.history.replaceState(null, "", globalThis.location.pathname);
   });
 
   it("initializes all keys to empty string", () => {
@@ -16,7 +16,7 @@ describe("useUrlFilters", () => {
   });
 
   it("reads initial values from URL params", () => {
-    window.history.replaceState(null, "", "?type=prime&ois=yes");
+    globalThis.history.replaceState(null, "", "?type=prime&ois=yes");
     const { result } = renderHook(() => useUrlFilters(KEYS));
     expect(result.current.values.type).toBe("prime");
     expect(result.current.values.ois).toBe("yes");
@@ -34,7 +34,7 @@ describe("useUrlFilters", () => {
   it("set syncs to URL", () => {
     const { result } = renderHook(() => useUrlFilters(KEYS));
     act(() => result.current.set("mount", "GFX"));
-    expect(window.location.search).toContain("mount=GFX");
+    expect(globalThis.location.search).toContain("mount=GFX");
   });
 
   it("clear resets all values to empty", () => {
@@ -50,11 +50,11 @@ describe("useUrlFilters", () => {
     const { result } = renderHook(() => useUrlFilters(KEYS));
     act(() => result.current.set("type", "prime"));
     act(() => result.current.clear());
-    expect(window.location.search).toBe("");
+    expect(globalThis.location.search).toBe("");
   });
 
   it("ignores URL params not in keys", () => {
-    window.history.replaceState(null, "", "?type=prime&unknown=foo");
+    globalThis.history.replaceState(null, "", "?type=prime&unknown=foo");
     const { result } = renderHook(() => useUrlFilters(KEYS));
     expect(result.current.values).toEqual({
       type: "prime",

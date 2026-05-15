@@ -367,21 +367,27 @@ Open either in a browser. The `reports/` directory is gitignored.
 | `src/components/interactive/GenreGuide/GenreGuide.test.tsx`         | Genre tabs, filters, matrices                  |
 | `src/components/interactive/GenreGuide/exposure.test.ts`            | Exposure calculations                          |
 
-### 3.6 Code quality (eslint-plugin-sonarjs)
+### 3.6 Code quality (eslint-plugin-sonarjs + unicorn)
 
 SonarQube-equivalent code smell detection runs via ESLint at all three quality
-gate layers (editor, pre-commit, CI). Configuration is in `eslint.config.js`.
+gate layers (editor, pre-commit, CI). Type-checked linting is enabled via
+`projectService` — 67 sonarjs rules that require type information are active.
+Configuration is in `eslint.config.js`.
 
-Enforced rules:
+Explicitly enabled rules:
 
-| Rule                          | What it catches                            |
-| ----------------------------- | ------------------------------------------ |
-| `cognitive-complexity`        | Functions exceeding complexity threshold   |
-| `no-nested-conditional`       | Deeply nested if/switch statements         |
-| `no-nested-template-literals` | Template literals inside template literals |
-| `redundant-type-aliases`      | Type aliases that add no information       |
+| Rule                               | What it catches                             |
+| ---------------------------------- | ------------------------------------------- |
+| `cognitive-complexity`             | Functions exceeding complexity threshold    |
+| `no-nested-conditional`            | Deeply nested if/switch statements          |
+| `no-nested-template-literals`      | Template literals inside template literals  |
+| `redundant-type-aliases`           | Type aliases that add no information        |
+| `unicorn/no-zero-fractions`        | Unnecessary `.0` in numeric literals        |
+| `unicorn/prefer-number-properties` | `parseInt()` instead of `Number.parseInt()` |
 
 Also enforced via ESLint core: `max-depth: 3`, `no-console`.
+Also enforced via `sonarjs.configs.recommended`: 67 type-checked rules including
+`no-alphabetical-sort`, `prefer-read-only-props`, `prefer-regexp-exec`.
 
 ```bash
 npm run lint

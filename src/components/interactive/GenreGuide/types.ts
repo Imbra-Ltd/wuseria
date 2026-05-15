@@ -50,5 +50,7 @@ const SCORED_GENRES: Genre[] = [
   "macro",
 ];
 
-export type { GenreLens, GenreGuideProps, SortKey, EnrichedLens };
+export type { GenreGuideProps, SortKey, EnrichedLens };
 export { SCORED_GENRES };
+
+export { type GenreLens } from "../../../types/genre-lens";
