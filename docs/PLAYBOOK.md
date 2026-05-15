@@ -311,7 +311,7 @@ npm run check
 Catches type errors that ESLint and the TypeScript compiler miss in `.astro`
 files — Astro's template syntax requires its own checker.
 
-### 3.5 Testing
+### 3.5 Testing (Vitest)
 
 **Run tests (single run with coverage):**
 
@@ -387,7 +387,7 @@ Also enforced via ESLint core: `max-depth: 3`, `no-console`.
 npm run lint
 ```
 
-### 3.7 Lighthouse CI
+### 3.7 Site quality (Lighthouse)
 
 Lighthouse runs automatically on every PR against 4 key pages
 (`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
@@ -410,7 +410,7 @@ This builds the site and runs Lighthouse against all 4 pages (3 runs each).
 HTML reports are written to `reports/lighthouse/` — open any `.report.html`
 in a browser for full scores, diagnostics, and opportunities.
 
-### 3.8 Link checker (lychee)
+### 3.8 Link checking (lychee)
 
 Lychee checks for broken internal links in the built site. Runs in CI on
 every PR. Requires [lychee](https://github.com/lycheeverse/lychee) installed
@@ -551,7 +551,7 @@ the cause.
 **Last verified:** 2026-05-14 — 106/461 pages indexed (23%), no critical
 coverage issues.
 
-### 3.14 PageSpeed Insights
+### 3.14 Page performance (PageSpeed Insights)
 
 [PageSpeed Insights](https://pagespeed.web.dev/) complements Lighthouse CI
 (3.7) with real-user field data from the Chrome User Experience Report (CrUX).
@@ -635,7 +635,7 @@ informational.
 
 **Last verified:** not yet baselined.
 
-### 3.16 Technical SEO crawler (Screaming Frog)
+### 3.16 Technical SEO crawl (Screaming Frog)
 
 [Screaming Frog SEO Spider](https://www.screamingfrog.co.uk/seo-spider/) is a
 desktop crawler that audits the site like a search engine. Deeper than Seobility
