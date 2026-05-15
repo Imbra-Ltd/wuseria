@@ -1767,3 +1767,25 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
   - Manual verification tools (Umami, GSC, PSI, Screaming Frog) belong in Quality alongside automated checks — they drive code changes
   - Screaming Frog replaces Seobility — full-site crawl supersedes per-page browser check
   - Projects MAY extend beyond the 5 base sections; Release and deploy MUST remain last
+
+---
+
+### Session 55 — Expedite Backlog and Type-Checked Linting
+
+- Tool: Claude Code (Opus 4.6)
+- PRs: #674 (submodule bump), #675 (version bump + CLAUDE.md rule), #677 (aperture format), #678 (zero fractions + type-checked linting)
+- Issues closed: #647 (release v0.5.0), #649 (aperture format), #645 (zero fractions), #679 (type-checked linting)
+- Issues created: #676 (CI version-match check, P4 Backlog)
+- Key changes:
+  - Bumped package.json from 0.4.0 to 0.5.0 — release had used wrong flow (no-build instead of version manifest)
+  - Added release rule to CLAUDE.md: "Releases MUST follow PLAYBOOK 5.1"
+  - Normalized f/2 to f/2.0 in 11 lens models (4 more than issue listed)
+  - Removed 845+ unnecessary .0 from numeric literals across data and source files
+  - Added eslint-plugin-unicorn with no-zero-fractions (S7748) and prefer-number-properties (S7773)
+  - Added explicit comparators to all bare .sort() calls (S2871)
+  - Enabled type-checked ESLint linting via projectService — activated 67 sonarjs rules that were silently inert
+  - Fixed 45 type-checked violations: prefer-read-only-props (25), no-unnecessary-type-assertion (7), restrict-plus-operands (7), no-base-to-string (6), prefer-regexp-exec (3), no-alphabetical-sort (2), restrict-template-expressions (1)
+  - Used recommended (not recommendedTypeChecked) to avoid no-unsafe-\* failures on CSS modules and Astro content imports in CI
+- Key decisions:
+  - recommendedTypeChecked breaks CI due to unresolved CSS module and Astro content types — use recommended + projectService instead
+  - Pre-commit lint ~7s per file with type checking — acceptable for lint-staged
