@@ -15,7 +15,7 @@ const xf90 = makeLens({
   model: "XF 90mm f/2.0",
   focalLengthMin: 90,
   focalLengthMax: 90,
-  maxAperture: 2.0,
+  maxAperture: 2,
 });
 
 const xf23 = makeLens({
@@ -73,7 +73,7 @@ describe("handheldExposure", () => {
   });
 
   it("macro uses magnification-adjusted rule", () => {
-    const result = handheldExposure(xf90, "macro", 10, 1.5, 1.0);
+    const result = handheldExposure(xf90, "macro", 10, 1.5, 1);
     expect(result.minShutter).toBeCloseTo(1 / (90 * 2 * 1.5), 6);
   });
 

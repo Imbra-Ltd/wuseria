@@ -32,7 +32,7 @@ if (missingMfd.length > 0) {
 }
 
 function magScore(mag: number): string {
-  if (mag >= 1.0) return "2.0";
+  if (mag >= 1) return "2.0";
   if (mag >= 0.5) return "1.5";
   if (mag >= 0.25) return "1.0";
   if (mag >= 0.15) return "0.5";

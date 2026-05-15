@@ -109,27 +109,27 @@ const W_PRIMARY = 3;
 const W_SECONDARY = 1;
 
 function apertureScore(maxAperture: number): number {
-  if (maxAperture <= 1.4) return 2.0;
-  if (maxAperture <= 2.0) return 1.5;
-  if (maxAperture <= 2.8) return 1.0;
-  if (maxAperture <= 4.0) return 0.5;
-  return 0.0;
+  if (maxAperture <= 1.4) return 2;
+  if (maxAperture <= 2) return 1.5;
+  if (maxAperture <= 2.8) return 1;
+  if (maxAperture <= 4) return 0.5;
+  return 0;
 }
 
 function weightScore(grams: number): number {
-  if (grams < 200) return 2.0;
+  if (grams < 200) return 2;
   if (grams <= 400) return 1.5;
-  if (grams <= 700) return 1.0;
+  if (grams <= 700) return 1;
   if (grams <= 1000) return 0.5;
-  return 0.0;
+  return 0;
 }
 
 function magnificationScore(maxMagnification: number): number {
-  if (maxMagnification >= 1.0) return 2.0;
+  if (maxMagnification >= 1) return 2;
   if (maxMagnification >= 0.5) return 1.5;
-  if (maxMagnification >= 0.25) return 1.0;
+  if (maxMagnification >= 0.25) return 1;
   if (maxMagnification >= 0.15) return 0.5;
-  return 0.0;
+  return 0;
 }
 
 // =============================================================================

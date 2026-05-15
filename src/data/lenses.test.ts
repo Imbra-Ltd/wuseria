@@ -59,7 +59,7 @@ describe("optical field ranges (0-2 scale)", () => {
   const scored = lenses.filter((l) => l.centerStopped != null);
 
   it("all optical fields are 0-2 in 0.5 steps", () => {
-    const valid = [0, 0.5, 1.0, 1.5, 2.0];
+    const valid = [0, 0.5, 1, 1.5, 2];
     for (const l of scored) {
       const id = `${l.brand} ${l.model}`;
       for (const field of OPTICAL_FIELDS) {

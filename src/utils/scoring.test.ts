@@ -37,11 +37,11 @@ describe("toMark", () => {
     expect(toMark(0.25)).toBe(1.5);
     expect(toMark(0.5)).toBe(2);
     expect(toMark(0.75)).toBe(2.5);
-    expect(toMark(1.0)).toBe(3);
+    expect(toMark(1)).toBe(3);
     expect(toMark(1.25)).toBe(3.5);
     expect(toMark(1.5)).toBe(4);
     expect(toMark(1.75)).toBe(4.5);
-    expect(toMark(2.0)).toBe(5);
+    expect(toMark(2)).toBe(5);
   });
 
   it("clamps to 1-5 range", () => {
@@ -56,41 +56,41 @@ describe("toMark", () => {
 
 describe("apertureScore", () => {
   it("scores aperture on 0-2 scale", () => {
-    expect(apertureScore(1.2)).toBe(2.0);
-    expect(apertureScore(1.4)).toBe(2.0);
+    expect(apertureScore(1.2)).toBe(2);
+    expect(apertureScore(1.4)).toBe(2);
     expect(apertureScore(1.8)).toBe(1.5);
-    expect(apertureScore(2.0)).toBe(1.5);
-    expect(apertureScore(2.8)).toBe(1.0);
-    expect(apertureScore(4.0)).toBe(0.5);
-    expect(apertureScore(4.5)).toBe(0.0);
-    expect(apertureScore(5.6)).toBe(0.0);
+    expect(apertureScore(2)).toBe(1.5);
+    expect(apertureScore(2.8)).toBe(1);
+    expect(apertureScore(4)).toBe(0.5);
+    expect(apertureScore(4.5)).toBe(0);
+    expect(apertureScore(5.6)).toBe(0);
   });
 });
 
 describe("weightScore", () => {
   it("scores weight on 0-2 scale", () => {
-    expect(weightScore(100)).toBe(2.0);
-    expect(weightScore(199)).toBe(2.0);
+    expect(weightScore(100)).toBe(2);
+    expect(weightScore(199)).toBe(2);
     expect(weightScore(200)).toBe(1.5);
     expect(weightScore(400)).toBe(1.5);
-    expect(weightScore(500)).toBe(1.0);
-    expect(weightScore(700)).toBe(1.0);
+    expect(weightScore(500)).toBe(1);
+    expect(weightScore(700)).toBe(1);
     expect(weightScore(900)).toBe(0.5);
     expect(weightScore(1000)).toBe(0.5);
-    expect(weightScore(1200)).toBe(0.0);
+    expect(weightScore(1200)).toBe(0);
   });
 });
 
 describe("magnificationScore", () => {
   it("scores magnification on 0-2 scale", () => {
-    expect(magnificationScore(1.0)).toBe(2.0);
+    expect(magnificationScore(1)).toBe(2);
     expect(magnificationScore(0.5)).toBe(1.5);
-    expect(magnificationScore(0.33)).toBe(1.0);
-    expect(magnificationScore(0.25)).toBe(1.0);
+    expect(magnificationScore(0.33)).toBe(1);
+    expect(magnificationScore(0.25)).toBe(1);
     expect(magnificationScore(0.2)).toBe(0.5);
     expect(magnificationScore(0.15)).toBe(0.5);
-    expect(magnificationScore(0.1)).toBe(0.0);
-    expect(magnificationScore(0.06)).toBe(0.0);
+    expect(magnificationScore(0.1)).toBe(0);
+    expect(magnificationScore(0.06)).toBe(0);
   });
 });
 
@@ -102,27 +102,27 @@ describe("resolveField", () => {
   const lens = findLens("XF 56mm f/1.2 R WR");
 
   it("returns optical fields directly", () => {
-    expect(resolveField(lens, "centerStopped")).toBe(2.0);
-    expect(resolveField(lens, "bokeh")).toBe(2.0);
+    expect(resolveField(lens, "centerStopped")).toBe(2);
+    expect(resolveField(lens, "bokeh")).toBe(2);
   });
 
   it("computes aperture score from maxAperture", () => {
-    expect(resolveField(lens, "_apertureScore")).toBe(2.0);
+    expect(resolveField(lens, "_apertureScore")).toBe(2);
   });
 
   it("computes weight score from weight", () => {
-    expect(resolveField(lens, "_weightScore")).toBe(1.0);
+    expect(resolveField(lens, "_weightScore")).toBe(1);
   });
 
   it("computes magnification score from maxMagnification", () => {
-    expect(resolveField(lens, "_magnificationScore")).toBe(0.0);
+    expect(resolveField(lens, "_magnificationScore")).toBe(0);
   });
 
   it("returns undefined for missing optical fields", () => {
     const sparse = makeLens({
       brand: "Fujifilm",
       model: "Sparse",
-      centerStopped: 2.0,
+      centerStopped: 2,
     });
     expect(resolveField(sparse, "bokeh")).toBeUndefined();
   });
@@ -158,13 +158,13 @@ describe("computeGenreMark", () => {
     const lens = makeLens({
       brand: "Fujifilm",
       model: "NoBokeh",
-      centerStopped: 2.0,
+      centerStopped: 2,
       cornerStopped: 1.5,
-      centerWideOpen: 2.0,
-      astigmatism: 2.0,
-      coma: 2.0,
-      longitudinalCA: 2.0,
-      lateralCA: 2.0,
+      centerWideOpen: 2,
+      astigmatism: 2,
+      coma: 2,
+      longitudinalCA: 2,
+      lateralCA: 2,
       // bokeh missing — required for portrait
     });
     expect(computeGenreMark(lens, "portrait")).toBeNull();
@@ -174,12 +174,12 @@ describe("computeGenreMark", () => {
     const lens = makeLens({
       brand: "Fujifilm",
       model: "Sparse",
-      centerStopped: 2.0,
-      cornerStopped: 2.0,
-      centerWideOpen: 2.0,
-      astigmatism: 2.0,
-      coma: 2.0,
-      lateralCA: 2.0,
+      centerStopped: 2,
+      cornerStopped: 2,
+      centerWideOpen: 2,
+      astigmatism: 2,
+      coma: 2,
+      lateralCA: 2,
       // Only 6 fields
     });
     expect(computeGenreMark(lens, "landscape")).toBeNull();
@@ -449,11 +449,11 @@ describe("computeOpticalQuality", () => {
     const lens = makeLens({
       brand: "Fujifilm",
       model: "Sparse",
-      centerStopped: 2.0,
+      centerStopped: 2,
       cornerStopped: 1.5,
-      centerWideOpen: 2.0,
+      centerWideOpen: 2,
       astigmatism: 1.5,
-      coma: 1.0,
+      coma: 1,
       lateralCA: 1.5,
     });
     expect(computeOpticalQuality(lens)).toBeNull();
@@ -463,11 +463,11 @@ describe("computeOpticalQuality", () => {
     const lens = makeLens({
       brand: "Fujifilm",
       model: "Scored",
-      centerStopped: 2.0,
+      centerStopped: 2,
       cornerStopped: 1.5,
-      centerWideOpen: 2.0,
+      centerWideOpen: 2,
       astigmatism: 1.5,
-      coma: 1.0,
+      coma: 1,
       lateralCA: 1.5,
       longitudinalCA: 1.5,
     });
@@ -481,22 +481,22 @@ describe("computeOpticalQuality", () => {
     const lens = makeLens({
       brand: "Fujifilm",
       model: "Perfect",
-      centerStopped: 2.0,
-      cornerStopped: 2.0,
-      centerWideOpen: 2.0,
-      cornerWideOpen: 2.0,
-      astigmatism: 2.0,
-      coma: 2.0,
-      sphericalAberration: 2.0,
-      longitudinalCA: 2.0,
-      lateralCA: 2.0,
-      distortion: 2.0,
-      vignettingWideOpen: 2.0,
-      vignettingStopped: 2.0,
-      bokeh: 2.0,
-      flareResistance: 2.0,
+      centerStopped: 2,
+      cornerStopped: 2,
+      centerWideOpen: 2,
+      cornerWideOpen: 2,
+      astigmatism: 2,
+      coma: 2,
+      sphericalAberration: 2,
+      longitudinalCA: 2,
+      lateralCA: 2,
+      distortion: 2,
+      vignettingWideOpen: 2,
+      vignettingStopped: 2,
+      bokeh: 2,
+      flareResistance: 2,
     });
-    expect(computeOpticalQuality(lens)).toBe(2.0);
+    expect(computeOpticalQuality(lens)).toBe(2);
   });
 
   it("matches known lens score from data", () => {
@@ -510,14 +510,14 @@ describe("computeOpticalQuality", () => {
     const lens = makeLens({
       brand: "Fujifilm",
       model: "Mixed",
-      centerStopped: 2.0,
-      cornerStopped: 1.0,
+      centerStopped: 2,
+      cornerStopped: 1,
       centerWideOpen: 1.5,
-      astigmatism: 2.0,
+      astigmatism: 2,
       coma: 0.5,
-      lateralCA: 1.0,
+      lateralCA: 1,
       longitudinalCA: 1.5,
-      distortion: 1.0,
+      distortion: 1,
     });
     const result = computeOpticalQuality(lens);
     expect(result).not.toBeNull();

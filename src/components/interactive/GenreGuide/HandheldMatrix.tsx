@@ -22,7 +22,7 @@ function HandheldMatrix({
   ev,
   selectedFl,
   genre,
-  magnification = 1.0,
+  magnification = 1,
 }: HandheldMatrixProps) {
   const isGfx = cropFactor === GFX_CROP_FACTOR;
   const MATRIX_FL_COLS = isGfx ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;

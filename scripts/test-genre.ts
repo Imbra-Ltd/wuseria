@@ -95,35 +95,35 @@ console.log("Secondary (w=" + W_S + "): " + config.secondary.join(", "));
 console.log("");
 
 function weightScore(grams: number): number {
-  if (grams < 200) return 2.0;
+  if (grams < 200) return 2;
   if (grams <= 400) return 1.5;
-  if (grams <= 700) return 1.0;
+  if (grams <= 700) return 1;
   if (grams <= 1000) return 0.5;
-  return 0.0;
+  return 0;
 }
 
 function apertureScore(maxAp: number): number {
-  if (maxAp <= 1.4) return 2.0;
-  if (maxAp <= 2.0) return 1.5;
-  if (maxAp <= 2.8) return 1.0;
-  if (maxAp <= 4.0) return 0.5;
-  return 0.0;
+  if (maxAp <= 1.4) return 2;
+  if (maxAp <= 2) return 1.5;
+  if (maxAp <= 2.8) return 1;
+  if (maxAp <= 4) return 0.5;
+  return 0;
 }
 
 function magnificationScore(mag: number): number {
-  if (mag >= 1.0) return 2.0;
+  if (mag >= 1) return 2;
   if (mag >= 0.5) return 1.5;
-  if (mag >= 0.25) return 1.0;
+  if (mag >= 0.25) return 1;
   if (mag >= 0.15) return 0.5;
-  return 0.0;
+  return 0;
 }
 
 function focusDistanceScore(mfd: number): number {
-  if (mfd <= 150) return 2.0;
+  if (mfd <= 150) return 2;
   if (mfd <= 250) return 1.5;
-  if (mfd <= 400) return 1.0;
+  if (mfd <= 400) return 1;
   if (mfd <= 700) return 0.5;
-  return 0.0;
+  return 0;
 }
 
 for (const lens of lenses) {
