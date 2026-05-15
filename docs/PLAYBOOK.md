@@ -50,7 +50,7 @@ gh issue list --label epic --state open
 Reference the issue in the PR body with `Closes #<number>`. GitHub closes it
 automatically on merge.
 
-## 2. Data operations
+## 2. Domain operations
 
 ### 2.1 Add a new lens
 
@@ -231,7 +231,7 @@ npx tsx scripts/list-unscored.ts           # list all lenses without optical sco
 
 ```bash
 npx tsx scripts/compute-marks.ts print      # print all computed marks
-npx tsx scripts/compute-marks.ts patch      # patch lenses.ts with marks
+npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
 ```
 
 ### 2.8 Backfill spec fields per brand
@@ -249,55 +249,9 @@ npx tsx scripts/compute-marks.ts patch      # patch lenses.ts with marks
 4. Add fields to `src/data/lenses.ts`, run `npm run validate`
 5. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
 
-### 2.9 Lighthouse CI
+## 3. Quality
 
-Lighthouse runs automatically on every PR against 4 key pages
-(`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
-`lighthouserc.json`.
-
-| Category       | Threshold | Level |
-| -------------- | --------- | ----- |
-| Performance    | >= 80     | error |
-| Accessibility  | >= 90     | warn  |
-| SEO            | >= 90     | warn  |
-| Best Practices | >= 90     | warn  |
-
-**Run locally:**
-
-```bash
-npm run lighthouse
-```
-
-This builds the site and runs Lighthouse against all 4 pages (3 runs each).
-HTML reports are written to `reports/lighthouse/` — open any `.report.html`
-in a browser for full scores, diagnostics, and opportunities.
-
-### 2.10 Link checker (lychee)
-
-Lychee checks for broken internal links in the built site. Runs in CI on
-every PR. Requires [lychee](https://github.com/lycheeverse/lychee) installed
-locally (see ONBOARDING prerequisites).
-
-```bash
-npm run build
-lychee --offline --no-progress --root-dir dist dist/
-```
-
-Checks all internal links in the static output. Exits non-zero on broken links.
-
-### 2.11 Secret scanning (gitleaks)
-
-Gitleaks scans for accidentally committed secrets. Runs in CI on every PR.
-Requires [gitleaks](https://github.com/gitleaks/gitleaks) installed locally
-(see ONBOARDING prerequisites).
-
-```bash
-gitleaks detect --source . --config .gitleaks.toml
-```
-
-Scans the full repo history. Exits non-zero if secrets are found.
-
-### 2.12 Testing
+### 3.1 Testing
 
 **Run tests (single run with coverage):**
 
@@ -353,7 +307,55 @@ Open either in a browser. The `reports/` directory is gitignored.
 | `src/components/interactive/GenreGuide/GenreGuide.test.tsx`         | Genre tabs, filters, matrices                  |
 | `src/components/interactive/GenreGuide/exposure.test.ts`            | Exposure calculations                          |
 
-### 2.13 Analytics verification (Umami)
+### 3.2 Lighthouse CI
+
+Lighthouse runs automatically on every PR against 4 key pages
+(`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
+`lighthouserc.json`.
+
+| Category       | Threshold | Level |
+| -------------- | --------- | ----- |
+| Performance    | >= 80     | error |
+| Accessibility  | >= 90     | warn  |
+| SEO            | >= 90     | warn  |
+| Best Practices | >= 90     | warn  |
+
+**Run locally:**
+
+```bash
+npm run lighthouse
+```
+
+This builds the site and runs Lighthouse against all 4 pages (3 runs each).
+HTML reports are written to `reports/lighthouse/` — open any `.report.html`
+in a browser for full scores, diagnostics, and opportunities.
+
+### 3.3 Link checker (lychee)
+
+Lychee checks for broken internal links in the built site. Runs in CI on
+every PR. Requires [lychee](https://github.com/lycheeverse/lychee) installed
+locally (see ONBOARDING prerequisites).
+
+```bash
+npm run build
+lychee --offline --no-progress --root-dir dist dist/
+```
+
+Checks all internal links in the static output. Exits non-zero on broken links.
+
+### 3.4 Secret scanning (gitleaks)
+
+Gitleaks scans for accidentally committed secrets. Runs in CI on every PR.
+Requires [gitleaks](https://github.com/gitleaks/gitleaks) installed locally
+(see ONBOARDING prerequisites).
+
+```bash
+gitleaks detect --source . --config .gitleaks.toml
+```
+
+Scans the full repo history. Exits non-zero if secrets are found.
+
+### 3.5 Analytics verification (Umami)
 
 Umami Cloud tracks page views with zero cookies and no consent banner.
 The script loads from `cloud.umami.is` via the base layout. Run this
@@ -403,9 +405,9 @@ Expected: `script.js` + exactly **1 `send`** request.
 
 **Last verified:** 2026-05-03 — all checks pass.
 
-## 3. Maintenance
+## 4. Maintenance
 
-### 3.1 Update quality conventions
+### 4.1 Update quality conventions
 
 ```bash
 git submodule update --remote docs/solid-ai-templates
@@ -413,12 +415,12 @@ git add docs/solid-ai-templates
 git commit -m "chore: bump solid-ai-templates submodule"
 ```
 
-### 3.2 Update architecture decisions
+### 4.2 Update architecture decisions
 
 1. Create an ADR in `docs/decisions/` using the format: context, decision, alternatives, consequences
 2. ADRs are immutable once merged — create a new ADR to supersede an old one
 
-### 3.3 Run the prototype
+### 4.3 Run the prototype
 
 All prototype resources live in `docs/prototype/`. To run:
 
@@ -438,9 +440,9 @@ rm index.html src/main.jsx src/App.jsx
 The prototype uses old field names (pre-migration) and is kept for reference
 only. Do not commit the copied files.
 
-## 4. Release and deploy
+## 5. Release and deploy
 
-### 4.1 Release
+### 5.1 Release
 
 ```bash
 # From main, with clean working directory:
@@ -458,7 +460,7 @@ git branch -d chore/release-vA.B.C
 git push origin --delete chore/release-vA.B.C
 ```
 
-### 4.2 Deploy
+### 5.2 Deploy
 
 Deployment is automated via GitHub Actions on push to `main`. No manual steps
 required.
