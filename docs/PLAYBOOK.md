@@ -594,52 +594,11 @@ Any performance score below 80 is a bug — cross-reference with Lighthouse CI
 
 **Last verified:** not yet baselined.
 
-### 3.15 SEO audit (Seobility)
-
-[Seobility](https://www.seobility.net/) provides deeper content-level SEO
-analysis than Lighthouse (3.7): meta tag quality, heading hierarchy, internal
-linking, crawlability, and keyword optimization. Run after adding new page
-types, changing meta descriptions, or updating structured data.
-
-**Step 1 — Site audit:**
-
-1. Open https://freetools.seobility.net/en/seocheck
-2. Enter `https://wuseria.com/`
-3. Review overall score and category breakdown
-
-**Step 2 — Check key page types:**
-
-Test one URL per page type:
-
-- Homepage: `https://wuseria.com/`
-- Listing: `https://wuseria.com/lenses/`
-- Detail: `https://wuseria.com/lenses/xf-23mm-f1-4-r/`
-- Wiki: `https://wuseria.com/wiki/aperture/`
-- Genre: `https://wuseria.com/genre/landscape/`
-
-**Step 3 — Review findings:**
-
-Focus on actionable issues:
-
-| Category  | What to check                                       |
-| --------- | --------------------------------------------------- |
-| Meta tags | Missing or duplicate titles/descriptions            |
-| Headings  | Hierarchy violations (skipped levels, multiple H1s) |
-| Links     | Broken internal links, orphan pages                 |
-| Content   | Thin pages, duplicate content                       |
-| Technical | Missing canonical, noindex on indexed pages         |
-
-Issues with direct code fixes (missing meta, broken heading hierarchy, bad
-canonicals) are bugs. Content suggestions (keyword density, readability) are
-informational.
-
-**Last verified:** not yet baselined.
-
-### 3.16 Technical SEO crawl (Screaming Frog)
+### 3.15 Technical SEO crawl (Screaming Frog)
 
 [Screaming Frog SEO Spider](https://www.screamingfrog.co.uk/seo-spider/) is a
-desktop crawler that audits the site like a search engine. Deeper than Seobility
-(3.15) — catches redirect chains, orphan pages, canonical mismatches, and
+desktop crawler that audits the site like a search engine. Catches redirect
+chains, orphan pages, canonical mismatches, and
 structured data errors. Free for up to 500 URLs (site currently has 461 pages).
 
 **Prerequisites:**
