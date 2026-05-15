@@ -88,16 +88,22 @@ wrong data.
 ### 2.5 Trusted review sources
 
 See `src/data/reviews.ts` for the full directory with methodology
-(lab/field) and trust (1-3) ratings. Top sources:
+(lab/field) and trust (1-3) ratings. Trust-3 sources:
 
-| Trust 3       | Methodology                     |
-| ------------- | ------------------------------- |
-| LensRentals   | Lab — optical bench MTF         |
-| LensTip       | Lab — Imatest MTF charts        |
-| OpticalLimits | Lab — Imatest MTF               |
-| Dustin Abbott | Field — systematic + lab hybrid |
-| DPReview      | Field — comprehensive           |
-| Phillip Reeve | Field — manual focus specialist |
+| Trust 3             | Methodology                     |
+| ------------------- | ------------------------------- |
+| LensRentals         | Lab — optical bench MTF         |
+| LensTip             | Lab — Imatest MTF charts        |
+| OpticalLimits       | Lab — Imatest MTF               |
+| DxOMark             | Lab — perceptual megapixel      |
+| The Digital Picture | Lab — ISO 12233 chart           |
+| ePHOTOzine          | Lab — Imatest MTF               |
+| ColorFoto           | Lab — proprietary bench         |
+| Dustin Abbott       | Field — systematic + lab hybrid |
+| DPReview            | Field — comprehensive           |
+| Phillip Reeve       | Field — manual focus specialist |
+| Lloyd Chambers      | Field — systematic high-res     |
+| Lonely Speck        | Field — astrophotography        |
 
 **Do not use:** Ken Rockwell — not a trusted data source.
 
@@ -108,10 +114,10 @@ source. See ADR-014 for the full rubric and reference scorings.
 
 **Step 1 — Identify sources**
 
-Search ALL trust 3 sources for the lens before proceeding:
+Search ALL trust-3 sources for the lens before proceeding:
 
-- Lab (trust 3): LensRentals, LensTip, OpticalLimits
-- Field (trust 3): Dustin Abbott, DPReview, Phillip Reeve
+- Lab (trust 3): LensRentals, LensTip, OpticalLimits, DxOMark, The Digital Picture, ePHOTOzine, ColorFoto
+- Field (trust 3): Dustin Abbott, DPReview, Phillip Reeve, Lloyd Chambers, Lonely Speck
 
 Do not skip sources — missing one can leave scoreable fields empty
 (e.g. Dustin Abbott provided astigmatism + bokeh data for the
@@ -206,6 +212,19 @@ py scripts/fetch-samyang-mtf.py             # fetch all to docs/mtf-charts/
 py scripts/fetch-samyang-mtf.py --seq 351   # fetch one by product seq
 py scripts/fetch-samyang-mtf.py --dry-run   # list without downloading
 py scripts/fetch-samyang-mtf.py --temp      # download to temp/ (testing)
+```
+
+**Fetch Sigma MTF charts:**
+
+```bash
+py scripts/fetch-sigma-mtf.py             # fetch all to docs/mtf-charts/
+py scripts/fetch-sigma-mtf.py --dry-run   # list without downloading
+```
+
+**List unscored lenses:**
+
+```bash
+npx tsx scripts/list-unscored.ts           # list all lenses without optical scores
 ```
 
 **Compute genre marks:**
