@@ -503,6 +503,54 @@ Expected: `script.js` + exactly **1 `send`** request.
 
 **Last verified:** 2026-05-03 — all checks pass.
 
+### 3.13 Search indexing (Google Search Console)
+
+GSC surfaces indexing issues that require code fixes (e.g. trailing slash
+inconsistencies, excluded pages, crawl errors). Run this check after routing
+changes, new page types, or sitemap updates — and periodically (~monthly).
+
+**Prerequisites:**
+
+- Access to [Google Search Console](https://search.google.com/search-console)
+  for wuseria.com
+
+**Step 1 — Coverage check:**
+
+1. Open GSC → Pages
+2. Check "Not indexed" count and reasons
+
+Red flags: "Page with redirect", "Duplicate without user-selected canonical",
+"Excluded by noindex tag", "Crawled — currently not indexed" on pages that
+should be indexed.
+
+**Step 2 — Sitemap validation:**
+
+1. Open GSC → Sitemaps
+2. Verify `sitemap-index.xml` status is "Success"
+3. Compare submitted page count with expected (currently 461 pages)
+
+If count is off, check that `@astrojs/sitemap` is generating correctly and
+no pages are accidentally excluded.
+
+**Step 3 — URL inspection:**
+
+For new page types or routing changes, inspect a sample URL:
+
+1. GSC → URL Inspection → paste the URL
+2. Verify: "URL is on Google" or "URL can be indexed"
+3. Check canonical URL matches the page URL
+
+**Step 4 — Core Web Vitals:**
+
+1. GSC → Core Web Vitals
+2. Check for "Poor" or "Needs improvement" URLs
+
+Any regression is a bug — cross-reference with Lighthouse (3.7) to identify
+the cause.
+
+**Last verified:** 2026-05-14 — 106/461 pages indexed (23%), no critical
+coverage issues.
+
 ## 4. Maintenance
 
 ### 4.1 Update quality conventions
