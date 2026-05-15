@@ -1789,3 +1789,7 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
 - Key decisions:
   - recommendedTypeChecked breaks CI due to unresolved CSS module and Astro content types — use recommended + projectService instead
   - Pre-commit lint ~7s per file with type checking — acceptable for lint-staged
+  - Added 4 more unicorn rules: no-negated-condition (S7735), prefer-string-replace-all (S7781), prefer-export-from (S7763), prefer-global-this (S7764)
+  - Merged duplicate import/import-type statements across 9 files (S3863)
+  - Lens detail pages now show all build fields with em-dash for missing values — 6 new fields added (clickless aperture, focus ring, focus by wire, distance scale, rotating front, tripod mount)
+  - Expedite milestone fully cleared
