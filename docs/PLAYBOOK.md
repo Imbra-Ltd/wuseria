@@ -355,7 +355,25 @@ gitleaks detect --source . --config .gitleaks.toml
 
 Scans the full repo history. Exits non-zero if secrets are found.
 
-### 3.5 Analytics verification (Umami)
+### 3.5 Static analysis (CodeQL)
+
+CodeQL runs automatically on every PR via `.github/workflows/codeql.yml`.
+Scans JavaScript and TypeScript for security vulnerabilities and code quality
+issues. No local setup needed — GitHub-native, results appear in the Security
+tab.
+
+### 3.6 Dependency updates (Dependabot)
+
+Dependabot opens weekly PRs for outdated npm packages and GitHub Actions.
+Configuration is in `.github/dependabot.yml`. PRs are labeled `chore` + `P3`.
+
+Review Dependabot PRs:
+
+```bash
+gh pr list --author app/dependabot
+```
+
+### 3.7 Analytics verification (Umami)
 
 Umami Cloud tracks page views with zero cookies and no consent banner.
 The script loads from `cloud.umami.is` via the base layout. Run this
