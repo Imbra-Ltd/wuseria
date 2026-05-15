@@ -1726,3 +1726,23 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
 - Key decisions:
   - Estimated maxMagnification values (calculated from focal length + min focus) are not accepted — only spec-confirmed values
 - Sources used: venuslens.net, laowalenses.ca, meikeglobal.com, LensTip spec DB, Dustin Abbott, Phillip Reeve, OpticalLimits, ePHOTOzine, Thom Hogan/sansmirror, B&H Photo, Radojuva, CameraDecision, Digitec Galaxus
+
+---
+
+### Session 53 — Viltrox, Sigma, NiSi Backfill
+
+- PRs: #654 (open)
+- Issues: #627, #628, #629 (will auto-close on merge)
+- Epic: #611 — now 11/25 brands done
+- Key changes:
+  - Filled build fields for all 13 Viltrox lenses — 6 have aperture rings (13mm clicked, 23/33/56mm f/1.4 clickless, 27/75mm Pro clicked), 7 do not (Air series, pancake, 85mm II)
+  - Filled build fields for all 11 Sigma lenses — 3 newer (12mm, 15mm 2024; 17-40mm Art 2025) have aperture rings, 8 older do not
+  - Filled build fields for all 10 NiSi lenses — 2 Sunstar X-mount + 8 Athena Prime GFX
+  - NiSi Athena corrections from official brochure: apertureBlades 9→10, weights updated to GFX-specific values (860g core, 1040g 135mm)
+  - Added maxMagnification + minFocusDistance + diameter + length for Viltrox 15mm/25mm/56mm f/1.7
+  - Added NiSi 15mm f/4 Sunstar specs from phillipreeve review (maxMagnification 0.13, minFocusDistance 200, diameter 79, length 77)
+  - Added macro genre marks for 3 Viltrox Air lenses (triggered by new maxMagnification)
+- Key decisions:
+  - NiSi Athena maxMagnification left unfilled — cinema manufacturers don't publish it; can't estimate per ADR-014 rules
+  - Sigma aperture ring appeared on mirrorless lenses starting late 2024 (12mm, 15mm DC DN C) and 2025 (17-40mm Art)
+- Sources used: sigma-global.com, viltrox.com (Playwright), LensTip build quality pages, OpticalLimits, Dustin Abbott, Phillip Reeve, NiSi official brochure (PDF), nisi-lens.com, NiSi Optics USA, CineD, Duclos Lenses, B&H Photo
