@@ -646,6 +646,9 @@ structured data errors. Free for up to 500 URLs (site currently has 461 pages).
 
 - [Screaming Frog SEO Spider](https://www.screamingfrog.co.uk/seo-spider/)
   installed locally
+- Free tier limit: 500 URLs (site currently has 461 pages). When the site
+  exceeds 500, either buy a license or crawl selectively by filtering to
+  specific directories (e.g. `/lenses/`, `/wiki/`)
 
 **Step 1 — Crawl the site:**
 
