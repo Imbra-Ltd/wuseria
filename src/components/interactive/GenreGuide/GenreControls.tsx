@@ -16,7 +16,7 @@ interface GenreControlsProps {
   state: GenreState;
 }
 
-function GenreControls({ state }: GenreControlsProps) {
+function GenreControls({ state }: Readonly<GenreControlsProps>) {
   const {
     genre,
     iso,

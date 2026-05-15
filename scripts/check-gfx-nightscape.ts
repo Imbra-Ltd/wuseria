@@ -20,10 +20,10 @@ for (const l of gfxScored) {
       "nightscape=" +
       (marks?.nightscape ?? "NONE").toString().padEnd(6) +
       "coma=" +
-      String(coma ?? "?").padEnd(5) +
+      String((coma as number | undefined) ?? "?").padEnd(5) +
       "astig=" +
-      String(astig ?? "?").padEnd(5) +
+      String((astig as number | undefined) ?? "?").padEnd(5) +
       "f/" +
-      aperture,
+      String(aperture),
   );
 }

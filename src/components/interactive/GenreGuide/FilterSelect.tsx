@@ -14,7 +14,7 @@ function FilterSelect({
   onChange,
   allLabel = "Any",
   options,
-}: FilterSelectProps) {
+}: Readonly<FilterSelectProps>) {
   return (
     <div className={styles.controlGroup}>
       <span className={styles.controlLabel}>{label}</span>
@@ -35,11 +35,11 @@ function FilterSelect({
   );
 }
 
-const MIN_THRESHOLDS = [2.0, 1.5, 1.0].map((v) => ({
+const MIN_THRESHOLDS = [2, 1.5, 1].map((v) => ({
   label: `\u2265 ${v}`,
   value: v,
 }));
-const APERTURE_THRESHOLDS = [1.4, 2.0, 2.8, 4.0].map((v) => ({
+const APERTURE_THRESHOLDS = [1.4, 2, 2.8, 4].map((v) => ({
   label: `\u2264 f/${v}`,
   value: v,
 }));

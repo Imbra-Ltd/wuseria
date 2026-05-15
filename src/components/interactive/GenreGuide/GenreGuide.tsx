@@ -20,7 +20,10 @@ import { useGenreState } from "./useGenreState";
 import { useEnrichedLenses } from "./useEnrichedLenses";
 import styles from "./GenreGuide.module.css";
 
-function GenreGuide({ lenses, defaultGenre = "street" }: GenreGuideProps) {
+function GenreGuide({
+  lenses,
+  defaultGenre = "street",
+}: Readonly<GenreGuideProps>) {
   const state = useGenreState(defaultGenre);
   const enrichedLenses = useEnrichedLenses(lenses, state);
   const {

@@ -16,7 +16,7 @@ const RULE_OF_500_FACTOR = 500;
 // =============================================================================
 
 const OQ_THRESHOLD_HIGH = 1.5;
-const OQ_THRESHOLD_MID = 1.0;
+const OQ_THRESHOLD_MID = 1;
 
 // =============================================================================
 // GENRE CONFIGS — ported from prototype GENRE_PARAMS (App.jsx:427-436)
@@ -269,9 +269,9 @@ const genreSceneFilter: Record<Genre, (ev: number) => boolean> = {
 const MACRO_MAGNIFICATION_OPTIONS = [
   { label: "0.25×", value: 0.25 },
   { label: "0.5×", value: 0.5 },
-  { label: "1.0×", value: 1.0 },
+  { label: "1.0×", value: 1 },
   { label: "1.4×", value: 1.4 },
-  { label: "2.0×", value: 2.0 },
+  { label: "2.0×", value: 2 },
 ];
 
 // =============================================================================
@@ -550,7 +550,7 @@ const MATRIX_FL_COLS_GFX: Record<number, number[]> = {
   500: [250, 500],
 };
 
-const MATRIX_APERTURES = [1.0, 1.4, 2.0, 2.8, 4.0, 5.6, 8, 11];
+const MATRIX_APERTURES = [1, 1.4, 2, 2.8, 4, 5.6, 8, 11];
 
 // =============================================================================
 // EXPORTS

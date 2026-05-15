@@ -32,7 +32,7 @@ function LensResults({
   sortKey,
   sortDirection,
   toggleSort,
-}: LensResultsProps) {
+}: Readonly<LensResultsProps>) {
   return (
     <>
       <div className={styles.tableWrap}>

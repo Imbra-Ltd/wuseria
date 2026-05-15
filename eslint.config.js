@@ -4,6 +4,7 @@ import tseslint from "typescript-eslint";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import sonarjs from "eslint-plugin-sonarjs";
+import unicorn from "eslint-plugin-unicorn";
 
 export default [
   { ignores: ["dist", ".astro"] },
@@ -11,13 +12,22 @@ export default [
   ...tseslint.configs.recommended,
   sonarjs.configs.recommended,
   {
+    files: ["**/*.{js,mjs}"],
+    ...tseslint.configs.disableTypeChecked,
+  },
+  {
     files: ["**/*.{ts,tsx}"],
     plugins: {
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
+      unicorn,
     },
     languageOptions: {
       globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -31,6 +41,8 @@ export default [
       "sonarjs/redundant-type-aliases": "error",
       "max-depth": ["error", 3],
       "no-console": "error",
+      "unicorn/no-zero-fractions": "error",
+      "unicorn/prefer-number-properties": "error",
     },
   },
   {

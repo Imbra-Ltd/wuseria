@@ -37,7 +37,7 @@ interface CameraFiltersProps {
   toggleSort: (key: CameraSortKey) => void;
 }
 
-function CameraFilters(props: CameraFiltersProps) {
+function CameraFilters(props: Readonly<CameraFiltersProps>) {
   const {
     search,
     setSearch,

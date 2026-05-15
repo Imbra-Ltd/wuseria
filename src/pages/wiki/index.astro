@@ -6,9 +6,9 @@ const entries = await getCollection("wiki");
 const sorted = [...entries].sort((a, b) =>
   a.data.title.localeCompare(b.data.title),
 );
-const categories = [
-  ...new Set(entries.flatMap((e) => e.data.categories)),
-].sort();
+const categories = [...new Set(entries.flatMap((e) => e.data.categories))].sort(
+  (a, b) => a.localeCompare(b),
+);
 ---
 
 <Base

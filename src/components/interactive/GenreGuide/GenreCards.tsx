@@ -11,7 +11,7 @@ interface GenreCardsProps {
   enrichedLenses: EnrichedLens[];
 }
 
-function GenreCards({ state, enrichedLenses }: GenreCardsProps) {
+function GenreCards({ state, enrichedLenses }: Readonly<GenreCardsProps>) {
   const { isNightscape, isLandscape, isArchitecture, isPortrait, isStreet } =
     state;
 

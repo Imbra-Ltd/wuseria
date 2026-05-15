@@ -79,7 +79,7 @@ for (const lens of lenses) {
           .replace("WideOpen", "WO")
           .replace("Resistance", "") +
         "=" +
-        (l[f] ?? "-"),
+        String((l[f] as number | undefined) ?? "-"),
     )
     .join(" ");
 

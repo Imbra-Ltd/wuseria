@@ -13,7 +13,7 @@ interface GenreTableProps {
   enrichedLenses: EnrichedLens[];
 }
 
-function GenreTable({ state, enrichedLenses }: GenreTableProps) {
+function GenreTable({ state, enrichedLenses }: Readonly<GenreTableProps>) {
   const { genre, sortBy, sortAsc, handleSort, isNightscape, isLandscape } =
     state;
   const columns = getColumnDefs(genre);

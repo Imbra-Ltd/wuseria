@@ -105,7 +105,9 @@ if (brand) {
   auditBrand(brand);
 } else {
   // All brands summary
-  const brands = [...new Set(lenses.map((l) => l.brand))].sort();
+  const brands = [...new Set(lenses.map((l) => l.brand))].sort((a, b) =>
+    a.localeCompare(b),
+  );
   console.log("GIVEN FIELDS COVERAGE BY BRAND\n");
   console.log("Brand                | Lenses | Given%  | Missing");
   console.log("---------------------|--------|---------|--------");

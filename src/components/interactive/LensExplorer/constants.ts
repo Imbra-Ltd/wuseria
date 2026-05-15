@@ -97,7 +97,7 @@ const FL_RANGES: Record<string, [number, number]> = {
 
 const OQ_RANGES: Record<string, [number, number]> = {
   "1.5+": [1.5, 2],
-  "1.0-1.4": [1.0, 1.4],
+  "1.0-1.4": [1, 1.4],
   "0.5-0.9": [0.5, 0.9],
   "0-0.4": [0, 0.4],
 };

@@ -63,7 +63,7 @@ function handheldExposure(
   if (genre === "portrait") {
     minShutter = 1 / (2 * crop * fl);
   } else if (genre === "macro") {
-    const mag = magnification ?? 1.0;
+    const mag = magnification ?? 1;
     minShutter = 1 / (fl * (1 + mag) * crop);
   } else if (genre === "sport" || genre === "wildlife") {
     minShutter = 1 / (4 * crop * fl);

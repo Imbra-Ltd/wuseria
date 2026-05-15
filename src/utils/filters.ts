@@ -15,7 +15,7 @@ function passesExactFilter(value: string, filter: string): boolean {
 
 function passesMaxFilter(value: number, filter: string): boolean {
   if (!filter) return true;
-  return value <= parseFloat(filter);
+  return value <= Number.parseFloat(filter);
 }
 
 function passesMinFilter(value: number | undefined, filter: string): boolean {

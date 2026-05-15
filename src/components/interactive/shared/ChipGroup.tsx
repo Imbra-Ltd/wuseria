@@ -12,7 +12,7 @@ function ChipGroup({
   options,
   onChange,
   styles,
-}: ChipGroupProps) {
+}: Readonly<ChipGroupProps>) {
   return (
     <div className={styles.chipGroup}>
       <span className={styles.chipLabel}>{label}</span>

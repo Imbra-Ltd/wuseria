@@ -23,7 +23,7 @@ function CameraResults({
   sortKey,
   sortDirection,
   toggleSort,
-}: CameraResultsProps) {
+}: Readonly<CameraResultsProps>) {
   return (
     <>
       <div className={styles.tableWrap}>

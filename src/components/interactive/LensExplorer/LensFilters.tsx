@@ -40,7 +40,7 @@ interface LensFiltersProps {
   toggleSort: (key: LensSortKey) => void;
 }
 
-function LensFilters(props: LensFiltersProps) {
+function LensFilters(props: Readonly<LensFiltersProps>) {
   const {
     search,
     setSearch,

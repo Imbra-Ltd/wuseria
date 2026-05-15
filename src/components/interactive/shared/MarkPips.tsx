@@ -11,7 +11,7 @@ function fieldValClass(value: number): string {
   return styles.fieldOver;
 }
 
-function FieldVal({ value }: { value: number | undefined }) {
+function FieldVal({ value }: Readonly<{ value: number | undefined }>) {
   if (value == null) return <span className={styles.markDash}>&ndash;</span>;
   return (
     <span className={`${fieldValClass(value)} ${styles.fieldMono}`}>
@@ -24,7 +24,7 @@ function FieldVal({ value }: { value: number | undefined }) {
 // MARK PIPS — visual dots for genre marks (0-5 scale)
 // =============================================================================
 
-function MarkPips({ mark }: { mark: number | null }) {
+function MarkPips({ mark }: Readonly<{ mark: number | null }>) {
   if (mark == null) return <span className={styles.markDash}>&ndash;</span>;
   const full = Math.floor(mark);
   const half = mark % 1 >= 0.5;
@@ -56,7 +56,7 @@ function MarkPips({ mark }: { mark: number | null }) {
 // PICK STAR — editorial pick indicator
 // =============================================================================
 
-function PickStar({ isPick }: { isPick: boolean }) {
+function PickStar({ isPick }: Readonly<{ isPick: boolean }>) {
   if (!isPick) return null;
   return (
     <span className={styles.topStar} aria-label="Editor pick">

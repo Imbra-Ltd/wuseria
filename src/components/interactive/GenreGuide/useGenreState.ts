@@ -22,7 +22,7 @@ function useGenreState(defaultGenre: Genre) {
   const [nd, setNd] = useState<number[]>([]);
   const [cropFactor, setCropFactor] = useState(X_CROP_FACTOR);
   const [selectedFl, setSelectedFl] = useState(defaults.fl);
-  const [magnification, setMagnification] = useState(1.0);
+  const [magnification, setMagnification] = useState(1);
   const [sortBy, setSortBy] = useState<SortKey>("mark");
   const [sortAsc, setSortAsc] = useState(false);
   const [brandFilter, setBrandFilter] = useState("");
@@ -61,7 +61,7 @@ function useGenreState(defaultGenre: Genre) {
     setIso(d.iso);
     setSelectedFl(d.fl);
     setNd([]);
-    setMagnification(1.0);
+    setMagnification(1);
     setSortBy("mark");
     setSortAsc(false);
     setBrandFilter("");

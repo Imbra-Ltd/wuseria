@@ -60,7 +60,7 @@ if (mode === "print") {
     // Look for the model string and then find the right place to insert
     const modelEscaped = model.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const modelRegex = new RegExp(`model: "${modelEscaped}",`);
-    const match = content.match(modelRegex);
+    const match = modelRegex.exec(content);
     if (!match || match.index == null) {
       console.error("Could not find model: " + model);
       continue;
@@ -78,7 +78,7 @@ if (mode === "print") {
     if (lensBlock.includes("genreMarks:")) {
       // Replace existing genreMarks
       const oldMarksRegex = /genreMarks: \{[^}]+\},/;
-      const oldMatch = lensBlock.match(oldMarksRegex);
+      const oldMatch = oldMarksRegex.exec(lensBlock);
       if (oldMatch && oldMatch.index != null) {
         const absPos = afterModel + oldMatch.index;
         content =
@@ -103,7 +103,7 @@ if (mode === "print") {
         // Find the indentation
         const lineStart = content.lastIndexOf("\n", insertPos) + 1;
         const indent =
-          content.slice(lineStart, insertPos).match(/^\s*/)?.[0] || "    ";
+          /^\s*/.exec(content.slice(lineStart, insertPos))?.[0] || "    ";
         content =
           content.slice(0, insertPos) +
           marksStr +

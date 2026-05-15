@@ -15,7 +15,10 @@ interface GenreFilterPanelProps {
   enrichedLenses: EnrichedLens[];
 }
 
-function GenreFilterPanel({ state, enrichedLenses }: GenreFilterPanelProps) {
+function GenreFilterPanel({
+  state,
+  enrichedLenses,
+}: Readonly<GenreFilterPanelProps>) {
   const {
     isNightscape,
     isLandscape,
@@ -57,7 +60,7 @@ function GenreFilterPanel({ state, enrichedLenses }: GenreFilterPanelProps) {
   } = state;
 
   const brandOptions = [...new Set(enrichedLenses.map((el) => el.lens.brand))]
-    .sort()
+    .sort((a, b) => a.localeCompare(b))
     .map((b) => ({ label: b, value: b }));
 
   return (

@@ -53,7 +53,7 @@ function passesRangeFilter(value: number, filter: string): boolean {
 
 function getCompatibleWith(acc: Accessory): string[] {
   if ("compatibleWith" in acc && Array.isArray(acc.compatibleWith)) {
-    return acc.compatibleWith as string[];
+    return acc.compatibleWith;
   }
   return [];
 }
@@ -90,7 +90,9 @@ const FILTER_KEYS = [
   "price",
 ] as const;
 
-function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
+function AccessoriesExplorer({
+  accessories,
+}: Readonly<AccessoriesExplorerProps>) {
   const {
     values: f,
     set,
@@ -99,7 +101,9 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
   } = useUrlFilters(FILTER_KEYS);
 
   const categories = useMemo(() => {
-    const cats = [...new Set(accessories.map((a) => a.category))].sort();
+    const cats = [...new Set(accessories.map((a) => a.category))].sort((a, b) =>
+      a.localeCompare(b),
+    );
     return cats;
   }, [accessories]);
 
@@ -292,7 +296,7 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
                         {"compatibleWith" in acc &&
                           Array.isArray(acc.compatibleWith) && (
                             <div className={styles.compatBadges}>
-                              {(acc.compatibleWith as string[]).map((c) => (
+                              {acc.compatibleWith.map((c) => (
                                 <span key={c} className={styles.compatBadge}>
                                   {c}
                                 </span>
@@ -341,7 +345,7 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
                   {"compatibleWith" in acc &&
                     Array.isArray(acc.compatibleWith) && (
                       <div className={styles.compatBadges}>
-                        {(acc.compatibleWith as string[]).map((c) => (
+                        {acc.compatibleWith.map((c) => (
                           <span key={c} className={styles.compatBadge}>
                             {c}
                           </span>

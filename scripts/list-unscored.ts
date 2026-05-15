@@ -19,7 +19,9 @@ for (const l of unscored) {
   byBrand[b].push(String(a.model));
 }
 
-for (const [brand, models] of Object.entries(byBrand).sort()) {
+for (const [brand, models] of Object.entries(byBrand).sort((a, b) =>
+  a[0].localeCompare(b[0]),
+)) {
   console.log(brand + " (" + models.length + "):");
   models.forEach((m) => console.log("  " + m));
 }
