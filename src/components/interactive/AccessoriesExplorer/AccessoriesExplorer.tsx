@@ -53,7 +53,7 @@ function passesRangeFilter(value: number, filter: string): boolean {
 
 function getCompatibleWith(acc: Accessory): string[] {
   if ("compatibleWith" in acc && Array.isArray(acc.compatibleWith)) {
-    return acc.compatibleWith as string[];
+    return acc.compatibleWith;
   }
   return [];
 }
