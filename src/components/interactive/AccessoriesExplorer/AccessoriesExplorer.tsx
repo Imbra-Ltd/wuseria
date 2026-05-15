@@ -90,7 +90,9 @@ const FILTER_KEYS = [
   "price",
 ] as const;
 
-function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
+function AccessoriesExplorer({
+  accessories,
+}: Readonly<AccessoriesExplorerProps>) {
   const {
     values: f,
     set,
@@ -294,7 +296,7 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
                         {"compatibleWith" in acc &&
                           Array.isArray(acc.compatibleWith) && (
                             <div className={styles.compatBadges}>
-                              {(acc.compatibleWith as string[]).map((c) => (
+                              {acc.compatibleWith.map((c) => (
                                 <span key={c} className={styles.compatBadge}>
                                   {c}
                                 </span>
@@ -343,7 +345,7 @@ function AccessoriesExplorer({ accessories }: AccessoriesExplorerProps) {
                   {"compatibleWith" in acc &&
                     Array.isArray(acc.compatibleWith) && (
                       <div className={styles.compatBadges}>
-                        {(acc.compatibleWith as string[]).map((c) => (
+                        {acc.compatibleWith.map((c) => (
                           <span key={c} className={styles.compatBadge}>
                             {c}
                           </span>

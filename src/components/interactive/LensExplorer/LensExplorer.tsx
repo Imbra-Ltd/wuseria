@@ -87,7 +87,7 @@ const FILTER_KEYS = [
   "price",
 ] as const;
 
-function LensExplorer({ lenses }: LensExplorerProps) {
+function LensExplorer({ lenses }: Readonly<LensExplorerProps>) {
   const {
     values: f,
     set,

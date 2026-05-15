@@ -15,7 +15,10 @@ interface GenreFilterPanelProps {
   enrichedLenses: EnrichedLens[];
 }
 
-function GenreFilterPanel({ state, enrichedLenses }: GenreFilterPanelProps) {
+function GenreFilterPanel({
+  state,
+  enrichedLenses,
+}: Readonly<GenreFilterPanelProps>) {
   const {
     isNightscape,
     isLandscape,

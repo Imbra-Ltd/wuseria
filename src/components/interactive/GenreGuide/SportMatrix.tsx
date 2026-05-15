@@ -21,7 +21,7 @@ function SportMatrix({
   ev,
   selectedFl,
   genre,
-}: SportMatrixProps) {
+}: Readonly<SportMatrixProps>) {
   const isGfx = cropFactor === GFX_CROP_FACTOR;
   const MATRIX_FL_COLS = isGfx ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
   const fallback = isGfx ? MATRIX_FL_COLS_GFX[63] : MATRIX_FL_COLS_X[135];

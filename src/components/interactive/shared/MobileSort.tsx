@@ -17,7 +17,7 @@ function MobileSort<K extends string>({
   sortDirection,
   toggleSort,
   styles,
-}: MobileSortProps<K>) {
+}: Readonly<MobileSortProps<K>>) {
   return (
     <div className={styles.mobileSort}>
       <label className={styles.mobileSortLabel} htmlFor="mobile-sort">

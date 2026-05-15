@@ -5,6 +5,7 @@ import {
   genreFormulas,
   computeAllGenreMarks,
 } from "../utils/scoring";
+import type { Genre } from "../types/genre";
 
 // =============================================================================
 // UNIQUENESS
@@ -150,7 +151,7 @@ describe("genreMarks", () => {
       for (const [genre, mark] of Object.entries(computed)) {
         expect(
           l.genreMarks![genre as keyof typeof l.genreMarks],
-          `${id}: ${genre} stored=${l.genreMarks![genre as keyof typeof l.genreMarks]} computed=${mark}`,
+          `${id}: ${genre} stored=${l.genreMarks![genre as Genre]} computed=${mark}`,
         ).toBe(mark);
       }
 

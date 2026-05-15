@@ -151,7 +151,7 @@ function useEnrichedLenses(
         const macroMag = genre === "macro" ? magnification : undefined;
         const idealIso = isNightscape
           ? astroExposure(
-              { ...l, focalLengthMin: effectiveFl } as GenreLens,
+              { ...l, focalLengthMin: effectiveFl },
               ev,
               iso,
               cropFactor,

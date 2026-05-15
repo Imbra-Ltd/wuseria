@@ -9,8 +9,12 @@ import unicorn from "eslint-plugin-unicorn";
 export default [
   { ignores: ["dist", ".astro"] },
   js.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.recommendedTypeChecked,
   sonarjs.configs.recommended,
+  {
+    files: ["**/*.{js,mjs}"],
+    ...tseslint.configs.disableTypeChecked,
+  },
   {
     files: ["**/*.{ts,tsx}"],
     plugins: {
@@ -20,6 +24,10 @@ export default [
     },
     languageOptions: {
       globals: globals.browser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     rules: {
       ...reactHooks.configs.recommended.rules,

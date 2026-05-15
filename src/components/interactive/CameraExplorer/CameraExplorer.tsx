@@ -51,7 +51,7 @@ const FILTER_KEYS = [
   "price",
 ] as const;
 
-function CameraExplorer({ cameras }: CameraExplorerProps) {
+function CameraExplorer({ cameras }: Readonly<CameraExplorerProps>) {
   const {
     values: f,
     set,

@@ -137,35 +137,27 @@ for (const lens of lenses) {
     config.primary.includes("_apertureScore") ||
     config.secondary.includes("_apertureScore")
   ) {
-    (l as unknown as Record<string, unknown>)._apertureScore = apertureScore(
-      l.maxAperture as number,
-    );
+    l._apertureScore = apertureScore(l.maxAperture as number);
   }
   if (
     config.primary.includes("_weightScore") ||
     config.secondary.includes("_weightScore")
   ) {
-    (l as unknown as Record<string, unknown>)._weightScore = weightScore(
-      l.weight as number,
-    );
+    l._weightScore = weightScore(l.weight as number);
   }
   if (
     config.primary.includes("_magnificationScore") ||
     config.secondary.includes("_magnificationScore")
   ) {
     const mag = l.maxMagnification as number | undefined;
-    if (mag != null)
-      (l as unknown as Record<string, unknown>)._magnificationScore =
-        magnificationScore(mag);
+    if (mag != null) l._magnificationScore = magnificationScore(mag);
   }
   if (
     config.primary.includes("_focusDistanceScore") ||
     config.secondary.includes("_focusDistanceScore")
   ) {
     const mfd = l.minFocusDistance as number | undefined;
-    if (mfd != null)
-      (l as unknown as Record<string, unknown>)._focusDistanceScore =
-        focusDistanceScore(mfd);
+    if (mfd != null) l._focusDistanceScore = focusDistanceScore(mfd);
   }
 
   // Check primaries
@@ -217,7 +209,7 @@ for (const lens of lenses) {
         .replace("flare", "flare")
         .replace("center", "c")
         .replace("corner", "cr");
-      return short + "=" + (l[f] ?? "-");
+      return short + "=" + String((l[f] as number | undefined) ?? "-");
     })
     .join(" ");
 

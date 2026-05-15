@@ -20,7 +20,7 @@ interface GenreRowCellsProps {
 function GenreRowCells({
   el,
   genre,
-}: GenreRowCellsProps): React.JSX.Element | null {
+}: Readonly<GenreRowCellsProps>): React.JSX.Element | null {
   switch (genre) {
     case "nightscape":
       return (

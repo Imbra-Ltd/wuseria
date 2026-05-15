@@ -5,7 +5,7 @@ interface GenreFooterProps {
   genre: Genre;
 }
 
-function GenreFooter({ genre }: GenreFooterProps): React.JSX.Element {
+function GenreFooter({ genre }: Readonly<GenreFooterProps>): React.JSX.Element {
   const text: Record<string, string> = {
     nightscape:
       " Primary: coma, astigmatism, aperture. Secondary: chromatic/spherical aberration, sharpness wide open, vignetting.",

@@ -14,7 +14,7 @@ function FilterSelect({
   onChange,
   allLabel = "Any",
   options,
-}: FilterSelectProps) {
+}: Readonly<FilterSelectProps>) {
   return (
     <div className={styles.controlGroup}>
       <span className={styles.controlLabel}>{label}</span>

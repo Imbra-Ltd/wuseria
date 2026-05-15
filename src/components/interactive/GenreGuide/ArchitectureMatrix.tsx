@@ -22,7 +22,7 @@ function ArchitectureMatrix({
   ev,
   nd,
   selectedFl,
-}: ArchitectureMatrixProps) {
+}: Readonly<ArchitectureMatrixProps>) {
   const isGfx = cropFactor === GFX_CROP_FACTOR;
   const MATRIX_FL_COLS = isGfx ? MATRIX_FL_COLS_GFX : MATRIX_FL_COLS_X;
   const fallback = isGfx ? MATRIX_FL_COLS_GFX[23] : MATRIX_FL_COLS_X[12];

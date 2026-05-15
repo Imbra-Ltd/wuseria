@@ -19,7 +19,7 @@ if (missingMag.length > 0) {
   console.log("=== Missing maxMagnification ===");
   for (const l of missingMag) {
     const a = l as unknown as Record<string, unknown>;
-    console.log("  " + a.brand + " " + a.model);
+    console.log("  " + String(a.brand) + " " + String(a.model));
   }
 }
 console.log("");
@@ -27,7 +27,7 @@ if (missingMfd.length > 0) {
   console.log("=== Missing minFocusDistance ===");
   for (const l of missingMfd) {
     const a = l as unknown as Record<string, unknown>;
-    console.log("  " + a.brand + " " + a.model);
+    console.log("  " + String(a.brand) + " " + String(a.model));
   }
 }
 
