@@ -225,6 +225,7 @@ npx tsx scripts/compute-marks.ts patch      # patch lenses.ts with marks
    - digitalkamera.de Datenblatt pages — good for dimensions, rarely has magnification
    - cameradecision.com via `fetch-page.py` (403s on direct fetch, Playwright bypasses)
    - Dustin Abbott / Phillip Reeve reviews — trust-3 field measurements
+   - Duclos Lenses (`ducloslenses.com`) — reliable spec tables for cinema lenses (length, weight, min focus)
 3. **LensTip page ID caveat:** URL names are ignored; only the numeric ID matters. Always verify `Manufacturer` and `Model` fields on the page — wrong IDs redirect silently to unrelated lenses.
 4. Add fields to `src/data/lenses.ts`, run `npm run validate`
 5. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
