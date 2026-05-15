@@ -520,7 +520,7 @@ const lensAccessories: LensAccessory[] = [
       "XF 70-300mm",
       "XF 150-600mm",
     ],
-    magnificationFactor: 2.0,
+    magnificationFactor: 2,
     isAfRetained: true,
     isWeatherSealed: true,
     price: 449,
