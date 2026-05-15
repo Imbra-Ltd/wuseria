@@ -58,7 +58,7 @@ if (mode === "print") {
 
     // Find the lens in the file by model
     // Look for the model string and then find the right place to insert
-    const modelEscaped = model.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const modelEscaped = model.replaceAll(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const modelRegex = new RegExp(`model: "${modelEscaped}",`);
     const match = modelRegex.exec(content);
     if (!match || match.index == null) {

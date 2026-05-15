@@ -38,7 +38,7 @@ const lenses = [
 
 describe("LensExplorer", () => {
   beforeEach(() => {
-    window.history.replaceState(null, "", window.location.pathname);
+    globalThis.history.replaceState(null, "", globalThis.location.pathname);
   });
 
   it("renders all lenses", () => {

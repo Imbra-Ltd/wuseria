@@ -5,8 +5,7 @@ import {
   ariaSortValue,
   sortIndicatorChar,
 } from "../shared/table";
-import type { ExplorerLens, LensSortKey } from "./constants";
-import { COLUMNS } from "./constants";
+import { type ExplorerLens, type LensSortKey, COLUMNS } from "./constants";
 import styles from "./LensExplorer.module.css";
 
 const ALIGN_CLASSES = makeAlignClasses(styles);
@@ -108,9 +107,9 @@ function LensResults({
                   <td
                     className={`${styles.cellRight} ${oqClass(lens.opticalQuality)}`}
                   >
-                    {lens.opticalQuality != null
-                      ? lens.opticalQuality.toFixed(1)
-                      : "\u2013"}
+                    {lens.opticalQuality == null
+                      ? "\u2013"
+                      : lens.opticalQuality.toFixed(1)}
                   </td>
                   <td className={styles.cellRight}>~${lens.price}</td>
                 </tr>

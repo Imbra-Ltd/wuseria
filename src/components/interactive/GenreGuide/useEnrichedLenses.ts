@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { GenreLens } from "./types";
+import type { GenreLens, EnrichedLens, SortKey } from "./types";
 import { GFX_CROP_FACTOR, RULE_OF_500_FACTOR } from "../../../data/genres";
 import {
   passesBooleanFilter,
@@ -9,9 +9,7 @@ import {
 } from "../../../utils/filters";
 import { getGenreMark, isEditorialPick } from "../../../utils/scoring";
 import { astroExposure, handheldExposure } from "./exposure";
-import type { EnrichedLens } from "./types";
 import type { GenreState } from "./useGenreState";
-import type { SortKey } from "./types";
 
 type LensGetter = (el: EnrichedLens) => number;
 

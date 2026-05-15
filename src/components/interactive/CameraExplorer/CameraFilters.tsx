@@ -1,8 +1,12 @@
 import { ChipGroup } from "../shared/ChipGroup";
 import { MobileSort } from "../shared/MobileSort";
 import { RESET_VALUE, resetValue } from "../shared/constants";
-import type { CameraSortKey } from "./constants";
-import { COLUMNS, YEAR_RANGES, VIDEO_OPTIONS } from "./constants";
+import {
+  type CameraSortKey,
+  COLUMNS,
+  YEAR_RANGES,
+  VIDEO_OPTIONS,
+} from "./constants";
 import styles from "./CameraExplorer.module.css";
 
 interface CameraFiltersProps {
