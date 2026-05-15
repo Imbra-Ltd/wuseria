@@ -21,8 +21,15 @@ const { lens } = Astro.props as Props;
 const slug = toSlug(`${lens.brand} ${lens.model}`);
 const canonicalUrl = new URL(`/lenses/${slug}/`, Astro.site);
 
+const DASH = "\u2014";
+
 function yesNo(val?: boolean): string {
+  if (val == null) return DASH;
   return val ? "Yes" : "No";
+}
+
+function num(val: number | undefined, suffix: string): string {
+  return val != null ? `${val}${suffix}` : DASH;
 }
 
 const opticalFields: [string, number | undefined][] = [
@@ -104,122 +111,86 @@ const jsonLd = {
               ></tr
             >
             <tr><td>Max aperture</td><td>f/{lens.maxAperture}</td></tr>
+            <tr>
+              <td>Sweet spot</td>
+              <td
+                >{
+                  lens.sweetSpotAperture ? `f/${lens.sweetSpotAperture}` : DASH
+                }</td
+              >
+            </tr>
+            <tr>
+              <td>Aperture blades</td>
+              <td>
+                {
+                  lens.apertureBlades != null
+                    ? `${lens.apertureBlades}${lens.hasCircularAperture ? " (circular)" : ""}`
+                    : DASH
+                }
+              </td>
+            </tr>
             {
-              lens.sweetSpotAperture && (
+              lens.apertureBlades != null && (
                 <tr>
-                  <>
-                    <td>Sweet spot</td>
-                    <td>f/{lens.sweetSpotAperture}</td>
-                  </>
+                  <td>Sunstar points</td>
+                  <td>
+                    {lens.apertureBlades % 2 === 0
+                      ? lens.apertureBlades
+                      : lens.apertureBlades * 2}
+                    {lens.hasCircularAperture
+                      ? " (soft — circular blades)"
+                      : " (sharp — straight blades)"}
+                  </td>
                 </tr>
               )
             }
-            {
-              lens.apertureBlades && (
-                <tr>
-                  <>
-                    <td>Aperture blades</td>
-                    <td>
-                      {lens.apertureBlades}
-                      {lens.hasCircularAperture ? " (circular)" : ""}
-                    </td>
-                  </>
-                </tr>
-              )
-            }
-            {
-              lens.apertureBlades && (
-                <tr>
-                  <>
-                    <td>Sunstar points</td>
-                    <td>
-                      {lens.apertureBlades % 2 === 0
-                        ? lens.apertureBlades
-                        : lens.apertureBlades * 2}
-                      {lens.hasCircularAperture
-                        ? " (soft — circular blades)"
-                        : " (sharp — straight blades)"}
-                    </td>
-                  </>
-                </tr>
-              )
-            }
-            {
-              lens.maxMagnification && (
-                <tr>
-                  <>
-                    <td>Max magnification</td>
-                    <td>{lens.maxMagnification}x</td>
-                  </>
-                </tr>
-              )
-            }
-            {
-              lens.minFocusDistance && (
-                <tr>
-                  <>
-                    <td>Min focus distance</td>
-                    <td>{lens.minFocusDistance}mm</td>
-                  </>
-                </tr>
-              )
-            }
+            <tr
+              ><td>Max magnification</td><td
+                >{
+                  lens.maxMagnification != null
+                    ? `${lens.maxMagnification}x`
+                    : DASH
+                }</td
+              ></tr
+            >
+            <tr
+              ><td>Min focus distance</td><td
+                >{num(lens.minFocusDistance, "mm")}</td
+              ></tr
+            >
             <tr><td>AF motor</td><td>{lens.afMotor ?? "Manual focus"}</td></tr>
             <tr><td>OIS</td><td>{yesNo(lens.hasOis)}</td></tr>
             <tr
               ><td>Weather sealed</td><td>{yesNo(lens.isWeatherSealed)}</td></tr
             >
+            <tr><td>Aperture ring</td><td>{yesNo(lens.hasApertureRing)}</td></tr
+            >
             {
-              lens.hasApertureRing != null && (
+              lens.hasApertureRing && (
                 <tr>
-                  <>
-                    <td>Aperture ring</td>
-                    <td>{yesNo(lens.hasApertureRing)}</td>
-                  </>
+                  <td>Clickless aperture</td>
+                  <td>{yesNo(lens.isApertureClickless)}</td>
                 </tr>
               )
             }
+            <tr><td>Focus ring</td><td>{yesNo(lens.hasFocusRing)}</td></tr>
+            <tr><td>Focus by wire</td><td>{yesNo(lens.isFocusByWire)}</td></tr>
+            <tr
+              ><td>Distance scale</td><td>{yesNo(lens.hasDistanceScale)}</td
+              ></tr
+            >
+            <tr
+              ><td>Rotating front</td><td>{yesNo(lens.hasRotatingFront)}</td
+              ></tr
+            >
+            <tr><td>Tripod mount</td><td>{yesNo(lens.hasTripodMount)}</td></tr>
             <tr><td>Weight</td><td>{lens.weight}g</td></tr>
-            {
-              lens.diameter && (
-                <tr>
-                  <>
-                    <td>Diameter</td>
-                    <td>{lens.diameter}mm</td>
-                  </>
-                </tr>
-              )
-            }
-            {
-              lens.length && (
-                <tr>
-                  <>
-                    <td>Length</td>
-                    <td>{lens.length}mm</td>
-                  </>
-                </tr>
-              )
-            }
-            {
-              lens.filterThread && (
-                <tr>
-                  <>
-                    <td>Filter thread</td>
-                    <td>{lens.filterThread}mm</td>
-                  </>
-                </tr>
-              )
-            }
-            {
-              lens.year && (
-                <tr>
-                  <>
-                    <td>Year</td>
-                    <td>{lens.year}</td>
-                  </>
-                </tr>
-              )
-            }
+            <tr><td>Diameter</td><td>{num(lens.diameter, "mm")}</td></tr>
+            <tr><td>Length</td><td>{num(lens.length, "mm")}</td></tr>
+            <tr
+              ><td>Filter thread</td><td>{num(lens.filterThread, "mm")}</td></tr
+            >
+            <tr><td>Year</td><td>{lens.year ?? DASH}</td></tr>
           </tbody>
         </table>
 
