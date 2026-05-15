@@ -50,7 +50,7 @@ gh issue list --label epic --state open
 Reference the issue in the PR body with `Closes #<number>`. GitHub closes it
 automatically on merge.
 
-## 2. Data operations
+## 2. Domain operations
 
 ### 2.1 Add a new lens
 
@@ -88,16 +88,22 @@ wrong data.
 ### 2.5 Trusted review sources
 
 See `src/data/reviews.ts` for the full directory with methodology
-(lab/field) and trust (1-3) ratings. Top sources:
+(lab/field) and trust (1-3) ratings. Trust-3 sources:
 
-| Trust 3       | Methodology                     |
-| ------------- | ------------------------------- |
-| LensRentals   | Lab — optical bench MTF         |
-| LensTip       | Lab — Imatest MTF charts        |
-| OpticalLimits | Lab — Imatest MTF               |
-| Dustin Abbott | Field — systematic + lab hybrid |
-| DPReview      | Field — comprehensive           |
-| Phillip Reeve | Field — manual focus specialist |
+| Trust 3             | Methodology                     |
+| ------------------- | ------------------------------- |
+| LensRentals         | Lab — optical bench MTF         |
+| LensTip             | Lab — Imatest MTF charts        |
+| OpticalLimits       | Lab — Imatest MTF               |
+| DxOMark             | Lab — perceptual megapixel      |
+| The Digital Picture | Lab — ISO 12233 chart           |
+| ePHOTOzine          | Lab — Imatest MTF               |
+| ColorFoto           | Lab — proprietary bench         |
+| Dustin Abbott       | Field — systematic + lab hybrid |
+| DPReview            | Field — comprehensive           |
+| Phillip Reeve       | Field — manual focus specialist |
+| Lloyd Chambers      | Field — systematic high-res     |
+| Lonely Speck        | Field — astrophotography        |
 
 **Do not use:** Ken Rockwell — not a trusted data source.
 
@@ -108,10 +114,10 @@ source. See ADR-014 for the full rubric and reference scorings.
 
 **Step 1 — Identify sources**
 
-Search ALL trust 3 sources for the lens before proceeding:
+Search ALL trust-3 sources for the lens before proceeding:
 
-- Lab (trust 3): LensRentals, LensTip, OpticalLimits
-- Field (trust 3): Dustin Abbott, DPReview, Phillip Reeve
+- Lab (trust 3): LensRentals, LensTip, OpticalLimits, DxOMark, The Digital Picture, ePHOTOzine, ColorFoto
+- Field (trust 3): Dustin Abbott, DPReview, Phillip Reeve, Lloyd Chambers, Lonely Speck
 
 Do not skip sources — missing one can leave scoreable fields empty
 (e.g. Dustin Abbott provided astigmatism + bokeh data for the
@@ -208,11 +214,24 @@ py scripts/fetch-samyang-mtf.py --dry-run   # list without downloading
 py scripts/fetch-samyang-mtf.py --temp      # download to temp/ (testing)
 ```
 
+**Fetch Sigma MTF charts:**
+
+```bash
+py scripts/fetch-sigma-mtf.py             # fetch all to docs/mtf-charts/
+py scripts/fetch-sigma-mtf.py --dry-run   # list without downloading
+```
+
+**List unscored lenses:**
+
+```bash
+npx tsx scripts/list-unscored.ts           # list all lenses without optical scores
+```
+
 **Compute genre marks:**
 
 ```bash
 npx tsx scripts/compute-marks.ts print      # print all computed marks
-npx tsx scripts/compute-marks.ts patch      # patch lenses.ts with marks
+npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
 ```
 
 ### 2.8 Backfill spec fields per brand
@@ -230,55 +249,69 @@ npx tsx scripts/compute-marks.ts patch      # patch lenses.ts with marks
 4. Add fields to `src/data/lenses.ts`, run `npm run validate`
 5. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
 
-### 2.9 Lighthouse CI
+## 3. Quality
 
-Lighthouse runs automatically on every PR against 4 key pages
-(`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
-`lighthouserc.json`.
+### 3.1 Validate pipeline
 
-| Category       | Threshold | Level |
-| -------------- | --------- | ----- |
-| Performance    | >= 80     | error |
-| Accessibility  | >= 90     | warn  |
-| SEO            | >= 90     | warn  |
-| Best Practices | >= 90     | warn  |
-
-**Run locally:**
+The full quality gate runs all checks in sequence. Run before every commit:
 
 ```bash
-npm run lighthouse
+npm run validate
 ```
 
-This builds the site and runs Lighthouse against all 4 pages (3 runs each).
-HTML reports are written to `reports/lighthouse/` — open any `.report.html`
-in a browser for full scores, diagnostics, and opportunities.
+Pipeline steps (exits on first failure):
 
-### 2.10 Link checker (lychee)
+| Step       | Command               | What it checks                                    |
+| ---------- | --------------------- | ------------------------------------------------- |
+| Lint       | `npm run lint`        | ESLint + sonarjs — code smells, unused vars       |
+| Format     | `npm run format`      | Prettier — consistent style                       |
+| Type check | `npm run check`       | astro check — `.astro` files and TypeScript types |
+| Test       | `npm test`            | Vitest — unit + component tests with coverage     |
+| Build      | `npm run build`       | Astro build — full static site generation         |
+| Link check | `npm run check:links` | Trailing slash validation on internal links       |
 
-Lychee checks for broken internal links in the built site. Runs in CI on
-every PR. Requires [lychee](https://github.com/lycheeverse/lychee) installed
-locally (see ONBOARDING prerequisites).
+### 3.2 Pre-commit hooks (husky + lint-staged)
+
+Every commit is gated by `.husky/pre-commit`. Runs automatically — no manual
+step needed.
+
+**What runs:**
+
+1. `gitleaks protect --staged` — blocks commits containing secrets (skipped if
+   gitleaks is not installed locally)
+2. `lint-staged` — runs per file type on staged files only:
+   - `*.{ts,tsx}` — `eslint --fix` + `prettier --write`
+   - `*.astro` — `prettier --write`
+   - `*.{json,md,css}` — `prettier --write`
+
+Configuration: `lint-staged` key in `package.json`, hook in `.husky/pre-commit`.
+
+### 3.3 Formatting (Prettier)
+
+Prettier owns all formatting — no style debates in code review. Runs at all
+three quality gate layers (editor on save, pre-commit via lint-staged, CI via
+`npm run format`).
 
 ```bash
-npm run build
-lychee --offline --no-progress --root-dir dist dist/
+npm run format              # check (CI mode, exits non-zero on diff)
+npx prettier --write <file> # fix a single file
 ```
 
-Checks all internal links in the static output. Exits non-zero on broken links.
+Configuration: `.prettierrc` + `prettier-plugin-astro` for `.astro` files.
 
-### 2.11 Secret scanning (gitleaks)
+### 3.4 Type checking (astro check)
 
-Gitleaks scans for accidentally committed secrets. Runs in CI on every PR.
-Requires [gitleaks](https://github.com/gitleaks/gitleaks) installed locally
-(see ONBOARDING prerequisites).
+Validates `.astro` files, TypeScript types, and content schemas. Part of the
+validate pipeline.
 
 ```bash
-gitleaks detect --source . --config .gitleaks.toml
+npm run check
 ```
 
-Scans the full repo history. Exits non-zero if secrets are found.
+Catches type errors that ESLint and the TypeScript compiler miss in `.astro`
+files — Astro's template syntax requires its own checker.
 
-### 2.12 Testing
+### 3.5 Testing (Vitest)
 
 **Run tests (single run with coverage):**
 
@@ -334,7 +367,93 @@ Open either in a browser. The `reports/` directory is gitignored.
 | `src/components/interactive/GenreGuide/GenreGuide.test.tsx`         | Genre tabs, filters, matrices                  |
 | `src/components/interactive/GenreGuide/exposure.test.ts`            | Exposure calculations                          |
 
-### 2.13 Analytics verification (Umami)
+### 3.6 Code quality (eslint-plugin-sonarjs)
+
+SonarQube-equivalent code smell detection runs via ESLint at all three quality
+gate layers (editor, pre-commit, CI). Configuration is in `eslint.config.js`.
+
+Enforced rules:
+
+| Rule                          | What it catches                            |
+| ----------------------------- | ------------------------------------------ |
+| `cognitive-complexity`        | Functions exceeding complexity threshold   |
+| `no-nested-conditional`       | Deeply nested if/switch statements         |
+| `no-nested-template-literals` | Template literals inside template literals |
+| `redundant-type-aliases`      | Type aliases that add no information       |
+
+Also enforced via ESLint core: `max-depth: 3`, `no-console`.
+
+```bash
+npm run lint
+```
+
+### 3.7 Site quality (Lighthouse)
+
+Lighthouse runs automatically on every PR against 4 key pages
+(`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
+`lighthouserc.json`.
+
+| Category       | Threshold | Level |
+| -------------- | --------- | ----- |
+| Performance    | >= 80     | error |
+| Accessibility  | >= 90     | warn  |
+| SEO            | >= 90     | warn  |
+| Best Practices | >= 90     | warn  |
+
+**Run locally:**
+
+```bash
+npm run lighthouse
+```
+
+This builds the site and runs Lighthouse against all 4 pages (3 runs each).
+HTML reports are written to `reports/lighthouse/` — open any `.report.html`
+in a browser for full scores, diagnostics, and opportunities.
+
+### 3.8 Link checking (lychee)
+
+Lychee checks for broken internal links in the built site. Runs in CI on
+every PR. Requires [lychee](https://github.com/lycheeverse/lychee) installed
+locally (see ONBOARDING prerequisites).
+
+```bash
+npm run build
+lychee --offline --no-progress --root-dir dist dist/
+```
+
+Checks all internal links in the static output. Exits non-zero on broken links.
+
+### 3.9 Secret scanning (gitleaks)
+
+Gitleaks scans for accidentally committed secrets. Runs in CI on every PR.
+Requires [gitleaks](https://github.com/gitleaks/gitleaks) installed locally
+(see ONBOARDING prerequisites).
+
+```bash
+gitleaks detect --source . --config .gitleaks.toml
+```
+
+Scans the full repo history. Exits non-zero if secrets are found.
+
+### 3.10 Static analysis (CodeQL)
+
+CodeQL runs automatically on every PR via `.github/workflows/codeql.yml`.
+Scans JavaScript and TypeScript for security vulnerabilities and code quality
+issues. No local setup needed — GitHub-native, results appear in the Security
+tab.
+
+### 3.11 Dependency updates (Dependabot)
+
+Dependabot opens weekly PRs for outdated npm packages and GitHub Actions.
+Configuration is in `.github/dependabot.yml`. PRs are labeled `chore` + `P3`.
+
+Review Dependabot PRs:
+
+```bash
+gh pr list --author app/dependabot
+```
+
+### 3.12 Analytics verification (Umami)
 
 Umami Cloud tracks page views with zero cookies and no consent banner.
 The script loads from `cloud.umami.is` via the base layout. Run this
@@ -384,9 +503,150 @@ Expected: `script.js` + exactly **1 `send`** request.
 
 **Last verified:** 2026-05-03 — all checks pass.
 
-## 3. Maintenance
+### 3.13 Search indexing (Google Search Console)
 
-### 3.1 Update quality conventions
+GSC surfaces indexing issues that require code fixes (e.g. trailing slash
+inconsistencies, excluded pages, crawl errors). Run this check after routing
+changes, new page types, or sitemap updates — and periodically (~monthly).
+
+**Prerequisites:**
+
+- Access to [Google Search Console](https://search.google.com/search-console)
+  for wuseria.com
+
+**Step 1 — Coverage check:**
+
+1. Open GSC → Pages
+2. Check "Not indexed" count and reasons
+
+Red flags: "Page with redirect", "Duplicate without user-selected canonical",
+"Excluded by noindex tag", "Crawled — currently not indexed" on pages that
+should be indexed.
+
+**Step 2 — Sitemap validation:**
+
+1. Open GSC → Sitemaps
+2. Verify `sitemap-index.xml` status is "Success"
+3. Compare submitted page count with expected (currently 461 pages)
+
+If count is off, check that `@astrojs/sitemap` is generating correctly and
+no pages are accidentally excluded.
+
+**Step 3 — URL inspection:**
+
+For new page types or routing changes, inspect a sample URL:
+
+1. GSC → URL Inspection → paste the URL
+2. Verify: "URL is on Google" or "URL can be indexed"
+3. Check canonical URL matches the page URL
+
+**Step 4 — Core Web Vitals:**
+
+1. GSC → Core Web Vitals
+2. Check for "Poor" or "Needs improvement" URLs
+
+Any regression is a bug — cross-reference with Lighthouse (3.7) to identify
+the cause.
+
+**Last verified:** 2026-05-14 — 106/461 pages indexed (23%), no critical
+coverage issues.
+
+### 3.14 Page performance (PageSpeed Insights)
+
+[PageSpeed Insights](https://pagespeed.web.dev/) complements Lighthouse CI
+(3.7) with real-user field data from the Chrome User Experience Report (CrUX).
+Local Lighthouse runs produce lab data only — PSI adds how actual visitors
+experience the site. Run after layout changes, new page types, or when GSC
+(3.13) flags Core Web Vitals regressions.
+
+**Step 1 — Test key pages:**
+
+Run these URLs through https://pagespeed.web.dev/:
+
+1. `https://wuseria.com/`
+2. `https://wuseria.com/lenses/`
+3. `https://wuseria.com/genre/`
+4. A sample lens detail page (e.g. `https://wuseria.com/lenses/xf-23mm-f1-4-r/`)
+
+**Step 2 — Check field data (CrUX):**
+
+If field data is available, verify Core Web Vitals pass:
+
+| Metric | Good threshold |
+| ------ | -------------- |
+| LCP    | < 2.5s         |
+| INP    | < 200ms        |
+| CLS    | < 0.1          |
+
+If field data shows "Not enough data", rely on lab data only.
+
+**Step 3 — Review lab diagnostics:**
+
+Check the Opportunities and Diagnostics sections for:
+
+- Render-blocking resources
+- Unused JavaScript/CSS
+- Image optimization opportunities
+- Layout shift sources
+
+Any performance score below 80 is a bug — cross-reference with Lighthouse CI
+(3.7) to confirm it reproduces locally before fixing.
+
+**Last verified:** not yet baselined.
+
+### 3.15 Technical SEO crawl (Screaming Frog)
+
+[Screaming Frog SEO Spider](https://www.screamingfrog.co.uk/seo-spider/) is a
+desktop crawler that audits the site like a search engine. Catches redirect
+chains, orphan pages, canonical mismatches, and
+structured data errors. Free for up to 500 URLs (site currently has 461 pages).
+
+**Prerequisites:**
+
+- [Screaming Frog SEO Spider](https://www.screamingfrog.co.uk/seo-spider/)
+  installed locally
+- Free tier limit: 500 URLs (site currently has 461 pages). When the site
+  exceeds 500, either buy a license or crawl selectively by filtering to
+  specific directories (e.g. `/lenses/`, `/wiki/`)
+
+**Step 1 — Crawl the site:**
+
+1. Open Screaming Frog
+2. Enter `https://wuseria.com/`
+3. Start crawl — wait for completion
+
+**Step 2 — Check key reports:**
+
+| Tab              | What to check                                       |
+| ---------------- | --------------------------------------------------- |
+| Internal         | Response codes — no 3xx chains, no 4xx/5xx          |
+| Page Titles      | No missing, duplicate, or truncated titles          |
+| Meta Description | No missing or duplicate descriptions                |
+| H1               | Exactly one H1 per page, no duplicates across pages |
+| H2               | No skipped heading levels (H1 → H3)                 |
+| Canonicals       | Every page has a self-referencing canonical         |
+| Structured Data  | JSON-LD validates, no errors                        |
+| Images           | No missing alt text on content images               |
+
+**Step 3 — Check for orphan pages:**
+
+1. Crawl Analysis → Orphan Pages
+2. Cross-reference with sitemap (Configuration → Spider → Crawl → check
+   "Crawl linked XML Sitemaps")
+
+Any page in the sitemap but not linked internally is an orphan — fix the
+internal linking or remove from sitemap.
+
+**Step 4 — Export issues:**
+
+Export findings as CSV for tracking. Issues with direct code fixes (missing
+meta, broken canonicals, redirect chains) are bugs.
+
+**Last verified:** not yet baselined.
+
+## 4. Maintenance
+
+### 4.1 Update quality conventions
 
 ```bash
 git submodule update --remote docs/solid-ai-templates
@@ -394,12 +654,12 @@ git add docs/solid-ai-templates
 git commit -m "chore: bump solid-ai-templates submodule"
 ```
 
-### 3.2 Update architecture decisions
+### 4.2 Update architecture decisions
 
 1. Create an ADR in `docs/decisions/` using the format: context, decision, alternatives, consequences
 2. ADRs are immutable once merged — create a new ADR to supersede an old one
 
-### 3.3 Run the prototype
+### 4.3 Run the prototype
 
 All prototype resources live in `docs/prototype/`. To run:
 
@@ -419,9 +679,9 @@ rm index.html src/main.jsx src/App.jsx
 The prototype uses old field names (pre-migration) and is kept for reference
 only. Do not commit the copied files.
 
-## 4. Release and deploy
+## 5. Release and deploy
 
-### 4.1 Release
+### 5.1 Release
 
 ```bash
 # From main, with clean working directory:
@@ -439,7 +699,7 @@ git branch -d chore/release-vA.B.C
 git push origin --delete chore/release-vA.B.C
 ```
 
-### 4.2 Deploy
+### 5.2 Deploy
 
 Deployment is automated via GitHub Actions on push to `main`. No manual steps
 required.

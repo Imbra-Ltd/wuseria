@@ -1746,3 +1746,24 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
   - NiSi Athena maxMagnification left unfilled — cinema manufacturers don't publish it; can't estimate per ADR-014 rules
   - Sigma aperture ring appeared on mirrorless lenses starting late 2024 (12mm, 15mm DC DN C) and 2025 (17-40mm Art)
 - Sources used: sigma-global.com, viltrox.com (Playwright), LensTip build quality pages, OpticalLimits, Dustin Abbott, Phillip Reeve, NiSi official brochure (PDF), nisi-lens.com, NiSi Optics USA, CineD, Duclos Lenses, B&H Photo
+
+---
+
+### Session 54 — PLAYBOOK Restructure and Quality Pipeline
+
+- Tool: Claude Code (Opus 4.6)
+- PRs: #673 (wuseria, auto-merge pending), solid-ai-templates #315 (merged)
+- Issues: #672 (will auto-close on #673 merge), solid-ai-templates #316, #317 (created)
+- Key changes:
+  - Restructured PLAYBOOK from 4 sections to 5 — added dedicated Quality section (section 3)
+  - Quality section has 15 subsections covering full pipeline: validate overview, pre-commit hooks, Prettier, astro check, Vitest, eslint-plugin-sonarjs, Lighthouse, lychee, gitleaks, CodeQL, Dependabot, Umami, GSC, PageSpeed Insights, Screaming Frog
+  - Updated trust-3 source table from 6 to 12 sources
+  - Added missing utility scripts (fetch-sigma-mtf.py, list-unscored.ts)
+  - Applied consistent "what (tool)" naming convention to all subsections
+  - Removed Seobility (redundant with Screaming Frog)
+  - Updated solid-ai-templates docs.md: 5-section PLAYBOOK structure with extensibility clause
+- Key decisions:
+  - Quality is a distinct PLAYBOOK chapter, not a subsection of Domain operations or Maintenance
+  - Manual verification tools (Umami, GSC, PSI, Screaming Frog) belong in Quality alongside automated checks — they drive code changes
+  - Screaming Frog replaces Seobility — full-site crawl supersedes per-page browser check
+  - Projects MAY extend beyond the 5 base sections; Release and deploy MUST remain last
