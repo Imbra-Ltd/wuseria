@@ -251,7 +251,67 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
 
 ## 3. Quality
 
-### 3.1 Testing
+### 3.1 Validate pipeline
+
+The full quality gate runs all checks in sequence. Run before every commit:
+
+```bash
+npm run validate
+```
+
+Pipeline steps (exits on first failure):
+
+| Step       | Command               | What it checks                                    |
+| ---------- | --------------------- | ------------------------------------------------- |
+| Lint       | `npm run lint`        | ESLint + sonarjs — code smells, unused vars       |
+| Format     | `npm run format`      | Prettier — consistent style                       |
+| Type check | `npm run check`       | astro check — `.astro` files and TypeScript types |
+| Test       | `npm test`            | Vitest — unit + component tests with coverage     |
+| Build      | `npm run build`       | Astro build — full static site generation         |
+| Link check | `npm run check:links` | Trailing slash validation on internal links       |
+
+### 3.2 Pre-commit hooks (husky + lint-staged)
+
+Every commit is gated by `.husky/pre-commit`. Runs automatically — no manual
+step needed.
+
+**What runs:**
+
+1. `gitleaks protect --staged` — blocks commits containing secrets (skipped if
+   gitleaks is not installed locally)
+2. `lint-staged` — runs per file type on staged files only:
+   - `*.{ts,tsx}` — `eslint --fix` + `prettier --write`
+   - `*.astro` — `prettier --write`
+   - `*.{json,md,css}` — `prettier --write`
+
+Configuration: `lint-staged` key in `package.json`, hook in `.husky/pre-commit`.
+
+### 3.3 Formatting (Prettier)
+
+Prettier owns all formatting — no style debates in code review. Runs at all
+three quality gate layers (editor on save, pre-commit via lint-staged, CI via
+`npm run format`).
+
+```bash
+npm run format              # check (CI mode, exits non-zero on diff)
+npx prettier --write <file> # fix a single file
+```
+
+Configuration: `.prettierrc` + `prettier-plugin-astro` for `.astro` files.
+
+### 3.4 Type checking (astro check)
+
+Validates `.astro` files, TypeScript types, and content schemas. Part of the
+validate pipeline.
+
+```bash
+npm run check
+```
+
+Catches type errors that ESLint and the TypeScript compiler miss in `.astro`
+files — Astro's template syntax requires its own checker.
+
+### 3.5 Testing
 
 **Run tests (single run with coverage):**
 
@@ -307,7 +367,7 @@ Open either in a browser. The `reports/` directory is gitignored.
 | `src/components/interactive/GenreGuide/GenreGuide.test.tsx`         | Genre tabs, filters, matrices                  |
 | `src/components/interactive/GenreGuide/exposure.test.ts`            | Exposure calculations                          |
 
-### 3.2 Code quality (eslint-plugin-sonarjs)
+### 3.6 Code quality (eslint-plugin-sonarjs)
 
 SonarQube-equivalent code smell detection runs via ESLint at all three quality
 gate layers (editor, pre-commit, CI). Configuration is in `eslint.config.js`.
@@ -327,7 +387,7 @@ Also enforced via ESLint core: `max-depth: 3`, `no-console`.
 npm run lint
 ```
 
-### 3.3 Lighthouse CI
+### 3.7 Lighthouse CI
 
 Lighthouse runs automatically on every PR against 4 key pages
 (`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
@@ -350,7 +410,7 @@ This builds the site and runs Lighthouse against all 4 pages (3 runs each).
 HTML reports are written to `reports/lighthouse/` — open any `.report.html`
 in a browser for full scores, diagnostics, and opportunities.
 
-### 3.4 Link checker (lychee)
+### 3.8 Link checker (lychee)
 
 Lychee checks for broken internal links in the built site. Runs in CI on
 every PR. Requires [lychee](https://github.com/lycheeverse/lychee) installed
@@ -363,7 +423,7 @@ lychee --offline --no-progress --root-dir dist dist/
 
 Checks all internal links in the static output. Exits non-zero on broken links.
 
-### 3.5 Secret scanning (gitleaks)
+### 3.9 Secret scanning (gitleaks)
 
 Gitleaks scans for accidentally committed secrets. Runs in CI on every PR.
 Requires [gitleaks](https://github.com/gitleaks/gitleaks) installed locally
@@ -375,14 +435,14 @@ gitleaks detect --source . --config .gitleaks.toml
 
 Scans the full repo history. Exits non-zero if secrets are found.
 
-### 3.6 Static analysis (CodeQL)
+### 3.10 Static analysis (CodeQL)
 
 CodeQL runs automatically on every PR via `.github/workflows/codeql.yml`.
 Scans JavaScript and TypeScript for security vulnerabilities and code quality
 issues. No local setup needed — GitHub-native, results appear in the Security
 tab.
 
-### 3.7 Dependency updates (Dependabot)
+### 3.11 Dependency updates (Dependabot)
 
 Dependabot opens weekly PRs for outdated npm packages and GitHub Actions.
 Configuration is in `.github/dependabot.yml`. PRs are labeled `chore` + `P3`.
@@ -393,7 +453,7 @@ Review Dependabot PRs:
 gh pr list --author app/dependabot
 ```
 
-### 3.8 Analytics verification (Umami)
+### 3.12 Analytics verification (Umami)
 
 Umami Cloud tracks page views with zero cookies and no consent banner.
 The script loads from `cloud.umami.is` via the base layout. Run this
