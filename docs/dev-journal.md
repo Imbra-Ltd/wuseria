@@ -1793,3 +1793,23 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
   - Merged duplicate import/import-type statements across 9 files (S3863)
   - Lens detail pages now show all build fields with em-dash for missing values — 6 new fields added (clickless aperture, focus ring, focus by wire, distance scale, rotating front, tripod mount)
   - Expedite milestone fully cleared
+
+---
+
+### Session 56 — Spec Backfill for 13 Remaining Brands
+
+- Tool: Claude Code (Opus 4.6)
+- PRs: #683
+- Issues closed: #630, #631, #632, #633, #634, #635, #636, #637, #638, #639, #640, #641, #642
+- Epic #611: 24/25 tasks done (only #609 isInternalFocusing remains)
+- Key changes:
+  - Backfilled all given spec fields for 53 lenses across 13 brands: Voigtlander (7), AstrHori (7), Mitakon (6), Handevision (5), Meyer Optik (4), Tamron (4), Tokina (4), Lensbaby (4), Carl Zeiss (3), Kamlan (3), Sirui (3), Pergear (3), single-lens brands (4)
+  - New fields per lens: hasCircularAperture, maxMagnification, hasFocusRing, isApertureClickless, hasDistanceScale, hasRotatingFront, hasTripodMount, diameter, length
+  - 40+ data corrections found during research (apertureBlades, filterThread, weight, minFocusDistance)
+  - Added macro genre marks to 4 scored lenses (Voigtlander Nokton 35mm f/1.2, Ultron 27mm, Nokton 35mm f/0.9, Carl Zeiss Touit 12mm, Touit 32mm)
+  - 8 maxMagnification values sourced from LensTip, Phillip Reeve, and Google AI Search
+  - Used 7 parallel research agents for initial data gathering
+- Key decisions:
+  - Subagents don't read CLAUDE.md or PLAYBOOK — must include relevant rules in agent prompts
+  - Always read PLAYBOOK 2.8 before launching spec research agents — LensTip and Radojuva are priority sources for maxMagnification
+  - 17 lenses have genuinely unpublished maxMagnification — confirmed across all playbook sources, web search, and PDF catalogs
