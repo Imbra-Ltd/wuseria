@@ -65,7 +65,7 @@ Project-specific overrides and additions follow below.
 - `src/test/` — Vitest setup and test factories
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
 - `docs/scoring-log.md` — per-lens scoring justifications (source data → rubric → score)
-- `docs/mtf-charts/` — official MTF chart images with companion `.md` analysis files
+- `docs/mtf-charts/` — MTF chart reading data (`.md` analysis files) and manufacturer `.png` reference images (not served on site, per ADR-027)
 
 ### 1.3 Commands
 
@@ -95,6 +95,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Releases MUST follow PLAYBOOK 5.1 — never tag without bumping `package.json` first
 - When creating GitHub issues, follow the formats in `docs/solid-ai-templates/templates/base/workflow/issues.md` — use the correct label (`epic`, `bug`, `incident`, `question`) and body structure for each type
 - Creating a new directory or moving content between documents is an architectural decision — write the ADR **at the moment of the decision**, before creating the files
+- Always ask before auto-merging PRs — never set `--auto` without explicit user permission
 
 ### 2.2 TypeScript
 
