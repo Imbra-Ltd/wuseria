@@ -248,11 +248,11 @@ describe("boolean field distribution", () => {
 // =============================================================================
 
 describe("prices", () => {
-  it("all prices are rounded to nearest $250", () => {
+  it("all prices are rounded to nearest $50", () => {
     for (const l of lenses) {
       expect(
-        l.price % 250,
-        `${l.brand} ${l.model}: price ${l.price} not rounded to $250`,
+        l.price % 50,
+        `${l.brand} ${l.model}: price ${l.price} not rounded to $50`,
       ).toBe(0);
     }
   });

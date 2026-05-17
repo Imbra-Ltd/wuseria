@@ -159,7 +159,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Never hardcode derived counts or statistics — compute them from the data source at build time
 - TypeScript files, not JSON — gives type checking at build time and IDE autocomplete on the data itself; a missing field is a compile error, not a runtime surprise
 - Astro imports `.ts` data at build time; data never ships as JS to the browser
-- Prices in USD by default (configurable in `src/data/config.ts`), rounded up to nearest $250
+- Prices in USD by default (configurable in `src/data/config.ts`), rounded up to nearest $50
 - All prices are approximate estimates — no `priceEstimated` flag needed
 - UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`) — no separate footnote needed
 - Review source directory in `src/data/reviews.ts` — methodology and trust per source
