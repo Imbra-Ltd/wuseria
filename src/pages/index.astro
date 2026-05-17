@@ -24,8 +24,10 @@ const wikiCount = wikiEntries.length;
       <strong>Scored for your genre.</strong>
     </h1>
     <p class="hero-subtitle">
-      Fujifilm lenses scored for your genre — backed by optical quality data
-      from trusted lab reviews, not marketing specs.
+      Optical quality data from trusted lab reviews, not marketing specs.
+      <span class="hero-tagline"
+        >No app. No login. No bloat. Works on 3G in the field.</span
+      >
     </p>
   </section>
 
@@ -148,6 +150,11 @@ const wikiCount = wikiEntries.length;
     font-size: var(--font-size-lg);
     color: var(--color-text-muted);
     line-height: var(--line-height);
+  }
+
+  .hero-tagline {
+    display: block;
+    margin-top: var(--space-sm);
   }
 
   .stats {
