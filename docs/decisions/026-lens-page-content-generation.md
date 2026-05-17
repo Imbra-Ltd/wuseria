@@ -14,8 +14,8 @@ are a discovery liability. The site needs unique, keyword-rich text per page.
 
 Generate deterministic prose at build time using score-to-phrase mapping tables.
 Each optical field score (0–2 scale) maps to a fixed natural-language phrase.
-The content spine has 6 sections: Summary, Strengths, Weaknesses, Genre Fit,
-Build, Sweet Spot.
+The content spine has 5 sections: Summary, Strengths, Weaknesses, Genre Fit,
+Build (includes sweet spot aperture).
 
 ## Alternatives considered
 
