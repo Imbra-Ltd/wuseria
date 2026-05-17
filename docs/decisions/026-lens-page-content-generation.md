@@ -1,4 +1,4 @@
-# ADR-026: Generate lens page prose from data at build time
+# ADR-026: Lens detail page content strategy
 
 **Status:** Accepted
 **Date:** 2026-05-17
