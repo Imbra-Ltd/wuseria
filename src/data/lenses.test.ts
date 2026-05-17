@@ -244,6 +244,52 @@ describe("boolean field distribution", () => {
 });
 
 // =============================================================================
+// SCORING STATUS
+// =============================================================================
+
+describe("scoringStatus", () => {
+  const validStatuses = [
+    "niche",
+    "new",
+    "discontinued",
+    "specialty",
+    "pending",
+  ];
+
+  it("scoringStatus uses valid values when present", () => {
+    for (const l of lenses) {
+      if (l.scoringStatus != null) {
+        expect(
+          validStatuses,
+          `${l.brand} ${l.model}: invalid scoringStatus "${l.scoringStatus}"`,
+        ).toContain(l.scoringStatus);
+      }
+    }
+  });
+});
+
+// =============================================================================
+// COMMUNITY NOTES
+// =============================================================================
+
+describe("communityNotes", () => {
+  it("communityNotes entries are non-empty strings when present", () => {
+    for (const l of lenses) {
+      if (l.communityNotes != null) {
+        const id = `${l.brand} ${l.model}`;
+        expect(
+          l.communityNotes.length,
+          `${id}: communityNotes is an empty array`,
+        ).toBeGreaterThan(0);
+        for (const note of l.communityNotes) {
+          expect(note.trim(), `${id}: empty communityNotes entry`).not.toBe("");
+        }
+      }
+    }
+  });
+});
+
+// =============================================================================
 // PRICE ROUNDING
 // =============================================================================
 
