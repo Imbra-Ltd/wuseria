@@ -29,6 +29,8 @@ Each optical field score (0–2 scale) maps to a fixed natural-language phrase.
 5. **Reviews** — professional review source links (from `reviewSources`)
 6. **Community** — user opinions as bullet points (from `communityNotes: string[]`,
    populated during scoring research, section hidden when empty)
+7. **Alternatives** — direct competitor lenses (same FL range + mount),
+   computed at build time, creates internal cross-links and "vs" keyword clusters
 
 ## Alternatives considered
 
