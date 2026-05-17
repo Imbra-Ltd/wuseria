@@ -35,6 +35,12 @@ Build, Sweet Spot.
 - Content quality is bounded by data quality — garbage scores produce garbage prose
 - Page word count: ~100 words (scored) / ~30 words (unscored)
 
+## Expected outcome
+
+Indexed page count increases from ~106 (23%) to 300+ as scored lens pages
+cross Google's quality threshold for indexing. Unique prose per page provides
+the content signal that pure data tables lack.
+
 ## Implementation
 
 - Utility function: `generateLensContent(lens) → ContentSpine`
