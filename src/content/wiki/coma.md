@@ -1,5 +1,5 @@
 ---
-title: "Coma"
+title: "Coma Aberration"
 categories:
   - "Optics"
 summary: "An optical aberration that stretches point light sources into comet-like shapes near frame edges."
