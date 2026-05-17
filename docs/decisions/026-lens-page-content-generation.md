@@ -59,6 +59,24 @@ Indexed page count increases from ~106 (23%) to 300+ as scored lens pages
 cross Google's quality threshold for indexing. Unique prose per page provides
 the content signal that pure data tables lack.
 
+## Missing data handling
+
+When optical scores or genre marks are absent, explain why using
+`scoringStatus?: "niche" | "new" | "discontinued" | "specialty" | "pending"`
+on the Lens interface.
+
+| Status         | Generated phrase                                             |
+| -------------- | ------------------------------------------------------------ |
+| `niche`        | Limited professional review coverage for this lens.          |
+| `new`          | Recently released — professional reviews pending.            |
+| `discontinued` | Discontinued before comprehensive optical testing.           |
+| `specialty`    | Standard optical bench tests do not apply to this lens type. |
+| `pending`      | Scoring in progress.                                         |
+
+Applied to Optical Quality, Genre Fit, and any section that depends on scored data.
+Field is set during data entry. Absent `scoringStatus` on an unscored lens defaults
+to `niche`.
+
 ## Implementation
 
 - Utility function: `generateLensContent(lens) → ContentSpine`
