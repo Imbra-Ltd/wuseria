@@ -69,6 +69,10 @@
 - https://ultralightphotography.net/gear/fuji-cameras/everything-you-wanted-to-know-about-np-w126-batteries/
 - https://www.fujirumors.com/fuji-guys-explain-which-battery-power-banks-are-best-for-your-fujifilm-cameras/
 
+## Genre and lens selection
+
+- https://fstoppers.com/originals/ups-and-downs-using-macro-lenses-portraiture-129330 — Macro lenses for portraiture: trade-offs (sharp detail, slow AF, harsh skin, focus breathing) but viable for portraits
+
 ## Technique and tutorials
 
 - https://photographylife.com/rating-each-focal-length-as-a-landscape-photographer

@@ -191,14 +191,162 @@ describe("generateLensContent", () => {
   });
 
   describe("alternatives", () => {
-    it("finds alternatives in same mount", () => {
-      const content = generateLensContent(scoredLens, allLenses);
-      expect(content.alternatives.length).toBeGreaterThan(0);
-      expect(content.alternatives[0].slug).toContain("fujifilm-xf-50mm");
+    const altHighOQ = makeLens({
+      brand: "Sigma",
+      model: "56mm f/1.4 DC DN",
+      mount: "X",
+      focalLengthMin: 56,
+      focalLengthMax: 56,
+      maxAperture: 1.4,
+      weight: 280,
+      price: 480,
+      centerWideOpen: 1.5,
+      cornerWideOpen: 1.5,
+      centerStopped: 1.5,
+      cornerStopped: 1.5,
+      longitudinalCA: 1.5,
+      lateralCA: 1.5,
+      coma: 1.5,
+      astigmatism: 1.5,
+      sphericalAberration: 1.5,
+      distortion: 1.5,
+      vignettingWideOpen: 1.5,
+      vignettingStopped: 1.5,
+      bokeh: 1.5,
+      flareResistance: 1.5,
+    });
+
+    const altLowOQ = makeLens({
+      brand: "Viltrox",
+      model: "56mm f/1.4 STM",
+      mount: "X",
+      focalLengthMin: 56,
+      focalLengthMax: 56,
+      maxAperture: 1.4,
+      weight: 260,
+      price: 300,
+      centerWideOpen: 1,
+      cornerWideOpen: 1,
+      centerStopped: 1,
+      cornerStopped: 1,
+      longitudinalCA: 1,
+      lateralCA: 1,
+      coma: 1,
+      astigmatism: 1,
+      sphericalAberration: 1,
+      distortion: 1,
+      vignettingWideOpen: 1,
+      vignettingStopped: 1,
+      bokeh: 1,
+      flareResistance: 1,
+    });
+
+    const altZoom = makeLens({
+      brand: "Fujifilm",
+      model: "XF 50-140mm f/2.8 R LM OIS WR",
+      mount: "X",
+      type: "zoom",
+      focalLengthMin: 50,
+      focalLengthMax: 140,
+      maxAperture: 2.8,
+      weight: 995,
+      price: 1600,
+      centerWideOpen: 1.5,
+      cornerWideOpen: 1.5,
+      centerStopped: 1.5,
+      cornerStopped: 1.5,
+      longitudinalCA: 1.5,
+      lateralCA: 1.5,
+      coma: 1.5,
+      astigmatism: 1.5,
+      sphericalAberration: 1.5,
+      distortion: 1.5,
+      vignettingWideOpen: 1.5,
+      vignettingStopped: 1.5,
+      bokeh: 1.5,
+      flareResistance: 1.5,
+    });
+
+    const altUnscored = makeLens({
+      brand: "7Artisans",
+      model: "55mm f/1.4 II",
+      mount: "X",
+      focalLengthMin: 55,
+      focalLengthMax: 55,
+      maxAperture: 1.4,
+      weight: 230,
+      price: 150,
+    });
+
+    const altLenses = [
+      scoredLens,
+      unscoredLens,
+      weakLens,
+      altHighOQ,
+      altLowOQ,
+      altZoom,
+      altUnscored,
+    ];
+
+    it("shows same-type alternatives first, sorted by OQ", () => {
+      const content = generateLensContent(scoredLens, altLenses);
+      const slugs = content.alternatives.map((a) => a.slug);
+      const highIdx = slugs.findIndex((s) => s.includes("sigma"));
+      const lowIdx = slugs.findIndex((s) => s.includes("viltrox"));
+      expect(highIdx).toBeLessThan(lowIdx);
+    });
+
+    it("limits same-type to 5 and other-type to 3", () => {
+      const content = generateLensContent(scoredLens, altLenses);
+      expect(content.alternatives.length).toBeLessThanOrEqual(8);
+    });
+
+    it("places unscored same-type alternatives after scored", () => {
+      const content = generateLensContent(scoredLens, altLenses);
+      const slugs = content.alternatives.map((a) => a.slug);
+      const scoredIdx = slugs.findIndex((s) => s.includes("sigma"));
+      const unscoredIdx = slugs.findIndex((s) => s.includes("xf-50mm"));
+      expect(scoredIdx).toBeGreaterThanOrEqual(0);
+      expect(unscoredIdx).toBeGreaterThanOrEqual(0);
+      expect(scoredIdx).toBeLessThan(unscoredIdx);
+    });
+
+    it("includes zooms that cover the focal length as other-type", () => {
+      const content = generateLensContent(scoredLens, altLenses);
+      const zoom = content.alternatives.find((a) =>
+        a.slug.includes("50-140mm"),
+      );
+      expect(zoom).toBeDefined();
+    });
+
+    it("excludes lenses outside ±20% range", () => {
+      const content = generateLensContent(scoredLens, altLenses);
+      // weakLens at 35mm: |35-56| = 21 > 56*0.2 = 11.2
+      const found = content.alternatives.find((a) =>
+        a.slug.includes("xf-35mm"),
+      );
+      expect(found).toBeUndefined();
+    });
+
+    it("excludes discontinued lenses", () => {
+      const discontinued = makeLens({
+        brand: "Fujifilm",
+        model: "XF 56mm f/1.2 R",
+        mount: "X",
+        focalLengthMin: 56,
+        focalLengthMax: 56,
+        isDiscontinued: true,
+      });
+      const withDiscontinued = [...altLenses, discontinued];
+      const content = generateLensContent(scoredLens, withDiscontinued);
+      const found = content.alternatives.find(
+        (a) => a.model === "XF 56mm f/1.2 R",
+      );
+      expect(found).toBeUndefined();
     });
 
     it("excludes the lens itself", () => {
-      const content = generateLensContent(scoredLens, allLenses);
+      const content = generateLensContent(scoredLens, altLenses);
       const self = content.alternatives.find(
         (a) => a.model === scoredLens.model,
       );

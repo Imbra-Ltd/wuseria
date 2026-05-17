@@ -549,50 +549,47 @@ function generateGenreFit(lens: Lens): GenreFitEntry[] {
 // ALTERNATIVES
 // =============================================================================
 
-function findAlternatives(lens: Lens, allLenses: Lens[]): Alternative[] {
-  // Focal length midpoint for distance calculation
-  const mid = (lens.focalLengthMin + lens.focalLengthMax) / 2;
+function sortByOQ(a: Lens, b: Lens): number {
+  const oqA = computeOpticalQuality(a);
+  const oqB = computeOpticalQuality(b);
+  if (oqA == null && oqB == null) return 0;
+  if (oqA == null) return 1;
+  if (oqB == null) return -1;
+  return oqB - oqA;
+}
 
-  return allLenses
-    .filter((other) => {
-      if (other.model === lens.model || other.mount !== lens.mount)
-        return false;
-      // Must cover the lens FL or start within ±15mm
-      const coversFL =
-        other.focalLengthMin <= mid && other.focalLengthMax >= mid;
-      const nearFL =
-        Math.abs(other.focalLengthMin - mid) <= 15 ||
-        Math.abs(other.focalLengthMax - mid) <= 15;
-      if (!coversFL && !nearFL) return false;
-      // Reject superzooms (>4x range) — they're not direct alternatives
-      const zoomRatio = other.focalLengthMax / other.focalLengthMin;
-      if (zoomRatio > 4) return false;
-      return true;
-    })
-    .sort((a, b) => {
-      // Distance: 0 if FL range covers the midpoint, otherwise gap
-      const distA =
-        mid >= a.focalLengthMin && mid <= a.focalLengthMax
-          ? 0
-          : Math.min(
-              Math.abs(a.focalLengthMin - mid),
-              Math.abs(a.focalLengthMax - mid),
-            );
-      const distB =
-        mid >= b.focalLengthMin && mid <= b.focalLengthMax
-          ? 0
-          : Math.min(
-              Math.abs(b.focalLengthMin - mid),
-              Math.abs(b.focalLengthMax - mid),
-            );
-      return distA - distB;
-    })
-    .slice(0, 10)
-    .map((other) => ({
-      brand: other.brand,
-      model: other.model,
-      slug: toSlug(`${other.brand} ${other.model}`),
-    }));
+function findAlternatives(lens: Lens, allLenses: Lens[]): Alternative[] {
+  const mid = (lens.focalLengthMin + lens.focalLengthMax) / 2;
+  const isSameType = (other: Lens): boolean => other.type === lens.type;
+
+  const candidates = allLenses.filter((other) => {
+    if (other.model === lens.model || other.mount !== lens.mount) return false;
+    if (other.isDiscontinued) return false;
+    // Must cover the lens FL or be within ±20%
+    const margin = mid * 0.2;
+    const coversFL = other.focalLengthMin <= mid && other.focalLengthMax >= mid;
+    const nearFL =
+      Math.abs(other.focalLengthMin - mid) <= margin ||
+      Math.abs(other.focalLengthMax - mid) <= margin;
+    if (!coversFL && !nearFL) return false;
+    // Reject superzooms (>4x range) — they're not direct alternatives
+    const zoomRatio = other.focalLengthMax / other.focalLengthMin;
+    if (zoomRatio > 4) return false;
+    return true;
+  });
+
+  // Same type first (up to 5), then other type (up to 3)
+  const sameType = candidates.filter(isSameType).sort(sortByOQ).slice(0, 5);
+  const otherType = candidates
+    .filter((c) => !isSameType(c))
+    .sort(sortByOQ)
+    .slice(0, 3);
+
+  return [...sameType, ...otherType].map((other) => ({
+    brand: other.brand,
+    model: other.model,
+    slug: toSlug(`${other.brand} ${other.model}`),
+  }));
 }
 
 // =============================================================================
