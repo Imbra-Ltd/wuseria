@@ -26,7 +26,9 @@ Each optical field score (0–2 scale) maps to a fixed natural-language phrase.
    - Distortion (distortion)
 4. **Genre Fit** — 9 genre sub-sections, each explaining why the lens is
    or isn't suited (pros AND cons derived from formula primary/secondary fields)
-5. **User Consensus** — review source links
+5. **Reviews** — professional review source links (from `reviewSources`)
+6. **Community** — user opinions as bullet points (from `communityNotes: string[]`,
+   populated during scoring research, section hidden when empty)
 
 ## Alternatives considered
 
