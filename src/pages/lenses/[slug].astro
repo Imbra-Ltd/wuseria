@@ -8,6 +8,15 @@ import { formatFL } from "../../utils/formatting";
 import { opticalFieldCount, OPTICAL_FIELDS } from "../../utils/scoring";
 import { generateLensContent } from "../../utils/lens-content";
 import type { Genre } from "../../types/genre";
+import type { ScoringStatus } from "../../types/lens";
+
+const SCORING_STATUS_PHRASES: Record<ScoringStatus, string> = {
+  niche: "Limited professional review coverage for this lens.",
+  new: "Recently released \u2014 professional reviews pending.",
+  discontinued: "Discontinued before comprehensive optical testing.",
+  specialty: "Standard optical bench tests do not apply to this lens type.",
+  pending: "Scoring in progress.",
+};
 
 export const getStaticPaths = (() => {
   return lenses.map((lens) => ({
@@ -132,6 +141,13 @@ const jsonLd = {
           lens.reviewSources && Object.keys(lens.reviewSources).length > 0 && (
             <li>
               <a href="#reviews">Reviews</a>
+            </li>
+          )
+        }
+        {
+          lens.communityNotes && lens.communityNotes.length > 0 && (
+            <li>
+              <a href="#community">Community</a>
             </li>
           )
         }
@@ -387,8 +403,9 @@ const jsonLd = {
           </>
         ) : (
           <p class="empty-text">
-            Not yet scored. Optical data from trusted review sources is required
-            before scoring.
+            {lens.scoringStatus
+              ? SCORING_STATUS_PHRASES[lens.scoringStatus]
+              : "Limited professional review coverage for this lens."}
           </p>
         )
       }
@@ -558,7 +575,21 @@ const jsonLd = {
       )
     }
 
-    {/* ── 7. Alternatives ── */}
+    {/* ── 6. Community ── */}
+    {
+      lens.communityNotes && lens.communityNotes.length > 0 && (
+        <section class="card">
+          <h2 id="community">Community</h2>
+          <ul class="community-list">
+            {lens.communityNotes.map((note) => (
+              <li>{note}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {/* ── 7. Alternatives ─�� */}
     {
       content.alternatives.length > 0 && (
         <section class="card">
@@ -915,6 +946,33 @@ const jsonLd = {
     content: "-";
     position: absolute;
     left: 2px;
+    color: var(--color-text-muted);
+    font-weight: 700;
+  }
+
+  /* ── Community ── */
+  .community-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .community-list li {
+    font-size: var(--font-size-sm);
+    padding: var(--space-xs) 0;
+    padding-left: var(--space-md);
+    position: relative;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .community-list li:last-child {
+    border-bottom: none;
+  }
+
+  .community-list li::before {
+    content: "\201C";
+    position: absolute;
+    left: 0;
     color: var(--color-text-muted);
     font-weight: 700;
   }
