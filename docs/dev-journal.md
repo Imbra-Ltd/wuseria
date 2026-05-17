@@ -1888,3 +1888,36 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
 - Convention change: price rounding $250 → $50
 - Issues created: #714 (backfill trust-3 reviews for XF 56mm), #715 (price verification workflow)
 - Epic #694: 5/9 tasks complete
+
+---
+
+### Session 60 — Alternatives Ranking Rework
+
+- **Tool:** Claude Code (Opus 4.6)
+- **Theme:** v0.7.0 epic — alternatives logic (#717) and portrait scoring spike (#718)
+
+#### PRs merged
+
+- **#719** — Alternatives rework: ±20% proportional FL range, OQ-based sorting, type grouping (5 same + 3 other), discontinued filter
+- **#720** — ADR-028: alternatives ranking algorithm
+- **#721** — Remove data fix exception for main commits
+
+#### Issues closed
+
+- **#717** — Rework alternatives logic (auto-closed by PR #719)
+- **#718** — Portrait aperture scoring spike (closed, no change — aperture in secondary affects 3/94 lenses by -0.5, in primary is destructive)
+
+#### Issues created
+
+- **#718** — Evaluate adding aperture score to portrait genre formula
+
+#### Key decisions
+
+- OQ is the right genre-neutral sort for alternatives (ADR-028)
+- Portrait formula unchanged — floor mechanism makes aperture either negligible (secondary) or destructive (primary)
+- Macro lenses are valid portrait alternatives (fstoppers article reference)
+- No commits to main, no exceptions (removed data fix clause from CLAUDE.md)
+
+#### Bookmark added
+
+- Macro lenses for portraiture (fstoppers.com) in `docs/bookmarks.md`
