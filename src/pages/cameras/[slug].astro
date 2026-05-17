@@ -33,14 +33,6 @@ const jsonLd = {
   brand: { "@type": "Brand", name: "Fujifilm" },
   url: canonicalUrl.href,
   ...(camera.officialUrl && { sameAs: camera.officialUrl }),
-  offers: {
-    "@type": "Offer",
-    price: camera.price,
-    priceCurrency: "USD",
-    availability: camera.isDiscontinued
-      ? "https://schema.org/Discontinued"
-      : "https://schema.org/InStock",
-  },
 };
 ---
 

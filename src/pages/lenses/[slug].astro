@@ -70,14 +70,6 @@ const jsonLd = {
   brand: { "@type": "Brand", name: lens.brand },
   url: canonicalUrl.href,
   ...(lens.officialUrl && { sameAs: lens.officialUrl }),
-  offers: {
-    "@type": "Offer",
-    price: lens.price,
-    priceCurrency: "USD",
-    availability: lens.isDiscontinued
-      ? "https://schema.org/Discontinued"
-      : "https://schema.org/InStock",
-  },
 };
 ---
 
