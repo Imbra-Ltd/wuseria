@@ -1813,3 +1813,27 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
   - Subagents don't read CLAUDE.md or PLAYBOOK — must include relevant rules in agent prompts
   - Always read PLAYBOOK 2.8 before launching spec research agents — LensTip and Radojuva are priority sources for maxMagnification
   - 17 lenses have genuinely unpublished maxMagnification — confirmed across all playbook sources, web search, and PDF catalogs
+
+---
+
+### Session 57 — Content Strategy and SEO Spike
+
+- Tool: Claude Code (Opus 4.6)
+- PRs: #696
+- Issues closed: #572 (spike), #611 (epic), #622, #623, #684
+- Issues created: #684, #693, #694, #695
+- Milestones: created v0.7.0; trimmed v0.6.0 from 29 → 3 issues
+- Key changes:
+  - ADR-026: Lens detail page content strategy (7-section page structure)
+  - Nav button renamed "Genre Guide" → "Genres"
+  - Spike: maxMagnification fallback — concluded no action needed (all missing lenses score bucket 0)
+  - Spike: isInternalFocusing field — researched, prototyped, discarded (needs per-lens verification, deferred to video genre)
+  - Spike #572: content generation feasibility — recommended IMPLEMENT
+- Key decisions:
+  - ADR-026: deterministic prose from optical scores at build time (ref: `docs/decisions/026-lens-page-content-generation.md`)
+  - 4 optical quality clusters (sharpness, aberrations, rendering, distortion) — not 14 sub-headings
+  - 9 per-genre explanations with pros AND cons derived from formula fields
+  - `scoringStatus` enum for missing data transparency
+  - `communityNotes: string[]` for user opinions (deferred population)
+  - Focus on 120 scored lenses first — usable pages over data completeness
+  - v0.7.0 milestone: content depth, implementing ADR-026
