@@ -1862,3 +1862,10 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
   - No forward references between ADRs — self-contained or reference backward only
   - Implementation specs fold into their ADR, not separate files
   - "No install" not "No app" — future-proofs for PWA (#705)
+  - Wiki page titles must match search queries, not internal jargon
+  - OQ scores need source provenance (reviewed, mtf, inferred) — #709
+- Second half:
+  - PR #710: optimized 10 wiki page titles against GSC query data
+  - Issue #698 closed
+  - Issues created: #707 (MTF score automation), #708 (construction score automation), #709 (score provenance)
+  - Upstream: solid-ai-templates#321 (SEO strategy checks for structure audit)
