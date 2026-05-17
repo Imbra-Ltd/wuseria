@@ -109,4 +109,4 @@ to `niche`.
 - Optical Quality uses 4 clusters (not 14 sub-headings) for UX scannability
   and SEO substance — individual field names appear in prose, not headings
 - MTF charts from `docs/mtf-charts/` served as images within Specifications
-- Spec stored in: `temp/lens-content-spine.md`
+- Spec stored in: `docs/specs/lens-content-spine.md`
