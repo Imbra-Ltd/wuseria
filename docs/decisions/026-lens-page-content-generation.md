@@ -24,8 +24,9 @@ Each optical field score (0–2 scale) maps to a fixed natural-language phrase.
    - Aberrations (longitudinalCA, lateralCA, coma, astigmatism, sphericalAberration)
    - Rendering (bokeh, vignettingWideOpen, vignettingStopped, flareResistance)
    - Distortion (distortion)
-4. **User Consensus** — review source links
-5. **Genre Fit** — top/weak genres from genre marks
+4. **Genre Fit** — 9 genre sub-sections, each explaining why the lens is
+   or isn't suited (pros AND cons derived from formula primary/secondary fields)
+5. **User Consensus** — review source links
 
 ## Alternatives considered
 
@@ -43,7 +44,10 @@ Each optical field score (0–2 scale) maps to a fixed natural-language phrase.
 - Unscored lenses get minimal content ("Not yet scored")
 - Generated text is a competitive advantage: unique per lens, no manual effort
 - Content quality is bounded by data quality — garbage scores produce garbage prose
-- Page word count: ~100 words (scored) / ~30 words (unscored)
+- Page word count: ~400 words (scored) / ~30 words (unscored)
+- Genre Fit alone generates ~270 words (9 genres × ~30 words each)
+- 9 genre sub-headings per lens create 2,196 unique keyword-rich sections across the site
+- Each genre explanation directly answers "is [lens] good for [genre]?" — featured snippet ready
 
 ## Expected outcome
 
