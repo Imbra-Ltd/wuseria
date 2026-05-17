@@ -41,14 +41,37 @@ Each optical field score (0–2 scale) maps to a fixed natural-language phrase.
 | No prose (status quo)                    | Pages remain thin; Discovery score stays at C                                 |
 | Template sentences without score mapping | Produces identical text across lenses; no uniqueness                          |
 
+## Unscored lens content
+
+Unscored lenses lack Optical Quality and Genre Fit sections but still have
+enough data for meaningful pages. Sections available without scores:
+
+| Section        | Content source                                            | Est. words |
+| -------------- | --------------------------------------------------------- | ---------- |
+| Summary        | Spec-derived description (FL, aperture, weight, features) | 40–60      |
+| Specifications | Full spec table (already populated)                       | (table)    |
+| Reviews        | `reviewSources` links (if any)                            | 20–30      |
+| Community      | `communityNotes` (if populated)                           | variable   |
+| Alternatives   | Same FL range + mount, computed at build time             | 30–50      |
+
+Additional spec-based prose:
+
+- Focal length context (equivalent mm, descriptive phrase)
+- Physical characteristics (weight class, build features, filter thread)
+- Key features summary (AF type, OIS, weather sealing, aperture ring)
+
+Estimated word count for unscored pages: **150–200 words** of unique content.
+This exceeds typical thin-content thresholds and eliminates the need for
+noindex on unscored pages.
+
 ## Consequences
 
 - Optical score changes automatically update user-facing prose
 - Phrase tables must be maintained — adding a new optical field requires new phrases
-- Unscored lenses get minimal content ("Not yet scored")
+- Unscored lenses still get meaningful spec-based content (~150–200 words)
 - Generated text is a competitive advantage: unique per lens, no manual effort
 - Content quality is bounded by data quality — garbage scores produce garbage prose
-- Page word count: ~400 words (scored) / ~30 words (unscored)
+- Page word count: ~400 words (scored) / ~150–200 words (unscored)
 - Genre Fit alone generates ~270 words (9 genres × ~30 words each)
 - 9 genre sub-headings per lens create 2,196 unique keyword-rich sections across the site
 - Each genre explanation directly answers "is [lens] good for [genre]?" — featured snippet ready
@@ -73,7 +96,8 @@ on the Lens interface.
 | `specialty`    | Standard optical bench tests do not apply to this lens type. |
 | `pending`      | Scoring in progress.                                         |
 
-Applied to Optical Quality, Genre Fit, and any section that depends on scored data.
+Applied to Optical Quality and Genre Fit sections only — spec-based sections
+(Summary, Specifications, Alternatives) render regardless of scoring status.
 Field is set during data entry. Absent `scoringStatus` on an unscored lens defaults
 to `niche`.
 
