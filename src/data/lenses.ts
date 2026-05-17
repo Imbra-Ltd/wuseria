@@ -8248,12 +8248,15 @@ const lenses: Lens[] = [
     type: "prime",
     mount: "X",
     year: 2022,
+    opticalElements: 13,
+    opticalGroups: 8,
+    specialElements: ["2 aspherical", "1 ED"],
     focalLengthMin: 56,
     focalLengthMax: 56,
     maxAperture: 1.2,
     apertureBlades: 11,
     hasCircularAperture: true,
-    maxMagnification: 0.09,
+    maxMagnification: 0.14,
     hasOis: false,
     isWeatherSealed: true,
 
@@ -8271,7 +8274,7 @@ const lenses: Lens[] = [
     filterThread: 62,
     minFocusDistance: 500,
     sweetSpotAperture: 2.8,
-    price: 1000,
+    price: 1200,
     centerStopped: 2,
     cornerStopped: 2,
     centerWideOpen: 2,
@@ -8304,7 +8307,8 @@ const lenses: Lens[] = [
         "https://opticallimits.com/fujifilm/fujinon-xf-56mm-1-2-r-wr-review/",
       dustinabbott:
         "https://dustinabbott.net/2024/05/fujinon-xf-56mm-f1-2-r-wr-review/",
-      fujivsfuji: "https://www.fujivsfuji.com/xf-56mm-f12-r-wr",
+      thephoblographer:
+        "https://www.thephoblographer.com/2023/01/31/fujifilm-56mm-f1-2-r-wr-review/",
     },
     officialUrl:
       "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r-wr/",

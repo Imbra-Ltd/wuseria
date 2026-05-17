@@ -2,10 +2,11 @@
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import Base from "../../layouts/Base.astro";
 import { lenses } from "../../data/lenses";
-import { genreConfigs } from "../../data/genres";
+import { reviewSourceDirectory } from "../../data/reviews";
 import { toSlug } from "../../utils/slug";
 import { formatFL } from "../../utils/formatting";
 import { opticalFieldCount, OPTICAL_FIELDS } from "../../utils/scoring";
+import { generateLensContent } from "../../utils/lens-content";
 import type { Genre } from "../../types/genre";
 
 export const getStaticPaths = (() => {
@@ -20,6 +21,7 @@ const { lens } = Astro.props as Props;
 
 const slug = toSlug(`${lens.brand} ${lens.model}`);
 const canonicalUrl = new URL(`/lenses/${slug}/`, Astro.site);
+const content = generateLensContent(lens, lenses);
 
 const DASH = "\u2014";
 
@@ -59,6 +61,29 @@ const genreEntries = lens.genreMarks
     )
   : [];
 
+const specFields: [string, unknown][] = [
+  ["Optical construction", lens.opticalElements],
+  ["Sweet spot", lens.sweetSpotAperture],
+  ["Aperture blades", lens.apertureBlades],
+  ["Max magnification", lens.maxMagnification],
+  ["Min focus distance", lens.minFocusDistance],
+  ["AF motor", lens.afMotor],
+  ["OIS", lens.hasOis],
+  ["Weather sealed", lens.isWeatherSealed],
+  ["Aperture ring", lens.hasApertureRing],
+  ["Focus ring", lens.hasFocusRing],
+  ["Focus by wire", lens.isFocusByWire],
+  ["Distance scale", lens.hasDistanceScale],
+  ["Rotating front", lens.hasRotatingFront],
+  ["Tripod mount", lens.hasTripodMount],
+  ["Diameter", lens.diameter],
+  ["Length", lens.length],
+  ["Filter thread", lens.filterThread],
+  ["Year", lens.year],
+];
+const specCount = specFields.filter(([, v]) => v != null).length;
+const specTotal = specFields.length;
+
 const isTiltShift =
   lens.isTiltShift && (lens.shiftRange || lens.tiltAngle || lens.imageCircle);
 
@@ -66,7 +91,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
   name: `${lens.brand} ${lens.model}`,
-  description: `${lens.brand} ${lens.model} — ${lens.mount} mount ${lens.type} lens, ${lens.weight}g.`,
+  description: content.metaDescription,
   brand: { "@type": "Brand", name: lens.brand },
   url: canonicalUrl.href,
   ...(lens.officialUrl && { sameAs: lens.officialUrl }),
@@ -75,7 +100,7 @@ const jsonLd = {
 
 <Base
   title={`${lens.brand} ${lens.model} Review Data — Wuseria`}
-  description={`Is the ${lens.brand} ${lens.model} right for your genre? Optical quality scores, specs, and lab-tested performance data.`}
+  description={content.metaDescription}
 >
   <script
     is:inline
@@ -88,151 +113,254 @@ const jsonLd = {
     {/* ── Header ── */}
     <header class="header">
       <h1>{lens.brand} {lens.model}</h1>
-      <p class="price-line">~${lens.price} USD</p>
     </header>
 
-    {/* ── Specs + Optical grid ── */}
-    <div class="grid">
-      <section class="card">
-        <h2>Specifications</h2>
-        <table class="spec-table">
-          <tbody>
-            <tr
-              ><td>Focal length</td><td
-                >{formatFL(lens.focalLengthMin, lens.focalLengthMax)}</td
-              ></tr
-            >
-            <tr><td>Max aperture</td><td>f/{lens.maxAperture}</td></tr>
-            <tr>
-              <td>Sweet spot</td>
-              <td
-                >{
-                  lens.sweetSpotAperture ? `f/${lens.sweetSpotAperture}` : DASH
-                }</td
-              >
-            </tr>
-            <tr>
-              <td>Aperture blades</td>
-              <td>
-                {
-                  lens.apertureBlades != null
-                    ? `${lens.apertureBlades}${lens.hasCircularAperture ? " (circular)" : ""}`
-                    : DASH
-                }
-              </td>
-            </tr>
-            {
-              lens.apertureBlades != null && (
-                <tr>
-                  <td>Sunstar points</td>
-                  <td>
-                    {lens.apertureBlades % 2 === 0
-                      ? lens.apertureBlades
-                      : lens.apertureBlades * 2}
-                    {lens.hasCircularAperture
-                      ? " (soft — circular blades)"
-                      : " (sharp — straight blades)"}
-                  </td>
-                </tr>
-              )
-            }
-            <tr
-              ><td>Max magnification</td><td
-                >{
-                  lens.maxMagnification != null
-                    ? `${lens.maxMagnification}x`
-                    : DASH
-                }</td
-              ></tr
-            >
-            <tr
-              ><td>Min focus distance</td><td
-                >{num(lens.minFocusDistance, "mm")}</td
-              ></tr
-            >
-            <tr><td>AF motor</td><td>{lens.afMotor ?? "Manual focus"}</td></tr>
-            <tr><td>OIS</td><td>{yesNo(lens.hasOis)}</td></tr>
-            <tr
-              ><td>Weather sealed</td><td>{yesNo(lens.isWeatherSealed)}</td></tr
-            >
-            <tr><td>Aperture ring</td><td>{yesNo(lens.hasApertureRing)}</td></tr
-            >
-            {
-              lens.hasApertureRing && (
-                <tr>
-                  <td>Clickless aperture</td>
-                  <td>{yesNo(lens.isApertureClickless)}</td>
-                </tr>
-              )
-            }
-            <tr><td>Focus ring</td><td>{yesNo(lens.hasFocusRing)}</td></tr>
-            <tr><td>Focus by wire</td><td>{yesNo(lens.isFocusByWire)}</td></tr>
-            <tr
-              ><td>Distance scale</td><td>{yesNo(lens.hasDistanceScale)}</td
-              ></tr
-            >
-            <tr
-              ><td>Rotating front</td><td>{yesNo(lens.hasRotatingFront)}</td
-              ></tr
-            >
-            <tr><td>Tripod mount</td><td>{yesNo(lens.hasTripodMount)}</td></tr>
-            <tr><td>Weight</td><td>{lens.weight}g</td></tr>
-            <tr><td>Diameter</td><td>{num(lens.diameter, "mm")}</td></tr>
-            <tr><td>Length</td><td>{num(lens.length, "mm")}</td></tr>
-            <tr
-              ><td>Filter thread</td><td>{num(lens.filterThread, "mm")}</td></tr
-            >
-            <tr><td>Year</td><td>{lens.year ?? DASH}</td></tr>
-          </tbody>
-        </table>
-
+    {/* ── Table of Contents ── */}
+    <nav class="toc" aria-label="Table of contents">
+      <ol>
+        <li><a href="#summary">Summary</a></li>
+        <li><a href="#specifications">Specifications</a></li>
+        <li><a href="#optical-quality">Optical Quality</a></li>
         {
-          isTiltShift && (
+          content.genreFit.length > 0 && (
+            <li>
+              <a href="#genre-fit">Genre Fit</a>
+            </li>
+          )
+        }
+        {
+          lens.reviewSources && Object.keys(lens.reviewSources).length > 0 && (
+            <li>
+              <a href="#reviews">Reviews</a>
+            </li>
+          )
+        }
+        {
+          content.alternatives.length > 0 && (
+            <li>
+              <a href="#alternatives">Alternatives</a>
+            </li>
+          )
+        }
+      </ol>
+    </nav>
+
+    {/* ── 1. Summary ── */}
+    <section class="card">
+      <h2 id="summary">Summary</h2>
+      <p class="verdict">
+        {content.summary.verdict}{" "}
+        The lens is priced at approximately ~${lens.price} USD.
+        {
+          lens.officialUrl && (
             <>
-              <h3>Tilt-Shift</h3>
-              <table class="spec-table">
-                <tbody>
-                  {lens.shiftRange && (
-                    <tr>
-                      <td>Shift range</td>
-                      <td>{lens.shiftRange}mm</td>
-                    </tr>
-                  )}
-                  {lens.tiltAngle && (
-                    <tr>
-                      <td>Tilt angle</td>
-                      <td>{lens.tiltAngle}deg</td>
-                    </tr>
-                  )}
-                  {lens.imageCircle && (
-                    <tr>
-                      <td>Image circle</td>
-                      <td>{lens.imageCircle}mm</td>
-                    </tr>
-                  )}
-                  {lens.isTiltShiftIndependent != null && (
-                    <tr>
-                      <td>Independent T/S</td>
-                      <td>{yesNo(lens.isTiltShiftIndependent)}</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+              {" "}
+              Please check the{" "}
+              <a
+                href={lens.officialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                official product page
+              </a>{" "}
+              for sample images, manuals, and firmware updates.
             </>
           )
         }
-      </section>
+      </p>
+      {
+        content.summary.genreTiers.length > 0 && (
+          <div class="summary-col">
+            <h3>Genre Suitability</h3>
+            <ul>
+              {content.summary.genreTiers.map((tier) => (
+                <li>
+                  <strong>{tier.label}:</strong> {tier.genres.join(", ")}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+      {
+        content.summary.strengths.length > 0 && (
+          <div class="summary-col">
+            <h3>Strengths</h3>
+            <ul>
+              {content.summary.strengths.map((s) => (
+                <li>{s}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+      {
+        content.summary.weaknesses.length > 0 && (
+          <div class="summary-col">
+            <h3>Weaknesses</h3>
+            <ul>
+              {content.summary.weaknesses.map((w) => (
+                <li>{w}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </section>
+
+    {/* ── 2. Specifications ── */}
+    <section class="card">
+      <h2 id="specifications">
+        Specifications{" "}
+        <span class="field-count">{specCount}/{specTotal}</span>
+      </h2>
+      <table class="spec-table">
+        <tbody>
+          {
+            lens.opticalElements != null && lens.opticalGroups != null && (
+              <tr>
+                <td>Optical construction</td>
+                <td>
+                  {lens.opticalElements} elements in {lens.opticalGroups} groups
+                  {lens.specialElements && lens.specialElements.length > 0 && (
+                    <span class="special-elements">
+                      {" "}
+                      ({lens.specialElements.join(", ")})
+                    </span>
+                  )}
+                </td>
+              </tr>
+            )
+          }
+          <tr
+            ><td>Focal length</td><td
+              >{formatFL(lens.focalLengthMin, lens.focalLengthMax)}</td
+            ></tr
+          >
+          <tr><td>Max aperture</td><td>f/{lens.maxAperture}</td></tr>
+          <tr>
+            <td>Sweet spot</td>
+            <td
+              >{
+                lens.sweetSpotAperture ? `f/${lens.sweetSpotAperture}` : DASH
+              }</td
+            >
+          </tr>
+          <tr>
+            <td>Aperture blades</td>
+            <td>
+              {
+                lens.apertureBlades != null
+                  ? `${lens.apertureBlades}${lens.hasCircularAperture ? " (circular)" : ""}`
+                  : DASH
+              }
+            </td>
+          </tr>
+          {
+            lens.apertureBlades != null && (
+              <tr>
+                <td>Sunstar points</td>
+                <td>
+                  {lens.apertureBlades % 2 === 0
+                    ? lens.apertureBlades
+                    : lens.apertureBlades * 2}
+                  {lens.hasCircularAperture
+                    ? " (soft — circular blades)"
+                    : " (sharp — straight blades)"}
+                </td>
+              </tr>
+            )
+          }
+          <tr
+            ><td>Max magnification</td><td
+              >{
+                lens.maxMagnification != null
+                  ? `${lens.maxMagnification}x`
+                  : DASH
+              }</td
+            ></tr
+          >
+          <tr
+            ><td>Min focus distance</td><td
+              >{num(lens.minFocusDistance, "mm")}</td
+            ></tr
+          >
+          <tr><td>AF motor</td><td>{lens.afMotor ?? "Manual focus"}</td></tr>
+          <tr><td>OIS</td><td>{yesNo(lens.hasOis)}</td></tr>
+          <tr><td>Weather sealed</td><td>{yesNo(lens.isWeatherSealed)}</td></tr>
+          <tr><td>Aperture ring</td><td>{yesNo(lens.hasApertureRing)}</td></tr>
+          {
+            lens.hasApertureRing && (
+              <tr>
+                <td>Clickless aperture</td>
+                <td>{yesNo(lens.isApertureClickless)}</td>
+              </tr>
+            )
+          }
+          <tr><td>Focus ring</td><td>{yesNo(lens.hasFocusRing)}</td></tr>
+          <tr><td>Focus by wire</td><td>{yesNo(lens.isFocusByWire)}</td></tr>
+          <tr><td>Distance scale</td><td>{yesNo(lens.hasDistanceScale)}</td></tr
+          >
+          <tr><td>Rotating front</td><td>{yesNo(lens.hasRotatingFront)}</td></tr
+          >
+          <tr><td>Tripod mount</td><td>{yesNo(lens.hasTripodMount)}</td></tr>
+          <tr><td>Weight</td><td>{lens.weight}g</td></tr>
+          <tr><td>Diameter</td><td>{num(lens.diameter, "mm")}</td></tr>
+          <tr><td>Length</td><td>{num(lens.length, "mm")}</td></tr>
+          <tr><td>Filter thread</td><td>{num(lens.filterThread, "mm")}</td></tr>
+          <tr><td>Year</td><td>{lens.year ?? DASH}</td></tr>
+        </tbody>
+      </table>
 
       {
-        hasOptical && (
-          <section class="card">
-            <h2>
-              Optical Quality{" "}
-              <span class="field-count">
-                {fieldCount}/{totalFields}
-              </span>
-            </h2>
+        isTiltShift && (
+          <>
+            <h3>Tilt-Shift</h3>
             <table class="spec-table">
+              <tbody>
+                {lens.shiftRange && (
+                  <tr>
+                    <td>Shift range</td>
+                    <td>{lens.shiftRange}mm</td>
+                  </tr>
+                )}
+                {lens.tiltAngle && (
+                  <tr>
+                    <td>Tilt angle</td>
+                    <td>{lens.tiltAngle}deg</td>
+                  </tr>
+                )}
+                {lens.imageCircle && (
+                  <tr>
+                    <td>Image circle</td>
+                    <td>{lens.imageCircle}mm</td>
+                  </tr>
+                )}
+                {lens.isTiltShiftIndependent != null && (
+                  <tr>
+                    <td>Independent T/S</td>
+                    <td>{yesNo(lens.isTiltShiftIndependent)}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </>
+        )
+      }
+    </section>
+
+    {/* ── 3. Optical Quality ── */}
+    <section class="card">
+      <h2 id="optical-quality">
+        Optical Quality{" "}
+        <span class="field-count">
+          {fieldCount}/{totalFields}
+        </span>
+      </h2>
+      {
+        hasOptical ? (
+          <>
+            <table class="spec-table oq-table">
               <tbody>
                 {opticalFields.map(
                   ([label, val]) =>
@@ -256,100 +384,222 @@ const jsonLd = {
                 )}
               </tbody>
             </table>
-            <p class="footnote">
-              0-2 scale. See{" "}
+          </>
+        ) : (
+          <p class="empty-text">
+            Not yet scored. Optical data from trusted review sources is required
+            before scoring.
+          </p>
+        )
+      }
+      {
+        content.opticalClusters && (
+          <>
+            {content.opticalClusters.sharpness.length > 0 && (
+              <div class="field-group">
+                <h3>Sharpness</h3>
+                <ul class="assessment-list">
+                  {content.opticalClusters.sharpness.map((a) => (
+                    <li class={a.isStrength ? "strength" : "weakness"}>
+                      {a.phrase}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {content.opticalClusters.aberrations.length > 0 && (
+              <div class="field-group">
+                <h3>Aberrations</h3>
+                <ul class="assessment-list">
+                  {content.opticalClusters.aberrations.map((a) => (
+                    <li class={a.isStrength ? "strength" : "weakness"}>
+                      {a.phrase}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {content.opticalClusters.rendering.length > 0 && (
+              <div class="field-group">
+                <h3>Rendering</h3>
+                <ul class="assessment-list">
+                  {content.opticalClusters.rendering.map((a) => (
+                    <li class={a.isStrength ? "strength" : "weakness"}>
+                      {a.phrase}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {content.opticalClusters.distortion.length > 0 && (
+              <div class="field-group">
+                <h3>Distortion</h3>
+                <ul class="assessment-list">
+                  {content.opticalClusters.distortion.map((a) => (
+                    <li class={a.isStrength ? "strength" : "weakness"}>
+                      {a.phrase}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <p class="methodology-note">
+              All optical scores are based on lab measurements and field tests
+              from trusted review sources. For details on how we score lenses,
+              see our{" "}
               <a href="/wiki/scoring-methodology/">scoring methodology</a>.
             </p>
-          </section>
+          </>
         )
       }
+    </section>
 
-      {
-        !hasOptical && (
-          <section class="card card-empty">
-            <h2>
-              Optical Quality{" "}
-              <span class="field-count">
-                {fieldCount}/{totalFields}
-              </span>
-            </h2>
-            <p class="empty-text">
-              Not yet scored. Optical data from trusted review sources is
-              required before scoring.
-            </p>
-          </section>
-        )
-      }
-    </div>
-
-    {/* ── Genre Scores ── */}
+    {/* ── 4. Genre Fit ── */}
     {
-      genreEntries.length > 0 && (
+      content.genreFit.length > 0 && (
         <section class="card">
-          <h2>Genre Scores</h2>
-          <div class="genre-grid">
-            {genreEntries.map(([genre, mark]) => (
-              <a href={`/genre/${genre}/`} class="genre-card">
-                <span class="genre-name">{genreConfigs[genre].name}</span>
-                <span class="genre-mark">{mark}/5</span>
+          <h2 id="genre-fit">Genre Fit</h2>
+          <div class="genre-chips">
+            {content.genreFit.map((entry) => (
+              <a
+                href={`#genre-${entry.genre}`}
+                class={`genre-chip ${entry.mark >= 4 ? "chip-fit" : entry.mark >= 2.5 ? "chip-adequate" : "chip-avoid"}`}
+              >
+                <span
+                  class={`genre-chip-indicator ${entry.mark >= 4 ? "fit-yes" : "fit-neutral"}`}
+                >
+                  {entry.mark >= 4
+                    ? "\u2713"
+                    : entry.mark >= 2.5
+                      ? "~"
+                      : "\u2717"}
+                </span>
+                <span class="genre-chip-name">
+                  {entry.name.replace(" Photography", "")}
+                </span>
+                <span class="genre-chip-quality">
+                  {entry.mark >= 4.5
+                    ? "Excellent"
+                    : entry.mark >= 4
+                      ? "Good"
+                      : entry.mark >= 2.5
+                        ? "Adequate"
+                        : "Avoid"}
+                </span>
               </a>
             ))}
           </div>
-          {lens.editorialPicks && lens.editorialPicks.length > 0 && (
-            <p class="editorial">
-              Editorial pick for:{" "}
-              {lens.editorialPicks.map((g) => genreConfigs[g].name).join(", ")}
-            </p>
-          )}
+          {content.genreFit.map((entry) => (
+            <div class="genre-section" id={`genre-${entry.genre}`}>
+              <h3>
+                <span
+                  class={`genre-indicator ${entry.mark >= 4 ? "fit-yes" : "fit-neutral"}`}
+                >
+                  {entry.mark >= 4
+                    ? "\u2713"
+                    : entry.mark >= 2.5
+                      ? "~"
+                      : "\u2717"}
+                </span>
+                <a href={`/genre/${entry.genre}/`}>{entry.name}</a>
+                <span class="genre-mark-inline">{entry.mark}/5</span>
+              </h3>
+              <p>{entry.verdict}</p>
+              {entry.primary.length > 0 && (
+                <div class="field-group">
+                  <span class="field-group-label">Primary</span>
+                  <ul class="assessment-list">
+                    {entry.primary.map((a) => (
+                      <li class={a.isStrength ? "strength" : "weakness"}>
+                        {a.phrase}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {entry.secondary.length > 0 && (
+                <div class="field-group">
+                  <span class="field-group-label">Secondary</span>
+                  <ul class="assessment-list">
+                    {entry.secondary.map((a) => (
+                      <li class={a.isStrength ? "strength" : "weakness"}>
+                        {a.phrase}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          ))}
         </section>
       )
     }
 
-    {/* ── Links ── */}
-    <section class="card">
-      <h2>Links</h2>
-      <div class="link-row">
-        {
-          lens.officialUrl && (
-            <a
-              href={lens.officialUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="link-button"
-            >
-              Official product page
-            </a>
-          )
-        }
-        {
-          lens.reviewSources &&
-            Object.entries(lens.reviewSources).map(([source, url]) => (
+    {/* ── 5. Reviews ── */}
+    {
+      lens.reviewSources && Object.keys(lens.reviewSources).length > 0 && (
+        <section class="card">
+          <h2 id="reviews">Reviews</h2>
+          <div class="link-row">
+            {Object.entries(lens.reviewSources).map(([source, url]) => (
               <a
                 href={url}
                 target="_blank"
                 rel="nofollow sponsored"
                 class="link-button"
               >
-                {source}
+                {reviewSourceDirectory[
+                  source as keyof typeof reviewSourceDirectory
+                ]?.name ?? source}
               </a>
-            ))
-        }
-      </div>
-    </section>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {/* ── 7. Alternatives ── */}
+    {
+      content.alternatives.length > 0 && (
+        <section class="card">
+          <h2 id="alternatives">Alternatives</h2>
+          <div class="alt-grid">
+            {content.alternatives.map((alt) => (
+              <a href={`/lenses/${alt.slug}/`} class="alt-card">
+                {alt.brand} {alt.model}
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
 
     <a href="/lenses/" class="back-link">Back to Lens Explorer</a>
   </div>
+
+  <button id="back-to-top" aria-label="Back to top">↑</button>
+  <script is:inline>
+    const btn = document.getElementById("back-to-top");
+    window.addEventListener("scroll", () => {
+      btn.classList.toggle("visible", window.scrollY > 300);
+    });
+    btn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  </script>
 </Base>
 
 <style>
   .detail {
-    max-width: 56rem;
+    max-width: 42rem;
+    margin: 0 auto;
+    --color-border: #606880;
   }
 
   /* ── Header ── */
   .header {
-    margin-bottom: var(--space-xl);
-    padding-bottom: var(--space-lg);
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
     border-bottom: 1px solid var(--color-border);
   }
 
@@ -357,17 +607,35 @@ const jsonLd = {
     margin-bottom: var(--space-xs);
   }
 
-  .price-line {
-    font-size: var(--font-size-lg);
-    color: var(--color-text-muted);
-    font-family: var(--font-mono);
-  }
-
   .field-count {
     font-size: var(--font-size-sm);
     font-weight: 400;
     color: var(--color-text-muted);
     font-family: var(--font-mono);
+  }
+
+  /* ── Table of Contents ── */
+  .toc {
+    margin-bottom: var(--space-lg);
+  }
+
+  .toc ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-md);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc a {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    color: var(--color-link);
   }
 
   /* ── Cards ── */
@@ -390,32 +658,50 @@ const jsonLd = {
     font-size: var(--font-size-sm);
   }
 
-  /* ── Grid ── */
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-md);
-    margin-bottom: var(--space-md);
-  }
-
-  @media (max-width: 640px) {
-    .grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
   /* ── Headings ── */
   h2 {
     font-size: var(--font-size-lg);
     margin-bottom: var(--space-sm);
     padding-bottom: var(--space-xs);
     border-bottom: 1px solid var(--color-border);
+    scroll-margin-top: 4rem;
   }
 
   h3 {
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     margin-top: var(--space-md);
     margin-bottom: var(--space-xs);
+    color: var(--color-text-muted);
+  }
+
+  /* ── Summary ── */
+  .verdict {
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+    margin-bottom: var(--space-md);
+  }
+
+  .summary-col h3 {
+    margin-top: var(--space-sm);
+  }
+
+  .summary-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .summary-col li {
+    font-size: var(--font-size-sm);
+    padding: var(--space-xs) 0;
+    padding-left: var(--space-sm);
+    position: relative;
+  }
+
+  .summary-col li::before {
+    content: "·";
+    position: absolute;
+    left: 0;
     color: var(--color-text-muted);
   }
 
@@ -428,8 +714,7 @@ const jsonLd = {
 
   .spec-table td {
     padding: var(--space-xs) 0;
-    border-bottom: 1px solid
-      color-mix(in srgb, var(--color-border) 50%, transparent);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .spec-table tr:last-child td {
@@ -439,6 +724,10 @@ const jsonLd = {
   .spec-table td:first-child {
     color: var(--color-text-muted);
     width: 45%;
+  }
+
+  .special-elements {
+    color: var(--color-text-muted);
   }
 
   /* ── Pips ── */
@@ -480,47 +769,157 @@ const jsonLd = {
     margin-top: var(--space-sm);
   }
 
-  /* ── Genre scores ── */
-  .genre-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
+  .methodology-note {
+    margin-top: var(--space-md);
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-sm);
   }
 
-  .genre-card {
+  /* ── Genre Fit ── */
+  .genre-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-md);
+  }
+
+  .genre-chip {
     display: flex;
     align-items: center;
-    gap: var(--space-sm);
+    gap: var(--space-xs);
     padding: var(--space-xs) var(--space-sm);
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
-    color: var(--color-text);
+    color: var(--color-text-muted);
     text-decoration: none;
-    font-size: var(--font-size-sm);
+    font-size: 0.75rem;
     background: var(--color-bg);
   }
 
-  .genre-card:hover {
-    border-color: var(--color-accent);
+  .chip-fit {
+    border-color: color-mix(
+      in srgb,
+      var(--color-accent) 50%,
+      var(--color-border)
+    );
   }
 
-  .genre-name {
+  .chip-adequate {
+    border-color: var(--color-border);
+  }
+
+  .chip-avoid {
+    border-color: var(--color-border);
+    opacity: 0.6;
+  }
+
+  .genre-chip:hover {
+    border-color: var(--color-accent);
+    opacity: 1;
+  }
+
+  .genre-chip-indicator {
+    font-weight: 700;
+  }
+
+  .genre-chip-name {
     color: var(--color-text-muted);
   }
 
-  .genre-mark {
+  .genre-chip-quality {
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  .genre-section {
+    padding-bottom: var(--space-md);
+    margin-bottom: var(--space-md);
+    scroll-margin-top: 4rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .genre-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .genre-section h3 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-top: 0;
+  }
+
+  .genre-section h3 a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .genre-section h3 a:hover {
+    color: var(--color-link);
+  }
+
+  .genre-indicator {
+    font-weight: 700;
+  }
+
+  .fit-yes {
+    color: var(--color-accent);
+  }
+
+  .fit-neutral {
+    color: var(--color-text-muted);
+  }
+
+  .genre-mark-inline {
     font-family: var(--font-mono);
     font-weight: 700;
     color: var(--color-accent);
   }
 
-  .editorial {
-    font-size: var(--font-size-sm);
-    color: var(--color-accent);
-    margin-top: var(--space-sm);
+  .field-group {
+    margin-top: var(--space-xs);
   }
 
-  /* ── Links ── */
+  .field-group-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+  }
+
+  .assessment-list {
+    list-style: none;
+    padding: 0;
+    margin: 2px 0 0;
+  }
+
+  .assessment-list li {
+    font-size: var(--font-size-sm);
+    padding: 2px 0 2px var(--space-md);
+    position: relative;
+  }
+
+  .assessment-list li.strength::before {
+    content: "+";
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-weight: 700;
+  }
+
+  .assessment-list li.weakness::before {
+    content: "-";
+    position: absolute;
+    left: 2px;
+    color: var(--color-text-muted);
+    font-weight: 700;
+  }
+
+  /* ── Links / Reviews ── */
   .link-row {
     display: flex;
     flex-wrap: wrap;
@@ -543,6 +942,29 @@ const jsonLd = {
     color: var(--color-link-hover);
   }
 
+  /* ── Alternatives ── */
+  .alt-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .alt-card {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-link);
+    font-size: var(--font-size-sm);
+    text-decoration: none;
+    background: var(--color-bg);
+  }
+
+  .alt-card:hover {
+    border-color: var(--color-accent);
+    color: var(--color-link-hover);
+  }
+
   /* ── Back link ── */
   .back-link {
     display: inline-block;
@@ -553,5 +975,62 @@ const jsonLd = {
 
   .back-link:hover {
     color: var(--color-link);
+  }
+</style>
+
+<style is:global>
+  #back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: 0.375rem;
+    background: var(--color-accent);
+    color: var(--color-bg);
+    font-size: 1.25rem;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 100;
+  }
+
+  #back-to-top.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #back-to-top:hover {
+    opacity: 0.8;
+  }
+
+  @media (max-width: 640px) {
+    #back-to-top {
+      bottom: 1rem;
+      right: 1rem;
+      width: 2rem;
+      height: 2rem;
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<style>
+  /* ── Mobile ── */
+  @media (max-width: 640px) {
+    .toc ol {
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .genre-chips {
+      gap: var(--space-xs);
+    }
+
+    .genre-chip {
+      font-size: 0.65rem;
+    }
   }
 </style>
