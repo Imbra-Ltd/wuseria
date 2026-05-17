@@ -1,5 +1,5 @@
 ---
-title: "Bortle Scale"
+title: "Bortle Scale: Dark Sky Rating"
 categories:
   - "Exposure"
 summary: "A 1-9 scale measuring night sky darkness, critical for astrophotography and nightscape planning."

@@ -1,6 +1,5 @@
 ---
-title: "Gamma correction"
-fullTitle: "Gamma Correction"
+title: "Gamma Correction in Photography"
 categories:
   - "Post-Processing"
 summary: "A nonlinear tone mapping applied to image data to match human perception of brightness."

@@ -1,5 +1,5 @@
 ---
-title: "Snoot"
+title: "Snoot Lighting"
 categories:
   - "Lighting"
 summary: "A cone or tube attached to a flash or studio head to narrow the light beam to a small spot."
