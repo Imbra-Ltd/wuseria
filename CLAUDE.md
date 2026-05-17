@@ -277,7 +277,7 @@ Follow `docs/solid-ai-templates/templates/base/workflow/scope.md` for scope guar
 ### 6.2 During the session
 
 - **One theme per session.** If an unrelated topic comes up, create a GitHub issue for it and say: "Noted as #X — let's come back to it next session."
-- **Always branch before coding.** No commits directly to `main` for feature work. Data fixes (single field updates) are acceptable on `main`.
+- **Always branch before coding.** No commits directly to `main` — no exceptions.
 - **Build after every change.** Don't accumulate multiple changes without verifying.
 
 ### 6.3 End of session
