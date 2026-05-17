@@ -14,8 +14,18 @@ are a discovery liability. The site needs unique, keyword-rich text per page.
 
 Generate deterministic prose at build time using score-to-phrase mapping tables.
 Each optical field score (0–2 scale) maps to a fixed natural-language phrase.
-The content spine has 5 sections: Summary, Strengths, Weaknesses, Genre Fit,
-Build (includes sweet spot aperture).
+
+### Page structure
+
+1. **Summary** — one-line verdict + strengths/weaknesses bullets
+2. **Specifications** — lens configuration, MTF charts, specs table
+3. **Optical Quality** — prose interpretation grouped into 4 clusters:
+   - Sharpness (centerWideOpen, cornerWideOpen, centerStopped, cornerStopped)
+   - Aberrations (longitudinalCA, lateralCA, coma, astigmatism, sphericalAberration)
+   - Rendering (bokeh, vignettingWideOpen, vignettingStopped, flareResistance)
+   - Distortion (distortion)
+4. **User Consensus** — review source links
+5. **Genre Fit** — top/weak genres from genre marks
 
 ## Alternatives considered
 
@@ -44,7 +54,9 @@ the content signal that pure data tables lack.
 ## Implementation
 
 - Utility function: `generateLensContent(lens) → ContentSpine`
-- Phrase tables: score → natural-language string (LensTip-inspired wording)
+- Phrase tables: score → natural-language string (review-style wording)
 - Focal length context: equivalent mm → descriptive phrase
-- Rendered as semantic HTML sections above spec tables
-- Spec stored in: #572 comments / `temp/lens-content-spine.md`
+- Optical Quality uses 4 clusters (not 14 sub-headings) for UX scannability
+  and SEO substance — individual field names appear in prose, not headings
+- MTF charts from `docs/mtf-charts/` served as images within Specifications
+- Spec stored in: `temp/lens-content-spine.md`
