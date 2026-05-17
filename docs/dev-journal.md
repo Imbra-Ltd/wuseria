@@ -1837,3 +1837,28 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
   - `communityNotes: string[]` for user opinions (deferred population)
   - Focus on 120 scored lenses first — usable pages over data completeness
   - v0.7.0 milestone: content depth, implementing ADR-026
+
+---
+
+### Session 58 — v0.7.0 Spikes and Lightweight Promise
+
+- Tool: Claude Code (Opus 4.6)
+- PRs: #700, #702, #703, #704
+- Issues closed: #693 (spike), #695 (spike), #697 (bug)
+- Issues created: #701 (structured data review check), #705 (PWA offline support)
+- Upstream: solid-ai-templates#319 (structured data semantic accuracy), solid-ai-templates#320 (ADR conventions)
+- Key changes:
+  - Removed misleading `offers` from JSON-LD on all product pages (not a store)
+  - ADR-026 updated: unscored lenses get ~150-200 words of spec-based content (no noindex needed)
+  - ADR-026 expanded: phrase tables, genre formulas, templates, worked example folded in from content spine
+  - ADR-027: asset storage strategy — MTF charts as generated SVG, readings table inline, chart as linked asset
+  - Content spine deleted — implementation specs belong in their ADR
+  - `docs/specs/` created then removed (folded into ADR)
+  - Homepage hero tagline: "No install. No login. No bloat. Works on 3G in the field."
+- Key decisions:
+  - ADR-027: generate own MTF chart SVGs, not manufacturer images (copyright, consistency)
+  - ADR-027: readings table inline (3G-friendly), SVG chart as linked asset (ref: `docs/decisions/027-asset-and-spec-storage.md`)
+  - Unscored pages are not thin — specs provide enough content without noindex
+  - No forward references between ADRs — self-contained or reference backward only
+  - Implementation specs fold into their ADR, not separate files
+  - "No install" not "No app" — future-proofs for PWA (#705)
