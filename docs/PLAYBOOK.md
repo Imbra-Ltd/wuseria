@@ -221,6 +221,16 @@ py scripts/fetch-sigma-mtf.py             # fetch all to docs/mtf-charts/
 py scripts/fetch-sigma-mtf.py --dry-run   # list without downloading
 ```
 
+**Extract MTF readings from chart PNGs (requires Python + Pillow):**
+
+```bash
+py tools/mtf-extract-sigma.py docs/mtf-charts/sigma-16mm-f1-4-dc-dn-c.png
+```
+
+Auto-detects plot area, extracts values at grid positions + edge, classifies
+S/M via curve-following gap detection. Copy the TypeScript output into
+`src/data/mtf-readings.ts`.
+
 **List unscored lenses:**
 
 ```bash

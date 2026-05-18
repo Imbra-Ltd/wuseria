@@ -1921,3 +1921,36 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
 #### Bookmark added
 
 - Macro lenses for portraiture (fstoppers.com) in `docs/bookmarks.md`
+
+---
+
+### Session 61 — MTF Chart SVG Rendering
+
+- **Tool:** Claude Code (Opus 4.6)
+- **Theme:** Render MTF charts as inline SVG from pixel-extracted data
+
+#### PRs created
+
+- **#724** — MTF charts as SVG from pixel-extracted data
+
+#### Key changes
+
+- New types: `MtfReading`, `MtfChart`, `MtfData` in `src/types/mtf.ts`
+- New data: `src/data/mtf-readings.ts` with 3 digitized lenses (Sigma 16mm, Sigma 56mm, Samyang 12mm)
+- New component: `MtfChart.astro` — static SVG renderer with legend, zero JS
+- New tool: `tools/mtf-extract-sigma.py` — automated pixel extraction from Sigma MTF chart PNGs
+- New tool: `tools/mtf-overlay.html` — visual overlay verification
+- MTF charts integrated into lens detail page Specifications section
+
+#### Key decisions
+
+- ADR-027 revised: SVG-from-data replaces PNG image migration (no `src/assets/mtf/` needed)
+- Per-brand extraction scripts (`mtf-extract-sigma.py`, future `mtf-extract-samyang.py`)
+- Curve-following gap detection reliably distinguishes solid (S) from dashed (M) lines through crossings
+- Edge readings beyond last grid line added via rightmost-pixel detection
+
+#### Next
+
+- Build `tools/mtf-extract-samyang.py` for Samyang chart format (different colors/line styles)
+- Digitize remaining ~28 lens charts
+- Spike #707 (automate sharpness/astigmatism from MTF data) now feasible with digitized readings
