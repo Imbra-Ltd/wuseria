@@ -2,8 +2,10 @@
 import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import Base from "../../layouts/Base.astro";
 import { lenses } from "../../data/lenses";
+import { mtfReadings } from "../../data/mtf-readings";
 import { reviewSourceDirectory } from "../../data/reviews";
 import { toSlug } from "../../utils/slug";
+import MtfChart from "../../components/static/MtfChart.astro";
 import { formatFL } from "../../utils/formatting";
 import { opticalFieldCount, OPTICAL_FIELDS } from "../../utils/scoring";
 import { generateLensContent } from "../../utils/lens-content";
@@ -31,6 +33,7 @@ const { lens } = Astro.props as Props;
 const slug = toSlug(`${lens.brand} ${lens.model}`);
 const canonicalUrl = new URL(`/lenses/${slug}/`, Astro.site);
 const content = generateLensContent(lens, lenses);
+const mtf = mtfReadings[slug];
 
 const DASH = "\u2014";
 
@@ -360,6 +363,50 @@ const jsonLd = {
                 )}
               </tbody>
             </table>
+          </>
+        )
+      }
+
+      {
+        mtf && (
+          <>
+            <h3>MTF Charts</h3>
+            {mtf.charts.map((chart) => (
+              <div class="mtf-block">
+                <span class="mtf-aperture">{chart.aperture}</span>
+                <MtfChart chart={chart} />
+                <table class="spec-table mtf-table">
+                  <thead>
+                    <tr>
+                      <th>Position</th>
+                      <th>10S</th>
+                      <th>10M</th>
+                      <th>30S</th>
+                      <th>30M</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {chart.readings.map((r) => (
+                      <tr>
+                        <td>
+                          {r.position === 0 ? "Center" : `${r.position}mm`}
+                        </td>
+                        <td>{r.contrast10S.toFixed(2)}</td>
+                        <td>{r.contrast10M.toFixed(2)}</td>
+                        <td>{r.resolution30S.toFixed(2)}</td>
+                        <td>{r.resolution30M.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+            <p class="mtf-source">
+              Source:{" "}
+              <a href={mtf.source} target="_blank" rel="noopener noreferrer">
+                Official manufacturer specifications
+              </a>
+            </p>
           </>
         )
       }
@@ -759,6 +806,52 @@ const jsonLd = {
 
   .special-elements {
     color: var(--color-text-muted);
+  }
+
+  /* ── MTF Charts ── */
+  .mtf-block {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .mtf-aperture {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    margin-bottom: var(--space-xs);
+  }
+
+  .mtf-table {
+    margin-top: var(--space-sm);
+    font-family: var(--font-mono);
+  }
+
+  .mtf-table th {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+    text-align: left;
+    padding: var(--space-xs) var(--space-xs) var(--space-xs) 0;
+    border-bottom: 1px solid var(--color-border);
+    font-weight: 400;
+  }
+
+  .mtf-table td:first-child {
+    width: auto;
+  }
+
+  .mtf-source {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-top: var(--space-xs);
+  }
+
+  .mtf-source a {
+    color: var(--color-text-muted);
+  }
+
+  .mtf-source a:hover {
+    color: var(--color-link);
   }
 
   /* ── Pips ── */

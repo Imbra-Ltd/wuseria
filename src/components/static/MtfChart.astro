@@ -1,0 +1,258 @@
+---
+import type { MtfChart } from "../../types/mtf";
+
+interface Props {
+  chart: MtfChart;
+}
+
+const { chart } = Astro.props;
+
+// Chart dimensions
+const W = 320;
+const H = 200;
+const PAD = { top: 12, right: 16, bottom: 28, left: 36 };
+const plotW = W - PAD.left - PAD.right;
+const plotH = H - PAD.top - PAD.bottom;
+
+// Data bounds
+const maxPos = Math.max(...chart.readings.map((r) => r.position));
+const xScale = (pos: number): number => PAD.left + (pos / maxPos) * plotW;
+const yScale = (val: number): number => PAD.top + (1 - val) * plotH;
+
+// Build SVG polyline points
+function toPoints(values: number[]): string {
+  return chart.readings
+    .map(
+      (r, i) =>
+        `${xScale(r.position).toFixed(1)},${yScale(values[i]).toFixed(1)}`,
+    )
+    .join(" ");
+}
+
+const contrast10S = chart.readings.map((r) => r.contrast10S);
+const contrast10M = chart.readings.map((r) => r.contrast10M);
+const resolution30S = chart.readings.map((r) => r.resolution30S);
+const resolution30M = chart.readings.map((r) => r.resolution30M);
+
+// Grid lines at 0.2 intervals
+const yTicks = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
+
+// X-axis ticks — use data positions
+const xTicks = chart.readings.map((r) => r.position);
+---
+
+<svg
+  viewBox={`0 0 ${W} ${H}`}
+  class="mtf-svg"
+  role="img"
+  aria-label={`MTF chart at ${chart.aperture}`}
+>
+  {/* Grid lines */}
+  {
+    yTicks.map((tick) => (
+      <line
+        x1={PAD.left}
+        y1={yScale(tick)}
+        x2={W - PAD.right}
+        y2={yScale(tick)}
+        class="grid-line"
+      />
+    ))
+  }
+
+  {/* Y-axis labels */}
+  {
+    yTicks.map((tick) => (
+      <text x={PAD.left - 4} y={yScale(tick) + 3} class="axis-label axis-y">
+        {tick.toFixed(1)}
+      </text>
+    ))
+  }
+
+  {/* X-axis labels */}
+  {
+    xTicks.map((pos) => (
+      <text x={xScale(pos)} y={H - PAD.bottom + 14} class="axis-label axis-x">
+        {pos === 0 ? "C" : pos}
+      </text>
+    ))
+  }
+
+  {/* X-axis title */}
+  <text x={PAD.left + plotW / 2} y={H - 2} class="axis-title">
+    Image height (mm)
+  </text>
+
+  {/* Data lines — 10 lp/mm (contrast) */}
+  <polyline points={toPoints(contrast10S)} class="line line-10s"></polyline>
+  <polyline points={toPoints(contrast10M)} class="line line-10m"></polyline>
+
+  {/* Data lines — 30 lp/mm (resolution) */}
+  <polyline points={toPoints(resolution30S)} class="line line-30s"></polyline>
+  <polyline points={toPoints(resolution30M)} class="line line-30m"></polyline>
+
+  {/* Data points */}
+  {
+    chart.readings.map((r) => (
+      <>
+        <circle
+          cx={xScale(r.position)}
+          cy={yScale(r.contrast10S)}
+          r="2"
+          class="dot dot-10"
+        />
+        <circle
+          cx={xScale(r.position)}
+          cy={yScale(r.contrast10M)}
+          r="2"
+          class="dot dot-10"
+        />
+        <circle
+          cx={xScale(r.position)}
+          cy={yScale(r.resolution30S)}
+          r="2"
+          class="dot dot-30"
+        />
+        <circle
+          cx={xScale(r.position)}
+          cy={yScale(r.resolution30M)}
+          r="2"
+          class="dot dot-30"
+        />
+      </>
+    ))
+  }
+</svg>
+
+<div class="mtf-legend">
+  <span class="legend-item">
+    <span class="legend-swatch swatch-10s"></span> 10 lp/mm S
+  </span>
+  <span class="legend-item">
+    <span class="legend-swatch swatch-10m"></span> 10 lp/mm M
+  </span>
+  <span class="legend-item">
+    <span class="legend-swatch swatch-30s"></span> 30 lp/mm S
+  </span>
+  <span class="legend-item">
+    <span class="legend-swatch swatch-30m"></span> 30 lp/mm M
+  </span>
+</div>
+
+<style>
+  .mtf-svg {
+    width: 100%;
+    max-width: 24rem;
+    height: auto;
+    display: block;
+  }
+
+  .grid-line {
+    stroke: var(--color-border);
+    stroke-width: 0.5;
+  }
+
+  .axis-label {
+    font-size: 7px;
+    fill: var(--color-text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .axis-y {
+    text-anchor: end;
+  }
+
+  .axis-x {
+    text-anchor: middle;
+  }
+
+  .axis-title {
+    font-size: 7px;
+    fill: var(--color-text-muted);
+    text-anchor: middle;
+  }
+
+  .line {
+    fill: none;
+    stroke-width: 1.5;
+  }
+
+  .line-10s {
+    stroke: var(--color-accent);
+  }
+
+  .line-10m {
+    stroke: var(--color-accent);
+    stroke-dasharray: 4 2;
+  }
+
+  .line-30s {
+    stroke: #6b9bd2;
+  }
+
+  .line-30m {
+    stroke: #6b9bd2;
+    stroke-dasharray: 4 2;
+  }
+
+  .dot {
+    fill: var(--color-bg);
+    stroke-width: 1;
+  }
+
+  .dot-10 {
+    stroke: var(--color-accent);
+  }
+
+  .dot-30 {
+    stroke: #6b9bd2;
+  }
+
+  .mtf-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-md);
+    margin-top: var(--space-xs);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .legend-swatch {
+    display: inline-block;
+    width: 16px;
+    height: 2px;
+  }
+
+  .swatch-10s {
+    background: var(--color-accent);
+  }
+
+  .swatch-10m {
+    background: var(--color-accent);
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--color-accent) 0 4px,
+      transparent 4px 6px
+    );
+    background-color: transparent;
+  }
+
+  .swatch-30s {
+    background: #6b9bd2;
+  }
+
+  .swatch-30m {
+    background-image: repeating-linear-gradient(
+      90deg,
+      #6b9bd2 0 4px,
+      transparent 4px 6px
+    );
+    background-color: transparent;
+  }
+</style>

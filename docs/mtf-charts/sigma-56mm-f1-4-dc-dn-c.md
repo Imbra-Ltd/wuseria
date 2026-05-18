@@ -14,12 +14,17 @@ Image: [sigma-56mm-f1-4-dc-dn-c.png](sigma-56mm-f1-4-dc-dn-c.png)
 
 | Position | 10 lp/mm S | 10 lp/mm M | 30 lp/mm S | 30 lp/mm M |
 | -------- | ---------- | ---------- | ---------- | ---------- |
-| Center   | ~0.97      | ~0.97      | ~0.86      | ~0.86      |
-| 5mm      | ~0.97      | ~0.97      | ~0.86      | ~0.86      |
-| 7.5mm    | ~0.97      | ~0.96      | ~0.81      | ~0.83      |
-| 10mm     | ~0.96      | ~0.97      | ~0.80      | ~0.85      |
-| 12.5mm   | ~0.96      | ~0.94      | ~0.75      | ~0.72      |
-| 14mm     | ~0.93      | ~0.93      | ~0.68      | ~0.60      |
+| Center   | 0.98       | 0.98\*     | 0.86       | 0.86\*     |
+| 2.5mm    | 0.98       | 0.98\*     | 0.87       | 0.87\*     |
+| 5mm      | 0.98       | 0.98\*     | 0.86       | 0.86\*     |
+| 7.5mm    | 0.97       | 0.97\*     | 0.81       | 0.85       |
+| 10mm     | 0.97       | 0.97\*     | 0.80       | 0.86       |
+| 12.5mm   | 0.91       | 0.95       | 0.61       | 0.74       |
+| 14mm     | 0.72       | 0.93       | 0.36       | 0.61       |
+
+Note: Values extracted by pixel scanning (tools/mtf-extract-sigma.py),
+calibrated against chart gridlines. \* = M interpolated (dashed line merged
+with S at scan position). S/M identity assigned by curve-following gap detection.
 
 ## Astigmatism assessment
 
