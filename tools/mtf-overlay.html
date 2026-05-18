@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>MTF Chart Overlay Verification</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: monospace;
+        background: #1a1a2e;
+        color: #e0e0e0;
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+      }
+      h2 {
+        font-size: 1rem;
+        margin: 1.5rem 0 0.5rem;
+        color: #d4a853;
+      }
+      .chart-section {
+        margin-bottom: 2rem;
+        border: 1px solid #333;
+        padding: 1rem;
+        border-radius: 4px;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.8rem;
+        align-items: center;
+      }
+      .controls label {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+      .controls input[type="range"] {
+        width: 80px;
+      }
+      .controls input[type="number"] {
+        width: 60px;
+        background: #222;
+        color: #eee;
+        border: 1px solid #555;
+        padding: 2px 4px;
+        font-family: monospace;
+      }
+      .overlay-container {
+        position: relative;
+        display: inline-block;
+      }
+      .overlay-container img {
+        display: block;
+        max-width: 100%;
+      }
+      .overlay-container svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .line-10s {
+        stroke: red;
+      }
+      .line-10m {
+        stroke: red;
+        stroke-dasharray: 8 4;
+      }
+      .line-30s {
+        stroke: #3366cc;
+      }
+      .line-30m {
+        stroke: #3366cc;
+        stroke-dasharray: 8 4;
+      }
+      .data-line {
+        fill: none;
+        stroke-width: 2;
+      }
+      .dot {
+        r: 3;
+        stroke-width: 1;
+      }
+      .dot-10 {
+        fill: red;
+      }
+      .dot-30 {
+        fill: #3366cc;
+      }
+      .note {
+        font-size: 0.75rem;
+        color: #888;
+        margin-top: 0.3rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>MTF Chart Overlay Verification</h1>
+    <p class="note">
+      Adjust calibration values until the SVG data points align with the PNG
+      chart curves. Use opacity to toggle between layers.
+    </p>
+
+    <div id="charts"></div>
+
+    <script>
+      const DATA = {
+        "sigma-16mm-f1-4-dc-dn-c": {
+          image: "../docs/mtf-charts/sigma-16mm-f1-4-dc-dn-c.png",
+          charts: [
+            {
+              aperture: "f/1.4",
+              // Calibration: pixel percentages of the plot area within the image
+              // These map the data coordinate system to image pixel coordinates
+              cal: { left: 5.8, right: 96.5, top: 5.5, bottom: 91.5, xMax: 14 },
+              readings: [
+                {
+                  position: 0,
+                  contrast10S: 0.96,
+                  contrast10M: 0.96,
+                  resolution30S: 0.81,
+                  resolution30M: 0.78,
+                },
+                {
+                  position: 2.5,
+                  contrast10S: 0.97,
+                  contrast10M: 0.97,
+                  resolution30S: 0.81,
+                  resolution30M: 0.78,
+                },
+                {
+                  position: 5,
+                  contrast10S: 0.96,
+                  contrast10M: 0.96,
+                  resolution30S: 0.82,
+                  resolution30M: 0.77,
+                },
+                {
+                  position: 7.5,
+                  contrast10S: 0.95,
+                  contrast10M: 0.95,
+                  resolution30S: 0.79,
+                  resolution30M: 0.75,
+                },
+                {
+                  position: 10,
+                  contrast10S: 0.93,
+                  contrast10M: 0.94,
+                  resolution30S: 0.68,
+                  resolution30M: 0.72,
+                },
+                {
+                  position: 12.5,
+                  contrast10S: 0.89,
+                  contrast10M: 0.93,
+                  resolution30S: 0.6,
+                  resolution30M: 0.64,
+                },
+              ],
+            },
+          ],
+        },
+        "sigma-56mm-f1-4-dc-dn-c": {
+          image: "../docs/mtf-charts/sigma-56mm-f1-4-dc-dn-c.png",
+          charts: [
+            {
+              aperture: "f/1.4",
+              cal: { left: 5.8, right: 96.5, top: 5.5, bottom: 91.5, xMax: 14 },
+              readings: [
+                {
+                  position: 0,
+                  contrast10S: 0.97,
+                  contrast10M: 0.97,
+                  resolution30S: 0.86,
+                  resolution30M: 0.85,
+                },
+                {
+                  position: 2.5,
+                  contrast10S: 0.97,
+                  contrast10M: 0.97,
+                  resolution30S: 0.86,
+                  resolution30M: 0.86,
+                },
+                {
+                  position: 5,
+                  contrast10S: 0.97,
+                  contrast10M: 0.97,
+                  resolution30S: 0.85,
+                  resolution30M: 0.85,
+                },
+                {
+                  position: 7.5,
+                  contrast10S: 0.97,
+                  contrast10M: 0.97,
+                  resolution30S: 0.81,
+                  resolution30M: 0.85,
+                },
+                {
+                  position: 10,
+                  contrast10S: 0.97,
+                  contrast10M: 0.97,
+                  resolution30S: 0.8,
+                  resolution30M: 0.85,
+                },
+                {
+                  position: 12.5,
+                  contrast10S: 0.95,
+                  contrast10M: 0.96,
+                  resolution30S: 0.73,
+                  resolution30M: 0.8,
+                },
+                {
+                  position: 14,
+                  contrast10S: 0.91,
+                  contrast10M: 0.94,
+                  resolution30S: 0.4,
+                  resolution30M: 0.6,
+                },
+              ],
+            },
+          ],
+        },
+        "samyang-12mm-f2-0-ncs-cs": {
+          image: "../docs/mtf-charts/samyang-12mm-f2.png",
+          charts: [
+            {
+              aperture: "f/2",
+              // Samyang chart has different layout — top chart only
+              cal: { left: 6, right: 95, top: 5, bottom: 58, xMax: 14 },
+              readings: [
+                {
+                  position: 0,
+                  contrast10S: 1.0,
+                  contrast10M: 0.98,
+                  resolution30S: 0.92,
+                  resolution30M: 0.84,
+                },
+                {
+                  position: 2,
+                  contrast10S: 0.99,
+                  contrast10M: 0.97,
+                  resolution30S: 0.91,
+                  resolution30M: 0.79,
+                },
+                {
+                  position: 4,
+                  contrast10S: 0.98,
+                  contrast10M: 0.95,
+                  resolution30S: 0.91,
+                  resolution30M: 0.72,
+                },
+                {
+                  position: 6,
+                  contrast10S: 0.98,
+                  contrast10M: 0.93,
+                  resolution30S: 0.9,
+                  resolution30M: 0.58,
+                },
+                {
+                  position: 8,
+                  contrast10S: 0.97,
+                  contrast10M: 0.94,
+                  resolution30S: 0.7,
+                  resolution30M: 0.5,
+                },
+                {
+                  position: 10,
+                  contrast10S: 0.96,
+                  contrast10M: 0.93,
+                  resolution30S: 0.52,
+                  resolution30M: 0.48,
+                },
+                {
+                  position: 12,
+                  contrast10S: 0.95,
+                  contrast10M: 0.91,
+                  resolution30S: 0.5,
+                  resolution30M: 0.35,
+                },
+                {
+                  position: 14,
+                  contrast10S: 0.82,
+                  contrast10M: 0.8,
+                  resolution30S: 0.35,
+                  resolution30M: 0.22,
+                },
+              ],
+            },
+            {
+              aperture: "f/8",
+              cal: { left: 6, right: 95, top: 44, bottom: 87, xMax: 14 },
+              readings: [
+                {
+                  position: 0,
+                  contrast10S: 1.0,
+                  contrast10M: 1.0,
+                  resolution30S: 0.97,
+                  resolution30M: 0.95,
+                },
+                {
+                  position: 2,
+                  contrast10S: 1.0,
+                  contrast10M: 1.0,
+                  resolution30S: 0.96,
+                  resolution30M: 0.94,
+                },
+                {
+                  position: 4,
+                  contrast10S: 1.0,
+                  contrast10M: 0.99,
+                  resolution30S: 0.95,
+                  resolution30M: 0.92,
+                },
+                {
+                  position: 6,
+                  contrast10S: 1.0,
+                  contrast10M: 0.99,
+                  resolution30S: 0.95,
+                  resolution30M: 0.88,
+                },
+                {
+                  position: 8,
+                  contrast10S: 1.0,
+                  contrast10M: 0.98,
+                  resolution30S: 0.72,
+                  resolution30M: 0.6,
+                },
+                {
+                  position: 10,
+                  contrast10S: 0.99,
+                  contrast10M: 0.95,
+                  resolution30S: 0.5,
+                  resolution30M: 0.48,
+                },
+                {
+                  position: 12,
+                  contrast10S: 0.98,
+                  contrast10M: 0.95,
+                  resolution30S: 0.5,
+                  resolution30M: 0.22,
+                },
+                {
+                  position: 14,
+                  contrast10S: 0.97,
+                  contrast10M: 0.96,
+                  resolution30S: 0.22,
+                  resolution30M: 0.12,
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      const root = document.getElementById("charts");
+
+      for (const [slug, lens] of Object.entries(DATA)) {
+        for (const chart of lens.charts) {
+          const section = document.createElement("div");
+          section.className = "chart-section";
+
+          const id = `${slug}-${chart.aperture.replace("/", "")}`;
+
+          section.innerHTML = `
+      <h2>${slug} @ ${chart.aperture}</h2>
+      <div class="controls">
+        <label>Opacity: <input type="range" min="0" max="100" value="70" data-ctrl="opacity" data-id="${id}"></label>
+        <label>Left %: <input type="number" step="0.1" value="${chart.cal.left}" data-ctrl="left" data-id="${id}"></label>
+        <label>Right %: <input type="number" step="0.1" value="${chart.cal.right}" data-ctrl="right" data-id="${id}"></label>
+        <label>Top %: <input type="number" step="0.1" value="${chart.cal.top}" data-ctrl="top" data-id="${id}"></label>
+        <label>Bottom %: <input type="number" step="0.1" value="${chart.cal.bottom}" data-ctrl="bottom" data-id="${id}"></label>
+        <label>X max (mm): <input type="number" step="0.5" value="${chart.cal.xMax}" data-ctrl="xMax" data-id="${id}"></label>
+      </div>
+      <div class="overlay-container">
+        <img src="${lens.image}" alt="${slug}">
+        <svg id="svg-${id}" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+      </div>
+    `;
+
+          root.appendChild(section);
+
+          const state = { ...chart.cal, opacity: 70 };
+
+          function render() {
+            const svg = document.getElementById(`svg-${id}`);
+            const { left, right, top, bottom, xMax } = state;
+
+            svg.style.opacity = state.opacity / 100;
+
+            function xPct(pos) {
+              return left + (pos / xMax) * (right - left);
+            }
+            function yPct(val) {
+              return top + (1 - val) * (bottom - top);
+            }
+
+            function polyline(field, cls) {
+              return `<polyline class="data-line ${cls}" points="${chart.readings
+                .map((r) => `${xPct(r.position)},${yPct(r[field])}`)
+                .join(" ")}"/>`;
+            }
+
+            function dots(field, cls) {
+              return chart.readings
+                .map(
+                  (r) =>
+                    `<circle cx="${xPct(r.position)}" cy="${yPct(r[field])}" class="dot ${cls}"/>`,
+                )
+                .join("");
+            }
+
+            svg.innerHTML =
+              polyline("contrast10S", "line-10s") +
+              polyline("contrast10M", "line-10m") +
+              polyline("resolution30S", "line-30s") +
+              polyline("resolution30M", "line-30m") +
+              dots("contrast10S", "dot-10") +
+              dots("contrast10M", "dot-10") +
+              dots("resolution30S", "dot-30") +
+              dots("resolution30M", "dot-30");
+          }
+
+          section.querySelectorAll("input").forEach((input) => {
+            input.addEventListener("input", () => {
+              state[input.dataset.ctrl] = parseFloat(input.value);
+              render();
+            });
+          });
+
+          render();
+        }
+      }
+    </script>
+  </body>
+</html>

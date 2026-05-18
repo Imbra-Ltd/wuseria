@@ -14,20 +14,26 @@ Image: [sigma-16mm-f1-4-dc-dn-c.png](sigma-16mm-f1-4-dc-dn-c.png)
 
 | Position | 10 lp/mm S | 10 lp/mm M | 30 lp/mm S | 30 lp/mm M |
 | -------- | ---------- | ---------- | ---------- | ---------- |
-| Center   | ~0.96      | ~0.96      | ~0.81      | ~0.80      |
-| 5mm      | ~0.96      | ~0.96      | ~0.82      | ~0.77      |
-| 7.5mm    | ~0.95      | ~0.95      | ~0.80      | ~0.75      |
-| 10mm     | ~0.94      | ~0.93      | ~0.68      | ~0.72      |
-| 12.5mm   | ~0.92      | ~0.90      | ~0.63      | ~0.63      |
-| 14mm     | ~0.90      | ~0.88      | ~0.60      | ~0.55      |
+| Center   | 0.96       | 0.96\*     | 0.81       | 0.79\*     |
+| 2.5mm    | 0.96       | 0.96\*     | 0.82       | 0.79       |
+| 5mm      | 0.96       | 0.96\*     | 0.82       | 0.77       |
+| 7.5mm    | 0.96       | 0.96\*     | 0.78       | 0.74       |
+| 10mm     | 0.93       | 0.95       | 0.68       | 0.72       |
+| 12.5mm   | 0.83       | 0.93       | 0.59       | 0.64       |
+| 14mm     | 0.71       | 0.89       | 0.50       | 0.56       |
+
+Note: Values extracted by pixel scanning (tools/mtf-extract-sigma.py),
+calibrated against chart gridlines. \* = M interpolated (dashed line merged
+with S at scan position). S/M identity assigned by curve-following gap detection.
 
 ## Astigmatism assessment
 
 S/M divergence at 30 lp/mm:
 
-- Center to ~7.5mm: S and M track closely, gap ~0.03-0.05
-- 10-14mm edge: moderate divergence, gap ~0.05
-- 10 lp/mm lines show minimal separation
+- Center to ~7.5mm: S above M, gap ~0.03-0.05
+- M crosses above S between 7.5-10mm
+- 10-16mm edge: moderate divergence (M > S), gap ~0.03-0.04
+- 10 lp/mm lines show same crossing pattern, gap grows to ~0.04 at edge
 
 **Scoring:** Moderate divergence at edges → **1.5**
 
