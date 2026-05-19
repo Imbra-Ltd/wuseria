@@ -2054,3 +2054,45 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
 - #726 — apply continuity fix to Sigma extraction tool
 - #728 — MTF chart wiki page
 - Continue ADR-026 implementation (#694)
+
+---
+
+### Session 64 — Genre Formula Validation Spike
+
+**Tool:** Claude Code (Opus 4.6)
+
+#### PRs
+
+None — research-only session.
+
+#### Issues closed
+
+- #733 — Evaluate contrast fields and consistency scoring for genre formulas (spike, P2)
+
+#### Issues created
+
+- #737 — Document per-genre field rationale in ADR-013 (task, P2)
+
+#### Key changes
+
+- Spike #733 evaluated three proposed genre formula changes:
+  1. Contrast fields (10 lp/mm) — rejected, only 18% of scored lenses have MTF readings data
+  2. Consistency scoring (center-corner delta) — rejected, only 5/120 lenses change marks (4%), 87% floor-capped
+  3. `_apertureScore` in portrait — rejected, only 3 lenses change and all downward (penalizes slow lenses)
+- Validated portrait formula is correct: XF 56mm f/1.2 R's low portrait mark (2) reflects real photographer experience — forum evidence shows lens was mostly shot at f/1.4-f/2, softness at f/1.2 was tolerated not celebrated, WR replacement universally considered better
+- Confirmed aperture rationale: street/travel need fast aperture for uncontrolled lighting; portrait is shot in controlled light (studio, reflectors)
+- Identified documentation gap: ADR-013 has formula table but no per-field photographic rationale (#737)
+
+#### Key decisions
+
+- Genre formulas confirmed correct as-is — no ADR needed
+- Consistency score useful for OQ page prose (ADR-029) but not for genre scoring
+- Per-genre field rationale to be added to ADR-013 (#737)
+
+#### Next
+
+- #737 — document per-genre field rationale in ADR-013
+- #565 — backfill optical construction fields
+- #735 — implement ADR-029 OQ content generation
+- #726 — apply continuity fix to Sigma extraction tool
+- #728 — MTF chart wiki page
