@@ -280,28 +280,30 @@ def trace_curve(img, ax_x, y_top, y_bot, color_fn):
     return x_to_ys
 
 
-def interpolate_curve_at(x_to_ys, target_x, y_top, y_bot):
+def interpolate_curve_at(x_to_ys, target_x, y_top, y_bot, prev_y=None):
     """Get the curve y-value at a specific x by interpolation.
 
     When there are multiple curve branches (clusters) at nearby x positions,
-    uses the closest x and picks the branch that forms a smooth trajectory.
+    uses prev_y (the previous position's y value) to pick the branch that
+    maintains continuity. Falls back to topmost branch when no hint exists.
 
-    Returns MTF value (0-1) or None.
+    Returns (MTF value 0-1, raw y pixel) or (None, None).
     """
     # Find closest x values with data
     xs_with_data = sorted(x_to_ys.keys())
     if not xs_with_data:
-        return None
+        return None, None
 
     def pick_y(centroids):
         """Pick the best centroid when multiple clusters exist.
 
-        For curves with a single cluster, return it directly.
-        For multiple clusters, take the one with the lowest y (highest MTF)
-        — the topmost branch is more likely to be the actual curve at that x.
+        Uses prev_y hint for continuity — pick the cluster closest to the
+        previous position's y value. Without a hint, pick the topmost (lowest y).
         """
         if len(centroids) == 1:
             return centroids[0]
+        if prev_y is not None:
+            return min(centroids, key=lambda c: abs(c - prev_y))
         return min(centroids)
 
     # Find bracketing x values
@@ -313,35 +315,35 @@ def interpolate_curve_at(x_to_ys, target_x, y_top, y_bot):
         if x >= target_x and right_x is None:
             right_x = x
 
+    def to_mtf(y):
+        mtf = round(1.0 - (y - y_top) / (y_bot - y_top), 4)
+        return mtf, y
+
     # Use exact or nearest
     if left_x is not None and abs(left_x - target_x) <= 5:
-        y = pick_y(x_to_ys[left_x])
-        return round(1.0 - (y - y_top) / (y_bot - y_top), 4)
+        return to_mtf(pick_y(x_to_ys[left_x]))
 
     if right_x is not None and abs(right_x - target_x) <= 5:
-        y = pick_y(x_to_ys[right_x])
-        return round(1.0 - (y - y_top) / (y_bot - y_top), 4)
+        return to_mtf(pick_y(x_to_ys[right_x]))
 
     # Interpolate between left and right
     if left_x is not None and right_x is not None:
         gap = right_x - left_x
         if gap > 100:
-            return None
+            return None, None
         t = (target_x - left_x) / gap
         left_y = pick_y(x_to_ys[left_x])
         right_y = pick_y(x_to_ys[right_x])
         y = left_y + t * (right_y - left_y)
-        return round(1.0 - (y - y_top) / (y_bot - y_top), 4)
+        return to_mtf(y)
 
     # Only one side available
     if left_x is not None and abs(left_x - target_x) <= 20:
-        y = pick_y(x_to_ys[left_x])
-        return round(1.0 - (y - y_top) / (y_bot - y_top), 4)
+        return to_mtf(pick_y(x_to_ys[left_x]))
     if right_x is not None and abs(right_x - target_x) <= 20:
-        y = pick_y(x_to_ys[right_x])
-        return round(1.0 - (y - y_top) / (y_bot - y_top), 4)
+        return to_mtf(pick_y(x_to_ys[right_x]))
 
-    return None
+    return None, None
 
 
 # ---------------------------------------------------------------------------
@@ -403,14 +405,15 @@ def process_plot(img, y_min, y_max, label):
             positions.append(edge_pos)
             print(f"  [{label}] edge at ~{edge_mm}mm, adding position {edge_pos}mm")
 
-    # Interpolate all 4 curves at each position
+    # Interpolate all 4 curves at each position, threading prev_y for continuity
     readings = []
+    prev_10s = prev_10m = prev_30s = prev_30m = None
     for pos in positions:
         xp = xpix(pos)
-        s10 = interpolate_curve_at(curve_10s, xp, y_top, y_bot)
-        m10 = interpolate_curve_at(curve_10m, xp, y_top, y_bot)
-        s30 = interpolate_curve_at(curve_30s, xp, y_top, y_bot)
-        m30 = interpolate_curve_at(curve_30m, xp, y_top, y_bot)
+        s10, prev_10s = interpolate_curve_at(curve_10s, xp, y_top, y_bot, prev_10s)
+        m10, prev_10m = interpolate_curve_at(curve_10m, xp, y_top, y_bot, prev_10m)
+        s30, prev_30s = interpolate_curve_at(curve_30s, xp, y_top, y_bot, prev_30s)
+        m30, prev_30m = interpolate_curve_at(curve_30m, xp, y_top, y_bot, prev_30m)
 
         readings.append({
             "position": pos,
@@ -449,14 +452,18 @@ def print_typescript(aperture_label, readings):
         m10 = r["contrast10M"]
         s30 = r["resolution30S"]
         m30 = r["resolution30M"]
-        if s10 is None:
+        # Skip rows where all values are None (no data at this position)
+        if s10 is None and m10 is None and s30 is None and m30 is None:
             continue
+        # Fill missing values from available data at this position
+        if s10 is None:
+            s10 = m10 if m10 is not None else 0
         if m10 is None:
             m10 = s10
         if m30 is None:
             m30 = s30 if s30 is not None else 0
         if s30 is None:
-            s30 = 0
+            s30 = m30 if m30 is not None else 0
         print(
             f"          {{ position: {r['position']}, "
             f"contrast10S: {round(s10, 2)}, contrast10M: {round(m10, 2)}, "
