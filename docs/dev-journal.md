@@ -1992,3 +1992,65 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
 - Apply continuity fix to Sigma extraction tool (#726)
 - Evaluate skeletonization pipeline (#727)
 - Continue ADR-026 implementation (#694)
+
+---
+
+### Session 63 — MTF Extraction and Optical Quality Architecture
+
+**Tool:** Claude Opus 4.6 (1M context)
+
+#### PRs
+
+- #734 — skeletonization MTF extraction tool + ADR-029
+
+#### Issues closed
+
+- #727 — Skeletonization-based MTF curve extraction pipeline (spike, ADAPT)
+- #730 — MTF inference validation (spike, revised conclusions after literature review)
+
+#### Issues created
+
+- #732 — Collect missing tele-end MTF charts for Sigma zoom lenses
+- #733 — Evaluate contrast fields and consistency scoring for genre formulas
+
+#### Key changes
+
+- **MTF extraction tool v2** (`tools/mtf-extract-skeleton.py`):
+  Color isolation → skeletonize → connected components for S/M classification.
+  Sigma: no dilation, fragment width classifies solid vs dashed. Samyang: dilate
+  for anti-aliasing, 4-color masks. Occlusion fill for overlapping curves.
+  Auto-detects grid step (APS-C 2.5mm vs full-frame 5mm). Zero gaps across
+  all 31 charts (20 Samyang + 11 Sigma).
+
+- **Spike #730 revised conclusions**: Initially concluded MTF can't predict
+  scores (data correlation showed no signal). After authoritative literature
+  review (Nikon USA, Zeiss H.H. Nasse, LensRentals Roger Cicala, Eckhardt
+  Optics), revised: the optical relationships are valid (sharpness, astigmatism,
+  bokeh tendency). The limitation is computed vs measured MTF — not MTF itself.
+  ADR-014 fallback #2 stands.
+
+- **ADR-029**: Splits Optical Quality into Overview + Optical Design Analysis +
+  Lab & Field Tests. Design Analysis covers MTF chart analysis, rendering
+  character (contrast-resolution gap for "pop" vs clinical), stopped-down
+  behavior, cross-frame consistency, and optical construction. Confidence
+  tiers: measured MTF (Sigma Art, Zeiss, Leica) gets direct language,
+  computed MTF gets qualified language. Enables ~100-150 extra words for
+  unscored lenses.
+
+#### Key decisions
+
+- ADR-029 (supersedes ADR-026 section 3)
+- Rendering character readable from 10 vs 30 lp/mm gap — but current genre
+  scoring has no contrast fields, only resolution (#733 created)
+- Construction inference uses confident language ("controls CA" not "designed
+  to control") — these are physical optical properties
+- Variance disclaimer tied to computed vs measured MTF, not brand tier
+- Coating data needed for flare analysis (#99 updated with ADR-029 context)
+
+#### Next
+
+- Merge PR #734
+- #733 — evaluate contrast fields and consistency scoring for genre formulas
+- #726 — apply continuity fix to Sigma extraction tool
+- #728 — MTF chart wiki page
+- Continue ADR-026 implementation (#694)
