@@ -221,15 +221,34 @@ py scripts/fetch-sigma-mtf.py             # fetch all to docs/mtf-charts/
 py scripts/fetch-sigma-mtf.py --dry-run   # list without downloading
 ```
 
-**Extract MTF readings from chart PNGs (requires Python + Pillow):**
+**Extract MTF readings from chart PNGs:**
+
+Skeleton tool (recommended — requires Python + scikit-image + opencv-python):
 
 ```bash
-py tools/mtf-extract-sigma.py docs/mtf-charts/sigma-16mm-f1-4-dc-dn-c.png
+py tools/mtf-extract-skeleton.py docs/mtf-charts/samyang-35mm-f1-2.png
+py tools/mtf-extract-skeleton.py docs/mtf-charts/sigma-56mm-f1-4-dc-dn-c.png
+py tools/mtf-extract-skeleton.py docs/mtf-charts/samyang-*.png   # batch
 ```
 
-Auto-detects plot area, extracts values at grid positions + edge, classifies
-S/M via curve-following gap detection. Copy the TypeScript output into
-`src/data/mtf-readings.ts`.
+Auto-detects chart type (Samyang 4-color / Sigma solid+dashed). Uses
+color isolation → skeletonization → connected components for S/M
+classification. Handles occlusion fill, auto grid step detection (APS-C
+2.5mm / full-frame 5mm), and M-value interpolation. Copy the TypeScript
+output into `src/data/mtf-readings.ts`.
+
+Comparison mode (Samyang only — validates against old pixel-scan tool):
+
+```bash
+py tools/mtf-extract-skeleton.py --compare docs/mtf-charts/samyang-35mm-f1-2.png
+```
+
+Legacy tools (Pillow only, no scikit-image needed):
+
+```bash
+py tools/mtf-extract-samyang.py docs/mtf-charts/samyang-35mm-f1-2.png
+py tools/mtf-extract-sigma.py docs/mtf-charts/sigma-16mm-f1-4-dc-dn-c.png
+```
 
 **List unscored lenses:**
 
