@@ -36,6 +36,7 @@ interface Lens {
   opticalElements?: number;
   opticalGroups?: number;
   specialElements?: string[]; // e.g. ["2 aspherical", "1 ED"]
+  coating?: string[]; // e.g. ["Super EBC", "Nano-GI"]
 
   // ===========================================================================
   // OPTICAL SPECS
