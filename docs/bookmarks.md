@@ -143,6 +143,10 @@
 - https://www.flickr.com/groups/best_photographers/pool/
 - https://www.youtube.com/channel/UCpOb6-cE8oyxyV2GOnuDRwQ
 
+## MTF chart interpretation
+
+- https://www.nikonusa.com/learn-and-explore/c/products-and-innovation/what-is-a-lens-mtf-chart-how-do-i-read-it — Nikon USA; MTF chart explainer including S/M convergence → bokeh quality relationship
+
 ## Scoring methodology references
 
 - https://www.lonelyspeck.com/lenses-for-milky-way-photography/ — Lonely Speck; astro lens scoring formula (aperture area × FOV × max shutter)
