@@ -1954,3 +1954,41 @@ GSC data: 106/461 pages indexed (23%), ranking only for wiki content ("golden ra
 - Build `tools/mtf-extract-samyang.py` for Samyang chart format (different colors/line styles)
 - Digitize remaining ~28 lens charts
 - Spike #707 (automate sharpness/astigmatism from MTF data) now feasible with digitized readings
+
+---
+
+### Session 62 — MTF Extraction Accuracy Fix
+
+- **Tool:** Claude Code (Opus 4.6)
+- **Theme:** Fix continuity bug in Samyang MTF pixel extraction and review PR #725
+
+#### PRs updated
+
+- **#725** — Samyang MTF chart extraction tool and readings data (added fix commit)
+
+#### Issues created
+
+- **#726** — Apply continuity-based curve tracing to Sigma MTF extraction tool (task, P3, v0.7.0)
+- **#727** — Skeletonization-based MTF curve extraction pipeline (spike, P3, v0.7.0)
+- **solid-ai-templates#325** — Add deploy health check to session startup checklist (upstream)
+
+#### Key changes
+
+- Fixed `pick_y` in `mtf-extract-samyang.py` — was always selecting topmost pixel cluster (`min(centroids)`), now uses continuity-based selection (closest to previous position's y value)
+- Fixed missing position 0 fallback — rows with partial data no longer skipped entirely
+- Re-extracted all 20 Samyang lenses with corrected algorithm
+- Example fix: 12mm f/2 at f/8 position 14 `resolution30M`: 0.97 → 0.23 (matches chart)
+- Added deploy health check to CLAUDE.md session startup protocol (step 3)
+
+#### Key decisions
+
+- Continuity-based cluster selection is a general pattern — applies to Sigma tool too (#726)
+- Skeletonization (Otsu + Zhang-Suen) explored as root-cause alternative to heuristic fixes (#727)
+- Deploy health check added to session protocol after discovering 19h stuck GitHub Pages deploy
+
+#### Next
+
+- Merge PR #725
+- Apply continuity fix to Sigma extraction tool (#726)
+- Evaluate skeletonization pipeline (#727)
+- Continue ADR-026 implementation (#694)
