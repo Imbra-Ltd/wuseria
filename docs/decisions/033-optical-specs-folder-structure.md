@@ -36,6 +36,13 @@ docs/optical-specs/<slug>/
                                 #   encountered, data provenance issues
 ```
 
+### Image format
+
+All images in optical-specs folders must be **PNG**. Source images
+downloaded as JPG or WebP must be converted to PNG before committing.
+PNG preserves chart text and diagram lines without compression artifacts
+that degrade readability on MTF charts.
+
 ### File responsibilities
 
 - **analysis.md** — deterministic: given the construction and MTF data,
