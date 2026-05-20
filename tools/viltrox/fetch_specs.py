@@ -89,14 +89,16 @@ def main() -> None:
             gr = specs.get("groups", "?")
             sp = specs.get("special", [])
             co = specs.get("coating", [])
+            inferred = " (brand default)" if specs.get("coating_inferred") else ""
 
-            print(f"  Specs: {el}e/{gr}g, special={sp}, coating={co}")
+            print(f"  Specs: {el}e/{gr}g, special={sp}, coating={co}{inferred}")
 
             if el != "?":
                 print(format_ts_fields(specs))
                 stats["specs"] += 1
             else:
-                print(f"  No specs found in Shopify body_html (older pages lack detail)")
+                print(f"  No construction specs in Shopify body_html (older pages lack detail)")
+                print(f"  Coating: {co}{inferred}")
                 stats["no_specs"] += 1
 
             if i < len(lenses) - 1:

@@ -179,12 +179,24 @@ def extract_specs(product_data: dict) -> dict:
 
     specs["special"] = special
 
-    # Coating
+    # Coating — Viltrox uses "HD Nano multilayer coating" across their entire
+    # lineup. Product pages use inconsistent abbreviations ("HD Nano coating",
+    # "Nano coating", "Nano multilayer coating") but they all refer to the
+    # same coating. Normalize to the full canonical name.
+    VILTROX_COATING = "HD Nano multilayer coating"
+
     coating = []
-    if re.search(r"(?:HD\s+)?Nano\s+(?:multi[- ]?layer\s+)?coating", text, re.IGNORECASE):
-        coating.append("Nano multilayer coating")
+    if re.search(r"(?:HD\s+)?[Nn]ano\s*(?:multi[- ]?layer\s+)?coat", text, re.IGNORECASE):
+        coating.append(VILTROX_COATING)
     elif re.search(r"nano[- ]?coat", text, re.IGNORECASE):
-        coating.append("Nano coating")
+        coating.append(VILTROX_COATING)
+
+    # Brand-level default: all Viltrox AF lenses use HD Nano multilayer
+    # coating (confirmed via Dustin Abbott reviews, manufacturer images,
+    # and distribution channel spec sheets). Flag if not found on page.
+    if not coating:
+        coating.append(VILTROX_COATING)
+        specs["coating_inferred"] = True
 
     specs["coating"] = coating
 
