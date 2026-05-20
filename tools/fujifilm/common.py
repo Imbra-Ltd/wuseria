@@ -15,7 +15,6 @@ from playwright.sync_api import sync_playwright, BrowserContext, Page
 ROOT = Path(__file__).resolve().parent.parent.parent
 LENSES_TS = ROOT / "src" / "data" / "lenses.ts"
 OPTICAL_SPECS_DIR = ROOT / "docs" / "optical-specs"
-MTF_CHARTS_DIR = ROOT / "docs" / "mtf-charts"
 CACHE_DIR = ROOT / ".cache" / "fetch"
 
 USER_AGENT = (
@@ -68,19 +67,15 @@ def has_construction_image(slug: str) -> bool:
 
 
 def has_mtf_charts(slug: str) -> bool:
-    """Check if MTF charts exist in either mtf-charts/ or optical-specs/ for the given slug."""
-    in_mtf = bool(list(MTF_CHARTS_DIR.glob(f"{slug}-*lp.*")))
+    """Check if MTF charts exist in optical-specs/{slug}/."""
     specs_dir = OPTICAL_SPECS_DIR / slug
-    if specs_dir.is_dir():
-        # Check for standard *lp* pattern or any PNG/webp images (covers non-standard naming)
-        mtf_images = [
-            f for f in specs_dir.glob(f"{slug}-*.png")
-            if "construction" not in f.name
-        ]
-        in_specs = bool(mtf_images)
-    else:
-        in_specs = False
-    return in_mtf or in_specs
+    if not specs_dir.is_dir():
+        return False
+    mtf_images = [
+        f for f in specs_dir.glob(f"{slug}-*")
+        if "construction" not in f.name and f.suffix in (".png", ".jpg", ".webp")
+    ]
+    return bool(mtf_images)
 
 
 # --- Caching ---

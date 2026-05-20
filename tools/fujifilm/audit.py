@@ -15,7 +15,6 @@ import re
 from common import (
     LENSES_TS,
     OPTICAL_SPECS_DIR,
-    MTF_CHARTS_DIR,
     extract_fujifilm_lenses,
     model_to_slug,
     has_construction_image,

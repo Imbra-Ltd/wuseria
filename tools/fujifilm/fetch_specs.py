@@ -21,8 +21,7 @@ from pathlib import Path
 
 from common import (
     ROOT,
-    OPTICAL_CONSTRUCTION_DIR,
-    MTF_CHARTS_DIR,
+    OPTICAL_SPECS_DIR,
     extract_fujifilm_lenses,
     model_to_slug,
     url_to_slug,
@@ -95,8 +94,7 @@ def main() -> None:
             print(f"  {lens['model']}: {', '.join(needs)}")
         return
 
-    OPTICAL_CONSTRUCTION_DIR.mkdir(parents=True, exist_ok=True)
-    MTF_CHARTS_DIR.mkdir(parents=True, exist_ok=True)
+    OPTICAL_SPECS_DIR.mkdir(parents=True, exist_ok=True)
 
     do_specs = not args.images_only and not args.coatings_only
     do_images = not args.specs_only and not args.coatings_only
@@ -144,9 +142,12 @@ def main() -> None:
 
                     found = False
 
+                    specs_dir = OPTICAL_SPECS_DIR / slug
+                    specs_dir.mkdir(parents=True, exist_ok=True)
+
                     if "construction" in img_urls:
                         ext = img_urls["construction"].rsplit(".", 1)[-1]
-                        dest = OPTICAL_CONSTRUCTION_DIR / f"{slug}.{ext}"
+                        dest = specs_dir / f"{slug}-construction.{ext}"
                         if download_image(img_urls["construction"], dest):
                             print(f"  Construction: {dest.name}")
                             stats["construction"] += 1
@@ -158,7 +159,7 @@ def main() -> None:
                     ]:
                         if key in img_urls:
                             ext = img_urls[key].rsplit(".", 1)[-1]
-                            dest = MTF_CHARTS_DIR / f"{slug}{suffix}.{ext}"
+                            dest = specs_dir / f"{slug}{suffix}.{ext}"
                             if download_image(img_urls[key], dest):
                                 print(f"  {label}: {dest.name}")
                                 stats["mtf"] += 1
