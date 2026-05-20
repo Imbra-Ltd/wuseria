@@ -6277,6 +6277,9 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 14,
+    opticalGroups: 11,
+    specialElements: ["2 aspherical", "4 ED", "2 HR"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6339,6 +6342,10 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 11,
+    opticalGroups: 10,
+    specialElements: ["2 ED", "2 HR"],
+    coating: ["HD Nano coating"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6399,6 +6406,9 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 10,
+    opticalGroups: 9,
+    specialElements: ["1 ED", "1 HR"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6453,6 +6463,10 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 10,
+    opticalGroups: 9,
+    specialElements: ["1 ED", "1 HR"],
+    coating: ["Nano coating"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6512,6 +6526,9 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 15,
+    opticalGroups: 11,
+    specialElements: ["1 aspherical", "2 ED", "5 HR"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6574,6 +6591,9 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 16,
+    opticalGroups: 11,
+    specialElements: ["3 ED", "4 HR"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6635,6 +6655,9 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 13,
+    opticalGroups: 11,
+    specialElements: ["2 aspherical", "3 ED", "3 HR"],
     minFocusDistance: 130,
 
     afMotor: "LM",
@@ -6697,6 +6720,9 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 12,
+    opticalGroups: 10,
+    specialElements: ["2 aspherical", "3 ED", "3 HR"],
     maxMagnification: 0.1,
     minFocusDistance: 230,
 
@@ -6756,6 +6782,10 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 12,
+    opticalGroups: 10,
+    specialElements: ["2 aspherical", "1 ED", "2 HR"],
+    coating: ["Nano coating"],
     maxMagnification: 0.11,
     minFocusDistance: 300,
 
@@ -6811,6 +6841,9 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 6,
+    opticalGroups: 6,
+    specialElements: ["2 aspherical", "2 ED"],
     minFocusDistance: 340,
 
     afMotor: "LM",
@@ -6872,6 +6905,9 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 11,
+    opticalGroups: 9,
+    specialElements: ["1 aspherical", "1 ED", "2 HR"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6936,6 +6972,9 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 11,
+    opticalGroups: 9,
+    specialElements: ["4 ED", "3 HR"],
     maxMagnification: 0.11,
     minFocusDistance: 550,
 
@@ -6996,6 +7035,10 @@ const lenses: Lens[] = [
     hasDistanceScale: false,
     hasRotatingFront: false,
     hasTripodMount: false,
+    opticalElements: 10,
+    opticalGroups: 7,
+    specialElements: ["1 ED"],
+    coating: ["Nano multilayer coating"],
 
     afMotor: "LM",
     isFocusByWire: true,
