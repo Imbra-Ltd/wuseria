@@ -53,13 +53,13 @@ def check_files(slug: str) -> dict:
     """Check which files exist for a given lens slug."""
     optical_specs_dir = OPTICAL_SPECS_DIR / slug
     has_optical_specs = optical_specs_dir.is_dir()
-    has_notes = (optical_specs_dir / "notes.md").exists() if has_optical_specs else False
+    has_analysis = (optical_specs_dir / "analysis.md").exists() if has_optical_specs else False
 
     return {
         "has_construction_img": has_construction_image(slug),
         "has_mtf": has_mtf_charts(slug),
         "has_optical_specs_dir": has_optical_specs,
-        "has_notes": has_notes,
+        "has_analysis": has_analysis,
     }
 
 
