@@ -2231,3 +2231,48 @@ None — research-only session.
 - Continue #565/#99 backfill for remaining brands (Sigma, Carl Zeiss next per epic #739)
 - #735 — implement ADR-029 OQ content generation (prereqs now partially met)
 - MKX 50-135mm construction: manual fetch from official page
+
+---
+
+### Session 71 — Sigma Optical Specs and Folder Structure
+
+#### PRs
+
+- #768 — Sigma optical specs, tools, and folder structure formalization
+
+#### Issues created
+
+- #767 — Add wiki entry for MTF charts (P3 task)
+
+#### Key changes
+
+- Migrated 11 Sigma MTF charts from `docs/mtf-charts/` to `docs/optical-specs/`
+- Created `tools/sigma/` extraction tools (fetch_specs.py, audit.py, common.py)
+  - Plain urllib like Samyang — Sigma pages are static HTML
+  - Extracts elements, groups, special elements (FLD, SLD, aspherical), coating
+  - Fallback detection for pages without explicit counts (marked with `~` prefix)
+  - Downloads construction diagrams and MTF charts (diffraction + geometrical)
+  - Fixed URL pattern to handle naming variants across Sigma page generations
+- Downloaded construction diagrams for all 11 Sigma lenses
+- Downloaded official MTF charts: diffraction + geometrical for all 11 lenses
+- Populated optical construction fields in lenses.ts for all 11 Sigma lenses
+- Verified special element counts against construction diagrams (visual inspection) and cross-validated with independent sources (OpticalLimits, B&H, Imaging Resource, Dustin Abbott)
+- Documented Sigma diffraction vs geometrical MTF chart types in analysis files
+- Removed 11 duplicate MTF files (old migration copies identical to downloaded versions)
+- Renamed all 45 `notes.md` → `analysis.md` per ADR-033
+- Moved XF 16-55mm back to `notes.md` (operational content, not analysis)
+- Removed repeated ADR-014 boilerplate from 23 analysis files
+- Updated Fujifilm audit tool to reference `analysis.md`
+
+#### Key decisions
+
+- ADR-032: Use diffraction MTF for scoring and display — comparable across all manufacturers, includes real-world diffraction constraints. Geometrical MTF retained in optical-specs for reference only.
+- ADR-033: Per-lens optical-specs folder structure — `analysis.md` (predictions), `scoring-log.md` (per-lens justification, incremental migration from monolith), `notes.md` (optional operational notes). Cross-lens comparison is the database's job.
+- SLD is a glass material property, aspherical is a surface shape — a single element can be both (e.g. Sigma 56mm f/1.4)
+- Sigma construction diagram color legend: red outline = aspherical, yellow fill = FLD, blue fill = SLD
+
+#### Next
+
+- Continue brand backfill (Carl Zeiss, Tamron next per epic #739)
+- #767 — wiki entry on MTF charts
+- Incremental migration of monolithic scoring-log.md to per-lens files

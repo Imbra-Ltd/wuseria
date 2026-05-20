@@ -64,11 +64,12 @@ Project-specific overrides and additions follow below.
 - `src/styles/global.css` — CSS custom properties, base styles, dark theme
 - `src/test/` — Vitest setup and test factories
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
-- `docs/scoring-log.md` — per-lens scoring justifications (source data → rubric → score)
-- `docs/optical-specs/` — verified per-lens optical reference data (MTF charts as PNG, `notes.md` for provenance), one subfolder per lens (ADR-031)
+- `docs/scoring-log.md` — legacy monolithic scoring log (being migrated to per-lens files per ADR-033)
+- `docs/optical-specs/` — verified per-lens optical reference data, one subfolder per lens (ADR-031, ADR-033): `analysis.md` (MTF readings, predictions), `scoring-log.md` (per-lens scoring justification), `notes.md` (optional operational notes), construction diagrams and MTF charts as PNG
 - `docs/mtf-charts/` — unverified MTF charts and third-party lens data pending review
 - `tools/fujifilm/` — Fujifilm optical spec extraction (fetch_specs, audit, Playwright-based)
 - `tools/samyang/` — Samyang optical spec extraction (fetch_specs, audit, plain urllib)
+- `tools/sigma/` — Sigma optical spec extraction (fetch_specs, audit, plain urllib)
 - `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility
 
 ### 1.3 Commands
