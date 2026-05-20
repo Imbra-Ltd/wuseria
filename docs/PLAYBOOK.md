@@ -251,6 +251,19 @@ py tools/sigma/audit.py                           # audit data completeness
 py tools/sigma/audit.py --missing                 # show only incomplete lenses
 ```
 
+**Fetch Viltrox optical specs and download images (Shopify JSON + HTML scraping):**
+
+```bash
+py tools/viltrox/fetch_specs.py                    # fetch all specs from Shopify API
+py tools/viltrox/fetch_specs.py --dry-run           # list lenses without fetching
+py tools/viltrox/fetch_specs.py --filter 13mm       # filter by model substring
+py tools/viltrox/download_images.py                 # download all theme images to cache
+py tools/viltrox/download_images.py --dry-run       # list image URLs only
+py tools/viltrox/download_images.py --filter 27mm   # filter by model substring
+py tools/viltrox/audit.py                           # audit data completeness
+py tools/viltrox/audit.py --missing                 # show only incomplete lenses
+```
+
 **Extract MTF readings from chart PNGs:**
 
 Skeleton tool (recommended — requires Python + scikit-image + opencv-python):
