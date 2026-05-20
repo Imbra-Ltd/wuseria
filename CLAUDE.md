@@ -70,6 +70,7 @@ Project-specific overrides and additions follow below.
 - `tools/fujifilm/` — Fujifilm optical spec extraction (fetch_specs, audit, Playwright-based)
 - `tools/samyang/` — Samyang optical spec extraction (fetch_specs, audit, plain urllib)
 - `tools/sigma/` — Sigma optical spec extraction (fetch_specs, audit, plain urllib)
+- `tools/viltrox/` — Viltrox optical spec extraction (fetch_specs, audit, download_images, Shopify JSON + HTML scraping)
 - `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility
 
 ### 1.3 Commands

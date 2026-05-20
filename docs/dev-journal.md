@@ -2276,3 +2276,37 @@ None — research-only session.
 - Continue brand backfill (Carl Zeiss, Tamron next per epic #739)
 - #767 — wiki entry on MTF charts
 - Incremental migration of monolithic scoring-log.md to per-lens files
+
+---
+
+### Session 72 — Viltrox Optical Specs Collection
+
+PRs: #768 (Sigma merge), #769 (Viltrox optical specs)
+Issues closed: #742 (Sigma), #746 (Viltrox)
+Epic: #739 — Sigma and Viltrox checked off
+
+#### Key changes
+
+- Merged PR #768 (Sigma optical specs from previous session)
+- Created `tools/viltrox/` extraction tools (fetch_specs, audit, download_images, common)
+- Populated optical construction fields for all 13 Viltrox lenses: opticalElements, opticalGroups, specialElements, coating
+- Downloaded MTF charts and construction diagrams for all 13 lenses from Viltrox Shopify theme pages and LensTip
+- Normalized all coating to "HD Nano multilayer coating" (brand-level standard confirmed via Dustin Abbott, Viltrox product images, distribution channel spec sheets)
+- Converted all images from JPG to PNG per project convention
+- Replaced undersized images (768px CDN variants) with full-resolution originals
+- Replaced 27mm f/1.2 Pro construction with LensTip cross-section diagram
+- ADR-033 updated: PNG image format requirement formalized
+- Brand-level coating default added to Viltrox tools (inferred with flag)
+- Download tool improved: broad CDN pattern matching, size variant deduplication
+
+#### Key decisions
+
+- ADR-033 amendment: all optical spec images must be PNG (ref ADR-033)
+- Viltrox coating is a brand-level attribute — same "HD Nano multilayer coating" across entire lineup, not per-lens
+- Shopify JSON API misses theme-embedded images — must scrape full HTML with broad patterns
+- PetaPixel not added as review source — news/editorial site, no systematic optical testing
+
+#### Next
+
+- Continue brand backfill (Carl Zeiss, Tamron, Venus Laowa next per epic #739)
+- #767 — wiki entry on MTF charts
