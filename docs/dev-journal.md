@@ -2195,3 +2195,37 @@ None — research-only session.
 - Merge PR #764
 - MKX 50-135mm construction: manual fetch from official page
 - Start next brand in epic #739 (Samyang or Sigma — scored P2 brands first)
+
+---
+
+### Session 69 — ADR-029 Prerequisites and Samyang Tool
+
+**Tool:** Claude Code (Opus 4.6)
+
+#### PRs
+
+- #765 — mtfType field, Samyang optical data, and extraction tool (auto-merge pending)
+
+#### Key changes
+
+- Added `mtfType: "computed" | "measured"` to `MtfData` type — all 22 MTF entries set to `"computed"`
+- Removed `docs/optical-construction/` (64 files already migrated to `docs/optical-specs/` per ADR-031)
+- Backfilled `opticalElements`, `opticalGroups`, `specialElements`, `coating` for all 20 Samyang lenses from official product pages
+- New `tools/samyang/` extraction tool: `fetch_specs.py`, `audit.py`, `common.py`
+  - Extracts specs, MTF charts, and construction diagrams from Samyang product pages
+  - Targeted spec table block extraction avoids false positives from navigation links
+  - Plain urllib (no Playwright needed) — Samyang pages are static HTML
+  - Page caching via `.cache/fetch/*.html`
+
+#### Key decisions
+
+- Sigma published MTF charts are computed (design data), not measured — corrected understanding from ADR-029 which grouped Sigma Art with Zeiss/Leica as measured. Correction deferred to a separate fix.
+- 86/244 lenses now have optical construction data (Fujifilm 66 + Samyang 20)
+
+#### Next
+
+- Merge PR #765
+- Correct ADR-029 Sigma MTF classification
+- Continue #565/#99 backfill for remaining brands (Sigma, Carl Zeiss next per epic #739)
+- #735 — implement ADR-029 OQ content generation (prereqs now partially met)
+- MKX 50-135mm construction: manual fetch from official page
