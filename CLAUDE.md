@@ -65,7 +65,8 @@ Project-specific overrides and additions follow below.
 - `src/test/` — Vitest setup and test factories
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
 - `docs/scoring-log.md` — per-lens scoring justifications (source data → rubric → score)
-- `docs/mtf-charts/` — MTF chart reading data (`.md` analysis files) and manufacturer `.png` reference images (not served on site, per ADR-027)
+- `docs/optical-specs/` — verified per-lens optical reference data (MTF charts as PNG, `notes.md` for provenance), one subfolder per lens (ADR-031)
+- `docs/mtf-charts/` — unverified MTF charts and third-party lens data pending review
 
 ### 1.3 Commands
 
@@ -271,9 +272,10 @@ Follow `docs/solid-ai-templates/templates/base/workflow/scope.md` for scope guar
 
 1. Check which branch we're on — if not `main`, ask why
 2. Check `git status` — if uncommitted changes exist, resolve before starting
-3. Check deploy health: `gh run list --branch main --limit 1` — if the latest deploy is not `completed/success`, flag it before starting work
-4. Ask: "What's the theme for this session?" — agree on ONE theme
-5. Review open issues for that theme before writing code
+3. Clean up stale branches: `git fetch --prune` to remove stale remote tracking refs, then `git branch --merged main | grep -v main` to delete merged local branches
+4. Check deploy health: `gh run list --branch main --limit 1` — if the latest deploy is not `completed/success`, flag it before starting work
+5. Ask: "What's the theme for this session?" — agree on ONE theme
+6. Review open issues for that theme before writing code
 
 ### 6.2 During the session
 

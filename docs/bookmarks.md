@@ -3,6 +3,7 @@
 - https://lens-db.com/system/fujifilm-x/full-list/
 - https://lens-db.com/system/fujifilm-g/full-list/
 - https://alikgriffin.com/a-complete-list-of-fujifilm-x-mount-lenses/
+- https://allphotolenses.com/ — lens database with official MTF charts
 - https://fujifilm-x.com/global/products/x-mount-lens-roadmap/
 
 ## Reviews and comparisons — trusted sources (matches ReviewSource type)
@@ -15,6 +16,7 @@
 - https://dustinabbott.net/ — thorough field + lab; CA, flare, bokeh analysis
 - https://www.imaging-resource.com/ — lab-based resolution and noise testing
 - https://www.ephotozine.com/ — lab-tested MTF + resolution charts
+- https://focus-review.com/ — lab methodology, trust-2
 - https://www.dpreview.com/ — comprehensive (archived, still referenced)
 - https://phillipreeve.net/blog/photography/ — manual focus and adapted lens specialist
 - https://www.cameralabs.com/ — Gordon Laing; thorough video + stills

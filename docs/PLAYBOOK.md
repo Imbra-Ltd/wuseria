@@ -190,10 +190,10 @@ genres (once genre formulas are implemented).
 **Fetch a web page (bot-blocked sites):**
 
 ```bash
-py scripts/fetch-page.py <url>              # text content (cached)
-py scripts/fetch-page.py <url> --html       # raw HTML (cached)
-py scripts/fetch-page.py <url> --wait 5000  # wait N ms after load
-py scripts/fetch-page.py <url> --no-cache   # bypass cache, fetch fresh
+py tools/fetch-page.py <url>              # text content (cached)
+py tools/fetch-page.py <url> --html       # raw HTML (cached)
+py tools/fetch-page.py <url> --wait 5000  # wait N ms after load
+py tools/fetch-page.py <url> --no-cache   # bypass cache, fetch fresh
 ```
 
 Responses are cached in `.cache/fetch/` with a full-page screenshot (PNG).

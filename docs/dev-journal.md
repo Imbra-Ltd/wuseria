@@ -2096,3 +2096,102 @@ None — research-only session.
 - #735 — implement ADR-029 OQ content generation
 - #726 — apply continuity fix to Sigma extraction tool
 - #728 — MTF chart wiki page
+
+---
+
+### Session 66 — MTF Chart Verification and Optical Specs Restructure
+
+**Tool:** Claude Code (Opus 4.6)
+
+#### PRs
+
+- None yet (branch: `feat/optical-construction-and-coating`)
+
+#### Key changes
+
+- Lens-by-lens verification of all Fujifilm MTF charts against official specs pages
+- Fixed GFX frequency labels — each GF lens uses different lp/mm (10/15/20/40/45), not uniform
+- Converted all MTF images to PNG (was webp/gif/jpg mix)
+- Added `wide-` prefix to all zoom wide-end files for consistency
+- Downloaded missing charts from Fujifilm CDN (zoom wide/tele gaps)
+- Replaced wrong charts: legends saved as charts, GFX data on APS-C lenses, CMS duplicates
+- Created `docs/optical-specs/` with per-lens subfolders (ADR-031)
+- Verified and moved 55 Fujifilm lenses; 5 remain unverified in `docs/mtf-charts/`
+- Added `notes.md` per lens when source is non-official or problematic
+
+#### Key decisions
+
+- ADR-031: optical-specs directory structure with per-lens subfolders
+- Fujifilm en-us specs pages have frequent CMS bugs; global pages (`/global/`) are more reliable
+- Third-party lenses (Samyang, Sigma, Viltrox) pending review
+
+#### Next
+
+- Review third-party MTF charts (Samyang, Sigma, Viltrox)
+- Fix remaining 5 unverified Fujifilm lenses
+- Add official URLs to GF lens database entries
+
+---
+
+### Session 67 — Optical Construction & Tool Consolidation
+
+**Tool:** Claude Code (Opus 4.6)
+
+#### PRs
+
+- None yet (branch: `feat/fujifilm-optical-specs`)
+
+#### Key changes
+
+- Refactored Fujifilm fetch scripts from `scripts/` into `tools/fujifilm/` with shared `common.py` module
+- Corrected `specialElements` for 5 lenses: XF 18-55mm (+1 ED), XF 18-135mm (+2 ED), XF 55-200mm (+1 Super ED), MKX 18-55mm (+6 Super ED), MKX 50-135mm (+2 Super ED)
+- Converted all construction images from webp/jpg to PNG format
+- Copied construction images into per-lens `docs/optical-specs/` subdirectories (35 lenses)
+- Added 29 MTF charts to `docs/mtf-charts/`
+- Documented issues: MKX 50-135mm wrong construction image, XF 16-55mm wrong diagram on official page
+
+#### Key decisions
+
+- None (continuation of ADR-031 implementation)
+
+#### Next
+
+- Continue optical construction diagrams for XF primes
+- Review and verify remaining unverified Fujifilm lenses
+- Third-party MTF chart review
+
+---
+
+### Session 68 — Fujifilm Optical Specs Completion
+
+**Tool:** Claude Code (Opus 4.6)
+
+#### PRs
+
+- #764 — Complete Fujifilm optical specs collection
+
+#### Key changes
+
+- Copied 26 XF + 4 XC construction images from `docs/optical-construction/` into per-lens `docs/optical-specs/` folders
+- Converted and moved 10 unverified MTF charts from `docs/mtf-charts/` (webp/jpg to PNG)
+- Removed 29 verified Fujifilm files from `docs/mtf-charts/` (only Samyang remains)
+- Visually verified all 45 XF + XC construction diagrams
+- Found and removed 1 invalid diagram: XC 16-50mm (unlabeled third-party, dark background)
+- Sourced XC 16-50mm construction from Digital Photography Live (official Fujifilm diagram rehosted)
+- Sourced XC 15-45mm construction from LensTip (priority source — missed by web search)
+- XC 35mm construction copied from XF 35mm f/2.0 R WR (same optical formula, documented in notes)
+- Result: 65/66 Fujifilm lenses complete (only MKX 50-135mm T2.9 remains — no MTF published, construction deferred)
+
+#### Key decisions
+
+- None (continuation of ADR-031 implementation)
+
+#### Lesson learned
+
+- Construction diagrams and MTF charts are embedded images in review articles — web search engines index text, not image contents. Always check PLAYBOOK 2.8 priority sources (LensTip, Radojuva, Phillip Reeve) directly before falling back to generic web search. The XC 15-45mm diagram was on LensTip the whole time.
+
+#### Next
+
+- Merge PR #764
+- MKX 50-135mm construction: manual fetch from official page
+- Start next brand in epic #739 (Samyang or Sigma — scored P2 brands first)
