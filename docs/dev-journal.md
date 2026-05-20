@@ -2221,6 +2221,8 @@ None — research-only session.
 
 - Sigma published MTF charts are computed (design data), not measured — corrected understanding from ADR-029 which grouped Sigma Art with Zeiss/Leica as measured. Correction deferred to a separate fix.
 - 86/244 lenses now have optical construction data (Fujifilm 66 + Samyang 20)
+- Wrap-up checklist steps 6 and 9 strengthened: must enumerate new files/directories/commands before evaluating — prevents batch-dismissing structural changes
+- Upstream issue: solid-ai-templates#327 (scope.md checklist fix)
 
 #### Next
 
