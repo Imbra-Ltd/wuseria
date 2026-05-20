@@ -64,9 +64,8 @@ Project-specific overrides and additions follow below.
 - `src/styles/global.css` — CSS custom properties, base styles, dark theme
 - `src/test/` — Vitest setup and test factories
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
-- `docs/scoring-log.md` — legacy monolithic scoring log (being migrated to per-lens files per ADR-033)
+- `docs/audits/` — 360-degree audits (timestamped) and SEO test plan
 - `docs/optical-specs/` — verified per-lens optical reference data, one subfolder per lens (ADR-031, ADR-033): `analysis.md` (MTF readings, predictions), `scoring-log.md` (per-lens scoring justification), `notes.md` (optional operational notes), construction diagrams and MTF charts as PNG
-- `docs/mtf-charts/` — unverified MTF charts and third-party lens data pending review
 - `tools/fujifilm/` — Fujifilm optical spec extraction (fetch_specs, audit, Playwright-based)
 - `tools/samyang/` — Samyang optical spec extraction (fetch_specs, audit, plain urllib)
 - `tools/sigma/` — Sigma optical spec extraction (fetch_specs, audit, plain urllib)
@@ -176,7 +175,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - All computed `genreMarks` MUST be stored on the lens — no omissions, even low scores (e.g. macro=1). Transparency over curation.
 - Scoring methodology and fallback rules are defined in `docs/decisions/014-optical-quality-rubric.md` — trust hierarchy, rubric thresholds, trust-2 aggregation, community consensus fallback, optical construction inference
 - Scoring log format and field completeness rules are defined in `docs/decisions/022-scoring-log-and-mtf-charts.md` — every entry must list all 14 optical fields with explicit undefined markers
-- When scoring lenses, always save official MTF charts to `docs/mtf-charts/` with companion `.md` analysis files per ADR-022
+- When scoring lenses, save official MTF charts and analysis to the per-lens folder in `docs/optical-specs/<slug>/`
 - Samyang lenses are sold under multiple brand aliases (Rokinon, Bower, Walimex Pro, Vivitar) — search all aliases when looking for reviews
 - optyczne.pl and lenstip.com are the same company (CO-NET Robert Olech) — never count as separate sources for trust-2 aggregation
 - Verify lens mount availability before adding to the database — check official manufacturer pages and third-party lens lists; do not assume a lens exists in X-mount or GFX just because it exists in other mounts

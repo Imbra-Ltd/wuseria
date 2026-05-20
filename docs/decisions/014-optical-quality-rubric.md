@@ -250,8 +250,8 @@ not measured from production samples.
 ## Reference scoring
 
 Per-lens scoring justifications are maintained in
-[`docs/scoring-log.md`](../scoring-log.md), sorted by brand and focal
-length. Each entry maps source data to rubric rules and is traceable
+`docs/optical-specs/<slug>/scoring-log.md`, one file per lens (see ADR-033).
+Each entry maps source data to rubric rules and is traceable
 to the original review page.
 
 ## Alternatives considered

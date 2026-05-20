@@ -1,0 +1,21 @@
+# Scoring Log: Samyang 12mm f/2.0 NCS CS
+
+Third-party ultra-wide prime. Popular astro lens.
+Sources: LensTip (lab, trust 3).
+Sensor: X-Trans I (X-E1), max ~66 lpmm.
+
+| Field               | Score | Source data                                                                                                                                                                                                            | Rubric rule            |
+| ------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| centerStopped       | 2.0   | ~74 lpmm at f/2.8-4.0 center (112% of max).                                                                                                                                                                            | >= 90%                 |
+| cornerStopped       | 1.0   | Summary PRO: "acceptable image quality on the edge of the frame." Edges "good" at f/5.6. "Significant difference from centre" (CON).                                                                                   | PRO: "acceptable"      |
+| centerWideOpen      | 2.0   | ~60 lpmm at f/2 center (91% of max).                                                                                                                                                                                   | >= 90%                 |
+| astigmatism         | 2.0   | 3.7%. "Corrected in a flawless way."                                                                                                                                                                                   | < 5%                   |
+| coma                | 1.5   | LensTip: "visible but intensity isn't high", "no serious reservations." Lonely Speck: "very low comatic aberration" at f/2. Dustin Abbott: "really well controlled." Consensus across sources: minor, well-controlled. | "minor" (multi-source) |
+| sphericalAberration | 2.0   | "No focus shift, no problems with correction."                                                                                                                                                                         | "negligible"           |
+| longitudinalCA      | 0.5   | "didn't manage to deal with that problem well", "photo shows it clearly."                                                                                                                                              | "poor"                 |
+| lateralCA           | 0.5   | ~0.15%. "Noticeable factor deteriorating edge image quality."                                                                                                                                                          | 0.15-0.20%             |
+| distortion          | 1.0   | -1.88% barrel. Same RAW and JPEG (no in-camera correction).                                                                                                                                                            | 1.0-2.0%               |
+| vignettingWideOpen  | 0.5   | -1.69 EV at f/2.                                                                                                                                                                                                       | 1.5-2.5 EV             |
+| vignettingStopped   | 1.5   | -0.87 EV at f/4.                                                                                                                                                                                                       | 0.5-1.0 EV             |
+| bokeh               | 1.5   | "Nice to look at, even light spread, no noticeable extremes."                                                                                                                                                          | "very good"            |
+| flareResistance     | 0.5   | "A lot of problems against bright light", deteriorates stopped down.                                                                                                                                                   | "poor"                 |

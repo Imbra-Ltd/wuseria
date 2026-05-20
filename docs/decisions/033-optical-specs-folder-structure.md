@@ -93,9 +93,8 @@ queryable data.
 
 - Existing `notes.md` files must be renamed to `analysis.md` (can be
   done in bulk)
-- New scoring work writes to per-lens `scoring-log.md` instead of the
-  monolith
+- New scoring work writes to per-lens `scoring-log.md`
 - Tools (`audit.py`) should be updated to check for `analysis.md`
   instead of `notes.md`
-- The monolithic `docs/scoring-log.md` shrinks over time and is
-  eventually deleted
+- The monolithic `docs/scoring-log.md` has been fully migrated and deleted
+  (session 73)

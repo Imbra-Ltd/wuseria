@@ -20,10 +20,9 @@ the scoring is reproducible.
 
 ### Scoring log
 
-Per-lens scoring justifications are extracted from ADR-014 into a
-standalone file: `docs/scoring-log.md`.
+Per-lens scoring justifications live in `docs/optical-specs/<slug>/scoring-log.md`,
+one file per lens (migrated from monolithic file per ADR-033).
 
-- Organized by brand (alphabetical), then focal length (wide to tele)
 - Each entry: lens name, sources, rubric table (field → score → source
   data → rubric rule)
 - ADR-014 retains only the rubric rules and a pointer to the scoring log
@@ -114,5 +113,5 @@ and judge relevance themselves.
 - MTF chart analysis files create a traceable evidence chain:
   image → readings → rubric rule → score
 - New scoring workflow step in PLAYBOOK (step 3 in "Write the data")
-- `docs/mtf-charts/` and `docs/scoring-log.md` added to project layout
-  in CLAUDE.md
+- `docs/mtf-charts/` added to project layout in CLAUDE.md; scoring log
+  now lives in per-lens `docs/optical-specs/<slug>/scoring-log.md`

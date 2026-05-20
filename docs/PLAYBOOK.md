@@ -175,7 +175,7 @@ infer from related fields or optical construction alone.
 
 1. Add optical fields + `sweetSpotAperture` + `reviewSources` to the
    lens entry in `src/data/lenses.ts`
-2. Add reference scoring table to `docs/scoring-log.md`, sorted by brand then focal length
+2. Add reference scoring table to `docs/optical-specs/<slug>/scoring-log.md`
 3. If astigmatism was scored from an official MTF chart, save the chart
    image and a companion `.md` analysis in `docs/mtf-charts/`
 4. Run `npm run validate` to verify
@@ -721,6 +721,11 @@ Export findings as CSV for tracking. Issues with direct code fixes (missing
 meta, broken canonicals, redirect chains) are bugs.
 
 **Last verified:** not yet baselined.
+
+### 3.16 SEO manual test plan
+
+Periodic checklist covering GSC, Umami, Lighthouse, structured data, and
+technical SEO spot checks. See [`docs/audits/seo-test-plan.md`](audits/seo-test-plan.md).
 
 ## 4. Maintenance
 
