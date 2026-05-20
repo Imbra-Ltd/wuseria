@@ -1,9 +1,12 @@
 """Download MTF chart and construction diagram images from Viltrox product pages.
 
-Viltrox embeds numbered gallery images in their Shopify theme (not in the
-product JSON API). This script scrapes the full HTML for CDN image URLs
-with the pattern cdn/shop/files/{N}_{hash}.jpg, downloads them to a temp
-directory, and lets the user identify which ones contain MTF/construction data.
+Viltrox embeds gallery images in their Shopify theme (not in the product
+JSON API). This script scrapes the full HTML for ALL CDN image URLs,
+downloads them to a cache directory, and lets the user identify which
+ones contain MTF/construction data.
+
+After identification, images must be converted to PNG before saving to
+docs/optical-specs/ (project convention: all optical spec images are PNG).
 
 Usage:
     py tools/viltrox/download_images.py                    # download all
