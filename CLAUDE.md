@@ -67,6 +67,9 @@ Project-specific overrides and additions follow below.
 - `docs/scoring-log.md` — per-lens scoring justifications (source data → rubric → score)
 - `docs/optical-specs/` — verified per-lens optical reference data (MTF charts as PNG, `notes.md` for provenance), one subfolder per lens (ADR-031)
 - `docs/mtf-charts/` — unverified MTF charts and third-party lens data pending review
+- `tools/fujifilm/` — Fujifilm optical spec extraction (fetch_specs, audit, Playwright-based)
+- `tools/samyang/` — Samyang optical spec extraction (fetch_specs, audit, plain urllib)
+- `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility
 
 ### 1.3 Commands
 
