@@ -2130,3 +2130,32 @@ None — research-only session.
 - Review third-party MTF charts (Samyang, Sigma, Viltrox)
 - Fix remaining 5 unverified Fujifilm lenses
 - Add official URLs to GF lens database entries
+
+---
+
+### Session 67 — Optical Construction & Tool Consolidation
+
+**Tool:** Claude Code (Opus 4.6)
+
+#### PRs
+
+- None yet (branch: `feat/fujifilm-optical-specs`)
+
+#### Key changes
+
+- Refactored Fujifilm fetch scripts from `scripts/` into `tools/fujifilm/` with shared `common.py` module
+- Corrected `specialElements` for 5 lenses: XF 18-55mm (+1 ED), XF 18-135mm (+2 ED), XF 55-200mm (+1 Super ED), MKX 18-55mm (+6 Super ED), MKX 50-135mm (+2 Super ED)
+- Converted all construction images from webp/jpg to PNG format
+- Copied construction images into per-lens `docs/optical-specs/` subdirectories (35 lenses)
+- Added 29 MTF charts to `docs/mtf-charts/`
+- Documented issues: MKX 50-135mm wrong construction image, XF 16-55mm wrong diagram on official page
+
+#### Key decisions
+
+- None (continuation of ADR-031 implementation)
+
+#### Next
+
+- Continue optical construction diagrams for XF primes
+- Review and verify remaining unverified Fujifilm lenses
+- Third-party MTF chart review
