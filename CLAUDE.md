@@ -300,10 +300,10 @@ execution prevents missed steps.
 [ ] 3. Update epic checklists if relevant
 [ ] 4. Dev journal entry (### heading, --- separator, PRs, issues, key changes, key decisions with ADR refs)
 [ ] 5. ADRs — record any architectural decisions in docs/decisions/. Check: were any new directories created or content moved between documents? Each one needs an ADR.
-[ ] 6. CLAUDE.md — list each new convention/rule by name, then evaluate individually: does it belong here? Name the section. Do not batch-dismiss.
+[ ] 6. CLAUDE.md — first list every new file, directory, and data field created this session. Then list each new convention/rule. Evaluate each item individually: does it belong in CLAUDE.md? Name the section. Do not batch-dismiss.
 [ ] 7. README.md — for each new command, dependency, or structural change, is it reflected? Name the section.
 [ ] 8. ONBOARDING.md — for each new tool, prerequisite, or setup step, is it documented? Name the section.
-[ ] 9. PLAYBOOK.md — for each new command/script/workflow added, is it documented? Name the section.
+[ ] 9. PLAYBOOK.md — first list every new command and script introduced this session. Then check: is each one documented? Name the section. Do not batch-dismiss.
 [ ] 10. Submodules — check if upstream needs update
 [ ] 11. Flag conventions for solid-ai-templates upstream — list each new convention/decision by name and evaluate individually. No blanket "nothing reusable." For each: state project-specific or reusable; if reusable, name the upstream template file and create an issue
 [ ] 12. Summarize what was done and what's next
