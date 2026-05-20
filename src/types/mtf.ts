@@ -11,9 +11,12 @@ interface MtfChart {
   readings: MtfReading[];
 }
 
+type MtfType = "computed" | "measured";
+
 interface MtfData {
   source: string; // attribution URL
+  mtfType: MtfType;
   charts: MtfChart[];
 }
 
-export type { MtfReading, MtfChart, MtfData };
+export type { MtfReading, MtfChart, MtfData, MtfType };
