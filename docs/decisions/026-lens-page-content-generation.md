@@ -109,4 +109,116 @@ to `niche`.
 - Optical Quality uses 4 clusters (not 14 sub-headings) for UX scannability
   and SEO substance — individual field names appear in prose, not headings
 - MTF charts from `docs/mtf-charts/` served as images within Specifications
-- Spec stored in: `docs/specs/lens-content-spine.md`
+
+### Summary template
+
+```
+A {fl} f/{aperture} {type} for Fujifilm {mount}-mount ({equiv}mm equivalent) —
+{flContext}. {weight}g, ~${price}. {status}.
+```
+
+Strengths: bullet list of fields with score >= 1.5.
+Weaknesses: bullet list of fields with score <= 0.5.
+
+### Focal length context phrases
+
+| Equivalent | Phrase                                                           |
+| ---------- | ---------------------------------------------------------------- |
+| <= 18mm    | ultra-wide field of view for interiors and dramatic perspectives |
+| 19-28mm    | wide-angle suited for landscapes and architecture                |
+| 29-40mm    | moderate wide angle for street and environmental portraits       |
+| 41-60mm    | standard field of view close to human vision                     |
+| 61-90mm    | short telephoto ideal for portraits and subject isolation        |
+| 91-135mm   | telephoto compression for portraits and detail shots             |
+| 136-200mm  | telephoto reach for sports and candid photography                |
+| 201-400mm  | super-telephoto reach for wildlife and distant subjects          |
+| 401+mm     | extreme telephoto for birding and surveillance distances         |
+
+### Optical Quality phrase tables
+
+#### Sharpness
+
+| Field          | Score 2                                           | Score 1.5                                    | Score 0.5                                        | Score 0                                   |
+| -------------- | ------------------------------------------------- | -------------------------------------------- | ------------------------------------------------ | ----------------------------------------- |
+| centerStopped  | excellent center sharpness when stopped down      | very good center sharpness when stopped down | average center sharpness even stopped down       | poor center sharpness stopped down        |
+| cornerStopped  | excellent corner-to-corner sharpness stopped down | very good corner sharpness stopped down      | soft corners even stopped down                   | very weak corner performance stopped down |
+| centerWideOpen | sharp in the center wide open                     | good center performance wide open            | soft center wide open, improves on stopping down | weak center sharpness wide open           |
+| cornerWideOpen | impressive corner sharpness even wide open        | decent corner performance wide open          | soft corners wide open                           | very weak corner performance wide open    |
+
+Sweet spot: append "Sharpest at f/{sweetSpotAperture}." when defined.
+
+#### Aberrations
+
+| Field               | Score 2                                       | Score 1.5                              | Score 0.5                                    | Score 0                                              |
+| ------------------- | --------------------------------------------- | -------------------------------------- | -------------------------------------------- | ---------------------------------------------------- |
+| longitudinalCA      | negligible longitudinal chromatic aberration  | well-corrected longitudinal CA         | noticeable longitudinal chromatic aberration | pronounced longitudinal CA (color fringing in bokeh) |
+| lateralCA           | practically zero lateral chromatic aberration | low lateral chromatic aberration       | visible lateral chromatic aberration         | strong lateral CA on frame edges                     |
+| coma                | well-controlled coma                          | moderate coma control                  | noticeable coma in corners                   | strong coma (problematic for point light sources)    |
+| astigmatism         | minimal astigmatism                           | moderate astigmatism                   | noticeable astigmatism                       | strong astigmatism                                   |
+| sphericalAberration | well-controlled spherical aberration          | proper spherical aberration correction | noticeable spherical aberration              | poorly controlled spherical aberration               |
+
+#### Rendering
+
+| Field              | Score 2                              | Score 1.5                             | Score 0.5                                        | Score 0                                 |
+| ------------------ | ------------------------------------ | ------------------------------------- | ------------------------------------------------ | --------------------------------------- |
+| bokeh              | smooth, pleasing bokeh rendering     | good bokeh character                  | busy bokeh character                             | harsh, distracting bokeh                |
+| vignettingWideOpen | minimal light falloff wide open      | moderate vignetting wide open         | distinct vignetting wide open                    | heavy light falloff at maximum aperture |
+| vignettingStopped  | virtually no vignetting stopped down | negligible vignetting stopped down    | some vignetting persists stopped down            | notable vignetting even stopped down    |
+| flareResistance    | excellent flare resistance           | good performance against bright light | performance against bright light could be better | poor flare resistance                   |
+
+#### Distortion
+
+| Field      | Score 2               | Score 1.5      | Score 0.5             | Score 0                                     |
+| ---------- | --------------------- | -------------- | --------------------- | ------------------------------------------- |
+| distortion | negligible distortion | low distortion | noticeable distortion | significant distortion requiring correction |
+
+### Genre formula reference
+
+| Genre        | Primary fields                           | Secondary fields                                                                                  |
+| ------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| nightscape   | centerWideOpen                           | \_apertureScore, lateralCA, longitudinalCA, vignettingStopped, flareResistance, astigmatism, coma |
+| landscape    | centerStopped, cornerStopped             | lateralCA, longitudinalCA, vignettingStopped, flareResistance, astigmatism, coma                  |
+| architecture | cornerStopped, centerStopped, distortion | lateralCA, vignettingStopped, flareResistance                                                     |
+| portrait     | bokeh, centerWideOpen                    | longitudinalCA, sphericalAberration, vignettingWideOpen                                           |
+| street       | centerStopped, \_apertureScore           | centerWideOpen, flareResistance, longitudinalCA, coma                                             |
+| travel       | centerStopped, \_weightScore             | \_apertureScore, flareResistance, longitudinalCA                                                  |
+| sport        | centerWideOpen                           | \_apertureScore, longitudinalCA, lateralCA                                                        |
+| wildlife     | centerWideOpen, centerStopped            | \_apertureScore, longitudinalCA, lateralCA                                                        |
+| macro        | centerStopped, \_magnificationScore      | distortion, lateralCA, longitudinalCA, sphericalAberration, bokeh                                 |
+
+### Derived field descriptions
+
+| Derived field               | Natural language                           |
+| --------------------------- | ------------------------------------------ |
+| \_apertureScore (high)      | fast maximum aperture                      |
+| \_apertureScore (low)       | slow maximum aperture limits low-light use |
+| \_weightScore (high)        | lightweight and portable                   |
+| \_weightScore (low)         | heavy for travel use                       |
+| \_magnificationScore (high) | strong close-focus magnification           |
+| \_magnificationScore (low)  | low magnification limits close-up work     |
+
+### Genre fit template
+
+```
+**{Genre} ({mark}/5):** {pros from formula fields}. {cons from formula fields}.
+```
+
+Omit entire section when `genreMarks` is null. Show "Not yet scored." fallback.
+
+### Alternatives matching logic
+
+Same mount + overlapping focal length range (+/-10mm equivalent):
+
+- For a 56mm prime: show all primes in 46-66mm range
+- For a 16-55mm zoom: show zooms that overlap that range
+
+Sort by genre similarity (highest overlap in top genres), then by price.
+Max 5 alternatives. Omit section when fewer than 2 exist.
+
+### Meta description template
+
+```
+{brand} {model}: {topGenre1}, {topGenre2} lens. Strengths: {strength1}, {strength2}. {weight}g, ~${price}.
+```
+
+Target: ~150 characters, unique per lens, keyword-rich.

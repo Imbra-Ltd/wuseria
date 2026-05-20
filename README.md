@@ -61,10 +61,11 @@ src/
   utils/            # Scoring, formatting, slug utilities
   styles/           # Global CSS custom properties, dark theme
 docs/
+  audits/           # 360-degree audits and SEO test plan
   decisions/        # Architecture Decision Records (ADRs)
   dev-journal.md    # Development history
+  optical-specs/    # Per-lens optical data (analysis, scoring logs, MTF charts)
   prototype/        # Original single-file prototype (reference only)
-  optical-specs/    # Per-lens optical data (analysis, MTF charts, construction diagrams)
   solid-ai-templates/  # Quality convention templates (submodule)
 public/             # Static assets (favicon, icons, robots.txt, CNAME)
 ```
@@ -113,7 +114,7 @@ files, type-checked at build time.
 
 - [Architecture decisions](docs/decisions/)
 - [Development journal](docs/dev-journal.md)
-- [360-degree audit history](docs/360-audit.md)
+- [360-degree audits](docs/audits/)
 - [Quality conventions](docs/solid-ai-templates/)
 - [GitHub Issues](https://github.com/Imbra-Ltd/wuseria/issues)
 
