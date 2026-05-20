@@ -1,7 +1,8 @@
 """Audit Samyang lens data completeness.
 
 Checks which Samyang lenses have optical construction and coating data
-populated in lenses.ts.
+populated in lenses.ts, plus MTF chart and construction diagram images
+in docs/optical-specs/.
 
 Usage:
     py tools/samyang/audit.py                  # full audit
@@ -12,7 +13,14 @@ Usage:
 import argparse
 import re
 
-from common import LENSES_TS, extract_samyang_lenses, model_to_slug
+from common import (
+    LENSES_TS,
+    OPTICAL_SPECS_DIR,
+    extract_samyang_lenses,
+    model_to_slug,
+    has_mtf_chart,
+    has_construction_image,
+)
 
 
 def check_lenses_ts_fields() -> dict[str, dict]:
@@ -60,6 +68,7 @@ def main() -> None:
     incomplete = 0
 
     for model in all_models:
+        slug = model_to_slug(model)
         fields = ts_fields[model]
         issues = []
 
@@ -73,6 +82,10 @@ def main() -> None:
             issues.append("no specialElements")
         if not fields["has_coating"]:
             issues.append("no coating")
+        if not has_mtf_chart(slug):
+            issues.append("no MTF chart")
+        if not has_construction_image(slug):
+            issues.append("no construction image")
 
         if issues:
             incomplete += 1

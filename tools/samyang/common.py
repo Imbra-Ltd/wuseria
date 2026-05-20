@@ -12,7 +12,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent.parent
 LENSES_TS = ROOT / "src" / "data" / "lenses.ts"
 OPTICAL_SPECS_DIR = ROOT / "docs" / "optical-specs"
-MTF_CHARTS_DIR = ROOT / "docs" / "mtf-charts"
 CACHE_DIR = ROOT / ".cache" / "fetch"
 
 BASE_URL = "https://www.lksamyang.com"
@@ -22,6 +21,25 @@ USER_AGENT = (
     "AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/131.0.0.0 Safari/537.36"
 )
+
+
+# --- File existence checks ---
+
+
+def has_mtf_chart(slug: str) -> bool:
+    """Check if an MTF chart image exists in optical-specs/{slug}/."""
+    specs_dir = OPTICAL_SPECS_DIR / slug
+    if not specs_dir.is_dir():
+        return False
+    return bool([f for f in specs_dir.glob(f"{slug}-mtf*") if f.suffix in (".png", ".jpg", ".webp")])
+
+
+def has_construction_image(slug: str) -> bool:
+    """Check if an optical construction diagram exists in optical-specs/{slug}/."""
+    specs_dir = OPTICAL_SPECS_DIR / slug
+    if not specs_dir.is_dir():
+        return False
+    return bool([f for f in specs_dir.glob(f"{slug}-construction*") if f.suffix in (".png", ".jpg", ".webp")])
 
 
 # --- Lens extraction ---
