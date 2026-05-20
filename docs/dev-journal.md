@@ -2159,3 +2159,39 @@ None — research-only session.
 - Continue optical construction diagrams for XF primes
 - Review and verify remaining unverified Fujifilm lenses
 - Third-party MTF chart review
+
+---
+
+### Session 68 — Fujifilm Optical Specs Completion
+
+**Tool:** Claude Code (Opus 4.6)
+
+#### PRs
+
+- #764 — Complete Fujifilm optical specs collection
+
+#### Key changes
+
+- Copied 26 XF + 4 XC construction images from `docs/optical-construction/` into per-lens `docs/optical-specs/` folders
+- Converted and moved 10 unverified MTF charts from `docs/mtf-charts/` (webp/jpg to PNG)
+- Removed 29 verified Fujifilm files from `docs/mtf-charts/` (only Samyang remains)
+- Visually verified all 45 XF + XC construction diagrams
+- Found and removed 1 invalid diagram: XC 16-50mm (unlabeled third-party, dark background)
+- Sourced XC 16-50mm construction from Digital Photography Live (official Fujifilm diagram rehosted)
+- Sourced XC 15-45mm construction from LensTip (priority source — missed by web search)
+- XC 35mm construction copied from XF 35mm f/2.0 R WR (same optical formula, documented in notes)
+- Result: 65/66 Fujifilm lenses complete (only MKX 50-135mm T2.9 remains — no MTF published, construction deferred)
+
+#### Key decisions
+
+- None (continuation of ADR-031 implementation)
+
+#### Lesson learned
+
+- Construction diagrams and MTF charts are embedded images in review articles — web search engines index text, not image contents. Always check PLAYBOOK 2.8 priority sources (LensTip, Radojuva, Phillip Reeve) directly before falling back to generic web search. The XC 15-45mm diagram was on LensTip the whole time.
+
+#### Next
+
+- Merge PR #764
+- MKX 50-135mm construction: manual fetch from official page
+- Start next brand in epic #739 (Samyang or Sigma — scored P2 brands first)
