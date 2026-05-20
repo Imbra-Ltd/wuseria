@@ -8,4 +8,4 @@
 
 ## Data Sources
 
-- sansmirror (10E/9G confirmed; ED+HR confirmed without counts — see notes.md)
+- sansmirror, Viltrox E-mount product page (1 ED, 1 HR, HD Nano multilayer coating confirmed)
