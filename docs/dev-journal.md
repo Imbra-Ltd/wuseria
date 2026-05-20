@@ -2096,3 +2096,37 @@ None — research-only session.
 - #735 — implement ADR-029 OQ content generation
 - #726 — apply continuity fix to Sigma extraction tool
 - #728 — MTF chart wiki page
+
+---
+
+### Session 66 — MTF Chart Verification and Optical Specs Restructure
+
+**Tool:** Claude Code (Opus 4.6)
+
+#### PRs
+
+- None yet (branch: `feat/optical-construction-and-coating`)
+
+#### Key changes
+
+- Lens-by-lens verification of all Fujifilm MTF charts against official specs pages
+- Fixed GFX frequency labels — each GF lens uses different lp/mm (10/15/20/40/45), not uniform
+- Converted all MTF images to PNG (was webp/gif/jpg mix)
+- Added `wide-` prefix to all zoom wide-end files for consistency
+- Downloaded missing charts from Fujifilm CDN (zoom wide/tele gaps)
+- Replaced wrong charts: legends saved as charts, GFX data on APS-C lenses, CMS duplicates
+- Created `docs/optical-specs/` with per-lens subfolders (ADR-031)
+- Verified and moved 55 Fujifilm lenses; 5 remain unverified in `docs/mtf-charts/`
+- Added `notes.md` per lens when source is non-official or problematic
+
+#### Key decisions
+
+- ADR-031: optical-specs directory structure with per-lens subfolders
+- Fujifilm en-us specs pages have frequent CMS bugs; global pages (`/global/`) are more reliable
+- Third-party lenses (Samyang, Sigma, Viltrox) pending review
+
+#### Next
+
+- Review third-party MTF charts (Samyang, Sigma, Viltrox)
+- Fix remaining 5 unverified Fujifilm lenses
+- Add official URLs to GF lens database entries

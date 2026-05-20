@@ -64,6 +64,7 @@ docs/
   decisions/        # Architecture Decision Records (ADRs)
   dev-journal.md    # Development history
   prototype/        # Original single-file prototype (reference only)
+  optical-specs/    # Verified per-lens optical data (MTF charts, notes)
   solid-ai-templates/  # Quality convention templates (submodule)
 public/             # Static assets (favicon, icons, robots.txt, CNAME)
 ```

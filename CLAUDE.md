@@ -65,7 +65,8 @@ Project-specific overrides and additions follow below.
 - `src/test/` — Vitest setup and test factories
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
 - `docs/scoring-log.md` — per-lens scoring justifications (source data → rubric → score)
-- `docs/mtf-charts/` — MTF chart reading data (`.md` analysis files) and manufacturer `.png` reference images (not served on site, per ADR-027)
+- `docs/optical-specs/` — verified per-lens optical reference data (MTF charts as PNG, `notes.md` for provenance), one subfolder per lens (ADR-031)
+- `docs/mtf-charts/` — unverified MTF charts and third-party lens data pending review
 
 ### 1.3 Commands
 
