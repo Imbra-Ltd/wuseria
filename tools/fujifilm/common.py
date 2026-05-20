@@ -15,7 +15,6 @@ from playwright.sync_api import sync_playwright, BrowserContext, Page
 ROOT = Path(__file__).resolve().parent.parent.parent
 LENSES_TS = ROOT / "src" / "data" / "lenses.ts"
 OPTICAL_SPECS_DIR = ROOT / "docs" / "optical-specs"
-OPTICAL_CONSTRUCTION_DIR = ROOT / "docs" / "optical-construction"
 MTF_CHARTS_DIR = ROOT / "docs" / "mtf-charts"
 CACHE_DIR = ROOT / ".cache" / "fetch"
 
@@ -61,8 +60,11 @@ def specs_url(official_url: str) -> str:
 
 
 def has_construction_image(slug: str) -> bool:
-    """Check if an optical construction image exists for the given slug."""
-    return bool(list(OPTICAL_CONSTRUCTION_DIR.glob(f"{slug}.*")))
+    """Check if an optical construction image exists in optical-specs/{slug}/."""
+    specs_dir = OPTICAL_SPECS_DIR / slug
+    if not specs_dir.is_dir():
+        return False
+    return bool([f for f in specs_dir.glob(f"{slug}-construction*") if f.suffix in (".png", ".jpg", ".webp")])
 
 
 def has_mtf_charts(slug: str) -> bool:

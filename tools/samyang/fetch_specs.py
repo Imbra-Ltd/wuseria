@@ -19,7 +19,6 @@ import time
 
 from common import (
     CACHE_DIR,
-    MTF_CHARTS_DIR,
     OPTICAL_SPECS_DIR,
     download_image,
     extract_image_urls,
@@ -115,7 +114,8 @@ def main() -> None:
                 img_urls = extract_image_urls(html)
 
                 if "mtf" in img_urls:
-                    dest = MTF_CHARTS_DIR / f"{slug}-mtf.jpg"
+                    specs_dir = OPTICAL_SPECS_DIR / slug
+                    dest = specs_dir / f"{slug}-mtf.jpg"
                     if download_image(img_urls["mtf"], dest):
                         print(f"  MTF: {dest.name}")
                         stats["mtf"] += 1
