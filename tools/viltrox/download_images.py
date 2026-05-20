@@ -34,16 +34,45 @@ def fetch_page_html(url: str, timeout: int = 30) -> str:
         return resp.read().decode("utf-8", errors="replace")
 
 
-def extract_numbered_images(html: str) -> list[str]:
-    """Extract numbered theme gallery images from page HTML.
+def extract_theme_images(html: str) -> list[str]:
+    """Extract ALL theme gallery images from page HTML.
 
-    Pattern: cdn/shop/files/{N}_{uuid-hash}.jpg
-    These are Shopify theme images embedded in the page template,
-    NOT product API images.
+    Shopify stores embed images in theme templates that don't appear in
+    the product JSON API. Image naming is inconsistent across product
+    generations:
+    - Numbered UUIDs: cdn/shop/files/16_{uuid}.jpg
+    - Descriptive: cdn/shop/files/27mm-f1.2-mb-25.jpg
+    - Prefixed: cdn/shop/files/AF_9mm_F2.8_Air_XF-img5.jpg
+
+    Extracts ALL cdn/shop/files/ images, filters out known non-product
+    images (icons, badges, banners).
     """
-    pattern = re.compile(r'cdn/shop/files/(\d+_[a-f0-9-]+\.(?:jpg|png))')
-    matches = sorted(set(pattern.findall(html)), key=lambda x: int(x.split("_")[0]))
-    return [f"https://viltrox.com/cdn/shop/files/{m}" for m in matches]
+    # Match all CDN image files — broad pattern
+    pattern = re.compile(
+        r'(?:https?://)?(?:viltrox\.com|cdn\.shopify\.com/s/files/1/0104/0380/7298)'
+        r'/(?:cdn/shop/)?files/([^"\'?\s]+\.(?:jpg|png))'
+    )
+    raw_matches = set(pattern.findall(html))
+
+    # Filter out non-product images (site chrome, badges, banners)
+    skip_keywords = [
+        "Free_Shipping", "Quality_guarantee", "Satisfied_or_refunded",
+        "Secure_payments", "icon", "logo", "banner", "badge",
+    ]
+
+    # Deduplicate size variants — keep only the original (largest).
+    # Shopify generates _768x and _1024x variants from the original.
+    # E.g. img5.jpg, img5_768x.jpg, img5_1024x.jpg -> keep img5.jpg
+    size_variant = re.compile(r'_\d+x\.(jpg|png)$')
+    filtered = []
+    for filename in sorted(raw_matches):
+        if any(kw.lower() in filename.lower() for kw in skip_keywords):
+            continue
+        if size_variant.search(filename):
+            continue
+        filtered.append(f"https://viltrox.com/cdn/shop/files/{filename}")
+
+    return filtered
 
 
 def download_image(url: str, dest: Path, min_size: int = 5000) -> bool:
@@ -93,7 +122,7 @@ def main() -> None:
 
         try:
             html = fetch_page_html(url)
-            images = extract_numbered_images(html)
+            images = extract_theme_images(html)
             stats["pages"] += 1
 
             if not images:

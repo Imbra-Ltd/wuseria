@@ -6280,6 +6280,7 @@ const lenses: Lens[] = [
     opticalElements: 14,
     opticalGroups: 11,
     specialElements: ["2 aspherical", "4 ED", "2 HR"],
+    coating: ["HD Nano multilayer coating"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6345,7 +6346,7 @@ const lenses: Lens[] = [
     opticalElements: 11,
     opticalGroups: 10,
     specialElements: ["2 ED", "2 HR"],
-    coating: ["HD Nano coating"],
+    coating: ["HD Nano multilayer coating"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6409,6 +6410,7 @@ const lenses: Lens[] = [
     opticalElements: 10,
     opticalGroups: 9,
     specialElements: ["1 ED", "1 HR"],
+    coating: ["HD Nano multilayer coating"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6466,7 +6468,7 @@ const lenses: Lens[] = [
     opticalElements: 10,
     opticalGroups: 9,
     specialElements: ["1 ED", "1 HR"],
-    coating: ["Nano coating"],
+    coating: ["HD Nano multilayer coating"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6529,6 +6531,7 @@ const lenses: Lens[] = [
     opticalElements: 15,
     opticalGroups: 11,
     specialElements: ["1 aspherical", "2 ED", "5 HR"],
+    coating: ["HD Nano multilayer coating"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6594,6 +6597,7 @@ const lenses: Lens[] = [
     opticalElements: 16,
     opticalGroups: 11,
     specialElements: ["3 ED", "4 HR"],
+    coating: ["HD Nano multilayer coating"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6658,6 +6662,7 @@ const lenses: Lens[] = [
     opticalElements: 13,
     opticalGroups: 11,
     specialElements: ["2 aspherical", "3 ED", "3 HR"],
+    coating: ["HD Nano multilayer coating"],
     minFocusDistance: 130,
 
     afMotor: "LM",
@@ -6723,6 +6728,7 @@ const lenses: Lens[] = [
     opticalElements: 12,
     opticalGroups: 10,
     specialElements: ["2 aspherical", "3 ED", "3 HR"],
+    coating: ["HD Nano multilayer coating"],
     maxMagnification: 0.1,
     minFocusDistance: 230,
 
@@ -6785,7 +6791,7 @@ const lenses: Lens[] = [
     opticalElements: 12,
     opticalGroups: 10,
     specialElements: ["2 aspherical", "1 ED", "2 HR"],
-    coating: ["Nano coating"],
+    coating: ["HD Nano multilayer coating"],
     maxMagnification: 0.11,
     minFocusDistance: 300,
 
@@ -6844,6 +6850,7 @@ const lenses: Lens[] = [
     opticalElements: 6,
     opticalGroups: 6,
     specialElements: ["2 aspherical", "2 ED"],
+    coating: ["HD Nano multilayer coating"],
     minFocusDistance: 340,
 
     afMotor: "LM",
@@ -6908,6 +6915,7 @@ const lenses: Lens[] = [
     opticalElements: 11,
     opticalGroups: 9,
     specialElements: ["1 aspherical", "1 ED", "2 HR"],
+    coating: ["HD Nano multilayer coating"],
 
     afMotor: "LM",
     isFocusByWire: true,
@@ -6975,6 +6983,7 @@ const lenses: Lens[] = [
     opticalElements: 11,
     opticalGroups: 9,
     specialElements: ["4 ED", "3 HR"],
+    coating: ["HD Nano multilayer coating"],
     maxMagnification: 0.11,
     minFocusDistance: 550,
 
