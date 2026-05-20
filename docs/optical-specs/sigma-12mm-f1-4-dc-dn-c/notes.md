@@ -1,7 +1,10 @@
 # Sigma 12mm f/1.4 DC DN C — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c025_12_14/)
-Image: [sigma-12mm-f1-4-dc-dn-c-mtf.png](sigma-12mm-f1-4-dc-dn-c-mtf.png)
+MTF charts:
+
+- [sigma-12mm-f1-4-dc-dn-c-mtf-1.png](sigma-12mm-f1-4-dc-dn-c-mtf-1.png) — diffraction MTF
+- [sigma-12mm-f1-4-dc-dn-c-mtf-2.png](sigma-12mm-f1-4-dc-dn-c-mtf-2.png) — geometrical MTF
 
 ## Chart legend
 

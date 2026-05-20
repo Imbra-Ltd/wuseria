@@ -1,7 +1,10 @@
 # Sigma 100-400mm f/5-6.3 DG DN OS C — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c020_100_400_5_63/)
-Image: [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf.png)
+MTF charts (16 total — 8 focal lengths x diffraction + geometrical):
+
+- mtf-1 through mtf-8: diffraction MTF at 100, 135, 200, 250, 300, 350, 380, 400mm
+- mtf-9 through mtf-16: geometrical MTF at the same focal lengths
 
 ## Chart legend
 

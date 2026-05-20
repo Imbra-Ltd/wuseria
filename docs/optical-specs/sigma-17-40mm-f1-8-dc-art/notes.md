@@ -1,7 +1,12 @@
 # Sigma 17-40mm f/1.8 DC Art — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/a025_17_40_18/)
-Image: [sigma-17-40mm-f1-8-dc-art-mtf.png](sigma-17-40mm-f1-8-dc-art-mtf.png)
+MTF charts:
+
+- [sigma-17-40mm-f1-8-dc-art-mtf-1.png](sigma-17-40mm-f1-8-dc-art-mtf-1.png) — diffraction MTF (wide)
+- [sigma-17-40mm-f1-8-dc-art-mtf-2.png](sigma-17-40mm-f1-8-dc-art-mtf-2.png) — diffraction MTF (tele)
+- [sigma-17-40mm-f1-8-dc-art-mtf-3.png](sigma-17-40mm-f1-8-dc-art-mtf-3.png) — geometrical MTF (wide)
+- [sigma-17-40mm-f1-8-dc-art-mtf-4.png](sigma-17-40mm-f1-8-dc-art-mtf-4.png) — geometrical MTF (tele)
 
 ## Chart legend
 

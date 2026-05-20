@@ -1,7 +1,12 @@
 # Sigma 10-18mm f/2.8 DC DN C — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c023_10_18_28/)
-Image: [sigma-10-18mm-f2-8-dc-dn-c-mtf.png](sigma-10-18mm-f2-8-dc-dn-c-mtf.png)
+MTF charts:
+
+- [sigma-10-18mm-f2-8-dc-dn-c-mtf-1.png](sigma-10-18mm-f2-8-dc-dn-c-mtf-1.png) — diffraction MTF (wide)
+- [sigma-10-18mm-f2-8-dc-dn-c-mtf-2.png](sigma-10-18mm-f2-8-dc-dn-c-mtf-2.png) — diffraction MTF (tele)
+- [sigma-10-18mm-f2-8-dc-dn-c-mtf-3.png](sigma-10-18mm-f2-8-dc-dn-c-mtf-3.png) — geometrical MTF (wide)
+- [sigma-10-18mm-f2-8-dc-dn-c-mtf-4.png](sigma-10-18mm-f2-8-dc-dn-c-mtf-4.png) — geometrical MTF (tele)
 
 ## Chart legend
 
