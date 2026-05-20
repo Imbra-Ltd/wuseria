@@ -1,7 +1,7 @@
 # Sigma 17-40mm f/1.8 DC Art — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/a025_17_40_18/)
-Image: [sigma-17-40mm-f1-8-dc-art.png](sigma-17-40mm-f1-8-dc-art.png)
+Image: [sigma-17-40mm-f1-8-dc-art-mtf.png](sigma-17-40mm-f1-8-dc-art-mtf.png)
 
 ## Chart legend
 

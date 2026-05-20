@@ -1,7 +1,7 @@
 # Sigma 56mm f/1.4 DC DN C — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c018_56_14/)
-Image: [sigma-56mm-f1-4-dc-dn-c.png](sigma-56mm-f1-4-dc-dn-c.png)
+Image: [sigma-56mm-f1-4-dc-dn-c-mtf.png](sigma-56mm-f1-4-dc-dn-c-mtf.png)
 
 ## Chart legend
 

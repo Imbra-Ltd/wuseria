@@ -1,7 +1,7 @@
 # Sigma 10-18mm f/2.8 DC DN C — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c023_10_18_28/)
-Image: [sigma-10-18mm-f2-8-dc-dn-c.png](sigma-10-18mm-f2-8-dc-dn-c.png)
+Image: [sigma-10-18mm-f2-8-dc-dn-c-mtf.png](sigma-10-18mm-f2-8-dc-dn-c-mtf.png)
 
 ## Chart legend
 

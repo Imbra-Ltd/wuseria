@@ -1,7 +1,7 @@
 # Sigma 18-50mm f/2.8 DC DN C — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c021_18_50_28/)
-Image: [sigma-18-50mm-f2-8-dc-dn-c.png](sigma-18-50mm-f2-8-dc-dn-c.png)
+Image: [sigma-18-50mm-f2-8-dc-dn-c-mtf.png](sigma-18-50mm-f2-8-dc-dn-c-mtf.png)
 
 ## Chart legend
 

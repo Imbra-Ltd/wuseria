@@ -1,7 +1,7 @@
 # Sigma 16-300mm f/3.5-6.7 DC OS C — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c025_16_300_35_67/)
-Image: [sigma-16-300mm-f3-5-6-7-dc-os-c.png](sigma-16-300mm-f3-5-6-7-dc-os-c.png)
+Image: [sigma-16-300mm-f3-5-6-7-dc-os-c-mtf.png](sigma-16-300mm-f3-5-6-7-dc-os-c-mtf.png)
 
 ## Chart legend
 

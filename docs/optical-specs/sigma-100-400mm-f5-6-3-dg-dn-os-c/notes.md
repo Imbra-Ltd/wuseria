@@ -1,7 +1,7 @@
 # Sigma 100-400mm f/5-6.3 DG DN OS C — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c020_100_400_5_63/)
-Image: [sigma-100-400mm-f5-6-3-dg-dn-os-c.png](sigma-100-400mm-f5-6-3-dg-dn-os-c.png)
+Image: [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf.png)
 
 ## Chart legend
 

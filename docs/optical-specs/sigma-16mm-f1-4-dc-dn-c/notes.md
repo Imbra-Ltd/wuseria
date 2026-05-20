@@ -1,7 +1,7 @@
 # Sigma 16mm f/1.4 DC DN C — MTF Chart Analysis
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c017_16_14/)
-Image: [sigma-16mm-f1-4-dc-dn-c.png](sigma-16mm-f1-4-dc-dn-c.png)
+Image: [sigma-16mm-f1-4-dc-dn-c-mtf.png](sigma-16mm-f1-4-dc-dn-c-mtf.png)
 
 ## Chart legend
 
