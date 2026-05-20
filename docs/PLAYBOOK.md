@@ -239,11 +239,16 @@ py scripts/fetch-samyang-mtf.py --dry-run   # list without downloading
 py scripts/fetch-samyang-mtf.py --temp      # download to temp/ (testing)
 ```
 
-**Fetch Sigma MTF charts:**
+**Fetch Sigma optical specs, MTF charts, and construction diagrams (urllib):**
 
 ```bash
-py scripts/fetch-sigma-mtf.py             # fetch all to docs/mtf-charts/
-py scripts/fetch-sigma-mtf.py --dry-run   # list without downloading
+py tools/sigma/fetch_specs.py                    # fetch all (specs + images)
+py tools/sigma/fetch_specs.py --dry-run           # list lenses without fetching
+py tools/sigma/fetch_specs.py --filter 12mm       # filter by model substring
+py tools/sigma/fetch_specs.py --specs-only        # only extract specs text
+py tools/sigma/fetch_specs.py --images-only       # only download images
+py tools/sigma/audit.py                           # audit data completeness
+py tools/sigma/audit.py --missing                 # show only incomplete lenses
 ```
 
 **Extract MTF readings from chart PNGs:**
