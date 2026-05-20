@@ -1,7 +1,7 @@
 """Shared utilities for Samyang lens data tools.
 
 Provides lens extraction from lenses.ts, slug generation, page fetching,
-and optical spec parsing for Samyang product pages.
+optical spec parsing, and image downloading for Samyang product pages.
 """
 
 import hashlib
@@ -11,7 +11,11 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 LENSES_TS = ROOT / "src" / "data" / "lenses.ts"
+OPTICAL_SPECS_DIR = ROOT / "docs" / "optical-specs"
+MTF_CHARTS_DIR = ROOT / "docs" / "mtf-charts"
 CACHE_DIR = ROOT / ".cache" / "fetch"
+
+BASE_URL = "https://www.lksamyang.com"
 
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -203,3 +207,71 @@ def extract_specs(html: str) -> dict:
     specs["coating"] = coating
 
     return specs
+
+
+# --- Image extraction ---
+
+
+def extract_image_urls(html: str) -> dict[str, str]:
+    """Extract MTF chart and construction diagram URLs from page HTML.
+
+    Samyang pages use: <strong>MTF Chart</strong> followed by <img src="...">,
+    and <li class="optical-construction"><strong>Optical Construction</strong>
+    followed by <img src="...">.
+
+    Image src paths are extensionless (/upload/editor/NNNN) but serve as JPEG.
+    """
+    urls: dict[str, str] = {}
+
+    # MTF chart: after "MTF Chart" or "MTF CHART"
+    m = re.search(
+        r"MTF\s*(?:Chart|CHART)\s*</strong>[^<]*<img\s+src=\"([^\"]+)\"",
+        html, re.IGNORECASE,
+    )
+    if m:
+        src = m.group(1)
+        urls["mtf"] = src if src.startswith("http") else BASE_URL + src
+
+    # Construction diagram: after "Optical Construction"
+    m = re.search(
+        r"Optical\s*Construction\s*</strong>[^<]*<img\s+src=\"([^\"]+)\"",
+        html, re.IGNORECASE,
+    )
+    if m:
+        src = m.group(1)
+        urls["construction"] = src if src.startswith("http") else BASE_URL + src
+
+    return urls
+
+
+def download_image(url: str, dest: Path, min_size: int = 500) -> bool:
+    """Download an image to dest. Returns True on success."""
+    if dest.exists():
+        return True
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            content_type = resp.headers.get("Content-Type", "")
+            data = resp.read()
+            if len(data) < min_size:
+                return False
+
+            # Determine extension from Content-Type since URLs are extensionless
+            ext_map = {
+                "image/jpeg": ".jpg",
+                "image/png": ".png",
+                "image/webp": ".webp",
+                "image/gif": ".gif",
+            }
+            ext = ext_map.get(content_type, ".jpg")
+
+            # Adjust dest extension if needed
+            if dest.suffix != ext:
+                dest = dest.with_suffix(ext)
+
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(data)
+        return True
+    except Exception as e:
+        print(f"    WARN: download failed for {dest.name}: {e}")
+        return False

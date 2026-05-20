@@ -1,35 +1,43 @@
-"""Fetch optical specs from Samyang product pages.
+"""Fetch optical specs, MTF charts, and construction diagrams from Samyang pages.
 
-Extracts optical construction (elements, groups, special elements) and
-coating data from official Samyang product pages.
+Extracts optical construction (elements, groups, special elements), coating
+data, MTF chart images, and construction diagram images from official
+Samyang product pages.
 
 Usage:
-    py tools/samyang/fetch_specs.py                    # fetch all
+    py tools/samyang/fetch_specs.py                    # fetch all (specs + images)
     py tools/samyang/fetch_specs.py --dry-run           # list lenses without fetching
     py tools/samyang/fetch_specs.py --filter 12mm       # filter by model substring
     py tools/samyang/fetch_specs.py --limit 5           # fetch first N only
     py tools/samyang/fetch_specs.py --no-cache          # bypass cache, re-fetch all pages
+    py tools/samyang/fetch_specs.py --specs-only        # only extract specs text, no images
+    py tools/samyang/fetch_specs.py --images-only       # only download images
 """
 
 import argparse
-import sys
 import time
 
 from common import (
-    extract_samyang_lenses,
-    model_to_slug,
-    fetch_page,
-    extract_specs,
     CACHE_DIR,
+    MTF_CHARTS_DIR,
+    OPTICAL_SPECS_DIR,
+    download_image,
+    extract_image_urls,
+    extract_samyang_lenses,
+    extract_specs,
+    fetch_page,
+    model_to_slug,
 )
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Fetch Samyang optical specs")
+    parser = argparse.ArgumentParser(description="Fetch Samyang optical specs and images")
     parser.add_argument("--dry-run", action="store_true", help="List lenses without fetching")
     parser.add_argument("--filter", type=str, help="Filter by model substring (case-insensitive)")
     parser.add_argument("--limit", type=int, help="Fetch first N lenses only")
     parser.add_argument("--no-cache", action="store_true", help="Bypass cache, re-fetch all pages")
+    parser.add_argument("--specs-only", action="store_true", help="Only extract specs text, no images")
+    parser.add_argument("--images-only", action="store_true", help="Only download images")
     return parser.parse_args()
 
 
@@ -53,7 +61,6 @@ def main() -> None:
     args = parse_args()
 
     if args.no_cache and CACHE_DIR.exists():
-        # Clear Samyang-related cache entries
         for f in CACHE_DIR.glob("*.html"):
             f.unlink()
         print("Cache cleared")
@@ -73,47 +80,71 @@ def main() -> None:
             print(f"  {lens['model']}: {lens['url']}")
         return
 
-    success = 0
-    failed = 0
+    do_specs = not args.images_only
+    do_images = not args.specs_only
+
+    stats = {"specs": 0, "mtf": 0, "construction": 0, "failed": 0}
 
     for i, lens in enumerate(lenses):
         model = lens["model"]
+        slug = model_to_slug(model)
         url = lens["url"]
 
         print(f"\n[{i + 1}/{len(lenses)}] {model}")
-        print(f"  URL: {url}")
 
         try:
             html = fetch_page(url)
-            specs = extract_specs(html)
 
-            el = specs.get("elements", "?")
-            gr = specs.get("groups", "?")
-            sp = specs.get("special", [])
-            co = specs.get("coating", [])
+            if do_specs:
+                specs = extract_specs(html)
+                el = specs.get("elements", "?")
+                gr = specs.get("groups", "?")
+                sp = specs.get("special", [])
+                co = specs.get("coating", [])
 
-            print(f"  Elements: {el}, Groups: {gr}")
-            print(f"  Special: {sp}")
-            print(f"  Coating: {co}")
+                print(f"  Specs: {el}e/{gr}g, special={sp}, coating={co}")
 
-            if el != "?":
-                print(f"  TypeScript:")
-                print(format_ts_fields(specs))
-                success += 1
-            else:
-                print(f"  WARN: could not extract elements/groups")
-                failed += 1
+                if el != "?":
+                    print(format_ts_fields(specs))
+                    stats["specs"] += 1
+                else:
+                    print(f"  WARN: could not extract elements/groups")
+                    stats["failed"] += 1
 
-            # Be polite to the server
+            if do_images:
+                img_urls = extract_image_urls(html)
+
+                if "mtf" in img_urls:
+                    dest = MTF_CHARTS_DIR / f"{slug}-mtf.jpg"
+                    if download_image(img_urls["mtf"], dest):
+                        print(f"  MTF: {dest.name}")
+                        stats["mtf"] += 1
+                    else:
+                        print(f"  WARN: MTF download failed")
+                else:
+                    print(f"  No MTF chart found on page")
+
+                if "construction" in img_urls:
+                    specs_dir = OPTICAL_SPECS_DIR / slug
+                    dest = specs_dir / f"{slug}-construction.jpg"
+                    if download_image(img_urls["construction"], dest):
+                        print(f"  Construction: {dest.name}")
+                        stats["construction"] += 1
+                    else:
+                        print(f"  WARN: construction download failed")
+                else:
+                    print(f"  No construction diagram found on page")
+
             if i < len(lenses) - 1:
                 time.sleep(1)
 
         except Exception as e:
             print(f"  ERROR: {e}")
-            failed += 1
+            stats["failed"] += 1
 
     print(f"\n{'=' * 40}")
-    print(f"Done: {success} extracted, {failed} failed")
+    print(f"Done: {stats['specs']} specs, {stats['mtf']} MTF charts, "
+          f"{stats['construction']} construction diagrams, {stats['failed']} failed")
 
 
 if __name__ == "__main__":
