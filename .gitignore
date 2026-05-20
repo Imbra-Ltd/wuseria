@@ -10,6 +10,7 @@ dist/
 *.swo
 .claude/
 coverage/
+__pycache__/
 .cache/
 reports/
 .lighthouseci/
