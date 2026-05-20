@@ -37,13 +37,3 @@ S/M divergence at 30 lp/mm:
 FF lens. 10 lp/mm: M rises above S at edge (crossing). 30 lp/mm: both drop with moderate gap. At f/8: heavy divergence at FF edge. LensTip lab measured 10.4% (1.0).
 
 **Score: 1.0 (moderate-heavy; lab data: 1.0 -- consistent)**
-
-Per ADR-014 MTF chart fallback:
-
-- S/M nearly overlapping = 2.0
-- Moderate divergence = 1.0-1.5
-- Heavy divergence = 0-0.5
-
-Note: Manufacturer MTF charts are computed from the optical design,
-not measured from production samples. Lab-measured astigmatism (LensTip)
-takes precedence when available.

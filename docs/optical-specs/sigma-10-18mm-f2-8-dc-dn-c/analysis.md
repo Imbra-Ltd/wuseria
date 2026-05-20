@@ -35,9 +35,3 @@ S/M divergence at 30 lp/mm:
 - 10 lp/mm lines stay tight until extreme edge where gap opens ~0.07
 
 **Scoring:** Moderate divergence at edges → **1.5**
-
-Per ADR-014 MTF chart fallback:
-
-- S/M nearly overlapping → 2.0
-- Moderate divergence → 1.0–1.5
-- Heavy divergence → 0–0.5

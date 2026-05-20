@@ -37,13 +37,3 @@ S/M divergence at 30 lp/mm:
 S/M lines nearly overlapping throughout entire frame. Gap < 0.03 everywhere. No contradicting lab data.
 
 **Score: 2.0 (S/M nearly overlapping -- negligible astigmatism)**
-
-Per ADR-014 MTF chart fallback:
-
-- S/M nearly overlapping = 2.0
-- Moderate divergence = 1.0-1.5
-- Heavy divergence = 0-0.5
-
-Note: Manufacturer MTF charts are computed from the optical design,
-not measured from production samples. Lab-measured astigmatism (LensTip)
-takes precedence when available.

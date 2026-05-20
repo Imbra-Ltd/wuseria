@@ -37,13 +37,3 @@ S/M divergence at 30 lp/mm:
 S and M cross around 6mm, track close with ~0.05 gap at edge. Low divergence. LensTip lab measured 17.6% (1.0) -- discrepancy. Lab data takes precedence.
 
 **Score: 1.5-2.0 (low divergence; lab data: 1.0 takes precedence)**
-
-Per ADR-014 MTF chart fallback:
-
-- S/M nearly overlapping = 2.0
-- Moderate divergence = 1.0-1.5
-- Heavy divergence = 0-0.5
-
-Note: Manufacturer MTF charts are computed from the optical design,
-not measured from production samples. Lab-measured astigmatism (LensTip)
-takes precedence when available.

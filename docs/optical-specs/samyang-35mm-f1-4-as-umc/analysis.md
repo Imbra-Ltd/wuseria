@@ -37,13 +37,3 @@ S/M divergence at 30 lp/mm:
 FF lens. 30 lp/mm: S/M diverge from ~10mm outward. Heavy split at FF edge (~0.10). On APS-C crop, split ~0.05. LensTip lab measured 2.5% (2.0).
 
 **Score: 1.0 (heavy on FF; lab data: 2.0 takes precedence)**
-
-Per ADR-014 MTF chart fallback:
-
-- S/M nearly overlapping = 2.0
-- Moderate divergence = 1.0-1.5
-- Heavy divergence = 0-0.5
-
-Note: Manufacturer MTF charts are computed from the optical design,
-not measured from production samples. Lab-measured astigmatism (LensTip)
-takes precedence when available.

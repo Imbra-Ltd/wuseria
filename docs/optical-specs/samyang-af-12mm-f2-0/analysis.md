@@ -40,13 +40,3 @@ S/M divergence at 30 lp/mm:
 Heavy S/M divergence across the frame. At APS-C edge (~10mm), S ~0.65 vs M ~0.50 wide open (~15% gap). At 14mm: S ~0.45, M ~0.22 (~23% gap). At f/8: divergence persists and worsens at edges (M drops to 0.10 at 14mm while S stays at 0.45), indicating inherent optical design limitation. Tangential field curvature or astigmatism causes elongated star rendering in corners.
 
 **Score: 0.5 (heavy S/M divergence, 18-25%+ range at APS-C edges)**
-
-Per ADR-014 MTF chart fallback:
-
-- S/M nearly overlapping = 2.0
-- Moderate divergence = 1.0-1.5
-- Heavy divergence = 0-0.5
-
-Note: Manufacturer MTF charts are computed from the optical design,
-not measured from production samples. Lab-measured astigmatism (LensTip)
-takes precedence when available.

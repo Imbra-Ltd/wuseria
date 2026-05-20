@@ -44,13 +44,3 @@ S/M divergence at 30 lp/mm:
 30 lp/mm: heavy S/M divergence at edges. S ~0.50, M ~0.30 at 14mm. LensTip lab measured 3.7% (2.0) -- chart edge divergence not captured by average measurement. Lab data takes precedence.
 
 **Score: 1.0 (heavy divergence at edges; lab data: 2.0 takes precedence)**
-
-Per ADR-014 MTF chart fallback:
-
-- S/M nearly overlapping = 2.0
-- Moderate divergence = 1.0-1.5
-- Heavy divergence = 0-0.5
-
-Note: Manufacturer MTF charts are computed from the optical design,
-not measured from production samples. Lab-measured astigmatism (LensTip)
-takes precedence when available.

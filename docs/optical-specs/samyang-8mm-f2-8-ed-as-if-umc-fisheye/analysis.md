@@ -37,13 +37,3 @@ S/M divergence at 30 lp/mm:
 Moderate S/M divergence at 30 lp/mm edges (~0.07 gap at APS-C edge). 10 lp/mm lines track close.
 
 **Score: 1.5 (moderate divergence)**
-
-Per ADR-014 MTF chart fallback:
-
-- S/M nearly overlapping = 2.0
-- Moderate divergence = 1.0-1.5
-- Heavy divergence = 0-0.5
-
-Note: Manufacturer MTF charts are computed from the optical design,
-not measured from production samples. Lab-measured astigmatism (LensTip)
-takes precedence when available.

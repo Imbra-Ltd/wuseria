@@ -38,13 +38,3 @@ S/M divergence at 30 lp/mm:
 S/M lines nearly overlapping at all positions. Maximum divergence ~4% at extreme FF edge. On APS-C crop (~14mm), divergence < 2%. Consistent with the APO-quality optical design confirmed by Dustin Abbott and Phillip Reeve.
 
 **Score: 2.0 (S/M nearly overlapping -- negligible astigmatism)**
-
-Per ADR-014 MTF chart fallback:
-
-- S/M nearly overlapping = 2.0
-- Moderate divergence = 1.0-1.5
-- Heavy divergence = 0-0.5
-
-Note: Manufacturer MTF charts are computed from the optical design,
-not measured from production samples. Lab-measured astigmatism (LensTip)
-takes precedence when available.
