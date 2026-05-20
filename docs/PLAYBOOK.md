@@ -205,6 +205,31 @@ npx tsx scripts/audit-brand.ts              # all brands summary
 npx tsx scripts/audit-brand.ts Fujifilm     # single brand detail
 ```
 
+**Fetch Fujifilm optical specs, images, and coatings (Playwright):**
+
+```bash
+py tools/fujifilm/fetch_specs.py                    # fetch all missing data
+py tools/fujifilm/fetch_specs.py --dry-run           # list what would be fetched
+py tools/fujifilm/fetch_specs.py --filter gf         # filter by model substring
+py tools/fujifilm/fetch_specs.py --specs-only        # only extract specs text
+py tools/fujifilm/fetch_specs.py --images-only       # only download images
+py tools/fujifilm/fetch_specs.py --coatings-only     # only extract coatings
+py tools/fujifilm/audit.py                           # audit data completeness
+py tools/fujifilm/audit.py --missing                 # show only incomplete lenses
+```
+
+**Fetch Samyang optical specs, MTF charts, and construction diagrams (urllib):**
+
+```bash
+py tools/samyang/fetch_specs.py                    # fetch all (specs + images)
+py tools/samyang/fetch_specs.py --dry-run           # list lenses without fetching
+py tools/samyang/fetch_specs.py --filter 12mm       # filter by model substring
+py tools/samyang/fetch_specs.py --specs-only        # only extract specs text
+py tools/samyang/fetch_specs.py --images-only       # only download images
+py tools/samyang/audit.py                           # audit data completeness
+py tools/samyang/audit.py --missing                 # show only incomplete lenses
+```
+
 **Fetch Samyang MTF charts:**
 
 ```bash

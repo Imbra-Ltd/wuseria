@@ -3,6 +3,7 @@ import type { MtfData } from "../types/mtf";
 const mtfReadings: Record<string, MtfData> = {
   "sigma-16mm-f1-4-dc-dn-c": {
     source: "https://www.sigma-global.com/en/lenses/c017_16_14/",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/1.4",
@@ -62,6 +63,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "sigma-56mm-f1-4-dc-dn-c": {
     source: "https://www.sigma-global.com/en/lenses/c018_56_14/",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/1.4",
@@ -121,6 +123,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-100mm-f2-8-ed-umc-macro": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=154",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/2.8",
@@ -206,6 +209,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-10mm-f2-8-ed-as-ncs-cs": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=343",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/2.8",
@@ -333,6 +337,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-12mm-f2-0-ncs-cs": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=351",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/2",
@@ -460,6 +465,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-12mm-f2-8-ed-as-ncs-fish-eye": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=190",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/2.8",
@@ -545,6 +551,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-135mm-f2-0-ed-umc": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=167",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/2",
@@ -630,6 +637,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-14mm-f2-8-ed-as-if-umc": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=148",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/2.8",
@@ -715,6 +723,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-16mm-f2-0-ed-as-umc-cs": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=354",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/2",
@@ -842,6 +851,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-20mm-f1-8-ed-as-umc": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=161",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/1.8",
@@ -927,6 +937,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-21mm-f1-4-ed-as-umc-cs": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=378",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/1.4",
@@ -1054,6 +1065,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-300mm-f6-3-ed-umc-cs-reflex": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=170",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/6.3",
@@ -1181,6 +1193,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-35mm-f1-2-ed-as-umc-cs": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=381",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/1.2",
@@ -1308,6 +1321,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-35mm-f1-4-as-umc": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=159",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/1.4",
@@ -1393,6 +1407,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-50mm-f1-2-as-umc-cs": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=384",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/1.2",
@@ -1520,6 +1535,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-50mm-f1-4-as-umc": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=155",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/1.4",
@@ -1605,6 +1621,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-85mm-f1-4-as-if-umc": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=149",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/1.4",
@@ -1690,6 +1707,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-8mm-f2-8-ed-as-if-umc-fisheye": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=339",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/2.8",
@@ -1817,6 +1835,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-8mm-f3-5-aspherical-if-mc-fish-eye": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=335",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/3.5",
@@ -1944,6 +1963,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-af-12mm-f2-0": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=466",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/2.0",
@@ -2043,6 +2063,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-af-75mm-f1-8": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=470",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/1.8",
@@ -2142,6 +2163,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "samyang-tiltshift-24mm-f3-5-ed-as-umc": {
     source: "https://www.lksamyang.com/en/product/product-view.php?seq=162",
+    mtfType: "computed",
     charts: [
       {
         aperture: "f/3.5",
