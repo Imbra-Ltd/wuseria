@@ -4,16 +4,8 @@
 
 - **Formula:** 10 elements in 9 groups
 - **Special elements:** 1 ED, 1 HR
-- **Coating:** Nano coating (per sansmirror review)
+- **Coating:** HD Nano multilayer coating
 
 ## Data Sources
 
-- sansmirror, Viltrox store
-
-## MTF Charts
-
-Not available — Viltrox does not publish MTF charts on their website.
-
-## Construction Diagram
-
-Not available — Viltrox does not publish construction diagrams on their website.
+- sansmirror (10E/9G confirmed; ED+HR confirmed without counts — see notes.md)

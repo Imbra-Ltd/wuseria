@@ -4,16 +4,8 @@
 
 - **Formula:** 11 elements in 9 groups
 - **Special elements:** 1 aspherical, 1 ED, 2 HR
-- **Coating:** Not published by manufacturer
+- **Coating:** HD Nano multilayer coating
 
 ## Data Sources
 
-- LensTip (708), Viltrox store
-
-## MTF Charts
-
-Not available — Viltrox does not publish MTF charts on their website.
-
-## Construction Diagram
-
-Not available — Viltrox does not publish construction diagrams on their website.
+- LensTip (708), Viltrox store, Dustin Abbott

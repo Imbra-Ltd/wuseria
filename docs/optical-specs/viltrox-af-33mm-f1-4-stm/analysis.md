@@ -4,16 +4,8 @@
 
 - **Formula:** 10 elements in 9 groups
 - **Special elements:** 1 ED, 1 HR
-- **Coating:** Not published by manufacturer
+- **Coating:** HD Nano multilayer coating
 
 ## Data Sources
 
 - OpticalLimits
-
-## MTF Charts
-
-Not available — Viltrox does not publish MTF charts on their website.
-
-## Construction Diagram
-
-Not available — Viltrox does not publish construction diagrams on their website.
