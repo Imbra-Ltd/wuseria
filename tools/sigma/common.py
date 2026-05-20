@@ -208,18 +208,21 @@ def extract_specs(html: str) -> dict:
 def extract_image_urls(html: str, code: str) -> dict[str, list[str]]:
     """Extract MTF chart and construction diagram URLs from page HTML.
 
-    Sigma pages use a predictable naming scheme:
-    - Construction: {code}_specification_01_*.png
-    - MTF charts:   {code}_specification_02_*.png
+    Sigma pages use several naming variants:
+    - {code}_specification_01_N.png   (older pages)
+    - {code}_specification_01.png     (newer pages, no sub-number)
+    - {code}_specification_2.png      (older pages, no leading zero)
+    - /images/{code}_specification_*  (some pages use images/ subdir)
+    - MTF charts use _specification_02_*
 
     Primes have 2 MTF charts (diffraction + geometrical).
-    Zooms have 4 MTF charts (2 focal lengths x 2 types).
+    Zooms have 4+ MTF charts (multiple focal lengths x 2 types).
     """
     urls: dict[str, list[str]] = {"mtf": [], "construction": []}
 
-    # Find all specification images for this lens code
+    # Match all specification images — flexible pattern for varying naming
     pattern = re.compile(
-        r'(?:src|href)="([^"]*' + re.escape(code) + r'_specification_\d+_\d+\.png)"',
+        r'(?:src|href)="([^"]*' + re.escape(code) + r'_specification[^"]*\.png)"',
         re.IGNORECASE,
     )
 
@@ -227,7 +230,9 @@ def extract_image_urls(html: str, code: str) -> dict[str, list[str]]:
         src = m.group(1)
         full_url = src if src.startswith("http") else BASE_URL + src
 
-        if "_specification_01_" in src:
+        # Construction diagrams: _specification_01 or _specification_2
+        # (but NOT _specification_02_ which are MTF charts)
+        if re.search(r"_specification_(?:01(?:_\d+)?|[12])\.png$", src, re.IGNORECASE):
             if full_url not in urls["construction"]:
                 urls["construction"].append(full_url)
         elif "_specification_02_" in src:
