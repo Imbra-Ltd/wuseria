@@ -2407,3 +2407,35 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Tokina tech spec verification (4 lenses)
 - Venus Laowa optical specs (16 lenses, #745)
 - Voigtlander optical specs (#747)
+
+---
+
+### Session 76 — Tokina Tech Spec Verification
+
+- **Tool:** Claude Code (claude-opus-4-6)
+- **Branch:** `fix/tokina-tech-specs`
+
+#### Issues
+
+- Created #779 — Add tech spec cross-validation to brand fetch tools (P2, v0.7.0)
+
+#### Key changes
+
+- Fixed all 4 Tokina officialUrl values: hyphens → underscores to match tokinalens.com URL scheme
+- Fixed afMotor on all 4 Tokina lenses: "LM" → "STM" (official pages confirm ST-M stepping motor)
+- Fixed maxMagnification on all 4 lenses against official specs (23mm: 0.15→0.1, 33mm: 0.15→0.1, 56mm: 0.14→0.1, 11-18mm: 0.25→0.11)
+- Fixed weight: 23mm 285→276g, 33mm 270→285g
+- Added missing hasApertureRing: false on 11-18mm zoom
+- Converted 6 Tokina optical-spec images from JPG to PNG for consistency
+
+#### Key decisions
+
+- Tokina PLUS branding is packaging-only refresh (June 2022) — no optical or spec changes, no model rename needed
+- Existing fetch tools only verify optical construction (elements/groups/coating) and field presence — they do not cross-validate tech specs (weight, magnification, motor type) against official pages; #779 tracks the gap
+- PNG is the project convention for optical-spec images (195 PNG vs 6 JPG before this session); JPGs converted
+
+#### Next
+
+- Venus Laowa optical specs (16 lenses, #745)
+- Voigtlander optical specs (#747)
+- Tech spec cross-validation for all brand tools (#779)
