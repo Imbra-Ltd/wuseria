@@ -338,10 +338,11 @@ npx tsx scripts/compute-marks.ts print      # print all computed marks
 npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
 ```
 
-### 2.8 Backfill spec fields per brand
+### 2.8 Fill and verify tech specs per brand
 
 1. Run `npx tsx scripts/audit-brand.ts <Brand>` to see gaps
-2. Research from these sources (priority order):
+2. Run the brand extraction tool if available: `py tools/<brand>/fetch_specs.py`
+3. Research missing fields from these sources (priority order):
    - Official manufacturer pages (dimensions, filter thread, build features)
    - LensTip spec database (`lenstip.com/<id>-<name>-lens_specifications.html`) — best for maxMagnification on budget lenses
    - Radojuva lens database (`radojuva.com`) — hands-on magnification measurements and detailed optical data
@@ -349,9 +350,14 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
    - cameradecision.com via `fetch-page.py` (403s on direct fetch, Playwright bypasses)
    - Dustin Abbott / Phillip Reeve reviews — trust-3 field measurements
    - Duclos Lenses (`ducloslenses.com`) — reliable spec tables for cinema lenses (length, weight, min focus)
-3. **LensTip page ID caveat:** URL names are ignored; only the numeric ID matters. Always verify `Manufacturer` and `Model` fields on the page — wrong IDs redirect silently to unrelated lenses.
-4. Add fields to `src/data/lenses.ts`, run `npm run validate`
-5. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
+4. **LensTip page ID caveat:** URL names are ignored; only the numeric ID matters. Always verify `Manufacturer` and `Model` fields on the page — wrong IDs redirect silently to unrelated lenses.
+5. Verify extracted data against downloaded images and official pages:
+   - Count elements and groups in construction diagrams — must match `opticalElements` and `opticalGroups`
+   - Identify special elements (aspherical, LD, ED) marked in diagrams — must match `specialElements`
+   - Check that all coatings on the product page are captured, including protective coatings (fluorine, water-repellent) that are often listed separately from optical coatings (AR, multi-coating)
+   - For lenses with X-mount variants, verify physical specs (weight, length, diameter) use X-mount values, not Sony E or other mounts
+6. Add fields to `src/data/lenses.ts`, run `npm run validate`
+7. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
 
 ## 3. Quality
 

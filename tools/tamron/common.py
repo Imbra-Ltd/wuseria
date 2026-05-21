@@ -195,12 +195,14 @@ def extract_specs(html: str) -> dict:
 
     specs["special"] = special
 
-    # Coating — Tamron uses BBAR G2, BBAR
+    # Coating — Tamron uses BBAR G2, BBAR, fluorine
     coating = []
     if re.search(r"BBAR\s+G2", text, re.IGNORECASE):
         coating.append("BBAR G2")
     elif re.search(r"BBAR\b", text, re.IGNORECASE):
         coating.append("BBAR")
+    if re.search(r"\bfluorine\b", text, re.IGNORECASE):
+        coating.append("fluorine")
 
     specs["coating"] = coating
 
