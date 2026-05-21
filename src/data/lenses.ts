@@ -7703,7 +7703,7 @@ const lenses: Lens[] = [
     minFocusDistance: 390,
     opticalElements: 9,
     opticalGroups: 8,
-    specialElements: [],
+    specialElements: ["2 atypical partial dispersion"],
     coating: ["Multi-coating"],
     // Not scored — X-mount exclusive Sonnar design; no trust-3 reviews
     officialUrl:
