@@ -264,6 +264,38 @@ py tools/viltrox/audit.py                           # audit data completeness
 py tools/viltrox/audit.py --missing                 # show only incomplete lenses
 ```
 
+**Fetch Tamron optical specs (urllib, dual-page parsing — main + /spec.html):**
+
+```bash
+py tools/tamron/fetch_specs.py                    # fetch all specs + images
+py tools/tamron/fetch_specs.py --dry-run           # list lenses without fetching
+py tools/tamron/fetch_specs.py --filter 17-70mm    # filter by model substring
+py tools/tamron/audit.py                           # audit data completeness
+py tools/tamron/audit.py --missing                 # show only incomplete lenses
+```
+
+**Fetch Tokina optical specs (urllib, alt-text scraping):**
+
+```bash
+py tools/tokina/fetch_specs.py                    # fetch all specs + images
+py tools/tokina/fetch_specs.py --dry-run           # list lenses without fetching
+py tools/tokina/fetch_specs.py --filter 23mm       # filter by model substring
+py tools/tokina/audit.py                           # audit data completeness
+py tools/tokina/audit.py --missing                 # show only incomplete lenses
+```
+
+**Fetch Carl Zeiss Touit PDF datasheets (discontinued lenses, no live pages):**
+
+```bash
+py tools/zeiss/fetch_specs.py                     # download all PDF datasheets
+py tools/zeiss/fetch_specs.py --dry-run            # list lenses without downloading
+py tools/zeiss/fetch_specs.py --filter 12mm        # filter by model substring
+py tools/zeiss/audit.py                            # audit data completeness
+py tools/zeiss/audit.py --missing                  # show only incomplete lenses
+```
+
+Note: Zeiss MTF charts and construction diagrams must be extracted manually from the downloaded PDFs.
+
 **Extract MTF readings from chart PNGs:**
 
 Skeleton tool (recommended — requires Python + scikit-image + opencv-python):

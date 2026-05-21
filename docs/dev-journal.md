@@ -2343,3 +2343,36 @@ Issues updated: #560 (expanded to all brands with missing scoring logs)
 - #560 — backfill scoring logs for 43 scored lenses missing documentation
 - #767 — wiki entry on MTF charts
 - #771 — audit lens database against third-party X-mount/GFX lists
+
+---
+
+### Session 74 — Optical Spec Tools: Carl Zeiss, Tamron, Tokina
+
+PRs: #774 (optical spec tools and data)
+Issues closed: #740 (Carl Zeiss), #743 (Tamron), #744 (Tokina)
+Epic: #739 — Carl Zeiss, Tamron, Tokina checked off (7/9 scored brands done)
+
+#### Key changes
+
+- Created `tools/tamron/` extraction tools (common, fetch_specs, audit) — plain urllib, dual-page spec parsing (main + /spec.html)
+- Created `tools/tokina/` extraction tools (common, fetch_specs, audit) — plain urllib, alt-text scraping for special elements
+- Created `tools/zeiss/` extraction tools (common, fetch_specs, audit) — PDF datasheet download (product pages return 404)
+- Populated optical specs for all 4 Tamron lenses: elements, groups, special (LD, XLD, GM aspherical, hybrid aspherical), coating (BBAR/BBAR G2)
+- Populated optical specs for all 4 Tokina lenses: elements, groups, special (aspherical, SD), coating (Multi-coating)
+- Downloaded PDF datasheets for all 3 Zeiss Touit lenses
+- Extracted MTF charts, construction diagrams, vignetting, and distortion charts from Zeiss PDFs
+- Fixed Zeiss Touit physical specs from datasheet verification (weight, diameter, length, minFocusDistance)
+- All audits pass: Zeiss 3/3, Tamron 4/4, Tokina 4/4
+
+#### Key decisions
+
+- Zeiss Touit lenses are discontinued — no live product pages, officialUrl points to PDF datasheets on zeiss.com
+- Zeiss tool downloads PDFs rather than scraping HTML (unique among brand tools)
+- Tamron specs split across two pages (main product page + /spec.html) — tool concatenates both
+- Tokina puts special element names in image alt text — tool extracts alt attributes before stripping tags
+
+#### Next
+
+- Venus Laowa optical specs (16 lenses, #745)
+- Voigtlander optical specs (#747)
+- #767 — wiki entry on MTF charts
