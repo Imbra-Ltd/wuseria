@@ -7602,6 +7602,10 @@ const lenses: Lens[] = [
     filterThread: 46,
     price: 750,
     minFocusDistance: 200,
+    opticalElements: 10,
+    opticalGroups: 6,
+    specialElements: ["1 aspherical", "2 anomalous partial dispersion"],
+    coating: ["Multi-coating"],
     // Not scored — no trust-3 reviews available
     officialUrl:
       "https://www.voigtlaender.de/lenses/x-mount/23-mm-11-2-nokton/?lang=en",
@@ -7633,6 +7637,10 @@ const lenses: Lens[] = [
     filterThread: 46,
     price: 750,
     minFocusDistance: 300,
+    opticalElements: 8,
+    opticalGroups: 6,
+    specialElements: ["1 anomalous partial dispersion"],
+    coating: ["Multi-coating"],
     sweetSpotAperture: 4,
     centerStopped: 2,
     cornerStopped: 0,
@@ -7693,6 +7701,10 @@ const lenses: Lens[] = [
     filterThread: 58,
     price: 1000,
     minFocusDistance: 390,
+    opticalElements: 9,
+    opticalGroups: 8,
+    specialElements: [],
+    coating: ["Multi-coating"],
     // Not scored — X-mount exclusive Sonnar design; no trust-3 reviews
     officialUrl:
       "https://www.voigtlaender.de/lenses/x-mount/50mm-11-2-nokton/?lang=en",
@@ -7724,6 +7736,10 @@ const lenses: Lens[] = [
     filterThread: 43,
     price: 750,
     minFocusDistance: 250,
+    opticalElements: 6,
+    opticalGroups: 4,
+    specialElements: ["1 atypical partial dispersion"],
+    coating: ["Multi-coating"],
     sweetSpotAperture: 4,
     centerStopped: 2,
     cornerStopped: 0.5,
@@ -7786,6 +7802,10 @@ const lenses: Lens[] = [
     filterThread: 43,
     price: 750,
     minFocusDistance: 170,
+    opticalElements: 7,
+    opticalGroups: 5,
+    specialElements: ["1 aspherical", "1 atypical partial dispersion"],
+    coating: ["Multi-coating"],
     officialUrl:
       "https://www.voigtlaender.de/lenses/x-mount/18-mm-128-color-skopar/?lang=en",
   },
@@ -7816,6 +7836,10 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 1000,
     minFocusDistance: 350,
+    opticalElements: 10,
+    opticalGroups: 8,
+    specialElements: ["1 ground aspherical", "1 aspherical"],
+    coating: ["Multi-coating"],
     sweetSpotAperture: 4,
     centerStopped: 2,
     cornerStopped: 1,
@@ -7846,7 +7870,8 @@ const lenses: Lens[] = [
       lenstip:
         "https://www.lenstip.com/663.1-Lens_review-Voigtlander_Nokton_35_mm_f_0.9_Aspherical.html",
     },
-    officialUrl: "https://www.voigtlaender.de/lenses/x-mount/",
+    officialUrl:
+      "https://www.voigtlaender.de/lenses/x-mount/35mm-109-nokton/?lang=en",
   },
   {
     // Not scored — no trust-3 reviews available
@@ -7876,6 +7901,10 @@ const lenses: Lens[] = [
     filterThread: 49,
     price: 750,
     minFocusDistance: 163,
+    opticalElements: 9,
+    opticalGroups: 6,
+    specialElements: ["3 anomalous partial dispersion"],
+    coating: ["Multi-coating"],
     officialUrl:
       "https://www.voigtlaender.de/lenses/x-mount/35-mm-12-macro-apo-ultron/?lang=en",
   },
