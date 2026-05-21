@@ -115,6 +115,12 @@ def fetch_page(url: str, timeout: int = 30) -> str:
 # --- Spec extraction ---
 
 
+TEXT_NUMS = {
+    "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
+    "six": "6", "seven": "7", "eight": "8", "nine": "9", "ten": "10",
+}
+
+
 def extract_specs(html: str) -> dict:
     """Extract optical specs from Tamron product page HTML.
 
@@ -129,6 +135,10 @@ def extract_specs(html: str) -> dict:
     """
     text = re.sub(r"<[^>]+>", " ", html)
     text = re.sub(r"\s+", " ", text)
+
+    # Normalize text numbers to digits
+    for word, digit in TEXT_NUMS.items():
+        text = re.sub(rf"\b{word}\b", digit, text, flags=re.IGNORECASE)
 
     specs: dict = {}
 
@@ -152,14 +162,16 @@ def extract_specs(html: str) -> dict:
         ]),
         ("hybrid aspherical", [
             r"(\d+)\s*(?:x\s+)?hybrid\s+aspherical",
+            r"(\d+)\s*(?:x\s+)?aspherical\s+hybrid",
         ]),
         ("XLD", [
             r"(\d+)\s*(?:x\s+)?XLD\b",
             r"(\d+)\s*eXtra\s+Low\s+Dispersion",
         ]),
         ("LD", [
-            r"(\d+)\s*(?:x\s+)?LD\b(?!\s*[/\(])",
+            r"(\d+)\s*(?:x\s+)?LD\s*\(Low\s+Dispersion\)",
             r"(\d+)\s*Low\s+Dispersion",
+            r"(\d+)\s*(?:x\s+)?LD\b",
         ]),
     ]
 

@@ -127,13 +127,27 @@ def fetch_page(url: str, timeout: int = 30) -> str:
 # --- Spec extraction ---
 
 
+TEXT_NUMS = {
+    "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
+    "six": "6", "seven": "7", "eight": "8", "nine": "9", "ten": "10",
+}
+
+
 def extract_specs(html: str) -> dict:
     """Extract optical specs from Tokina product page HTML.
 
     Returns dict with keys: elements, groups, special, coating.
     """
+    # Extract alt attributes before stripping tags — Tokina puts
+    # special element names in image alt text (e.g. "Super Low Dispersion Glass")
+    alt_text = " ".join(re.findall(r'alt="([^"]*)"', html))
     text = re.sub(r"<[^>]+>", " ", html)
+    text = text + " " + alt_text
     text = re.sub(r"\s+", " ", text)
+
+    # Normalize text numbers to digits
+    for word, digit in TEXT_NUMS.items():
+        text = re.sub(rf"\b{word}\b", digit, text, flags=re.IGNORECASE)
 
     specs: dict = {}
 
@@ -178,7 +192,7 @@ def extract_specs(html: str) -> dict:
         if not found:
             fallback_patterns = {
                 "aspherical": r"\baspherical\s+(?:lens|element)",
-                "SD": r"\b(?:Super\s+)?Low[- ]Dispersion\b|\bSD\s+glass",
+                "SD": r"\b(?:Super\s+)?Low[- ]Dispersion\b|\bSD\s+glass|\bSuper\s+Low\s+Dispersion\s+Glass\b",
                 "ED": r"\bED\s+(?:glass|element|lens)",
             }
             pat = fallback_patterns.get(label)
