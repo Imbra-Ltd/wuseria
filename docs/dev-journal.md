@@ -2310,3 +2310,36 @@ Epic: #739 — Sigma and Viltrox checked off
 
 - Continue brand backfill (Carl Zeiss, Tamron, Venus Laowa next per epic #739)
 - #767 — wiki entry on MTF charts
+
+---
+
+### Session 73 — Docs Folder Cleanup
+
+PRs: #770 (session 72 wrap-up merge), #772 (docs cleanup)
+Issues created: #771 (lens database audit against third-party lists)
+Issues updated: #560 (expanded to all brands with missing scoring logs)
+
+#### Key changes
+
+- Migrated 77 scoring log entries from monolithic `docs/scoring-log.md` to per-lens `docs/optical-specs/<slug>/scoring-log.md` — completes ADR-033 migration
+- Folded lens content spine spec (`docs/specs/lens-content-spine.md`) into ADR-026 — phrase tables, genre formulas, derived fields, alternatives logic, meta template
+- Deleted `docs/specs/` directory (content merged into ADR-026)
+- Deleted `docs/mtf-charts/` directory (6 files, superseded by `docs/optical-specs/`)
+- Deleted `docs/scoring-log.md` (152KB, fully migrated to per-lens files)
+- Created `docs/audits/` — split `docs/360-audit.md` into timestamped `2026-04-29-360.md` and `2026-05-03-360.md`
+- Moved `docs/seo-test-plan.md` to `docs/audits/seo-test-plan.md`
+- Updated all cross-references in CLAUDE.md, README.md, PLAYBOOK.md, ADR-014, ADR-022, ADR-026, ADR-033
+- Identified 43 scored lenses with no scoring log documentation (gap: Fujifilm 40, Viltrox 8, Carl Zeiss 3, Tamron 4, Tokina 4)
+
+#### Key decisions
+
+- Per our ADR convention, implementation specs fold into the ADR itself — no separate spec files
+- ADR filenames describe the decision topic, not current state — ADR-022 filename kept as-is
+- SEO test plan is an audit checklist by nature — belongs in `docs/audits/`, referenced from PLAYBOOK 3.16
+
+#### Next
+
+- Continue brand backfill (Carl Zeiss, Tamron, Venus Laowa next per epic #739)
+- #560 — backfill scoring logs for 43 scored lenses missing documentation
+- #767 — wiki entry on MTF charts
+- #771 — audit lens database against third-party X-mount/GFX lists
