@@ -2343,3 +2343,67 @@ Issues updated: #560 (expanded to all brands with missing scoring logs)
 - #560 — backfill scoring logs for 43 scored lenses missing documentation
 - #767 — wiki entry on MTF charts
 - #771 — audit lens database against third-party X-mount/GFX lists
+
+---
+
+### Session 74 — Optical Spec Tools: Carl Zeiss, Tamron, Tokina
+
+PRs: #774 (optical spec tools and data)
+Issues closed: #740 (Carl Zeiss), #743 (Tamron), #744 (Tokina)
+Epic: #739 — Carl Zeiss, Tamron, Tokina checked off (7/9 scored brands done)
+
+#### Key changes
+
+- Created `tools/tamron/` extraction tools (common, fetch_specs, audit) — plain urllib, dual-page spec parsing (main + /spec.html)
+- Created `tools/tokina/` extraction tools (common, fetch_specs, audit) — plain urllib, alt-text scraping for special elements
+- Created `tools/zeiss/` extraction tools (common, fetch_specs, audit) — PDF datasheet download (product pages return 404)
+- Populated optical specs for all 4 Tamron lenses: elements, groups, special (LD, XLD, GM aspherical, hybrid aspherical), coating (BBAR/BBAR G2)
+- Populated optical specs for all 4 Tokina lenses: elements, groups, special (aspherical, SD), coating (Multi-coating)
+- Downloaded PDF datasheets for all 3 Zeiss Touit lenses
+- Extracted MTF charts, construction diagrams, vignetting, and distortion charts from Zeiss PDFs
+- Fixed Zeiss Touit physical specs from datasheet verification (weight, diameter, length, minFocusDistance)
+- All audits pass: Zeiss 3/3, Tamron 4/4, Tokina 4/4
+
+#### Key decisions
+
+- Zeiss Touit lenses are discontinued — no live product pages, officialUrl points to PDF datasheets on zeiss.com
+- Zeiss tool downloads PDFs rather than scraping HTML (unique among brand tools)
+- Tamron specs split across two pages (main product page + /spec.html) — tool concatenates both
+- Tokina puts special element names in image alt text — tool extracts alt attributes before stripping tags
+
+#### Next
+
+- Venus Laowa optical specs (16 lenses, #745)
+- Voigtlander optical specs (#747)
+- #767 — wiki entry on MTF charts
+
+---
+
+### Session 75 — Tamron Tech Spec Verification
+
+PRs: #774 (updated with fixes)
+Issues closed: none
+Issues created: solid-ai-templates#329 (no-force-push convention)
+
+#### Key changes
+
+- Fixed aperture blades for 3 Tamron lenses (9→7 for B060, B061, A057) — official spec pages confirm 7
+- Fixed X-mount dimensions for 3 lenses (B060, B070, B061) — tool had used Sony E-mount values
+- Added missing fluorine coating to all 4 Tamron lenses — product pages list it separately from optical coatings
+- Added missing 2 LD special elements to B070 (17-70mm) — confirmed by LensTip and PhotographyBlog, not on Tamron's own page
+- Fixed Tamron extraction tool (`tools/tamron/common.py`) to detect fluorine coating
+- Updated ADR-033 to allow SVG format alongside PNG for optical spec images
+- Added spec verification step to PLAYBOOK 2.8 (fill and verify tech specs per brand)
+
+#### Key decisions
+
+- No force push — use merge instead of rebase when resolving conflicts on pushed branches (solid-ai-templates#329)
+- SVG allowed for optical spec images (ADR-033 update) — vector format preserves chart text at any scale
+- Protective coatings (fluorine) are often listed separately from optical coatings on manufacturer pages — extraction tools must check both sections
+- PLAYBOOK 2.8 now includes image cross-check step: verify extracted data against construction diagrams
+
+#### Next
+
+- Tokina tech spec verification (4 lenses)
+- Venus Laowa optical specs (16 lenses, #745)
+- Voigtlander optical specs (#747)

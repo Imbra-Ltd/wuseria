@@ -65,11 +65,14 @@ Project-specific overrides and additions follow below.
 - `src/test/` — Vitest setup and test factories
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
 - `docs/audits/` — 360-degree audits (timestamped) and SEO test plan
-- `docs/optical-specs/` — verified per-lens optical reference data, one subfolder per lens (ADR-031, ADR-033): `analysis.md` (MTF readings, predictions), `scoring-log.md` (per-lens scoring justification), `notes.md` (optional operational notes), construction diagrams and MTF charts as PNG
+- `docs/optical-specs/` — verified per-lens optical reference data, one subfolder per lens (ADR-031, ADR-033): `analysis.md` (MTF readings, predictions), `scoring-log.md` (per-lens scoring justification), `notes.md` (optional operational notes), construction diagrams and MTF charts as PNG or SVG
 - `tools/fujifilm/` — Fujifilm optical spec extraction (fetch_specs, audit, Playwright-based)
 - `tools/samyang/` — Samyang optical spec extraction (fetch_specs, audit, plain urllib)
 - `tools/sigma/` — Sigma optical spec extraction (fetch_specs, audit, plain urllib)
+- `tools/tamron/` — Tamron optical spec extraction (fetch_specs, audit, plain urllib, dual-page parsing)
+- `tools/tokina/` — Tokina optical spec extraction (fetch_specs, audit, plain urllib, alt-text scraping)
 - `tools/viltrox/` — Viltrox optical spec extraction (fetch_specs, audit, download_images, Shopify JSON + HTML scraping)
+- `tools/zeiss/` — Carl Zeiss optical spec extraction (fetch_specs, audit, PDF datasheet download)
 - `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility
 
 ### 1.3 Commands

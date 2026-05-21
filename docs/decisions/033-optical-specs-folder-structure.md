@@ -25,8 +25,8 @@ Formalize the per-lens folder structure under `docs/optical-specs/<slug>/`:
 
 ```
 docs/optical-specs/<slug>/
-  <slug>-construction.png       # required — optical construction diagram
-  <slug>-mtf-*.png              # required — MTF chart images
+  <slug>-construction.{png,svg} # required — optical construction diagram
+  <slug>-mtf-*.{png,svg}        # required — MTF chart images
   analysis.md                   # required — predictions from construction
                                 #   parameters and MTF charts (readings,
                                 #   astigmatism assessment, quality predictions)
@@ -38,10 +38,11 @@ docs/optical-specs/<slug>/
 
 ### Image format
 
-All images in optical-specs folders must be **PNG**. Source images
+Images in optical-specs folders must be **PNG or SVG**. Source images
 downloaded as JPG or WebP must be converted to PNG before committing.
-PNG preserves chart text and diagram lines without compression artifacts
-that degrade readability on MTF charts.
+SVG is preferred when the source provides it — vector format preserves
+chart text and diagram lines at any scale. PNG is acceptable for raster
+sources. No other formats (JPG, WebP, GIF) are allowed.
 
 ### File responsibilities
 
