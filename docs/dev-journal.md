@@ -2376,3 +2376,34 @@ Epic: #739 — Carl Zeiss, Tamron, Tokina checked off (7/9 scored brands done)
 - Venus Laowa optical specs (16 lenses, #745)
 - Voigtlander optical specs (#747)
 - #767 — wiki entry on MTF charts
+
+---
+
+### Session 75 — Tamron Tech Spec Verification
+
+PRs: #774 (updated with fixes)
+Issues closed: none
+Issues created: solid-ai-templates#329 (no-force-push convention)
+
+#### Key changes
+
+- Fixed aperture blades for 3 Tamron lenses (9→7 for B060, B061, A057) — official spec pages confirm 7
+- Fixed X-mount dimensions for 3 lenses (B060, B070, B061) — tool had used Sony E-mount values
+- Added missing fluorine coating to all 4 Tamron lenses — product pages list it separately from optical coatings
+- Added missing 2 LD special elements to B070 (17-70mm) — confirmed by LensTip and PhotographyBlog, not on Tamron's own page
+- Fixed Tamron extraction tool (`tools/tamron/common.py`) to detect fluorine coating
+- Updated ADR-033 to allow SVG format alongside PNG for optical spec images
+- Added spec verification step to PLAYBOOK 2.8 (fill and verify tech specs per brand)
+
+#### Key decisions
+
+- No force push — use merge instead of rebase when resolving conflicts on pushed branches (solid-ai-templates#329)
+- SVG allowed for optical spec images (ADR-033 update) — vector format preserves chart text at any scale
+- Protective coatings (fluorine) are often listed separately from optical coatings on manufacturer pages — extraction tools must check both sections
+- PLAYBOOK 2.8 now includes image cross-check step: verify extracted data against construction diagrams
+
+#### Next
+
+- Tokina tech spec verification (4 lenses)
+- Venus Laowa optical specs (16 lenses, #745)
+- Voigtlander optical specs (#747)

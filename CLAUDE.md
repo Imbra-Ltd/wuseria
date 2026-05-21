@@ -65,7 +65,7 @@ Project-specific overrides and additions follow below.
 - `src/test/` — Vitest setup and test factories
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
 - `docs/audits/` — 360-degree audits (timestamped) and SEO test plan
-- `docs/optical-specs/` — verified per-lens optical reference data, one subfolder per lens (ADR-031, ADR-033): `analysis.md` (MTF readings, predictions), `scoring-log.md` (per-lens scoring justification), `notes.md` (optional operational notes), construction diagrams and MTF charts as PNG
+- `docs/optical-specs/` — verified per-lens optical reference data, one subfolder per lens (ADR-031, ADR-033): `analysis.md` (MTF readings, predictions), `scoring-log.md` (per-lens scoring justification), `notes.md` (optional operational notes), construction diagrams and MTF charts as PNG or SVG
 - `tools/fujifilm/` — Fujifilm optical spec extraction (fetch_specs, audit, Playwright-based)
 - `tools/samyang/` — Samyang optical spec extraction (fetch_specs, audit, plain urllib)
 - `tools/sigma/` — Sigma optical spec extraction (fetch_specs, audit, plain urllib)
