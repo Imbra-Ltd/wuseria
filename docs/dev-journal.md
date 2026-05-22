@@ -2507,3 +2507,52 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Merge PR #781 (Voigtlander optical specs)
 - Venus Laowa optical specs (#745)
 - AQ spike research (#783) when MTF data pipeline is more complete
+
+---
+
+### Session 79 — TTartisan Optical Specs & Manual Verification
+
+- **Tool:** Claude Code (claude-opus-4-6)
+- **Branch:** `feat/ttartisan-optical-specs`
+
+#### PRs
+
+- #787 — feat: TTartisan optical specs for all 19 lenses (open, CI pending)
+
+#### Issues created
+
+- #788 — Explore optical design patterns as a data dimension (spike, P3, Backlog)
+- #789 — Add wiki entry for optical glass types and element shapes (task, P3, Backlog)
+
+#### Issues updated
+
+- #739 — Collect optical specs epic: checked off #745 (Venus Laowa), #747 (Voigtlander), #762 (TTartisan)
+
+#### Key changes
+
+- Built `tools/ttartisan/` extraction tool (plain urllib, no Cloudflare) with fetch_specs.py, audit.py, common.py
+- Populated optical fields for all 19 TTartisan lenses (11 X-mount MF, 4 X-mount AF, 4 GFX)
+- Downloaded MTF charts and construction diagrams for 18/19 lenses (AF 56mm from Shopify CDN)
+- Corrected 28 pre-existing tech spec errors across 17 lenses (apertureBlades, weight, filterThread, minFocusDistance)
+- Added MC Multi-Layer coating to all 19 lenses (brand standard from DJ Optical, CVD process)
+- Manual lens-by-lens verification: found special elements in 7 construction diagrams not mentioned in page text
+- Converted all images to PNG
+- Added fcracer.com as trust-2 field review source
+- Added Northlight Images as specialist T/S bookmark
+
+#### Key decisions
+
+- TTartisan uses MC Multi-Layer coating as brand standard (DJ Optical CVD process) — normalized across all 19 lenses
+- Construction diagrams are authoritative over page text for special elements (page text omits glass types that diagrams show)
+- `specialElements` stores glass types (HR, ED, LD) not design patterns (achromatic doublet) for consistency — design patterns deferred to #788
+- Diagram label names take precedence over page text names (e.g. "LD" over "UD", "Extra low Dispersion" over "ultra-low dispersion")
+- 500mm f/6.3 had entirely wrong specs from older product version — all corrected against current official page
+- Per-lens provenance workflow added to PLAYBOOK 2.8 step 6: specs-log first, lenses.ts second (root cause: missed 7/19 logs by batching)
+- CLAUDE.md references PLAYBOOK as single source of truth (no duplication)
+
+#### Next
+
+- Merge PR #787 when CI passes
+- Continue optical specs collection: 7Artisans (#748, 18 lenses) is next by size
+- #779 should include a validate mode that cross-checks lenses.ts against official pages
+- #788 explore design patterns, #789 wiki for glass types

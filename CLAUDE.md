@@ -71,6 +71,7 @@ Project-specific overrides and additions follow below.
 - `tools/sigma/` — Sigma optical spec extraction (fetch_specs, audit, plain urllib)
 - `tools/tamron/` — Tamron optical spec extraction (fetch_specs, audit, plain urllib, dual-page parsing)
 - `tools/tokina/` — Tokina optical spec extraction (fetch_specs, audit, plain urllib, alt-text scraping)
+- `tools/ttartisan/` — TTartisan optical spec extraction (fetch_specs, audit, plain urllib, spec table + prose parsing)
 - `tools/viltrox/` — Viltrox optical spec extraction (fetch_specs, audit, download_images, Shopify JSON + HTML scraping)
 - `tools/zeiss/` — Carl Zeiss optical spec extraction (fetch_specs, audit, PDF datasheet download)
 - `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility

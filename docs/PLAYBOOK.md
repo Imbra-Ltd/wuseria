@@ -296,6 +296,25 @@ py tools/zeiss/audit.py --missing                  # show only incomplete lenses
 
 Note: Zeiss MTF charts and construction diagrams must be extracted manually from the downloaded PDFs.
 
+**Fetch TTartisan optical specs (urllib, spec table + prose parsing):**
+
+```bash
+py tools/ttartisan/fetch_specs.py                    # fetch all specs + images
+py tools/ttartisan/fetch_specs.py --dry-run           # list lenses without fetching
+py tools/ttartisan/fetch_specs.py --filter 23mm       # filter by model substring
+py tools/ttartisan/fetch_specs.py --specs-only        # only extract specs text
+py tools/ttartisan/fetch_specs.py --images-only       # only download images
+py tools/ttartisan/audit.py                           # audit data completeness
+py tools/ttartisan/audit.py --missing                 # show only incomplete lenses
+```
+
+Note: TTartisan pages use two site patterns — main site (ttartisan.com) with
+query-param routing and Shopify store (ttartisan.store). Some pages embed
+Shopify CDN images not detectable by the scraper. Some older pages use
+legacy timestamp URLs instead of named Specification-\*.webp files.
+Construction diagrams are authoritative for special elements — page text
+often omits glass types that diagrams show.
+
 **Fetch Venus Laowa optical specs (SeleniumBase UC mode — Cloudflare bypass):**
 
 ```bash
