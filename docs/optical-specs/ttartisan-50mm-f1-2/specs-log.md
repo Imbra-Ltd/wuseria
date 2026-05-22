@@ -8,7 +8,7 @@
 - Date: 2026-05-22
 - Result: found
 - Elements/groups: 7/5
-- Special elements: none mentioned in text; construction diagram shows High Index glass
+- Special elements: none mentioned in text; construction diagram shows 3 High Index (blue)
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
 - MTF chart: found (legacy timestamp URL)
 - Construction diagram: found (legacy timestamp URL)
@@ -22,4 +22,4 @@
 
 - Legacy page uses timestamp-based image URLs instead of named Specification-\*.webp
 - Page text does not mention special elements; data sourced from construction diagram
-- Construction diagram shows High Index glass but exact count needs visual verification
+- Construction diagram visually verified: 3 HR (1 front group, 2 rear group)

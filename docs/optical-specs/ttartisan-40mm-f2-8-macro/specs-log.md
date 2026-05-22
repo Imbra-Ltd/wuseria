@@ -8,11 +8,12 @@
 - Date: 2026-05-22
 - Result: found
 - Elements/groups: 8/7
-- Special elements: "two ultra-low dispersion (UD) elements" mentioned in text
+- Special elements: "two ultra-low dispersion (UD) elements" mentioned in text; construction diagram shows 2 LD (tan) + 3 High Index (blue)
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
 - MTF chart: found (Specification-MTF.webp)
-- Construction diagram: found (Specification-OD-EN.webp)
+- Construction diagram: found (Specification-OD-EN.webp); diagram labels "LD Lens (LowDispersion)" and "High Index"
 
 ## Caveats
 
-- None
+- Page text says "UD" but diagram labels it "LD"; LD used (diagram authoritative)
+- Page text omits 3 HR elements; data sourced from construction diagram
