@@ -4720,6 +4720,9 @@ const lenses: Lens[] = [
     filterThread: 49,
     price: 750,
     minFocusDistance: 120,
+    opticalElements: 15,
+    opticalGroups: 10,
+    specialElements: ["2 aspherical", "3 ED"],
     sweetSpotAperture: 4,
     centerStopped: 2,
     cornerStopped: 1,
@@ -4775,6 +4778,9 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 750,
     minFocusDistance: 250,
+    opticalElements: 15,
+    opticalGroups: 11,
+    specialElements: ["2 aspherical", "3 ED"],
     isTiltShift: true,
     shiftRange: 7,
     // Not scored — specialty shift zoom; no trusted reviews
@@ -4808,6 +4814,9 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 500,
     minFocusDistance: 170,
+    opticalElements: 14,
+    opticalGroups: 10,
+    specialElements: ["3 ED"],
     sweetSpotAperture: 5.6,
     centerStopped: 2,
     cornerStopped: 2,
@@ -4864,6 +4873,9 @@ const lenses: Lens[] = [
     length: 26,
     price: 250,
     minFocusDistance: 80,
+    opticalElements: 7,
+    opticalGroups: 6,
+    specialElements: [],
     // Not scored — niche 210-degree fisheye; no trusted reviews
     officialUrl: "https://www.venuslens.net/product/laowa-4mm-f-2-8-mft/",
   },
@@ -4894,6 +4906,9 @@ const lenses: Lens[] = [
     filterThread: 86,
     price: 500,
     minFocusDistance: 200,
+    opticalElements: 16,
+    opticalGroups: 12,
+    specialElements: ["2 aspherical", "2 ED"],
     // Not scored — no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-8-16mm-f3-5-5-zoom-cf/",
@@ -4925,6 +4940,9 @@ const lenses: Lens[] = [
     filterThread: 37,
     price: 250,
     minFocusDistance: 100,
+    opticalElements: 12,
+    opticalGroups: 8,
+    specialElements: ["2 aspherical", "4 ED", "2 UHR"],
     // Not scored — no trusted reviews
     officialUrl: "https://www.venuslens.net/product/laowa-10mm-f-4-cookie/",
   },
@@ -4955,6 +4973,9 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 500,
     minFocusDistance: 340,
+    opticalElements: 14,
+    opticalGroups: 9,
+    specialElements: ["1 ED", "2 HR"],
     // Not scored — no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-argus-25mm-f-0-95-apsc-apo/",
@@ -4986,6 +5007,9 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 750,
     minFocusDistance: 350,
+    opticalElements: 14,
+    opticalGroups: 9,
+    specialElements: ["1 aspherical", "1 ED", "3 UHR"],
     sweetSpotAperture: 2.8,
     centerStopped: 2,
     cornerStopped: 1,
@@ -10478,6 +10502,9 @@ const lenses: Lens[] = [
     filterThread: 86,
     price: 1250,
     minFocusDistance: 200,
+    opticalElements: 21,
+    opticalGroups: 14,
+    specialElements: ["2 aspherical", "3 ED"],
     // Not scored — GFX niche; no trusted reviews
     officialUrl: "https://www.venuslens.net/product/laowa-17mm-f-4-gfx-zero-d/",
   },
@@ -10508,6 +10535,9 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 1250,
     minFocusDistance: 170,
+    opticalElements: 14,
+    opticalGroups: 11,
+    specialElements: ["2 ED", "1 UHR"],
     isTiltShift: true,
     // Not scored — GFX T/S specialty; no trusted reviews
     officialUrl:
@@ -10540,6 +10570,9 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 1500,
     minFocusDistance: 247,
+    opticalElements: 13,
+    opticalGroups: 10,
+    specialElements: ["2 ED", "1 UHR"],
     isTiltShift: true,
     // Not scored — GFX T/S specialty; no trusted reviews
     officialUrl:
@@ -10572,6 +10605,9 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 1250,
     minFocusDistance: 140,
+    opticalElements: 14,
+    opticalGroups: 12,
+    specialElements: ["2 aspherical", "4 ED", "1 UHR"],
     isTiltShift: true,
     // Not scored — GFX T/S specialty; no trusted reviews
     officialUrl:
@@ -10835,6 +10871,9 @@ const lenses: Lens[] = [
     length: 103,
     price: 1500,
     minFocusDistance: 200,
+    opticalElements: 17,
+    opticalGroups: 11,
+    specialElements: ["2 aspherical", "3 ED"],
     isTiltShift: true,
     shiftRange: 11,
     // Not scored — GFX shift specialty; no trusted reviews
@@ -10867,6 +10906,9 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 1000,
     minFocusDistance: 200,
+    opticalElements: 12,
+    opticalGroups: 10,
+    specialElements: ["2 aspherical", "3 ED", "1 UHR"],
     // Not scored — GFX niche; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-19mm-f-2-8-zero-d-gfx/",
@@ -10898,6 +10940,9 @@ const lenses: Lens[] = [
     filterThread: 82,
     price: 1500,
     minFocusDistance: 250,
+    opticalElements: 16,
+    opticalGroups: 11,
+    specialElements: ["2 aspherical", "3 ED"],
     isTiltShift: true,
     shiftRange: 10,
     // Not scored — GFX shift specialty; no trusted reviews
@@ -10930,6 +10975,9 @@ const lenses: Lens[] = [
     length: 101,
     price: 1500,
     minFocusDistance: 150,
+    opticalElements: 13,
+    opticalGroups: 9,
+    specialElements: [],
     // Not scored — GFX fisheye zoom; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-8-15mm-f-2-8-ff-zoom-fisheye-2/",
