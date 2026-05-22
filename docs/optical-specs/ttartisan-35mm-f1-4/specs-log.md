@@ -8,7 +8,7 @@
 - Date: 2026-05-22
 - Result: found
 - Elements/groups: 7/6
-- Special elements: none mentioned in text; construction diagram not yet visually checked
+- Special elements: none mentioned in text; construction diagram confirms no special glass (no shading, no legend)
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
 - MTF chart: found (Specification-MTF.webp)
 - Construction diagram: found (Specification-OD-EN.webp)
