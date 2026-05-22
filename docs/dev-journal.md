@@ -2470,6 +2470,7 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Discovered Voigtlander PORTRAIT HELIAR 75mm F1.5 (E-mount) has an SA correction ring — Voigtlander's own DC concept
 - Researched MTF data availability for legendary character lenses — confirmed systematic scarcity; third-party measured data is the only path for X-mount Noktons
 - Drafted 22 forum questions across 8 themes for community discovery and data gathering
+- Formalized `notes.md` → renamed to `specs-log.md` as mandatory technical specs provenance log (ADR-033 update); pairs with `scoring-log.md`
 
 #### Key decisions
 

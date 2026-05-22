@@ -6,14 +6,14 @@
 ## Context
 
 Each lens in `docs/optical-specs/<slug>/` has accumulated files
-organically: construction diagrams, MTF charts, and a `notes.md` that
+organically: construction diagrams, MTF charts, and a `specs-log.md` that
 mixes MTF readings, analysis predictions, and operational notes. The
 scoring log lives in a separate monolithic file (`docs/scoring-log.md`)
 with 200+ entries.
 
 This creates several problems:
 
-- `notes.md` conflates analysis (predictions from optical data) with
+- `specs-log.md` conflates analysis (predictions from optical data) with
   operational notes (problems, data issues, provenance)
 - The monolithic scoring log produces noisy diffs when scoring one lens
   and is hard to navigate
@@ -32,7 +32,7 @@ docs/optical-specs/<slug>/
                                 #   astigmatism assessment, quality predictions)
   scoring-log.md                # required when scored — per-lens scoring
                                 #   justification (same format as ADR-022)
-  notes.md                      # required — technical specs provenance log
+  specs-log.md                      # required — technical specs provenance log
 ```
 
 ### Image format
@@ -52,7 +52,7 @@ sources. No other formats (JPG, WebP, GIF) are allowed.
   the way it was? Links sources, applies the rubric (ADR-014), records
   the trust level. Same field format as the monolithic scoring log
   defined in ADR-022.
-- **notes.md** — technical specs provenance: auditable log of all
+- **specs-log.md** — technical specs provenance: auditable log of all
   research performed to find the lens's technical specifications
   (construction diagrams, MTF charts, element/group counts, coatings,
   special glass types, magnification data). Documents every source
@@ -61,7 +61,7 @@ sources. No other formats (JPG, WebP, GIF) are allowed.
   Note: this is distinct from `scoring-log.md`, which covers optical
   quality field scoring justification (ADR-014 rubric application).
 
-### notes.md format
+### specs-log.md format
 
 ```markdown
 # <Model Name> — Notes
@@ -103,10 +103,10 @@ Cross-lens comparison is the database's job (`src/data/lenses.ts`).
 The scoring log's purpose is provenance (justifying why a score was
 given), not cross-reference. No index or summary file is needed.
 
-### Rename existing notes.md
+### Rename existing specs-log.md
 
-Existing `notes.md` files that contain MTF readings and analysis are
-renamed to `analysis.md`. Every lens folder must have a `notes.md`
+Existing `specs-log.md` files that contain MTF readings and analysis are
+renamed to `analysis.md`. Every lens folder must have a `specs-log.md`
 with at minimum a data provenance table.
 
 ## Alternatives considered
@@ -115,7 +115,7 @@ with at minimum a data provenance table.
 diffs, is hard to navigate, and separates scoring justification from
 the optical data it references.
 
-**Keep mixed notes.md** — rejected because it conflates analysis
+**Keep mixed specs-log.md** — rejected because it conflates analysis
 (repeatable predictions) with operational notes (one-time issues),
 making both harder to maintain.
 
@@ -125,10 +125,10 @@ queryable data.
 
 ## Consequences
 
-- Existing `notes.md` files must be renamed to `analysis.md` (can be
+- Existing `specs-log.md` files must be renamed to `analysis.md` (can be
   done in bulk)
 - New scoring work writes to per-lens `scoring-log.md`
 - Tools (`audit.py`) should be updated to check for `analysis.md`
-  instead of `notes.md`
+  instead of `specs-log.md`
 - The monolithic `docs/scoring-log.md` has been fully migrated and deleted
   (session 73)
