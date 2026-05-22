@@ -283,7 +283,7 @@ def extract_image_urls(html: str) -> dict[str, list[str]]:
 
         full_url = src if src.startswith("http") else BASE_URL + src
 
-        if re.search(r"mtf", lower):
+        if re.search(r"mtf|mft", lower):  # MFT is a common typo on Venus Laowa pages
             if full_url not in urls["mtf"]:
                 urls["mtf"].append(full_url)
         elif re.search(
