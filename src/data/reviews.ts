@@ -265,6 +265,12 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
     name: "Radojuva",
     site: "radojuva.com",
   },
+  fcracer: {
+    methodology: "field",
+    trust: 2,
+    name: "fcracer",
+    site: "fcracer.com",
+  },
 };
 
 export { reviewSourceDirectory };

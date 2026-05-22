@@ -21,8 +21,13 @@
 - https://phillipreeve.net/blog/photography/ — manual focus and adapted lens specialist
 - https://www.cameralabs.com/ — Gordon Laing; thorough video + stills
 - https://www.fujivsfuji.com/ — Fuji-specific head-to-head comparisons
+- https://fcracer.com/ — Farzaan Kassam; Fuji-focused (X-mount + GFX); resolution chart crops, quantitative AF timing, bokeh/CA/distortion analysis; trust-3
 - https://www.photographyblog.com/ — decent hands-on reviews
 - https://www.digitalcameraworld.com/ — buyer's guide oriented
+
+## Specialist review sources (not general trust-3, but domain experts)
+
+- https://www.northlight-images.co.uk/ — Keith Cooper; architectural/commercial photographer, published book on tilt-shift lenses; hands-on reviews with MTF charts, no lab measurements; strong on T/S lens evaluation
 
 ## Other photography resources
 
