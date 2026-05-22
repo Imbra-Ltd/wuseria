@@ -1,15 +1,18 @@
-# XF 16-55mm f/2.8 R LM WR — Issues
+# XF 16-55mm f/2.8 R LM WR — Notes
 
-## Construction image source (2026-05-20)
+## Data provenance
 
-Fujifilm's official specs page has the wrong construction diagram — it
-shows the XF 16mm f/1.4 R WR (`xf16mmf14-r-wr_cross.webp`) instead of
-the XF 16-55mm f/2.8.
+| Date       | Source                  | URL                                                                                | Result                                                        |
+| ---------- | ----------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| 2026-05-20 | Fujifilm official specs | https://fujifilm-x.com/global/products/lenses/xf16-55mmf28-r-lm-wr/specifications/ | Wrong construction diagram (shows XF 16mm f/1.4 R WR instead) |
+| 2026-05-20 | Ken Rockwell archive    | (original Fujifilm diagram from pre-redesign page)                                 | Construction image sourced                                    |
 
-Image sourced from Ken Rockwell's archived Fujifilm materials (original
-Fujifilm diagram from pre-redesign product page).
+## Classification
 
-**Official specs:** 17 elements in 12 groups (includes 3 aspherical and
-3 extra low dispersion elements)
+- Character tier: N/A — clinical zoom
+- Design family: 17 elements in 12 groups (3 aspherical, 3 ED)
 
-**Source:** https://fujifilm-x.com/global/products/lenses/xf16-55mmf28-r-lm-wr/specifications/
+## Caveats
+
+- Fujifilm's official specs page has the wrong construction diagram — shows `xf16mmf14-r-wr_cross.webp` (XF 16mm f/1.4 R WR) instead of the XF 16-55mm f/2.8.
+- Construction image sourced from Ken Rockwell's archived Fujifilm materials.

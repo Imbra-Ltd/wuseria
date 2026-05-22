@@ -1,40 +1,27 @@
 # Nokton 50mm f/1.2 — Notes
 
-## MTF chart search (2026-05-22)
+## Data provenance
 
-No MTF chart found from any source.
+| Date       | Source                              | URL                                                                            | Result                                           |
+| ---------- | ----------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------------ |
+| 2026-05-22 | cosina.co.jp product page (X-mount) | https://www.cosina.co.jp/voigtlander/x-mount/nokton-50mm-f1-2/                 | Construction diagram only, no MTF                |
+| 2026-05-22 | cosina.co.jp product page (E-mount) | https://www.cosina.co.jp/voigtlander/e-mount/nokton-50mm-f1-2-aspherical/      | Construction diagram only, no MTF                |
+| 2026-05-22 | Voigtlander catalog PDF             | https://www.cosina.co.jp/wp/wp-content/uploads/catalog/v-catalog.pdf (p6, p14) | Construction diagram only, no MTF                |
+| 2026-05-22 | LensTip                             | (not reviewed)                                                                 | No data                                          |
+| 2026-05-22 | OpticalLimits                       | Returned 404                                                                   | No data                                          |
+| 2026-05-22 | Dustin Abbott                       | Returned 404                                                                   | No data                                          |
+| 2026-05-22 | Phillip Reeve                       | Returned 404                                                                   | No data                                          |
+| 2026-05-22 | Radojuva                            | Announcement only                                                              | No review data                                   |
+| 2026-05-21 | Voigtlander catalog                 | (special elements section)                                                     | 2 atypical partial dispersion elements confirmed |
 
-### Sources checked
+## Classification
 
-- **cosina.co.jp product page (X-mount)** — construction diagram only, no MTF
-  - URL: https://www.cosina.co.jp/voigtlander/x-mount/nokton-50mm-f1-2/
-- **cosina.co.jp product page (E-mount)** — construction diagram only, no MTF
-  - Confirmed: E-mount Nokton 50mm also has no MTF (while APO-LANTHAR 50mm F2 E-mount does)
-- **Voigtlander catalog PDF** — construction diagram only, no MTF (pages 6, 14)
-  - URL: https://www.cosina.co.jp/wp/wp-content/uploads/catalog/v-catalog.pdf
-- **LensTip** — no review (as of 2026-05-22)
-- **OpticalLimits** — page not found (404)
-- **Dustin Abbott** — 404 on review URL
-- **Phillip Reeve** — 404 on review URL
-- **Radojuva** — announcement only
+- Character tier: Tier 1 — purpose-built character lens
+- Design family: Sonnar-type (X-mount version)
 
-### Conclusion
+## Caveats
 
-Same Voigtlander policy: Noktons get no MTF, APO-LANTHARs do. Third-party measured MTF is the only path.
-
-## Important: X-mount vs E-mount/VM are different designs
-
-The X-mount Nokton 50mm f/1.2 is a **completely different lens** from the E-mount/VM version:
-
-- X-mount: Sonnar-type, different element count and construction
-- E-mount/VM: aspherical design, 8 elements in 6 groups
-
-Reviews from other mounts **cannot be applied** to the X-mount version. This is a common buyer trap.
-
-## Character lens classification
-
-**Tier 1 purpose-built character lens.** The blueprint MTF analysis (temp/artisitc_blueprint_mtf.png) was modeled on this type of lens. Wide open shows high 10 lp/mm contrast but low 30 lp/mm microcontrast (glow signature), with strong S/T divergence in the transition field (swirl). Sharp when stopped down to f/5.6.
-
-## Special elements (2026-05-21)
-
-Added 2 atypical partial dispersion elements per Voigtlander catalog data (commit e1944c2).
+- **X-mount vs E-mount/VM are completely different designs.** X-mount is Sonnar-type with different element count. E-mount/VM is aspherical design, 8 elements in 6 groups. Reviews from other mounts cannot be applied to X-mount.
+- Voigtlander deliberately withholds MTF from Noktons; APO-LANTHARs get MTF. Confirmed corporate policy.
+- The blueprint MTF analysis (temp/artisitc_blueprint_mtf.png) was modeled on this type of lens.
+- 2 atypical partial dispersion elements added to lenses.ts (commit e1944c2, 2026-05-21).

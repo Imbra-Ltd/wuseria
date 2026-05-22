@@ -32,8 +32,7 @@ docs/optical-specs/<slug>/
                                 #   astigmatism assessment, quality predictions)
   scoring-log.md                # required when scored — per-lens scoring
                                 #   justification (same format as ADR-022)
-  notes.md                      # optional — operational notes, problems
-                                #   encountered, data provenance issues
+  notes.md                      # required — data provenance log
 ```
 
 ### Image format
@@ -53,9 +52,39 @@ sources. No other formats (JPG, WebP, GIF) are allowed.
   the way it was? Links sources, applies the rubric (ADR-014), records
   the trust level. Same field format as the monolithic scoring log
   defined in ADR-022.
-- **notes.md** — operational: anything that doesn't fit analysis or
-  scoring. Data extraction problems, URL changes, conflicting sources,
-  manual verification notes. Created on demand, not required.
+- **notes.md** — provenance: auditable log of all research performed
+  on the lens. Documents every source checked (successful or not),
+  data extraction issues, conflicting sources, and lens-specific
+  caveats. Required for every lens folder.
+
+### notes.md format
+
+```markdown
+# <Model Name> — Notes
+
+## Data provenance
+
+| Date       | Source        | URL            | Result                   |
+| ---------- | ------------- | -------------- | ------------------------ |
+| 2026-05-22 | cosina.co.jp  | https://...    | No MTF chart             |
+| 2026-05-22 | LensTip       | (not reviewed) | No data                  |
+| 2026-05-22 | Dustin Abbott | https://...    | Full review, MTF + bokeh |
+
+## Classification
+
+- Character tier: Tier 1 / Tier 2 / Tier 3 (clinical) / N/A
+- Design family: Double Gauss / Sonnar / Retrofocus / etc.
+
+## Caveats
+
+- (e.g. X-mount vs E-mount are different optical designs)
+- (e.g. manual PDF checked, no MTF inside)
+```
+
+The provenance table is the core — every source checked gets a row,
+whether the result was positive or negative. This prevents future
+sessions from repeating the same searches and creates a traceable
+audit trail for every data point.
 
 ### Migration
 
@@ -73,8 +102,8 @@ given), not cross-reference. No index or summary file is needed.
 ### Rename existing notes.md
 
 Existing `notes.md` files that contain MTF readings and analysis are
-renamed to `analysis.md`. A fresh `notes.md` is only created when
-operational issues need to be recorded.
+renamed to `analysis.md`. Every lens folder must have a `notes.md`
+with at minimum a data provenance table.
 
 ## Alternatives considered
 

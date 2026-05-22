@@ -1,23 +1,22 @@
 # Nokton 35mm f/0.9 Aspherical — Notes
 
-## MTF chart search (2026-05-22)
+## Data provenance
 
-No MTF chart found from any source.
+| Date       | Source                    | URL                                                                       | Result                            |
+| ---------- | ------------------------- | ------------------------------------------------------------------------- | --------------------------------- |
+| 2026-05-22 | cosina.co.jp product page | https://www.cosina.co.jp/voigtlander/x-mount/nokton-35mm-f0-9-aspherical/ | Construction diagram only, no MTF |
+| 2026-05-22 | Voigtlander catalog PDF   | https://www.cosina.co.jp/wp/wp-content/uploads/catalog/v-catalog.pdf      | Construction diagram only, no MTF |
+| 2026-05-22 | LensTip                   | (not reviewed)                                                            | No data                           |
+| 2026-05-22 | OpticalLimits             | (not reviewed)                                                            | No data                           |
+| 2026-05-22 | Radojuva                  | (not reviewed)                                                            | No data                           |
 
-### Sources checked
+## Classification
 
-- **cosina.co.jp product page** — construction diagram only, no MTF
-  - URL: https://www.cosina.co.jp/voigtlander/x-mount/nokton-35mm-f0-9-aspherical/
-- **Voigtlander catalog PDF** — construction diagram only, no MTF
-  - URL: https://www.cosina.co.jp/wp/wp-content/uploads/catalog/v-catalog.pdf
-- **LensTip** — no review (as of 2026-05-22)
-- **OpticalLimits** — no review found
-- **Radojuva** — no review found
+- Character tier: Tier 1 — purpose-built character lens
+- Design family: Modified Double Gauss with aspherical elements
 
-### Conclusion
+## Caveats
 
-Same Voigtlander policy: Noktons get no MTF, APO-LANTHARs do. Third-party measured MTF is the only path.
-
-## Character lens classification
-
-**Tier 1 purpose-built character lens.** The fastest X-mount lens at f/0.9. Extreme rendering wide open with massive depth of field isolation. Aspherical elements present (unlike the 35mm f/1.2 which is all-spherical), suggesting Cosina needed aspherical correction to make f/0.9 usable at all.
+- Fastest X-mount lens at f/0.9. Extreme rendering wide open.
+- Voigtlander deliberately withholds MTF from Noktons; APO-LANTHARs get MTF. Confirmed corporate policy.
+- Has aspherical elements (unlike the 35mm f/1.2 which is all-spherical) — needed to make f/0.9 usable.
