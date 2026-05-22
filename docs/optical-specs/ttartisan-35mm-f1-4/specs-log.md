@@ -8,14 +8,11 @@
 - Date: 2026-05-22
 - Result: found
 - Elements/groups: 7/6
-- Special elements: none mentioned
-- Coating: not specified
+- Special elements: none mentioned in text; construction diagram not yet visually checked
+- Coating: not specified on page; MC Multi-Layer confirmed as brand standard
 - MTF chart: found (Specification-MTF.webp)
 - Construction diagram: found (Specification-OD-EN.webp)
 
 ## Caveats
 
-- TTartisan rarely documents coating type; only the 500mm f/6.3 mentions MC Multi-Layer
-- Some pages use legacy timestamp-based image URLs instead of named Specification-\*.webp
-- 11mm f/2.8 Fisheye page has both mirrorless and SLR optical variants; mirrorless data used for GFX
-- 100mm Macro 2X and 500mm f/6.3 share the same product page across X-mount and GFX
+- Construction diagram should be visually checked for special glass markers

@@ -8,14 +8,13 @@
 - Date: 2026-05-22
 - Result: found
 - Elements/groups: 10/9
-- Special elements: 1 ultra-low dispersion + 2 high-index
-- Coating: not specified
-- MTF chart: not found (not published)
-- Construction diagram: not found (not published)
+- Special elements: "1 ultra-low dispersion element and 2 high-index glasses" in text
+- Coating: not specified on page; MC Multi-Layer confirmed as brand standard
+- MTF chart: not found (not published by manufacturer)
+- Construction diagram: not found (not published by manufacturer)
 
 ## Caveats
 
-- TTartisan rarely documents coating type; only the 500mm f/6.3 mentions MC Multi-Layer
-- Some pages use legacy timestamp-based image URLs instead of named Specification-\*.webp
-- 11mm f/2.8 Fisheye page has both mirrorless and SLR optical variants; mirrorless data used for GFX
-- 100mm Macro 2X and 500mm f/6.3 share the same product page across X-mount and GFX
+- No MTF chart or construction diagram available on TTartisan website
+- Page has internal contradiction: feature highlight says 0.5m MFD, spec table says 0.8m; spec table used
+- Page uses non-standard table markup (no class="specification")

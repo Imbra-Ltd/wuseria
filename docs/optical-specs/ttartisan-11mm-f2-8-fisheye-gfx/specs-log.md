@@ -7,15 +7,14 @@
 - URL: https://www.ttartisan.com/?full-frame-lenses/62.html
 - Date: 2026-05-22
 - Result: found
-- Elements/groups: 11/7 (mirrorless version)
-- Special elements: none mentioned
-- Coating: not specified
-- MTF chart: found (Specification-1-M.webp)
-- Construction diagram: found (Specification-2-M-EN.webp)
+- Elements/groups: 11/7 (mirrorless version); 12/10 (SLR version)
+- Special elements: none mentioned in text; construction diagram not yet visually checked
+- Coating: not specified on page; MC Multi-Layer confirmed as brand standard
+- MTF chart: found (Specification-1-M.webp, mirrorless variant)
+- Construction diagram: found (Specification-2-M-EN.webp, mirrorless variant)
 
 ## Caveats
 
-- TTartisan rarely documents coating type; only the 500mm f/6.3 mentions MC Multi-Layer
-- Some pages use legacy timestamp-based image URLs instead of named Specification-\*.webp
-- 11mm f/2.8 Fisheye page has both mirrorless and SLR optical variants; mirrorless data used for GFX
-- 100mm Macro 2X and 500mm f/6.3 share the same product page across X-mount and GFX
+- Page has both mirrorless and SLR optical variants with different element counts; mirrorless data used for GFX
+- SLR variant images excluded
+- Construction diagram should be visually checked for special glass markers

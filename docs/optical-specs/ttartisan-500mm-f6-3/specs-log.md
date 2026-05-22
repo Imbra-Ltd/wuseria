@@ -8,14 +8,12 @@
 - Date: 2026-05-22
 - Result: found
 - Elements/groups: 8/5
-- Special elements: 2 extra-low dispersion + 2 high index
-- Coating: MC Multi-Layer Coatings
+- Special elements: "2 extra-low dispersion glass and 2 high index glass" in text
+- Coating: "MC Multi-Layer Coatings" explicitly mentioned on page
 - MTF chart: found (Specification-1.webp)
 - Construction diagram: found (Specification-2-EN.webp)
 
 ## Caveats
 
-- TTartisan rarely documents coating type; only the 500mm f/6.3 mentions MC Multi-Layer
-- Some pages use legacy timestamp-based image URLs instead of named Specification-\*.webp
-- 11mm f/2.8 Fisheye page has both mirrorless and SLR optical variants; mirrorless data used for GFX
-- 100mm Macro 2X and 500mm f/6.3 share the same product page across X-mount and GFX
+- Same product page shared with GFX mount variant (same optical design)
+- Original DB entry had entirely wrong specs (weight, filter, blades, MFD) from older product version; all corrected

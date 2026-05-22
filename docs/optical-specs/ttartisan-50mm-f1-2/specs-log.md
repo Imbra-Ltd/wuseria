@@ -8,14 +8,18 @@
 - Date: 2026-05-22
 - Result: found
 - Elements/groups: 7/5
-- Special elements: none in text; construction diagram shows High Index glass
-- Coating: not specified
+- Special elements: none mentioned in text; construction diagram shows High Index glass
+- Coating: not specified on page; MC Multi-Layer confirmed as brand standard
 - MTF chart: found (legacy timestamp URL)
 - Construction diagram: found (legacy timestamp URL)
 
+### alikgriffin.com
+
+- Date: 2026-05-22
+- Result: spec table lists "multi-coating" (confirms brand standard)
+
 ## Caveats
 
-- TTartisan rarely documents coating type; only the 500mm f/6.3 mentions MC Multi-Layer
-- Some pages use legacy timestamp-based image URLs instead of named Specification-\*.webp
-- 11mm f/2.8 Fisheye page has both mirrorless and SLR optical variants; mirrorless data used for GFX
-- 100mm Macro 2X and 500mm f/6.3 share the same product page across X-mount and GFX
+- Legacy page uses timestamp-based image URLs instead of named Specification-\*.webp
+- Page text does not mention special elements; data sourced from construction diagram
+- Construction diagram shows High Index glass but exact count needs visual verification

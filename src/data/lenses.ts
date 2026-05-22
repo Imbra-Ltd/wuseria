@@ -5217,6 +5217,7 @@ const lenses: Lens[] = [
     minFocusDistance: 120,
     opticalElements: 11,
     opticalGroups: 8,
+    specialElements: ["2 LD", "3 HR"],
     coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/72.html",
   },

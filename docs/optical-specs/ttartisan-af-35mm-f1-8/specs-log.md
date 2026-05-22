@@ -8,14 +8,11 @@
 - Date: 2026-05-22
 - Result: found
 - Elements/groups: 10/7
-- Special elements: 2 high-refractive + 2 ED
-- Coating: not specified
+- Special elements: "2 high-refractive elements and 2 ED (Extra-low Dispersion) elements" in text
+- Coating: not specified on page; MC Multi-Layer confirmed as brand standard
 - MTF chart: found (Specification-MTF.webp)
-- Construction diagram: found (Specification-OD-EN.webp)
+- Construction diagram: found (Specification-OD-EN.webp); confirms 2 HR (blue) + 2 ED (purple)
 
 ## Caveats
 
-- TTartisan rarely documents coating type; only the 500mm f/6.3 mentions MC Multi-Layer
-- Some pages use legacy timestamp-based image URLs instead of named Specification-\*.webp
-- 11mm f/2.8 Fisheye page has both mirrorless and SLR optical variants; mirrorless data used for GFX
-- 100mm Macro 2X and 500mm f/6.3 share the same product page across X-mount and GFX
+- Page uses non-standard table markup (no class="specification")
