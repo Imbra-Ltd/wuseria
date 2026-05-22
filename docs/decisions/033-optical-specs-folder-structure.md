@@ -32,7 +32,7 @@ docs/optical-specs/<slug>/
                                 #   astigmatism assessment, quality predictions)
   scoring-log.md                # required when scored — per-lens scoring
                                 #   justification (same format as ADR-022)
-  notes.md                      # required — data provenance log
+  notes.md                      # required — technical specs provenance log
 ```
 
 ### Image format
@@ -52,10 +52,14 @@ sources. No other formats (JPG, WebP, GIF) are allowed.
   the way it was? Links sources, applies the rubric (ADR-014), records
   the trust level. Same field format as the monolithic scoring log
   defined in ADR-022.
-- **notes.md** — provenance: auditable log of all research performed
-  on the lens. Documents every source checked (successful or not),
-  data extraction issues, conflicting sources, and lens-specific
-  caveats. Required for every lens folder.
+- **notes.md** — technical specs provenance: auditable log of all
+  research performed to find the lens's technical specifications
+  (construction diagrams, MTF charts, element/group counts, coatings,
+  special glass types, magnification data). Documents every source
+  checked (successful or not), data extraction issues, conflicting
+  sources, and lens-specific caveats. Required for every lens folder.
+  Note: this is distinct from `scoring-log.md`, which covers optical
+  quality field scoring justification (ADR-014 rubric application).
 
 ### notes.md format
 
