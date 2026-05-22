@@ -1,4 +1,5 @@
 import type { Genre } from "./genre";
+import type { LensCategory } from "./lens";
 import type { Brand, Mount } from "./common";
 
 interface GenreLens {
@@ -6,6 +7,7 @@ interface GenreLens {
   model: string;
   mount: Mount;
   type: "prime" | "zoom";
+  category: LensCategory;
   focalLengthMin: number;
   focalLengthMax: number;
   maxAperture: number;

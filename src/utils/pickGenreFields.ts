@@ -7,6 +7,7 @@ function pickGenreFields(l: Lens): GenreLens {
     model: l.model,
     mount: l.mount,
     type: l.type,
+    category: l.category,
     focalLengthMin: l.focalLengthMin,
     focalLengthMax: l.focalLengthMax,
     maxAperture: l.maxAperture,
