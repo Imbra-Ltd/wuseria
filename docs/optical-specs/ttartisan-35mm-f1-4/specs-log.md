@@ -15,4 +15,5 @@
 
 ## Caveats
 
-- Construction diagram should be visually checked for special glass markers
+- Construction diagram visually checked — no special glass (no shading, no legend)
+- MTF chart is identical to Tilt 35mm f/1.4 — same optical formula (7/6, no special glass), tilt version adds mechanical tilt around same optics

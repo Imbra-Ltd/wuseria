@@ -10,11 +10,17 @@
 - Elements/groups: 10/9
 - Special elements: "1 ultra-low dispersion element and 2 high-index glasses" in text
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
-- MTF chart: not found (not published by manufacturer)
-- Construction diagram: not found (not published by manufacturer)
+- MTF chart: found (Shopify CDN, not on ttartisan.com domain)
+- Construction diagram: found (Shopify CDN); shows 1 Extra low Dispersion + 2 High Index
+
+### Image sources (Shopify CDN)
+
+- MTF: https://cdn.shopify.com/s/files/1/0433/2224/5282/files/MTF_862c5298-6eeb-4d5d-8497-fb475c5710c3.jpg
+- Construction: https://cdn.shopify.com/s/files/1/0433/2224/5282/files/EN_4d288a8b-f553-4527-b803-80a2b86af3f9.jpg
 
 ## Caveats
 
-- No MTF chart or construction diagram available on TTartisan website
+- Images hosted on Shopify CDN, not on ttartisan.com — automated scraper missed them
+- Page text says "ultra-low dispersion" but diagram labels it "Extra low Dispersion"; ED used
 - Page has internal contradiction: feature highlight says 0.5m MFD, spec table says 0.8m; spec table used
 - Page uses non-standard table markup (no class="specification")

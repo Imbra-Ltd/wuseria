@@ -23,3 +23,4 @@
 
 - No special elements in text or construction diagram
 - Page uses non-standard table markup (no class="specification")
+- MTF chart is identical to regular 35mm f/1.4 — same optical formula (7/6, no special glass), tilt version adds mechanical tilt around same optics
