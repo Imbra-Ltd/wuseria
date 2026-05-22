@@ -6,14 +6,14 @@
 ## Context
 
 Each lens in `docs/optical-specs/<slug>/` has accumulated files
-organically: construction diagrams, MTF charts, and a `notes.md` that
+organically: construction diagrams, MTF charts, and a `specs-log.md` that
 mixes MTF readings, analysis predictions, and operational notes. The
 scoring log lives in a separate monolithic file (`docs/scoring-log.md`)
 with 200+ entries.
 
 This creates several problems:
 
-- `notes.md` conflates analysis (predictions from optical data) with
+- `specs-log.md` conflates analysis (predictions from optical data) with
   operational notes (problems, data issues, provenance)
 - The monolithic scoring log produces noisy diffs when scoring one lens
   and is hard to navigate
@@ -32,8 +32,7 @@ docs/optical-specs/<slug>/
                                 #   astigmatism assessment, quality predictions)
   scoring-log.md                # required when scored — per-lens scoring
                                 #   justification (same format as ADR-022)
-  notes.md                      # optional — operational notes, problems
-                                #   encountered, data provenance issues
+  specs-log.md                      # required — technical specs provenance log
 ```
 
 ### Image format
@@ -53,9 +52,43 @@ sources. No other formats (JPG, WebP, GIF) are allowed.
   the way it was? Links sources, applies the rubric (ADR-014), records
   the trust level. Same field format as the monolithic scoring log
   defined in ADR-022.
-- **notes.md** — operational: anything that doesn't fit analysis or
-  scoring. Data extraction problems, URL changes, conflicting sources,
-  manual verification notes. Created on demand, not required.
+- **specs-log.md** — technical specs provenance: auditable log of all
+  research performed to find the lens's technical specifications
+  (construction diagrams, MTF charts, element/group counts, coatings,
+  special glass types, magnification data). Documents every source
+  checked (successful or not), data extraction issues, conflicting
+  sources, and lens-specific caveats. Required for every lens folder.
+  Note: this is distinct from `scoring-log.md`, which covers optical
+  quality field scoring justification (ADR-014 rubric application).
+
+### specs-log.md format
+
+```markdown
+# <Model Name> — Notes
+
+## Data provenance
+
+| Date       | Source        | URL            | Result                   |
+| ---------- | ------------- | -------------- | ------------------------ |
+| 2026-05-22 | cosina.co.jp  | https://...    | No MTF chart             |
+| 2026-05-22 | LensTip       | (not reviewed) | No data                  |
+| 2026-05-22 | Dustin Abbott | https://...    | Full review, MTF + bokeh |
+
+## Classification
+
+- Character tier: Tier 1 / Tier 2 / Tier 3 (clinical) / N/A
+- Design family: Double Gauss / Sonnar / Retrofocus / etc.
+
+## Caveats
+
+- (e.g. X-mount vs E-mount are different optical designs)
+- (e.g. manual PDF checked, no MTF inside)
+```
+
+The provenance table is the core — every source checked gets a row,
+whether the result was positive or negative. This prevents future
+sessions from repeating the same searches and creates a traceable
+audit trail for every data point.
 
 ### Migration
 
@@ -70,11 +103,11 @@ Cross-lens comparison is the database's job (`src/data/lenses.ts`).
 The scoring log's purpose is provenance (justifying why a score was
 given), not cross-reference. No index or summary file is needed.
 
-### Rename existing notes.md
+### Rename existing specs-log.md
 
-Existing `notes.md` files that contain MTF readings and analysis are
-renamed to `analysis.md`. A fresh `notes.md` is only created when
-operational issues need to be recorded.
+Existing `specs-log.md` files that contain MTF readings and analysis are
+renamed to `analysis.md`. Every lens folder must have a `specs-log.md`
+with at minimum a data provenance table.
 
 ## Alternatives considered
 
@@ -82,7 +115,7 @@ operational issues need to be recorded.
 diffs, is hard to navigate, and separates scoring justification from
 the optical data it references.
 
-**Keep mixed notes.md** — rejected because it conflates analysis
+**Keep mixed specs-log.md** — rejected because it conflates analysis
 (repeatable predictions) with operational notes (one-time issues),
 making both harder to maintain.
 
@@ -92,10 +125,10 @@ queryable data.
 
 ## Consequences
 
-- Existing `notes.md` files must be renamed to `analysis.md` (can be
+- Existing `specs-log.md` files must be renamed to `analysis.md` (can be
   done in bulk)
 - New scoring work writes to per-lens `scoring-log.md`
 - Tools (`audit.py`) should be updated to check for `analysis.md`
-  instead of `notes.md`
+  instead of `specs-log.md`
 - The monolithic `docs/scoring-log.md` has been fully migrated and deleted
   (session 73)

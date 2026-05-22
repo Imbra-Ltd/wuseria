@@ -18,7 +18,7 @@ contains:
 
 - MTF chart PNGs with the naming convention
   `{lens-slug}-{wide|tele}-{frequency}lp.png`
-- `notes.md` when the source is not the official Fujifilm specifications page
+- `specs-log.md` when the source is not the official Fujifilm specifications page
   or when known issues exist (wrong charts on official page, CMS duplicates)
 - Optical design diagrams (future)
 
@@ -40,7 +40,7 @@ no single convention across the GFX lineup. XF/XC lenses use 15/45 lp/mm.
 ## Consequences
 
 - Each verified lens has a single source of truth for optical reference data
-- Provenance is documented per lens via `notes.md`
+- Provenance is documented per lens via `specs-log.md`
 - `docs/mtf-charts/` becomes a staging area for unverified files
 - Third-party lens charts (Samyang, Sigma, Viltrox) still need verification
   and migration

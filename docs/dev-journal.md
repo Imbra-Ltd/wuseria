@@ -2439,3 +2439,48 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Venus Laowa optical specs (16 lenses, #745)
 - Voigtlander optical specs (#747)
 - Tech spec cross-validation for all brand tools (#779)
+
+---
+
+### Session 77 — Voigtlander Optical Specs & Character Lens Research
+
+- **Tool:** Claude Code (claude-opus-4-6)
+- **Branch:** `feat/voigtlander-optical-specs`
+
+#### PRs
+
+- #781 — feat: Voigtlander optical specs extraction tool and data (open, from previous session)
+
+#### Issues created
+
+- #783 — Explore Artistic Quality (AQ) scoring via MTF blueprint matching (spike, P2, Backlog)
+- #784 — Draft forum questions for character lens rendering discussion (task, P3, Backlog)
+
+#### Issues updated
+
+- #511 — Establish community presence for discovery — added task references (#699, #784)
+
+#### Key changes
+
+- Assessed all ~23 third-party character lenses in the database (Voigtlander Noktons, 7Artisans f/0.95 series, TTartisan, Lensbaby, Meyer Optik, Zhongyi Speedmaster)
+- Identified the core problem: OQ rubric (ADR-014) penalizes character lenses because all 14 fields score "more corrected = better"
+- Proposed AQ (Artistic Quality) as a parallel scoring dimension using MTF blueprint matching against archetype curves (Classic Glow, Soap Bubble, Swirl, Soft Classic)
+- Documented Nikon DC Nikkor 105mm f/2D as prior art — mechanical SA correction ring validates that character is quantifiable on a continuous scale
+- Discovered Voigtlander's deliberate MTF publication policy from their catalog PDF (cosina.co.jp): APO-LANTHAR lenses get MTF charts, Noktons do not — confirms character lenses operate on a different quality axis
+- Discovered Voigtlander PORTRAIT HELIAR 75mm F1.5 (E-mount) has an SA correction ring — Voigtlander's own DC concept
+- Researched MTF data availability for legendary character lenses — confirmed systematic scarcity; third-party measured data is the only path for X-mount Noktons
+- Drafted 22 forum questions across 8 themes for community discovery and data gathering
+- Formalized `notes.md` → renamed to `specs-log.md` as mandatory technical specs provenance log (ADR-033 update); pairs with `scoring-log.md`
+
+#### Key decisions
+
+- AQ is a spike (#783), not a commitment — must validate feasibility of blueprint threshold matching before building
+- Legendary lenses (Nikon DC, Helios 44, Trioplan) are conceptual references for archetype definition, not data sources
+- AQ validation should focus on X-mount lenses with available MTF data (Fujifilm magic trio, Voigtlander Noktons via third-party, 7Artisans)
+- Forum questions serve dual purpose: community discovery (#511) and AQ data gathering (#783)
+
+#### Next
+
+- Merge PR #781 (Voigtlander optical specs)
+- Venus Laowa optical specs (#745)
+- AQ spike research (#783) when MTF data pipeline is more complete
