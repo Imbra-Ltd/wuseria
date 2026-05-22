@@ -5086,7 +5086,7 @@ const lenses: Lens[] = [
     opticalElements: 7,
     opticalGroups: 6,
     specialElements: ["2 HR"],
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?full-frame-lenses/60.html",
   },
   {
@@ -5118,7 +5118,7 @@ const lenses: Lens[] = [
     isTiltShift: true,
     opticalElements: 7,
     opticalGroups: 6,
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/Tilt-C-35.html",
   },
   {
@@ -5152,7 +5152,7 @@ const lenses: Lens[] = [
     opticalElements: 14,
     opticalGroups: 10,
     specialElements: ["6 HR"],
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl:
       "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
   },
@@ -5186,7 +5186,7 @@ const lenses: Lens[] = [
     opticalElements: 8,
     opticalGroups: 7,
     specialElements: ["2 UD"],
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/75.html",
   },
   // Additional TTartisan MF
@@ -5217,7 +5217,7 @@ const lenses: Lens[] = [
     minFocusDistance: 120,
     opticalElements: 11,
     opticalGroups: 8,
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/72.html",
   },
   {
@@ -5250,7 +5250,7 @@ const lenses: Lens[] = [
     opticalElements: 8,
     opticalGroups: 6,
     specialElements: ["3 HR", "1 LD"],
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/76.html",
   },
   {
@@ -5282,7 +5282,7 @@ const lenses: Lens[] = [
     minFocusDistance: 250,
     opticalElements: 7,
     opticalGroups: 5,
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/78.html",
   },
   {
@@ -5313,7 +5313,7 @@ const lenses: Lens[] = [
     minFocusDistance: 280,
     opticalElements: 7,
     opticalGroups: 6,
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/71.html",
   },
   {
@@ -5344,7 +5344,7 @@ const lenses: Lens[] = [
     minFocusDistance: 500,
     opticalElements: 7,
     opticalGroups: 5,
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/73.html",
   },
   {
@@ -5375,7 +5375,7 @@ const lenses: Lens[] = [
     minFocusDistance: 500,
     opticalElements: 6,
     opticalGroups: 5,
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl:
       "https://www.ttartisan.com/?full-frame-lenses/TTArtisan-50-F2.html",
   },
@@ -7551,7 +7551,7 @@ const lenses: Lens[] = [
     minFocusDistance: 350,
     opticalElements: 6,
     opticalGroups: 5,
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?af-lens/38.html",
   },
   // Additional TTartisan AF
@@ -7586,7 +7586,7 @@ const lenses: Lens[] = [
     opticalElements: 10,
     opticalGroups: 7,
     specialElements: ["2 ED", "2 HR"],
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?af-lens/AF-35-II.html",
   },
   {
@@ -7620,7 +7620,7 @@ const lenses: Lens[] = [
     opticalElements: 10,
     opticalGroups: 9,
     specialElements: ["1 UD", "2 HR"],
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?af-lens/AF-56.html",
   },
   {
@@ -7654,7 +7654,7 @@ const lenses: Lens[] = [
     opticalElements: 10,
     opticalGroups: 7,
     specialElements: ["1 ED", "4 HR"],
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?af-lens/FF-AF75.html",
   },
   // Voigtlander Nokton / Ultron (X-mount)
@@ -10761,7 +10761,7 @@ const lenses: Lens[] = [
     minFocusDistance: 120,
     opticalElements: 11,
     opticalGroups: 7,
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?full-frame-lenses/62.html",
   },
   {
@@ -10793,7 +10793,7 @@ const lenses: Lens[] = [
     opticalElements: 11,
     opticalGroups: 7,
     specialElements: ["4 achromatic doublet"],
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?full-frame-lenses/56.html",
   },
   {
@@ -10826,7 +10826,7 @@ const lenses: Lens[] = [
     opticalElements: 14,
     opticalGroups: 10,
     specialElements: ["6 HR"],
-    coating: ["Multi-coating"],
+    coating: ["MC Multi-Layer"],
     officialUrl:
       "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
   },
