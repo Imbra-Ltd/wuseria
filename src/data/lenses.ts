@@ -4723,6 +4723,7 @@ const lenses: Lens[] = [
     opticalElements: 15,
     opticalGroups: 10,
     specialElements: ["2 aspherical", "3 ED"],
+    coating: ["Frog Eye Coating"],
     sweetSpotAperture: 4,
     centerStopped: 2,
     cornerStopped: 1,
@@ -4781,6 +4782,7 @@ const lenses: Lens[] = [
     opticalElements: 15,
     opticalGroups: 11,
     specialElements: ["2 aspherical", "3 ED"],
+    coating: ["Frog Eye Coating"],
     isTiltShift: true,
     shiftRange: 7,
     // Not scored — specialty shift zoom; no trusted reviews
@@ -4817,6 +4819,7 @@ const lenses: Lens[] = [
     opticalElements: 14,
     opticalGroups: 10,
     specialElements: ["3 ED"],
+    coating: ["multi-coating"],
     sweetSpotAperture: 5.6,
     centerStopped: 2,
     cornerStopped: 2,
@@ -4876,6 +4879,7 @@ const lenses: Lens[] = [
     opticalElements: 7,
     opticalGroups: 6,
     specialElements: [],
+    coating: ["multi-coating"],
     // Not scored — niche 210-degree fisheye; no trusted reviews
     officialUrl: "https://www.venuslens.net/product/laowa-4mm-f-2-8-mft/",
   },
@@ -4909,6 +4913,7 @@ const lenses: Lens[] = [
     opticalElements: 16,
     opticalGroups: 12,
     specialElements: ["2 aspherical", "2 ED"],
+    coating: ["Frog Eye Coating"],
     // Not scored — no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-8-16mm-f3-5-5-zoom-cf/",
@@ -4943,6 +4948,7 @@ const lenses: Lens[] = [
     opticalElements: 12,
     opticalGroups: 8,
     specialElements: ["2 aspherical", "4 ED", "2 UHR"],
+    coating: ["multi-coating"],
     // Not scored — no trusted reviews
     officialUrl: "https://www.venuslens.net/product/laowa-10mm-f-4-cookie/",
   },
@@ -4976,6 +4982,7 @@ const lenses: Lens[] = [
     opticalElements: 14,
     opticalGroups: 9,
     specialElements: ["1 ED", "2 HR"],
+    coating: ["multi-coating"],
     // Not scored — no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-argus-25mm-f-0-95-apsc-apo/",
@@ -5010,6 +5017,7 @@ const lenses: Lens[] = [
     opticalElements: 14,
     opticalGroups: 9,
     specialElements: ["1 aspherical", "1 ED", "3 UHR"],
+    coating: ["multi-coating"],
     sweetSpotAperture: 2.8,
     centerStopped: 2,
     cornerStopped: 1,
@@ -10505,6 +10513,7 @@ const lenses: Lens[] = [
     opticalElements: 21,
     opticalGroups: 14,
     specialElements: ["2 aspherical", "3 ED"],
+    coating: ["Frog Eye Coating"],
     // Not scored — GFX niche; no trusted reviews
     officialUrl: "https://www.venuslens.net/product/laowa-17mm-f-4-gfx-zero-d/",
   },
@@ -10538,6 +10547,7 @@ const lenses: Lens[] = [
     opticalElements: 14,
     opticalGroups: 11,
     specialElements: ["2 ED", "1 UHR"],
+    coating: ["multi-coating"],
     isTiltShift: true,
     // Not scored — GFX T/S specialty; no trusted reviews
     officialUrl:
@@ -10573,6 +10583,7 @@ const lenses: Lens[] = [
     opticalElements: 13,
     opticalGroups: 10,
     specialElements: ["2 ED", "1 UHR"],
+    coating: ["multi-coating"],
     isTiltShift: true,
     // Not scored — GFX T/S specialty; no trusted reviews
     officialUrl:
@@ -10608,6 +10619,7 @@ const lenses: Lens[] = [
     opticalElements: 14,
     opticalGroups: 12,
     specialElements: ["2 aspherical", "4 ED", "1 UHR"],
+    coating: ["Frog Eye Coating"],
     isTiltShift: true,
     // Not scored — GFX T/S specialty; no trusted reviews
     officialUrl:
@@ -10874,6 +10886,7 @@ const lenses: Lens[] = [
     opticalElements: 17,
     opticalGroups: 11,
     specialElements: ["2 aspherical", "3 ED"],
+    coating: ["multi-coating"],
     isTiltShift: true,
     shiftRange: 11,
     // Not scored — GFX shift specialty; no trusted reviews
@@ -10909,6 +10922,7 @@ const lenses: Lens[] = [
     opticalElements: 12,
     opticalGroups: 10,
     specialElements: ["2 aspherical", "3 ED", "1 UHR"],
+    coating: ["multi-coating"],
     // Not scored — GFX niche; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-19mm-f-2-8-zero-d-gfx/",
@@ -10943,6 +10957,7 @@ const lenses: Lens[] = [
     opticalElements: 16,
     opticalGroups: 11,
     specialElements: ["2 aspherical", "3 ED"],
+    coating: ["Frog Eye Coating"],
     isTiltShift: true,
     shiftRange: 10,
     // Not scored — GFX shift specialty; no trusted reviews
@@ -10978,6 +10993,7 @@ const lenses: Lens[] = [
     opticalElements: 13,
     opticalGroups: 9,
     specialElements: ["4 ED", "1 UHR"],
+    coating: ["multi-coating"],
     // Not scored — GFX fisheye zoom; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-8-15mm-f-2-8-ff-zoom-fisheye-2/",
