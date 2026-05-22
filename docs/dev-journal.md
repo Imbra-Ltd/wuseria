@@ -2472,6 +2472,29 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Drafted 22 forum questions across 8 themes for community discovery and data gathering
 - Formalized `notes.md` → renamed to `specs-log.md` as mandatory technical specs provenance log (ADR-033 update); pairs with `scoring-log.md`
 
+---
+
+### Session 78 — Venus Laowa Optical Specs (Coating & Cleanup)
+
+- **Tool:** Claude Code (claude-opus-4-6)
+- **Branch:** `feat/venus-laowa-optical-specs`
+
+#### PRs
+
+- (pending) Venus Laowa optical specs — 14 commits, ready for PR creation
+
+#### Key changes
+
+- Added coating data for all 16 Venus Laowa lenses: 7 with Frog Eye Coating (FEC, hydrophobic front-element), 9 with generic multi-coating (Venus Laowa doesn't name their AR multi-coating)
+- Converted 14 JPG + 1 WebP images to PNG for format consistency across optical-specs
+- Created specs-log.md provenance logs for all 16 lenses (mandatory per ADR-033)
+- Sources: venuslens.net (cached via SeleniumBase), photographyblog.com, PetaPixel, 4KShooters, B&H Photo, jonasrask, Fstoppers, Digital Camera World, OpticalLimits, Phillip Reeve, LensTip, DustinAbbott
+
+#### Key decisions
+
+- Frog Eye Coating is a hydrophobic surface coating (like Fujifilm fluorine), not an anti-reflective optical coating — stored in `coating[]` field alongside AR coatings for consistency with how Fujifilm stores `"fluorine"`
+- Lenses without a named coating get `["multi-coating"]` — all modern lenses have AR coatings, Venus Laowa just doesn't brand theirs
+
 #### Key decisions
 
 - AQ is a spike (#783), not a commitment — must validate feasibility of blueprint threshold matching before building
