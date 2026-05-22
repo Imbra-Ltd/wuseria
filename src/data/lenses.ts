@@ -5083,6 +5083,8 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 500,
     isTiltShift: true,
+    opticalElements: 7,
+    opticalGroups: 6,
     officialUrl: "https://www.ttartisan.com/?full-frame-lenses/60.html",
   },
   {
@@ -5112,6 +5114,8 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 400,
     isTiltShift: true,
+    opticalElements: 7,
+    opticalGroups: 6,
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/Tilt-C-35.html",
   },
   {
@@ -5142,6 +5146,9 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 250,
     isTiltShift: true,
+    opticalElements: 14,
+    opticalGroups: 10,
+    specialElements: ["6 HR"],
     officialUrl:
       "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
   },
@@ -5172,6 +5179,9 @@ const lenses: Lens[] = [
     filterThread: 49,
     price: 250,
     minFocusDistance: 170,
+    opticalElements: 8,
+    opticalGroups: 7,
+    specialElements: ["2 UD"],
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/75.html",
   },
   // Additional TTartisan MF
@@ -5200,6 +5210,8 @@ const lenses: Lens[] = [
     length: 53,
     price: 250,
     minFocusDistance: 120,
+    opticalElements: 11,
+    opticalGroups: 8,
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/72.html",
   },
   {
@@ -5229,6 +5241,9 @@ const lenses: Lens[] = [
     filterThread: 46,
     price: 250,
     minFocusDistance: 200,
+    opticalElements: 8,
+    opticalGroups: 6,
+    specialElements: ["3 HR", "1 LD"],
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/76.html",
   },
   {
@@ -5258,6 +5273,8 @@ const lenses: Lens[] = [
     filterThread: 43,
     price: 250,
     minFocusDistance: 250,
+    opticalElements: 7,
+    opticalGroups: 5,
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/78.html",
   },
   {
@@ -5286,6 +5303,8 @@ const lenses: Lens[] = [
     filterThread: 39,
     price: 250,
     minFocusDistance: 280,
+    opticalElements: 7,
+    opticalGroups: 6,
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/71.html",
   },
   {
@@ -5314,6 +5333,8 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 250,
     minFocusDistance: 500,
+    opticalElements: 7,
+    opticalGroups: 5,
     officialUrl: "https://www.ttartisan.com/?aps-c-lenses/73.html",
   },
   {
@@ -5342,6 +5363,8 @@ const lenses: Lens[] = [
     filterThread: 46,
     price: 250,
     minFocusDistance: 500,
+    opticalElements: 6,
+    opticalGroups: 5,
     officialUrl:
       "https://www.ttartisan.com/?full-frame-lenses/TTArtisan-50-F2.html",
   },
@@ -5372,6 +5395,10 @@ const lenses: Lens[] = [
     filterThread: 67,
     price: 250,
     minFocusDistance: 2500,
+    opticalElements: 8,
+    opticalGroups: 5,
+    specialElements: ["2 ED", "2 HR"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?full-frame-lenses/500-F6-3.html",
   },
   // Sigma DC DN Contemporary (AF)
@@ -7512,6 +7539,8 @@ const lenses: Lens[] = [
     filterThread: 39,
     price: 250,
     minFocusDistance: 350,
+    opticalElements: 6,
+    opticalGroups: 5,
     officialUrl: "https://www.ttartisan.com/?af-lens/38.html",
   },
   // Additional TTartisan AF
@@ -7543,6 +7572,9 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 250,
     minFocusDistance: 350,
+    opticalElements: 10,
+    opticalGroups: 7,
+    specialElements: ["2 ED", "2 HR"],
     officialUrl: "https://www.ttartisan.com/?af-lens/AF-35-II.html",
   },
   {
@@ -7573,6 +7605,9 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 250,
     minFocusDistance: 500,
+    opticalElements: 10,
+    opticalGroups: 9,
+    specialElements: ["1 UD", "2 HR"],
     officialUrl: "https://www.ttartisan.com/?af-lens/AF-56.html",
   },
   {
@@ -7603,8 +7638,10 @@ const lenses: Lens[] = [
     filterThread: 52,
     price: 250,
     minFocusDistance: 700,
-    officialUrl:
-      "https://ttartisan.store/products/ttartisan-af-75mm-f2?variant=45759989940386",
+    opticalElements: 10,
+    opticalGroups: 7,
+    specialElements: ["1 ED", "4 HR"],
+    officialUrl: "https://www.ttartisan.com/?af-lens/FF-AF75.html",
   },
   // Voigtlander Nokton / Ultron (X-mount)
   {
@@ -10708,6 +10745,8 @@ const lenses: Lens[] = [
     length: 67,
     price: 250,
     minFocusDistance: 120,
+    opticalElements: 11,
+    opticalGroups: 7,
     officialUrl: "https://www.ttartisan.com/?full-frame-lenses/62.html",
   },
   {
@@ -10736,6 +10775,9 @@ const lenses: Lens[] = [
     filterThread: 77,
     price: 500,
     minFocusDistance: 800,
+    opticalElements: 11,
+    opticalGroups: 7,
+    specialElements: ["4 achromatic doublet"],
     officialUrl: "https://www.ttartisan.com/?full-frame-lenses/56.html",
   },
   {
@@ -10765,6 +10807,9 @@ const lenses: Lens[] = [
     filterThread: 67,
     price: 500,
     minFocusDistance: 260,
+    opticalElements: 14,
+    opticalGroups: 10,
+    specialElements: ["6 HR"],
     officialUrl:
       "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
   },
@@ -11114,6 +11159,10 @@ const lenses: Lens[] = [
     filterThread: 67,
     price: 250,
     minFocusDistance: 2500,
+    opticalElements: 8,
+    opticalGroups: 5,
+    specialElements: ["2 ED", "2 HR"],
+    coating: ["MC Multi-Layer"],
     officialUrl: "https://www.ttartisan.com/?full-frame-lenses/500-F6-3.html",
   },
   {
