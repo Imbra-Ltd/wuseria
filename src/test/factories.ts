@@ -7,6 +7,7 @@ function makeLens(
 ): Lens {
   return {
     type: "prime",
+    category: "photo",
     mount: "X",
     focalLengthMin: 35,
     focalLengthMax: 35,
@@ -19,6 +20,7 @@ function makeLens(
 
 const EXPLORER_DEFAULTS: Omit<ExplorerLens, "brand" | "model"> = {
   type: "prime",
+  category: "photo",
   mount: "X",
   focalLengthMin: 35,
   focalLengthMax: 35,

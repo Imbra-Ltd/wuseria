@@ -7,6 +7,7 @@ import type { ReviewSource } from "./review";
 // =============================================================================
 
 type LensType = "prime" | "zoom";
+type LensCategory = "photo" | "cine";
 
 // DC = coreless, STM = stepping, LM = linear motor
 type AfMotor = "DC" | "STM" | "LM";
@@ -25,6 +26,7 @@ interface Lens {
   brand: Brand;
   model: string;
   type: LensType;
+  category: LensCategory;
   mount: Mount;
   year?: number;
   isDiscontinued?: boolean;
@@ -171,4 +173,4 @@ interface Lens {
 // EXPORTS
 // =============================================================================
 
-export type { Lens, LensType, AfMotor, ScoringStatus };
+export type { Lens, LensCategory, LensType, AfMotor, ScoringStatus };

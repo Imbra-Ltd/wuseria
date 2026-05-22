@@ -6,6 +6,7 @@ interface ExplorerLens {
   year?: number;
   mount: string;
   type: "prime" | "zoom";
+  category: "photo" | "cine";
   focalLengthMin: number;
   focalLengthMax: number;
   maxAperture: number;
