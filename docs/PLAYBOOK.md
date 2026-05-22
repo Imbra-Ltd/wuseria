@@ -296,6 +296,24 @@ py tools/zeiss/audit.py --missing                  # show only incomplete lenses
 
 Note: Zeiss MTF charts and construction diagrams must be extracted manually from the downloaded PDFs.
 
+**Fetch Venus Laowa optical specs (SeleniumBase UC mode — Cloudflare bypass):**
+
+```bash
+py tools/venus/fetch_specs.py                    # fetch all specs + images
+py tools/venus/fetch_specs.py --dry-run           # list lenses without fetching
+py tools/venus/fetch_specs.py --filter 10mm       # filter by model substring
+py tools/venus/fetch_specs.py --specs-only        # only extract specs text
+py tools/venus/fetch_specs.py --images-only       # only download images
+py tools/venus/audit.py                           # audit data completeness
+py tools/venus/audit.py --missing                 # show only incomplete lenses
+```
+
+Note: venuslens.net uses Cloudflare Turnstile which blocks plain urllib and
+Playwright. Requires `py -m pip install seleniumbase` (installs Undetected
+Chrome driver). Runs headed (non-headless) — a browser window will open
+briefly per page. Some construction diagrams use Chinese filenames not
+detectable by the tool; manual page inspection may find additional images.
+
 **Extract MTF readings from chart PNGs:**
 
 Skeleton tool (recommended — requires Python + scikit-image + opencv-python):
