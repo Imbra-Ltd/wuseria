@@ -526,6 +526,18 @@ const lensAccessories: LensAccessory[] = [
     price: 449,
     officialUrl: "https://fujifilm-x.com/global/products/lenses/xf2x-tc-wr/",
   },
+  {
+    category: "lens-accessory",
+    brand: "Thingyfy",
+    model: "Pinhole Pro X",
+    description:
+      "Pinhole lens with laser-drilled aperture disc. No glass elements. Fixed f/96. 2x pinhole size selector.",
+    mount: "X",
+    year: 2018,
+    price: 250,
+    officialUrl:
+      "https://thingyfy.com/products/pinhole-pro-x-professional-pinhole-2x-zoom-lens-for-dslr-mirrorless-cameras",
+  },
 ];
 
 // -----------------------------------------------------------------------------

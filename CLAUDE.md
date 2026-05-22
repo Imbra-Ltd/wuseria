@@ -90,6 +90,14 @@ npm run test:watch   # run tests in watch mode (development)
 npm run validate     # lint + format + check + test + build — full CI suite
 ```
 
+### 1.4 Web fetching
+
+- Use `py tools/fetch-page.py <url>` for all web page fetching — never WebFetch or Fetch tools
+- WebFetch/Fetch truncates large pages through a small model, silently losing data
+- `fetch-page.py` caches the full content and takes a screenshot for verification
+- This applies to both the main agent and all subagents — when spawning research agents, instruct them to use `fetch-page.py`, not WebFetch
+- Use `--html` flag when raw HTML is needed (e.g. extracting image URLs)
+
 ## 2. Code conventions
 
 ### 2.1 Git
