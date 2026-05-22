@@ -43,7 +43,8 @@ type ReviewSource =
   | "asobinet"
   | "fujiyacamera"
   | "mapcamera"
-  | "radojuva";
+  | "radojuva"
+  | "fcracer";
 
 // =============================================================================
 // METHODOLOGY & TRUST
