@@ -2556,3 +2556,56 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Continue optical specs collection: 7Artisans (#748, 18 lenses) is next by size
 - #779 should include a validate mode that cross-checks lenses.ts against official pages
 - #788 explore design patterns, #789 wiki for glass types
+
+---
+
+### Session 79 — Optical Specs Quick Wins and Milestone Cleanup
+
+**Tool:** Claude Code (Opus 4.6 1M)
+
+#### PRs
+
+- #834 — Optical specs for Irix, Kipon, SLR Magic; move Thingyfy to accessories
+
+#### Issues closed
+
+- #751 (Irix), #753 (Kipon), #760 (SLR Magic), #763 (Thingyfy), #762 (TTartisan), #732 (Sigma MTF charts), #771 (lens audit — superseded by #820)
+
+#### Issues created
+
+- #790 — Epic: Digitize MTF charts (v0.8.0, 27 tasks)
+- #791–#815 — Per-brand MTF digitization tasks
+- #816 — Add 8 Irix cine lenses (Backlog)
+- #817 — Add 11 Kipon lenses (Backlog)
+- #818 — Add 13 SLR Magic lenses (Backlog)
+- #819 — Add missing brands: Brightin Star, Kase, Yongnuo, Thypoch, Astra Lab (Backlog)
+- #820 — Epic: Audit lens database (~175 missing lenses, Backlog)
+- #821–#833 — Per-brand missing lens tasks (Backlog)
+
+#### Key changes
+
+- Thingyfy Pinhole Pro X moved from lenses to accessories (no glass = accessory)
+- Irix 45mm f/1.4 GFX: full specs + MTF chart + distortion map + construction diagram
+- Kipon IBERIT 75mm f/2.4 GFX: specs only (nothing published by Kipon)
+- SLR Magic HyperPrime 50mm T0.95: specs + weight/length corrections
+- "Quick win" single-lens brands turned out to have 32 missing lenses between them
+
+#### Key decisions
+
+- v0.7.0 focused on optical specs collection only; everything else moved out
+- v0.8.0 focused on MTF digitization only
+- Lens database audit (#820) → Backlog (not optical specs)
+- Lenses without glass elements are accessories, not lenses
+
+#### Workflow improvements (CLAUDE.md + PLAYBOOK)
+
+- Always verify brand's full lens lineup before researching specs (PLAYBOOK 2.8 step 1)
+- Use Google Image Search for construction diagrams and MTF charts (PLAYBOOK 2.8 step 4)
+- Use fetch-page.py over WebFetch/Fetch — WebFetch truncates large pages silently (CLAUDE.md 1.4)
+- alikgriffin.com tables are AJAX-loaded (Ninja Tables) — documented API endpoint (PLAYBOOK 2.8)
+
+#### Next
+
+- Merge PR #834
+- Continue optical specs: Handevision (5 lenses), Kamlan (3), Pergear (3)
+- Then larger brands: 7Artisans (18), Meike (14), NiSi (10), AstrHori (7)
