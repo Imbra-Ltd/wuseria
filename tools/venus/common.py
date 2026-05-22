@@ -268,6 +268,7 @@ def extract_image_urls(html: str) -> dict[str, list[str]]:
     - *_MTF.png or *_MTF_*.png for MTF charts
     - *_Lens-Structure.png or *_Lens_Structure.png for construction diagrams
     - *_Optical-Design.png or *_optical*.png variants
+    - URL-encoded Chinese: %E5%85%89%E8%B7%AF%E5%9B%BE (光路图 = optical path diagram)
     """
     urls: dict[str, list[str]] = {"mtf": [], "construction": []}
 
@@ -285,11 +286,29 @@ def extract_image_urls(html: str) -> dict[str, list[str]]:
         if re.search(r"mtf", lower):
             if full_url not in urls["mtf"]:
                 urls["mtf"].append(full_url)
-        elif re.search(r"lens[_-]?structure|optical[_-]?design|construction|cross[_-]?section", lower):
+        elif re.search(
+            r"lens[_-]?structure|optical[_-]?design|construction|cross[_-]?section"
+            r"|%E5%85%89%E8%B7%AF%E5%9B%BE"  # 光路图 = optical path diagram (URL-encoded)
+            r"|%E7%BB%93%E6%9E%84"  # 结构 = structure (URL-encoded)
+            r"|%E9%95%9C%E7%BB%84"  # 镜组 = lens group (URL-encoded)
+            r"|\u5149\u8DEF\u56FE"  # 光路图 = optical path diagram (decoded)
+            r"|\u7ED3\u6784"  # 结构 = structure (decoded)
+            r"|\u955C\u7EC4",  # 镜组 = lens group (decoded)
+            lower,
+        ):
             if full_url not in urls["construction"]:
                 urls["construction"].append(full_url)
 
     return urls
+
+
+def _encode_url(url: str) -> str:
+    """Percent-encode non-ASCII characters in a URL path."""
+    from urllib.parse import quote, urlparse, urlunparse
+
+    parsed = urlparse(url)
+    encoded_path = quote(parsed.path, safe="/:@!$&'()*+,;=-._~")
+    return urlunparse(parsed._replace(path=encoded_path))
 
 
 def download_image(url: str, dest: Path, min_size: int = 500) -> bool:
@@ -300,6 +319,7 @@ def download_image(url: str, dest: Path, min_size: int = 500) -> bool:
     """
     if dest.exists():
         return True
+    url = _encode_url(url)
     try:
         req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
         with urllib.request.urlopen(req, timeout=30) as resp:

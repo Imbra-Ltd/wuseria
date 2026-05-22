@@ -10977,7 +10977,7 @@ const lenses: Lens[] = [
     minFocusDistance: 150,
     opticalElements: 13,
     opticalGroups: 9,
-    specialElements: [],
+    specialElements: ["4 ED", "1 UHR"],
     // Not scored — GFX fisheye zoom; no trusted reviews
     officialUrl:
       "https://www.venuslens.net/product/laowa-8-15mm-f-2-8-ff-zoom-fisheye-2/",
