@@ -374,8 +374,16 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
    - Identify special elements (aspherical, LD, ED) marked in diagrams — must match `specialElements`
    - Check that all coatings on the product page are captured, including protective coatings (fluorine, water-repellent) that are often listed separately from optical coatings (AR, multi-coating)
    - For lenses with X-mount variants, verify physical specs (weight, length, diameter) use X-mount values, not Sony E or other mounts
-6. Add fields to `src/data/lenses.ts`, run `npm run validate`
-7. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
+6. **Per-lens provenance workflow** (mandatory sequence for every lens touched):
+   1. Check source (official page, diagram, third-party review)
+   2. User confirms or corrects findings
+   3. Update `specs-log.md` FIRST — document the source, date, result, and caveats
+   4. Edit `lenses.ts` — apply the verified data
+   5. Confirm both files updated before moving to the next lens
+   - The specs-log is the **primary deliverable** — data without provenance is unverifiable
+   - If lenses share optical design across mounts (e.g. X + GFX), update BOTH specs-logs
+7. Add fields to `src/data/lenses.ts`, run `npm run validate`
+8. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
 
 ## 3. Quality
 
