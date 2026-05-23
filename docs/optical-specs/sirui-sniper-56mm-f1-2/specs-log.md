@@ -27,4 +27,4 @@
 - **length:** was 68mm, corrected to 92mm (official: 92.2mm for X-mount)
 - **price:** was $500, corrected to $300 (official: $279 black, $262 white/silver)
 - **minFocusDistance:** was 500mm, corrected to 600mm (official: 0.6m)
-- **diameter:** 66mm in DB — not listed on official page, unverified
+- **diameter:** was 66mm in DB, corrected to 72mm (cameradecision X-mount: 72mm)
