@@ -2699,3 +2699,31 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Merge optical-specs-quick-wins branch
 - Continue optical specs for remaining brands
 - Add missing lenses (#825 Pergear, #821 Sirui)
+
+---
+
+### Session 82 — Spec Table Cleanup and Bookmarks
+
+**Tool:** Claude Code (Opus 4.6 1M)
+
+#### Key changes
+
+- Lens detail page: show all spec rows unconditionally with dash for missing values (previously hid optical construction, sunstar points, clickless aperture when null)
+- Added coating row to spec table — 169/243 lenses already populated
+- Updated issue #99 scope: removed filter step, narrowed to display-only; closes on merge
+- Moved all 15 wiki issues from P3 to P4 (backlog)
+- Bookmarked 3 vintage/character lens references in docs/bookmarks.md
+
+#### PRs
+
+- Commits on `feat/optical-specs-quick-wins` (no new PR)
+
+#### Issues
+
+- #99 — updated scope, will auto-close on merge
+
+#### Next
+
+- Merge optical-specs-quick-wins branch
+- Continue optical specs for remaining brands
+- Add missing lenses (#825 Pergear, #821 Sirui)
