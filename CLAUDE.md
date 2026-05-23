@@ -322,5 +322,6 @@ execution prevents missed steps.
 [ ] 9. PLAYBOOK.md — first list every new command and script introduced this session. Then check: is each one documented? Name the section. Do not batch-dismiss.
 [ ] 10. Submodules — check if upstream needs update
 [ ] 11. Flag conventions for solid-ai-templates upstream — list each new convention/decision by name and evaluate individually. No blanket "nothing reusable." For each: state project-specific or reusable; if reusable, name the upstream template file and create an issue
-[ ] 12. Summarize what was done and what's next
+[ ] 12. Review sources — list every new external link used this session for tech specs, optical specs, or lab/field reviews. For each: is it already in `src/data/reviews.ts` or `docs/bookmarks.md`? If not, bookmark it and evaluate whether it should be added as a review source.
+[ ] 13. Summarize what was done and what's next
 ```

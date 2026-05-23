@@ -38,6 +38,7 @@
 - https://fstoppers.com/
 - https://lensvid.com/
 - https://radojuva.com/ — Radojuva; lens database with hands-on magnification measurements and detailed optical field data
+- https://www.mobile01.com/ — Mobile01; Taiwan's largest tech forum; staff reviewers with systematic lens testing, construction diagrams from manufacturers; strong on Chinese/Taiwanese brands; requires SeleniumBase UC to fetch
 - https://www.sansmirror.com/ — Thom Hogan; mirrorless lens spec database with dimensions and DOF data
 - https://www.laowalenses.ca/ — Canadian Laowa distributor; detailed spec tables with mount-specific dimensions
 - https://manuals.plus/ — Detailed product spec sheets and data sheets; useful for budget lens magnification data
@@ -153,6 +154,29 @@
 ## MTF chart interpretation
 
 - https://www.nikonusa.com/learn-and-explore/c/products-and-innovation/what-is-a-lens-mtf-chart-how-do-i-read-it — Nikon USA; MTF chart explainer including S/M convergence → bokeh quality relationship
+- https://www.band-optics.com/blog/step-by-step-process-for-measuring-mtf-of-a-lens.html — Band Optics; step-by-step MTF measurement process (setup, test charts, software, verification); useful for wiki #837
+- https://photographylife.com/how-to-read-mtf-charts — Photography Life; beginner-friendly MTF chart reading guide
+
+## Optical construction (elements, groups, special glass)
+
+- https://en.wikipedia.org/wiki/Photographic_lens_design — Wikipedia; comprehensive overview of elements, groups, cemented doublets, aspherical, exotic glass materials
+- https://www.edmundoptics.com/knowledge-center/application-notes/optics/understanding-optical-specifications/ — Edmund Optics; technical reference on glass properties (Abbe number, refractive index, dispersion)
+- https://www.band-optics.com/blog/step-by-step-process-for-measuring-mtf-of-a-lens.html — (also under MTF) covers how element quality affects MTF
+
+## Vintage and character lenses
+
+- https://jonasraskphotography.com/2013/10/23/full-frame-x-pro1-the-mitakon-lens-turbo-review/ — Jonas Rask; Mitakon Lens Turbo review on X-Pro1 (blocked by WP security, manual access needed)
+- https://amateurphotographer.com/second-hand/best-vintage-lenses/ — Amateur Photographer; best vintage lenses guide (Helios, Canon FD, Minolta, Pentax Takumar); interviews with Mathieu Stern, Annemarie Farley, Marc Sirisi
+- https://www.youtube.com/watch?v=-rozLBrz7Xk — Hunter Creates Things; "5 Criminally Underrated CHEAP Lenses" — Helios 44M 58mm f/2 (Zeiss Biotar formula, like 44-2), Pentax 67 135mm f/4 Macro, Pentax M 28mm f/2.8, Nikkor 50-300mm f/4.5 zoom, Nikkor 16mm f/2.8 fisheye
+
+## Lens reviews — additional sources
+
+- https://expertphotography.com/ — hands-on reviews with test charts, sharpness crops, CA/distortion analysis; trust-3 level; good for consensus scoring on budget/mid-range lenses
+
+## Aperture blades and bokeh
+
+- https://www.picturecorrect.com/how-aperture-blades-affect-image-quality/ — PictureCorrect; how blade count and shape affect bokeh and sunstars
+- https://www.dpreview.com/forums/threads/number-of-aperture-blades-its-affect.2950906/ — DPReview forum; discussion on blade count effects
 
 ## Scoring methodology references
 

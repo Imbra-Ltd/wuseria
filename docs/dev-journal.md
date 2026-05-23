@@ -2609,3 +2609,121 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Merge PR #834
 - Continue optical specs: Handevision (5 lenses), Kamlan (3), Pergear (3)
 - Then larger brands: 7Artisans (18), Meike (14), NiSi (10), AstrHori (7)
+
+---
+
+### Session 80 — Kamlan Optical Specs Completion
+
+**Tool:** Claude Code (Opus 4.6 1M)
+
+#### Key changes
+
+- Kamlan 28mm f/1.4: confirmed maxMagnification 0.15x (Photography Life), added construction diagram (allphotolenses.com), updated specs-log with 3 new sources
+- Kamlan 50mm f/1.1 II: added maxMagnification 0.25x (DPReview manufacturer description), added specialElements 6 HR (FujiRumors diagram), added construction diagram, updated specs-log
+- Kamlan 32mm f/1.1: added construction diagram, updated specs-log with Mobile01 source
+- Removed unverified coating field from all 3 Kamlan lenses
+- Added DPReview and Photography Life to PLAYBOOK 2.8 source priority list
+- Discovered 4 missing Kamlan X-mount lenses (8mm f/3.0, 15mm f/2.0, 21mm f/1.8, 70mm f/1.1) — documented in #752
+- Identified 4 brands without dedicated extraction tools — created #836
+
+#### Issues created
+
+- #836 — Create optical spec extraction tools for remaining brands (Kamlan, Irix, Kipon, SLR Magic)
+
+#### Next
+
+- Merge optical-specs-quick-wins branch
+- Add 4 missing Kamlan lenses (#752)
+- Continue optical specs for remaining unscored brands
+
+---
+
+### Session 81 — Pergear & Sirui Optical Specs Verification
+
+**Tool:** Claude Code (Opus 4.6 1M)
+
+#### Key changes — Pergear (3 lenses)
+
+- Verified all 3 Pergear lenses against official Shopify JSON + product pages
+- Fixed tech specs across all 3 lenses: years (2019→2020/2021), prices ($250→$100), weights, minFocusDistance values
+- 10mm f/8 Fisheye: saved official construction diagram (5/4, 3 ED)
+- 25mm f/1.8: saved Photozone lab MTF chart; noted lens deprecated (successor: 25mm f/1.7)
+- 35mm f/1.6: confirmed specs against allphotolenses.com
+- All 3 specs-logs expanded with 12+ sources checked (maxMagnification not published for any Pergear lens)
+
+#### Key changes — Sirui Sniper (3 lenses)
+
+- Verified all 3 Sirui Sniper f/1.2 lenses against official Sirui store, LensTip, cameradecision
+- Fixed maxMagnification on all 3: was 0.14 (unverified placeholder from session 6), corrected to LensTip values (23mm: 0.09x, 33mm: 0.10x, 56mm: 0.12x)
+- Fixed length (68→92mm), price (500→300), diameter (66→72mm), minFocusDistance on all 3
+- LensTip covers all 3 Sniper lenses — previous specs-logs incorrectly said "Not covered" (see #846)
+- No construction diagrams or MTF charts published by Sirui for the Sniper series
+
+#### Issues created
+
+- #837 — Add wiki entry for lens manufacturing quality control (QC)
+- #838 — Explore brand transparency score based on published optical data
+- #839 — Wiki: sample variation in lenses
+- #840 — Wiki: lens manufacturing tolerances
+- #841 — Wiki: used lens inspection
+- #842 — Wiki: lens value and price-to-performance
+- #843 — Wiki: third-party vs first-party lenses
+- #844 — Wiki: lens generations and Mark II updates
+- #845 — Spike: evaluate whether to keep or remove cameras/accessories sections
+- #846 — Improve LensTip search workflow for optical specs research
+- #847 — Wiki: aperture blades and their effect on image quality
+- #849 — Wiki: lens optical construction (elements, groups, special glass)
+- Updated #836 with all 14 brands missing extraction tools
+
+#### Backlog cleanup
+
+- Closed #516 (Thingyfy — moved to accessories), #728 and #767 (MTF charts wiki — already exists), #584 (meta description — now dynamic), #591 (genre pages — auto-generated)
+- Updated #671 — removed Thingyfy, kept SLR Magic/Kipon/Irix
+- Assigned 16 wiki issues to Backlog milestone
+- Added session protocol step 12: evaluate external links used for specs/reviews
+
+#### Issues created (full list)
+
+- #837 — Wiki: QC
+- #838 — Spike: brand transparency score
+- #839–#844 — Wiki: sample variation, tolerances, used lens inspection, lens value, third-party lenses, lens generations
+- #845 — Spike: evaluate cameras/accessories sections
+- #846 — Improve LensTip search workflow
+- #847 — Wiki: aperture blades
+- #849 — Wiki: optical construction
+- #857 — Evaluate bookmarked review sources for reviews.ts
+- Updated #836 with all 14 brands missing extraction tools
+
+#### Next
+
+- Merge optical-specs-quick-wins branch
+- Continue optical specs for remaining brands
+- Add missing lenses (#825 Pergear, #821 Sirui)
+
+---
+
+### Session 82 — Spec Table Cleanup and Bookmarks
+
+**Tool:** Claude Code (Opus 4.6 1M)
+
+#### Key changes
+
+- Lens detail page: show all spec rows unconditionally with dash for missing values (previously hid optical construction, sunstar points, clickless aperture when null)
+- Added coating row to spec table — 169/243 lenses already populated
+- Updated issue #99 scope: removed filter step, narrowed to display-only; closes on merge
+- Moved all 15 wiki issues from P3 to P4 (backlog)
+- Bookmarked 3 vintage/character lens references in docs/bookmarks.md
+
+#### PRs
+
+- Commits on `feat/optical-specs-quick-wins` (no new PR)
+
+#### Issues
+
+- #99 — updated scope, will auto-close on merge
+
+#### Next
+
+- Merge optical-specs-quick-wins branch
+- Continue optical specs for remaining brands
+- Add missing lenses (#825 Pergear, #821 Sirui)

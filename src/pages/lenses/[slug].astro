@@ -75,6 +75,7 @@ const genreEntries = lens.genreMarks
 
 const specFields: [string, unknown][] = [
   ["Optical construction", lens.opticalElements],
+  ["Coating", lens.coating],
   ["Sweet spot", lens.sweetSpotAperture],
   ["Aperture blades", lens.apertureBlades],
   ["Max magnification", lens.maxMagnification],
@@ -83,6 +84,7 @@ const specFields: [string, unknown][] = [
   ["OIS", lens.hasOis],
   ["Weather sealed", lens.isWeatherSealed],
   ["Aperture ring", lens.hasApertureRing],
+  ["Clickless aperture", lens.isApertureClickless],
   ["Focus ring", lens.hasFocusRing],
   ["Focus by wire", lens.isFocusByWire],
   ["Distance scale", lens.hasDistanceScale],
@@ -235,22 +237,38 @@ const jsonLd = {
       </h2>
       <table class="spec-table">
         <tbody>
-          {
-            lens.opticalElements != null && lens.opticalGroups != null && (
-              <tr>
-                <td>Optical construction</td>
-                <td>
-                  {lens.opticalElements} elements in {lens.opticalGroups} groups
-                  {lens.specialElements && lens.specialElements.length > 0 && (
-                    <span class="special-elements">
-                      {" "}
-                      ({lens.specialElements.join(", ")})
-                    </span>
-                  )}
-                </td>
-              </tr>
-            )
-          }
+          <tr>
+            <td>Optical construction</td>
+            <td>
+              {
+                lens.opticalElements != null && lens.opticalGroups != null ? (
+                  <>
+                    {lens.opticalElements} elements in {lens.opticalGroups}{" "}
+                    groups
+                    {lens.specialElements &&
+                      lens.specialElements.length > 0 && (
+                        <span class="special-elements">
+                          {" "}
+                          ({lens.specialElements.join(", ")})
+                        </span>
+                      )}
+                  </>
+                ) : (
+                  DASH
+                )
+              }
+            </td>
+          </tr>
+          <tr>
+            <td>Coating</td>
+            <td
+              >{
+                lens.coating && lens.coating.length > 0
+                  ? lens.coating.join(", ")
+                  : DASH
+              }</td
+            >
+          </tr>
           <tr
             ><td>Focal length</td><td
               >{formatFL(lens.focalLengthMin, lens.focalLengthMax)}</td
@@ -275,30 +293,35 @@ const jsonLd = {
               }
             </td>
           </tr>
-          {
-            lens.apertureBlades != null && (
-              <tr>
-                <td>Sunstar points</td>
-                <td>
-                  {lens.apertureBlades % 2 === 0
-                    ? lens.apertureBlades
-                    : lens.apertureBlades * 2}
-                  {lens.hasCircularAperture
-                    ? " (soft — circular blades)"
-                    : " (sharp — straight blades)"}
-                </td>
-              </tr>
-            )
-          }
-          <tr
-            ><td>Max magnification</td><td
+          <tr>
+            <td>Sunstar points</td>
+            <td>
+              {
+                lens.apertureBlades != null ? (
+                  <>
+                    {lens.apertureBlades % 2 === 0
+                      ? lens.apertureBlades
+                      : lens.apertureBlades * 2}
+                    {lens.hasCircularAperture
+                      ? " (soft — circular blades)"
+                      : " (sharp — straight blades)"}
+                  </>
+                ) : (
+                  DASH
+                )
+              }
+            </td>
+          </tr>
+          <tr>
+            <td>Max magnification</td>
+            <td
               >{
                 lens.maxMagnification != null
                   ? `${lens.maxMagnification}x`
                   : DASH
               }</td
-            ></tr
-          >
+            >
+          </tr>
           <tr
             ><td>Min focus distance</td><td
               >{num(lens.minFocusDistance, "mm")}</td
@@ -308,14 +331,11 @@ const jsonLd = {
           <tr><td>OIS</td><td>{yesNo(lens.hasOis)}</td></tr>
           <tr><td>Weather sealed</td><td>{yesNo(lens.isWeatherSealed)}</td></tr>
           <tr><td>Aperture ring</td><td>{yesNo(lens.hasApertureRing)}</td></tr>
-          {
-            lens.hasApertureRing && (
-              <tr>
-                <td>Clickless aperture</td>
-                <td>{yesNo(lens.isApertureClickless)}</td>
-              </tr>
-            )
-          }
+          <tr
+            ><td>Clickless aperture</td><td
+              >{yesNo(lens.isApertureClickless)}</td
+            ></tr
+          >
           <tr><td>Focus ring</td><td>{yesNo(lens.hasFocusRing)}</td></tr>
           <tr><td>Focus by wire</td><td>{yesNo(lens.isFocusByWire)}</td></tr>
           <tr><td>Distance scale</td><td>{yesNo(lens.hasDistanceScale)}</td></tr
