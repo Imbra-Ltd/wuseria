@@ -2638,11 +2638,11 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 
 ---
 
-### Session 81 — Pergear Optical Specs Verification
+### Session 81 — Pergear & Sirui Optical Specs Verification
 
 **Tool:** Claude Code (Opus 4.6 1M)
 
-#### Key changes
+#### Key changes — Pergear (3 lenses)
 
 - Verified all 3 Pergear lenses against official Shopify JSON + product pages
 - Fixed tech specs across all 3 lenses: years (2019→2020/2021), prices ($250→$100), weights, minFocusDistance values
@@ -2650,12 +2650,30 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - 25mm f/1.8: saved Photozone lab MTF chart; noted lens deprecated (successor: 25mm f/1.7)
 - 35mm f/1.6: confirmed specs against allphotolenses.com
 - All 3 specs-logs expanded with 12+ sources checked (maxMagnification not published for any Pergear lens)
-- Confirmed Pergear publishes no MTF charts, no construction diagrams (except 10mm), and no magnification ratios
+
+#### Key changes — Sirui Sniper (3 lenses)
+
+- Verified all 3 Sirui Sniper f/1.2 lenses against official Sirui store, LensTip, cameradecision
+- Fixed maxMagnification on all 3: was 0.14 (unverified placeholder from session 6), corrected to LensTip values (23mm: 0.09x, 33mm: 0.10x, 56mm: 0.12x)
+- Fixed length (68→92mm), price (500→300), diameter (66→72mm), minFocusDistance on all 3
+- LensTip covers all 3 Sniper lenses — previous specs-logs incorrectly said "Not covered" (see #846)
+- No construction diagrams or MTF charts published by Sirui for the Sniper series
 
 #### Issues created
 
 - #837 — Add wiki entry for lens manufacturing quality control (QC)
 - #838 — Explore brand transparency score based on published optical data
+- #839 — Wiki: sample variation in lenses
+- #840 — Wiki: lens manufacturing tolerances
+- #841 — Wiki: used lens inspection
+- #842 — Wiki: lens value and price-to-performance
+- #843 — Wiki: third-party vs first-party lenses
+- #844 — Wiki: lens generations and Mark II updates
+- #845 — Spike: evaluate whether to keep or remove cameras/accessories sections
+- #846 — Improve LensTip search workflow for optical specs research
+- #847 — Wiki: aperture blades and their effect on image quality
+- #849 — Wiki: lens optical construction (elements, groups, special glass)
+- Updated #836 with all 14 brands missing extraction tools
 
 #### Next
 
