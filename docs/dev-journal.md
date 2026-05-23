@@ -2635,3 +2635,30 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Merge optical-specs-quick-wins branch
 - Add 4 missing Kamlan lenses (#752)
 - Continue optical specs for remaining unscored brands
+
+---
+
+### Session 81 — Pergear Optical Specs Verification
+
+**Tool:** Claude Code (Opus 4.6 1M)
+
+#### Key changes
+
+- Verified all 3 Pergear lenses against official Shopify JSON + product pages
+- Fixed tech specs across all 3 lenses: years (2019→2020/2021), prices ($250→$100), weights, minFocusDistance values
+- 10mm f/8 Fisheye: saved official construction diagram (5/4, 3 ED)
+- 25mm f/1.8: saved Photozone lab MTF chart; noted lens deprecated (successor: 25mm f/1.7)
+- 35mm f/1.6: confirmed specs against allphotolenses.com
+- All 3 specs-logs expanded with 12+ sources checked (maxMagnification not published for any Pergear lens)
+- Confirmed Pergear publishes no MTF charts, no construction diagrams (except 10mm), and no magnification ratios
+
+#### Issues created
+
+- #837 — Add wiki entry for lens manufacturing quality control (QC)
+- #838 — Explore brand transparency score based on published optical data
+
+#### Next
+
+- Merge optical-specs-quick-wins branch
+- Continue optical specs for remaining brands
+- Add 8 missing Pergear lenses (#825)
