@@ -154,6 +154,7 @@
 ## MTF chart interpretation
 
 - https://www.nikonusa.com/learn-and-explore/c/products-and-innovation/what-is-a-lens-mtf-chart-how-do-i-read-it — Nikon USA; MTF chart explainer including S/M convergence → bokeh quality relationship
+- https://www.band-optics.com/blog/step-by-step-process-for-measuring-mtf-of-a-lens.html — Band Optics; step-by-step MTF measurement process (setup, test charts, software, verification); useful for wiki #837
 
 ## Scoring methodology references
 
