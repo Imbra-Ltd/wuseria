@@ -157,6 +157,12 @@
 - https://www.band-optics.com/blog/step-by-step-process-for-measuring-mtf-of-a-lens.html — Band Optics; step-by-step MTF measurement process (setup, test charts, software, verification); useful for wiki #837
 - https://photographylife.com/how-to-read-mtf-charts — Photography Life; beginner-friendly MTF chart reading guide
 
+## Optical construction (elements, groups, special glass)
+
+- https://en.wikipedia.org/wiki/Photographic_lens_design — Wikipedia; comprehensive overview of elements, groups, cemented doublets, aspherical, exotic glass materials
+- https://www.edmundoptics.com/knowledge-center/application-notes/optics/understanding-optical-specifications/ — Edmund Optics; technical reference on glass properties (Abbe number, refractive index, dispersion)
+- https://www.band-optics.com/blog/step-by-step-process-for-measuring-mtf-of-a-lens.html — (also under MTF) covers how element quality affects MTF
+
 ## Aperture blades and bokeh
 
 - https://www.picturecorrect.com/how-aperture-blades-affect-image-quality/ — PictureCorrect; how blade count and shape affect bokeh and sunstars
