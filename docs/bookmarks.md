@@ -157,6 +157,11 @@
 - https://www.band-optics.com/blog/step-by-step-process-for-measuring-mtf-of-a-lens.html — Band Optics; step-by-step MTF measurement process (setup, test charts, software, verification); useful for wiki #837
 - https://photographylife.com/how-to-read-mtf-charts — Photography Life; beginner-friendly MTF chart reading guide
 
+## Aperture blades and bokeh
+
+- https://www.picturecorrect.com/how-aperture-blades-affect-image-quality/ — PictureCorrect; how blade count and shape affect bokeh and sunstars
+- https://www.dpreview.com/forums/threads/number-of-aperture-blades-its-affect.2950906/ — DPReview forum; discussion on blade count effects
+
 ## Scoring methodology references
 
 - https://www.lonelyspeck.com/lenses-for-milky-way-photography/ — Lonely Speck; astro lens scoring formula (aperture area × FOV × max shutter)
