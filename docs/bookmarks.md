@@ -163,6 +163,10 @@
 - https://www.edmundoptics.com/knowledge-center/application-notes/optics/understanding-optical-specifications/ — Edmund Optics; technical reference on glass properties (Abbe number, refractive index, dispersion)
 - https://www.band-optics.com/blog/step-by-step-process-for-measuring-mtf-of-a-lens.html — (also under MTF) covers how element quality affects MTF
 
+## Lens reviews — additional sources
+
+- https://expertphotography.com/ — hands-on reviews with test charts, sharpness crops, CA/distortion analysis; trust-3 level; good for consensus scoring on budget/mid-range lenses
+
 ## Aperture blades and bokeh
 
 - https://www.picturecorrect.com/how-aperture-blades-affect-image-quality/ — PictureCorrect; how blade count and shape affect bokeh and sunstars
