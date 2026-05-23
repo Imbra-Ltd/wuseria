@@ -2609,3 +2609,29 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Merge PR #834
 - Continue optical specs: Handevision (5 lenses), Kamlan (3), Pergear (3)
 - Then larger brands: 7Artisans (18), Meike (14), NiSi (10), AstrHori (7)
+
+---
+
+### Session 80 — Kamlan Optical Specs Completion
+
+**Tool:** Claude Code (Opus 4.6 1M)
+
+#### Key changes
+
+- Kamlan 28mm f/1.4: confirmed maxMagnification 0.15x (Photography Life), added construction diagram (allphotolenses.com), updated specs-log with 3 new sources
+- Kamlan 50mm f/1.1 II: added maxMagnification 0.25x (DPReview manufacturer description), added specialElements 6 HR (FujiRumors diagram), added construction diagram, updated specs-log
+- Kamlan 32mm f/1.1: added construction diagram, updated specs-log with Mobile01 source
+- Removed unverified coating field from all 3 Kamlan lenses
+- Added DPReview and Photography Life to PLAYBOOK 2.8 source priority list
+- Discovered 4 missing Kamlan X-mount lenses (8mm f/3.0, 15mm f/2.0, 21mm f/1.8, 70mm f/1.1) — documented in #752
+- Identified 4 brands without dedicated extraction tools — created #836
+
+#### Issues created
+
+- #836 — Create optical spec extraction tools for remaining brands (Kamlan, Irix, Kipon, SLR Magic)
+
+#### Next
+
+- Merge optical-specs-quick-wins branch
+- Add 4 missing Kamlan lenses (#752)
+- Continue optical specs for remaining unscored brands
