@@ -38,6 +38,7 @@
 - https://fstoppers.com/
 - https://lensvid.com/
 - https://radojuva.com/ — Radojuva; lens database with hands-on magnification measurements and detailed optical field data
+- https://www.mobile01.com/ — Mobile01; Taiwan's largest tech forum; staff reviewers with systematic lens testing, construction diagrams from manufacturers; strong on Chinese/Taiwanese brands; requires SeleniumBase UC to fetch
 - https://www.sansmirror.com/ — Thom Hogan; mirrorless lens spec database with dimensions and DOF data
 - https://www.laowalenses.ca/ — Canadian Laowa distributor; detailed spec tables with mount-specific dimensions
 - https://manuals.plus/ — Detailed product spec sheets and data sheets; useful for budget lens magnification data

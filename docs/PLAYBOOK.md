@@ -388,10 +388,13 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
 3. Run the brand extraction tool if available: `py tools/<brand>/fetch_specs.py`
 4. Research missing fields from these sources (priority order):
    - Official manufacturer pages (dimensions, filter thread, build features)
+   - DPReview spec database (`dpreview.com/products/<brand>/lenses/<slug>`) — comprehensive specs including magnification; manufacturer descriptions often contain data not on official pages
    - LensTip spec database (`lenstip.com/<id>-<name>-lens_specifications.html`) — best for maxMagnification on budget lenses
    - Radojuva lens database (`radojuva.com`) — hands-on magnification measurements and detailed optical data
    - digitalkamera.de Datenblatt pages — good for dimensions, rarely has magnification
    - cameradecision.com via `fetch-page.py` (403s on direct fetch, Playwright bypasses)
+   - Mobile01 (`mobile01.com`) — Taiwan's largest tech forum; staff reviewers with systematic testing, construction diagrams from manufacturers; especially good for Chinese/Taiwanese brands (Kamlan, etc.); requires SeleniumBase UC mode to fetch (Akamai CDN blocks headless browsers)
+   - Photography Life lens database (`photographylife.com/lenses/<slug>`) — spec tables with magnification, construction diagrams, special elements
    - Dustin Abbott / Phillip Reeve reviews — trust-3 field measurements
    - Duclos Lenses (`ducloslenses.com`) — reliable spec tables for cinema lenses (length, weight, min focus)
    - **Google Image Search** for construction diagrams and MTF charts — text-based searches miss images on non-English blogs, press kit reposts, and pages with minimal surrounding text; search `<brand> <model> optical construction diagram` or `<brand> <model> MTF chart`
