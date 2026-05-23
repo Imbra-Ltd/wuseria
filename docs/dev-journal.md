@@ -2675,8 +2675,27 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - #849 — Wiki: lens optical construction (elements, groups, special glass)
 - Updated #836 with all 14 brands missing extraction tools
 
+#### Backlog cleanup
+
+- Closed #516 (Thingyfy — moved to accessories), #728 and #767 (MTF charts wiki — already exists), #584 (meta description — now dynamic), #591 (genre pages — auto-generated)
+- Updated #671 — removed Thingyfy, kept SLR Magic/Kipon/Irix
+- Assigned 16 wiki issues to Backlog milestone
+- Added session protocol step 12: evaluate external links used for specs/reviews
+
+#### Issues created (full list)
+
+- #837 — Wiki: QC
+- #838 — Spike: brand transparency score
+- #839–#844 — Wiki: sample variation, tolerances, used lens inspection, lens value, third-party lenses, lens generations
+- #845 — Spike: evaluate cameras/accessories sections
+- #846 — Improve LensTip search workflow
+- #847 — Wiki: aperture blades
+- #849 — Wiki: optical construction
+- #857 — Evaluate bookmarked review sources for reviews.ts
+- Updated #836 with all 14 brands missing extraction tools
+
 #### Next
 
 - Merge optical-specs-quick-wins branch
 - Continue optical specs for remaining brands
-- Add 8 missing Pergear lenses (#825)
+- Add missing lenses (#825 Pergear, #821 Sirui)
