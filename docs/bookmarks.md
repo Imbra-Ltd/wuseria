@@ -332,6 +332,11 @@ No public affiliate programs found (2026-04-06). Contact ФотоСинтези�
 - https://searchengineland.com/guide/what-is-seo — What is SEO
 - https://searchengineland.com/guide/seo/types-of-search-engine-ranking-factors — Ranking factors
 
+## Optical history
+
+- https://zeissikonveb.de/start/objektive/normalobjektive/primoplan.html — Primoplan design history with Zeiss collection data sheets, aberration curves, Goerz patent lineage
+- https://zeissikonveb.de/start/objektive/normalobjektive/trioplan.html — Trioplan (Cooke triplet) history, vintage cutaways and product photos
+
 ## Photo sharing sites
 
 - www.unsplash.com
