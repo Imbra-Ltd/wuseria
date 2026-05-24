@@ -2702,6 +2702,56 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 
 ---
 
+### Session 83 — Lensbaby Optical Specs
+
+**Tool:** Claude Code (Opus 4.6 1M)
+
+#### Key changes
+
+- Optical specs for all 4 Lensbaby lenses: Velvet 56, Velvet 85, Composer Pro II Sweet 35, 5.8mm Circular Fisheye
+- Velvet 56/85: 4e/3g singlet-doublet-singlet design, broadband multi-coated AR coating
+- Sweet 35: 4e/3g, same coating, marked discontinued (replaced by Edge 35)
+- Fisheye: 8e/5g, different optical formula; marked discontinued
+- Fix Velvet 85 minFocusDistance 240→230mm, Fisheye focalLength 6→5.8mm, Fisheye weight 190→298g
+- MTF+CA charts saved for Velvet 56 and Fisheye (ePhotozine Imatest)
+- Resolution chart reconstructed from PCMag data for Velvet 85
+- Velvet 85 resolution data added to #783 (AQ spike)
+- Content structure reference added to #694 (lens detail page)
+- Created #859 — evaluate lens optical character field (clinical vs character vs art)
+- Closed #752 (Kamlan), #759 (Pergear), #761 (Sirui), #565 (construction fields), #754 (Lensbaby)
+- Moved #506 (OG images) to Backlog
+- v0.7.0 milestone: 29 closed / 11 open (73% done)
+
+#### PRs
+
+- Branch `feat/optical-specs-small-brands` pushed (no PR yet)
+
+#### Issues
+
+- #754 — closed (Lensbaby optical specs complete)
+- #752, #759, #761 — closed (Kamlan, Pergear, Sirui already done)
+- #565 — closed (construction fields — 175/243 populated)
+- #506 — moved to Backlog
+- #859 — created (lens character field spike)
+- #783 — comment added (Velvet 85 resolution data)
+- #694 — comment added (SilentPeak content structure reference)
+
+#### Key decisions
+
+- Lensbaby brand uses singlet-doublet-singlet design across Velvet/Sweet line (4e/3g)
+- Fisheye has different formula (8e/5g) — not same optical family
+- Zero trust-3/2 sources review any Lensbaby lens — niche art lenses
+- Keep discontinued lenses in DB for reference (philosophy: keep everything)
+- Coating normalized as "Broadband multi-coated AR" across brand
+
+#### Next
+
+- Continue optical specs for remaining brands (Meyer Optik, Handevision next smallest)
+- #822 — add ~14 missing Lensbaby lenses
+- Create PR for optical-specs-small-brands branch
+
+---
+
 ### Session 82 — Spec Table Cleanup and Bookmarks
 
 **Tool:** Claude Code (Opus 4.6 1M)
