@@ -21,15 +21,7 @@
 - **Special elements:** none mentioned — no ED, aspherical, or special glass
 - **Coating:** not published — no coating name on any source
 - **Construction diagram:** not found
-- **MTF chart:** exists on Kipon blog (3 apertures: f/2.4, f/4.0, f/5.6) but images are JS-rendered and hotlink-protected; could not download automatically
-
-### MTF chart URLs (on Kipon blog, not directly downloadable)
-
-- f/2.4: `https://kipon.com/wp-content/uploads/2021/03/20181211143432782.jpg`
-- f/4.0: `https://kipon.com/wp-content/uploads/2021/03/20181211143441156.jpg`
-- f/5.6: `https://kipon.com/wp-content/uploads/2021/03/20181211143450445.jpg`
-
-These URLs return HTML (hotlink protection) when fetched directly. Manual browser download required.
+- **MTF chart:** found on Kipon blog (Zemax OpticStudio computed, 2016-10-07); 3 apertures saved: `mtf-f2.4.jpg`, `mtf-f4.0.jpg`, `mtf-f5.6.jpg`; Zemax filename: `2.4-90mm-BK43.6-4L-900-02-1.ZMX`; downloaded via Playwright (hotlink-protected, requires session cookies)
 
 ## Physical spec corrections (FX mount)
 
