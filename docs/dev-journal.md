@@ -2777,3 +2777,32 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Merge optical-specs-quick-wins branch
 - Continue optical specs for remaining brands
 - Add missing lenses (#825 Pergear, #821 Sirui)
+
+---
+
+### Session 83 — Optical Specs Gap-Fill and Meyer Optik
+
+- **PR:** #862 — optical specs for Kamlan, Pergear, Meyer Optik
+- **Issues:** closed #756 (Meyer Optik), created #861 (wiki: optical glass manufacturers), commented on #859 (character category workflow rationale)
+- **Epic #739:** updated checklist — Sirui, Kamlan, Pergear marked done (17/25 brands)
+
+#### Key changes
+
+- Kamlan (3 lenses): added coating `["multi-coated"]` from specs-log research
+- Pergear 10mm f/8: added coating, marked discontinued, identified f/5.6 successor
+- Meyer Optik (4 lenses): full optical specs + major physical spec corrections
+  - Primoplan 58mm/75mm: 5E/4G enhanced Cooke triplet, Schott glass
+  - Trioplan 50mm/100mm: 3E/3G classic Cooke triplet
+  - Fixed wrong aperture blades, filter thread, weight, length, MFD, prices on all 4
+  - Historical construction diagrams and aberration curves from zeissikonveb.de (Goerz patent 1926)
+  - Primoplan design lineage: Goerz → Schäfter → modern II (same 5E/4G topology, modern glass/coatings)
+
+#### Key decisions
+
+- Character lens category (#859): user workflow rationale added — filter by character in explorer, then compare OQ/AQ
+- Epic subtasks preference: use GitHub sub-issues instead of markdown checklists
+
+#### Next
+
+- Continue optical specs for remaining 7 brands: Handevision (5), Mitakon (6), AstrHori (7), NiSi (10), Meike (14), 7Artisans (18)
+- Merge PR #862
