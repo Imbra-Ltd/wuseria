@@ -10,6 +10,7 @@
 | B&H Photo (search)             | https://www.bhphotovideo.com/c/search?q=mitakon+speedmaster+65mm+1.4+GFX                                   | 2026-05-25 | Found: "Two Ultra-Low Dispersion Elements, Two High Refractive Index Elements" |
 | DPReview                       | dpreview.com                                                                                               | 2026-05-25 | Not listed                                                                     |
 | LensTip                        | lenstip.com                                                                                                | 2026-05-25 | Not found                                                                      |
+| zyoptics.net (XCD page, UC)    | https://zyoptics.net/product/mitakon-speedmaster-65mm-f-1-4-xcd/                                           | 2026-05-25 | Found: MTF chart (65mm_f1.4_MTF.jpg), same optical design as GFX               |
 
 ## Optical construction
 
@@ -17,7 +18,7 @@
 - **Special elements:** 2 UD (Ultra-low Dispersion) + 2 HRI (High Refractive Index) — from description: "2pcs of HRI (High Refractive Index) & 2pcs of UD (Ultra-low dispersion) elements"
 - **Coating:** not published
 - **Construction diagram:** not found
-- **MTF chart:** not found
+- **MTF chart:** found on zyoptics.net XCD version page (same optical design, different mount adapter); saved as `mtf-f1.4.png` (screenshot — CDN blocks direct image download); shows 10/30 LP/MM sagittal+tangential at f/1.4 across 27mm image circle
 
 ## Caveats
 
