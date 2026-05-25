@@ -29,7 +29,9 @@
 | length         | 75       | 65             | Kipon spec table (M/NEX/FX column) |
 | apertureBlades | 9        | 6              | Kipon spec table: 6 iris leaves    |
 
-minFocusDistance (700mm) confirmed correct. Diameter (58mm) confirmed correct.
+| minFocusDistance | 700 | 600 | Kipon spec table: 0.7/0.6 — second value is FX mount |
+
+Diameter (58mm) confirmed correct.
 
 ## maxMagnification
 

@@ -2878,7 +2878,7 @@ const lenses: Lens[] = [
     length: 65,
     filterThread: 49,
     price: 350,
-    minFocusDistance: 700,
+    minFocusDistance: 600,
     officialUrl: "https://kipon.com/product/elegant-75mm-f2-4-for-fuji-x/",
   },
   {
