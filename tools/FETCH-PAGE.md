@@ -1,6 +1,6 @@
 # fetch-page.py — Dev Journal
 
-Page fetching utility for optical specs research. Uses a three-tier
+Page fetching utility for optical specs research. Uses a four-tier
 strategy that auto-escalates on failure.
 
 ## Architecture
@@ -10,15 +10,20 @@ urllib (plain HTTP, ~1s)
   │
   ├─ success → done
   ├─ HTTP error (404, timeout) → Playwright
-  └─ bot protection (captcha, 403 page) → skip Playwright → UC
-                                              │
-Playwright (headless Chromium, ~5-9s)         │
-  │                                           │
-  ├─ success → done                           │
-  ├─ bot detection → UC  ◄────────────────────┘
-  └─ timeout/error → UC
+  └─ bot protection (captcha, 403 page) → skip Playwright → Nodriver
+                                                │
+Playwright (headless Chromium, ~5-9s)           │
+  │                                             │
+  ├─ success → done                             │
+  ├─ bot detection → Nodriver  ◄────────────────┘
+  └─ timeout/error → Nodriver
                 │
-SeleniumBase UC mode (stealth Chrome, ~18-24s)
+Nodriver (headed Chrome via CDP, ~6-8s)
+  │
+  ├─ success → done
+  └─ failure → UC
+                │
+SeleniumBase UC mode (headless stealth Chrome, ~18-24s)
   │
   ├─ success → done
   └─ failure → "All tiers failed"
@@ -26,11 +31,12 @@ SeleniumBase UC mode (stealth Chrome, ~18-24s)
 
 ## Tiers
 
-| Tier | Engine          | Speed   | Use case                                  |
-| ---- | --------------- | ------- | ----------------------------------------- |
-| 1    | urllib          | ~1s     | Static HTML pages (most sites)            |
-| 2    | Playwright      | ~5-9s   | JS-rendered content (SPAs, lazy tabs)     |
-| 3    | SeleniumBase UC | ~18-24s | Bot-protected sites (Cloudflare, captcha) |
+| Tier | Engine          | Speed   | Mode     | Use case                               |
+| ---- | --------------- | ------- | -------- | -------------------------------------- |
+| 1    | urllib          | ~1s     | —        | Static HTML pages (most sites)         |
+| 2    | Playwright      | ~5-9s   | headless | JS-rendered content (SPAs, lazy tabs)  |
+| 3    | Nodriver        | ~6-8s   | headed   | Bot-protected sites (no driver binary) |
+| 4    | SeleniumBase UC | ~18-24s | headless | Fallback for headless-only contexts    |
 
 ## CLI
 
@@ -38,6 +44,7 @@ SeleniumBase UC mode (stealth Chrome, ~18-24s)
 py tools/fetch-page.py <url>              # auto mode
 py tools/fetch-page.py <url> --html       # raw HTML output
 py tools/fetch-page.py <url> --js         # force Playwright
+py tools/fetch-page.py <url> --nodriver   # force Nodriver (headed)
 py tools/fetch-page.py <url> --uc         # force SeleniumBase UC
 py tools/fetch-page.py <url> --wait 5000  # extra wait (ms)
 py tools/fetch-page.py <url> --no-cache   # bypass cache
@@ -120,22 +127,45 @@ Benchmark: 3 bot-protected pages (zyoptics.net):
 55% faster on batch. Supports: `--batch file.txt`, `--batch -` (stdin),
 or multiple positional URLs. `--output-dir` saves one file per URL.
 
+### v5 — Nodriver integration (2026-05-25)
+
+Added Nodriver as Tier 3 (between Playwright and UC). Nodriver connects
+to Chrome via CDP WebSocket — no driver binary to fingerprint. Requires
+headed mode (Chrome window opens briefly).
+
+Auto mode now prefers Nodriver over UC for bot-protected sites.
+
+Benchmark: 3 bot-protected pages (zyoptics.net):
+
+| Page       | UC batch | Nodriver batch |
+| ---------- | -------- | -------------- |
+| 1st (cold) | 11.6s    | 9.2s           |
+| 2nd        | 3.2s     | 2.2s           |
+| 3rd        | 2.4s     | 2.8s           |
+| **Total**  | **27s**  | **16s**        |
+
+Also tested Camoufox (C++ patched Firefox) — 530MB dependency, still
+blocked by PerimeterX. Not integrated. PerimeterX "Press & Hold"
+requires real mouse interaction (spike #865).
+
 ## Sites tested
 
 | Site                  | Tier used  | Notes                                     |
 | --------------------- | ---------- | ----------------------------------------- |
 | allphotolenses.com    | urllib     | Static HTML, fast                         |
 | ttartisan.com         | Playwright | JS-rendered content (query-param routing) |
-| zyoptics.net          | UC         | SiteGround captcha + bot protection       |
-| bhphotovideo.com      | Playwright | networkidle timeout on product pages      |
+| zyoptics.net          | Nodriver   | SiteGround captcha + bot protection       |
+| bhphotovideo.com      | Nodriver   | Bypasses Cloudflare (headed mode)         |
 | viltrox.com (Shopify) | urllib     | Static HTML with Shopify JSON             |
 | mobile01.com          | UC         | Akamai CDN blocks headless browsers       |
+| adorama.com           | BLOCKED    | PerimeterX "Press & Hold" — manual only   |
 
 ## Dependencies
 
 - **urllib** (stdlib) — always available
 - **Playwright** (`pip install playwright`) — optional, Tier 2
-- **SeleniumBase** (`pip install seleniumbase`) — optional, Tier 3
+- **Nodriver** (`pip install nodriver`) — optional, Tier 3
+- **SeleniumBase** (`pip install seleniumbase`) — optional, Tier 4
 
 Missing dependencies are caught gracefully — the tier is skipped with
 a stderr message.
@@ -147,8 +177,7 @@ variants are cached separately. Use `--no-cache` to bypass.
 
 ## Known limitations
 
+- Nodriver requires headed mode (Chrome window opens) — not suitable for CI/headless servers
 - UC mode is ~18-24s minimum due to Chrome launch overhead (~10-12s)
-- Some bot-protection pages need >5s for the security handshake
-- B&H product pages timeout on Playwright (`networkidle` never fires
-  due to continuous ad/tracking requests)
-- Single-URL mode launches a new Chrome per call; use batch mode for multiple URLs
+- PerimeterX "Press & Hold" (Adorama) blocks all automated tools — needs spike #865
+- Single-URL mode launches a new browser per call; use batch mode for multiple URLs
