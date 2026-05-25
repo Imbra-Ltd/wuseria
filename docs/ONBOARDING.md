@@ -32,6 +32,13 @@ cd wuseria
 npm install
 ```
 
+For optical specs research tools (optional):
+
+```bash
+pip install playwright nodriver seleniumbase
+playwright install chromium
+```
+
 The `--recursive` flag pulls the `docs/solid-ai-templates` submodule. If you
 already cloned without it, run `git submodule update --init`.
 

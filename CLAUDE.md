@@ -74,7 +74,8 @@ Project-specific overrides and additions follow below.
 - `tools/ttartisan/` — TTartisan optical spec extraction (fetch_specs, audit, plain urllib, spec table + prose parsing)
 - `tools/viltrox/` — Viltrox optical spec extraction (fetch_specs, audit, download_images, Shopify JSON + HTML scraping)
 - `tools/zeiss/` — Carl Zeiss optical spec extraction (fetch_specs, audit, PDF datasheet download)
-- `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility
+- `tools/mitakon/` — Mitakon optical spec extraction (fetch_specs, audit, SeleniumBase UC for zyoptics.net)
+- `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility, `FETCH-PAGE.md` dev journal
 
 ### 1.3 Commands
 
@@ -94,9 +95,12 @@ npm run validate     # lint + format + check + test + build — full CI suite
 
 - Use `py tools/fetch-page.py <url>` for all web page fetching — never WebFetch or Fetch tools
 - WebFetch/Fetch truncates large pages through a small model, silently losing data
-- `fetch-page.py` caches the full content and takes a screenshot for verification
+- `fetch-page.py` auto-escalates: urllib (~1s) → Playwright (~5-9s) → Nodriver (~6-8s) → SeleniumBase UC (~18-24s)
+- Flags: `--html` (raw HTML), `--js` (force Playwright), `--nodriver` (force headed Chrome), `--uc` (force UC), `--batch urls.txt` (persistent browser session), `--no-cache` (bypass cache)
+- For bot-protected sites, auto mode skips Playwright and goes straight to Nodriver (headed Chrome, no driver binary)
+- Use DuckDuckGo HTML search (`html.duckduckgo.com/html/?q=...`) when Google/Bing block with CAPTCHAs — works with urllib (~1s)
 - This applies to both the main agent and all subagents — when spawning research agents, instruct them to use `fetch-page.py`, not WebFetch
-- Use `--html` flag when raw HTML is needed (e.g. extracting image URLs)
+- See `tools/FETCH-PAGE.md` for architecture details and performance history
 
 ## 2. Code conventions
 

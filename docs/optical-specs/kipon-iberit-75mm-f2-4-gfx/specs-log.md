@@ -2,79 +2,35 @@
 
 ## Sources checked
 
-### Official product page (kipon-global.com)
+| Source               | URL                                                                                    | Date       | Result                                   |
+| -------------------- | -------------------------------------------------------------------------------------- | ---------- | ---------------------------------------- |
+| Kipon official (GFX) | https://kipon.com/product/elegant-75mm-f2-4-for-fuji-gfx/                              | 2026-05-25 | Found: 5E/5G, 6 blades, physical specs   |
+| Kipon blog (MTF)     | https://kipon.com/kipon-released-mtf-curvesample-photos-for-new-elegant-series-lenses/ | 2026-05-24 | Found: MTF charts at f/2.4, f/4.0, f/5.6 |
+| Handevision.de       | handevision.de                                                                         | 2026-05-24 | Domain defunct (for sale)                |
 
-- **URL:** https://www.kipon-global.com/product-page/kipon-75mm-f2-4-medium-format-lens-for-fuji-g-gfx-mount-camera
-- **Date:** 2026-05-22
-- **Result:** Wix-hosted site, JS-rendered. Search snippets confirm: 5 elements / 5 groups, f/2.4-16, 6 iris blades, 55mm image circle, 0.7m close focus, M49x0.75 filter, 65mm length, 58mm diameter, 384g. No coating name, no special glass, no MTF chart, no construction diagram.
+## Optical construction
 
-### Kipon IBERIT Fuji X page (full-frame version)
+- **Elements / Groups:** 5 / 5 (Kipon official spec table)
+- **Special elements:** none mentioned
+- **Coating:** not published
+- **Construction diagram:** not found
+- **MTF chart:** shared with Handevision IBERIT 75mm f/2.4 (same optical design); Zemax OpticStudio computed charts from Kipon blog; 3 apertures saved: `mtf-f2.4.jpg`, `mtf-f4.0.jpg`, `mtf-f5.6.jpg`
 
-- **URL:** https://www.kipon-global.com/product-page/kipon-iberit-75mm-f2-4-full-frame-camera-lenses-for-fuji-x-mount
-- **Date:** 2026-05-22
-- **Result:** Blocked (WebFetch denied). Search snippets confirm same 5/5 construction with 44mm image circle (full-frame version).
+## Shared optical design
 
-### Fuji Addict announcement
+This lens uses the identical optical formula as the Handevision IBERIT 75mm f/2.4 (X-mount). The IBERIT series was originally sold under the Handevision brand and later rebranded to Kipon ELEGANT/IBERIT. The GFX version adds a different mount adapter but retains the same 5E/5G optical core. MTF charts and specs-log research from `docs/optical-specs/handevision-iberit-75mm-f2-4/` apply directly.
 
-- **URL:** https://fujiaddict.com/2019/07/24/kipon-iberit-75mm-f-2-4-lens-for-gfx-now-shipping/
-- **Date:** 2026-05-22
-- **Result:** Found. 5/5 construction, 55mm image circle, 384g, 0.7m MFD, M49x0.75 filter, 6 iris blades.
+## Physical specs (GFX mount)
 
-### Alik Griffin review
-
-- **URL:** https://alikgriffin.com/handevision-75mm-f2-4-review-sample-photos/
-- **Date:** 2026-05-22
-- **Result:** Found. 5 elements / 5 groups, 6-blade aperture, 49mm filter, MFD 70cm, all-metal construction. Notes lens lacks proprietary coatings — more flare/ghosting than branded lenses.
-
-### LensTip
-
-- **Date:** 2026-05-22
-- **Result:** Not found — no entry in database.
-
-### Phillip Reeve
-
-- **Date:** 2026-05-22
-- **Result:** Not found — no review.
-
-### Radojuva (GFX version)
-
-- **URL:** https://radojuva.com/en/2023/06/kipon-iberit-2-4-75mm-fujifilm-gfx/
-- **Date:** 2026-05-22
-- **Result:** 403 — page behind Cloudflare. Potentially detailed source; manual access recommended.
-
-### DPReview forums
-
-- **URL:** https://www.dpreview.com/forums/thread/4348775
-- **Date:** 2026-05-22
-- **Result:** 403 — blocked. Search snippet mentions Kipon rep claiming "MTF line for the 75mm is just a straight line" but no actual chart published.
-
-### IB/E Optics (lens designer)
-
-- **URL:** https://www.ibe-optics.com/photography
-- **Date:** 2026-05-22
-- **Result:** Blocked. Search confirms IB/E Optics (Germany) designed the IBERIT optical formula; Kipon/Shanghai Transvision manufactures.
-
-### Yukosteel lens disassembly (X-mount version)
-
-- **URL:** https://yukosteel.wordpress.com/2021/11/06/disassembly-kipon-iberit-75mm-f2-4-lens-fuji-x-mount/
-- **Date:** 2026-05-22
-- **Result:** Blocked. Search snippets describe physical disassembly with internal element photos, but no formal optical diagram.
-
-## Summary
-
-| Field                | Value     | Source                           |
-| -------------------- | --------- | -------------------------------- |
-| Elements             | 5         | Official (snippet), Fuji Addict  |
-| Groups               | 5         | Official (snippet), Fuji Addict  |
-| ED elements          | Not found | No source mentions special glass |
-| Aspherical elements  | Not found | No source mentions special glass |
-| Coating              | Not found | Kipon publishes no coating name  |
-| MTF chart            | Not found | No official MTF chart published  |
-| Construction diagram | Not found | No optical diagram published     |
+| Field            | Value | Source           |
+| ---------------- | ----- | ---------------- |
+| weight           | 384g  | Kipon spec table |
+| diameter         | 58mm  | Kipon spec table |
+| length           | 65mm  | Kipon spec table |
+| filterThread     | 49mm  | Kipon spec table |
+| maxMagnification | 0.14  | Kipon spec table |
 
 ## Caveats
 
-- GFX version has larger image circle (55mm vs 44mm on full-frame mounts) and weighs more (384g vs 330g for X-mount). Same 5/5 element/group count across all mounts.
-- Optical formula designed by IB/E Optics (Germany), manufactured by Kipon/Shanghai Transvision.
-- No special glass types (ED, aspherical, HR) mentioned by any source. The simple 5-in-5 design appears to use standard optical glass.
-- Radojuva has a GFX-specific review that could not be accessed — may contain additional data.
+- GFX version is heavier (384g vs 270g for X-mount) due to the larger mount adapter
+- Physical specs (diameter, length, filter thread) are the same across mounts
