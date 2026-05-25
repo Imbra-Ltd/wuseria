@@ -30,12 +30,56 @@ Usage:
     echo url | py tools/fetch-page.py --batch -           # batch from stdin
 """
 
+import atexit
 import hashlib
+import os
 import re
+import signal
 import sys
 import urllib.request
 import urllib.error
 from pathlib import Path
+
+# Track Chrome PIDs spawned by this process for cleanup
+_spawned_chrome_pids: set[int] = set()
+
+
+def _get_chrome_pids() -> set[int]:
+    """Get all chrome.exe PIDs currently running (Windows only)."""
+    pids = set()
+    try:
+        import subprocess
+        result = subprocess.run(
+            ["tasklist", "/FI", "IMAGENAME eq chrome.exe", "/FO", "CSV", "/NH"],
+            capture_output=True, text=True, timeout=5,
+        )
+        for line in result.stdout.strip().splitlines():
+            parts = line.strip('"').split('","')
+            if len(parts) >= 2:
+                try:
+                    pids.add(int(parts[1]))
+                except ValueError:
+                    pass
+    except Exception:
+        pass
+    return pids
+
+
+def _cleanup_chrome() -> None:
+    """Kill Chrome processes that were spawned by this script."""
+    if not _spawned_chrome_pids:
+        return
+    still_running = _get_chrome_pids() & _spawned_chrome_pids
+    for pid in still_running:
+        try:
+            os.kill(pid, signal.SIGTERM)
+        except (OSError, ProcessLookupError):
+            pass
+    if still_running:
+        print(f"[cleanup] Killed {len(still_running)} orphaned Chrome process(es)", file=sys.stderr)
+
+
+atexit.register(_cleanup_chrome)
 
 CACHE_DIR = Path(__file__).resolve().parent.parent / ".cache" / "fetch"
 
@@ -218,7 +262,9 @@ def fetch_nodriver(url: str, raw_html: bool, wait_ms: int = 500) -> str | None:
     async def _fetch() -> str | None:
         browser = None
         try:
+            pids_before = _get_chrome_pids()
             browser = await uc_nd.start(headless=False)
+            _spawned_chrome_pids.update(_get_chrome_pids() - pids_before)
             page = await browser.get(url)
 
             # Event-driven wait: poll readyState then check bot detection
@@ -441,7 +487,9 @@ def fetch_uc(url: str, raw_html: bool, wait_ms: int = 500) -> str | None:
         return None
 
     try:
+        pids_before = _get_chrome_pids()
         with SB(uc=True, headless=True) as sb:
+            _spawned_chrome_pids.update(_get_chrome_pids() - pids_before)
             return _fetch_uc_with_session(sb, url, raw_html, wait_ms)
     except Exception as e:
         print(f"[uc] {e}", file=sys.stderr)
@@ -555,7 +603,9 @@ def _run_batch(
             import nodriver as uc_nd
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
+            pids_before = _get_chrome_pids()
             nd_browser = loop.run_until_complete(uc_nd.start(headless=False))
+            _spawned_chrome_pids.update(_get_chrome_pids() - pids_before)
             print(f"[batch] Persistent Nodriver session started for {len(urls)} URLs", file=sys.stderr)
         except ImportError:
             print("[batch] Nodriver not installed, falling back to UC", file=sys.stderr)
@@ -569,8 +619,10 @@ def _run_batch(
     if needs_uc and not nd_browser:
         try:
             from seleniumbase import SB
+            pids_before = _get_chrome_pids()
             sb_context = SB(uc=True, headless=True)
             sb_session = sb_context.__enter__()
+            _spawned_chrome_pids.update(_get_chrome_pids() - pids_before)
             print(f"[batch] Persistent UC session started for {len(urls)} URLs", file=sys.stderr)
         except ImportError:
             print("[batch] SeleniumBase not installed, falling back to per-URL mode", file=sys.stderr)
