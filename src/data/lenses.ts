@@ -8316,7 +8316,7 @@ const lenses: Lens[] = [
     maxAperture: 0.95,
     opticalElements: 11,
     opticalGroups: 8,
-    specialElements: ["1 ED", "3 HRI"],
+    specialElements: ["1 ED", "2 EHR", "3 HR"],
     apertureBlades: 9,
     hasCircularAperture: true,
     maxMagnification: 0.13,
