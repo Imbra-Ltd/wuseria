@@ -333,6 +333,14 @@ No public affiliate programs found (2026-04-06). Contact ФотоСинтези�
 - https://searchengineland.com/guide/what-is-seo — What is SEO
 - https://searchengineland.com/guide/seo/types-of-search-engine-ranking-factors — Ranking factors
 
+## Mitakon / Zhongyi — lens-specific references
+
+- https://petapixel.com/2023/07/13/the-zy-optics-200mm-f-4-addresses-demand-for-a-telephoto-macro-lens/ — PetaPixel; ZY Optics 200mm f/4 macro announcement and design rationale
+- https://www.cameralabs.com/zhongyi-mitakon-speedmaster-85mm-f1-2-review/ — CameraLabs; Gordon Laing review of Speedmaster 85mm f/1.2 (trust-3)
+- https://www.dpreview.com/forums/threads/from-which-lens-does-the-mitakon-65mm-1-4-copy.4719175/ — DPReview forum; discussion of Mitakon 65mm f/1.4 optical design lineage
+- https://www.klassik-cameras.de/Zhongyi35mm095.html — klassik-cameras.de; German review of Zhongyi Speedmaster 35mm f/0.95 with optical analysis
+- https://photographylife.com/lenses/mitakon-50mm-f0-95 — Photography Life; Mitakon 50mm f/0.95 spec page and overview
+
 ## Optical history
 
 - https://zeissikonveb.de/start/objektive/normalobjektive/primoplan.html — Primoplan design history with Zeiss collection data sheets, aberration curves, Goerz patent lineage
