@@ -168,6 +168,7 @@
 - https://jonasraskphotography.com/2013/10/23/full-frame-x-pro1-the-mitakon-lens-turbo-review/ — Jonas Rask; Mitakon Lens Turbo review on X-Pro1 (blocked by WP security, manual access needed)
 - https://amateurphotographer.com/second-hand/best-vintage-lenses/ — Amateur Photographer; best vintage lenses guide (Helios, Canon FD, Minolta, Pentax Takumar); interviews with Mathieu Stern, Annemarie Farley, Marc Sirisi
 - https://www.youtube.com/watch?v=-rozLBrz7Xk — Hunter Creates Things; "5 Criminally Underrated CHEAP Lenses" — Helios 44M 58mm f/2 (Zeiss Biotar formula, like 44-2), Pentax 67 135mm f/4 Macro, Pentax M 28mm f/2.8, Nikkor 50-300mm f/4.5 zoom, Nikkor 16mm f/2.8 fisheye
+- https://www.youtube.com/watch?v=D_rwGj03f30 — Anamorphic Cookbook; "Stop Saying 'Character'" — practical breakdown of aberrations and optical traits that shape lens rendering; argues for precise vocabulary (SA, coma, astigmatism, field curvature) over vague terms like "character" and "creamy"; relevant to #859 and #783
 
 ## Lens reviews — additional sources
 
