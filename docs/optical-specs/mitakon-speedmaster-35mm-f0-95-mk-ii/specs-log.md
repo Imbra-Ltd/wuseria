@@ -2,17 +2,17 @@
 
 ## Sources checked
 
-| Source                         | URL                                                                                                      | Date       | Result                                               |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------- |
-| zyoptics.net (live)            | https://zyoptics.net/product/mitakon-speedmaster-35mm-f-0-95/                                            | 2026-05-25 | 403 (bot protection)                                 |
-| zyoptics.net (Wayback)         | https://web.archive.org/web/20230529045554/https://zyoptics.net/product/mitakon-speedmaster-35mm-f-0-95/ | 2026-05-25 | Found: 11E/8G, 1 ED, 2 Extra-High RI, 1 High RI      |
-| zyoptics.net (SeleniumBase UC) | https://zyoptics.net/product/mitakon-speedmaster-35mm-f-0-95/                                            | 2026-05-25 | Found: 11E/8G, same special elements                 |
-| B&H Photo (search)             | https://www.bhphotovideo.com/c/search?q=mitakon+speedmaster+35mm+0.95+fujifilm                           | 2026-05-25 | Found: "One Extra-Low Dispersion Element"            |
-| AllPhotoLenses                 | https://allphotolenses.com/lenses/item/c_4048.html                                                       | 2026-05-25 | Found: confirms 11/8                                 |
-| Alik Griffin review            | https://alikgriffin.com/mitakon-speedmaster-35mm-f0-95-ii-review-sample-photos/                          | 2026-05-25 | Found: confirms 11/8, notes "coatings are fantastic" |
-| DPReview                       | dpreview.com                                                                                             | 2026-05-25 | Not listed (no Mitakon brand)                        |
-| LensTip                        | lenstip.com                                                                                              | 2026-05-25 | Not found                                            |
-| OpticalLimits                  | opticallimits.com                                                                                        | 2026-05-25 | 404                                                  |
+| Source                         | URL                                                                                                      | Date       | Result                                                |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------- | ---------- | ----------------------------------------------------- |
+| zyoptics.net (live)            | https://zyoptics.net/product/mitakon-speedmaster-35mm-f-0-95/                                            | 2026-05-25 | 403 (bot protection)                                  |
+| zyoptics.net (Wayback)         | https://web.archive.org/web/20230529045554/https://zyoptics.net/product/mitakon-speedmaster-35mm-f-0-95/ | 2026-05-25 | Found: 11E/8G, 1 ED, 2 Extra-High RI, 1 High RI       |
+| zyoptics.net (SeleniumBase UC) | https://zyoptics.net/product/mitakon-speedmaster-35mm-f-0-95/                                            | 2026-05-25 | Found: 11E/8G, same special elements                  |
+| B&H Photo (search)             | https://www.bhphotovideo.com/c/search?q=mitakon+speedmaster+35mm+0.95+fujifilm                           | 2026-05-25 | Found: "One Extra-Low Dispersion Element"             |
+| AllPhotoLenses                 | https://allphotolenses.com/lenses/item/c_4048.html                                                       | 2026-05-25 | Found: confirms 11/8                                  |
+| Alik Griffin review            | https://alikgriffin.com/mitakon-speedmaster-35mm-f0-95-ii-review-sample-photos/                          | 2026-05-25 | Found: confirms 11/8, notes "coatings are fantastic"  |
+| DPReview                       | dpreview.com                                                                                             | 2026-05-25 | Not listed (no Mitakon brand)                         |
+| LensTip (Mk I review)          | https://www.lenstip.com/441.1-Lens_review-Mitakon_Speedmaster_35_mm_f_0.95_Introduction.html             | 2026-05-25 | Found: Mk I review (10E/7G, different optical design) |
+| OpticalLimits                  | opticallimits.com                                                                                        | 2026-05-25 | 404                                                   |
 
 ## Optical construction
 
@@ -26,3 +26,4 @@
 
 - B&H simplifies to "One Extra-Low Dispersion Element" and does not list HRI separately in key features
 - zyoptics.net page distinguishes "Extra-High Refractive Index" (2) from "High Refractive Index" (1) — both are HRI glass types with different refractive indices, summed as 3 HRI
+- LensTip reviewed the **Mk I** (10E/7G, 10 blades, 680g) — different optical design from our Mk II (11E/8G, 9 blades, 460g). The Mk I review found single-layer MgF₂-quality coatings with 85-86% max transmission (very basic). If the Mk II uses similar coating technology, this would explain why Mitakon doesn't brand their coatings. Not directly applicable to Mk II data.
