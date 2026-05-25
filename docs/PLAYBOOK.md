@@ -187,16 +187,19 @@ genres (once genre formulas are implemented).
 
 ### 2.7 Utility scripts
 
-**Fetch a web page (bot-blocked sites):**
+**Fetch a web page (four-tier auto-escalation):**
 
 ```bash
-py tools/fetch-page.py <url>              # text content (cached)
-py tools/fetch-page.py <url> --html       # raw HTML (cached)
-py tools/fetch-page.py <url> --wait 5000  # wait N ms after load
+py tools/fetch-page.py <url>              # auto mode: urllib → Playwright → Nodriver → UC
+py tools/fetch-page.py <url> --html       # raw HTML output
+py tools/fetch-page.py <url> --js         # force Playwright (JS-rendered pages)
+py tools/fetch-page.py <url> --nodriver   # force Nodriver (headed Chrome, bot bypass)
+py tools/fetch-page.py <url> --uc         # force SeleniumBase UC (headless fallback)
 py tools/fetch-page.py <url> --no-cache   # bypass cache, fetch fresh
+py tools/fetch-page.py --batch urls.txt --nodriver --output-dir out/  # batch mode
 ```
 
-Responses are cached in `.cache/fetch/` with a full-page screenshot (PNG).
+Responses are cached in `.cache/fetch/`. See `tools/FETCH-PAGE.md` for details.
 
 **Audit spec field coverage per brand:**
 

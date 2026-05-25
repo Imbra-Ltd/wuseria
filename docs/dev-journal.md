@@ -2847,3 +2847,42 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Merge PR #864
 - Continue optical specs for remaining 6 brands: Mitakon (5), AstrHori (7), NiSi (10), Meike (14), 7Artisans (18)
 - Quick win next: Mitakon (5 lenses)
+
+---
+
+### Session 84 — Mitakon Optical Specs & fetch-page.py Rewrite (2026-05-25)
+
+**PRs:** #866
+**Issues:** #757 (Mitakon specs), #833 (updated missing lenses), #865 (PerimeterX spike)
+
+#### Key changes
+
+- Mitakon optical specs for all 7 lenses (including Mk I discovered via LensTip)
+- Kipon IBERIT 75mm f/2.4 GFX specs copied from Handevision (same optical design)
+- `tools/mitakon/` extraction tool (SeleniumBase UC for zyoptics.net bot protection)
+- MTF chart found for Speedmaster 65mm f/1.4 via DuckDuckGo → XCD version page
+- Issue #833 expanded from ~2 to ~11 missing Mitakon lenses (B&H inventory audit)
+
+#### fetch-page.py rewrite
+
+- Four-tier auto-escalation: urllib (~1s) → Playwright (~5-9s) → Nodriver (~6-8s) → SeleniumBase UC (~18-24s)
+- Bot detection skip: urllib detects captcha → straight to Nodriver (skips Playwright)
+- `domcontentloaded` over `networkidle` (Playwright ~40% faster)
+- Event-driven UC waits (poll readyState + bot clearance, no fixed sleeps)
+- Batch mode with persistent browser session (--batch, --output-dir)
+- Nodriver integration: headed Chrome via CDP, no driver binary, 40% faster than UC batch
+- Camoufox tested but not integrated (530MB, still blocked by PerimeterX)
+- `tools/FETCH-PAGE.md` dev journal documenting v1-v5 evolution
+
+#### Key decisions
+
+- DuckDuckGo HTML search (`html.duckduckgo.com/html/`) as discovery tool — works with urllib, bypasses Google/Bing CAPTCHAs, found MTF chart on alternate product page
+- PerimeterX "Press & Hold" is a hard wall for all automated tools — spike #865 for CDP mouse simulation
+- Nodriver preferred over UC for bot-protected sites (faster, no driver binary)
+- Mitakon doesn't publish MTF charts, construction diagrams, or coating names (company-wide policy)
+
+#### Next
+
+- Merge PR #866
+- Continue optical specs: AstrHori (7), NiSi (10), Meike (14), 7Artisans (18)
+- Quick win next: AstrHori (7 lenses)
