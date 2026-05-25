@@ -2806,3 +2806,44 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 
 - Continue optical specs for remaining 7 brands: Handevision (5), Mitakon (6), AstrHori (7), NiSi (10), Meike (14), 7Artisans (18)
 - Merge PR #862
+
+---
+
+### Session 84 — Handevision IBERIT Optical Specs
+
+**Tool:** Claude Code (Opus 4.6 1M)
+
+#### PRs
+
+- #864 — Handevision IBERIT optical specs, MTF charts, physical corrections, discontinued
+
+#### Issues
+
+- #750 — will close on merge (Handevision optical specs)
+- #863 — created (spike: Handevision IBERIT → Kipon ELEGANT rebrand evaluation)
+- #817 — updated (clarified ELEGANT vs IBERIT vs Colibri in task body)
+- #783 — blocked by #859 (AQ scoring requires character field first)
+- #739 — updated checklist (Meyer Optik checked off, was missed in session 83)
+
+#### Key changes
+
+- Optical construction for all 5 IBERIT lenses: 24mm (8E/7G), 35mm (6E/6G), 50mm (6E/6G), 75mm (5E/5G), 90mm (4E/4G)
+- 15 Zemax OpticStudio MTF charts downloaded from Kipon blog (3 apertures x 5 lenses) via Playwright (hotlink-protected)
+- Systematic physical spec corrections: aperture blades, weight, length, MFD — DB had wrong mount column values (Leica SL instead of Fuji X)
+- Prices updated $750 → $350 (current Kipon store price)
+- All 5 lenses marked `isDiscontinued: true` (Handevision brand defunct, same optics now sold as Kipon ELEGANT)
+- Coatings: exhaustive search (30+ sources) confirmed no coating name published by Kipon/IB/E Optics
+- Construction diagrams: not published anywhere
+- Bookmarked Anamorphic Cookbook "Stop Saying Character" video (relevant to #859, #783)
+
+#### Key decisions
+
+- Handevision IBERIT and Kipon ELEGANT are the same optics — confirmed by Kipon's own blog ("the optic system with IBERIT series")
+- Two-entry approach for SEO: keep IBERIT (discontinued, second-hand) + add ELEGANT (active) later via #817
+- AQ spike #783 blocked by character field spike #859
+
+#### Next
+
+- Merge PR #864
+- Continue optical specs for remaining 6 brands: Mitakon (5), AstrHori (7), NiSi (10), Meike (14), 7Artisans (18)
+- Quick win next: Mitakon (5 lenses)
