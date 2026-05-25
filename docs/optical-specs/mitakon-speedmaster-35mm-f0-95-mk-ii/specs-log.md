@@ -26,7 +26,7 @@
 - **Special elements:** 1 ED + 2 Extra-High Refractive Index + 3 High Refractive Index = 6 special elements total (B&H, Photography Bay, Lensrentals all agree; zyoptics.net listed HR as 1 — typo)
 - **Coating:** not published (no branded coating name; Alik Griffin notes good coating quality)
 - **Construction diagram:** found — saved as `construction-diagram.png` (from photorumors.com, official ZY Optics material). Shows 11 elements in 8 groups with colored special elements (blue, orange).
-- **MTF chart:** not found
+- **MTF chart:** found — saved as `construction-diagram-cine-mtf.png` (from eBay cine lens listing, combined diagram + MTF). MTF chart shows 10/30 lp/mm S/T at image heights 0–21.28mm (APS-C). Same optical design as photo version, cine variant uses T-stop marking.
 
 ## Caveats
 
