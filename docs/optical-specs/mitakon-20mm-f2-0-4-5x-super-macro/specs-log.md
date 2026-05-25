@@ -11,12 +11,12 @@
 | Dyxum                          | https://www.dyxum.com/lenses/Mitakon-Creator-20mm-F2-Super-Macro_lens7015.html                    | 2026-05-25 | Found: confirms 6/4                                       |
 | DPReview                       | dpreview.com                                                                                      | 2026-05-25 | Not listed                                                |
 | LensTip                        | lenstip.com                                                                                       | 2026-05-25 | Not found                                                 |
-| eBay (product image)           | https://i.ebayimg.com/images/g/-6YAAOSwYV9e4Z9x/s-l960.webp                                       | 2026-05-25 | Found: construction diagram (official ZY Optics material) |
+| eBay (product image)           | https://i.ebayimg.com/images/g/-6YAAOSwYV9e4Z9x/s-l960.png                                        | 2026-05-25 | Found: construction diagram (official ZY Optics material) |
 
 ## Optical construction
 
 - **Elements / Groups:** 6 / 4 (zyoptics.net spec table: "Optical Design 6 Elements in 4 Groups")
 - **Special elements:** none mentioned on any source
 - **Coating:** not published
-- **Construction diagram:** found — saved as `construction-diagram.webp` (from eBay product listing, official ZY Optics material). Confirms 6E/4G with no special elements. Text: "Super macro lens adopts 6pcs 4 groups optical structures, 3pcs aperture blade, magnification achieve amazing 4.5X"
+- **Construction diagram:** found — saved as `construction-diagram.png` (from eBay product listing, official ZY Optics material). Confirms 6E/4G with no special elements. Text: "Super macro lens adopts 6pcs 4 groups optical structures, 3pcs aperture blade, magnification achieve amazing 4.5X"
 - **MTF chart:** not found

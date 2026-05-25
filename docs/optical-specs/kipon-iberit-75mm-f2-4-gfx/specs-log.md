@@ -14,7 +14,7 @@
 - **Special elements:** none mentioned
 - **Coating:** not published
 - **Construction diagram:** not found
-- **MTF chart:** shared with Handevision IBERIT 75mm f/2.4 (same optical design); Zemax OpticStudio computed charts from Kipon blog; 3 apertures saved: `mtf-f2.4.jpg`, `mtf-f4.0.jpg`, `mtf-f5.6.jpg`
+- **MTF chart:** shared with Handevision IBERIT 75mm f/2.4 (same optical design); Zemax OpticStudio computed charts from Kipon blog; 3 apertures saved: `mtf-f2.4.png`, `mtf-f4.0.png`, `mtf-f5.6.png`
 
 ## Shared optical design
 

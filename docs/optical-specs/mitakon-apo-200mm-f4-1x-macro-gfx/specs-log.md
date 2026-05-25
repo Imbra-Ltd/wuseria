@@ -17,5 +17,5 @@
 - **Elements / Groups:** 11 / 7 (zyoptics.net spec table, confirmed by ZY Optics press release via FujiRumors)
 - **Special elements:** 3 ED (Extraordinary Dispersion), 3 ultra-high index, 1 extra-high transmission — from ZY Optics press release: "three Extraordinary Dispersion (ED) lenses, three ultra-high index elements, and a single extra-high transmission lens"
 - **Coating:** not published
-- **Construction diagram:** found — saved as `construction-diagram-mtf.jpg` (from PetaPixel, official ZY Optics material). Combined image with construction diagram (left) and MTF chart (right). Shows 11 elements in 7 groups with colored special elements (orange = ED, blue/purple = HRI/UHT).
+- **Construction diagram:** found — saved as `construction-diagram-mtf.png` (from PetaPixel, official ZY Optics material). Combined image with construction diagram (left) and MTF chart (right). Shows 11 elements in 7 groups with colored special elements (orange = ED, blue/purple = HRI/UHT).
 - **MTF chart:** found — in same file as construction diagram. Shows 10 and 30 lp/mm S/T at paraxial image heights 0–21mm. Excellent center performance (~1.0 at 10 lp/mm, ~0.9 at 30 lp/mm), edge drops to ~0.88/0.65 at 20mm.

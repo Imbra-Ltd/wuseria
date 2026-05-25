@@ -10,8 +10,8 @@
 - Elements/groups: 7/6
 - Special elements: none mentioned in text; construction diagram shows 2 High Index
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
-- MTF chart: found (Specification-1.webp)
-- Construction diagram: found (Specification-2-EN.webp)
+- MTF chart: found (Specification-1.png)
+- Construction diagram: found (Specification-2-EN.png)
 
 ### Northlight Images (Keith Cooper)
 

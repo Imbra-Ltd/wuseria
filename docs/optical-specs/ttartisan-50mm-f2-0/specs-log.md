@@ -10,8 +10,8 @@
 - Elements/groups: 6/5
 - Special elements: none mentioned in text; construction diagram shows 2 High Index
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
-- MTF chart: found (Specification-1.webp)
-- Construction diagram: found (Specification-2-EN.webp); confirms 2 HR (blue) in rear group
+- MTF chart: found (Specification-1.png)
+- Construction diagram: found (Specification-2-EN.png); confirms 2 HR (blue) in rear group
 
 ## Caveats
 

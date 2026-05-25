@@ -10,8 +10,8 @@
 - Elements/groups: 11/7 (mirrorless version); 12/10 (SLR version)
 - Special elements: none mentioned in text; construction diagram shows 1 Extra low Dispersion + 4 High Index
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
-- MTF chart: found (Specification-1-M.webp, mirrorless variant)
-- Construction diagram: found (Specification-2-M-EN.webp, mirrorless variant); confirms 1 ED (purple, front group) + 4 HR (blue, center + rear)
+- MTF chart: found (Specification-1-M.png, mirrorless variant)
+- Construction diagram: found (Specification-2-M-EN.png, mirrorless variant); confirms 1 ED (purple, front group) + 4 HR (blue, center + rear)
 
 ## Caveats
 

@@ -22,7 +22,7 @@
 - **Elements / Groups:** 11 / 8 (zyoptics.net spec table, confirmed by AllPhotoLenses)
 - **Special elements:** 1 ED + 2 Extra-High Refractive Index + 1 High Refractive Index = 1 ED, 3 HRI total
 - **Coating:** not published (no branded coating name; Alik Griffin notes good coating quality)
-- **Construction diagram:** found — saved as `construction-diagram.jpg` (from photorumors.com, official ZY Optics material). Shows 11 elements in 8 groups with colored special elements (blue, orange).
+- **Construction diagram:** found — saved as `construction-diagram.png` (from photorumors.com, official ZY Optics material). Shows 11 elements in 8 groups with colored special elements (blue, orange).
 - **MTF chart:** not found
 
 ## Caveats

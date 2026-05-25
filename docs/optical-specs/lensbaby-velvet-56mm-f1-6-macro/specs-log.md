@@ -19,8 +19,8 @@
 - **Optical design:** Singlet-doublet-singlet (unique to this lens)
 - **Coating:** Broadband multi-coated anti-reflective
 - **Special elements:** None documented
-- **MTF chart:** ePhotozine Imatest chart saved as `mtf-chart-ephotozine.jpg` — centre reaches Excellent from f/5.6, edges remain Poor (halation by design)
-- **CA chart:** ePhotozine Imatest chart saved as `ca-chart-ephotozine.jpg` — extreme readings wide open due to haze effect confusing Imatest
+- **MTF chart:** ePhotozine Imatest chart saved as `mtf-chart-ephotozine.png` — centre reaches Excellent from f/5.6, edges remain Poor (halation by design)
+- **CA chart:** ePhotozine Imatest chart saved as `ca-chart-ephotozine.png` — extreme readings wide open due to haze effect confusing Imatest
 - **Construction diagram:** Not available — Lensbaby considers design proprietary
 
 ## Caveats

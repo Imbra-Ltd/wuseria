@@ -10,8 +10,8 @@
 - Elements/groups: 14/10
 - Special elements: "6 high-index lenses" mentioned in text
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
-- MTF chart: found (Specification-1.webp)
-- Construction diagram: found (Specification-2.webp)
+- MTF chart: found (Specification-1.png)
+- Construction diagram: found (Specification-2.png)
 
 ## Caveats
 

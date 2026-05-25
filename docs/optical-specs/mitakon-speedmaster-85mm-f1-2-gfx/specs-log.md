@@ -18,5 +18,5 @@
 - **Elements / Groups:** 9 / 6 (zyoptics.net spec table, confirmed by FujiRumors 2017 announcement)
 - **Special elements:** 2 ED + 4 HRI — from description: "two extra-low dispersion elements with four high refractive index elements"; FujiRumors: "two of which are ED lenses, and four are high refraction and low dispersion glass lenses"
 - **Coating:** not published
-- **Construction diagram:** found — saved as `construction-diagram.jpg` (from CameraLabs review by Gordon Laing). Shows 9 elements in 6 groups with colored special elements (blue = HRI, beige = ED).
+- **Construction diagram:** found — saved as `construction-diagram.png` (from CameraLabs review by Gordon Laing). Shows 9 elements in 6 groups with colored special elements (blue = HRI, beige = ED).
 - **MTF chart:** not found

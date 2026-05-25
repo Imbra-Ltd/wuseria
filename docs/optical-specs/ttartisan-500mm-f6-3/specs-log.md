@@ -10,8 +10,8 @@
 - Elements/groups: 8/5
 - Special elements: "2 extra-low dispersion glass and 2 high index glass" in text
 - Coating: "MC Multi-Layer Coatings" explicitly mentioned on page
-- MTF chart: found (Specification-1.webp)
-- Construction diagram: found (Specification-2-EN.webp)
+- MTF chart: found (Specification-1.png)
+- Construction diagram: found (Specification-2-EN.png)
 
 ## Caveats
 

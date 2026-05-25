@@ -15,8 +15,8 @@
 
 ### Image sources (Shopify CDN)
 
-- MTF: https://cdn.shopify.com/s/files/1/0433/2224/5282/files/MTF_862c5298-6eeb-4d5d-8497-fb475c5710c3.jpg
-- Construction: https://cdn.shopify.com/s/files/1/0433/2224/5282/files/EN_4d288a8b-f553-4527-b803-80a2b86af3f9.jpg
+- MTF: https://cdn.shopify.com/s/files/1/0433/2224/5282/files/MTF_862c5298-6eeb-4d5d-8497-fb475c5710c3.png
+- Construction: https://cdn.shopify.com/s/files/1/0433/2224/5282/files/EN_4d288a8b-f553-4527-b803-80a2b86af3f9.png
 
 ## Caveats
 

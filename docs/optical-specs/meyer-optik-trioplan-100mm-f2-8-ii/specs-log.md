@@ -14,7 +14,7 @@
 - **opticalGroups:** 3 (triplet design — 3 single elements = 3 groups by definition)
 - **specialElements:** none — classic Cooke triplet with 15 steel aperture blades, no ED/aspherical elements
 - **coating:** multi-coated (official: "newly designed lens coating"; no proprietary name; Schott optical glass across Meyer Optik lineup)
-- **constructionDiagram:** `trioplan-construction.jpg` — labeled Cooke triplet optical diagram (L I positive, L II negative, L III positive) with radii r₁-r₆ and thickness/spacing dimensions (source: zeissikonveb.de)
+- **constructionDiagram:** `trioplan-construction.png` — labeled Cooke triplet optical diagram (L I positive, L II negative, L III positive) with radii r₁-r₆ and thickness/spacing dimensions (source: zeissikonveb.de)
 - **MTF chart:** not found — character lens, manufacturer does not publish MTF
 
 ## Physical spec corrections (2026-05-24)

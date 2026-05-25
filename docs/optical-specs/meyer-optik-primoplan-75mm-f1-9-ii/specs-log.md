@@ -15,7 +15,7 @@
 - **opticalGroups:** 4 (official page)
 - **specialElements:** none — enhanced Cooke triplet design, no ED/aspherical/HR elements mentioned
 - **coating:** multi-coated (brand standard, no proprietary name; Schott optical glass across Meyer Optik lineup)
-- **constructionDiagram:** same 5E/4G Primoplan design as the 58mm; `primoplan-optical-design.jpg` copied from 58mm folder (source: zeissikonveb.de)
+- **constructionDiagram:** same 5E/4G Primoplan design as the 58mm; `primoplan-optical-design.png` copied from 58mm folder (source: zeissikonveb.de)
 - **MTF chart:** not found — character lens, manufacturer does not publish MTF
 
 ## Physical spec corrections (2026-05-24)

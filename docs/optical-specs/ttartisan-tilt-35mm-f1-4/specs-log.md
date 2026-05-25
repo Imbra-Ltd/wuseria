@@ -10,8 +10,8 @@
 - Elements/groups: 7/6
 - Special elements: none mentioned in text; construction diagram confirms no special glass
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
-- MTF chart: found (Specification-MTF.webp)
-- Construction diagram: found (Specification-OD-EN.webp)
+- MTF chart: found (Specification-MTF.png)
+- Construction diagram: found (Specification-OD-EN.png)
 
 ### Phillip Reeve
 

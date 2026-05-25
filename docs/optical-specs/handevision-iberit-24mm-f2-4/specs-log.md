@@ -21,7 +21,7 @@
 - **Special elements:** none mentioned — no ED, aspherical, or special glass
 - **Coating:** not published — no coating name on any source
 - **Construction diagram:** not found — Kipon/IB/E Optics does not publish diagrams
-- **MTF chart:** found on Kipon blog (Zemax OpticStudio computed, 2016-10-06); 3 apertures saved: `mtf-f2.4.jpg`, `mtf-f4.0.jpg`, `mtf-f5.6.jpg`; Zemax filename: `24mmFF-000-05-2.ZMX`
+- **MTF chart:** found on Kipon blog (Zemax OpticStudio computed, 2016-10-06); 3 apertures saved: `mtf-f2.4.png`, `mtf-f4.0.png`, `mtf-f5.6.png`; Zemax filename: `24mmFF-000-05-2.ZMX`
 
 ## Physical spec corrections (FX mount)
 
