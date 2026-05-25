@@ -401,6 +401,7 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
    - Dustin Abbott / Phillip Reeve reviews — trust-3 field measurements
    - Duclos Lenses (`ducloslenses.com`) — reliable spec tables for cinema lenses (length, weight, min focus)
    - **Google Image Search** for construction diagrams and MTF charts — text-based searches miss images on non-English blogs, press kit reposts, and pages with minimal surrounding text; search `<brand> <model> optical construction diagram` or `<brand> <model> MTF chart`
+   - **Image filename caveat:** when checking article pages for diagrams and MTF charts, do not rely on image filename keywords alone — news sites use generic filenames (e.g. `APO200F14-lens.jpg` for a combined construction diagram + MTF chart). For pages with a small number of images (< 10), download and visually check all content images rather than filtering by filename patterns.
 5. **LensTip page ID caveat:** URL names are ignored; only the numeric ID matters. Always verify `Manufacturer` and `Model` fields on the page — wrong IDs redirect silently to unrelated lenses.
 6. Verify extracted data against downloaded images and official pages:
    - Count elements and groups in construction diagrams — must match `opticalElements` and `opticalGroups`
