@@ -380,59 +380,69 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
 
 ### 2.8 Fill and verify tech specs per brand
 
-1. **Verify the brand's full lens lineup first** — before researching individual
-   lens specs, confirm every X-mount and GFX lens the brand offers. Do not
-   assume the database is complete. Cross-reference against:
-   - Official manufacturer product pages or catalog
-   - Retailers (B&H, Adorama) — search `<brand> Fuji X mount`
-   - [alikgriffin.com X-mount list](https://alikgriffin.com/a-complete-list-of-fujifilm-x-mount-lenses/) and [GFX list](https://alikgriffin.com/fujifilm-g-lenses-the-ultimate-list/) — note: lens tables are AJAX-loaded (Ninja Tables plugin), not in page HTML; use the API endpoint `https://alikgriffin.com/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=<ID>&target_action=get-all-data` to fetch data, or ask the user to paste the table
-   - If missing lenses are found, create a separate issue before continuing
-2. Run `npx tsx scripts/audit-brand.ts <Brand>` to see gaps
-3. Run the brand extraction tool if available: `py tools/<brand>/fetch_specs.py`
-4. **Generate research URLs** — run `py tools/lookup.py "<lens name>"` to get direct
-   links and search URLs for all sources in one shot. For LensTip, the tool uses
-   the local index (`tools/lenstip/lenstip-index.json`) to resolve the opaque numeric
-   ID automatically. To rebuild the index: `py tools/lenstip/build_index.py`
-5. Research missing fields from these sources (priority order):
-   - Official manufacturer pages (dimensions, filter thread, build features)
-   - DPReview spec database (`dpreview.com/products/<brand>/lenses/<slug>`) — comprehensive specs including magnification; manufacturer descriptions often contain data not on official pages
-   - LensTip spec database (`lenstip.com/<id>-<name>-lens_specifications.html`) — best for maxMagnification on budget lenses; use `py tools/lenstip/search.py "<lens>"` to find the page ID
-   - Radojuva lens database (`radojuva.com`) — hands-on magnification measurements and detailed optical data
-   - digitalkamera.de Datenblatt pages — good for dimensions, rarely has magnification
-   - cameradecision.com via `fetch-page.py` (403s on direct fetch, Playwright bypasses)
-   - Mobile01 (`mobile01.com`) — Taiwan's largest tech forum; staff reviewers with systematic testing, construction diagrams from manufacturers; especially good for Chinese/Taiwanese brands (Kamlan, etc.); requires SeleniumBase UC mode to fetch (Akamai CDN blocks headless browsers)
-   - Photography Life lens database (`photographylife.com/lenses/<slug>`) — spec tables with magnification, construction diagrams, special elements
-   - Dustin Abbott / Phillip Reeve reviews — trust-3 field measurements
-   - Duclos Lenses (`ducloslenses.com`) — reliable spec tables for cinema lenses (length, weight, min focus)
-   - **Google Image Search** for construction diagrams and MTF charts — text-based searches miss images on non-English blogs, press kit reposts, and pages with minimal surrounding text; search `<brand> <model> optical construction diagram` or `<brand> <model> MTF chart`
-   - **Image filename caveat:** when checking article pages for diagrams and MTF charts, do not rely on image filename keywords alone — news sites use generic filenames (e.g. `APO200F14-lens.jpg` for a combined construction diagram + MTF chart). For pages with a small number of images (< 10), download and visually check all content images rather than filtering by filename patterns.
-6. **LensTip page ID caveat:** URL names are ignored; only the numeric ID matters. Always verify `Manufacturer` and `Model` fields on the page — wrong IDs redirect silently to unrelated lenses.
-7. Verify extracted data against downloaded images and official pages:
-   - Count elements and groups in construction diagrams — must match `opticalElements` and `opticalGroups`
-   - Identify special elements (aspherical, LD, ED) marked in diagrams — must match `specialElements`
-   - Check that all coatings on the product page are captured, including protective coatings (fluorine, water-repellent) that are often listed separately from optical coatings (AR, multi-coating)
-   - For lenses with X-mount variants, verify physical specs (weight, length, diameter) use X-mount values, not Sony E or other mounts
-8. **Per-lens provenance workflow** (mandatory sequence for every lens touched):
-   1. Run `py tools/lookup.py "<lens name>"` to generate all research URLs
-   2. Check each mandatory source and record the result in specs-log.md (found/not found/404/paywall)
-   3. User confirms or corrects findings
-   4. Update `specs-log.md` FIRST — document the source, date, result, and caveats
-   5. Edit `lenses.ts` — apply the verified data
-   6. Confirm both files updated before moving to the next lens
-   - The specs-log is the **primary deliverable** — data without provenance is unverifiable
-   - If lenses share optical design across mounts (e.g. X + GFX), update BOTH specs-logs
-   - **Mandatory source checklist** — every specs-log MUST include a row for each of
-     these sources, even if the result is "Not found":
-     1. Official manufacturer page
-     2. LensTip (use `py tools/lenstip/search.py "<lens>"` for the page ID)
-     3. Radojuva
-     4. DPReview
-     5. Google Image Search (construction diagram + MTF chart)
-9. Add fields to `src/data/lenses.ts`, run `npm run validate`
-10. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
-11. **Audit false negatives** — periodically run `py tools/lenstip/audit_specslog.py --fix`
-    to find specs-logs that say "Not covered" but where LensTip actually has a page.
-    Rebuild the index quarterly: `py tools/lenstip/build_index.py`
+#### Phase 1 — Prepare
+
+1. **Verify the brand's full lineup** — confirm every X-mount and GFX lens
+   the brand offers before researching individual specs. Cross-reference
+   official catalog, retailers (B&H, Adorama), and
+   [alikgriffin.com](https://alikgriffin.com/a-complete-list-of-fujifilm-x-mount-lenses/).
+   Create a separate issue for any missing lenses.
+2. **Audit gaps** — run `npx tsx scripts/audit-brand.ts <Brand>`
+3. **Run extraction tool** if available: `py tools/<brand>/fetch_specs.py`
+
+#### Phase 2 — Research each lens
+
+4. **Generate research URLs** — `py tools/lookup.py "<lens name>"`
+5. **Check each source** and record result in `specs-log.md` (found / not found / 404 / paywall).
+   Every specs-log MUST include a row for at least these five sources:
+   - Official manufacturer page
+   - LensTip (`py tools/lenstip/search.py "<lens>"` resolves the page ID)
+   - Radojuva
+   - DPReview
+   - Google Image Search (construction diagram + MTF chart)
+6. **Verify** extracted data against diagrams and official pages — element/group
+   counts, special elements, coatings (including protective), X-mount dimensions
+
+#### Phase 3 — Commit per lens
+
+7. Update `specs-log.md` FIRST — the specs-log is the primary deliverable
+8. Edit `lenses.ts` — apply the verified data
+9. Confirm both files updated before moving to the next lens
+10. Run `npm run validate`
+11. If adding `maxMagnification` to a scored lens, also add `macro` genre mark
+
+#### Maintenance
+
+- **Audit false negatives** — `py tools/lenstip/audit_specslog.py --fix`
+- **Rebuild LensTip index** quarterly — `py tools/lenstip/build_index.py`
+
+#### Source reference (priority order)
+
+| Source                        | Best for                                  | Notes                                  |
+| ----------------------------- | ----------------------------------------- | -------------------------------------- |
+| Official manufacturer         | Dimensions, filter thread, build features | Always check first                     |
+| DPReview                      | Comprehensive specs incl. magnification   | Archived but still available           |
+| LensTip                       | maxMagnification on budget lenses         | Opaque numeric IDs — use the index     |
+| Radojuva                      | Hands-on magnification measurements       | Multi-language, search all variants    |
+| digitalkamera.de              | Dimensions                                | Rarely has magnification               |
+| cameradecision.com            | Spec comparison                           | 403s on direct fetch, use Playwright   |
+| Mobile01                      | Construction diagrams, Chinese brands     | Requires SeleniumBase UC               |
+| Photography Life              | Spec tables, diagrams, special elements   | Predictable URL pattern                |
+| Dustin Abbott / Phillip Reeve | Trust-3 field measurements                | Thorough optical analysis              |
+| Duclos Lenses                 | Cinema lens specs                         | Length, weight, min focus              |
+| Google Image Search           | Construction diagrams, MTF charts         | Text searches miss non-English sources |
+
+#### Caveats
+
+- **LensTip IDs:** URL names are ignored; only the numeric ID matters. Verify
+  `Manufacturer` and `Model` on the page — wrong IDs redirect silently.
+- **Image filenames:** do not filter by filename keywords — news sites use
+  generic names (e.g. `APO200F14-lens.jpg` for a combined diagram + MTF).
+  For pages with < 10 images, visually check all content images.
+- **Mount variants:** if lenses share optical design across mounts, update
+  BOTH specs-logs.
+- **alikgriffin.com tables:** AJAX-loaded (Ninja Tables plugin), not in page
+  HTML. Use the admin-ajax API endpoint or ask the user to paste the table.
 
 ## 3. Quality
 
