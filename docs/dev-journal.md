@@ -3003,3 +3003,31 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - 8 Dependabot PRs pending (same CDN outage)
 - Re-check 10 false negative specs-logs with actual LensTip data
 - Continue optical specs: NiSi (#758), Meike (#755), 7Artisans (#748)
+
+---
+
+### Session 86 — NiSi Optical Specs
+
+- PR #875 merged — optical specs for all 10 NiSi lenses (closes #758)
+- Issues closed: #758
+- Epic #739 updated: 22/25 brands done, 3 remaining (7Artisans, Meike)
+
+#### Key changes
+
+- Sunstar 9mm f/2.8: 14/12, 2 aspherical, 4 ED, SA+ coating
+- Sunstar 15mm f/4: 12/10, 1 aspherical, 2 ED
+- Athena Primes (8 cine lenses): all optical fields undefined — NiSi deliberately protects proprietary glass block engineering; confirmed by Newsshooter review (Matthew Allard ACS); Jomla.ae retailer lists 13/11 for 5 lenses, recorded with caveat, kept undefined in lenses.ts
+- Added Newsshooter as review source (field, trust-2) for cinema lens coverage
+- Added DuckDuckGo fallback caveat to PLAYBOOK 2.8
+- Bookmarked Roger Cicala MTF bench testing article (DPReview)
+
+#### Key decisions
+
+- Cinema lens brands that don't publish element/group counts get documented provenance (specs-log) but no data in lenses.ts — honesty over speculation
+- Jomla.ae (UAE retailer) data treated as unverified — not sufficient to override manufacturer non-disclosure
+- Chinese-language search tested on Sirui as experiment — not worth adding to PLAYBOOK as standard step (same data as English sources)
+
+#### Next
+
+- Continue optical specs: 7Artisans (#748, 18 lenses), Meike (#755, 14 lenses)
+- Epic #739: 3 brands remaining (7Artisans, Meike + AstrHori missing lenses #867)
