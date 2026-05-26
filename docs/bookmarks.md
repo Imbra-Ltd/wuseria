@@ -341,6 +341,11 @@ No public affiliate programs found (2026-04-06). Contact ФотоСинтези�
 - https://www.klassik-cameras.de/Zhongyi35mm095.html — klassik-cameras.de; German review of Zhongyi Speedmaster 35mm f/0.95 with optical analysis
 - https://photographylife.com/lenses/mitakon-50mm-f0-95 — Photography Life; Mitakon 50mm f/0.95 spec page and overview
 
+## Lens news and rumor sites
+
+- https://photorumors.com/ — lens announcements with official press materials (construction diagrams, specs)
+- https://photographybay.com/ — lens news and announcements; useful for spec confirmation from press releases
+
 ## Optical history
 
 - https://zeissikonveb.de/start/objektive/normalobjektive/primoplan.html — Primoplan design history with Zeiss collection data sheets, aberration curves, Goerz patent lineage

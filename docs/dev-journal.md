@@ -2886,3 +2886,38 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Merge PR #866
 - Continue optical specs: AstrHori (7), NiSi (10), Meike (14), 7Artisans (18)
 - Quick win next: AstrHori (7 lenses)
+
+---
+
+### Session 85 — AstrHori Optical Specs + Mitakon Deep Dive
+
+- PR #868 — AstrHori optical specs (7 lenses) + Mitakon diagrams/MTF + Chrome cleanup + PNG standardization
+- Closed #757 (Mitakon optical specs — already closed), updated epic #739 checkbox
+- Closed #869 (duplicate of #833 — Mitakon 20mm f/0.95)
+- Created #867 — 14 missing AstrHori X-mount lenses
+- Created #869 → closed as duplicate of #833
+- Created #870 — DPReview GDPR consent wall in fetch-page.py
+
+#### Key changes
+
+- **AstrHori (7 lenses):** specs-logs created, optical construction populated in lenses.ts (elements, groups, ED, special elements, coating where available)
+- **Mitakon deep dive:** reviewed all 7 Mitakon lenses with user-provided links; saved 6 construction diagrams and 4 MTF charts across the brand
+- **Mitakon 35mm f/0.95 Mk II fix:** corrected specialElements from `["1 ED", "3 HRI"]` to `["1 ED", "2 EHR", "3 HR"]` — zyoptics.net had a typo (1 HR instead of 3); confirmed by B&H, Photography Bay, Lensrentals, LensTip (ADR: n/a, data correction)
+- **Mitakon Mk I coating:** discovered "AMC" (Anti-reflection Multi-Coating) model suffix on AllPhotoLenses; contradicts LensTip single-layer MgF2 measurement
+- **Chrome cleanup:** added atexit handler to fetch-page.py to kill orphaned Chrome processes from Nodriver/SeleniumBase
+- **PNG standardization:** converted all 40 jpg/webp images in docs/optical-specs/ to PNG; updated all specs-log references
+- **Pending cine materials:** saved construction diagrams and MTF charts for 20mm T1.0 and 50mm T1.0 cine lenses (not in DB, tracked in #833)
+- **PLAYBOOK 2.8:** added image filename caveat — don't rely on filename keywords, check all images on small pages
+
+#### Key decisions
+
+- Optical-specs images standardized on PNG and SVG only (no jpg/webp)
+- `_pending-*` folder pattern for pre-collected materials for lenses not yet in DB
+
+#### Next
+
+- Merge PR #868 (after PR #866)
+- Continue optical specs: NiSi (10), Meike (14), 7Artisans (18)
+- Handle DPReview GDPR consent wall (#870)
+- Add 14 missing AstrHori lenses (#867)
+- Add ~11 missing Mitakon lenses (#833)
