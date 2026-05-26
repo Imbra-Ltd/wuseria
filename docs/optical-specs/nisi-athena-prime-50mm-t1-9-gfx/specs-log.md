@@ -10,7 +10,7 @@
 | NiSi USA            | nisiopticsusa.com                                         | 2026-05-26 | Not found: 404 on Athena pages                      |
 | Duclos Lenses       | ducloslenses.com                                          | 2026-05-26 | Not found: no NiSi Athena product page              |
 | B&H Photo           | bhphotovideo.com                                          | 2026-05-26 | Blocked: bot detection                              |
-| Adorama             | adorama.com                                               | 2026-05-26 | Blocked: bot detection                              |
+| Adorama article     | adorama.com/alc/nisi-athena-prime-optical-performance/    | 2026-05-26 | Found: confirms ED + HR glass, no element counts    |
 | CineD               | cined.com                                                 | 2026-05-26 | Not found: review page did not load lens data       |
 | LensTip             | lenstip.com                                               | 2026-05-26 | Not found: no entry in index                        |
 | Google Image Search | google.com/images                                         | 2026-05-26 | Blocked: CAPTCHA                                    |
@@ -19,7 +19,7 @@
 
 - **opticalElements:** undefined (NiSi does not publish)
 - **opticalGroups:** undefined (NiSi does not publish)
-- **specialElements:** undefined
+- **specialElements:** ED + HR glass confirmed (Adorama article), counts unknown
 - **coating:** undefined
 - **constructionDiagram:** not found
 - **MTF chart:** not found
