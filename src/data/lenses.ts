@@ -3050,7 +3050,8 @@ const lenses: Lens[] = [
     length: 61,
     price: 250,
     minFocusDistance: 100,
-    officialUrl: "https://meikeglobal.com/collections/fujifilm",
+    officialUrl:
+      "https://web.archive.org/web/2021/https://meikeglobal.com/products/meike-6-5mm-f-2-0-ultra-wide-circular-fisheye-lens-for-fujifilm-x-mount-mirrorless-aps-c-camera-x-pro2-x-e3-x-t1-x-t2-x-t10-x-t20-x-a2-x-e2-x-e2s-x-e1-x30-x70-x-m1-x-a1-xpro1-etc",
   },
   {
     brand: "Meike",
@@ -3082,7 +3083,8 @@ const lenses: Lens[] = [
     length: 84,
     price: 250,
     minFocusDistance: 100,
-    officialUrl: "https://meikeglobal.com/collections/fujifilm",
+    officialUrl:
+      "https://meikeglobal.com/products/meike-8mm-f-3-5-fisheye-lens-for-fujifilm-x-mount-mirrorless-aps-c-camera-x-pro2-x-e3-x-t1-x-t2-x-t10-x-t20-x-a2-x-e2-x-e2s",
   },
   {
     brand: "Meike",
@@ -3116,7 +3118,8 @@ const lenses: Lens[] = [
     filterThread: 72,
     price: 500,
     minFocusDistance: 200,
-    officialUrl: "https://meikeglobal.com/collections/fujifilm",
+    officialUrl:
+      "https://meikeglobal.com/products/meike-12mm-f-2-8-ultra-wide-angle-fixed-aps-c-lens-with-removeable-hood-fit-fujifilm-x-mount-mirrorless-aps-c-camera-x-t3-x-t100-x-pro2-x-e3-x-t1-x-t2-x-t10-x-t20-x-a2-x-e2-x-e1-x30-x70-x-m1-xpro1-etc",
   },
   {
     brand: "Meike",
@@ -3183,7 +3186,8 @@ const lenses: Lens[] = [
     filterThread: 55,
     price: 500,
     minFocusDistance: 350,
-    officialUrl: "https://meikeglobal.com/collections/fujifilm",
+    officialUrl:
+      "https://web.archive.org/web/2021/https://meikeglobal.com/products/meike-85mm-f-2-8-manual-focus-aspherical-medium-telephoto-full-frame-prime-macro-lens-with-portrait-capability-for-fuji-x-mount-digital-mirrorless-dslr-cameras",
   },
   // Meike — current
   {
