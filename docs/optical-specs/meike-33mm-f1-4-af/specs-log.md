@@ -8,6 +8,7 @@
 | Official (E-mount)      | meikeglobal.com/en-gb/collections/auto-focus-lenses/products/3314e           | 2026-05-26 | Found: 12 el / 9 gr, filter 55mm                                |
 | LensTip                 | lenstip.com/2152                                                             | 2026-05-26 | Specs only (no review): 12/9 confirmed, filter 55mm             |
 | B&H Photo               | bhphotovideo.com/c/product/1841840-REG/meike_mk_3314cfstm_x_33mm_f_1_4_af... | 2026-05-26 | Found: 12/9, "multilayered coatings"                            |
+| Lens Rumors             | lens-rumors.com/meike-af-33mm-f-1-4-aps-c-lens-photos-and-mtf-chart/         | 2026-05-26 | Found: dual MTF chart (f/1.4 + f/8), Weibo leak source          |
 | DPReview                | dpreview.com                                                                 | 2026-05-26 | Not listed                                                      |
 
 ## Findings
@@ -25,12 +26,19 @@
 
 ## MTF analysis
 
-Official MTF at f/1.4 (wide open):
+Source: lens-rumors.com (Weibo leak, dual chart f/1.4 + f/8)
 
-- **10 lp/mm S:** ~0.93 center, drops to ~0.90 at edge (14mm) — excellent contrast
-- **10 lp/mm M:** ~0.97 center, rises to ~0.95 at edge — very uniform
-- **30 lp/mm S:** ~0.90 center, drops to ~0.65 at edge — good resolution, moderate corner falloff
-- **30 lp/mm M:** ~0.88 center, drops to ~0.70 at edge — slight astigmatism (S/M gap ~5% at edge)
+**f/1.4 (wide open):**
+
+- **10 lp/mm T:** ~0.97 center, drops to ~0.90 at 13mm — excellent contrast
+- **10 lp/mm S:** ~0.97 center, drops to ~0.82 at 13mm — slight S/T gap at edges
+- **30 lp/mm T:** ~0.86 center, drops to ~0.55 at 13mm — moderate corner falloff
+- **30 lp/mm S:** ~0.82 center, drops to ~0.60 at 13mm — astigmatism visible (T/S ~5%)
+
+**f/8 (stopped down):**
+
+- **10 lp/mm:** ~0.95 flat across entire field — excellent uniformity
+- **30 lp/mm:** ~0.82 center, drops to ~0.75 at edge — very good stopped-down resolution
 
 ## Caveats
 

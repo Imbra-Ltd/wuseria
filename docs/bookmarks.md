@@ -34,6 +34,10 @@
 
 - https://www.northlight-images.co.uk/ — Keith Cooper; architectural/commercial photographer, published book on tilt-shift lenses; hands-on reviews with MTF charts, no lab measurements; strong on T/S lens evaluation
 
+## Leak and rumor sites (pre-release specs, MTF charts)
+
+- https://www.lens-rumors.com/ — lens announcement aggregator; reposts Weibo leaks with MTF charts and spec sheets for Chinese brands (Meike, Yongnuo, etc.)
+
 ## Other photography resources
 
 - https://www.photozone.de/ — redirects to opticallimits.com
