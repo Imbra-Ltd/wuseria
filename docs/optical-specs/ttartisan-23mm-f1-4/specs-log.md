@@ -10,8 +10,8 @@
 - Elements/groups: 8/6
 - Special elements: "one low dispersion element and three high refractive elements" in text
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
-- MTF chart: found (Specification-MTF.webp)
-- Construction diagram: found (Specification-OD-EN.webp); confirms 1 LD (tan) + 3 HR (blue)
+- MTF chart: found (Specification-MTF.png)
+- Construction diagram: found (Specification-OD-EN.png); confirms 1 LD (tan) + 3 HR (blue)
 
 ## Caveats
 

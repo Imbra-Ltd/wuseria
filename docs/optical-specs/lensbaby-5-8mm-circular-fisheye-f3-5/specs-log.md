@@ -22,8 +22,8 @@
 - **Groups:** 5 (B&H specs page)
 - **Coating:** Unknown
 - **Special elements:** Unknown
-- **MTF chart:** ePhotozine Imatest chart saved as `mtf-chart-ephotozine.jpg` — excellent centre from f/3.5, edges improve from Poor to Good at f/8+
-- **CA chart:** ePhotozine Imatest chart saved as `ca-chart-ephotozine.jpg` — high edge CA (typical fisheye), low centre CA
+- **MTF chart:** ePhotozine Imatest chart saved as `mtf-chart-ephotozine.png` — excellent centre from f/3.5, edges improve from Poor to Good at f/8+
+- **CA chart:** ePhotozine Imatest chart saved as `ca-chart-ephotozine.png` — high edge CA (typical fisheye), low centre CA
 - **Construction diagram:** Not available
 
 ## Caveats

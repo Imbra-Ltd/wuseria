@@ -32,7 +32,7 @@ The modern Primoplan 58 II (5E/4G) matches the **Goerz patent design (1926)**. B
 Saved files:
 
 - `construction-diagram.jpeg` — modern II version (from DPReview)
-- `primoplan-optical-design.jpg` — comprehensive diagram from zeissikonveb.de: construction (5E/4G f/1.9), spherical aberration curves, astigmatism/field curvature, distortion (+1.5% pincushion at 15°)
+- `primoplan-optical-design.png` — comprehensive diagram from zeissikonveb.de: construction (5E/4G f/1.9), spherical aberration curves, astigmatism/field curvature, distortion (+1.5% pincushion at 15°)
 
 ## Physical spec corrections (2026-05-24)
 

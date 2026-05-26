@@ -16,4 +16,4 @@
 ## Caveats
 
 - officialUrl updated from Shopify store to main site (main site has specs, Shopify does not)
-- Legacy page uses timestamp-based image URLs instead of named Specification-\*.webp
+- Legacy page uses timestamp-based image URLs instead of named Specification-\*.png

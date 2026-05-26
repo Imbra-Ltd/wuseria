@@ -20,7 +20,7 @@
 - **Special elements:** none mentioned — no ED, aspherical, or special glass
 - **Coating:** not published — Alik Griffin notes reasonable flare resistance but no coating name given
 - **Construction diagram:** not found — Kipon/IB/E Optics does not publish diagrams
-- **MTF chart:** found on Kipon blog (Zemax OpticStudio computed, 2016-10-06); 3 apertures saved: `mtf-f2.4.jpg`, `mtf-f4.0.jpg`, `mtf-f5.6.jpg`
+- **MTF chart:** found on Kipon blog (Zemax OpticStudio computed, 2016-10-06); 3 apertures saved: `mtf-f2.4.png`, `mtf-f4.0.png`, `mtf-f5.6.png`
 
 ## Physical spec corrections (FX mount)
 

@@ -15,6 +15,6 @@
 
 ## Caveats
 
-- Legacy page uses timestamp-based image URLs instead of named Specification-\*.webp
+- Legacy page uses timestamp-based image URLs instead of named Specification-\*.png
 - Construction diagram has Chinese text labels only
 - Page uses non-standard table markup (no class="specification")

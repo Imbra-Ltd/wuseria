@@ -20,6 +20,6 @@
 
 ## Caveats
 
-- Legacy page uses timestamp-based image URLs instead of named Specification-\*.webp
+- Legacy page uses timestamp-based image URLs instead of named Specification-\*.png
 - Page text does not mention special elements; data sourced from construction diagram
 - Construction diagram visually verified: 3 HR (1 front group, 2 rear group)

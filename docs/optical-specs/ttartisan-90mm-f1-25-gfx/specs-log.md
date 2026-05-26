@@ -10,8 +10,8 @@
 - Elements/groups: 11/7
 - Special elements: "4 Sets of Achromatic Doublets" mentioned in text; diagram labels them "High index"
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
-- MTF chart: found (Specification-1.webp)
-- Construction diagram: found (Specification-2-EN.webp); shows 4 HR elements each cemented to regular glass
+- MTF chart: found (Specification-1.png)
+- Construction diagram: found (Specification-2-EN.png); shows 4 HR elements each cemented to regular glass
 
 ## Caveats
 

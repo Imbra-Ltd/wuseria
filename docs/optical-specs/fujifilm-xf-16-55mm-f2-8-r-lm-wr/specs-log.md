@@ -14,5 +14,5 @@
 
 ## Caveats
 
-- Fujifilm's official specs page has the wrong construction diagram — shows `xf16mmf14-r-wr_cross.webp` (XF 16mm f/1.4 R WR) instead of the XF 16-55mm f/2.8.
+- Fujifilm's official specs page has the wrong construction diagram — shows `xf16mmf14-r-wr_cross.png` (XF 16mm f/1.4 R WR) instead of the XF 16-55mm f/2.8.
 - Construction image sourced from Ken Rockwell's archived Fujifilm materials.

@@ -10,8 +10,8 @@
 - Elements/groups: 10/7
 - Special elements: "2 high-refractive elements and 2 ED (Extra-low Dispersion) elements" in text
 - Coating: not specified on page; MC Multi-Layer confirmed as brand standard
-- MTF chart: found (Specification-MTF.webp)
-- Construction diagram: found (Specification-OD-EN.webp); confirms 2 HR (blue) + 2 ED (purple)
+- MTF chart: found (Specification-MTF.png)
+- Construction diagram: found (Specification-OD-EN.png); confirms 2 HR (blue) + 2 ED (purple)
 
 ## Caveats
 

@@ -12,7 +12,7 @@
 | Alik Griffin review  | alikgriffin.com                                                                         | 2026-05-23 | Found: multi-coating description                                                              |
 | Photography Life     | photographylife.com/lenses/kamlan-28mm-f1-4                                             | 2026-05-23 | Found: 8/7, 6 HRI, 11 rounded blades, 0.15x mag, 0.25m MFD, 384g/55x65mm (non-X mount values) |
 | PhotoRumors          | photorumors.com/2018/05/31/new-kamlan-28mm-f-1-4-mirrorless-lens-coming-to-kickstarter/ | 2026-05-23 | Timeout — page did not load                                                                   |
-| allphotolenses.com   | allphotolenses.com/public/files/optical/ab9f8cbda214da10c51143b7c7479738.jpg            | 2026-05-23 | Found: construction diagram — 8 elements, 7 groups, 6 HR (grey shading), matches specs        |
+| allphotolenses.com   | allphotolenses.com/public/files/optical/ab9f8cbda214da10c51143b7c7479738.png            | 2026-05-23 | Found: construction diagram — 8 elements, 7 groups, 6 HR (grey shading), matches specs        |
 | LensTip              | lenstip.com                                                                             | 2026-05-23 | Not covered                                                                                   |
 
 ## Findings
@@ -27,4 +27,4 @@
 ## Caveats
 
 - Photography Life lists weight 384g and dimensions 55x65mm — these are non-X-mount values (PL lists Canon EF-M, MFT, Sony E mounts only). DB uses official Kamlan X-mount values (348g, 66x58mm).
-- Construction diagram from allphotolenses.com saved as `kamlan-28mm-f1-4-construction.jpg`
+- Construction diagram from allphotolenses.com saved as `kamlan-28mm-f1-4-construction.png`
