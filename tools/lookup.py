@@ -37,15 +37,22 @@ def lenstip_lookup(query: str) -> str | None:
     return None
 
 
+def ddg_site_search(site: str, query: str) -> str:
+    """Generate a DuckDuckGo HTML site-search URL (no CAPTCHAs, works with fetch-page.py)."""
+    return f"https://html.duckduckgo.com/html/?q=site%3A{site}+{url_encode(query)}"
+
+
 def lenstip_search_url(query: str) -> str:
-    """Generate a Google site-search URL for LensTip."""
-    return f"https://www.google.com/search?q=site%3Alenstip.com+{url_encode(query)}"
+    """Generate a DuckDuckGo site-search URL for LensTip."""
+    return ddg_site_search("lenstip.com", query)
 
 
 def generate_urls(query: str) -> list[tuple[str, str, str]]:
     """Generate research URLs for a lens query.
 
     Returns list of (source_name, url, note) tuples.
+    Uses DuckDuckGo HTML for site-searches (no CAPTCHAs, works with
+    fetch-page.py via plain urllib). Google only for image search.
     """
     q = url_encode(query)
     urls = []
@@ -62,74 +69,74 @@ def generate_urls(query: str) -> list[tuple[str, str, str]]:
     # Radojuva
     urls.append((
         "Radojuva",
-        f"https://www.google.com/search?q=site%3Aradojuva.com+{q}",
+        ddg_site_search("radojuva.com", query),
         "hands-on measurements",
     ))
 
     # Phillip Reeve
     urls.append((
         "Phillip Reeve",
-        f"https://www.google.com/search?q=site%3Aphillipreeve.net+{q}",
+        ddg_site_search("phillipreeve.net", query),
         "manual focus specialist",
     ))
 
     # DPReview
     urls.append((
         "DPReview",
-        f"https://www.google.com/search?q=site%3Adpreview.com+{q}+specifications",
+        ddg_site_search("dpreview.com", f"{query} specifications"),
         "spec database (archived)",
     ))
 
     # Official manufacturer (generic search)
     urls.append((
         "Official page",
-        f"https://www.google.com/search?q={q}+official+specifications",
+        f"https://html.duckduckgo.com/html/?q={q}+official+specifications",
         "manufacturer specs",
     ))
 
     # Dustin Abbott
     urls.append((
         "Dustin Abbott",
-        f"https://www.google.com/search?q=site%3Adustinabbott.net+{q}",
+        ddg_site_search("dustinabbott.net", query),
         "trust-3 field + lab",
     ))
 
     # Opticallimits
     urls.append((
         "Opticallimits",
-        f"https://www.google.com/search?q=site%3Aopticallimits.com+{q}",
+        ddg_site_search("opticallimits.com", query),
         "lab MTF (ex-photozone)",
     ))
 
     # Lensrentals (Roger Cicala)
     urls.append((
         "Lensrentals",
-        f"https://www.google.com/search?q=site%3Alensrentals.com+{q}+blog",
+        ddg_site_search("lensrentals.com", f"{query} blog"),
         "optical bench MTF",
     ))
 
     # Photography Life
     urls.append((
         "Photography Life",
-        f"https://www.google.com/search?q=site%3Aphotographylife.com+{q}",
+        ddg_site_search("photographylife.com", query),
         "spec tables + diagrams",
     ))
 
     # digitalkamera.de
     urls.append((
         "digitalkamera.de",
-        f"https://www.google.com/search?q=site%3Adigitalkamera.de+{q}+Datenblatt",
+        ddg_site_search("digitalkamera.de", f"{query} Datenblatt"),
         "dimensions (German)",
     ))
 
     # Mobile01
     urls.append((
         "Mobile01",
-        f"https://www.google.com/search?q=site%3Amobile01.com+{q}",
+        ddg_site_search("mobile01.com", query),
         "Taiwan forum, construction diagrams",
     ))
 
-    # Google Image Search for diagrams/MTF
+    # Google Image Search for diagrams/MTF (no DDG equivalent)
     urls.append((
         "Construction diagram",
         f"https://www.google.com/search?q={q}+optical+construction+diagram&tbm=isch",
@@ -139,13 +146,6 @@ def generate_urls(query: str) -> list[tuple[str, str, str]]:
         "MTF chart",
         f"https://www.google.com/search?q={q}+MTF+chart&tbm=isch",
         "image search",
-    ))
-
-    # DuckDuckGo fallback (no CAPTCHAs)
-    urls.append((
-        "DuckDuckGo",
-        f"https://html.duckduckgo.com/html/?q={q}+lens+specifications",
-        "fallback if Google blocks",
     ))
 
     return urls

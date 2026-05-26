@@ -413,15 +413,26 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
    - Check that all coatings on the product page are captured, including protective coatings (fluorine, water-repellent) that are often listed separately from optical coatings (AR, multi-coating)
    - For lenses with X-mount variants, verify physical specs (weight, length, diameter) use X-mount values, not Sony E or other mounts
 8. **Per-lens provenance workflow** (mandatory sequence for every lens touched):
-   1. Check source (official page, diagram, third-party review)
-   2. User confirms or corrects findings
-   3. Update `specs-log.md` FIRST — document the source, date, result, and caveats
-   4. Edit `lenses.ts` — apply the verified data
-   5. Confirm both files updated before moving to the next lens
+   1. Run `py tools/lookup.py "<lens name>"` to generate all research URLs
+   2. Check each mandatory source and record the result in specs-log.md (found/not found/404/paywall)
+   3. User confirms or corrects findings
+   4. Update `specs-log.md` FIRST — document the source, date, result, and caveats
+   5. Edit `lenses.ts` — apply the verified data
+   6. Confirm both files updated before moving to the next lens
    - The specs-log is the **primary deliverable** — data without provenance is unverifiable
    - If lenses share optical design across mounts (e.g. X + GFX), update BOTH specs-logs
+   - **Mandatory source checklist** — every specs-log MUST include a row for each of
+     these sources, even if the result is "Not found":
+     1. Official manufacturer page
+     2. LensTip (use `py tools/lenstip/search.py "<lens>"` for the page ID)
+     3. Radojuva
+     4. DPReview
+     5. Google Image Search (construction diagram + MTF chart)
 9. Add fields to `src/data/lenses.ts`, run `npm run validate`
 10. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
+11. **Audit false negatives** — periodically run `py tools/lenstip/audit_specslog.py --fix`
+    to find specs-logs that say "Not covered" but where LensTip actually has a page.
+    Rebuild the index quarterly: `py tools/lenstip/build_index.py`
 
 ## 3. Quality
 
