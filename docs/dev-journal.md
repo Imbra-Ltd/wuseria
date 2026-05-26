@@ -2921,3 +2921,41 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Handle DPReview GDPR consent wall (#870)
 - Add 14 missing AstrHori lenses (#867)
 - Add ~11 missing Mitakon lenses (#833)
+
+---
+
+### Session 85 — AstrHori Optical Diagrams and Release Notes
+
+**Date:** 2026-05-26
+**Tool:** Claude Code (Opus 4.6)
+
+#### PRs
+
+- #871 — MTF charts, construction diagrams, and standardized specs-logs for all 7 AstrHori lenses
+
+#### Issues
+
+- No new issues created
+
+#### Key changes
+
+- **Release notes:** Created GitHub Releases for v0.1.0–v0.4.0 (were tags only), reformatted all 6 releases (v0.1.0–v0.6.0) with highlights + grouped categories
+- **AstrHori optical data:** Extracted construction diagrams and MTF charts from official Shopify product description images for all 7 AstrHori lenses. Cropped and saved as PNG.
+  - Construction diagrams: 18mm f/5.6 Shift, 85mm f/2.8 Macro Tilt
+  - MTF charts: all lenses except 50mm f/1.4 Tilt (not published)
+  - 50mm f/1.4 Tilt: exhaustive research (Wayback Machine, Amazon, Pergear, Bilibili, Google Patents, Chinese sites) — confirmed AstrHori does not publish diagrams for this lens
+- **ADR-033 amended:** Standardized specs-log optical specs table to mirror DB fields; dropped `edElements`/`asphericalElements` in favor of `specialElements`
+- **lenses.ts updates:** Added `specialElements` to 18mm Shift, `coating` to 12mm Fisheye GFX
+
+#### Key decisions
+
+- specs-log optical specs table MUST mirror DB fields (`opticalElements`, `opticalGroups`, `specialElements`, `coating`) — no separate `edElements`/`asphericalElements` (ADR-033 amendment)
+- AstrHori 75mm f/4 GFX: keep 11/8 element count from page text despite contradictory 8/6 in product parameters image — official text is authoritative, higher number is more plausible for medium format design
+
+#### Next
+
+- Merge PR #871
+- Continue optical specs: NiSi (10), Meike (14), 7Artisans (18)
+- AstrHori 50mm f/1.4 Tilt: contact manufacturer for missing construction diagram and MTF
+- Brand transparency spike (#838) — AstrHori is a case study
+- Add 14 missing AstrHori lenses (#867)
