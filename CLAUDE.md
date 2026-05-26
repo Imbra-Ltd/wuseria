@@ -117,6 +117,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Run `npm run validate` before committing
 - Releases MUST follow PLAYBOOK 5.1 — never tag without bumping `package.json` first
 - When creating GitHub issues, follow the formats in `docs/solid-ai-templates/templates/base/workflow/issues.md` — use the correct label (`epic`, `bug`, `incident`, `question`) and body structure for each type
+- Every issue MUST have a type label, a priority label (P0–P4), and a milestone assigned at creation — no exceptions
 - Creating a new directory or moving content between documents is an architectural decision — write the ADR **at the moment of the decision**, before creating the files
 - Always ask before auto-merging PRs — never set `--auto` without explicit user permission
 
