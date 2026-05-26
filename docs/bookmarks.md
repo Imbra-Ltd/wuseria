@@ -25,6 +25,11 @@
 - https://www.photographyblog.com/ — decent hands-on reviews
 - https://www.digitalcameraworld.com/ — buyer's guide oriented
 
+## Cinema lens reviews
+
+- https://www.newsshooter.com/ — Matthew Allard ACS; cinema lens reviews from working film industry professional; hands-on field analysis of breathing, flare, CA; trust-2
+- https://www.adorama.com/alc/nisi-athena-prime-optical-performance/ — Adorama editorial; NiSi Athena Prime optical performance overview (confirms ED + HR glass, no element counts)
+
 ## Specialist review sources (not general trust-3, but domain experts)
 
 - https://www.northlight-images.co.uk/ — Keith Cooper; architectural/commercial photographer, published book on tilt-shift lenses; hands-on reviews with MTF charts, no lab measurements; strong on T/S lens evaluation
@@ -156,6 +161,7 @@
 - https://www.nikonusa.com/learn-and-explore/c/products-and-innovation/what-is-a-lens-mtf-chart-how-do-i-read-it — Nikon USA; MTF chart explainer including S/M convergence → bokeh quality relationship
 - https://www.band-optics.com/blog/step-by-step-process-for-measuring-mtf-of-a-lens.html — Band Optics; step-by-step MTF measurement process (setup, test charts, software, verification); useful for wiki #837
 - https://photographylife.com/how-to-read-mtf-charts — Photography Life; beginner-friendly MTF chart reading guide
+- https://www.dpreview.com/opinion/4042117089/roger-cicala-why-i-dont-use-an-mtf-bench-to-test-my-own-lenses — Roger Cicala (Lensrentals); why MTF bench testing has limitations for lens QC
 
 ## Optical construction (elements, groups, special glass)
 

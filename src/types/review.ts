@@ -33,6 +33,7 @@ type ReviewSource =
   | "dcfever"
   | "cined"
   | "provideocoalition"
+  | "newsshooter"
   | "diglloyd"
   | "lonelyspeck"
   | "nightscapephotographer"
