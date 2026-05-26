@@ -213,6 +213,12 @@ const reviewSourceDirectory: Record<ReviewSource, ReviewSourceInfo> = {
     name: "ProVideo Coalition",
     site: "provideocoalition.com",
   },
+  newsshooter: {
+    methodology: "field",
+    trust: 2,
+    name: "Newsshooter",
+    site: "newsshooter.com",
+  },
 
   // --- lab, trust 2 (multilingual) ---
   "digitalkamera-de": {

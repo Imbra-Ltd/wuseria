@@ -25,6 +25,11 @@
 - https://www.photographyblog.com/ — decent hands-on reviews
 - https://www.digitalcameraworld.com/ — buyer's guide oriented
 
+## Cinema lens reviews
+
+- https://www.newsshooter.com/ — Matthew Allard ACS; cinema lens reviews from working film industry professional; hands-on field analysis of breathing, flare, CA; trust-2
+- https://www.adorama.com/alc/nisi-athena-prime-optical-performance/ — Adorama editorial; NiSi Athena Prime optical performance overview (confirms ED + HR glass, no element counts)
+
 ## Specialist review sources (not general trust-3, but domain experts)
 
 - https://www.northlight-images.co.uk/ — Keith Cooper; architectural/commercial photographer, published book on tilt-shift lenses; hands-on reviews with MTF charts, no lab measurements; strong on T/S lens evaluation
