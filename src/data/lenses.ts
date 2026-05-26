@@ -3329,7 +3329,7 @@ const lenses: Lens[] = [
     year: 2020,
     opticalElements: 6,
     opticalGroups: 5,
-    coating: ["multi-layer"],
+    coating: ["nano multi-layer"],
     focalLengthMin: 35,
     focalLengthMax: 35,
     maxAperture: 1.7,
