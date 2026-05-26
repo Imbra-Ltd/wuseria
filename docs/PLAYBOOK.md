@@ -445,6 +445,9 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
   BOTH specs-logs.
 - **alikgriffin.com tables:** AJAX-loaded (Ninja Tables plugin), not in page
   HTML. Use the admin-ajax API endpoint or ask the user to paste the table.
+- **DuckDuckGo fallback:** when Google or Bing block with CAPTCHAs, use
+  DuckDuckGo HTML search — it works with plain urllib (~1s):
+  `py tools/fetch-page.py "https://html.duckduckgo.com/html/?q=<query>"`
 
 ## 3. Quality
 
