@@ -3152,7 +3152,7 @@ const lenses: Lens[] = [
     filterThread: 62,
     price: 750,
     minFocusDistance: 250,
-    officialUrl: "https://meikeglobal.com/collections/fujifilm",
+    officialUrl: "https://meikeglobal.com/products/25mm-f0-95x",
   },
   {
     brand: "Meike",
