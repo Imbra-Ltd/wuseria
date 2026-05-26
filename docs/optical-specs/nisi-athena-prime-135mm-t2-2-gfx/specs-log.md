@@ -29,6 +29,7 @@ NiSi protects the proprietary engineering of their optical glass blocks.
 Element/group counts have never been disclosed — not on the official NiSi
 Global Store, regional portals (NiSi UK), or industry analysis (Newsshooter,
 CineD). Any element/group configuration found online is unverified speculation.
+lengths (14, 25, 35, 50, 85mm) — not confirmed by NiSi, kept undefined.
 
 Instead of element-to-group architecture, NiSi establishes accuracy through
 standardized physical and optical configurations:

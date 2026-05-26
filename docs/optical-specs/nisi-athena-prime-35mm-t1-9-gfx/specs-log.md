@@ -2,17 +2,18 @@
 
 ## Sources checked
 
-| Source              | URL                                                       | Date       | Result                                              |
-| ------------------- | --------------------------------------------------------- | ---------- | --------------------------------------------------- |
-| Official NiSi       | nisi-lens.com/athena                                      | 2026-05-26 | Found: marketing only, no element/group counts      |
-| Newsshooter review  | newsshooter.com/2023/08/30/nisi-athena-cine-prime-review/ | 2026-05-26 | Confirms NiSi does not publish optical construction |
-| Adorama article     | adorama.com/alc/nisi-athena-prime-optical-performance/    | 2026-05-26 | Found: confirms ED + HR glass, no element counts    |
-| NiSi UK             | nisioptics.co.uk                                          | 2026-05-26 | Not found: no individual Athena product pages       |
-| NiSi USA            | nisiopticsusa.com                                         | 2026-05-26 | Not found: 404 on Athena pages                      |
-| Duclos Lenses       | ducloslenses.com                                          | 2026-05-26 | Not found: no NiSi Athena product page              |
-| CineD               | cined.com                                                 | 2026-05-26 | Not found: review page did not load lens data       |
-| LensTip             | lenstip.com                                               | 2026-05-26 | Not found: no entry in index                        |
-| Google Image Search | google.com/images                                         | 2026-05-26 | Blocked: CAPTCHA                                    |
+| Source              | URL                                                                 | Date       | Result                                              |
+| ------------------- | ------------------------------------------------------------------- | ---------- | --------------------------------------------------- |
+| Official NiSi       | nisi-lens.com/athena                                                | 2026-05-26 | Found: marketing only, no element/group counts      |
+| Newsshooter review  | newsshooter.com/2023/08/30/nisi-athena-cine-prime-review/           | 2026-05-26 | Confirms NiSi does not publish optical construction |
+| Adorama article     | adorama.com/alc/nisi-athena-prime-optical-performance/              | 2026-05-26 | Found: confirms ED + HR glass, no element counts    |
+| NiSi UK             | nisioptics.co.uk                                                    | 2026-05-26 | Not found: no individual Athena product pages       |
+| NiSi USA            | nisiopticsusa.com                                                   | 2026-05-26 | Not found: 404 on Athena pages                      |
+| Duclos Lenses       | ducloslenses.com                                                    | 2026-05-26 | Not found: no NiSi Athena product page              |
+| CineD               | cined.com                                                           | 2026-05-26 | Not found: review page did not load lens data       |
+| LensTip             | lenstip.com                                                         | 2026-05-26 | Not found: no entry in index                        |
+| Jomla.ae (retailer) | jomla.ae/en/product/nisi-athena-cinema-lens-35mm-t19-canon-rfmount/ | 2026-05-26 | Found: lists 13/11 — unverified by manufacturer     |
+| Google Image Search | google.com/images                                                   | 2026-05-26 | Blocked: CAPTCHA                                    |
 
 ## Findings
 
@@ -29,6 +30,8 @@ NiSi protects the proprietary engineering of their optical glass blocks.
 Element/group counts have never been disclosed — not on the official NiSi
 Global Store, regional portals (NiSi UK), or industry analysis (Newsshooter,
 CineD). Any element/group configuration found online is unverified speculation.
+Jomla.ae (UAE retailer) lists 13 elements in 11 groups for 5 of 8 focal
+lengths (14, 25, 35, 50, 85mm) — not confirmed by NiSi, kept undefined.
 
 Instead of element-to-group architecture, NiSi establishes accuracy through
 standardized physical and optical configurations:
