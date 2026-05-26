@@ -400,6 +400,8 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
    - Radojuva
    - DPReview
    - Google Image Search (construction diagram + MTF chart)
+   - If these five come up empty, continue down the source reference table
+     below until data is found or all sources are exhausted
 6. **Verify** extracted data against diagrams and official pages — element/group
    counts, special elements, coatings (including protective), X-mount dimensions
 
