@@ -156,6 +156,7 @@
 - https://www.nikonusa.com/learn-and-explore/c/products-and-innovation/what-is-a-lens-mtf-chart-how-do-i-read-it — Nikon USA; MTF chart explainer including S/M convergence → bokeh quality relationship
 - https://www.band-optics.com/blog/step-by-step-process-for-measuring-mtf-of-a-lens.html — Band Optics; step-by-step MTF measurement process (setup, test charts, software, verification); useful for wiki #837
 - https://photographylife.com/how-to-read-mtf-charts — Photography Life; beginner-friendly MTF chart reading guide
+- https://www.dpreview.com/opinion/4042117089/roger-cicala-why-i-dont-use-an-mtf-bench-to-test-my-own-lenses — Roger Cicala (Lensrentals); why MTF bench testing has limitations for lens QC
 
 ## Optical construction (elements, groups, special glass)
 
