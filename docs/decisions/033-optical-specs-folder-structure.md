@@ -64,15 +64,29 @@ sources. No other formats (JPG, WebP, GIF) are allowed.
 ### specs-log.md format
 
 ```markdown
-# <Model Name> — Notes
+# Specs Log — <Model Name>
 
-## Data provenance
+## Sources checked
 
-| Date       | Source        | URL            | Result                   |
-| ---------- | ------------- | -------------- | ------------------------ |
-| 2026-05-22 | cosina.co.jp  | https://...    | No MTF chart             |
-| 2026-05-22 | LensTip       | (not reviewed) | No data                  |
-| 2026-05-22 | Dustin Abbott | https://...    | Full review, MTF + bokeh |
+| Source        | URL            | Date       | Result                   |
+| ------------- | -------------- | ---------- | ------------------------ |
+| cosina.co.jp  | https://...    | 2026-05-22 | No MTF chart             |
+| LensTip       | (not reviewed) | 2026-05-22 | No data                  |
+| Dustin Abbott | https://...    | 2026-05-22 | Full review, MTF + bokeh |
+
+## Optical specs
+
+| Field           | Value                                     | Source                        |
+| --------------- | ----------------------------------------- | ----------------------------- |
+| opticalElements | 7                                         | Official, Pergear             |
+| opticalGroups   | 5                                         | Official, Pergear             |
+| specialElements | ["3 low-dispersion", "1 high-refractive"] | Official construction diagram |
+| coating         | "Multi-coating"                           | Official product page         |
+
+## Diagrams
+
+- `construction-diagram.png` — source and description
+- `mtf-chart.png` — type (polychromatic/monochromatic), frequency range, field positions
 
 ## Classification
 
@@ -85,10 +99,31 @@ sources. No other formats (JPG, WebP, GIF) are allowed.
 - (e.g. manual PDF checked, no MTF inside)
 ```
 
-The provenance table is the core — every source checked gets a row,
-whether the result was positive or negative. This prevents future
+### specs-log.md field rules
+
+The **Sources checked** table is the core — every source checked gets a
+row, whether the result was positive or negative. This prevents future
 sessions from repeating the same searches and creates a traceable
 audit trail for every data point.
+
+The **Optical specs** table fields MUST mirror the database type
+(`src/types/lens.ts`):
+
+| specs-log field | DB field          | Type       |
+| --------------- | ----------------- | ---------- |
+| opticalElements | `opticalElements` | `number`   |
+| opticalGroups   | `opticalGroups`   | `number`   |
+| specialElements | `specialElements` | `string[]` |
+| coating         | `coating`         | `string`   |
+
+Do NOT use `edElements`, `asphericalElements`, or other breakdown
+fields — these are subsumed by `specialElements`. The Source column
+in the optical specs table provides the provenance for each value
+(e.g. "3 low-dispersion per official diagram"). Unknown fields use
+`undefined` with a reason (e.g. "Not mentioned by any source").
+
+The **Diagrams** section documents saved images with source and
+description. Required when construction diagrams or MTF charts exist.
 
 ### Migration
 
