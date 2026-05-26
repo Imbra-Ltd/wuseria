@@ -75,6 +75,8 @@ Project-specific overrides and additions follow below.
 - `tools/viltrox/` — Viltrox optical spec extraction (fetch_specs, audit, download_images, Shopify JSON + HTML scraping)
 - `tools/zeiss/` — Carl Zeiss optical spec extraction (fetch_specs, audit, PDF datasheet download)
 - `tools/mitakon/` — Mitakon optical spec extraction (fetch_specs, audit, SeleniumBase UC for zyoptics.net)
+- `tools/lenstip/` — LensTip lens index (build_index, search); local JSON index of 2300+ lenses for instant ID lookup
+- `tools/lookup.py` — unified lens lookup; generates research URLs for all PLAYBOOK 2.8 sources in one shot
 - `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility, `FETCH-PAGE.md` dev journal
 
 ### 1.3 Commands
@@ -297,8 +299,9 @@ Follow `docs/solid-ai-templates/templates/base/workflow/scope.md` for scope guar
 2. Check `git status` — if uncommitted changes exist, resolve before starting
 3. Clean up stale branches: `git fetch --prune` to remove stale remote tracking refs, then `git branch --merged main | grep -v main` to delete merged local branches
 4. Check deploy health: `gh run list --branch main --limit 1` — if the latest deploy is not `completed/success`, flag it before starting work
-5. Ask: "What's the theme for this session?" — agree on ONE theme
-6. Review open issues for that theme before writing code
+5. Check open PRs: `gh pr list --state open` — flag Dependabot bumps, stale PRs, or anything awaiting review
+6. Ask: "What's the theme for this session?" — agree on ONE theme
+7. Review open issues for that theme before writing code
 
 ### 6.2 During the session
 

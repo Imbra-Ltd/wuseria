@@ -389,10 +389,14 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
    - If missing lenses are found, create a separate issue before continuing
 2. Run `npx tsx scripts/audit-brand.ts <Brand>` to see gaps
 3. Run the brand extraction tool if available: `py tools/<brand>/fetch_specs.py`
-4. Research missing fields from these sources (priority order):
+4. **Generate research URLs** — run `py tools/lookup.py "<lens name>"` to get direct
+   links and search URLs for all sources in one shot. For LensTip, the tool uses
+   the local index (`tools/lenstip/lenstip-index.json`) to resolve the opaque numeric
+   ID automatically. To rebuild the index: `py tools/lenstip/build_index.py`
+5. Research missing fields from these sources (priority order):
    - Official manufacturer pages (dimensions, filter thread, build features)
    - DPReview spec database (`dpreview.com/products/<brand>/lenses/<slug>`) — comprehensive specs including magnification; manufacturer descriptions often contain data not on official pages
-   - LensTip spec database (`lenstip.com/<id>-<name>-lens_specifications.html`) — best for maxMagnification on budget lenses
+   - LensTip spec database (`lenstip.com/<id>-<name>-lens_specifications.html`) — best for maxMagnification on budget lenses; use `py tools/lenstip/search.py "<lens>"` to find the page ID
    - Radojuva lens database (`radojuva.com`) — hands-on magnification measurements and detailed optical data
    - digitalkamera.de Datenblatt pages — good for dimensions, rarely has magnification
    - cameradecision.com via `fetch-page.py` (403s on direct fetch, Playwright bypasses)
@@ -402,13 +406,13 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
    - Duclos Lenses (`ducloslenses.com`) — reliable spec tables for cinema lenses (length, weight, min focus)
    - **Google Image Search** for construction diagrams and MTF charts — text-based searches miss images on non-English blogs, press kit reposts, and pages with minimal surrounding text; search `<brand> <model> optical construction diagram` or `<brand> <model> MTF chart`
    - **Image filename caveat:** when checking article pages for diagrams and MTF charts, do not rely on image filename keywords alone — news sites use generic filenames (e.g. `APO200F14-lens.jpg` for a combined construction diagram + MTF chart). For pages with a small number of images (< 10), download and visually check all content images rather than filtering by filename patterns.
-5. **LensTip page ID caveat:** URL names are ignored; only the numeric ID matters. Always verify `Manufacturer` and `Model` fields on the page — wrong IDs redirect silently to unrelated lenses.
-6. Verify extracted data against downloaded images and official pages:
+6. **LensTip page ID caveat:** URL names are ignored; only the numeric ID matters. Always verify `Manufacturer` and `Model` fields on the page — wrong IDs redirect silently to unrelated lenses.
+7. Verify extracted data against downloaded images and official pages:
    - Count elements and groups in construction diagrams — must match `opticalElements` and `opticalGroups`
    - Identify special elements (aspherical, LD, ED) marked in diagrams — must match `specialElements`
    - Check that all coatings on the product page are captured, including protective coatings (fluorine, water-repellent) that are often listed separately from optical coatings (AR, multi-coating)
    - For lenses with X-mount variants, verify physical specs (weight, length, diameter) use X-mount values, not Sony E or other mounts
-7. **Per-lens provenance workflow** (mandatory sequence for every lens touched):
+8. **Per-lens provenance workflow** (mandatory sequence for every lens touched):
    1. Check source (official page, diagram, third-party review)
    2. User confirms or corrects findings
    3. Update `specs-log.md` FIRST — document the source, date, result, and caveats
@@ -416,8 +420,8 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
    5. Confirm both files updated before moving to the next lens
    - The specs-log is the **primary deliverable** — data without provenance is unverifiable
    - If lenses share optical design across mounts (e.g. X + GFX), update BOTH specs-logs
-8. Add fields to `src/data/lenses.ts`, run `npm run validate`
-9. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
+9. Add fields to `src/data/lenses.ts`, run `npm run validate`
+10. If adding `maxMagnification` to a scored lens, also add `macro` genre mark (test will fail if missing)
 
 ## 3. Quality
 
