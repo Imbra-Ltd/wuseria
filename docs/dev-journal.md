@@ -2959,3 +2959,47 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - AstrHori 50mm f/1.4 Tilt: contact manufacturer for missing construction diagram and MTF
 - Brand transparency spike (#838) — AstrHori is a case study
 - Add 14 missing AstrHori lenses (#867)
+
+---
+
+### Session 86 — Research Workflow Improvements
+
+**Tool:** Claude Code (Opus 4.6, 1M context)
+
+#### PRs
+
+- #873 — feat: improve optical specs research workflow (#846)
+
+#### Issues
+
+- #846 assigned to v0.7.0 milestone
+- #845, #857, #838 assigned to Backlog (no milestone → Backlog)
+- #865 updated with PerimeterX layer analysis, test matrix (7 runs), screenshot, downgraded P3 → P4
+- Session 6.1 startup checklist: added step 5 (check open PRs)
+
+#### Key changes
+
+- **LensTip index scraper** (`tools/lenstip/build_index.py`): scrapes all 42 brands from lenstip.com catalog, builds a 2302-lens JSON index mapping names to opaque numeric page IDs
+- **LensTip search** (`tools/lenstip/search.py`): fuzzy word-boundary matching against local index
+- **Specs-log audit** (`tools/lenstip/audit_specslog.py`): cross-references "Not covered" entries vs index — found 10 false negatives (2 AstrHori, 2 Kamlan, 6 Mitakon)
+- **Unified lens lookup** (`tools/lookup.py`): generates DuckDuckGo site-search URLs for all PLAYBOOK 2.8 sources in one command
+- **PLAYBOOK 2.8 restructured**: 4 phases (Prepare, Research, Commit, Maintenance) + source reference table + mandatory 5-source checklist + fallback instruction
+- **CLAUDE.md**: new tools documented, PR check in startup, mandatory milestone rule on issues
+- **PerimeterX testing** (#865): Nodriver headed passes Layer 1 (fingerprint), gets Press & Hold on Layer 2; current product pages load without challenge inconsistently (5/7 passed); price extraction confirmed ($1,129.98 for XF 56mm f/1.2)
+- **chrome-relay evaluation**: reviewed Kushal's codebase (B+ overall), genuine project, no Windows support yet — blocker for us
+- **Bookmarks**: added Bright Data, ScraperAPI, Chrome Relay under new "Web scraping and bot protection" section
+
+#### Key decisions
+
+- Every issue MUST have type label, priority label, and milestone at creation (CLAUDE.md rule)
+- Session startup MUST check open PRs (`gh pr list --state open`) — step 5 in 6.1
+- LensTip index committed (not gitignored) — agents need it without setup
+- DuckDuckGo HTML over Google for all site-searches in lookup.py — no CAPTCHAs, works with fetch-page.py via urllib
+- PerimeterX spike (#865) downgraded to P4 — Nodriver sufficient for occasional lookups
+
+#### Next
+
+- Merge PR #873 (pending CI — GitHub CDN outage)
+- 8 Dependabot PRs pending (same CDN outage)
+- Re-check 10 false negative specs-logs with actual LensTip data
+- Continue optical specs: NiSi (#758), Meike (#755), 7Artisans (#748)

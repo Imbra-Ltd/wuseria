@@ -75,6 +75,8 @@ Project-specific overrides and additions follow below.
 - `tools/viltrox/` — Viltrox optical spec extraction (fetch_specs, audit, download_images, Shopify JSON + HTML scraping)
 - `tools/zeiss/` — Carl Zeiss optical spec extraction (fetch_specs, audit, PDF datasheet download)
 - `tools/mitakon/` — Mitakon optical spec extraction (fetch_specs, audit, SeleniumBase UC for zyoptics.net)
+- `tools/lenstip/` — LensTip lens index (build_index, search); local JSON index of 2300+ lenses for instant ID lookup
+- `tools/lookup.py` — unified lens lookup; generates research URLs for all PLAYBOOK 2.8 sources in one shot
 - `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility, `FETCH-PAGE.md` dev journal
 
 ### 1.3 Commands
@@ -115,6 +117,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Run `npm run validate` before committing
 - Releases MUST follow PLAYBOOK 5.1 — never tag without bumping `package.json` first
 - When creating GitHub issues, follow the formats in `docs/solid-ai-templates/templates/base/workflow/issues.md` — use the correct label (`epic`, `bug`, `incident`, `question`) and body structure for each type
+- Every issue MUST have a type label, a priority label (P0–P4), and a milestone assigned at creation — no exceptions
 - Creating a new directory or moving content between documents is an architectural decision — write the ADR **at the moment of the decision**, before creating the files
 - Always ask before auto-merging PRs — never set `--auto` without explicit user permission
 
@@ -297,8 +300,9 @@ Follow `docs/solid-ai-templates/templates/base/workflow/scope.md` for scope guar
 2. Check `git status` — if uncommitted changes exist, resolve before starting
 3. Clean up stale branches: `git fetch --prune` to remove stale remote tracking refs, then `git branch --merged main | grep -v main` to delete merged local branches
 4. Check deploy health: `gh run list --branch main --limit 1` — if the latest deploy is not `completed/success`, flag it before starting work
-5. Ask: "What's the theme for this session?" — agree on ONE theme
-6. Review open issues for that theme before writing code
+5. Check open PRs: `gh pr list --state open` — flag Dependabot bumps, stale PRs, or anything awaiting review
+6. Ask: "What's the theme for this session?" — agree on ONE theme
+7. Review open issues for that theme before writing code
 
 ### 6.2 During the session
 

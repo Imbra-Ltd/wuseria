@@ -276,6 +276,12 @@ No public affiliate programs found (2026-04-06). Contact ФотоСинтези�
 - https://www.camelcamelcamel.com — Amazon price history tracker
 - https://www.skinflint.co.uk — Skinflint (formerly Geizhals UK); EU price aggregator
 
+## Web scraping and bot protection
+
+- https://brightdata.com/products/web-unlocker/captcha-solver/perimeterx — Bright Data; PerimeterX CAPTCHA solver (paid service)
+- https://www.scraperapi.com/blog/scrape-perimeterx-protected-websites-with-python/ — ScraperAPI; guide for bypassing PerimeterX with Python
+- https://chrome-relay.kushalsm.com/ — Chrome Relay; remote headed Chrome service, potential replacement for local SeleniumBase UC
+
 ## Framework and hosting
 
 - https://docs.astro.build/en/getting-started/ — Astro docs
