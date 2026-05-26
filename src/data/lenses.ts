@@ -3187,7 +3187,7 @@ const lenses: Lens[] = [
     price: 500,
     minFocusDistance: 350,
     officialUrl:
-      "https://web.archive.org/web/2021/https://meikeglobal.com/products/meike-85mm-f-2-8-manual-focus-aspherical-medium-telephoto-full-frame-prime-macro-lens-with-portrait-capability-for-fuji-x-mount-digital-mirrorless-dslr-cameras",
+      "https://meikeglobal.com/products/meike-mk-85mm-f2-8-nikon-z-mount-macro-full-frame-lens-for-nikon-z7-z6-z-series-cameras",
   },
   // Meike — current
   {
