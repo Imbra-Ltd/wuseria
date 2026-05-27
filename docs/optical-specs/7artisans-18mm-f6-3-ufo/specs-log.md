@@ -2,13 +2,13 @@
 
 ## Sources checked
 
-| Source              | URL                                                                                  | Date       | Result                                           |
-| ------------------- | ------------------------------------------------------------------------------------ | ---------- | ------------------------------------------------ |
-| Official (Shopify)  | 7artisans.store/products/18mm-f-6-3-mark-ii-aps-c-lens-for-sony-e-fujifilm-x-nikon-z | 2026-05-27 | Found: 6 elements / 5 groups                     |
-| LensTip             | lenstip.com/1760                                                                     | 2026-05-27 | Specs only: mag 0.2x; 6 elem / 4 groups (Mark I) |
-| Radojuva            | radojuva.com                                                                         | 2026-05-27 | Not found                                        |
-| DPReview            | dpreview.com                                                                         | 2026-05-27 | Not listed                                       |
-| Google Image Search | google.com                                                                           | 2026-05-27 | No construction diagram or MTF chart             |
+| Source              | URL                                                                                  | Date       | Result                                                                                                                                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Official (Shopify)  | 7artisans.store/products/18mm-f-6-3-mark-ii-aps-c-lens-for-sony-e-fujifilm-x-nikon-z | 2026-05-27 | Found: 6 elements / 5 groups; spec panel confirms 0 diaphragm blades (fixed aperture), no filter support, MFD 0.3m. Sliced the full section composite (cdn/shop/files, 18719px) — no diagram/MTF |
+| LensTip             | lenstip.com/1760                                                                     | 2026-05-27 | Specs only: mag 0.2x; 6 elem / 4 groups (Mark I)                                                                                                                                                 |
+| Radojuva            | radojuva.com                                                                         | 2026-05-27 | Not found                                                                                                                                                                                        |
+| DPReview            | dpreview.com                                                                         | 2026-05-27 | Not listed                                                                                                                                                                                       |
+| Google Image Search | google.com                                                                           | 2026-05-27 | No construction diagram or MTF chart                                                                                                                                                             |
 
 ## Findings
 
@@ -17,8 +17,9 @@
 - **specialElements:** none stated
 - **coating:** none stated (no coating named on official page; not stocked at B&H; unverified Amazon snippet only — not recorded)
 - **maxMagnification:** 0.2 (LensTip)
-- **constructionDiagram:** not found
-- **MTF chart:** not found
+- **constructionDiagram:** not found (sliced the full official section composite — product/
+  marketing/sample-photo + spec table only; none published, as expected for a fixed-aperture pancake)
+- **MTF chart:** not found (same sweep — none published)
 
 ## Caveats
 

@@ -2,14 +2,14 @@
 
 ## Sources checked
 
-| Source              | URL                                                                 | Date       | Result                                                                        |
-| ------------------- | ------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------- |
-| Official (Shopify)  | 7artisans.store/products/12mm-f-2-8-aps-c-lens-for-e-eos-m-fx-m43-z | 2026-05-27 | Found: 12 elements / 10 groups                                                |
-| LensTip             | lenstip.com                                                         | 2026-05-27 | Not listed                                                                    |
-| Radojuva            | radojuva.com                                                        | 2026-05-27 | Not found                                                                     |
-| DPReview            | dpreview.com                                                        | 2026-05-27 | Not listed                                                                    |
-| Google Image Search | google.com                                                          | 2026-05-27 | No construction diagram or MTF                                                |
-| B&H Photo           | bhphotovideo.com/c/product/1732945-REG                              | 2026-05-27 | Confirms 12 elements / 10 groups (Mark II), manual, X-mount; no coating named |
+| Source              | URL                                                                 | Date       | Result                                                                                                                                                |
+| ------------------- | ------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Official (Shopify)  | 7artisans.store/products/12mm-f-2-8-aps-c-lens-for-e-eos-m-fx-m43-z | 2026-05-27 | Found: 12 elements / 10 groups; spec panel (cdn/shop/files): 5 diaphragm blades, filter 67mm, MFD 0.15m. Swept all 13 section panels — no diagram/MTF |
+| LensTip             | lenstip.com                                                         | 2026-05-27 | Not listed                                                                                                                                            |
+| Radojuva            | radojuva.com                                                        | 2026-05-27 | Not found                                                                                                                                             |
+| DPReview            | dpreview.com                                                        | 2026-05-27 | Not listed                                                                                                                                            |
+| Google Image Search | google.com                                                          | 2026-05-27 | No construction diagram or MTF                                                                                                                        |
+| B&H Photo           | bhphotovideo.com/c/product/1732945-REG                              | 2026-05-27 | Confirms 12/10, 5 blades, filter 67mm, MFD 5.9" (~0.15m), manual, X-mount; no coating named                                                           |
 
 ## Findings
 
@@ -18,8 +18,9 @@
 - **specialElements:** none stated
 - **coating:** none stated (no coating named on official page or B&H; unverified Amazon snippet only — not recorded)
 - **maxMagnification:** not found (official states MFD ~0.15m only — not estimated per project rule)
-- **constructionDiagram:** not found
-- **MTF chart:** not found
+- **constructionDiagram:** not found (swept all 13 official `cdn/shop/files/` section
+  panels — spec table + marketing/mount/sample-photo only; no diagram)
+- **MTF chart:** not found (same sweep — none published)
 
 ## Caveats
 
@@ -28,3 +29,6 @@
   plain "12mm f/2.8"; the live current product is the Mark II. Construction
   (12/10) is from the current (Mark II) page. Name/generation reconciliation is
   out of scope for this specs task and left as-is.
+- **DB corrections/fills (2026-05-27):** `apertureBlades` 7 → **5** (official spec panel
+  "5pcs" + B&H); `filterThread` added **67** (official + B&H); `minFocusDistance` 200 →
+  **150** (official "0.15m" + B&H "5.9 inches"). All from the Mark II page/B&H.
