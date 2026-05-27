@@ -19,9 +19,12 @@
 - **specialElements:** none stated (no ED/aspherical on official, LensTip, or B&H)
 - **coating:** none stated (no coating named on official page or B&H; unverified Amazon snippet only — not recorded)
 - **maxMagnification:** 0.1 (LensTip 2012 Mark II, "0.1x"; the DB's prior 0.07 was the ORIGINAL 12mm's value — corrected)
-- **constructionDiagram:** not found (swept all 13 official `cdn/shop/files/` section
-  panels — spec table + marketing/mount/sample-photo only; no diagram)
-- **MTF chart:** not found (same sweep — none published)
+- **constructionDiagram:** not found — exhaustive search (opened all 17 official
+  `cdn/shop/files/` images, LensTip 2012, B&H, DPReview, Radojuva, DDG image search,
+  lens-rumors). None published for the Mark II.
+- **MTF chart:** not found — same exhaustive search. The Mark II (2022) was not published
+  with an MTF. (NB: the ORIGINAL 12mm — a different lens — DOES have lab/official MTF at
+  photozone + allphotolenses; do not substitute it for the Mark II.)
 
 ## Caveats
 
