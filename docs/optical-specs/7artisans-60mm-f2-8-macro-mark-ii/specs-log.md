@@ -1,0 +1,30 @@
+# 7Artisans 60mm f/2.8 Macro Mark II — Specs Log
+
+## Sources checked
+
+| Source              | URL                                                                 | Date       | Result                                         |
+| ------------------- | ------------------------------------------------------------------- | ---------- | ---------------------------------------------- |
+| Official (Shopify)  | 7artisans.store/products/7artisans-60mm-f2-8-mark-ii-macro-lens-... | 2026-05-27 | Found: 11 elements / 8 groups, 1 ED, 1:1 macro |
+| LensTip             | lenstip.com                                                         | 2026-05-27 | Not listed                                     |
+| Radojuva            | radojuva.com                                                        | 2026-05-27 | Not found                                      |
+| DPReview            | dpreview.com                                                        | 2026-05-27 | Not listed                                     |
+| Google Image Search | google.com                                                          | 2026-05-27 | No construction diagram or MTF chart found     |
+
+## Findings
+
+- **opticalElements:** 11 (official: "60mm/f2.8II consists of 11 elements in 8 groups, one ED lens")
+- **opticalGroups:** 8 (official)
+- **specialElements:** 1 ED (official: "built-in ED (extra-low dispersion lens)")
+- **coating:** none stated
+- **maxMagnification:** 1.0 (official: 1:1 "life-size" / "1x macro telephoto", MFD 0.175m)
+- **constructionDiagram:** not found
+- **MTF chart:** not found
+
+## Caveats
+
+- IMPORTANT: the DB `officialUrl` pointed at `/products/60mm-f2-8`, which is the
+  **original** 60mm f/2.8 (8 elements / 7 groups, no ED stated, up to 2:1–3:1
+  with extension) — a different optical design. The Mark II is a distinct
+  product at `7artisans-60mm-f2-8-mark-ii-macro-lens-...`. The DB entry is
+  named "Macro Mark II", so the Mark II specs (11/8, 1 ED, 1:1) and the Mark II
+  URL apply. `officialUrl` corrected in this PR.
