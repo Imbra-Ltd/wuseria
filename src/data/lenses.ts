@@ -141,6 +141,7 @@ const lenses: Lens[] = [
     year: 2017,
     opticalElements: 6,
     opticalGroups: 5,
+    coating: ["multi-layer"],
     focalLengthMin: 50,
     focalLengthMax: 50,
     maxAperture: 1.8,
