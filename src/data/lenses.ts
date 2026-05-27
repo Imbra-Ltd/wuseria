@@ -267,7 +267,7 @@ const lenses: Lens[] = [
     price: 250,
     minFocusDistance: 420,
     officialUrl:
-      "https://7artisans.store/products/7artisans-55mm-f1-4-mark-ii-aps-c-portrait-lens",
+      "https://7artisans.store/products/7artisans-55mm-f1-4-mark-ii-aps-c-portrait-lens-for-sony-e-nikon-z-fuji-fx-canon-eos-m-olympus-m43-mirrorless-cameras",
   },
   {
     brand: "7Artisans",

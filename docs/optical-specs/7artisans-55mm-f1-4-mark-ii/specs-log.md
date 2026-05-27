@@ -22,8 +22,10 @@
 
 ## Caveats
 
-- The DB `officialUrl` for this lens uses a shortened handle; the live product
-  page is `7artisans-55mm-f1-4-mark-ii-aps-c-portrait-lens-for-sony-e-nikon-z-fuji-fx-canon-eos-m-olympus-m43-mirrorless-cameras`.
+- **DB `officialUrl` fixed (2026-05-27):** the previous shortened handle
+  (`...-aps-c-portrait-lens`) returned 404; corrected to the full live handle
+  (`...-for-sony-e-nikon-z-fuji-fx-canon-eos-m-olympus-m43-mirrorless-cameras`),
+  which returns 200.
 - Diagram/MTF "not found" is a FLOOR, not a confirmed absence: opened all 21 store
   gallery images (product/lifestyle only) and DDG press/rumor searches came up empty
   (likely rate-limited). The v1's diagram + MTF were eventually found on LeicaRumors'
