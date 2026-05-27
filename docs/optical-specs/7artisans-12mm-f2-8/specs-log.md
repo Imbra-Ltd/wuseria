@@ -2,33 +2,35 @@
 
 ## Sources checked
 
-| Source              | URL                                                                 | Date       | Result                                                                                                                                                |
-| ------------------- | ------------------------------------------------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Official (Shopify)  | 7artisans.store/products/12mm-f-2-8-aps-c-lens-for-e-eos-m-fx-m43-z | 2026-05-27 | Found: 12 elements / 10 groups; spec panel (cdn/shop/files): 5 diaphragm blades, filter 67mm, MFD 0.15m. Swept all 13 section panels — no diagram/MTF |
-| LensTip             | lenstip.com                                                         | 2026-05-27 | Not listed                                                                                                                                            |
-| Radojuva            | radojuva.com                                                        | 2026-05-27 | Not found                                                                                                                                             |
-| DPReview            | dpreview.com                                                        | 2026-05-27 | Not listed                                                                                                                                            |
-| Google Image Search | google.com                                                          | 2026-05-27 | No construction diagram or MTF                                                                                                                        |
-| B&H Photo           | bhphotovideo.com/c/product/1732945-REG                              | 2026-05-27 | Confirms 12/10, 5 blades, filter 67mm, MFD 5.9" (~0.15m), manual, X-mount; no coating named                                                           |
+| Source              | URL                                                                 | Date       | Result                                                                                                                                                                                 |
+| ------------------- | ------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Official (Shopify)  | 7artisans.store/products/12mm-f-2-8-aps-c-lens-for-e-eos-m-fx-m43-z | 2026-05-27 | Found: 12 elements / 10 groups; spec panel (cdn/shop/files): 5 diaphragm blades, filter 67mm, MFD 0.15m. Swept all 13 section panels — no diagram/MTF                                  |
+| LensTip (Mark II)   | lenstip.com/2012                                                    | 2026-05-27 | Mark II confirmed: 12/10, 5 blades, filter 67mm, MFD 0.15m, mag 0.1x; release 20.12.2022. (The original 12mm = LensTip 1724: 10/8, 7 blades, 77mm, mag 0.07x, 2017 — a DIFFERENT lens) |
+| Radojuva            | radojuva.com                                                        | 2026-05-27 | Not found                                                                                                                                                                              |
+| DPReview            | dpreview.com                                                        | 2026-05-27 | Not listed                                                                                                                                                                             |
+| Google Image Search | google.com                                                          | 2026-05-27 | No construction diagram or MTF                                                                                                                                                         |
+| B&H Photo           | bhphotovideo.com/c/product/1732945-REG                              | 2026-05-27 | Confirms 12/10, 5 blades, filter 67mm, MFD 5.9" (~0.15m), manual, X-mount; no coating named                                                                                            |
 
 ## Findings
 
-- **opticalElements:** 12 (official: "Constructed of 12 glass elements in 10 groups")
-- **opticalGroups:** 10 (official)
-- **specialElements:** none stated
+- **opticalElements:** 12 (official + LensTip 2012 Mark II + B&H)
+- **opticalGroups:** 10 (official + LensTip 2012 + B&H)
+- **specialElements:** none stated (no ED/aspherical on official, LensTip, or B&H)
 - **coating:** none stated (no coating named on official page or B&H; unverified Amazon snippet only — not recorded)
-- **maxMagnification:** not found (official states MFD ~0.15m only — not estimated per project rule)
+- **maxMagnification:** 0.1 (LensTip 2012 Mark II, "0.1x"; the DB's prior 0.07 was the ORIGINAL 12mm's value — corrected)
 - **constructionDiagram:** not found (swept all 13 official `cdn/shop/files/` section
   panels — spec table + marketing/mount/sample-photo only; no diagram)
 - **MTF chart:** not found (same sweep — none published)
 
 ## Caveats
 
-- The `officialUrl` in the DB resolves to the page titled "MF 12mm f/2.8 Mark II".
-  An original/Gen-I 12mm exists only as a "Used" listing. The DB entry is named
-  plain "12mm f/2.8"; the live current product is the Mark II. Construction
-  (12/10) is from the current (Mark II) page. Name/generation reconciliation is
-  out of scope for this specs task and left as-is.
-- **DB corrections/fills (2026-05-27):** `apertureBlades` 7 → **5** (official spec panel
-  "5pcs" + B&H); `filterThread` added **67** (official + B&H); `minFocusDistance` 200 →
-  **150** (official "0.15m" + B&H "5.9 inches"). All from the Mark II page/B&H.
+- **This entry IS the Mark II** (confirmed: its specs — 12/10, 5 blades, 67mm, MFD 0.15m,
+  mag 0.1x — match LensTip 2012 / the Mark II page exactly, NOT the original LensTip 1724:
+  10/8, 7 blades, 77mm, 0.07x). The DB just names it plain "12mm f/2.8". The original
+  Gen-I 12mm is a different lens carried only as a "Used" listing; if it's ever added it
+  needs its own row. The model-name should arguably gain "Mark II" — flagged but the rename
+  is out of scope for this specs task.
+- **DB corrections/fills (2026-05-27):** `apertureBlades` 7 → **5**; `filterThread` added
+  **67**; `minFocusDistance` 200 → **150** (all official spec panel + B&H, Mark II). Plus
+  `year` 2018 → **2022** and `maxMagnification` 0.07 → **0.1** (LensTip 2012 Mark II release
+  20.12.2022) — the prior 2018/0.07 were the ORIGINAL 12mm's values left on the Mark II row.
