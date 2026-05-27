@@ -9,13 +9,14 @@
 | Radojuva            | radojuva.com                                      | 2026-05-27 | Not found                                                                              |
 | DPReview            | dpreview.com                                      | 2026-05-27 | Not listed                                                                             |
 | Google Image Search | google.com                                        | 2026-05-27 | Diagram + MTF found embedded in official composite marketing images; cropped and saved |
+| B&H Photo           | bhphotovideo.com/c/product/1682771-REG            | 2026-05-27 | Confirms 8 elements / 5 groups, 9 blades, X-mount; no special glass or coating named   |
 
 ## Findings
 
 - **opticalElements:** 8 (official, verified directly: "a 8 elements in 5 groups optical design, using Japanese Hoya Lenses")
 - **opticalGroups:** 5 (official)
 - **specialElements:** none stated (official: standard Japanese Hoya glass; LensTip lists no special elements)
-- **coating:** none stated
+- **coating:** none stated (no coating named on official page or B&H; B&H confirms plain construction, Japanese Hoya glass only — left undefined)
 - **maxMagnification:** 0.11 (LensTip)
 - **constructionDiagram:** found — `construction-diagram.jpg` (official line-art; 8 elements / 5 groups)
 - **MTF chart:** found — `mtf-chart.jpg` (official; T1-T3 / S1-S3)

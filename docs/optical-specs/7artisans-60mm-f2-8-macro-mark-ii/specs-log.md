@@ -9,13 +9,14 @@
 | Radojuva            | radojuva.com                                                        | 2026-05-27 | Not found                                                                             |
 | DPReview            | dpreview.com                                                        | 2026-05-27 | Not listed                                                                            |
 | Google Image Search | google.com                                                          | 2026-05-27 | Diagram found embedded in official Amazon composite image; cropped and saved (no MTF) |
+| B&H Photo           | bhphotovideo.com/c/product/1642656-REG                              | 2026-05-27 | Confirms 11 elements / 8 groups, manual, X-mount; no coating named                    |
 
 ## Findings
 
 - **opticalElements:** 11 (official: "60mm/f2.8II consists of 11 elements in 8 groups, one ED lens")
 - **opticalGroups:** 8 (official)
 - **specialElements:** 1 ED (official: "built-in ED (extra-low dispersion lens)")
-- **coating:** none stated
+- **coating:** none stated (no coating named on official page, B&H, or any reachable retailer; Amazon brand-store snippet suggested "multi-layer" but could not be verified on a confirmed Fuji-X page — not recorded)
 - **maxMagnification:** 1.0 (official: 1:1 "life-size" / "1x macro telephoto", MFD 0.175m)
 - **constructionDiagram:** found — `construction-diagram.jpg` (official, from Amazon listing; cross-section with legend red = HOYA Ultra-Low Dispersion glass, confirms 1 ED)
 - **MTF chart:** not found (no MTF published on official store or Amazon)

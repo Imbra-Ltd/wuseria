@@ -15,7 +15,7 @@
 - **opticalElements:** 7 (LensTip)
 - **opticalGroups:** 5 (LensTip)
 - **specialElements:** 1 ED, 3 HR (LensTip: "1 ED glass element, 3 HR glass elements")
-- **coating:** none stated
+- **coating:** none stated (Mark II not listed at B&H or Amazon US; only the original 50mm f/1.2 is, which names no coating. Left undefined — the Mark II's 1 ED + 3 HR comes from LensTip, not a coating source.)
 - **maxMagnification:** 0.08 (LensTip)
 - **constructionDiagram:** not found
 - **MTF chart:** not found

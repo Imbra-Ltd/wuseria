@@ -15,7 +15,7 @@
 - **opticalElements:** 6 (official Mark II page: "composed of five groups of six pieces")
 - **opticalGroups:** 5 (official Mark II)
 - **specialElements:** none stated
-- **coating:** none stated
+- **coating:** none stated (no coating named on official page; not stocked at B&H; unverified Amazon snippet only — not recorded)
 - **maxMagnification:** 0.2 (LensTip)
 - **constructionDiagram:** not found
 - **MTF chart:** not found
