@@ -3050,8 +3050,8 @@ const lenses: Lens[] = [
     length: 52,
     price: 250,
     minFocusDistance: 190,
-    officialUrl:
-      "https://meikeglobal.com/products/meike-6-5mm-ultra-wide-f-2-0-circular-fisheye-lens-for-sony-a9-a7iii-a7riii-a6500-a6000-a6100-a6300-nex3-nex3n-nex5-nex5t-nex5r-nex6-nex7-a7ii-a7sii-a7rii-mirorrless-cameras",
+    // eslint-disable-next-line sonarjs/no-clear-text-protocols -- mkgrip.com is HTTP-only
+    officialUrl: "http://www.mkgrip.com/goods/show-203.html",
   },
   {
     brand: "Meike",
@@ -3063,7 +3063,7 @@ const lenses: Lens[] = [
     isDiscontinued: true,
     opticalElements: 11,
     opticalGroups: 8,
-    coating: ["multi-layer"],
+    coating: ["nano multi-layer"],
     focalLengthMin: 8,
     focalLengthMax: 8,
     maxAperture: 3.5,
@@ -3083,8 +3083,8 @@ const lenses: Lens[] = [
     length: 84,
     price: 250,
     minFocusDistance: 100,
-    officialUrl:
-      "https://meikeglobal.com/products/meike-8mm-f-3-5-fisheye-lens-for-fujifilm-x-mount-mirrorless-aps-c-camera-x-pro2-x-e3-x-t1-x-t2-x-t10-x-t20-x-a2-x-e2-x-e2s",
+    // eslint-disable-next-line sonarjs/no-clear-text-protocols -- mkgrip.com is HTTP-only
+    officialUrl: "http://www.mkgrip.com/goods/show-201.html",
   },
   {
     brand: "Meike",
@@ -3185,7 +3185,9 @@ const lenses: Lens[] = [
     length: 90,
     filterThread: 55,
     price: 500,
-    minFocusDistance: 350,
+    minFocusDistance: 250,
+    // eslint-disable-next-line sonarjs/no-clear-text-protocols -- mkgrip.com is HTTP-only
+    officialUrl: "http://www.mkgrip.com/goods/show-212.html",
   },
   // Meike — current
   {
