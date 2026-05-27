@@ -73,6 +73,7 @@ const lenses: Lens[] = [
     category: "photo",
     mount: "X",
     year: 2017,
+    isDiscontinued: true,
     opticalElements: 6,
     opticalGroups: 5,
     focalLengthMin: 35,

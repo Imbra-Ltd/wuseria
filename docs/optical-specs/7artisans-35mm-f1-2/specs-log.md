@@ -25,3 +25,8 @@
 - Construction diagram / MTF were published only inside composite marketing images
   (generic filenames); recovered by visual inspection per PLAYBOOK 2.8 and cropped to
   separate artifacts. Earlier pass wrongly reported "not found".
+- **Discontinued** (marked `isDiscontinued: true` 2026-05-27): the official `.js`
+  storefront reports every variant `available: false` (incl. FX mount), the product
+  lists only "Silver", 7Artisans carries a separate "Used 35mm f/1.2" listing, and the
+  lens is superseded by the still-selling 35mm f/1.2 Mark II. Original page still in
+  catalog (not delisted), so `officialUrl` retained.
