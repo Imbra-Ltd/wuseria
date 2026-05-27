@@ -46,4 +46,7 @@
   `filterThread` 52 → **62** (official "ф62mm" + LensTip + the saved diagram's spec panel);
   `minFocusDistance` 150 → **300** (official "0.3m" + LensTip + B&H "11.8 in"); `year`
   2023 → **2025** (PetaPixel + LensTip launch 2025-09-29); `maxMagnification` filled **0.04**
-  (LensTip 2273).
+  (LensTip 2273); `weight` 280 → **232** (official "weight of just 232g" / spec table "≈232g
+  (E)"; the unsourced 280 replaced. Note: 7Artisans publishes only the E-mount weight; the
+  X-mount weight is not separately stated — 232g is the best sourced figure).
+- B&H dimensions "ø 2.7 × L 2.8 in" (≈68.6 × 71mm) corroborate DB diameter 68.5 / length 70.

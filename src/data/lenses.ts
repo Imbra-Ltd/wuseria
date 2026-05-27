@@ -330,7 +330,7 @@ const lenses: Lens[] = [
     hasRotatingFront: false,
     hasDistanceScale: false,
     hasTripodMount: false,
-    weight: 280,
+    weight: 232,
     diameter: 68.5,
     length: 70,
     filterThread: 62,
