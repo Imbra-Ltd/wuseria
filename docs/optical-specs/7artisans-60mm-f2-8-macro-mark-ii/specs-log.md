@@ -34,6 +34,13 @@
   product at `7artisans-60mm-f2-8-mark-ii-macro-lens-...`. The DB entry is
   named "Macro Mark II", so the Mark II specs (11/8, 1 ED, 1:1) and the Mark II
   URL apply. `officialUrl` corrected in this PR.
+- **Mk I material located (NOT used here — Mk I is not in the DB):** the original
+  60mm f/2.8 Macro (Mk I, 2019) is documented at fujiaddict.com/2019/06/05/...,
+  fujirumors.com/7artisans-60mm-f-2-8-macro-available, and a DPReview forum thread
+  ("60mm f/2.8 Macro version 1"). These may carry the Mk I's own diagram/MTF. Flagged
+  so Mk I assets are not confused with the Mark II's, and as a provenance starting
+  point if the Mk I is ever added to the DB. The artifacts saved in THIS folder are
+  the Mark II's (11/8, 1 ED), verified against the Mark II diagram and LensTip 1834.
 - Construction diagram / MTF were published only inside composite marketing images
   (generic filenames); recovered by visual inspection per PLAYBOOK 2.8 and cropped to
   separate artifacts. Earlier pass wrongly reported "not found".
