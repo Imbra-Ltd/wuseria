@@ -2,13 +2,13 @@
 
 ## Sources checked
 
-| Source              | URL                                                             | Date       | Result                         |
-| ------------------- | --------------------------------------------------------------- | ---------- | ------------------------------ |
-| Official (Shopify)  | 7artisans.store/products/50mm-f1-4-aps-c-tilt-lens-for-e-fx-m43 | 2026-05-27 | Found: 7 elements / 6 groups   |
-| LensTip             | lenstip.com                                                     | 2026-05-27 | Not listed                     |
-| Radojuva            | radojuva.com                                                    | 2026-05-27 | Not found                      |
-| DPReview            | dpreview.com                                                    | 2026-05-27 | Not listed                     |
-| Google Image Search | google.com                                                      | 2026-05-27 | No construction diagram or MTF |
+| Source              | URL                                                             | Date       | Result                                                                                 |
+| ------------------- | --------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
+| Official (Shopify)  | 7artisans.store/products/50mm-f1-4-aps-c-tilt-lens-for-e-fx-m43 | 2026-05-27 | Found: 7 elements / 6 groups                                                           |
+| LensTip             | lenstip.com                                                     | 2026-05-27 | Not listed                                                                             |
+| Radojuva            | radojuva.com                                                    | 2026-05-27 | Not found                                                                              |
+| DPReview            | dpreview.com                                                    | 2026-05-27 | Not listed                                                                             |
+| Google Image Search | google.com                                                      | 2026-05-27 | Diagram + MTF found embedded in official composite marketing images; cropped and saved |
 
 ## Findings
 
@@ -17,10 +17,13 @@
 - **specialElements:** none stated (only generic "Premium Optical Glass")
 - **coating:** none stated
 - **maxMagnification:** not found (official states MFD 0.5m only — not estimated per project rule)
-- **constructionDiagram:** not found
-- **MTF chart:** not found
+- **constructionDiagram:** found — `construction-diagram.jpg` (official "MIRROR STRUCTURE" line-art; 7 elements / 6 groups, no glass-type color legend)
+- **MTF chart:** found — `mtf-chart.jpg` (official; T1/S1/T2/S2, Y field of view in mm)
 
 ## Caveats
 
 - A marketing bullet on the page sloppily reads "7 elements in groups"; the
   spec table is authoritative at 7 elements / 6 groups.
+- Construction diagram / MTF were published only inside composite marketing images
+  (generic filenames); recovered by visual inspection per PLAYBOOK 2.8 and cropped to
+  separate artifacts. Earlier pass wrongly reported "not found".

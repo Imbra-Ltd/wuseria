@@ -2,13 +2,13 @@
 
 ## Sources checked
 
-| Source              | URL                                                                 | Date       | Result                                         |
-| ------------------- | ------------------------------------------------------------------- | ---------- | ---------------------------------------------- |
-| Official (Shopify)  | 7artisans.store/products/7artisans-60mm-f2-8-mark-ii-macro-lens-... | 2026-05-27 | Found: 11 elements / 8 groups, 1 ED, 1:1 macro |
-| LensTip             | lenstip.com                                                         | 2026-05-27 | Not listed                                     |
-| Radojuva            | radojuva.com                                                        | 2026-05-27 | Not found                                      |
-| DPReview            | dpreview.com                                                        | 2026-05-27 | Not listed                                     |
-| Google Image Search | google.com                                                          | 2026-05-27 | No construction diagram or MTF chart found     |
+| Source              | URL                                                                 | Date       | Result                                                                                |
+| ------------------- | ------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------- |
+| Official (Shopify)  | 7artisans.store/products/7artisans-60mm-f2-8-mark-ii-macro-lens-... | 2026-05-27 | Found: 11 elements / 8 groups, 1 ED, 1:1 macro                                        |
+| LensTip             | lenstip.com                                                         | 2026-05-27 | Not listed                                                                            |
+| Radojuva            | radojuva.com                                                        | 2026-05-27 | Not found                                                                             |
+| DPReview            | dpreview.com                                                        | 2026-05-27 | Not listed                                                                            |
+| Google Image Search | google.com                                                          | 2026-05-27 | Diagram found embedded in official Amazon composite image; cropped and saved (no MTF) |
 
 ## Findings
 
@@ -17,8 +17,8 @@
 - **specialElements:** 1 ED (official: "built-in ED (extra-low dispersion lens)")
 - **coating:** none stated
 - **maxMagnification:** 1.0 (official: 1:1 "life-size" / "1x macro telephoto", MFD 0.175m)
-- **constructionDiagram:** not found
-- **MTF chart:** not found
+- **constructionDiagram:** found — `construction-diagram.jpg` (official, from Amazon listing; cross-section with legend red = HOYA Ultra-Low Dispersion glass, confirms 1 ED)
+- **MTF chart:** not found (no MTF published on official store or Amazon)
 
 ## Caveats
 
@@ -28,3 +28,6 @@
   product at `7artisans-60mm-f2-8-mark-ii-macro-lens-...`. The DB entry is
   named "Macro Mark II", so the Mark II specs (11/8, 1 ED, 1:1) and the Mark II
   URL apply. `officialUrl` corrected in this PR.
+- Construction diagram / MTF were published only inside composite marketing images
+  (generic filenames); recovered by visual inspection per PLAYBOOK 2.8 and cropped to
+  separate artifacts. Earlier pass wrongly reported "not found".

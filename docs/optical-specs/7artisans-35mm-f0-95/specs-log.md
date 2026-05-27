@@ -2,13 +2,13 @@
 
 ## Sources checked
 
-| Source              | URL                                | Date       | Result                                                         |
-| ------------------- | ---------------------------------- | ---------- | -------------------------------------------------------------- |
-| Official (Shopify)  | 7artisans.store/products/35mm-0-95 | 2026-05-27 | Found: 12 aperture blades, MFD 0.37m; no element count in text |
-| LensTip             | lenstip.com/1758                   | 2026-05-27 | Confirmed: 11 elements / 8 groups, 2 ED, mag 0.12x             |
-| Radojuva            | radojuva.com                       | 2026-05-27 | Not found                                                      |
-| DPReview            | dpreview.com                       | 2026-05-27 | Not listed                                                     |
-| Google Image Search | google.com                         | 2026-05-27 | No standalone construction diagram or MTF chart                |
+| Source              | URL                                | Date       | Result                                                                                 |
+| ------------------- | ---------------------------------- | ---------- | -------------------------------------------------------------------------------------- |
+| Official (Shopify)  | 7artisans.store/products/35mm-0-95 | 2026-05-27 | Found: 12 aperture blades, MFD 0.37m; no element count in text                         |
+| LensTip             | lenstip.com/1758                   | 2026-05-27 | Confirmed: 11 elements / 8 groups, 2 ED, mag 0.12x                                     |
+| Radojuva            | radojuva.com                       | 2026-05-27 | Not found                                                                              |
+| DPReview            | dpreview.com                       | 2026-05-27 | Not listed                                                                             |
+| Google Image Search | google.com                         | 2026-05-27 | Diagram + MTF found embedded in official composite marketing images; cropped and saved |
 
 ## Findings
 
@@ -17,10 +17,13 @@
 - **specialElements:** 2 ED (LensTip: "2 ED glass elements")
 - **coating:** none stated
 - **maxMagnification:** 0.12 (LensTip)
-- **constructionDiagram:** not found (diagram embedded in composite marketing gallery images)
-- **MTF chart:** not found
+- **constructionDiagram:** found — `construction-diagram.jpg` (official; red/blue glass legend, 11 elements / 8 groups; 2 ED shown red)
+- **MTF chart:** found — `mtf-chart.jpg` (official; S1-S3 / T1-T3)
 
 ## Caveats
 
 - Construction (11/8, 2 ED) and magnification come from LensTip (id 1758, released
   15.10.2020); the official store page does not print an element count in text.
+- Construction diagram / MTF were published only inside composite marketing images
+  (generic filenames); recovered by visual inspection per PLAYBOOK 2.8 and cropped to
+  separate artifacts. Earlier pass wrongly reported "not found".
