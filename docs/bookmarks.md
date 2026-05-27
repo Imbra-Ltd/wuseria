@@ -24,6 +24,7 @@
 - https://fcracer.com/ — Farzaan Kassam; Fuji-focused (X-mount + GFX); resolution chart crops, quantitative AF timing, bokeh/CA/distortion analysis; trust-3
 - https://www.photographyblog.com/ — decent hands-on reviews
 - https://www.digitalcameraworld.com/ — buyer's guide oriented
+- https://alikgriffin.com/ — Alik Griffin; Fuji X-focused hands-on reviews + sample photos; useful for budget Chinese primes (7Artisans, Meike) where lab sources are sparse; qualitative CA/sharpness/build observations, no lab MTF; trust-1
 
 ## Cinema lens reviews
 
