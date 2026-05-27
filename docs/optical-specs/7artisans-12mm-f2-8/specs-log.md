@@ -33,8 +33,9 @@
   LensTip 1724 (10/8, 7 blades, 0.07x, 2017); stkb.co.jp 2018 launch post (has diagram + MTF);
   **photozone.de/opticallimits trust-3 lab review** (Sept 2019, Sony FE): 10/8, 7 blades, 55mm
   filter, 0.2m MFD, 292g, clickless aperture, "Zeiss Distagon-inspired, rear focusing" —
-  measured lab MTF available there. The model-name should arguably gain "Mark II" — flagged
-  but the rename is out of scope here.
+  measured lab MTF available there; and **allphotolenses c_4657** (2017, 10/8, X-mount,
+  43mm filter, 265g — hosts optical-design diagram + MTF charts). The model-name should
+  arguably gain "Mark II" — flagged but the rename is out of scope here.
 - **DB corrections/fills (2026-05-27):** `apertureBlades` 7 → **5**; `filterThread` added
   **67**; `minFocusDistance` 200 → **150** (all official spec panel + B&H, Mark II). Plus
   `year` 2018 → **2022** and `maxMagnification` 0.07 → **0.1** (LensTip 2012 Mark II release
