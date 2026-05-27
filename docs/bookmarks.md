@@ -183,6 +183,7 @@
 ## Lens reviews — additional sources
 
 - https://expertphotography.com/ — hands-on reviews with test charts, sharpness crops, CA/distortion analysis; trust-3 level; good for consensus scoring on budget/mid-range lenses
+- https://drobertsphoto.com/ — field reviews for Fujifilm X-mount third-party lenses (Meike, budget AF primes)
 
 ## Aperture blades and bokeh
 
