@@ -20,7 +20,10 @@
 - **coating:** multi-layer (the official 7Artisans UK store states "multi-layer coatings reduce flare and ghosting" for the Mark II; the 7artisans.store .com page and B&H are silent. Recorded as `["multi-layer"]` on the official UK store.)
 - **maxMagnification:** 1.0 (official: 1:1 "life-size" / "1x macro telephoto", MFD 0.175m)
 - **constructionDiagram:** found — `construction-diagram.jpg` (official, from Amazon listing; cross-section with legend red = HOYA Ultra-Low Dispersion glass, confirms 1 ED)
-- **MTF chart:** not found (no MTF published on official store or Amazon)
+- **MTF chart:** not found — thoroughly checked: .com store gallery, Amazon listing, B&H,
+  the official 7Artisans UK store gallery (4 product photos only), and press/rumor image
+  searches all came up empty. No MTF appears to be published for this macro (common for
+  macro lenses). Construction diagram exists; MTF does not.
 
 ## Caveats
 
