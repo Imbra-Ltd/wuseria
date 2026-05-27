@@ -13,9 +13,7 @@
 
 - **opticalElements:** 11 (LensTip — official page has no specs)
 - **opticalGroups:** 8 (LensTip)
-- **edElements:** 2 (LensTip: "2 ED glass elements")
-- **asphericalElements:** none listed
-- **hrElements:** 2 (LensTip: "2 HR glass elements" — high-refractive)
+- **specialElements:** 2 ED, 2 HR (LensTip: "2 ED glass elements", "2 HR glass elements" — high-refractive)
 - **coating:** not explicitly named; "Low Dispersion" in product title implies ED glass
 - **maxMagnification:** 0.13 (already in DB, confirmed by LensTip)
 - **constructionDiagram:** not found
@@ -24,5 +22,6 @@
 ## Caveats
 
 - Official Meike page has no specs for this lens — only firmware history
-- "HR glass" (high-refractive index glass) is noted but not tracked in DB schema
-- LensTip filter thread 58mm matches DB value of 55mm — discrepancy needs verification
+- HR glass added as "2 HR" to specialElements per LensTip (2026-05-27)
+- LensTip filter thread 58mm matches DB value of 58mm
+- DB corrected: specialElements changed from ["1 ED"] to ["2 ED"] per LensTip (2026-05-27)

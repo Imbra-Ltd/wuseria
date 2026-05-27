@@ -13,8 +13,7 @@
 
 - **opticalElements:** 11 (official)
 - **opticalGroups:** 9 (official)
-- **edElements:** none listed in any source
-- **asphericalElements:** none listed in any source
+- **specialElements:** none found
 - **coating:** multi-layer (official)
 - **filterThread:** none (fisheye with built-in hood)
 - **maxMagnification:** 0.1 (already in DB)

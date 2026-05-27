@@ -15,9 +15,7 @@
 
 - **opticalElements:** 12 (official spec table image, LensTip, B&H)
 - **opticalGroups:** 9 (official spec table image, LensTip, B&H)
-- **edElements:** 1 (official construction diagram: "1 ED Element — Suppresses chromatic aberrations")
-- **asphericalElements:** none listed
-- **hrElements:** 1 HR + 1 UHR (official: "1 High Refractive Index Element", "1 Ultra-High Refractive Index Element")
+- **specialElements:** 1 ED, 1 HR, 1 UHR (official construction diagram: "1 ED Element", "1 High Refractive Index Element", "1 Ultra-High Refractive Index Element")
 - **coating:** HD double-sided multi-layer (official construction diagram)
 - **filterThread:** 55mm (official spec table image; DB corrected from 52mm)
 - **maxMagnification:** 0.1 (already in DB, confirmed by LensTip)
@@ -43,4 +41,4 @@ Source: lens-rumors.com (Weibo leak, dual chart f/1.4 + f/8)
 ## Caveats
 
 - X-mount page renders body images via Shopify theme JS — plain HTML scrape misses them; JSON API body_html has the image URLs
-- "HR" and "UHR" elements not tracked in DB schema (only ED tracked via specialElements)
+- HR and UHR elements tracked in specialElements alongside ED

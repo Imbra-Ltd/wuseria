@@ -7,6 +7,7 @@
 | Official (Shopify, Z-mount)      | meikeglobal.com/products/meike-mk-85mm-f2-8-nikon-z-mount-... | 2026-05-26 | Found: 11 elements / 8 groups, nano multi-layer coating |
 | Official (35mm comparison table) | meikeglobal.com/products/meike-35mm-f-1-7-...                 | 2026-05-26 | Confirmed: 11 elements in 8 groups                      |
 | LensTip                          | lenstip.com/1481                                              | 2026-05-26 | Specs only (no review): 11/8 confirmed, mag 1:1.5       |
+| ePhotozine                       | ephotozine.com/article/meike-85mm-f-2-8-macro-review-31461    | 2026-05-27 | Full review: confirms 1.5x macro (two-stage focus ring) |
 | DPReview                         | dpreview.com                                                  | 2026-05-26 | Not listed                                              |
 | Google Image Search              | google.com                                                    | 2026-05-26 | No construction diagram or MTF chart found              |
 
@@ -14,10 +15,9 @@
 
 - **opticalElements:** 11 (official, LensTip)
 - **opticalGroups:** 8 (official, LensTip)
-- **edElements:** none listed in any source
-- **asphericalElements:** none listed in any source (product title mentions "aspherical" but spec table does not list count)
+- **specialElements:** none found (product title mentions "aspherical" but spec table does not list count)
 - **coating:** nano multi-layer (official)
-- **maxMagnification:** 1.5x (already in DB)
+- **maxMagnification:** 1.5 (official spec, confirmed by ePhotozine review: two-stage focusing, 1:1 + extension to 1.5:1)
 - **constructionDiagram:** not found
 - **MTF chart:** not found
 

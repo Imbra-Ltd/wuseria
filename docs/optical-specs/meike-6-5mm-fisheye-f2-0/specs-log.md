@@ -14,8 +14,7 @@
 
 - **opticalElements:** 6 (official, LensTip)
 - **opticalGroups:** 5 (official, LensTip)
-- **edElements:** none listed in any source
-- **asphericalElements:** none listed in any source
+- **specialElements:** none found
 - **coating:** multi-layer (implied by product range, not explicitly named)
 - **filterThread:** none (circular fisheye with bulging front element)
 - **maxMagnification:** not published in any source
@@ -25,4 +24,4 @@
 ## Caveats
 
 - Circular fisheye with 190 degree angle of view
-- LensTip lists 0 aperture blades — appears to be data error; DB has 9
+- LensTip lists 0 aperture blades — data error; 9 blades confirmed by Thom Hogan, Kamerastore, getuscart.com

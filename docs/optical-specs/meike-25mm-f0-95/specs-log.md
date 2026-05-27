@@ -13,8 +13,7 @@
 
 - **opticalElements:** 11 (official Shopify JSON spec table)
 - **opticalGroups:** 9 (official Shopify JSON spec table)
-- **edElements:** none listed in any source
-- **asphericalElements:** none listed in any source
+- **specialElements:** none found
 - **coating:** multi-layer (official page mentions "Multi-layered")
 - **filterThread:** 62mm (official; LensTip says 55mm — LensTip wrong)
 - **maxMagnification:** not published in any source

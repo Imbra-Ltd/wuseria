@@ -13,8 +13,7 @@
 
 - **opticalElements:** 12 (official, LensTip)
 - **opticalGroups:** 9 (official, LensTip)
-- **edElements:** none listed in any source
-- **asphericalElements:** 2 (official page: "including 2 aspherical lenses")
+- **specialElements:** 2 aspherical (official page: "including 2 aspherical lenses")
 - **coating:** multi-layer (implied)
 - **maxMagnification:** 0.07 (already in DB)
 - **constructionDiagram:** not found

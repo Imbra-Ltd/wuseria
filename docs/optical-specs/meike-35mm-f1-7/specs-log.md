@@ -13,8 +13,7 @@
 
 - **opticalElements:** 6 (official, LensTip)
 - **opticalGroups:** 5 (official, LensTip)
-- **edElements:** none listed in any source
-- **asphericalElements:** none listed in any source
+- **specialElements:** none found
 - **coating:** nano multi-layer (official body_html image: "Nano Multi-layer Coating helps reduce flaring and vignetting"; barrel engraving: "MULTI COATED")
 - **maxMagnification:** 0.113 (official; DB has 0.11 — close enough)
 - **constructionDiagram:** not found

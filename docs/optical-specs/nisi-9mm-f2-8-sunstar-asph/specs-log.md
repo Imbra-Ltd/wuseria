@@ -17,8 +17,7 @@
 
 - **opticalElements:** 14 (official, NiSi UK, NiSi USA, Phillip Reeve)
 - **opticalGroups:** 12 (official, NiSi UK, NiSi USA, Phillip Reeve)
-- **asphericalElements:** 2 (official: "2x double side aspherical elements")
-- **edElements:** 4 (official: "4x extra-low dispersion elements")
+- **specialElements:** 2 aspherical, 4 ED (official: "2x double side aspherical elements", "4x extra-low dispersion elements")
 - **coating:** SA+ (official: "SA+ anti-reflection film technology"; confirmed by 4kshooters, Canon Rumors)
 - **constructionDiagram:** not found
 - **MTF chart:** not found

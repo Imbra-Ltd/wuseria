@@ -14,8 +14,7 @@
 
 - **opticalElements:** 11 (official, LensTip)
 - **opticalGroups:** 8 (official, LensTip)
-- **edElements:** none listed in any source
-- **asphericalElements:** none listed in any source
+- **specialElements:** none found
 - **coating:** multi-layer (not explicitly named)
 - **filterThread:** none (diagonal fisheye with bulging front element)
 - **maxMagnification:** not published in any source

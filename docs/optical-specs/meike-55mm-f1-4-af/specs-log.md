@@ -12,15 +12,15 @@
 
 ## Findings
 
-- **opticalElements:** 11 (LensTip, B&H)
-- **opticalGroups:** 8 (LensTip, B&H)
-- **edElements:** none listed in any source
-- **asphericalElements:** none listed in any source
-- **coating:** multi-layer (B&H: "multilayered coatings")
+- **opticalElements:** 11 (LensTip, B&H, construction diagram)
+- **opticalGroups:** 8 (LensTip, B&H, construction diagram)
+- **specialElements:** 1 ED (construction diagram: "1 ED lens")
+- **coating:** dual-sided multi-layer (construction diagram: "Dual-sided multi-layer coatings")
 - **maxMagnification:** 0.11 (already in DB, confirmed by LensTip)
-- **constructionDiagram:** not found
+- **constructionDiagram:** saved as construction-diagram.jpg (from Meike via Fujifilm User Group Malaysia Facebook post)
 - **MTF chart:** not found
 
 ## Caveats
 
 - Official Meike page has no specs for this lens — only firmware history
+- Construction diagram also shows 2 high-refractive-index elements — added as "2 HR" to specialElements (2026-05-27)

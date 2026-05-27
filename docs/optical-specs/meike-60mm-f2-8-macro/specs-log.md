@@ -13,8 +13,7 @@
 
 - **opticalElements:** 11 (official, LensTip)
 - **opticalGroups:** 8 (official, LensTip)
-- **edElements:** none listed in any source
-- **asphericalElements:** none listed in any source
+- **specialElements:** none found
 - **coating:** nano multi-layer (official)
 - **maxMagnification:** 1.0 (already in DB, confirmed by LensTip)
 - **constructionDiagram:** not found

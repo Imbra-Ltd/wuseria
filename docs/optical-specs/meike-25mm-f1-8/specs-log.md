@@ -14,9 +14,8 @@
 
 - **opticalElements:** 7 (official, LensTip)
 - **opticalGroups:** 5 (official, LensTip)
-- **edElements:** none listed in any source
-- **asphericalElements:** none listed in any source
+- **specialElements:** none found
 - **coating:** multi-layer (official)
-- **maxMagnification:** 0.15 (already in DB; LensTip says 0.13x — minor discrepancy)
+- **maxMagnification:** 0.13 (LensTip; DB corrected from 0.15 — unsourced value, 2026-05-27)
 - **constructionDiagram:** not found
 - **MTF chart:** not found
