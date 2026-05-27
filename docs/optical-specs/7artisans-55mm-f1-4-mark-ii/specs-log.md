@@ -32,3 +32,8 @@
   Amazon SG listing (B077ZM3VRV), whose "Multi-layer Coating" panel embeds both — the
   same pattern as the Fisheye II (Amazon) and the v1 (LeicaRumors press archive).
 - Active / not discontinued (official `.js` available:true).
+- **`hasCircularAperture: false` verified correct (2026-05-27):** the official page,
+  LensTip 1842, and the Amazon SG listing all describe a plain "9-blade diaphragm" with
+  NO "rounded"/"circular" wording. Contrast the 35mm f/1.2 Mark II, whose official page
+  says "rounded 10-blade" (flagged `true`). The DB sets `hasCircularAperture` only on an
+  explicit "rounded" statement, not inferred from blade count — so `false` is intended.
