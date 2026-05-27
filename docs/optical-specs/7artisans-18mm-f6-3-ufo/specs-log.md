@@ -24,9 +24,13 @@
 
 ## Caveats
 
-- The DB entry "18mm f/6.3 UFO" maps to the MF 18mm f/6.3 **Mark II** pancake (officialUrl +
-  6/5 specs confirm it). The original 18mm f/6.3 (6/4, 0.2x, 2020 — LensTip 1760) is a
-  different lens, not in the DB.
+- The DB entry "18mm f/6.3 UFO" maps to the MF 18mm f/6.3 **Mark II** pancake — confirmed not
+  by the URL slug alone but by the official **page title "MF 18mm f/6.3 Mark II"** and the
+  store carrying two distinct products (`18mm-f6-3` original + `...-mark-ii-...`).
+- The original 18mm f/6.3 (6/4, 0.2x, 2020 — LensTip 1760) is a different lens. It is NOT a
+  candidate for the DB: the official original-lens `.js` lists only a Canon EOS-M variant
+  (no Fuji X), so it fails the X-mount requirement. (Contrast the 60mm/12mm originals, which
+  WERE X-mount and are tracked in #878.)
 - Group-count conflict RESOLVED: 6/5 is the Mark II (official + LensTip 2023); the 6/4 was
   the original (LensTip 1760).
 - **DB corrections (2026-05-27):** `maxMagnification` 0.2 → **0.07** and `year` 2019 →
