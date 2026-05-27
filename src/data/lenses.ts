@@ -279,6 +279,7 @@ const lenses: Lens[] = [
     opticalElements: 11,
     opticalGroups: 8,
     specialElements: ["1 ED"],
+    coating: ["multi-layer"],
     focalLengthMin: 60,
     focalLengthMax: 60,
     maxAperture: 2.8,
