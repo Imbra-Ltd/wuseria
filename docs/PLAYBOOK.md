@@ -402,16 +402,21 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
    - Google Image Search (construction diagram + MTF chart)
    - If these five come up empty, continue down the source reference table
      below until data is found or all sources are exhausted
-6. **Verify** extracted data against diagrams and official pages — element/group
+6. **Check Shopify JSON for embedded images** — if the official site is
+   Shopify-based, fetch `<product-url>.json` and extract image URLs from
+   `body_html`. Construction diagrams, MTF charts, and spec tables are
+   often embedded as images invisible to text scraping. Download and
+   visually inspect candidate images.
+7. **Verify** extracted data against diagrams and official pages — element/group
    counts, special elements, coatings (including protective), X-mount dimensions
 
 #### Phase 3 — Commit per lens
 
-7. Update `specs-log.md` FIRST — the specs-log is the primary deliverable
-8. Edit `lenses.ts` — apply the verified data
-9. Confirm both files updated before moving to the next lens
-10. Run `npm run validate`
-11. If adding `maxMagnification` to a scored lens, also add `macro` genre mark
+8. Update `specs-log.md` FIRST — the specs-log is the primary deliverable
+9. Edit `lenses.ts` — apply the verified data
+10. Confirm both files updated before moving to the next lens
+11. Run `npm run validate`
+12. If adding `maxMagnification` to a scored lens, also add `macro` genre mark
 
 #### Maintenance
 

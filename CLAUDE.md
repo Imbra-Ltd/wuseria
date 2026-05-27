@@ -197,6 +197,8 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - When scoring lenses, save official MTF charts and analysis to the per-lens folder in `docs/optical-specs/<slug>/`
 - Every lens folder in `docs/optical-specs/<slug>/` MUST have a `specs-log.md` technical specs provenance log — document every source checked for construction diagrams, MTF charts, element counts, coatings, special glass, magnification (URL, date, result: found/not found/404/paywall), whether the search was successful or not, plus any caveats (e.g. different optical designs across mounts); distinct from `scoring-log.md` which covers OQ field scoring
 - When verifying or adding optical specs, follow the per-lens provenance workflow in PLAYBOOK 2.8 step 6 — specs-log first, lenses.ts second, no exceptions
+- When adding any artifact (construction diagram, MTF chart) to an optical-specs folder, update `specs-log.md` findings in the same commit — never add files without updating the log
+- `specs-log.md` findings MUST use DB field names — `specialElements` (not `edElements`, `asphericalElements`, `hrElements`), `coating`, `maxMagnification`, etc.
 - Samyang lenses are sold under multiple brand aliases (Rokinon, Bower, Walimex Pro, Vivitar) — search all aliases when looking for reviews
 - optyczne.pl and lenstip.com are the same company (CO-NET Robert Olech) — never count as separate sources for trust-2 aggregation
 - Verify lens mount availability before adding to the database — check official manufacturer pages and third-party lens lists; do not assume a lens exists in X-mount or GFX just because it exists in other mounts

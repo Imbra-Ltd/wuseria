@@ -15,8 +15,7 @@
 
 - **opticalElements:** 12 (NiSi UK, ManualsLib, B&H)
 - **opticalGroups:** 10 (NiSi UK, ManualsLib, B&H)
-- **asphericalElements:** 1 (ManualsLib: "1x double side aspherical element")
-- **edElements:** 2 (ManualsLib: "2x extra-low dispersion element")
+- **specialElements:** 1 aspherical, 2 ED (ManualsLib: "1x double side aspherical element", "2x extra-low dispersion element")
 - **coating:** undefined (no proprietary name found; described generically as "anti-reflection film technology" and "hard surface coating technology")
 - **constructionDiagram:** not found
 - **MTF chart:** not found

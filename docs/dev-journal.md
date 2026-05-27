@@ -3031,3 +3031,35 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 
 - Continue optical specs: 7Artisans (#748, 18 lenses), Meike (#755, 14 lenses)
 - Epic #739: 3 brands remaining (7Artisans, Meike + AstrHori missing lenses #867)
+
+---
+
+### Session 87 — Meike Cross-Check and Spec Corrections
+
+- PR #877 updated — cross-checked all 14 Meike lenses against official sources
+- Issues: #755 (awaiting merge)
+
+#### Key changes
+
+- Cross-checked lenses.ts against specs-log.md for all 14 Meike lenses; found construction diagrams contradicting specs-log findings
+- Fixed specialElements: 55mm f/1.4 AF added 2 HR (construction diagram), 55mm f/1.8 Pro AF 1 ED→2 ED + 2 HR (LensTip), 33mm f/1.4 AF added 1 HR + 1 UHR (construction diagram), 85mm f/1.8 Pro AF added 3 HR (official + LensTip)
+- Upgraded coatings from generic "multi-layer" to specific names: 33mm "HD double-sided multi-layer", 55mm f/1.4 "dual-sided multi-layer", 85mm f/1.8 Pro "double-sided multi-layer", 6.5mm/8mm fisheyes "nano multi-layer" (all from official sources)
+- Fixed maxMagnification: 25mm f/1.8 0.15→0.13 (LensTip)
+- Confirmed 85mm f/2.8 Macro 1.5x super-macro via ePhotozine review (two-stage focus ring)
+- Confirmed 6.5mm Fisheye 9 blades via Thom Hogan, Kamerastore, getuscart.com
+- Normalized all 16 specs-logs (14 Meike + 2 NiSi) to use DB field name `specialElements` instead of separate edElements/asphericalElements/hrElements
+- Manual cross-check of all 14 lenses against official pages (meikeglobal.com + mkgrip.com): fixed swapped diameter/length on 6.5mm and 12mm f/2.8, corrected weights on 5 lenses, corrected prices on 7 lenses, fixed filter thread on 60mm f/2.8 Macro (58→49mm)
+- Replaced dead officialUrls with mkgrip.com pages for discontinued lenses (6.5mm, 8mm, 85mm f/2.8 Macro)
+- Removed dead officialUrls for 35mm f/1.7 (page removed from meikeglobal.com entirely)
+
+#### Key decisions
+
+- When adding artifacts to optical-specs folders, specs-log.md MUST be updated in the same commit (new CLAUDE.md rule)
+- specs-log.md findings MUST use DB field names — specialElements, not edElements/asphericalElements/hrElements (new CLAUDE.md rule)
+- mkgrip.com (Meike's manufacturing site) used as officialUrl for discontinued lenses where meikeglobal.com pages are dead; HTTP-only site requires ESLint disable comments
+
+#### Next
+
+- Merge PR #877 (all CI green)
+- Continue optical specs: 7Artisans (#748, 18 lenses)
+- Epic #739: 2 brands remaining (7Artisans + AstrHori missing lenses #867)

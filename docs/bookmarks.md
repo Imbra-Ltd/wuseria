@@ -34,6 +34,10 @@
 
 - https://www.northlight-images.co.uk/ — Keith Cooper; architectural/commercial photographer, published book on tilt-shift lenses; hands-on reviews with MTF charts, no lab measurements; strong on T/S lens evaluation
 
+## Leak and rumor sites (pre-release specs, MTF charts)
+
+- https://www.lens-rumors.com/ — lens announcement aggregator; reposts Weibo leaks with MTF charts and spec sheets for Chinese brands (Meike, Yongnuo, etc.)
+
 ## Other photography resources
 
 - https://www.photozone.de/ — redirects to opticallimits.com
@@ -179,6 +183,7 @@
 ## Lens reviews — additional sources
 
 - https://expertphotography.com/ — hands-on reviews with test charts, sharpness crops, CA/distortion analysis; trust-3 level; good for consensus scoring on budget/mid-range lenses
+- https://drobertsphoto.com/ — field reviews for Fujifilm X-mount third-party lenses (Meike, budget AF primes)
 
 ## Aperture blades and bokeh
 
