@@ -313,7 +313,7 @@ const lenses: Lens[] = [
     year: 2023,
     opticalElements: 11,
     opticalGroups: 10,
-    specialElements: ["aspherical", "ED", "HR"],
+    specialElements: ["2 aspherical", "3 ED", "2 HR"],
     focalLengthMin: 10,
     focalLengthMax: 10,
     maxAperture: 2.8,
