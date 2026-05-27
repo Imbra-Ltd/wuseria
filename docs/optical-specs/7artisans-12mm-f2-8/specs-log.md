@@ -29,9 +29,12 @@
   mag 0.1x — match LensTip 2012 / the Mark II page exactly, NOT the original LensTip 1724:
   10/8, 7 blades, 77mm, 0.07x). The DB just names it plain "12mm f/2.8". The original
   Gen-I 12mm is a different lens carried only as a "Used" listing; if it's ever added it
-  needs its own row (10/8, 7 blades, 77mm, 0.07x, 2017 — LensTip 1724; stkb.co.jp's 2018
-  launch post indicates the original HAS a construction diagram + MTF — a provenance lead).
-  The model-name should arguably gain "Mark II" — flagged but the rename is out of scope here.
+  needs its own row. Original-lens provenance leads (NOT used for this Mark II row):
+  LensTip 1724 (10/8, 7 blades, 0.07x, 2017); stkb.co.jp 2018 launch post (has diagram + MTF);
+  **photozone.de/opticallimits trust-3 lab review** (Sept 2019, Sony FE): 10/8, 7 blades, 55mm
+  filter, 0.2m MFD, 292g, clickless aperture, "Zeiss Distagon-inspired, rear focusing" —
+  measured lab MTF available there. The model-name should arguably gain "Mark II" — flagged
+  but the rename is out of scope here.
 - **DB corrections/fills (2026-05-27):** `apertureBlades` 7 → **5**; `filterThread` added
   **67**; `minFocusDistance` 200 → **150** (all official spec panel + B&H, Mark II). Plus
   `year` 2018 → **2022** and `maxMagnification` 0.07 → **0.1** (LensTip 2012 Mark II release
