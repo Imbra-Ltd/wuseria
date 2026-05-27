@@ -11,6 +11,7 @@
 | Google Image Search           | google.com                                                          | 2026-05-27 | Diagram found embedded in official Amazon composite image; cropped and saved (no MTF)                                |
 | B&H Photo                     | bhphotovideo.com/c/product/1642656-REG                              | 2026-05-27 | Confirms 11 elements / 8 groups, 9 blades, filter 49mm, manual, X-mount; no coating named                            |
 | 7Artisans UK (official store) | 7artisans.co.uk/products/7artisans-60mm-f-2-8-macro-...             | 2026-05-27 | Mark II: 11/8, 9 blades, filter 49mm, 1:1; "multi-layer coatings reduce flare and ghosting"                          |
+| 7Artisans UK (MTF template)   | 7artisans.co.uk/cdn/shop/files/MTF_Template_copy.jpg                | 2026-05-27 | Official lens-structure diagram (1 red ED) + MTF chart (10/20/30 lp/mm, 0–13.2); MTF recovered and saved             |
 
 ## Findings
 
@@ -20,10 +21,10 @@
 - **coating:** multi-layer (the official 7Artisans UK store states "multi-layer coatings reduce flare and ghosting" for the Mark II; the 7artisans.store .com page and B&H are silent. Recorded as `["multi-layer"]` on the official UK store.)
 - **maxMagnification:** 1.0 (official: 1:1 "life-size" / "1x macro telephoto", MFD 0.175m)
 - **constructionDiagram:** found — `construction-diagram.jpg` (official, from Amazon listing; cross-section with legend red = HOYA Ultra-Low Dispersion glass, confirms 1 ED)
-- **MTF chart:** not found — thoroughly checked: .com store gallery, Amazon listing, B&H,
-  the official 7Artisans UK store gallery (4 product photos only), and press/rumor image
-  searches all came up empty. No MTF appears to be published for this macro (common for
-  macro lenses). Construction diagram exists; MTF does not.
+- **MTF chart:** found — `mtf-chart.jpg` (official; 10/20/30 lp/mm, 0–13.2). Sourced from
+  the 7Artisans UK store's `MTF_Template_copy.jpg` section image — NOT in the product
+  gallery (4 product photos) or the .com store / Amazon / B&H listings, which is why it
+  was initially recorded "not found". Recovered on review.
 
 ## Caveats
 
