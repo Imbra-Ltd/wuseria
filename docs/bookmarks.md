@@ -35,6 +35,7 @@
 
 - https://www.northlight-images.co.uk/ — Keith Cooper; architectural/commercial photographer, published book on tilt-shift lenses; hands-on reviews with MTF charts, no lab measurements; strong on T/S lens evaluation
 - https://sonyalpha.blog/ — Marc Alhadeff; deep manual-lens and tilt-shift coverage with 100% crops, CA/flare/sunstar/bokeh comparisons across competing 50mm primes; Sony-mount but covers the same optics sold in X-mount; trust-2 for OQ observations
+- https://kleiber.me/blog/ — Ingo Kleiber; Fuji X-mount hands-on reviews of budget/quirky lenses (7Artisans, etc.) with real-world sample crops and head-to-head vs Fujinon; qualitative, no lab MTF; trust-1
 
 ## Leak and rumor sites (pre-release specs, MTF charts)
 
