@@ -11,13 +11,14 @@
 | Google Image Search       | google.com                                                                                           | 2026-05-27 | Construction diagram + MTF recovered from official composite images; high-res versions sourced from the Amazon listing (saved)                                          |
 | Shutterbug (review)       | shutterbug.com/content/sharp-super-affordable-and-fun-7artisans-75mm-f28-mark-ii-fisheye-lens-review | 2026-05-27 | Confirmed: rear group Hoya ED glass; front group high-refractive-index element replacing Mk I cemented glass; clean labeled diagram shows 2 red ED elements; price $139 |
 | Amazon (official listing) | m.media-amazon.com (7Artisans "LENS DESCRIPTION" image)                                              | 2026-05-27 | High-res official composite: MTF chart + lens-structure diagram (2 red ED rear elements). Source of the saved artifacts.                                                |
+| B&H Photo                 | bhphotovideo.com/c/product/1732941-REG                                                               | 2026-05-27 | Confirms 11 elements / 9 groups, 7 blades; lists "Multi-Layer Lens Coating"                                                                                             |
 
 ## Findings
 
 - **opticalElements:** 11 (official, confirmed by LensTip id 1844 and the official construction diagram)
 - **opticalGroups:** 9 (official, confirmed by LensTip id 1844)
 - **specialElements:** 2 ED (official: "two ED lenses added"; LensTip: "2 ultra-low dispersion glass elements"; both the official and Amazon lens-structure diagrams show 2 ED elements in the rear group — three+ sources agree on 2 ED). Shutterbug also notes a high-refractive-index element in the front group (replaces Mk I cemented glass) — not separately recorded as the maker gives it no count/designation.
-- **coating:** none stated (no coating named on official page or LensTip; Shutterbug review remarks only that "the coating on the front element appears to be quite satisfactory" — an observation, not a named coating; left undefined per project rule)
+- **coating:** multi-layer (NOT on the official store page or LensTip, but B&H lists "Multi-Layer Lens Coating"; Shutterbug review separately remarks the front-element coating "appears to be quite satisfactory". Recorded as `["multi-layer"]` on B&H evidence.)
 - **maxMagnification:** not found (official states closest focus 0.15m only; LensTip leaves magnification blank — not estimated per project rule)
 - **constructionDiagram:** found — `construction-diagram.jpg` (official 7Artisans lens-structure cross-section; ED elements shown in red, rear group)
 - **MTF chart:** found — `mtf-chart.jpg` (official; S1–S4 sagittal solid + T1–T4 meridional dashed, 0–12mm)
