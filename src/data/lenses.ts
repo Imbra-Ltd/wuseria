@@ -194,9 +194,9 @@ const lenses: Lens[] = [
     weight: 450,
     diameter: 75,
     length: 73,
-    filterThread: 62,
+    filterThread: 46,
     price: 250,
-    minFocusDistance: 400,
+    minFocusDistance: 500,
     isTiltShift: true,
     officialUrl:
       "https://7artisans.store/products/50mm-f1-4-aps-c-tilt-lens-for-e-fx-m43",
