@@ -3154,3 +3154,34 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Merge PR #898 (#779 8-brand physical extraction); then #897 (Sigma+Viltrox) when network is available to close #779.
 - Data cleanup #896 (triage --verify findings: real errors vs per-mount differences).
 - Backlog carried over: #894 (Python toolchain spike), #884 (specs-log backfill), pagefetch `download_bytes` escalation for Venus images, pagefetch→submodule extraction.
+
+---
+
+### Session 91 — Deploy Fix, CI Gate, Sigma + Viltrox extract_physical
+
+- Theme started as "fix the deploy" (main had been red for 3 commits) and, with maintainer sign-off at each step, extended into the last two `extract_physical` brands.
+- PRs merged: #899, #900 (deploy/CI), #903 (Sigma), #904 (Viltrox). Issues: closed #897, #901, #779, epic #885; created #901, #902; moved #902 to Expedite. ADR-036 added.
+
+#### Key changes
+
+- **Deploy fix** (#899, #900): the Python tooling refactor (#893/#895/#898) committed scraped HTML test fixtures under `tools/*/tests/fixtures/`, which `prettier --check` failed on — breaking the main deploy three times. First patch ignored the fixtures (#899); the correct fix excludes all of `tools/` from the front-end gate (prettier + eslint), since `tools/` is Python with its own pytest suites and is not part of the Astro/TS front end (#900). Also gitignored `.pytest_cache/`.
+- **Sigma `extract_physical`** (#903): parses Sigma's `l-grid` spec rows. Verified live against all 11 lenses, which exposed and fixed three parser bugs — weight thousands-separator (`1,135g` → 135), ASCII-vs-fullwidth per-mount colon (newer pages switched to `:`), and MFD in cm with zoom ranges (`112(W) - 160(T)cm`). Three trimmed fixtures keep the real Unicode (φ, ×, ：) the live pages serve.
+- **Viltrox re-source** (#901 → #904, ADR-036): live verification found Viltrox moved its specs out of the Shopify JSON (`body_html` now marketing prose) into a spec table in the theme HTML. Re-sourced `ViltroxExtractor` from JSON to HTML — `normalize_url` now identity, dynamic X-mount column selection (column order varies per lens), per-field synonym sets for label/unit drift, special-element scan scoped to the description block (a CSS UUID `…b953ed` otherwise read as `953 ED`). Verified live across all 13 lenses. Stale JSON fixture replaced with two HTML fixtures.
+- **#779 / epic #885 closed**: `extract_physical` cross-validation now covers all applicable brands (8 from #898 + Sigma + Viltrox; Zeiss N/A). All 8 epic children done.
+
+#### Key decisions
+
+- **CI gate scope** (maintainer call): `tools/` is excluded from the front-end checks rather than added to them — Python files with their own pytest suites do not belong in the Astro/TS prettier+eslint gate. This aligns the gate with the `ci.yml` `changes` path-filter, which already excludes `tools/` from triggering the build job.
+- **Viltrox JSON→HTML** (ADR-036): the JSON source is dead for specs; re-sourcing to theme HTML was a rewrite, not an addition, so #897's Viltrox half was split into #901. Special-element counts are no longer extracted from Viltrox (not structurally present on the page) — `[]` is honest; fabricating from page noise is not.
+- **Data vs tooling separation**: `--verify` mismatches are data defects in `lenses.ts`, kept out of the extractor PRs and triaged into #902 (Sigma + Viltrox). Source-conflict rule applied — confirmed the official page describes the same lens before declaring stored data wrong (Sigma 15mm). Flagged the systematic Viltrox `afMotor: LM → STM+Lead screw` as a vocabulary decision, not a find-and-replace.
+
+#### Post-mortems
+
+- **Main deploy red for 3 commits (P2).** **Symptom:** `Deploy to GitHub Pages` failed on every push since the tooling refactor; site stayed on the last good build. **Root cause:** `prettier --check .` walked the newly-committed `tools/*/tests/fixtures/*.html` scraped pages and failed; the front-end validate gate had no business scanning `tools/`. **Why missed:** PR CI's `build` job (which runs `validate`) is gated by a `changes` path-filter that excludes `tools/`, so `tools/`-only PRs skipped the gate entirely and showed all-green; the failure only fires post-merge on the deploy workflow, which runs `validate` unconditionally. The `gate` job also treats a skipped `build` as success. **Fix:** #899 then #900 (exclude `tools/` from prettier+eslint). **Prevention:** the front-end gate and the PR path-filter now agree — `tools/` is outside both; a `tools/`-only change cannot break the front-end deploy.
+
+#### Next
+
+- #902 (Expedite): apply the Sigma + Viltrox `--verify` data corrections to `lenses.ts`, with source-conflict review on the flagged cases (Sigma 12mm/15mm, Viltrox 23mm/33mm) and a decision on the `afMotor` vocabulary.
+- #896: Fujifilm rounded-weight cleanup (still open).
+- Release: v0.7.0 still un-tagged — `package.json` at 0.6.0, milestone 45 closed / remaining items are data/backlog. Decide whether to tag now or after #902/#896.
+- Backlog carried over: #894 (Python toolchain spike), #884 (specs-log backfill), pagefetch `download_bytes` escalation for Venus images, pagefetch→submodule extraction.
