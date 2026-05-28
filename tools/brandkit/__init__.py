@@ -25,7 +25,14 @@ from .audit import audit
 from .cli import format_ts_fields, run
 from .diff import Mismatch, diff_physical
 from .extractor import BrandConfig, BrandExtractor
-from .lenses import PHYSICAL_FIELDS, LensEntry, LensesFile
+from .lenses import (
+    FIELD_KIND,
+    PHYSICAL_FIELDS,
+    PHYSICAL_SPEC_FIELDS,
+    LensEntry,
+    LensesFile,
+    PhysicalValue,
+)
 from .slug import model_to_slug
 from .specs_dir import (
     detect_ext,
@@ -45,7 +52,10 @@ __all__ = [
     "BrandConfig",
     "LensesFile",
     "LensEntry",
+    "PhysicalValue",
     "PHYSICAL_FIELDS",
+    "PHYSICAL_SPEC_FIELDS",
+    "FIELD_KIND",
     "model_to_slug",
     "diff_physical",
     "Mismatch",

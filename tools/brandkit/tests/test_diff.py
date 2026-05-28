@@ -72,5 +72,47 @@ def test_non_numeric_stored_value_is_skipped():
 
 
 def test_bool_is_not_treated_as_number():
-    # bool is an int subclass; a stray True must not be diffed as 1.
+    # apertureBlades is numeric; a stray True must not be diffed as 1.
     assert diff_physical({"apertureBlades": 9}, {"apertureBlades": True}) == []
+
+
+# --- typed comparison: booleans ---
+
+
+def test_boolean_match_no_mismatch():
+    assert diff_physical({"hasOis": True}, {"hasOis": True}) == []
+    assert diff_physical({"isWeatherSealed": False}, {"isWeatherSealed": False}) == []
+
+
+def test_boolean_mismatch_caught():
+    # Stored says weather-sealed; page says it is not.
+    m = diff_physical({"isWeatherSealed": True}, {"isWeatherSealed": False})
+    assert len(m) == 1
+    assert m[0].field == "isWeatherSealed"
+
+
+def test_boolean_skipped_when_page_silent():
+    # The extractor only returns a flag it confirmed; if it omits hasOis, the
+    # stored False is not compared (page did not address it).
+    assert diff_physical({"hasOis": False}, {}) == []
+
+
+# --- typed comparison: strings (afMotor) ---
+
+
+def test_string_match_case_insensitive():
+    assert diff_physical({"afMotor": "STM"}, {"afMotor": "stm"}) == []
+
+
+def test_string_mismatch_caught():
+    m = diff_physical({"afMotor": "STM"}, {"afMotor": "LM"})
+    assert len(m) == 1
+    assert m[0].field == "afMotor"
+
+
+def test_mixed_field_set_reports_each_kind():
+    stored = {"weight": 276, "hasOis": False, "afMotor": "STM"}
+    extracted = {"weight": 300, "hasOis": True, "afMotor": "STM"}
+    fields = {m.field for m in diff_physical(stored, extracted)}
+    # weight off by ~9%, OIS flipped; afMotor agrees.
+    assert fields == {"weight", "hasOis"}

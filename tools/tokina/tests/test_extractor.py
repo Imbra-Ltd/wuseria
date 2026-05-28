@@ -76,7 +76,7 @@ def test_extract_image_urls_empty_when_no_diagrams(extractor):
     assert urls == {"mtf": [], "construction": []}
 
 
-def test_extract_physical_all_fields(extractor, html):
+def test_extract_physical_dimensions(extractor, html):
     phys = extractor.extract_physical(html)
     assert phys["weight"] == 276  # last-occurrence wins over the widget junk
     assert phys["filterThread"] == 52
@@ -85,6 +85,26 @@ def test_extract_physical_all_fields(extractor, html):
     assert phys["maxMagnification"] == 0.1  # 1:10 -> decimal
     assert phys["diameter"] == 65
     assert phys["length"] == 72
+
+
+def test_extract_physical_optical_and_flags(extractor, html):
+    phys = extractor.extract_physical(html)
+    assert phys["maxAperture"] == 1.4
+    assert phys["focalLengthMin"] == 23  # prime -> min == max
+    assert phys["focalLengthMax"] == 23
+    assert phys["hasApertureRing"] is True
+    assert phys["isApertureClickless"] is True
+    assert phys["hasFocusRing"] is True
+
+
+def test_extract_physical_omits_unstated_flags(extractor, html):
+    # The Tokina page does not state OIS / weather-sealing / AF motor for this
+    # lens — they must be omitted, not returned False (so the stored False is
+    # never falsely flagged as a mismatch).
+    phys = extractor.extract_physical(html)
+    assert "hasOis" not in phys
+    assert "isWeatherSealed" not in phys
+    assert "afMotor" not in phys
 
 
 def test_physical_diff_catches_swapped_weight(extractor, html):

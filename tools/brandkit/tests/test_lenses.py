@@ -49,11 +49,18 @@ def test_physical_fields_extracted(lenses_sample_path):
     assert entry.physical["minFocusDistance"] == 300
 
 
-def test_missing_physical_fields_omitted(lenses_sample_path):
+def test_missing_numeric_fields_omitted_but_booleans_default_false(lenses_sample_path):
     lf = LensesFile(lenses_sample_path)
-    # The 33mm entry only declares weight.
+    # The 33mm entry only declares weight among the numeric specs.
     entry = lf.entries_for("Tokina")[1]
-    assert entry.physical == {"weight": 285.0}
+    # Numeric/string specs absent from the block stay absent (unknown)...
+    assert entry.physical["weight"] == 285.0
+    assert "diameter" not in entry.physical
+    assert "afMotor" not in entry.physical
+    # ...but booleans default to False per the Lens-type contract.
+    assert entry.physical["hasOis"] is False
+    assert entry.physical["isWeatherSealed"] is False
+    assert entry.physical["isTiltShift"] is False
 
 
 def test_other_brand_isolated(lenses_sample_path):
