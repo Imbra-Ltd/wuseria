@@ -1020,9 +1020,24 @@ merges:
 ```bash
 git checkout main && git pull
 git tag vA.B.C && git push origin vA.B.C
+
+# Verify the manifest version matches the tag (base/git.md post-release check)
+node -p "require('./package.json').version"   # must equal A.B.C
+git describe --tags --abbrev=0                 # must be vA.B.C
+
+# Create the GitHub Release — a pushed tag alone does NOT create one
+gh release create vA.B.C --title "vA.B.C" --generate-notes
+
+# Clean up the release branch
 git branch -d chore/release-vA.B.C
 git push origin --delete chore/release-vA.B.C
 ```
+
+The git **tag** and the GitHub **Release** are separate artifacts: pushing
+the tag creates the git ref; `gh release create` creates the Releases-page
+entry with notes auto-generated from the PRs merged since the previous tag.
+The deploy (§5.2) runs on the release-bump merge to `main`, independent of
+the tag.
 
 ### 5.2 Deploy
 

@@ -3259,9 +3259,11 @@ GitHub Release with auto-generated notes; deploy green).
 
 - v0.7.0 shipped. Next release tag is a natural point after the #912–#915
   polish and/or the next data/feature arc.
-- For future tags: `gh release create` is a separate step from the git tag —
-  PLAYBOOK 5.1 (with-manifest path) documents the tag but not the Release;
-  consider adding the `gh release create ... --generate-notes` step to 5.1.
+- PLAYBOOK 5.1 now documents the full post-merge sequence (tag → verify
+  manifest==tag → `gh release create --generate-notes` → cleanup); the git
+  tag and the GitHub Release are called out as separate artifacts. Flagged
+  upstream as solid-ai-templates#338 (with-manifest path should include
+  `gh release create`).
 - Spot-check other brands for comma-formatted weights / rounded data now that
   all `extract_physical` brands are live (per-brand `extract_physical` regexes
   were written independently; brandkit lenses.py `_parse_number` already
