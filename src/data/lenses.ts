@@ -492,7 +492,7 @@ const lenses: Lens[] = [
     isApertureClickless: true,
     hasDistanceScale: true,
     hasTripodMount: false,
-    weight: 160,
+    weight: 228,
     diameter: 60,
     length: 42.2,
     filterThread: 46,
