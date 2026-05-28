@@ -3063,3 +3063,34 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Merge PR #877 (all CI green)
 - Continue optical specs: 7Artisans (#748, 18 lenses)
 - Epic #739: 2 brands remaining (7Artisans + AstrHori missing lenses #867)
+
+### Session 88 — 7Artisans Optical Specs and Per-Lens Audit
+
+- Merged PR #877 (Meike #755); restored a stray submodule rewind at session start
+- PR #880 open — 7Artisans optical specs (#748) + a full per-lens re-audit; all CI green, awaiting merge
+- Issues: closed #755/#877 era; created #879 (phantom 35mm f/2.0), #881 (fetch-page cache bug), #882 (Trust Score spike), #883 (spec-researcher subagent + image-gather tool); merged duplicate #878 into #824; fixed #609 title (stripped `data:` prefix); solid-ai-templates #330 (startup-reads hook troubleshooting)
+
+#### Key changes
+
+- Collected optical construction + coating for all 17 real 7Artisans X-mount lenses; specs-log per lens (PLAYBOOK 2.8 order: specs-log first)
+- Recovered construction diagrams (13/17) + MTF charts (13/17) that the first research pass missed — they live in Shopify `cdn/shop/files` section images / Amazon listings / press archives, not the gallery JSON
+- Per-lens cross-check (DB vs official + LensTip + B&H) surfaced ~25 DB errors fixed: removed phantom 35mm f/2.0 (Leica-M-only); flagged 35mm f/1.2 v1 discontinued; renamed 12mm + 18mm UFO to "Mark II"; corrected weights (e.g. 35mm f/0.95 550→369, 25mm f/1.8 200→143), filters, MFDs, blades, years, the 10mm AF motor (LM→STM), and dimensions across many lenses; fixed a 404 officialUrl (55mm Mark II)
+- Built `tools/crop-artifact.py` — content-aware bbox cropper (replaces hand-guessed pixel coords that silently truncate); used for remaining crops
+- Translated the 10mm AF construction-diagram legend to English (kept verbatim `-original`); chose the "ED Glass" legend diagram for 50mm f/0.95 over the "HOYA ULD" one to match the DB `2 ED` term
+- Hardened PLAYBOOK 2.8: verify EVERY field (not just optical); `cdn/shop/files` section-image layer + open every image (never filenames, never sample); Mark-II-vs-original generation check; source-conflict rule (official wins, distrust a mis-cataloged source's other fields); discontinuation via `.js` availability not "Sold out"
+- Added `.prettierignore` entry for `downloaded_files/` (scratch caches were failing `npm run validate`)
+- Bookmarked review sources: alikgriffin.com, sonyalpha.blog, kleiber.me; logged Shutterbug + PhotoRumors + LeicaRumors as press/diagram sources
+
+#### Key decisions
+
+- Trust Score = f(completeness, authority, effort): complete+authoritative highest, complete-but-from-rumors/Amazon/eBay lower (with per-click effort penalty), incomplete lowest — spike #882; two underlying factors kept separable for a lens-page completeness-vs-source-trust chart + homepage brand heatmap
+- Subagent errors (filename-only image checks, unverifiable snippets) are a task-fit/instrumentation problem, not an agent-quality one — fix via a reusable `.claude/agents/spec-researcher.md` + `tools/gather-lens-images.py` carrying the PLAYBOOK discipline (task #883), to be built before the next brand
+- LensTip can be mis-cataloged per-lens (35mm f/1.4: 10/9 vs official 8/5; 50mm f/0.95 MFD): official manufacturer wins, and a source wrong on one field has its other fields distrusted
+- Mark II entries created by copying the original frequently inherit the original's year/magnification/blades/filter — verify generation against the official page title, not the URL slug
+
+#### Next
+
+- Merge PR #880 (awaiting explicit permission; all CI green)
+- Build #883 (spec-researcher subagent + image-gather tool) as the first step of the next brand
+- Continue: #824 (7Artisans missing lenses incl. Mk I 60mm/12mm + AF lenses), then AstrHori #867, Mitakon #833
+- Backlog: Trust Score spike #882, fetch-page cache fix #881

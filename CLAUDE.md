@@ -77,6 +77,7 @@ Project-specific overrides and additions follow below.
 - `tools/mitakon/` — Mitakon optical spec extraction (fetch_specs, audit, SeleniumBase UC for zyoptics.net)
 - `tools/lenstip/` — LensTip lens index (build_index, search); local JSON index of 2300+ lenses for instant ID lookup
 - `tools/lookup.py` — unified lens lookup; generates research URLs for all PLAYBOOK 2.8 sources in one shot
+- `tools/crop-artifact.py` — content-aware cropper for construction diagrams / MTF charts; detects content bbox from corner-median background (no hand-guessed pixel coords), splits composites (`--split --left/--right`), supports explicit `--region`, `--margin`, advisory `--check`
 - `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility, `FETCH-PAGE.md` dev journal
 
 ### 1.3 Commands
@@ -203,6 +204,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - optyczne.pl and lenstip.com are the same company (CO-NET Robert Olech) — never count as separate sources for trust-2 aggregation
 - Verify lens mount availability before adding to the database — check official manufacturer pages and third-party lens lists; do not assume a lens exists in X-mount or GFX just because it exists in other mounts
 - `maxMagnification` MUST come from spec sheets or review measurements — never estimate from focal length and minimum focus distance (thin lens formula has ~39% median error)
+- Source-conflict resolution: the official manufacturer page wins on any contested field; when a secondary source (incl. LensTip) is provably wrong on one verifiable field, distrust its other fields for that lens — it is likely mis-cataloged (e.g. LensTip listed 35mm f/1.4 as 10/9 vs official 8/5; do not adopt its physical specs either)
 - Products without glass elements (pinhole lenses, cap lenses) are accessories (`lens-accessory`), not lenses — they have no optical parameters to measure or score
 
 ## 3. Quality

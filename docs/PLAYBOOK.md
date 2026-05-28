@@ -465,6 +465,21 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
   sets — check both. Also check the brand's official Amazon/regional store listings
   (US, SG, UK), which often host the highest-res official composite (diagram + MTF)
   and state coatings the `.com` store omits. Request the largest image with `?width=3200`.
+- **Cropping the diagram/MTF out of a composite:** use `tools/crop-artifact.py` —
+  do NOT hand-guess pixel coordinates (they silently truncate or off-center the
+  result). It detects the content bounding box from the corner-median background:
+
+  ```bash
+  py tools/crop-artifact.py in.jpg --out construction-diagram.jpg            # auto bbox
+  py tools/crop-artifact.py in.jpg --split --left  --out construction-diagram.jpg  # left half of a side-by-side composite
+  py tools/crop-artifact.py in.jpg --split --right --out mtf-chart.jpg              # right half
+  py tools/crop-artifact.py in.jpg --region 120,80,1480,1040 --out mtf-chart.jpg    # explicit box when auto over/under-reaches
+  py tools/crop-artifact.py in.jpg --check                                   # advisory edge-touch report (non-blocking)
+  ```
+
+  Always eyeball the output — a tight axis box or a wide lens housing legitimately
+  reaches the margin, so `--check` is advisory only.
+
 - **Generation check (Mark II vs original):** before trusting a "Mark II" row,
   confirm the entry's generation against the official **page title** and the lens's
   specs (not the URL slug alone). Rows created by copying the original frequently

@@ -40,6 +40,8 @@
 ## Leak and rumor sites (pre-release specs, MTF charts)
 
 - https://www.lens-rumors.com/ — lens announcement aggregator; reposts Weibo leaks with MTF charts and spec sheets for Chinese brands (Meike, Yongnuo, etc.)
+- https://leicarumors.com/ — rumor/press archive; hosts official press-kit construction diagrams and MTF charts (used to recover the 7Artisans 35mm f/1.2 v1 official diagram)
+- https://www.fujiaddict.com/ — Fujifilm news/rumor blog; useful for generation history (e.g. distinguishing 7Artisans Mk I vs Mark II) and announcement specs
 
 ## Other photography resources
 
@@ -187,6 +189,8 @@
 
 - https://expertphotography.com/ — hands-on reviews with test charts, sharpness crops, CA/distortion analysis; trust-3 level; good for consensus scoring on budget/mid-range lenses
 - https://drobertsphoto.com/ — field reviews for Fujifilm X-mount third-party lenses (Meike, budget AF primes)
+- https://www.shutterbug.com/ — established photo-magazine reviews; hands-on with optical notes (used to confirm 7Artisans 7.5mm f/2.8 Fisheye II rear-group Hoya ED glass + front high-index element)
+- https://chako.ua/ — Ukrainian camera retailer; carries full spec tables for Chinese-brand lenses, useful as a retailer-tier spec cross-reference
 
 ## Aperture blades and bokeh
 
