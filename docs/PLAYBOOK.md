@@ -293,9 +293,15 @@ All 11 brands are migrated onto the `pagefetch` + `brandkit` architecture
 in `brandkit`; `fetch_specs.py`/`audit.py` are thin delegators. The same
 flags work for every brand (substitute the brand directory below). The
 `--verify` flag (#779) cross-validates stored physical specs against the
-official page — implemented for 8 brands (fujifilm, samyang, tamron, tokina,
-ttartisan, voigtlander, venus, mitakon); sigma/viltrox pending (#897),
-zeiss N/A (PDF-only). Tokina shown as the example:
+official page — implemented for all brands except zeiss (N/A, PDF-only).
+When using `--verify` to drive a `lenses.ts` data pass, confirm the
+extractor is reliable first: a systematic extraction bug makes `--verify`
+report false divergences and blindly applying its page values corrupts good
+data (e.g. #906 truncated comma-formatted weights). Treat a physically
+implausible page value as a tool bug, fix and re-verify; cross-check a
+suspect official page (e.g. an `/en-us/` page serving the wrong lens's
+data) against `/global/` or an independent source before overwriting.
+Tokina shown as the example:
 
 ```bash
 py tools/tokina/fetch_specs.py                    # fetch all specs + images
