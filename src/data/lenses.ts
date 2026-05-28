@@ -525,10 +525,10 @@ const lenses: Lens[] = [
     isApertureClickless: true,
     hasDistanceScale: true,
     hasTripodMount: false,
-    weight: 540,
+    weight: 418,
     diameter: 62,
     length: 58,
-    filterThread: 52,
+    filterThread: 62,
     price: 500,
     minFocusDistance: 500,
     officialUrl:
