@@ -16,18 +16,30 @@ Usage:
 
 import argparse
 import re
+import sys
 import time
 import urllib.request
 from pathlib import Path
 
-from common import (
-    OPTICAL_SPECS_DIR,
-    USER_AGENT,
-    extract_viltrox_lenses,
-    model_to_slug,
-)
+TOOLS_DIR = Path(__file__).resolve().parent.parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
 
-DOWNLOAD_DIR = Path(__file__).resolve().parent.parent.parent / ".cache" / "viltrox-images"
+from brandkit import LensesFile, model_to_slug  # noqa: E402
+from pagefetch import DEFAULT_USER_AGENT as USER_AGENT  # noqa: E402
+
+ROOT = TOOLS_DIR.parent
+LENSES_TS = ROOT / "src" / "data" / "lenses.ts"
+DOWNLOAD_DIR = ROOT / ".cache" / "viltrox-images"
+
+
+def viltrox_lenses() -> list[dict]:
+    """Viltrox lenses from lenses.ts as {model, url} dicts (this scraper
+    predates the BrandTool pipeline and works in plain dicts)."""
+    return [
+        {"model": e.model, "url": e.url}
+        for e in LensesFile(LENSES_TS).entries_for("Viltrox")
+    ]
 
 
 def fetch_page_html(url: str, timeout: int = 30) -> str:
@@ -106,7 +118,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    lenses = extract_viltrox_lenses()
+    lenses = viltrox_lenses()
     print(f"Found {len(lenses)} Viltrox lenses")
 
     if args.filter:
@@ -117,7 +129,7 @@ def main() -> None:
 
     for i, lens in enumerate(lenses):
         model = lens["model"]
-        slug = model_to_slug(model)
+        slug = model_to_slug("viltrox", model)
         url = lens["url"]
 
         print(f"\n[{i + 1}/{len(lenses)}] {model}")

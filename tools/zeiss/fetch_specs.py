@@ -1,28 +1,43 @@
 """Fetch PDF datasheets for Carl Zeiss Touit lenses.
 
-Carl Zeiss Touit lenses are discontinued and their product pages return 404.
-The officialUrl fields point to PDF datasheets on zeiss.com that contain
-optical construction diagrams, MTF charts, and full specifications.
+Carl Zeiss Touit lenses are discontinued and their product pages 404. The
+officialUrl fields point to PDF datasheets on zeiss.com with optical
+construction diagrams, MTF charts, and specs. This tool downloads those PDFs
+to docs/optical-specs/{slug}/; charts must be extracted from the PDF manually.
 
-This tool downloads the PDF datasheets to docs/optical-specs/{slug}/.
-MTF charts and construction diagrams must be extracted manually from the PDFs
-(e.g. screenshot or PDF image extraction tool).
+Unlike other brands this is a PDF download, not spec scraping, so it builds a
+brandkit BrandTool (for lens resolution + the shared save_pdf path) but keeps
+its own small main rather than using the generic spec/verify CLI runner.
 
 Usage:
-    py tools/zeiss/fetch_specs.py                    # download all datasheets
-    py tools/zeiss/fetch_specs.py --dry-run           # list lenses without downloading
-    py tools/zeiss/fetch_specs.py --filter 12mm       # filter by model substring
+    py tools/zeiss/fetch_specs.py                # download all datasheets
+    py tools/zeiss/fetch_specs.py --dry-run      # list lenses without downloading
+    py tools/zeiss/fetch_specs.py --filter 12mm  # filter by model substring
 """
 
 import argparse
+import sys
 import time
+from pathlib import Path
 
-from common import (
-    OPTICAL_SPECS_DIR,
-    download_pdf,
-    extract_zeiss_lenses,
-    model_to_slug,
-)
+TOOLS_DIR = Path(__file__).resolve().parent.parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
+from brandkit import BrandTool  # noqa: E402
+from pagefetch import FileCache, NetworkFetcher  # noqa: E402
+from zeiss.extractor import ZeissExtractor  # noqa: E402
+
+ROOT = TOOLS_DIR.parent
+
+
+def build_tool() -> BrandTool:
+    return BrandTool(
+        extractor=ZeissExtractor(),
+        source=NetworkFetcher(cache=FileCache(cache_dir=ROOT / ".cache" / "fetch")),
+        lenses_path=ROOT / "src" / "data" / "lenses.ts",
+        specs_root=ROOT / "docs" / "optical-specs",
+    )
 
 
 def parse_args() -> argparse.Namespace:
@@ -34,43 +49,34 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    tool = build_tool()
 
-    lenses = extract_zeiss_lenses()
+    lenses = tool.resolve_lenses()
     print(f"Found {len(lenses)} Carl Zeiss lenses with official URLs")
-
     if args.filter:
-        lenses = [l for l in lenses if args.filter.lower() in l["model"].lower()]
+        lenses = [l for l in lenses if args.filter.lower() in l.model.lower()]
         print(f"  Filtered to {len(lenses)} matching '{args.filter}'")
 
     if args.dry_run:
         for lens in lenses:
-            print(f"  {lens['model']}: {lens['url']}")
+            print(f"  {lens.model}: {lens.url}")
         return
 
     stats = {"downloaded": 0, "skipped": 0, "failed": 0}
-
     for i, lens in enumerate(lenses):
-        model = lens["model"]
-        slug = model_to_slug(model)
-        url = lens["url"]
-        specs_dir = OPTICAL_SPECS_DIR / slug
-
-        print(f"\n[{i + 1}/{len(lenses)}] {model}")
-
-        dest = specs_dir / f"{slug}-datasheet.pdf"
-        if dest.exists():
-            print(f"  Already exists: {dest.name}")
+        slug = tool.slug_for(lens.model)
+        print(f"\n[{i + 1}/{len(lenses)}] {lens.model}")
+        if tool.has_datasheet(lens):
+            print(f"  Already exists: {slug}-datasheet.pdf")
             stats["skipped"] += 1
-        elif download_pdf(url, dest):
-            print(f"  Downloaded: {dest.name}")
+        elif tool.save_pdf(lens):
+            print(f"  Downloaded: {slug}-datasheet.pdf")
             stats["downloaded"] += 1
         else:
-            print(f"  FAILED: could not download datasheet")
+            print("  FAILED: could not download datasheet")
             stats["failed"] += 1
-
-        print(f"  NOTE: Extract MTF charts and construction diagrams manually from the PDF")
-        print(f"        Save as: {slug}-mtf.png, {slug}-construction.png")
-
+        print("  NOTE: extract MTF + construction diagrams manually from the PDF")
+        print(f"        save as: {slug}-mtf.png, {slug}-construction.png")
         if i < len(lenses) - 1:
             time.sleep(1)
 

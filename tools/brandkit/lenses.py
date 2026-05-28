@@ -37,8 +37,12 @@ class LensEntry:
 
 
 def _split_brand_blocks(content: str) -> list[str]:
-    """Split lenses.ts into per-lens blocks (each begins with `brand:`)."""
-    return re.split(r"(?=\{\s*\n\s*brand:)", content)
+    """Split lenses.ts into per-lens blocks (each begins with `brand:`).
+
+    Tolerates `//` comment lines between the opening brace and the brand
+    field — some entries carry a leading comment, and the naive split would
+    merge them into the previous block and drop the lens."""
+    return re.split(r"(?=\{\s*\n\s*(?://[^\n]*\n\s*)*brand:)", content)
 
 
 def _parse_number(raw: str) -> float | None:

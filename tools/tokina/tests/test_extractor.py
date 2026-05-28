@@ -9,13 +9,11 @@ from pathlib import Path
 
 import pytest
 
-TOKINA_DIR = Path(__file__).resolve().parent.parent
-TOOLS_DIR = TOKINA_DIR.parent
-for p in (str(TOOLS_DIR), str(TOKINA_DIR)):
-    if p not in sys.path:
-        sys.path.insert(0, p)
+TOOLS_DIR = Path(__file__).resolve().parent.parent.parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
 
-from extractor import TokinaExtractor  # noqa: E402
+from tokina.extractor import TokinaExtractor  # noqa: E402
 
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "tokina-23mm-sample.html"
 

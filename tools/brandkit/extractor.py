@@ -26,6 +26,17 @@ class BrandConfig:
     content_mode: ContentMode = ContentMode.HTML
     transport: Transport = Transport.AUTO
     has_diagrams: bool = True
+    # Extra page paths appended to the lens URL and concatenated with the main
+    # page before extraction — e.g. Tamron keeps element/group counts and
+    # diagrams on a "spec.html" sub-page. A tuple (not list) keeps the frozen
+    # dataclass hashable. Empty means single-page.
+    extra_paths: tuple[str, ...] = ()
+    # When True and the HTML image path finds nothing, BrandTool opens a live
+    # Playwright page and calls extract_images_live — for brands whose image
+    # URLs can only be resolved by on-page geometry (Fujifilm's newer pages
+    # with generic CDN filenames). The browser stays in brandkit; pagefetch
+    # is never handed a live page.
+    needs_live_page: bool = False
 
 
 class BrandExtractor(ABC):
@@ -49,10 +60,24 @@ class BrandExtractor(ABC):
         returns nothing, so a brand can migrate before implementing this."""
         return {}
 
-    def extract_image_urls(self, content: str) -> dict[str, list[str]]:
+    def extract_image_urls(self, content: str, url: str) -> dict[str, list[str]]:
         """Return MTF and construction-diagram URLs, normalized to
         {"mtf": [...], "construction": [...]}. Brands without published
-        diagrams inherit the empty default."""
+        diagrams inherit the empty default.
+
+        url is the lens's (normalized) page URL — some brands (Sigma,
+        Tamron) derive a product code from it to build image-URL patterns;
+        brands that match on page content alone ignore it."""
+        return {"mtf": [], "construction": []}
+
+    def extract_images_live(self, page, url: str) -> dict[str, list[str]]:
+        """Resolve image URLs from a live browser page when static HTML can't.
+
+        Called by BrandTool only when config.needs_live_page is set and the
+        static extract_image_urls returned nothing. `page` is a live
+        Playwright Page (brandkit owns it; pagefetch is not involved). The
+        default is a no-op — only Fujifilm, whose newer pages use generic CDN
+        filenames resolvable only by on-page geometry, overrides it."""
         return {"mtf": [], "construction": []}
 
     def normalize_url(self, url: str) -> str:

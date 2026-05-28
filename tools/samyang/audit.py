@@ -1,8 +1,8 @@
 """Audit Samyang lens data completeness.
 
-Checks which Samyang lenses have optical construction and coating data
-populated in lenses.ts, plus MTF chart and construction diagram images
-in docs/optical-specs/.
+Thin entry point: builds the Samyang BrandTool and hands it to the shared
+brandkit audit runner, which checks lenses.ts field presence plus MTF /
+construction image presence.
 
 Usage:
     py tools/samyang/audit.py                  # full audit
@@ -10,92 +10,17 @@ Usage:
     py tools/samyang/audit.py --missing        # show only lenses with missing data
 """
 
-import argparse
-import re
+import sys
+from pathlib import Path
 
-from common import (
-    LENSES_TS,
-    OPTICAL_SPECS_DIR,
-    extract_samyang_lenses,
-    model_to_slug,
-    has_mtf_chart,
-    has_construction_image,
-)
+TOOLS_DIR = Path(__file__).resolve().parent.parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
 
+from brandkit import audit  # noqa: E402
 
-def check_lenses_ts_fields() -> dict[str, dict]:
-    """Check which Samyang lenses have optical fields populated in lenses.ts."""
-    content = LENSES_TS.read_text(encoding="utf-8")
-    blocks = re.split(r"(?=\{\s*\n\s*brand:)", content)
-    results = {}
-
-    for block in blocks:
-        if 'brand: "Samyang"' not in block:
-            continue
-        model_m = re.search(r'model:\s*"([^"]+)"', block)
-        if not model_m:
-            continue
-
-        model = model_m.group(1)
-        results[model] = {
-            "has_elements": "opticalElements:" in block,
-            "has_groups": "opticalGroups:" in block,
-            "has_special": "specialElements:" in block,
-            "has_coating": "coating:" in block,
-            "has_official_url": "officialUrl:" in block,
-        }
-
-    return results
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Audit Samyang lens data completeness")
-    parser.add_argument("--filter", type=str, help="Filter by model substring (case-insensitive)")
-    parser.add_argument("--missing", action="store_true", help="Show only lenses with missing data")
-    return parser.parse_args()
-
-
-def main() -> None:
-    args = parse_args()
-
-    ts_fields = check_lenses_ts_fields()
-    all_models = sorted(ts_fields.keys())
-
-    if args.filter:
-        all_models = [m for m in all_models if args.filter.lower() in m.lower()]
-
-    complete = 0
-    incomplete = 0
-
-    for model in all_models:
-        slug = model_to_slug(model)
-        fields = ts_fields[model]
-        issues = []
-
-        if not fields["has_official_url"]:
-            issues.append("no officialUrl")
-        if not fields["has_elements"]:
-            issues.append("no opticalElements")
-        if not fields["has_groups"]:
-            issues.append("no opticalGroups")
-        if not fields["has_special"]:
-            issues.append("no specialElements")
-        if not fields["has_coating"]:
-            issues.append("no coating")
-        if not has_mtf_chart(slug):
-            issues.append("no MTF chart")
-        if not has_construction_image(slug):
-            issues.append("no construction image")
-
-        if issues:
-            incomplete += 1
-            print(f"  {model}: {', '.join(issues)}")
-        elif not args.missing:
-            complete += 1
-            print(f"  {model}: OK")
-
-    print(f"\n{complete} complete, {incomplete} incomplete out of {len(all_models)} lenses")
+from samyang.fetch_specs import build_tool  # noqa: E402
 
 
 if __name__ == "__main__":
-    main()
+    audit(build_tool())

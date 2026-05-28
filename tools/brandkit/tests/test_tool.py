@@ -35,7 +35,7 @@ class StubExtractor(BrandExtractor):
     def extract_physical(self, content: str) -> dict:
         return dict(self._physical)
 
-    def extract_image_urls(self, content: str) -> dict:
+    def extract_image_urls(self, content: str, url: str = "") -> dict:
         return {k: list(v) for k, v in self._images.items()}
 
 

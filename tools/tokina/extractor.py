@@ -94,7 +94,8 @@ class TokinaExtractor(BrandExtractor):
                 special.append(f"~1 {label}")
         return special
 
-    def extract_image_urls(self, content: str) -> dict[str, list[str]]:
+    def extract_image_urls(self, content: str, url: str = "") -> dict[str, list[str]]:
+        # Tokina matches on image filenames in the page; url is unused.
         urls: dict[str, list[str]] = {"mtf": [], "construction": []}
 
         for m in re.finditer(

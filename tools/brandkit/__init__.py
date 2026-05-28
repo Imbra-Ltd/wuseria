@@ -21,6 +21,8 @@ composes it with a PageSource from the pagefetch package:
 Unlike pagefetch, brandkit is me-fuji-specific — it reads lenses.ts.
 """
 
+from .audit import audit
+from .cli import format_ts_fields, run
 from .diff import Mismatch, diff_physical
 from .extractor import BrandConfig, BrandExtractor
 from .lenses import PHYSICAL_FIELDS, LensEntry, LensesFile
@@ -34,6 +36,9 @@ from .specs_dir import (
 from .tool import BrandTool, UrlStatus
 
 __all__ = [
+    "run",
+    "audit",
+    "format_ts_fields",
     "BrandTool",
     "UrlStatus",
     "BrandExtractor",
