@@ -96,6 +96,20 @@ def test_extract_physical_zoom_focal_range(extractor):
     assert phys["focalLengthMax"] == 24
 
 
+def test_extract_physical_comma_weight(extractor):
+    # Weights >=1000g use a comma thousands separator on the spec page
+    # (e.g. XF 200mm f/2 reads "2,265g") — the digits before the comma
+    # must not be dropped (#906).
+    html = "<td>Weight *2 (approx.)</td><td>2,265g</td>"
+    assert extractor.extract_physical(html)["weight"] == 2265
+
+
+def test_extract_physical_plain_weight_unaffected(extractor):
+    # Sub-1000g weights have no separator and must still parse.
+    html = "<td>Weight</td><td>375g</td>"
+    assert extractor.extract_physical(html)["weight"] == 375
+
+
 def test_named_image_urls_cross_and_specifications(extractor, html):
     urls = extractor.extract_image_urls(html, LENS_URL + "specifications/")
     assert any(u.endswith("xf16mmf14-r-wr_cross.webp") for u in urls["construction"])

@@ -112,8 +112,11 @@ class FujifilmExtractor(BrandExtractor):
             out["apertureBlades"] = blades
         if (mag := self._num(text, r"Max\.?\s*magnification\s*([\d.]+)\s*x")) is not None:
             out["maxMagnification"] = mag
-        if w := self._num(text, r"Weight[^=g]*?([\d.]+)\s*g"):
-            out["weight"] = w
+        # Weights >=1000g are printed with a comma thousands separator
+        # ("2,265g"); capture commas and strip them before parsing so the
+        # leading digits are not dropped.
+        if wm := re.search(r"Weight[^=g]*?([\d,.]+)\s*g", text, re.IGNORECASE):
+            out["weight"] = float(wm.group(1).replace(",", ""))
         if ft := self._num(text, r"Filter size[^\d]*([\d.]+)\s*mm"):
             out["filterThread"] = ft
         # dimensions: "Diameter x Length ... 65mm x 58.4mm"
