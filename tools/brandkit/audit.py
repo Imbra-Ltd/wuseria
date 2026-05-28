@@ -46,8 +46,12 @@ def _parse_args(brand: str) -> argparse.Namespace:
     return parser.parse_args()
 
 
-def audit(tool: BrandTool) -> None:
-    """Parse argv and print a completeness report for the brand."""
+def audit(tool: BrandTool, extra_checks=None) -> None:
+    """Parse argv and print a completeness report for the brand.
+
+    extra_checks, if given, is called as extra_checks(tool, model) -> list[str]
+    and its returned issue labels are appended — lets a brand add checks the
+    shared report doesn't know about (e.g. Zeiss's PDF datasheet)."""
     brand = tool.config.name
     args = _parse_args(brand)
 
@@ -62,10 +66,14 @@ def audit(tool: BrandTool) -> None:
             label for marker, label in _FIELD_MARKERS if not presence[model][marker]
         ]
         slug = tool.slug_for(model)
-        if not tool.has_mtf_for_slug(slug):
-            issues.append("no MTF chart")
-        if not tool.has_construction_for_slug(slug):
-            issues.append("no construction image")
+        # Image checks only apply to brands that publish diagrams.
+        if tool.config.has_diagrams:
+            if not tool.has_mtf_for_slug(slug):
+                issues.append("no MTF chart")
+            if not tool.has_construction_for_slug(slug):
+                issues.append("no construction image")
+        if extra_checks:
+            issues.extend(extra_checks(tool, model))
 
         if issues:
             incomplete += 1
