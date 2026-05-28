@@ -11,6 +11,7 @@ dist/
 .claude/
 coverage/
 __pycache__/
+.pytest_cache/
 .cache/
 reports/
 .lighthouseci/
