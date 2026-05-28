@@ -548,6 +548,12 @@ Pipeline steps (exits on first failure):
 | Build      | `npm run build`       | Astro build — full static site generation         |
 | Link check | `npm run check:links` | Trailing slash validation on internal links       |
 
+Manual / scheduled (network — not in `validate`):
+
+| Check          | Command                        | What it checks                                                                                                                                                                                                                                 |
+| -------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| External links | `npm run check:external-links` | Every external URL in `src/data/*.ts` (officialUrl + review links) is reachable. Bot-blocked/rate-limited hosts (403/429/503/timeout) report as UNVERIFIABLE, not dead. Runs weekly via `external-links.yml`; also a pre-release check (§5.1). |
+
 ### 3.2 Pre-commit hooks (husky + lint-staged)
 
 Every commit is gated by `.husky/pre-commit`. Runs automatically — no manual
@@ -1014,9 +1020,24 @@ merges:
 ```bash
 git checkout main && git pull
 git tag vA.B.C && git push origin vA.B.C
+
+# Verify the manifest version matches the tag (base/git.md post-release check)
+node -p "require('./package.json').version"   # must equal A.B.C
+git describe --tags --abbrev=0                 # must be vA.B.C
+
+# Create the GitHub Release — a pushed tag alone does NOT create one
+gh release create vA.B.C --title "vA.B.C" --generate-notes
+
+# Clean up the release branch
 git branch -d chore/release-vA.B.C
 git push origin --delete chore/release-vA.B.C
 ```
+
+The git **tag** and the GitHub **Release** are separate artifacts: pushing
+the tag creates the git ref; `gh release create` creates the Releases-page
+entry with notes auto-generated from the PRs merged since the previous tag.
+The deploy (§5.2) runs on the release-bump merge to `main`, independent of
+the tag.
 
 ### 5.2 Deploy
 
