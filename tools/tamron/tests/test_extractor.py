@@ -60,6 +60,22 @@ def test_coating_bbar_g2_and_fluorine(extractor):
     assert "fluorine" in specs["coating"]
 
 
+def test_extract_physical_from_spec_table(extractor):
+    phys = extractor.extract_physical(MAIN + SPEC)
+    assert phys["filterThread"] == 67
+    assert phys["diameter"] == 74.6
+    assert phys["length"] == 119.3  # first (Sony E) value
+    assert phys["weight"] == 525  # first per-mount value
+    assert phys["apertureBlades"] == 9
+    assert phys["minFocusDistance"] == 190  # 0.19m WIDE -> mm
+    assert phys["maxMagnification"] == round(1 / 4.8, 3)  # 1:4.8 WIDE
+
+
+def test_extract_physical_omits_filter_entity_digits(extractor):
+    # The &#8709; diameter sign must not leak its digits into filterThread.
+    assert extractor.extract_physical(MAIN + SPEC)["filterThread"] == 67
+
+
 def test_image_urls_svg_with_code(extractor):
     urls = extractor.extract_image_urls(MAIN + SPEC, LENS_URL)
     assert len(urls["construction"]) == 1
