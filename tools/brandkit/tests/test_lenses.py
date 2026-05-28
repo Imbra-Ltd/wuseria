@@ -11,13 +11,25 @@ def test_entries_for_brand_filters_and_requires_url(lenses_sample_path):
     assert models == ["atx-m 23mm f/1.4 X", "atx-m 33mm f/1.4 X"]
 
 
-def test_multiline_official_url_is_parsed(lenses_sample_path):
-    lf = LensesFile(lenses_sample_path)
-    entries = {e.model: e for e in lf.entries_for("Tokina")}
-    assert (
-        entries["atx-m 33mm f/1.4 X"].url
-        == "https://tokinalens.com/product/atx-m-33mm-f1-4-x/"
+def test_multiline_official_url_is_parsed(tmp_path):
+    # Written inline (not in the .ts fixture) so prettier cannot collapse
+    # the wrapped officialUrl — production lenses.ts wraps long URLs and
+    # the parser must handle the line break.
+    ts = tmp_path / "wrapped.ts"
+    ts.write_text(
+        'export const lenses = [\n'
+        '  {\n'
+        '    brand: "Tokina",\n'
+        '    model: "Wrapped 50mm f/1.4 X",\n'
+        '    officialUrl:\n'
+        '      "https://tokinalens.com/product/atx-m-50mm-f1-4-x/",\n'
+        '  },\n'
+        '];\n',
+        encoding="utf-8",
     )
+    entries = LensesFile(ts).entries_for("Tokina")
+    assert len(entries) == 1
+    assert entries[0].url == "https://tokinalens.com/product/atx-m-50mm-f1-4-x/"
 
 
 def test_normalize_url_hook_is_applied(lenses_sample_path):
