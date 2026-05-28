@@ -2,14 +2,14 @@
 
 ## Sources checked
 
-| Source              | URL                                                              | Date       | Result                                                                                                                                                   |
-| ------------------- | ---------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Official (Shopify)  | 7artisans.store/products/7artisans-50mm-f0-95-large-aperture-... | 2026-05-27 | Found: 7/5, 2 ED, 13 blades; spec-table image "Min focusing distance 0.5m, Weight 418g"; labeled diagram "Filter size: 62mm, length 58mm"                |
-| LensTip             | lenstip.com/1862                                                 | 2026-05-27 | 7/5, 2 Hoya low-dispersion, mag 0.15x, 13 blades, filter 62mm, weight 416g; release 06.08.2021. NOTE: LensTip MFD "0.45m" is WRONG — official says 0.5m  |
-| Radojuva            | radojuva.com                                                     | 2026-05-27 | Not found                                                                                                                                                |
-| DPReview            | dpreview.com                                                     | 2026-05-27 | Not listed                                                                                                                                               |
-| Google Image Search | google.com                                                       | 2026-05-27 | Diagram + MTF found embedded in official composite marketing images; cropped and saved                                                                   |
-| B&H Photo           | bhphotovideo.com/c/product/1657656-REG                           | 2026-05-28 | Full spec (user-supplied; scraper was throttled): 7/5, 13 blades, filter 62mm, MFD **45cm**, weight 420g, **ø67.5 × L60.2mm**, X-mount; no coating named |
+| Source              | URL                                                              | Date       | Result                                                                                                                                                                               |
+| ------------------- | ---------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Official (Shopify)  | 7artisans.store/products/7artisans-50mm-f0-95-large-aperture-... | 2026-05-27 | 7/5, 2 ED, 13 blades, weight 418g, filter 62mm; INTERNAL CONFLICT on MFD — spec-table image says 0.5m, "Optical structure" prose says 0.45m (prose matches B&H/LensTip → 0.45m used) |
+| LensTip             | lenstip.com/1862                                                 | 2026-05-27 | 7/5, 2 Hoya low-dispersion, mag 0.15x, 13 blades, filter 62mm, weight 416g, MFD 0.45m; release 06.08.2021 (MFD 0.45m later corroborated by B&H + official prose)                     |
+| Radojuva            | radojuva.com                                                     | 2026-05-27 | Not found                                                                                                                                                                            |
+| DPReview            | dpreview.com                                                     | 2026-05-27 | Not listed                                                                                                                                                                           |
+| Google Image Search | google.com                                                       | 2026-05-27 | Diagram + MTF found embedded in official composite marketing images; cropped and saved                                                                                               |
+| B&H Photo           | bhphotovideo.com/c/product/1657656-REG                           | 2026-05-28 | Full spec (user-supplied; scraper was throttled): 7/5, 13 blades, filter 62mm, MFD **45cm**, weight 420g, **ø67.5 × L60.2mm**, X-mount; no coating named                             |
 
 ## Findings
 
