@@ -43,6 +43,7 @@ class BrandTool:
     ):
         self._ex = extractor
         self._src = source
+        self.lenses_path = lenses_path
         self._lenses = LensesFile(lenses_path)
         self._specs_root = specs_root
 
@@ -82,10 +83,16 @@ class BrandTool:
         return self._ex.extract_image_urls(content) if content else {"mtf": [], "construction": []}
 
     def has_mtf(self, lens: LensEntry) -> bool:
-        return has_mtf_chart(self._specs_root, self.slug_for(lens.model))
+        return self.has_mtf_for_slug(self.slug_for(lens.model))
 
     def has_construction(self, lens: LensEntry) -> bool:
-        return has_construction_image(self._specs_root, self.slug_for(lens.model))
+        return self.has_construction_for_slug(self.slug_for(lens.model))
+
+    def has_mtf_for_slug(self, slug: str) -> bool:
+        return has_mtf_chart(self._specs_root, slug)
+
+    def has_construction_for_slug(self, slug: str) -> bool:
+        return has_construction_image(self._specs_root, slug)
 
     def save_images(self, lens: LensEntry, urls: dict[str, list[str]]) -> list[Path]:
         """Download MTF/construction images to the lens's specs folder.
