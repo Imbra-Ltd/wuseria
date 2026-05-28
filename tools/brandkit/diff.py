@@ -29,6 +29,12 @@ class Mismatch:
         return f"{self.field}: stored={self.stored} page={self.extracted}"
 
 
+def _is_number(value: object) -> bool:
+    """True for real numeric values. bool is excluded (it is an int subclass
+    but never a valid spec value)."""
+    return isinstance(value, (int, float)) and not isinstance(value, bool)
+
+
 def _values_agree(field: str, stored: float, extracted: float) -> bool:
     if stored == extracted:
         return True
@@ -46,11 +52,14 @@ def diff_physical(
 ) -> list[Mismatch]:
     """Return a mismatch for each field present in BOTH dicts whose values
     disagree beyond tolerance. Fields missing from either side are skipped —
-    a value the page does not expose is not a mismatch, it is unknown."""
+    a value the page does not expose is not a mismatch, it is unknown.
+    Non-numeric values on either side are skipped too: a field an extractor
+    could not parse into a number is unknown, not a mismatch."""
     mismatches: list[Mismatch] = []
     for field, extracted_value in extracted.items():
-        if field not in stored:
+        stored_value = stored.get(field)
+        if not _is_number(stored_value) or not _is_number(extracted_value):
             continue
-        if not _values_agree(field, stored[field], extracted_value):
-            mismatches.append(Mismatch(field, stored[field], extracted_value))
+        if not _values_agree(field, stored_value, extracted_value):
+            mismatches.append(Mismatch(field, stored_value, extracted_value))
     return mismatches

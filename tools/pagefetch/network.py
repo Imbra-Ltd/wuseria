@@ -369,12 +369,14 @@ class NetworkFetcher(PageSource):
     # --- escalation orchestrator -------------------------------------
 
     def _fetch_single(
-        self, url: str, opts: FetchOptions, sb_session=None, nd_browser=None
+        self, url: str, opts: FetchOptions, sb_session=None
     ) -> tuple[str, str]:
         """Fetch one URL, escalating tiers as needed.
 
         Returns (content, tier_used). content is "" if every tier failed.
-        Shared by single and batch modes.
+        Shared by single and batch modes. The batch loop drives a
+        persistent Nodriver browser itself; sb_session lets a persistent
+        UC session flow through to escalation.
         """
         mode, wait_ms = opts.mode, opts.wait_ms
 
@@ -383,14 +385,14 @@ class NetworkFetcher(PageSource):
             if cached is not None:
                 return cached, "cache"
 
-        content, tier = self._escalate(url, opts, sb_session, nd_browser)
+        content, tier = self._escalate(url, opts, sb_session)
 
         if content:
             self._cache.write(url, mode, content)
         return content, tier
 
     def _escalate(
-        self, url: str, opts: FetchOptions, sb_session, nd_browser
+        self, url: str, opts: FetchOptions, sb_session
     ) -> tuple[str, str]:
         """Run the tier strategy for opts.transport. Returns (content, tier)."""
         mode, wait_ms = opts.mode, opts.wait_ms
@@ -400,7 +402,7 @@ class NetworkFetcher(PageSource):
             return content, "uc" if content else "none"
 
         if opts.transport is Transport.NODRIVER:
-            content = self._nodriver_either(nd_browser, url, mode, wait_ms)
+            content = self._nodriver_either(url, mode, wait_ms)
             return content, "nodriver" if content else "none"
 
         if opts.transport is Transport.PLAYWRIGHT:
@@ -415,7 +417,7 @@ class NetworkFetcher(PageSource):
         if result == _BOT_BLOCKED:
             # Bot protection: skip Playwright (it would fail too).
             print("[auto] Skipping Playwright (bot protection), trying Nodriver...", file=sys.stderr)
-            content = self._nodriver_either(nd_browser, url, mode, wait_ms)
+            content = self._nodriver_either(url, mode, wait_ms)
             if content:
                 return content, "nodriver"
             print("[auto] Nodriver failed, escalating to UC...", file=sys.stderr)
@@ -428,24 +430,16 @@ class NetworkFetcher(PageSource):
         if content:
             return content, "playwright"
         print("[auto] Escalating to Nodriver...", file=sys.stderr)
-        content = self._nodriver_either(nd_browser, url, mode, wait_ms)
+        content = self._nodriver_either(url, mode, wait_ms)
         if content:
             return content, "nodriver"
         print("[auto] Escalating to UC...", file=sys.stderr)
         content = self._uc_either(sb_session, url, mode, wait_ms)
         return content, "uc" if content else "none"
 
-    def _nodriver_either(self, nd_browser, url, mode, wait_ms) -> str:
-        """Nodriver via a persistent batch browser if given, else standalone."""
-        if nd_browser:
-            import asyncio
-
-            return (
-                asyncio.get_event_loop().run_until_complete(
-                    self._nodriver_fetch_with_browser(nd_browser, url, mode, wait_ms)
-                )
-                or ""
-            )
+    def _nodriver_either(self, url, mode, wait_ms) -> str:
+        """Nodriver fetch. The batch loop drives the persistent browser
+        directly (see _run_batch); single/escalation fetches are standalone."""
         return self._fetch_nodriver(url, mode, wait_ms) or ""
 
     def _uc_either(self, sb_session, url, mode, wait_ms) -> str:

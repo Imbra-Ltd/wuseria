@@ -59,3 +59,18 @@ def test_multiple_mismatches_reported():
 
 def test_mismatch_str_is_readable():
     assert str(Mismatch("weight", 285, 276)) == "weight: stored=285 page=276"
+
+
+def test_non_numeric_extracted_value_is_skipped_not_crashed():
+    # A future extractor whose regex matched but captured nothing could
+    # yield None — must be treated as unknown, never crash.
+    assert diff_physical({"weight": 276}, {"weight": None}) == []
+
+
+def test_non_numeric_stored_value_is_skipped():
+    assert diff_physical({"weight": "276g"}, {"weight": 276}) == []
+
+
+def test_bool_is_not_treated_as_number():
+    # bool is an int subclass; a stray True must not be diffed as 1.
+    assert diff_physical({"apertureBlades": 9}, {"apertureBlades": True}) == []
