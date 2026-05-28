@@ -22,8 +22,12 @@
 - **filterThread:** 62mm (official labeled diagram "Filter size: 62mm" + LensTip — DB's prior 52 corrected)
 - **weight:** 418g (official spec table "418g"; LensTip 416g agrees — DB's prior 540 corrected, was ~122g too high)
 - **length:** 58mm (official diagram "58mm" — DB already correct)
-- **constructionDiagram:** found — `construction-diagram.jpg` (official; legend red = HOYA Ultra-Low Dispersion glass, shows 2 ED; 7 elements / 5 groups)
-- **MTF chart:** found — `mtf-chart.jpg` (official; 10/20/30 lp/mm)
+- **constructionDiagram:** found — `construction-diagram.jpg` (official product-page section
+  image `50mm-F0_6.jpg`; legend **"ED Glass"** red, shows 2 ED; 7 elements / 5 groups).
+  Chosen over the PARAMETER-panel version (which labels the same element "HOYA Ultra-Low
+  Dispersion Glass") because "ED Glass" matches the DB `specialElements: ["2 ED"]` term and
+  the 25mm f/0.95 diagram's legend.
+- **MTF chart:** found — `mtf-chart.jpg` (official; from the same `50mm-F0_6.jpg`; T1/S1/T2/S2/T3/S3, 10/20/30 lp/mm)
 
 ## Caveats
 
