@@ -61,3 +61,21 @@ def test_image_urls_resolved(extractor, html):
 
 def test_no_spec_block_returns_empty(extractor):
     assert extractor.extract_optical("<html><body>nothing here</body></html>") == {}
+
+
+def test_extract_physical_from_th2_td2_rows(extractor, html):
+    phys = extractor.extract_physical(html)
+    assert phys["diameter"] == 87.0
+    assert phys["length"] == 96.1
+    assert phys["minFocusDistance"] == 280  # 0.28m -> mm
+    assert phys["maxAperture"] == 2.8  # "F2.8 ~ 22"
+
+
+def test_extract_physical_weight_first_mount_value(extractor, html):
+    # Weight row lists per-mount values; take the first.
+    assert extractor.extract_physical(html)["weight"] == 550
+
+
+def test_extract_physical_omits_dashed_filter(extractor, html):
+    # The 14mm has no filter thread ("- mm") — must be omitted, not 0.
+    assert "filterThread" not in extractor.extract_physical(html)
