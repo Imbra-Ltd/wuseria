@@ -5,9 +5,9 @@ docs/solid-ai-templates/
 docs/prototype/
 downloaded_files/
 
-# Scraped HTML test fixtures — raw captured pages, must stay byte-for-byte
-tools/**/tests/fixtures/
+# Python tooling — own pytest suites, not part of the front-end gate
+tools/
 
-# Python tooling caches — generated, never committed
+# Python caches — generated, never committed
 **/.pytest_cache/
 **/__pycache__/
