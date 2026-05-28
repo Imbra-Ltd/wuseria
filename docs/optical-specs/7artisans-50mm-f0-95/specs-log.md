@@ -22,6 +22,12 @@
 - **filterThread:** 62mm (official labeled diagram "Filter size: 62mm" + LensTip — DB's prior 52 corrected)
 - **weight:** 418g (official spec table "418g"; LensTip 416g agrees — DB's prior 540 corrected, was ~122g too high)
 - **length:** 58mm (official diagram "58mm" — DB already correct)
+- **diameter:** 62 (DB) — UNVERIFIED: the official labeled diagram gives filter size (62mm)
+  and length (58mm) but not body diameter; LensTip shows dimensions blank; B&H throttled.
+  62 is plausible (barrel ≈ filter on this lens) but not independently confirmed — left as-is.
+- **hasCircularAperture:** false — official says only "13-blade diaphragm" (no "rounded"/
+  "circular" wording), so `false` per the convention (set true only on explicit "rounded").
+- **isDiscontinued / afMotor:** correctly absent — active (`.js` available:true), manual focus.
 - **constructionDiagram:** found — `construction-diagram.jpg` (official product-page section
   image `50mm-F0_6.jpg`; legend **"ED Glass"** red, shows 2 ED; 7 elements / 5 groups).
   Chosen over the PARAMETER-panel version (which labels the same element "HOYA Ultra-Low
