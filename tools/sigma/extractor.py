@@ -73,6 +73,80 @@ class SigmaExtractor(BrandExtractor):
         )
         return specs
 
+    def extract_physical(self, content: str) -> dict:
+        """Parse physical specs from Sigma's l-grid spec rows (#779).
+
+        Each spec is a <li> with a <p>label</p> then a <div> of value <p>s.
+        Multi-mount lenses prefix each value with 'Mount：'/'Mount:' (older
+        pages use a fullwidth colon, newer ones ASCII); the first value wins,
+        matching Tamron. Weights carry thousands separators ('1,135g'). Sigma
+        quotes MFD in cm — a single value ('30cm') or a zoom range
+        ('112(W) - 160(T)cm'), where the wide (first) figure wins. Dimensions
+        are 'φDIAmm × LENmm' (× or lowercase x). 'Rounded diaphragm' on the
+        blade count confirms a circular aperture."""
+        rows = self._spec_rows(content)
+        out: dict = {}
+
+        if ft := self._num(rows.get("Filter Size"), r"([\d.]+)\s*mm"):
+            out["filterThread"] = ft
+        dims = self._first_value(rows.get("Dimensions (Diameter × Length)"))
+        if dims:
+            dm = re.search(r"([\d.]+)\s*mm\s*[×x]\s*([\d.]+)\s*mm", dims)
+            if dm:
+                out["diameter"] = float(dm.group(1))
+                out["length"] = float(dm.group(2))
+        if w := self._num(self._first_value(rows.get("Weight")), r"([\d,]+\.?\d*)\s*g"):
+            out["weight"] = w
+        blades_raw = rows.get("Number of Diaphragm Blades", "")
+        if blades := self._num(blades_raw, r"(\d+)"):
+            out["apertureBlades"] = blades
+        if re.search(r"round", blades_raw, re.IGNORECASE):
+            out["hasCircularAperture"] = True
+        # MFD in cm -> mm; a zoom range gives the wide (first) figure.
+        if (mfd := self._num(rows.get("Minimum Focusing Distance"), r"([\d.]+)")) is not None:
+            if re.search(r"cm", rows.get("Minimum Focusing Distance", "")):
+                out["minFocusDistance"] = round(mfd * 10)
+        mag = re.search(r"1\s*:\s*([\d.]+)", rows.get("Maximum Magnification Ratio", ""))
+        if mag:
+            out["maxMagnification"] = round(1 / float(mag.group(1)), 3)
+        return out
+
+    @staticmethod
+    def _spec_rows(content: str) -> dict[str, str]:
+        rows: dict[str, str] = {}
+        pattern = re.compile(
+            r'l-grid --panel-2">\s*<p>(.*?)</p>\s*<div>(.*?)</div>\s*</div>\s*</li>',
+            re.DOTALL,
+        )
+        for m in pattern.finditer(content):
+            label = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.group(1))).strip()
+            value = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.group(2))).strip()
+            if label and value and label not in rows:
+                rows[label] = value
+        return rows
+
+    @staticmethod
+    def _first_value(value: str | None) -> str | None:
+        """First per-mount value. Mount labels use a fullwidth colon on older
+        pages ('L-Mount：280g') and an ASCII colon on newer ones
+        ('Canon RF Mount: 250g'). Returns the value after the first colon, up
+        to the next 'Mount:' label."""
+        if not value:
+            return None
+        m = re.search(r"[：:]", value)
+        if not m:
+            return value
+        after = value[m.end():]
+        # The next mount value starts at the next 'Word(s) Mount[：:]' run.
+        return re.split(r"\s+[\w-]+(?:\s+[\w-]+)*\s*[：:]", after, maxsplit=1)[0].strip()
+
+    @staticmethod
+    def _num(value: str | None, pattern: str) -> float | None:
+        if not value:
+            return None
+        m = re.search(pattern, value)
+        return float(m.group(1).replace(",", "")) if m else None
+
     @staticmethod
     def _special(text: str) -> list[str]:
         special: list[str] = []
