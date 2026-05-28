@@ -407,8 +407,14 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
    `body_html`. Construction diagrams, MTF charts, and spec tables are
    often embedded as images invisible to text scraping. Download and
    visually inspect candidate images.
-7. **Verify** extracted data against diagrams and official pages — element/group
-   counts, special elements, coatings (including protective), X-mount dimensions
+7. **Verify EVERY field, not just optical ones** — cross-check the full DB entry
+   against official + LensTip + B&H (+ retailer/press as needed), field by field:
+   optical (element/group counts, special elements, coatings) AND physical
+   (`weight`, `diameter`, `length`, `apertureBlades`, `filterThread`,
+   `minFocusDistance`, `maxMagnification`, `year`). The physical fields are where
+   pre-existing rows hide the most errors — they are not optional. When auditing an
+   existing lens, build a DB-value-vs-each-source table and resolve every mismatch;
+   do not assume a field already present is correct.
 
 #### Phase 3 — Commit per lens
 
@@ -448,6 +454,30 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
   For pages with < 10 images, visually check all content images.
 - **Mount variants:** if lenses share optical design across mounts, update
   BOTH specs-logs.
+- **Shopify section images (`/cdn/shop/files/`):** diagrams and MTF charts often
+  live NOT in the product gallery (`product.images[]`) nor inline `body_html`, but
+  as theme/section graphics referenced only in the rendered page HTML (filenames
+  like `MTF_Template.jpg`, `01.png`). Scrape the full rendered HTML for
+  `cdn/shop/files/*.{jpg,png}` and open them — checking the gallery JSON alone
+  misses them. Also check the brand's official Amazon/regional store listings (US,
+  SG, UK), which often host the highest-res official composite (diagram + MTF) and
+  state coatings the `.com` store omits. Request the largest image with `?width=3200`.
+- **Generation check (Mark II vs original):** before trusting a "Mark II" row,
+  confirm the entry's generation against the official **page title** and the lens's
+  specs (not the URL slug alone). Rows created by copying the original frequently
+  retain the original's `year`, `maxMagnification`, `apertureBlades`, and
+  `filterThread` while carrying Mark II optical construction. Verify each against the
+  Mark II's own LensTip entry / spec table. Ensure the model name includes the
+  generation marker per the naming convention.
+- **Source-conflict resolution:** when LensTip (or any secondary source) contradicts
+  the official page on construction, the official page wins. If a secondary source is
+  wrong on one verifiable field, treat ALL its unverified fields as suspect (it may be
+  mis-cataloged for the lens) — do NOT adopt its other figures. Leave a field
+  unresolved and flagged rather than overwrite with a contradicted source.
+- **Discontinuation:** judge from the official `.js` storefront endpoint
+  (`<product-url>.js` → `available` per variant), NOT the page's "Sold out" text — a
+  sold-out variant is not a discontinued lens. All-variant `available:false` + a
+  "Used" listing + a successor model = discontinued (`isDiscontinued: true`).
 - **alikgriffin.com tables:** AJAX-loaded (Ninja Tables plugin), not in page
   HTML. Use the admin-ajax API endpoint or ask the user to paste the table.
 - **DuckDuckGo fallback:** when Google or Bing block with CAPTCHAs, use
