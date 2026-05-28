@@ -67,3 +67,24 @@ def test_slr_variants_excluded(extractor, html):
 def test_relative_urls_resolved(extractor, html):
     urls = extractor.extract_image_urls(html)
     assert all(u.startswith("https://www.ttartisan.com/") for u in urls["mtf"])
+
+
+def test_extract_physical_inline_specs(extractor, html):
+    phys = extractor.extract_physical(html)
+    assert phys["filterThread"] == 67
+    assert phys["apertureBlades"] == 12
+    assert phys["maxAperture"] == 1.25
+    assert phys["minFocusDistance"] == 900  # 0.9m -> mm
+    assert phys["focalLengthMin"] == 90
+    assert phys["focalLengthMax"] == 90
+    assert phys["maxMagnification"] == 0.2  # 1:5
+
+
+def test_extract_physical_weight_range_takes_higher(extractor, html):
+    # "Around 620~640g" -> the higher (final) value.
+    assert extractor.extract_physical(html)["weight"] == 640
+
+
+def test_extract_physical_tilt_angle_when_present(extractor):
+    html = "<p>Focal length 35mm Maximum aperture F1.4 Tilt Angle 8 Weight Around 350g</p>"
+    assert extractor.extract_physical(html)["tiltAngle"] == 8
