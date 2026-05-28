@@ -7,7 +7,7 @@ import sonarjs from "eslint-plugin-sonarjs";
 import unicorn from "eslint-plugin-unicorn";
 
 export default [
-  { ignores: ["dist", ".astro"] },
+  { ignores: ["dist", ".astro", "tools"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   sonarjs.configs.recommended,
