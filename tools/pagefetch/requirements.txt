@@ -1,0 +1,20 @@
+# pagefetch optional dependencies.
+#
+# The package works with only the Python standard library — the urllib
+# tier needs nothing extra. The browser tiers are lazily imported and
+# skipped gracefully if their library is absent. Install the ones you
+# need for JS-rendered or bot-protected sites.
+
+# Tier 2 — headless Chromium for JS-rendered pages.
+# After install: `playwright install chromium`
+playwright>=1.40
+
+# Tier 3 — headed Chrome via CDP, no driver binary (preferred for bots).
+nodriver>=0.35
+
+# Tier 4 — SeleniumBase UC mode, headless bot bypass fallback.
+seleniumbase>=4.20
+
+# Dev only — test suite. Coverage reporting is optional.
+# pytest>=8.0
+# pytest-cov>=5.0
