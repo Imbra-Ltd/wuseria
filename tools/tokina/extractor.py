@@ -56,6 +56,50 @@ class TokinaExtractor(BrandExtractor):
             return url
         return prefix + url[len(prefix):].replace("-", "_")
 
+    def extract_physical(self, content: str) -> dict[str, float]:
+        """Parse physical specs from the property_list spec table (#779).
+
+        Rows are <_title>/<_value> cell pairs; the page repeats some labels
+        in a related-products widget above the real table, so the LAST value
+        for each label wins. Units are normalized to the lenses.ts convention
+        (weight g, distances mm, magnification ratio -> decimal)."""
+        rows = re.findall(
+            r'_title"[^>]*>(.*?)</div>.*?_value"[^>]*>(.*?)</div>',
+            content, re.DOTALL,
+        )
+        specs: dict[str, str] = {}
+        for raw_title, raw_value in rows:
+            title = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", raw_title)).strip()
+            value = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", raw_value)).strip()
+            if title and value:
+                specs[title] = value  # last occurrence wins
+
+        out: dict[str, float] = {}
+        if w := self._num(specs.get("Weight"), r"([\d.]+)\s*g"):
+            out["weight"] = w
+        if ft := self._num(specs.get("Filter Size"), r"([\d.]+)\s*mm"):
+            out["filterThread"] = ft
+        if blades := self._num(specs.get("Aperture Blades"), r"(\d+)"):
+            out["apertureBlades"] = blades
+        if (mfd := self._num(specs.get("Minimum Focusing Distance"), r"([\d.]+)\s*m")) is not None:
+            out["minFocusDistance"] = round(mfd * 1000)  # metres -> mm
+        macro = specs.get("Macro Ratio", "")
+        mr = re.search(r"1\s*:\s*([\d.]+)", macro)
+        if mr:
+            out["maxMagnification"] = round(1 / float(mr.group(1)), 3)
+        dims = re.search(r"([\d.]+)\s*x\s*([\d.]+)", specs.get("Dimensions", ""))
+        if dims:
+            out["diameter"] = float(dims.group(1))
+            out["length"] = float(dims.group(2))
+        return out
+
+    @staticmethod
+    def _num(value: str | None, pattern: str) -> float | None:
+        if not value:
+            return None
+        m = re.search(pattern, value)
+        return float(m.group(1)) if m else None
+
     def extract_optical(self, content: str) -> dict:
         # Tokina puts special-element names in image alt text, so fold alt
         # attributes into the searchable text before stripping tags.
