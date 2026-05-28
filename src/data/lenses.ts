@@ -341,7 +341,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "7Artisans",
-    model: "12mm f/2.8",
+    model: "12mm f/2.8 Mark II",
     type: "prime",
     category: "photo",
     mount: "X",
@@ -374,7 +374,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "7Artisans",
-    model: "18mm f/6.3 UFO",
+    model: "18mm f/6.3 UFO Mark II",
     type: "prime",
     category: "photo",
     mount: "X",

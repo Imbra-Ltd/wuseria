@@ -1,4 +1,4 @@
-# 7Artisans 18mm f/6.3 UFO — Specs Log
+# 7Artisans 18mm f/6.3 UFO Mark II — Specs Log
 
 ## Sources checked
 
@@ -25,9 +25,12 @@
 
 ## Caveats
 
-- The DB entry "18mm f/6.3 UFO" maps to the MF 18mm f/6.3 **Mark II** pancake — confirmed not
-  by the URL slug alone but by the official **page title "MF 18mm f/6.3 Mark II"** and the
-  store carrying two distinct products (`18mm-f6-3` original + `...-mark-ii-...`).
+- The entry maps to the MF 18mm f/6.3 **Mark II** pancake — confirmed not by the URL slug
+  alone but by the official **page title "MF 18mm f/6.3 Mark II"** and the store carrying two
+  distinct products (`18mm-f6-3` original + `...-mark-ii-...`). **Model renamed to
+  "18mm f/6.3 UFO Mark II" (2026-05-28)** per CLAUDE.md naming convention ("UFO" is the
+  nickname; "Mark II" is the official generation marker). Optical-specs folder renamed to
+  `7artisans-18mm-f6-3-ufo-mark-ii`.
 - The original 18mm f/6.3 (6/4, 0.2x, 2020 — LensTip 1760) is a different lens. It is NOT a
   candidate for the DB: the official original-lens `.js` lists only a Canon EOS-M variant
   (no Fuji X), so it fails the X-mount requirement. (Contrast the 60mm/12mm originals, which
