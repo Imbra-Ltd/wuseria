@@ -31,3 +31,8 @@
   L-mount announcement, which archived the official press-kit lens-design + MTF image —
   the same pattern noted in `docs/bookmarks.md` for leak/rumor sites carrying press
   diagrams the store later drops.
+
+## Physical-field re-check (2026-05-28)
+
+Full field cross-check vs LensTip completed — ALL physical fields (blades, magnification,
+MFD, filter, weight, dimensions, year) match LensTip exactly. No corrections needed.

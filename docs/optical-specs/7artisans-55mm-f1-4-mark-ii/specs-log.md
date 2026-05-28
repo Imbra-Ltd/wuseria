@@ -37,3 +37,8 @@
   NO "rounded"/"circular" wording. Contrast the 35mm f/1.2 Mark II, whose official page
   says "rounded 10-blade" (flagged `true`). The DB sets `hasCircularAperture` only on an
   explicit "rounded" statement, not inferred from blade count — so `false` is intended.
+
+## Physical-field re-check (2026-05-28)
+
+Full field cross-check vs LensTip completed — ALL physical fields (blades, magnification,
+MFD, filter, weight, dimensions, year) match LensTip exactly. No corrections needed.

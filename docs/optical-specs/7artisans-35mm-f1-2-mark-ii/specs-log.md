@@ -33,3 +33,8 @@
 - Official page has an internal contradiction on aperture blades: spec table says 10,
   bokeh graphic says 9. **Resolved to 10** — both LensTip (id 1762) and B&H state 10
   rounded blades; the bokeh graphic's "9" is the outlier. DB `apertureBlades: 10` is correct.
+
+## Physical-field re-check (2026-05-28)
+
+Full field cross-check vs LensTip completed — ALL physical fields (blades, magnification,
+MFD, filter, weight, dimensions, year) match LensTip exactly. No corrections needed.

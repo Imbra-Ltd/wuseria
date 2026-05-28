@@ -31,3 +31,11 @@
   lists only "Silver", 7Artisans carries a separate "Used 35mm f/1.2" listing, and the
   lens is superseded by the still-selling 35mm f/1.2 Mark II. Original page still in
   catalog (not delisted), so `officialUrl` retained.
+
+## Physical-field re-check (2026-05-28)
+
+Full field cross-check vs LensTip 1727 (initial pass was optical + MFD only):
+
+- **diameter:** 43 → **55** (LensTip 55×36; the prior 43 was the FILTER size — front engraving "Ø43" — wrongly placed as diameter)
+- **length:** 32 → **36** (LensTip)
+- weight 150, blades 9, mag 0.13x, MFD 350, filter 43 (engraving "Ø43") all CONFIRMED. LensTip 1727 matched on every optical field, so its dimensions are reliable here.

@@ -27,3 +27,11 @@
 - Construction diagram / MTF were published only inside composite marketing images
   (generic filenames); recovered by visual inspection per PLAYBOOK 2.8 and cropped to
   separate artifacts. Earlier pass wrongly reported "not found".
+
+## Physical-field re-check (2026-05-28)
+
+Full field cross-check vs official + LensTip 1732 (initial pass was optical + MFD only):
+
+- **weight:** 200 → **168** (official "168g" + LensTip 167g — DB was ~32g too high)
+- **length:** 43 → **39** (LensTip 56×39mm)
+- diameter 55, blades 12, mag 0.13x, MFD 500, filter 52 CONFIRMED.
