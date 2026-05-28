@@ -71,6 +71,31 @@ def test_coating_super_ebc_when_page_silent(extractor):
     assert specs["coating"] == ["Super EBC"]
 
 
+def test_extract_physical_full_spec_table(extractor, html):
+    phys = extractor.extract_physical(html)
+    assert phys["focalLengthMin"] == 16
+    assert phys["focalLengthMax"] == 16
+    assert phys["maxAperture"] == 1.4
+    assert phys["apertureBlades"] == 9
+    assert phys["maxMagnification"] == 0.21
+    assert phys["weight"] == 375
+    assert phys["filterThread"] == 67
+    assert phys["diameter"] == 73.4
+    assert phys["length"] == 73
+
+
+def test_extract_physical_min_focus_takes_macro(extractor, html):
+    # Focus range "Normal 60cm - inf  Macro 15cm - inf" -> closer is 15cm.
+    assert extractor.extract_physical(html)["minFocusDistance"] == 150  # 15cm -> mm
+
+
+def test_extract_physical_zoom_focal_range(extractor):
+    html = "<td>Focal length</td><td>f=10-24mm (15-36mm equivalent)</td>"
+    phys = extractor.extract_physical(html)
+    assert phys["focalLengthMin"] == 10
+    assert phys["focalLengthMax"] == 24
+
+
 def test_named_image_urls_cross_and_specifications(extractor, html):
     urls = extractor.extract_image_urls(html, LENS_URL + "specifications/")
     assert any(u.endswith("xf16mmf14-r-wr_cross.webp") for u in urls["construction"])
