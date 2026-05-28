@@ -76,6 +76,56 @@ def test_extract_image_urls_empty_when_no_diagrams(extractor):
     assert urls == {"mtf": [], "construction": []}
 
 
+def test_extract_physical_dimensions(extractor, html):
+    phys = extractor.extract_physical(html)
+    assert phys["weight"] == 276  # last-occurrence wins over the widget junk
+    assert phys["filterThread"] == 52
+    assert phys["apertureBlades"] == 9
+    assert phys["minFocusDistance"] == 300  # 0.3m -> mm
+    assert phys["maxMagnification"] == 0.1  # 1:10 -> decimal
+    assert phys["diameter"] == 65
+    assert phys["length"] == 72
+
+
+def test_extract_physical_optical_and_flags(extractor, html):
+    phys = extractor.extract_physical(html)
+    assert phys["maxAperture"] == 1.4
+    assert phys["focalLengthMin"] == 23  # prime -> min == max
+    assert phys["focalLengthMax"] == 23
+    assert phys["hasApertureRing"] is True
+    assert phys["isApertureClickless"] is True
+    assert phys["hasFocusRing"] is True
+
+
+def test_extract_physical_omits_unstated_flags(extractor, html):
+    # The Tokina page does not state OIS / weather-sealing / AF motor for this
+    # lens — they must be omitted, not returned False (so the stored False is
+    # never falsely flagged as a mismatch).
+    phys = extractor.extract_physical(html)
+    assert "hasOis" not in phys
+    assert "isWeatherSealed" not in phys
+    assert "afMotor" not in phys
+
+
+def test_physical_diff_catches_swapped_weight(extractor, html):
+    # The Session-76 bug: 23mm stored with the 33mm's weight (285). verify()
+    # must flag it. Here we diff the extracted 276 against a wrong stored 285.
+    from brandkit import diff_physical
+
+    extracted = extractor.extract_physical(html)
+    stored_wrong = {"weight": 285}  # the swapped value
+    mismatches = diff_physical(stored_wrong, extracted)
+    assert any(m.field == "weight" for m in mismatches)
+
+
+def test_physical_clean_when_stored_matches(extractor, html):
+    from brandkit import diff_physical
+
+    extracted = extractor.extract_physical(html)
+    stored_correct = {"weight": 276, "filterThread": 52, "apertureBlades": 9}
+    assert diff_physical(stored_correct, extracted) == []
+
+
 def test_numbered_fallback_for_zoom_lenses(extractor):
     html = (
         '<img src="/uploads/images/catalog/product/atx-m/11-18/05_1.png">'

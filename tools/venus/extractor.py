@@ -75,6 +75,46 @@ class VenusExtractor(BrandExtractor):
         specs["coating"] = self._coating(text)
         return specs
 
+    def extract_physical(self, content: str) -> dict:
+        """Parse physical specs from Venus Laowa's inline label-value block
+        (#779), e.g. 'Aperture Blades 7 Min. Focusing Distance 12cm
+        Magnification 1:7.5 Filter Thread 49mm Dimensions 60 x 53mm
+        Weight 215g'. NOTE: Venus lists Dimensions as length x diameter
+        (the reverse of most brands). Magnification 'N:M' -> decimal."""
+        text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", content))
+        out: dict = {}
+
+        if blades := self._num(text, r"Aperture Blades\s*(\d+)"):
+            out["apertureBlades"] = blades
+        if (mfd := self._num(text, r"Min(?:imum|\.)?\s*Focus(?:ing)?\s*Distance\s*([\d.]+)\s*cm")) is not None:
+            out["minFocusDistance"] = round(mfd * 10)  # cm -> mm
+        mag = re.search(r"Magnification\s*([\d.]+)\s*:\s*([\d.]+)", text, re.IGNORECASE)
+        if mag:
+            a, b = float(mag.group(1)), float(mag.group(2))
+            out["maxMagnification"] = round(a / b, 3) if b else 0.0
+        if ft := self._num(text, r"Filter Thread\s*([\d.]+)\s*mm"):
+            out["filterThread"] = ft
+        # Dimensions are "length x diameter" for Venus (reverse of Tokina).
+        dims = re.search(r"Dimensions\s*([\d.]+)\s*x\s*([\d.]+)\s*mm", text, re.IGNORECASE)
+        if dims:
+            out["length"] = float(dims.group(1))
+            out["diameter"] = float(dims.group(2))
+        if w := self._num(text, r"Weight\s*([\d.]+)\s*g"):
+            out["weight"] = w
+        # Focal length and aperture from "Focal Length 9mm" / "Maximum Aperture F2.8".
+        fl = re.search(r"Focal Length\s*([\d.]+)(?:\s*-\s*([\d.]+))?\s*mm", text, re.IGNORECASE)
+        if fl:
+            out["focalLengthMin"] = float(fl.group(1))
+            out["focalLengthMax"] = float(fl.group(2) or fl.group(1))
+        if ap := self._num(text, r"Maximum Aperture\s*F/?([\d.]+)"):
+            out["maxAperture"] = ap
+        return out
+
+    @staticmethod
+    def _num(text: str, pattern: str) -> float | None:
+        m = re.search(pattern, text, re.IGNORECASE)
+        return float(m.group(1)) if m else None
+
     @staticmethod
     def _special(text: str) -> list[str]:
         # Parenthetical right after the structure line is the most reliable.

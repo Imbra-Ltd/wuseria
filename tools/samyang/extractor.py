@@ -73,6 +73,58 @@ class SamyangExtractor(BrandExtractor):
         specs["coating"] = self._coating(block, text)
         return specs
 
+    def extract_physical(self, content: str) -> dict:
+        """Parse physical specs from Samyang's th2/td2 spec rows (#779).
+
+        Rows are <td class="th2">Label</td><td class="td2">value</td>. The
+        same lens ships in several mounts, so some rows (Weight) list a value
+        per mount — we take the first numeric value (mount-specific weights
+        differ slightly; --verify surfaces any real divergence)."""
+        rows = self._spec_rows(content)
+        out: dict = {}
+
+        if ft := self._num(rows.get("Filter Size"), r"([\d.]+)\s*mm"):
+            out["filterThread"] = ft
+        if dia := self._num(rows.get("Maximum Diameter"), r"([\d.]+)\s*mm"):
+            out["diameter"] = dia
+        if length := self._num(rows.get("Length"), r"([\d.]+)\s*mm"):
+            out["length"] = length
+        if blades := self._num(rows.get("Number of Diaphragm Blades"), r"(\d+)"):
+            out["apertureBlades"] = blades
+        if (mfd := self._num(rows.get("Minimum Focusing Distance"), r"([\d.]+)\s*m")) is not None:
+            out["minFocusDistance"] = round(mfd * 1000)
+        # Weight: first numeric (mounts listed left-to-right).
+        if w := self._num(rows.get("Weight"), r"([\d.]+)\s*g"):
+            out["weight"] = w
+        # "Aperture Range" reads "F2.0 ~ 22" — the first value is max aperture.
+        if ap := self._num(rows.get("Aperture Range"), r"F/?([\d.]+)"):
+            out["maxAperture"] = ap
+        if (mag := self._num(rows.get("Maximum Magnification Ratio"), r"([\d.]+)")) is not None:
+            out["maxMagnification"] = mag
+        return out
+
+    @staticmethod
+    def _spec_rows(content: str) -> dict[str, str]:
+        """Label -> value from the th2/td2 spec table. First value per label
+        wins (mount columns trail the first value)."""
+        rows: dict[str, str] = {}
+        for m in re.finditer(
+            r'<td[^>]*class="th2"[^>]*>(.*?)</td>\s*<td[^>]*class="td2"[^>]*>(.*?)</td>',
+            content, re.DOTALL,
+        ):
+            label = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.group(1))).strip()
+            value = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.group(2))).strip()
+            if label and value and label not in rows:
+                rows[label] = value
+        return rows
+
+    @staticmethod
+    def _num(value: str | None, pattern: str) -> float | None:
+        if not value:
+            return None
+        m = re.search(pattern, value)
+        return float(m.group(1)) if m else None
+
     @staticmethod
     def _spec_block(text: str) -> str:
         """The spec table sits between these two headings; isolate it to

@@ -64,3 +64,19 @@ def test_hri_plain_only():
 
 def test_no_diagrams_empty_images(extractor, html):
     assert extractor.extract_image_urls(html, "https://x") == {"mtf": [], "construction": []}
+
+
+def test_extract_physical_inline_run(extractor, html):
+    phys = extractor.extract_physical(html)
+    assert phys["filterThread"] == 72
+    assert phys["maxMagnification"] == 0.25
+    assert phys["minFocusDistance"] == 700  # 70cm -> mm
+    assert phys["maxAperture"] == 1.4
+    assert phys["diameter"] == 82  # (DxL) -> diameter first
+    assert phys["length"] == 96
+
+
+def test_extract_physical_text_bladed_and_comma_weight(extractor, html):
+    phys = extractor.extract_physical(html)
+    assert phys["apertureBlades"] == 11  # "Eleven-Bladed"
+    assert phys["weight"] == 1050  # "1,050 g" comma stripped

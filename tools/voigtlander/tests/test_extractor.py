@@ -52,3 +52,19 @@ def test_construction_german_filename(extractor, html):
 
 def test_no_match_returns_empty(extractor):
     assert extractor.extract_optical("<p>no spec here</p>") == {}
+
+
+def test_extract_physical_inline_run(extractor, html):
+    phys = extractor.extract_physical(html)
+    assert phys["apertureBlades"] == 12
+    assert phys["minFocusDistance"] == 300  # 0.30m -> mm
+    assert phys["maxMagnification"] == 0.5  # 1:2
+    assert phys["diameter"] == 69.6
+    assert phys["weight"] == 340
+    assert phys["filterThread"] == 58
+
+
+def test_extract_physical_length_not_focal(extractor, html):
+    # 'A 35mm lens' precedes the spec run; physical Length must be 39.8 (from
+    # the diameter-anchored dimensions), not the focal length 35.
+    assert extractor.extract_physical(html)["length"] == 39.8

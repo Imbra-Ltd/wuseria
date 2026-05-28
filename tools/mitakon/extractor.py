@@ -20,6 +20,8 @@ from brandkit import BrandConfig, BrandExtractor
 _TEXT_NUMS = {
     "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
     "six": "6", "seven": "7", "eight": "8", "nine": "9", "ten": "10",
+    "eleven": "11", "twelve": "12", "thirteen": "13", "fourteen": "14",
+    "fifteen": "15", "sixteen": "16",
 }
 
 _SINGLE_PATTERNS = [
@@ -76,6 +78,49 @@ class MitakonExtractor(BrandExtractor):
         specs["special"] = self._special(self._normalize(full_text))
         specs["coating"] = self._coating(full_text)
         return specs
+
+    def extract_physical(self, content: str) -> dict:
+        """Parse physical specs from a zyoptics.net (GFX) product page (#779).
+
+        Inline label-value spec run, e.g. 'Filter Thread 72 mm
+        Dimensions (DxL) 82x 96mm Weight 1,050 g', plus 'Maximum
+        Magnification 0.25x', 'Minimum Focus Distance 70 cm', an
+        'Eleven-Bladed Diaphragm' (text number), and 'Aperture range f/1.4'.
+        Dimensions are (DxL) = diameter x length; weight carries a comma."""
+        text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", content)).replace("&nbsp;", " ")
+        out: dict = {}
+
+        if ft := self._num(text, r"Filter Thread\s*([\d.]+)\s*mm"):
+            out["filterThread"] = ft
+        # Dimensions "(DxL) 82x 96mm" -> diameter x length.
+        dims = re.search(r"Dimensions\s*\(?D\s*x\s*L\)?\s*([\d.]+)\s*x\s*([\d.]+)\s*mm", text, re.IGNORECASE)
+        if dims:
+            out["diameter"] = float(dims.group(1))
+            out["length"] = float(dims.group(2))
+        # Weight carries a thousands comma ("1,050 g").
+        wm = re.search(r"Weight\s*([\d,]+(?:\.\d+)?)\s*g", text, re.IGNORECASE)
+        if wm:
+            out["weight"] = float(wm.group(1).replace(",", ""))
+        if (mag := self._num(text, r"Maximum Magnification\s*([\d.]+)\s*x")) is not None:
+            out["maxMagnification"] = mag
+        if (mfd := self._num(text, r"Minimum Focus(?:ing)?\s*Distance\s*([\d.]+)\s*cm")) is not None:
+            out["minFocusDistance"] = round(mfd * 10)  # cm -> mm
+        if ap := self._num(text, r"Aperture range\s*f/?([\d.]+)"):
+            out["maxAperture"] = ap
+        # Blades: "Eleven-Bladed Diaphragm" (text number) or "11 blades".
+        bm = re.search(r"(\w+)[- ]Bladed", text, re.IGNORECASE)
+        if bm:
+            n = _TEXT_NUMS.get(bm.group(1).lower())
+            if n:
+                out["apertureBlades"] = float(n)
+        elif blades := self._num(text, r"(\d+)\s*(?:aperture\s*)?blades?"):
+            out["apertureBlades"] = blades
+        return out
+
+    @staticmethod
+    def _num(text: str, pattern: str) -> float | None:
+        m = re.search(pattern, text, re.IGNORECASE)
+        return float(m.group(1)) if m else None
 
     @staticmethod
     def _normalize(text: str) -> str:

@@ -81,6 +81,53 @@ class TamronExtractor(BrandExtractor):
         specs["coating"] = self._coating(text)
         return specs
 
+    def extract_physical(self, content: str) -> dict:
+        """Parse physical specs from Tamron's spec.html th/td table (#779).
+
+        The spec sub-page (fetched + concatenated via config.extra_paths) has
+        clean <th>label</th><td>value</td> rows. Multi-mount lenses list
+        per-mount values ('86.2mm / ... (for Sony E-mount)'); the first value
+        wins. Magnification 'N:M' -> decimal; MOD metres -> mm."""
+        rows = self._spec_rows(content)
+        out: dict = {}
+
+        if ft := self._num(rows.get("Filter Size"), r"([\d.]+)\s*mm"):
+            out["filterThread"] = ft
+        if dia := self._num(rows.get("Maximum Diameter"), r"([\d.]+)\s*mm"):
+            out["diameter"] = dia
+        for key in ("Length", "Length *", "Overall Length"):
+            if length := self._num(rows.get(key), r"([\d.]+)\s*mm"):
+                out["length"] = length
+                break
+        if w := self._num(rows.get("Weight"), r"([\d.]+)\s*g"):
+            out["weight"] = w
+        if blades := self._num(rows.get("Aperture Blades"), r"(\d+)"):
+            out["apertureBlades"] = blades
+        # MOD: first value (WIDE) in "0.15m (5.9 in) (WIDE) / 0.24m (TELE)".
+        if (mod := self._num(rows.get("Minimum Object Distance"), r"([\d.]+)\s*m")) is not None:
+            out["minFocusDistance"] = round(mod * 1000)
+        mag = re.search(r"1\s*:\s*([\d.]+)", rows.get("Maximum Magnification Ratio", ""))
+        if mag:
+            out["maxMagnification"] = round(1 / float(mag.group(1)), 3)
+        return out
+
+    @staticmethod
+    def _spec_rows(content: str) -> dict[str, str]:
+        rows: dict[str, str] = {}
+        for m in re.finditer(r"<th[^>]*>(.*?)</th>\s*<td[^>]*>(.*?)</td>", content, re.DOTALL):
+            label = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.group(1))).strip()
+            value = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", m.group(2))).strip()
+            if label and value and label not in rows:
+                rows[label] = value
+        return rows
+
+    @staticmethod
+    def _num(value: str | None, pattern: str) -> float | None:
+        if not value:
+            return None
+        m = re.search(pattern, value)
+        return float(m.group(1)) if m else None
+
     @staticmethod
     def _special(text: str) -> list[str]:
         special: list[str] = []

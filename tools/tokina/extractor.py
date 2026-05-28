@@ -56,6 +56,82 @@ class TokinaExtractor(BrandExtractor):
             return url
         return prefix + url[len(prefix):].replace("-", "_")
 
+    def extract_physical(self, content: str) -> dict:
+        """Parse physical specs from the property_list spec table (#779).
+
+        Rows are <_title>/<_value> cell pairs; the page repeats some labels
+        in a related-products widget above the real table, so the LAST value
+        for each label wins. Numerics are normalized to the lenses.ts
+        convention (weight g, distances mm, magnification ratio -> decimal);
+        build flags are returned only when the page states them (a flag the
+        page omits is left out, never returned False)."""
+        specs = self._spec_rows(content)
+        out: dict = {}
+
+        # --- dimensions ---
+        if w := self._num(specs.get("Weight"), r"([\d.]+)\s*g"):
+            out["weight"] = w
+        if ft := self._num(specs.get("Filter Size"), r"([\d.]+)\s*mm"):
+            out["filterThread"] = ft
+        if blades := self._num(specs.get("Aperture Blades"), r"(\d+)"):
+            out["apertureBlades"] = blades
+        if (mfd := self._num(specs.get("Minimum Focusing Distance"), r"([\d.]+)\s*m")) is not None:
+            out["minFocusDistance"] = round(mfd * 1000)  # metres -> mm
+        mr = re.search(r"1\s*:\s*([\d.]+)", specs.get("Macro Ratio", ""))
+        if mr:
+            out["maxMagnification"] = round(1 / float(mr.group(1)), 3)
+        dims = re.search(r"([\d.]+)\s*x\s*([\d.]+)", specs.get("Dimensions", ""))
+        if dims:
+            out["diameter"] = float(dims.group(1))
+            out["length"] = float(dims.group(2))
+
+        # --- core optical ---
+        if ap := self._num(specs.get("Maximum Aperture"), r"f/?([\d.]+)"):
+            out["maxAperture"] = ap
+        focal = re.search(r"([\d.]+)\s*-\s*([\d.]+)\s*mm|([\d.]+)\s*mm",
+                          specs.get("Main specifications", ""))
+        if focal:
+            if focal.group(1):  # zoom range
+                out["focalLengthMin"] = float(focal.group(1))
+                out["focalLengthMax"] = float(focal.group(2))
+            else:  # prime
+                fl = float(focal.group(3))
+                out["focalLengthMin"] = out["focalLengthMax"] = fl
+
+        # --- build flags (only when the page states them) ---
+        yes = lambda v: bool(v) and v.strip().lower() in ("yes", "true")
+        if "Manual Aperture Ring" in specs:
+            out["hasApertureRing"] = yes(specs["Manual Aperture Ring"])
+        if "Aperture De-Click" in specs:
+            out["isApertureClickless"] = yes(specs["Aperture De-Click"])
+        if "Manual Focusing Ring" in specs:
+            out["hasFocusRing"] = yes(specs["Manual Focusing Ring"])
+        if "Image Stabilization" in specs:
+            out["hasOis"] = yes(specs["Image Stabilization"])
+        return out
+
+    @staticmethod
+    def _spec_rows(content: str) -> dict[str, str]:
+        """Title/value pairs from the property_list table; last value wins."""
+        rows = re.findall(
+            r'_title"[^>]*>(.*?)</div>.*?_value"[^>]*>(.*?)</div>',
+            content, re.DOTALL,
+        )
+        specs: dict[str, str] = {}
+        for raw_title, raw_value in rows:
+            title = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", raw_title)).strip()
+            value = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", raw_value)).strip()
+            if title and value:
+                specs[title] = value
+        return specs
+
+    @staticmethod
+    def _num(value: str | None, pattern: str) -> float | None:
+        if not value:
+            return None
+        m = re.search(pattern, value)
+        return float(m.group(1)) if m else None
+
     def extract_optical(self, content: str) -> dict:
         # Tokina puts special-element names in image alt text, so fold alt
         # attributes into the searchable text before stripping tags.

@@ -52,12 +52,16 @@ class BrandExtractor(ABC):
         special (list[str]), coating (list[str]). Brands without a given
         field simply omit it (or return an empty list)."""
 
-    def extract_physical(self, content: str) -> dict[str, float]:
+    def extract_physical(self, content: str) -> dict:
         """Parse physical specs for cross-validation (#779).
 
-        Returns a subset of weight, maxMagnification, minFocusDistance,
-        filterThread, apertureBlades, diameter, length. The base default
-        returns nothing, so a brand can migrate before implementing this."""
+        Returns any subset of the page-verifiable specs in
+        lenses.PHYSICAL_SPEC_FIELDS — dimensions, core optical specs, build
+        flags (booleans), afMotor (string), tilt-shift geometry. Return a
+        boolean ONLY when the page affirmatively confirms it (a flag the page
+        does not mention must be omitted, not returned False). The base
+        default returns nothing, so a brand can migrate before implementing
+        this."""
         return {}
 
     def extract_image_urls(self, content: str, url: str) -> dict[str, list[str]]:

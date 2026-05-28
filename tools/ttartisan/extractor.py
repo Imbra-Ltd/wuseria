@@ -56,6 +56,47 @@ class TTArtisanExtractor(BrandExtractor):
         specs["coating"] = self._coating(_strip(content))
         return specs
 
+    def extract_physical(self, content: str) -> dict:
+        """Parse physical specs from TTartisan's inline label-value spec block
+        (#779). Values appear as 'Label value' in running text, e.g.
+        'Filter size 52mm  Maximum aperture F1.4  Weight Around 341~350g'."""
+        text = _strip(content)
+        out: dict = {}
+
+        if ft := self._num(text, r"Filter size\s*([\d.]+)\s*mm"):
+            out["filterThread"] = ft
+        if blades := self._num(text, r"Diaphragm Blades\s*(\d+)"):
+            out["apertureBlades"] = blades
+        if ap := self._num(text, r"Maximum aperture\s*F/?([\d.]+)"):
+            out["maxAperture"] = ap
+        # Weight is often a range ("341~350g"); take the larger (final) value.
+        wm = re.search(r"Weight\s*(?:Around\s*)?(?:[\d.]+\s*~\s*)?([\d.]+)\s*g", text, re.IGNORECASE)
+        if wm:
+            out["weight"] = float(wm.group(1))
+        if (mfd := self._num(text, r"Closest focus distance\s*([\d.]+)\s*m")) is not None:
+            out["minFocusDistance"] = round(mfd * 1000)  # metres -> mm
+        # Magnification: "Magnification 2:1" (>life-size) or "1:4".
+        mag = re.search(r"Magnification\s*([\d.]+)\s*:\s*([\d.]+)", text, re.IGNORECASE)
+        if mag:
+            a, b = float(mag.group(1)), float(mag.group(2))
+            out["maxMagnification"] = round(a / b, 3) if b else 0.0
+
+        # Focal length: "Focal length 50mm" (prime) or "Focal length 11-20mm".
+        fl = re.search(r"Focal length\s*([\d.]+)(?:\s*-\s*([\d.]+))?\s*mm", text, re.IGNORECASE)
+        if fl:
+            out["focalLengthMin"] = float(fl.group(1))
+            out["focalLengthMax"] = float(fl.group(2) or fl.group(1))
+
+        # Tilt-shift geometry (only on T-S lenses).
+        if tilt := self._num(text, r"Tilt Angle\s*([\d.]+)"):
+            out["tiltAngle"] = tilt
+        return out
+
+    @staticmethod
+    def _num(text: str, pattern: str) -> float | None:
+        m = re.search(pattern, text, re.IGNORECASE)
+        return float(m.group(1)) if m else None
+
     @staticmethod
     def _elements_groups(html: str) -> tuple[int, int] | None:
         """Counts: spec table first, then any table mentioning elements/groups,

@@ -87,6 +87,51 @@ class FujifilmExtractor(BrandExtractor):
         specs["coating"] = self._coating(text)
         return specs
 
+    def extract_physical(self, content: str) -> dict:
+        """Parse physical specs from the Fujifilm specifications page (#779).
+
+        The spec table's two-column layout shifts on multi-value rows, so
+        these use targeted patterns over the de-tagged text rather than
+        cell-pairing. minFocusDistance takes the closer of the Normal/Macro
+        focus ranges (Macro = the lens's true minimum)."""
+        text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", content))
+        text = text.replace("&#8211;", "-").replace("&nbsp;", " ")
+        # Drop other HTML numeric entities (e.g. &#8709; diameter sign, &#8734;
+        # infinity) so their digits don't get mistaken for spec values.
+        text = re.sub(r"&#\d+;", " ", text)
+        out: dict = {}
+
+        # focal length: "f=14mm" or "f=10-24mm"
+        fl = re.search(r"f=\s*([\d.]+)(?:\s*-\s*([\d.]+))?\s*mm", text, re.IGNORECASE)
+        if fl:
+            out["focalLengthMin"] = float(fl.group(1))
+            out["focalLengthMax"] = float(fl.group(2) or fl.group(1))
+        if ap := self._num(text, r"Max\.?\s*aperture\s*F/?([\d.]+)"):
+            out["maxAperture"] = ap
+        if blades := self._num(text, r"(\d+)\s*\(rounded diaphragm"):
+            out["apertureBlades"] = blades
+        if (mag := self._num(text, r"Max\.?\s*magnification\s*([\d.]+)\s*x")) is not None:
+            out["maxMagnification"] = mag
+        if w := self._num(text, r"Weight[^=g]*?([\d.]+)\s*g"):
+            out["weight"] = w
+        if ft := self._num(text, r"Filter size[^\d]*([\d.]+)\s*mm"):
+            out["filterThread"] = ft
+        # dimensions: "Diameter x Length ... 65mm x 58.4mm"
+        dims = re.search(r"Diameter x Length[^\d]*?([\d.]+)\s*mm\s*x\s*([\d.]+)\s*mm", text, re.IGNORECASE)
+        if dims:
+            out["diameter"] = float(dims.group(1))
+            out["length"] = float(dims.group(2))
+        # focus range: take the closer of Normal/Macro (cm -> mm).
+        ranges = [float(x) for x in re.findall(r"(?:Normal|Macro)\s*([\d.]+)\s*cm", text, re.IGNORECASE)]
+        if ranges:
+            out["minFocusDistance"] = round(min(ranges) * 10)  # cm -> mm
+        return out
+
+    @staticmethod
+    def _num(text: str, pattern: str) -> float | None:
+        m = re.search(pattern, text, re.IGNORECASE)
+        return float(m.group(1)) if m else None
+
     @staticmethod
     def _coating(text: str) -> list[str]:
         # Every Fujifilm lens has Super EBC; Nano-GI / HT-EBC are optional.

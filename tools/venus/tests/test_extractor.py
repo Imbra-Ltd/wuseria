@@ -69,3 +69,22 @@ def test_construction_url_encoded_chinese(extractor):
     html = '<img src="/uploads/%E5%85%89%E8%B7%AF%E5%9B%BE-33mm.png">'
     urls = extractor.extract_image_urls(html)
     assert len(urls["construction"]) == 1
+
+
+def test_extract_physical_inline_block(extractor, html):
+    phys = extractor.extract_physical(html)
+    assert phys["apertureBlades"] == 9
+    assert phys["minFocusDistance"] == 350  # 35cm -> mm
+    assert phys["maxMagnification"] == 0.25  # 1:4
+    assert phys["filterThread"] == 62
+    assert phys["weight"] == 587
+    assert phys["focalLengthMin"] == 33
+    assert phys["maxAperture"] == 0.95
+
+
+def test_extract_physical_dimensions_length_x_diameter(extractor, html):
+    # Venus lists Dimensions as length x diameter (reverse of most brands):
+    # "71.5 x 72mm" -> length 71.5, diameter 72.
+    phys = extractor.extract_physical(html)
+    assert phys["length"] == 71.5
+    assert phys["diameter"] == 72
