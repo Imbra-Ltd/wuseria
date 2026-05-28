@@ -288,10 +288,16 @@ py tools/tamron/audit.py --missing                 # show only incomplete lenses
 
 **Fetch Tokina optical specs (urllib, alt-text scraping):**
 
+Migrated onto the `pagefetch` + `brandkit` architecture (ADR-035) — the
+brand parsing lives in `tools/tokina/extractor.py`, the pipeline in
+`brandkit`. The `--verify` flag (#779) cross-validates stored physical
+specs against the official page.
+
 ```bash
 py tools/tokina/fetch_specs.py                    # fetch all specs + images
 py tools/tokina/fetch_specs.py --dry-run           # list lenses without fetching
 py tools/tokina/fetch_specs.py --filter 23mm       # filter by model substring
+py tools/tokina/fetch_specs.py --verify            # cross-validate physical specs (#779)
 py tools/tokina/audit.py                           # audit data completeness
 py tools/tokina/audit.py --missing                 # show only incomplete lenses
 ```
