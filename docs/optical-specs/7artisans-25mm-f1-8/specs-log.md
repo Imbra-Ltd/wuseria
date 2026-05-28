@@ -23,6 +23,17 @@
 - **constructionDiagram:** found — `construction-diagram.jpg` (official; 7 elements / 5 groups)
 - **MTF chart:** found — `mtf-chart.jpg` (official; S10/T10/S30/T30 at f/1.8 and f/8)
 
+## Physical-field re-check (2026-05-28)
+
+Full field cross-check vs LensTip 1725 + B&H 1387943 (initial pass was optical + MFD only):
+
+- **weight:** 200 → **143** (LensTip 143g + B&H "5.04 oz / 143g" — DB was 57g too high)
+- **diameter:** 50 → **51** (LensTip 51mm + B&H ø2.01" — minor)
+- year 2017, blades 12, mag 0.2x, MFD 180, length 32, filter 46 all CONFIRMED (DB correct).
+- `hasCircularAperture` KEPT false: B&H says "12, Rounded" but the official page does not say
+  "rounded"; the DB sets circular only on explicit OFFICIAL "rounded" wording (consistent
+  with the 55mm Mark II). Flagged as a possible upgrade if official confirms.
+
 ## Caveats
 
 - Construction diagram / MTF were published only inside composite marketing images
