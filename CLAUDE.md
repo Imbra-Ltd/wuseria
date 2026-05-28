@@ -70,7 +70,7 @@ Project-specific overrides and additions follow below.
 - `tools/samyang/` — Samyang optical spec extraction (fetch_specs, audit, plain urllib)
 - `tools/sigma/` — Sigma optical spec extraction (fetch_specs, audit, plain urllib)
 - `tools/tamron/` — Tamron optical spec extraction (fetch_specs, audit, plain urllib, dual-page parsing)
-- `tools/tokina/` — Tokina optical spec extraction (fetch_specs, audit, plain urllib, alt-text scraping)
+- `tools/tokina/` — Tokina optical spec extraction (fetch_specs, audit, alt-text scraping); migrated onto `brandkit` + `pagefetch` (TokinaExtractor strategy, ADR-035)
 - `tools/ttartisan/` — TTartisan optical spec extraction (fetch_specs, audit, plain urllib, spec table + prose parsing)
 - `tools/viltrox/` — Viltrox optical spec extraction (fetch_specs, audit, download_images, Shopify JSON + HTML scraping)
 - `tools/zeiss/` — Carl Zeiss optical spec extraction (fetch_specs, audit, PDF datasheet download)
@@ -78,7 +78,9 @@ Project-specific overrides and additions follow below.
 - `tools/lenstip/` — LensTip lens index (build_index, search); local JSON index of 2300+ lenses for instant ID lookup
 - `tools/lookup.py` — unified lens lookup; generates research URLs for all PLAYBOOK 2.8 sources in one shot
 - `tools/crop-artifact.py` — content-aware cropper for construction diagrams / MTF charts; detects content bbox from corner-median background (no hand-guessed pixel coords), splits composites (`--split --left/--right`), supports explicit `--region`, `--margin`, advisory `--check`
-- `tools/` — MTF extraction tools (mtf-extract-skeleton.py), page fetch utility, `FETCH-PAGE.md` dev journal
+- `tools/pagefetch/` — standalone, importable web-fetch package (PageSource ABC + NetworkFetcher + FakeFetcher, four-tier auto-escalation, configurable cache); submodule-ready, zero project coupling; own pytest suite + README (ADR-035)
+- `tools/brandkit/` — shared brand-tool library (BrandTool orchestrator + BrandExtractor strategy via composition, lenses.ts parser, slug + specs-dir helpers); eliminates per-brand scaffolding duplication (ADR-035)
+- `tools/` — MTF extraction tools (mtf-extract-skeleton.py)
 
 ### 1.3 Commands
 
@@ -96,14 +98,15 @@ npm run validate     # lint + format + check + test + build — full CI suite
 
 ### 1.4 Web fetching
 
-- Use `py tools/fetch-page.py <url>` for all web page fetching — never WebFetch or Fetch tools
+- Use `py -m pagefetch <url>` (run from `tools/`) for all web page fetching — never WebFetch or Fetch tools
 - WebFetch/Fetch truncates large pages through a small model, silently losing data
-- `fetch-page.py` auto-escalates: urllib (~1s) → Playwright (~5-9s) → Nodriver (~6-8s) → SeleniumBase UC (~18-24s)
+- `pagefetch` auto-escalates: urllib (~1s) → Playwright (~5-9s) → Nodriver (~6-8s) → SeleniumBase UC (~18-24s)
 - Flags: `--html` (raw HTML), `--js` (force Playwright), `--nodriver` (force headed Chrome), `--uc` (force UC), `--batch urls.txt` (persistent browser session), `--no-cache` (bypass cache)
 - For bot-protected sites, auto mode skips Playwright and goes straight to Nodriver (headed Chrome, no driver binary)
 - Use DuckDuckGo HTML search (`html.duckduckgo.com/html/?q=...`) when Google/Bing block with CAPTCHAs — works with urllib (~1s)
-- This applies to both the main agent and all subagents — when spawning research agents, instruct them to use `fetch-page.py`, not WebFetch
-- See `tools/FETCH-PAGE.md` for architecture details and performance history
+- This applies to both the main agent and all subagents — when spawning research agents, instruct them to use `py -m pagefetch`, not WebFetch
+- In code, import the package: `from pagefetch import NetworkFetcher, FetchOptions, ContentMode` (inject a `PageSource`; use `FakeFetcher` in tests)
+- See `tools/pagefetch/README.md` for architecture details and performance history
 
 ## 2. Code conventions
 

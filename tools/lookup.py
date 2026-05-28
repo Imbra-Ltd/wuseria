@@ -38,7 +38,7 @@ def lenstip_lookup(query: str) -> str | None:
 
 
 def ddg_site_search(site: str, query: str) -> str:
-    """Generate a DuckDuckGo HTML site-search URL (no CAPTCHAs, works with fetch-page.py)."""
+    """Generate a DuckDuckGo HTML site-search URL (no CAPTCHAs, works with pagefetch)."""
     return f"https://html.duckduckgo.com/html/?q=site%3A{site}+{url_encode(query)}"
 
 
@@ -52,7 +52,7 @@ def generate_urls(query: str) -> list[tuple[str, str, str]]:
 
     Returns list of (source_name, url, note) tuples.
     Uses DuckDuckGo HTML for site-searches (no CAPTCHAs, works with
-    fetch-page.py via plain urllib). Google only for image search.
+    pagefetch via plain urllib). Google only for image search.
     """
     q = url_encode(query)
     urls = []

@@ -3094,3 +3094,32 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Build #883 (spec-researcher subagent + image-gather tool) as the first step of the next brand
 - Continue: #824 (7Artisans missing lenses incl. Mk I 60mm/12mm + AF lenses), then AstrHori #867, Mitakon #833
 - Backlog: Trust Score spike #882, fetch-page cache fix #881
+
+---
+
+### Session 89 — Tooling Refactor: pagefetch + brandkit
+
+- Theme: close out v0.7.0. Confirmed epic #739 (optical-specs collection) was complete (all 25 brand sub-tasks done; Meike #755 + 7Artisans #748 merged) — fixed its stale checkboxes and closed it. Filed #884 (backfill specs-log.md for 126 folders predating ADR-031/033).
+- Then re-architected the Python tooling layer (the remaining v0.7.0 item #779 grew into this). Work on branch `refactor/pagefetch-brandkit` (6 commits, pushed, no PR yet per maintainer).
+- Issues: closed #739; created epic #885 + child tasks #886–#892; re-parented #779 under #885. Created #884.
+
+#### Key changes
+
+- **pagefetch package** (`tools/pagefetch/`, #886/#887): extracted the 748-line CLI-only `fetch-page.py` into an importable, submodule-ready package — `PageSource` ABC, `NetworkFetcher` (four-tier escalation preserved line-for-line), `FakeFetcher` test double, configurable `FileCache` (cache key `sha256[:16]` unchanged so existing caches stay valid), `detection`/`chrome` modules, thin `__main__` CLI (`py -m pagefetch`, all flags preserved). 42 unit tests; escalation tested via stubbed transport (no network/browser). Own README (folds in the old FETCH-PAGE.md journal); `FETCH-PAGE.md` now a pointer.
+- **brandkit library** (`tools/brandkit/`, #889): `BrandTool` orchestrator composed with an injected `PageSource` + per-brand `BrandExtractor` strategy. Moves the per-brand scaffolding (`model_to_slug`, lenses.ts parser, specs-folder globs, image download) into one place; adds physical-spec `diff` for #779. 41 unit tests; `BrandTool` exercised via `FakeFetcher`.
+- **Tokina migration** (`tools/tokina/`, #890): `TokinaExtractor(BrandExtractor)` holds the brand parsing; `fetch_specs.py`/`audit.py` construct a `BrandTool`; removed the 282-line `tokina/common.py`. Added a `--verify` flag wiring #779 end-to-end (fetch → extract_physical → diff → report + URL validation). 9 extractor tests; `--dry-run` parity + live `--verify` verified.
+- Consumer + docs migration (#888): repointed `tools/lenstip/build_index.py` at `py -m pagefetch`; updated CLAUDE.md §1.2/§1.4, PLAYBOOK §2.7, ONBOARDING; gitignored `downloaded_files/`. Removed `fetch-page.py`. 92 Python tests total; `astro check` clean.
+
+#### Key decisions
+
+- Composition over inheritance for the brand layer (ADR-035): a `BrandExtractor` strategy injected into a `BrandTool` orchestrator, not a `BrandFetcher` base class — per `base/testing.md` (inheritance drags the hierarchy into every test); the brand variance (HTML/JSON/text input, dict/list/absent image shapes) is absorbed behind a normalized `content: str -> dict` contract.
+- Two packages, one ADR: `pagefetch` is transport-only and me-fuji-agnostic (submodule-ready); `brandkit` is me-fuji-coupled (reads lenses.ts). Splitting keeps the submodule clean.
+- Boolean flag params (`raw_html`) replaced by `ContentMode`/`Transport` enums (quality.md ban on boolean flag params).
+- The normalized extractor contract has one documented exception: Fujifilm's position-based image fallback needs a live Playwright page, not a content string — deferred to #892 as `extract_image_urls_live(page)`.
+- #779 is NOT done: the `--verify` plumbing landed, but per-brand `extract_physical` is still the base-default no-op (Tokina's "1 clean" is vacuous until real physical extraction lands). Tracked under #779/#891/#892.
+
+#### Next
+
+- Open the PR for `refactor/pagefetch-brandkit` when ready (maintainer to decide one PR vs. split); install `pytest-cov` to confirm #887's 90% coverage before merge.
+- After merge: #891 (urllib brands), #892 (browser brands + Zeiss PDF), then #779 per-brand `extract_physical`.
+- Backlog carried over: #884 (specs-log backfill), Trust Score #882, fetch-page cache #881.

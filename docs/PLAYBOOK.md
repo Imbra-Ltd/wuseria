@@ -189,17 +189,26 @@ genres (once genre formulas are implemented).
 
 **Fetch a web page (four-tier auto-escalation):**
 
+Run from the `tools/` directory so `python -m pagefetch` resolves the package.
+
 ```bash
-py tools/fetch-page.py <url>              # auto mode: urllib → Playwright → Nodriver → UC
-py tools/fetch-page.py <url> --html       # raw HTML output
-py tools/fetch-page.py <url> --js         # force Playwright (JS-rendered pages)
-py tools/fetch-page.py <url> --nodriver   # force Nodriver (headed Chrome, bot bypass)
-py tools/fetch-page.py <url> --uc         # force SeleniumBase UC (headless fallback)
-py tools/fetch-page.py <url> --no-cache   # bypass cache, fetch fresh
-py tools/fetch-page.py --batch urls.txt --nodriver --output-dir out/  # batch mode
+py -m pagefetch <url>              # auto mode: urllib → Playwright → Nodriver → UC
+py -m pagefetch <url> --html       # raw HTML output
+py -m pagefetch <url> --js         # force Playwright (JS-rendered pages)
+py -m pagefetch <url> --nodriver   # force Nodriver (headed Chrome, bot bypass)
+py -m pagefetch <url> --uc         # force SeleniumBase UC (headless fallback)
+py -m pagefetch <url> --no-cache   # bypass cache, fetch fresh
+py -m pagefetch --batch urls.txt --nodriver --output-dir out/  # batch mode
 ```
 
-Responses are cached in `.cache/fetch/`. See `tools/FETCH-PAGE.md` for details.
+Responses are cached in `.cache/fetch/` (me-fuji points the cache there).
+See `tools/pagefetch/README.md` for the architecture and library API.
+
+**Run the Python tool tests:**
+
+```bash
+cd tools && py -m pytest pagefetch/tests/ brandkit/tests/ -v
+```
 
 **Audit spec field coverage per brand:**
 
@@ -279,10 +288,16 @@ py tools/tamron/audit.py --missing                 # show only incomplete lenses
 
 **Fetch Tokina optical specs (urllib, alt-text scraping):**
 
+Migrated onto the `pagefetch` + `brandkit` architecture (ADR-035) — the
+brand parsing lives in `tools/tokina/extractor.py`, the pipeline in
+`brandkit`. The `--verify` flag (#779) cross-validates stored physical
+specs against the official page.
+
 ```bash
 py tools/tokina/fetch_specs.py                    # fetch all specs + images
 py tools/tokina/fetch_specs.py --dry-run           # list lenses without fetching
 py tools/tokina/fetch_specs.py --filter 23mm       # filter by model substring
+py tools/tokina/fetch_specs.py --verify            # cross-validate physical specs (#779)
 py tools/tokina/audit.py                           # audit data completeness
 py tools/tokina/audit.py --missing                 # show only incomplete lenses
 ```
@@ -500,7 +515,7 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
   HTML. Use the admin-ajax API endpoint or ask the user to paste the table.
 - **DuckDuckGo fallback:** when Google or Bing block with CAPTCHAs, use
   DuckDuckGo HTML search — it works with plain urllib (~1s):
-  `py tools/fetch-page.py "https://html.duckduckgo.com/html/?q=<query>"`
+  `py -m pagefetch "https://html.duckduckgo.com/html/?q=<query>"` (from `tools/`)
 
 ## 3. Quality
 

@@ -15,6 +15,7 @@ __pycache__/
 reports/
 .lighthouseci/
 temp/
+downloaded_files/
 .DS_Store
 Thumbs.db
 desktop.ini

@@ -35,8 +35,16 @@ npm install
 For optical specs research tools (optional):
 
 ```bash
-pip install playwright nodriver seleniumbase
+pip install playwright nodriver seleniumbase pytest
 playwright install chromium
+```
+
+The web-fetch package (`tools/pagefetch/`) works with only the Python
+standard library; the browser libraries above enable its higher tiers and
+are imported lazily. `pytest` runs the Python tool tests:
+
+```bash
+cd tools && py -m pytest pagefetch/tests/ brandkit/tests/
 ```
 
 The `--recursive` flag pulls the `docs/solid-ai-templates` submodule. If you
