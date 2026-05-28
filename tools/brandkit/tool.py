@@ -61,12 +61,19 @@ class BrandTool:
         )
 
     def _fetch_content(self, url: str, use_cache: bool = True) -> str:
+        """Fetch the lens page, plus any extra sub-pages the brand declares,
+        concatenated. Single-page brands (extra_paths empty) just get the
+        main page."""
         opts = FetchOptions(
             mode=self._ex.config.content_mode,
             transport=self._ex.config.transport,
             use_cache=use_cache,
         )
-        return self._src.fetch(url, opts).content
+        parts = [self._src.fetch(url, opts).content]
+        for path in self._ex.config.extra_paths:
+            extra_url = url.rstrip("/") + "/" + path.lstrip("/")
+            parts.append(self._src.fetch(extra_url, opts).content)
+        return "".join(parts)
 
     def fetch_optical(self, lens: LensEntry) -> dict:
         content = self._fetch_content(lens.url)

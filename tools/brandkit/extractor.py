@@ -26,6 +26,11 @@ class BrandConfig:
     content_mode: ContentMode = ContentMode.HTML
     transport: Transport = Transport.AUTO
     has_diagrams: bool = True
+    # Extra page paths appended to the lens URL and concatenated with the main
+    # page before extraction — e.g. Tamron keeps element/group counts and
+    # diagrams on a "spec.html" sub-page. A tuple (not list) keeps the frozen
+    # dataclass hashable. Empty means single-page.
+    extra_paths: tuple[str, ...] = ()
 
 
 class BrandExtractor(ABC):
