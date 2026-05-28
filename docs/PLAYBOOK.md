@@ -548,6 +548,12 @@ Pipeline steps (exits on first failure):
 | Build      | `npm run build`       | Astro build — full static site generation         |
 | Link check | `npm run check:links` | Trailing slash validation on internal links       |
 
+Manual / scheduled (network — not in `validate`):
+
+| Check          | Command                        | What it checks                                                                                                                                                                                                                                 |
+| -------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| External links | `npm run check:external-links` | Every external URL in `src/data/*.ts` (officialUrl + review links) is reachable. Bot-blocked/rate-limited hosts (403/429/503/timeout) report as UNVERIFIABLE, not dead. Runs weekly via `external-links.yml`; also a pre-release check (§5.1). |
+
 ### 3.2 Pre-commit hooks (husky + lint-staged)
 
 Every commit is gated by `.husky/pre-commit`. Runs automatically — no manual
