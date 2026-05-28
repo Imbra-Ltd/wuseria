@@ -288,10 +288,14 @@ py tools/tamron/audit.py --missing                 # show only incomplete lenses
 
 **Fetch Tokina optical specs (urllib, alt-text scraping):**
 
-Migrated onto the `pagefetch` + `brandkit` architecture (ADR-035) — the
-brand parsing lives in `tools/tokina/extractor.py`, the pipeline in
-`brandkit`. The `--verify` flag (#779) cross-validates stored physical
-specs against the official page.
+All 11 brands are migrated onto the `pagefetch` + `brandkit` architecture
+(ADR-035) — brand parsing lives in `tools/<brand>/extractor.py`, the pipeline
+in `brandkit`; `fetch_specs.py`/`audit.py` are thin delegators. The same
+flags work for every brand (substitute the brand directory below). The
+`--verify` flag (#779) cross-validates stored physical specs against the
+official page — implemented for 8 brands (fujifilm, samyang, tamron, tokina,
+ttartisan, voigtlander, venus, mitakon); sigma/viltrox pending (#897),
+zeiss N/A (PDF-only). Tokina shown as the example:
 
 ```bash
 py tools/tokina/fetch_specs.py                    # fetch all specs + images

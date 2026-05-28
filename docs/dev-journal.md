@@ -3123,3 +3123,34 @@ Issues created: solid-ai-templates#329 (no-force-push convention)
 - Open the PR for `refactor/pagefetch-brandkit` when ready (maintainer to decide one PR vs. split); install `pytest-cov` to confirm #887's 90% coverage before merge.
 - After merge: #891 (urllib brands), #892 (browser brands + Zeiss PDF), then #779 per-brand `extract_physical`.
 - Backlog carried over: #884 (specs-log backfill), Trust Score #882, fetch-page cache #881.
+
+---
+
+### Session 90 — Brand Migrations and Physical-Spec Verification
+
+- Continued the tooling theme. Merged PR #893 (pagefetch + brandkit + Tokina) and PR #895 (10 remaining brands migrated). Then implemented #779 physical-spec extraction across 8 brands on branch `feat/779-extract-physical` (PR #898, open).
+- Issues: closed #886–890 (PR #893), #891/#892 (PR #895); created #896 (data-cleanup from --verify findings), #897 (Sigma+Viltrox extract_physical, deferred), #898 PR. #779 stays open pending #898 merge + #897.
+
+#### Key changes
+
+- **All 11 brands migrated onto pagefetch + brandkit** (#891 PR #895, #892 within it): each brand is now a `<Brand>Extractor(BrandExtractor)` + thin delegators; ~250 lines/brand of duplicated scaffolding removed. Net −2122 lines while migrating 10 brands.
+- **Shared brandkit runners** extracted: `cli.run` (fetch/verify) and `audit.audit` — each brand's `fetch_specs.py`/`audit.py` is ~15 lines.
+- **#779 physical-spec verification** (PR #898): expanded scope from the ticket's 5 numeric fields to all page-verifiable specs (dimensions, core optical, build booleans, afMotor, tilt-shift) via a typed `PHYSICAL_SPEC_FIELDS` registry + typed `diff_physical` (numeric tolerance / boolean exact / string case-insensitive). Implemented + real-page-verified `extract_physical` for 8 brands (Tokina, TTartisan, Samyang, Fujifilm, Tamron, Voigtlander, Venus, Mitakon).
+- `--verify` now catches real data discrepancies (Fujifilm rounded weights, Voigtlander diameter typo, Tamron weight, per-mount divergences) — tracked in #896.
+
+#### Key decisions
+
+- Contract generalizations solved once and reused across brands, never special-cased: `extract_image_urls(content, url)` (Sigma/Tamron URL codes), `BrandConfig.extra_paths` (Tamron dual-page), JSON-via-content (Viltrox), `BrandConfig.transport` (Playwright/UC), `BrandConfig.needs_live_page` + `extract_images_live(page)` (Fujifilm — the one documented contract bend; brandkit owns the browser page, pagefetch stays pure transport).
+- `extract_physical` returns a boolean ONLY when the page affirmatively states it — so a stored `false` for an unmentioned flag is never falsely flagged (the "absent = false" stored default vs page-silence asymmetry).
+- Sigma + Viltrox `extract_physical` deferred (#897): their pages weren't cached and there was no network to verify offline; shipping unverified parsers would break the real-page-verification discipline held for the other 8. Zeiss is a deliberate no-op (PDF-only).
+- The --verify discrepancies are a data-quality signal, not noise to suppress — kept the strict tolerance and filed #896 rather than widening it to mask errors.
+
+#### Post-mortems
+
+- Module-name collision (P2): brand `extractor.py` modules all imported as bare `extractor` collided under one pytest interpreter (Samyang's test imported Tokina's class). **Root cause:** bare `from extractor import` + no per-brand package. **Fix:** brand-qualified imports (`tokina.extractor`) + `__init__.py` per brand dir (PR #895). **Why missed:** Tokina alone (the proof brand) never triggered it. **Prevention:** brand-qualified imports are now the pattern for all brands.
+
+#### Next
+
+- Merge PR #898 (#779 8-brand physical extraction); then #897 (Sigma+Viltrox) when network is available to close #779.
+- Data cleanup #896 (triage --verify findings: real errors vs per-mount differences).
+- Backlog carried over: #894 (Python toolchain spike), #884 (specs-log backfill), pagefetch `download_bytes` escalation for Venus images, pagefetch→submodule extraction.

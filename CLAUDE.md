@@ -66,15 +66,7 @@ Project-specific overrides and additions follow below.
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
 - `docs/audits/` — 360-degree audits (timestamped) and SEO test plan
 - `docs/optical-specs/` — verified per-lens optical reference data, one subfolder per lens (ADR-031, ADR-033): `analysis.md` (MTF readings, predictions), `scoring-log.md` (per-lens scoring justification), `specs-log.md` (mandatory technical specs provenance log), construction diagrams and MTF charts as PNG or SVG
-- `tools/fujifilm/` — Fujifilm optical spec extraction (fetch_specs, audit, Playwright-based)
-- `tools/samyang/` — Samyang optical spec extraction (fetch_specs, audit, plain urllib)
-- `tools/sigma/` — Sigma optical spec extraction (fetch_specs, audit, plain urllib)
-- `tools/tamron/` — Tamron optical spec extraction (fetch_specs, audit, plain urllib, dual-page parsing)
-- `tools/tokina/` — Tokina optical spec extraction (fetch_specs, audit, alt-text scraping); migrated onto `brandkit` + `pagefetch` (TokinaExtractor strategy, ADR-035)
-- `tools/ttartisan/` — TTartisan optical spec extraction (fetch_specs, audit, plain urllib, spec table + prose parsing)
-- `tools/viltrox/` — Viltrox optical spec extraction (fetch_specs, audit, download_images, Shopify JSON + HTML scraping)
-- `tools/zeiss/` — Carl Zeiss optical spec extraction (fetch_specs, audit, PDF datasheet download)
-- `tools/mitakon/` — Mitakon optical spec extraction (fetch_specs, audit, SeleniumBase UC for zyoptics.net)
+- `tools/<brand>/` — per-brand optical spec extraction, all 11 migrated onto `brandkit` + `pagefetch` (ADR-035): each is a `<Brand>Extractor(BrandExtractor)` in `extractor.py` plus thin `fetch_specs.py`/`audit.py` that delegate to the shared brandkit runners. Brands: fujifilm (Playwright + live-page image fallback), samyang, sigma, tamron (dual-page via `extra_paths`), tokina, ttartisan, viltrox (Shopify JSON + `download_images.py` theme scraper), zeiss (PDF-only, `save_pdf`), mitakon (UC), venus (UC), voigtlander (Playwright). Transport per brand via `BrandConfig.transport`; import the extractor brand-qualified (`from tokina.extractor import ...`). `extract_physical` (#779 cross-validation) implemented for 8 brands; sigma/viltrox pending (#897), zeiss N/A
 - `tools/lenstip/` — LensTip lens index (build_index, search); local JSON index of 2300+ lenses for instant ID lookup
 - `tools/lookup.py` — unified lens lookup; generates research URLs for all PLAYBOOK 2.8 sources in one shot
 - `tools/crop-artifact.py` — content-aware cropper for construction diagrams / MTF charts; detects content bbox from corner-median background (no hand-guessed pixel coords), splits composites (`--split --left/--right`), supports explicit `--region`, `--margin`, advisory `--check`
