@@ -23,7 +23,7 @@ from pathlib import Path
 BASE_URL = "https://www.lenstip.com"
 TOOL_DIR = Path(__file__).parent
 INDEX_FILE = TOOL_DIR / "lenstip-index.json"
-FETCH_PAGE = Path(__file__).parent.parent / "fetch-page.py"
+TOOLS_DIR = Path(__file__).parent.parent  # holds the pagefetch package
 
 # Manufacturer IDs from the LensTip dropdown (producent select element).
 # Format: {dropdown_value: (url_name, display_name)}
@@ -84,11 +84,14 @@ LENS_NAME_RE = re.compile(
 
 
 def fetch_html(url: str, *, no_cache: bool = False) -> str:
-    """Fetch a page using fetch-page.py and return raw HTML."""
-    cmd = [sys.executable, str(FETCH_PAGE), url, "--html"]
+    """Fetch a page using the pagefetch package and return raw HTML."""
+    cmd = [sys.executable, "-m", "pagefetch", url, "--html"]
     if no_cache:
         cmd.append("--no-cache")
-    result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+    # Run from tools/ so `python -m pagefetch` resolves the package.
+    result = subprocess.run(
+        cmd, capture_output=True, text=True, timeout=60, cwd=str(TOOLS_DIR)
+    )
     if result.returncode != 0:
         print(f"  WARNING: fetch failed for {url}: {result.stderr[:200]}")
         return ""
@@ -200,7 +203,7 @@ def main() -> None:
         "--brand", type=str, help="Filter to a single brand (case-insensitive substring)"
     )
     parser.add_argument(
-        "--no-cache", action="store_true", help="Bypass fetch-page.py cache"
+        "--no-cache", action="store_true", help="Bypass pagefetch cache"
     )
     args = parser.parse_args()
 

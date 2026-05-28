@@ -5,7 +5,7 @@ optical spec parsing, and image downloading for Voigtlander product pages.
 
 Voigtlander (Cosina) uses a Divi theme with JavaScript-rendered content.
 Pages require Playwright for full rendering, but cached HTML from
-fetch-page.py can be parsed with plain urllib for spec extraction.
+pagefetch can be parsed with plain urllib for spec extraction.
 """
 
 import hashlib
