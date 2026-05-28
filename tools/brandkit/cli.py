@@ -38,7 +38,10 @@ def format_ts_fields(specs: dict) -> str:
         lines.append(f"    specialElements: [{items}],")
     if specs.get("coating"):
         items = ", ".join(f'"{c}"' for c in specs["coating"])
-        lines.append(f"    coating: [{items}],")
+        # Flag coatings filled from a brand default rather than read off the
+        # page (e.g. Viltrox), so the value gets a human check before use.
+        note = "  // brand default (verify)" if specs.get("coating_inferred") else ""
+        lines.append(f"    coating: [{items}],{note}")
     return "\n".join(lines)
 
 
