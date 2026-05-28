@@ -9,7 +9,6 @@ import MtfChart from "../../components/static/MtfChart.astro";
 import { formatFL } from "../../utils/formatting";
 import { opticalFieldCount, OPTICAL_FIELDS } from "../../utils/scoring";
 import { generateLensContent } from "../../utils/lens-content";
-import type { Genre } from "../../types/genre";
 import type { ScoringStatus } from "../../types/lens";
 
 const SCORING_STATUS_PHRASES: Record<ScoringStatus, string> = {
@@ -66,12 +65,6 @@ const opticalFields: [string, number | undefined][] = [
 const hasOptical = opticalFields.some(([, v]) => v != null);
 const fieldCount = opticalFieldCount(lens);
 const totalFields = OPTICAL_FIELDS.length;
-
-const genreEntries = lens.genreMarks
-  ? (Object.entries(lens.genreMarks) as [Genre, number][]).sort(
-      (a, b) => b[1] - a[1],
-    )
-  : [];
 
 const specFields: [string, unknown][] = [
   ["Optical construction", lens.opticalElements],

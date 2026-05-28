@@ -24,7 +24,7 @@ landscape, portrait, street, architecture, sport, wildlife, travel, and macro
 
 ## Quick start
 
-Prerequisites: Node.js 20+, npm 10+
+Prerequisites: Node.js 22+, npm 10+
 
 ```bash
 git clone --recursive https://github.com/Imbra-Ltd/wuseria.git

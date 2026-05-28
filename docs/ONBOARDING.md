@@ -6,7 +6,7 @@ New contributor guide for Wuseria
 
 **Required:**
 
-- Node.js 20+
+- Node.js 22+ (the `lint-staged` pre-commit hook and CI require Node 22)
 - npm 10+
 - Git
 - [GitHub CLI](https://cli.github.com/) (`gh`) — used for PRs and issues

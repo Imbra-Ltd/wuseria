@@ -1,0 +1,29 @@
+name: External Link Check
+
+# External officialUrl + review links in src/data/*.ts. Runs on a schedule
+# (not per-PR) — external hosts rate-limit and flake, so this must not gate
+# merges. A failure means an official/review URL went dead and the data needs
+# updating.
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  external-links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Check external links
+        run: npm run check:external-links
