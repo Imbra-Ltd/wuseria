@@ -290,6 +290,16 @@ Verify every MUST from `base/docs.md` (standard documents, ADRs),
 Run after: new project setup, framework migration, adding a major layer
 (backend, CI/CD), or before a release.
 
+### 5.3 360-degree audit storage (upstream deviation)
+
+`base/workflow/360.md` mandates a single `docs/360-audit.md` history file.
+This project deliberately deviates: 360 results are stored as **verbose
+dated reports** under `docs/audits/YYYY-MM-DD-360.md` — each with the full
+per-dimension findings tables and the rationale for every grade, not just a
+score row. This keeps one home for audit history (avoids the two-locations
+split a separate history file creates) and preserves the reasoning behind
+each score. Do NOT re-create `docs/360-audit.md`. Deviation flagged upstream.
+
 ## 6. Session Protocol
 
 Follow `docs/solid-ai-templates/templates/base/workflow/scope.md` for scope guard and end-of-session audit.

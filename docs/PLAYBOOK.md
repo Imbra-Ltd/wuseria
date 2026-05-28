@@ -989,9 +989,13 @@ npm run check:external-links                          # external officialUrl/rev
    `0 dead` (unverifiable bot-blocked hosts are acceptable). The weekly
    `external-links.yml` cron also runs this.
 3. **360-degree analysis** — run a fresh 360 (see `base/workflow/360.md`,
-   four parallel role agents) and record the result in
-   `docs/360-audit.md`. The release SHOULD NOT ship with critical
-   findings unresolved; non-critical findings become issues.
+   four parallel role agents) and record the result as a verbose dated
+   report in `docs/audits/YYYY-MM-DD-360.md` (per-dimension findings
+   tables + the rationale for each grade — not just a score table). The
+   release SHOULD NOT ship with critical findings unresolved; non-critical
+   findings become issues. (This project stores dated audit reports under
+   `docs/audits/` rather than a single `docs/360-audit.md` history file —
+   see the upstream deviation note in CLAUDE.md §5.2.)
 4. **Structure audit** — verify the §5.2 MUSTs (standard docs, README
    sections, config/SEO files) if the project structure changed since
    the last audit.
