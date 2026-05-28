@@ -15,6 +15,7 @@
     "test:report": "vitest run --coverage --reporter=default --reporter=html --outputFile=reports/tests/index.html",
     "lighthouse": "npm run build && npx @lhci/cli autorun --config lighthouserc.json",
     "check:links": "npx tsx scripts/check-trailing-slashes.ts",
+    "check:external-links": "npx tsx scripts/check-external-links.ts",
     "validate": "npm run lint && npm run format && npm run check && npm run test && npm run build && npm run check:links",
     "release": "bash scripts/release.sh",
     "prepare": "husky"

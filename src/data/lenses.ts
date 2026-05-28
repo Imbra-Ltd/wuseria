@@ -4024,8 +4024,6 @@ const lenses: Lens[] = [
     reviewSources: {
       lenstip:
         "https://www.lenstip.com/239.1-Lens_review-Samyang_14_mm_f_2.8_ED_AS_IF_UMC_Introduction.html",
-      opticallimits:
-        "https://www.opticallimits.com/canon_eos_ff/532-samyang14f28eosff",
       dustinabbott:
         "https://dustinabbott.net/2013/10/rokinon-14mm-f2-8-wide-angle-review/",
     },
@@ -4328,8 +4326,6 @@ const lenses: Lens[] = [
     reviewSources: {
       lenstip:
         "https://www.lenstip.com/297.1-Lens_review-Samyang_35_mm_f_1.4_AS_UMC__Introduction.html",
-      opticallimits:
-        "https://www.opticallimits.com/canon_eos_ff/657-samyang35f14eosff",
     },
     officialUrl:
       "https://www.lksamyang.com/en/product/product-view.php?seq=287",
@@ -4535,8 +4531,6 @@ const lenses: Lens[] = [
     reviewSources: {
       lenstip:
         "https://www.lenstip.com/166.1-Lens_review-Samyang_85_mm_f_1.4_Aspherical_IF_.html",
-      opticallimits:
-        "https://www.opticallimits.com/canon_eos_ff/483-samyang_85_14_5d",
     },
     officialUrl:
       "https://www.lksamyang.com/en/product/product-view.php?seq=311",

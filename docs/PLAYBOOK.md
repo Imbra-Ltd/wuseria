@@ -972,6 +972,36 @@ only. Do not commit the copied files.
 
 ### 5.1 Release
 
+#### Pre-release checks (run before `npm run release`)
+
+Per `base/git.md`, complete these gates first — do not tag with any
+critical finding unresolved:
+
+```bash
+git branch --no-merged main                          # investigate any unmerged work
+git fsck --unreachable --no-reflogs | grep commit    # verify no orphaned commits lost
+npm run check:external-links                          # external officialUrl/review links (0 dead)
+```
+
+1. **Unmerged branches / orphaned commits** — investigate any results;
+   confirm no unique work would be lost by tagging the current `main`.
+2. **External link check** — `npm run check:external-links` must report
+   `0 dead` (unverifiable bot-blocked hosts are acceptable). The weekly
+   `external-links.yml` cron also runs this.
+3. **360-degree analysis** — run a fresh 360 (see `base/workflow/360.md`,
+   four parallel role agents) and record the result as a verbose dated
+   report in `docs/audits/YYYY-MM-DD-360.md` (per-dimension findings
+   tables + the rationale for each grade — not just a score table). The
+   release SHOULD NOT ship with critical findings unresolved; non-critical
+   findings become issues. (This project stores dated audit reports under
+   `docs/audits/` rather than a single `docs/360-audit.md` history file —
+   see the upstream deviation note in CLAUDE.md §5.2.)
+4. **Structure audit** — verify the §5.2 MUSTs (standard docs, README
+   sections, config/SEO files) if the project structure changed since
+   the last audit.
+
+#### Tag the release
+
 ```bash
 # From main, with clean working directory:
 npm run release -- A.B.C
