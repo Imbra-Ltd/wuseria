@@ -80,7 +80,9 @@ class BrandTool:
         if not self._ex.config.has_diagrams:
             return {"mtf": [], "construction": []}
         content = self._fetch_content(lens.url)
-        return self._ex.extract_image_urls(content) if content else {"mtf": [], "construction": []}
+        if not content:
+            return {"mtf": [], "construction": []}
+        return self._ex.extract_image_urls(content, lens.url)
 
     def has_mtf(self, lens: LensEntry) -> bool:
         return self.has_mtf_for_slug(self.slug_for(lens.model))

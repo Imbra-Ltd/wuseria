@@ -118,7 +118,8 @@ class SamyangExtractor(BrandExtractor):
             return [cm.group(1).upper()]
         return []
 
-    def extract_image_urls(self, content: str) -> dict[str, list[str]]:
+    def extract_image_urls(self, content: str, url: str = "") -> dict[str, list[str]]:
+        # Samyang matches on heading-adjacent <img>; url is unused.
         urls: dict[str, list[str]] = {"mtf": [], "construction": []}
         mtf = re.search(
             r"MTF\s*(?:Chart|CHART)\s*</strong>[^<]*<img\s+src=\"([^\"]+)\"",

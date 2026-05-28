@@ -49,10 +49,14 @@ class BrandExtractor(ABC):
         returns nothing, so a brand can migrate before implementing this."""
         return {}
 
-    def extract_image_urls(self, content: str) -> dict[str, list[str]]:
+    def extract_image_urls(self, content: str, url: str) -> dict[str, list[str]]:
         """Return MTF and construction-diagram URLs, normalized to
         {"mtf": [...], "construction": [...]}. Brands without published
-        diagrams inherit the empty default."""
+        diagrams inherit the empty default.
+
+        url is the lens's (normalized) page URL — some brands (Sigma,
+        Tamron) derive a product code from it to build image-URL patterns;
+        brands that match on page content alone ignore it."""
         return {"mtf": [], "construction": []}
 
     def normalize_url(self, url: str) -> str:
