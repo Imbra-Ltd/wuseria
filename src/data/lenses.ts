@@ -549,7 +549,7 @@ const lenses: Lens[] = [
     maxAperture: 1.2,
     apertureBlades: 11,
     hasCircularAperture: false,
-    maxMagnification: 0.1,
+    maxMagnification: 0.08,
     hasOis: false,
     isWeatherSealed: false,
     hasApertureRing: true,

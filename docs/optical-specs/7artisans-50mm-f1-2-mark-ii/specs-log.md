@@ -16,7 +16,10 @@
 - **opticalGroups:** 5 (LensTip + official spec table)
 - **specialElements:** 1 ED, 3 HR (LensTip: "1 ED glass element, 3 HR glass elements"; CONFIRMED by the official "Lens structure" diagram — legend yellow = Extra-low Dispersion (1 element), blue = High Refraction (3 elements))
 - **coating:** none stated (the official section image, LensTip, and the original 50mm f/1.2's retailer listings name no coating; not found on a reachable source — left undefined)
-- **maxMagnification:** 0.08 (LensTip)
+- **maxMagnification:** 0.08 (LensTip 2291; official names none — DB's prior 0.1 corrected to 0.08, the only sourced value)
+- **apertureBlades / filterThread / minFocusDistance / weight / dimensions:** 11 / 55mm /
+  0.7m (700) / 410g / 68×62mm — all confirmed by LensTip 2291 AND the official spec-table
+  strip (this is a fresh 2025 entry; full field cross-check found everything correct except mag)
 - **constructionDiagram:** found — `construction-diagram.jpg` (official "Lens structure"; 1 ED + 3 HR, dark-background rendering)
 - **MTF chart:** found — `mtf-chart.jpg` (official; OTF vs Y-field of view 0–14, T1/T2/S1/S2)
 
@@ -29,3 +32,6 @@
   The strip's own spec table independently confirms 7/5, Φ55 filter, 11 blades, MFD 0.7m.
 - LensTip id 2291 (release 2025-12-16) confirms the entry is the Mark II, matching the
   store page created 2025-12-09.
+- **DB correction (2026-05-28):** `maxMagnification` 0.1 → **0.08** (LensTip 2291 "0.08x";
+  official names no magnification). All other fields matched LensTip + official exactly —
+  the cleanest of the 17 7Artisans entries, being a fresh 2025 row.
