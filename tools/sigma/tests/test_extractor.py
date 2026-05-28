@@ -15,7 +15,11 @@ if str(TOOLS_DIR) not in sys.path:
 
 from sigma.extractor import SigmaExtractor, url_to_code  # noqa: E402
 
-FIXTURE = Path(__file__).resolve().parent / "fixtures" / "sigma-30mm-sample.html"
+FIXDIR = Path(__file__).resolve().parent / "fixtures"
+FIXTURE = FIXDIR / "sigma-30mm-sample.html"
+PHYS_PRIME = FIXDIR / "sigma-physical-sample.html"
+PHYS_ZOOM = FIXDIR / "sigma-physical-zoom-sample.html"
+PHYS_ASCII = FIXDIR / "sigma-physical-ascii-colon-sample.html"
 LENS_URL = "https://www.sigma-global.com/en/lenses/c016_30_14/"
 
 
@@ -74,3 +78,49 @@ def test_image_urls_use_url_code(extractor, html):
 def test_image_urls_empty_without_url(extractor, html):
     # No url → no code → cannot match Sigma's code-keyed image names.
     assert extractor.extract_image_urls(html, "") == {"mtf": [], "construction": []}
+
+
+# --- extract_physical (#779 / #897) -------------------------------------
+
+
+def test_extract_physical_prime(extractor):
+    phys = extractor.extract_physical(PHYS_PRIME.read_text(encoding="utf-8"))
+    assert phys["filterThread"] == 52
+    assert phys["diameter"] == 65.4
+    assert phys["length"] == 71.3  # first per-mount (L-Mount) value
+    assert phys["weight"] == 280  # first per-mount value
+    assert phys["apertureBlades"] == 9
+    assert phys["hasCircularAperture"] is True  # "Rounded diaphragm"
+    assert phys["minFocusDistance"] == 300  # 30cm -> mm
+    assert phys["maxMagnification"] == round(1 / 7, 3)  # 1:7
+
+
+def test_extract_physical_weight_thousands_separator(extractor):
+    # A telephoto's "1,135g" must parse as 1135, not 135.
+    phys = extractor.extract_physical(PHYS_ZOOM.read_text(encoding="utf-8"))
+    assert phys["weight"] == 1135
+
+
+def test_extract_physical_zoom_mfd_range_takes_wide(extractor):
+    # "112(W) - 160(T)cm" -> wide (first) figure, in mm.
+    phys = extractor.extract_physical(PHYS_ZOOM.read_text(encoding="utf-8"))
+    assert phys["minFocusDistance"] == 1120
+
+
+def test_extract_physical_dimensions_lowercase_x(extractor):
+    # Some pages use "φ86.0mm x 197.2mm" (lowercase x) not the × sign.
+    phys = extractor.extract_physical(PHYS_ZOOM.read_text(encoding="utf-8"))
+    assert phys["diameter"] == 86.0
+    assert phys["length"] == 197.2
+
+
+def test_extract_physical_ascii_colon_mount_label(extractor):
+    # Newer pages use "Canon RF Mount: 250g" (ASCII colon), not fullwidth.
+    phys = extractor.extract_physical(PHYS_ASCII.read_text(encoding="utf-8"))
+    assert phys["filterThread"] == 62
+    assert phys["weight"] == 250  # first per-mount value, ASCII-colon split
+
+
+def test_extract_physical_empty_page(extractor):
+    # A page with no spec rows yields no physical specs.
+    assert extractor.extract_physical("<p>no specs here</p>") == {}
