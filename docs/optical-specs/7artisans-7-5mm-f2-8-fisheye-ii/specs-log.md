@@ -20,6 +20,19 @@
 - **specialElements:** 2 ED (official: "two ED lenses added"; LensTip: "2 ultra-low dispersion glass elements"; both the official and Amazon lens-structure diagrams show 2 ED elements in the rear group — three+ sources agree on 2 ED). Shutterbug also notes a high-refractive-index element in the front group (replaces Mk I cemented glass) — not separately recorded as the maker gives it no count/designation.
 - **coating:** multi-layer (NOT on the official store page or LensTip, but B&H lists "Multi-Layer Lens Coating"; Shutterbug review separately remarks the front-element coating "appears to be quite satisfactory". Recorded as `["multi-layer"]` on B&H evidence.)
 - **maxMagnification:** not found (official states closest focus 0.15m only; LensTip leaves magnification blank — not estimated per project rule)
+- **apertureBlades:** 5 (official spec table "Blades number 5 pcs" — KEPT over B&H's and LensTip's "7"; official manufacturer wins per the source-conflict rule. B&H/LensTip likely inherited the original 7.5mm fisheye's 7-blade figure.)
+- **minFocusDistance:** 150 / 0.15m (official + LensTip + B&H "5.9 in" all agree) ✓
+- **weight:** 265g (official "About 265g" + LensTip + B&H "9.3 oz / 265g" — all agree) ✓
+- **filterThread:** none (bulbous fisheye; official + LensTip "0mm") ✓
+- **diameter:** 63 (LensTip "63 × 63mm") ✓
+- **length / year — UNRESOLVED minor:** DB length 55 vs LensTip 63 (LensTip-only, B&H gave box dims, official image-based — kept DB 55 pending a corroborating source). DB year 2021 vs LensTip release 2019 — kept 2021 (store listing created 2021-03-23 + a 2021 Shutterbug review calling it "just released"; LensTip's 2019 is likely the original fisheye's date). Both flagged, not changed on a single unreliable source.
+
+## Physical-field re-check (2026-05-28)
+
+- Full field cross-check completed (initial pass had only optical + MFD). Result: blades
+  CONFIRMED 5 (official wins over B&H/LensTip 7); weight/MFD/diameter/filter all confirmed;
+  length (55 vs LensTip 63) and year (2021 vs LensTip 2019) flagged unresolved — no DB change,
+  as only a single unreliable source disagrees.
 - **constructionDiagram:** found — `construction-diagram.jpg` (official 7Artisans lens-structure cross-section; ED elements shown in red, rear group)
 - **MTF chart:** found — `mtf-chart.jpg` (official; S1–S4 sagittal solid + T1–T4 meridional dashed, 0–12mm)
 
