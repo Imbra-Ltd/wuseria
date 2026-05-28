@@ -457,11 +457,14 @@ npx tsx scripts/compute-marks.ts patch       # patch lenses.ts with marks
 - **Shopify section images (`/cdn/shop/files/`):** diagrams and MTF charts often
   live NOT in the product gallery (`product.images[]`) nor inline `body_html`, but
   as theme/section graphics referenced only in the rendered page HTML (filenames
-  like `MTF_Template.jpg`, `01.png`). Scrape the full rendered HTML for
-  `cdn/shop/files/*.{jpg,png}` and open them — checking the gallery JSON alone
-  misses them. Also check the brand's official Amazon/regional store listings (US,
-  SG, UK), which often host the highest-res official composite (diagram + MTF) and
-  state coatings the `.com` store omits. Request the largest image with `?width=3200`.
+  like `MTF_Template.jpg`, `01.png`, `50mm-F0_6.jpg`). Scrape the full rendered HTML
+  for `cdn/shop/files/*.{jpg,png}` and open **EVERY** one — do NOT sample a subset
+  (a hand-picked range silently skips the one image that has the diagram/MTF). For a
+  set of N images, download all and build a contact sheet to scan at once. Note the
+  product _page_ and the product _gallery_ (`product.images[]`) are DIFFERENT image
+  sets — check both. Also check the brand's official Amazon/regional store listings
+  (US, SG, UK), which often host the highest-res official composite (diagram + MTF)
+  and state coatings the `.com` store omits. Request the largest image with `?width=3200`.
 - **Generation check (Mark II vs original):** before trusting a "Mark II" row,
   confirm the entry's generation against the official **page title** and the lens's
   specs (not the URL slug alone). Rows created by copying the original frequently
