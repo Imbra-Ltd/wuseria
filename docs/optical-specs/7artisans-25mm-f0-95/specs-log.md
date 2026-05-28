@@ -30,6 +30,7 @@
   (generic filenames); recovered by visual inspection per PLAYBOOK 2.8 and cropped to
   separate artifacts. Earlier pass wrongly reported "not found".
 - **DB corrections (2026-05-28):** `minFocusDistance` 350 → **250**, `filterThread` 58 → **52**,
-  `year` 2020 → **2021** — all confirmed by official + B&H + LensTip 1880. (The 7Artisans UK
+  `year` 2020 → **2021**, `weight` 520 → **582** — all confirmed by official + B&H + LensTip 1880
+  (B&H 587g / LensTip 582g agree; dimensions 63 × 99.7mm confirmed by LensTip). (The 7Artisans UK
   store page for "25mm f/0.95" is the **L-mount full-frame** variant — different filter/weight —
   not used for the X-mount APS-C specs.)
