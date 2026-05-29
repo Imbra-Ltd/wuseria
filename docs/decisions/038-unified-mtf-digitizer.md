@@ -130,6 +130,16 @@ Per lens, the pipeline emits one review file with three panels:
 - **Right** — the SVG regenerated from the extracted readings.
 - **Bottom** — the regenerated curves overlaid on the original.
 
+```
++---------------------+---------------------+
+|   original chart    |    regenerated SVG  |
+|      (raster)       |   (from readings)   |
++---------------------+---------------------+
+|        overlay: regen curves on original  |
+|        (aligned to detected anchors)      |
++-------------------------------------------+
+```
+
 The overlay is registered using the same axis/grid anchors the extraction
 detected, so it is deterministic — no hand-tuned calibration, unlike the old
 `mtf-overlay.html`.
