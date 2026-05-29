@@ -92,6 +92,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 ### 1.4 Web fetching
 
 - Use `py -m pagefetch <url>` (run from `tools/`) for all web page fetching — never WebFetch or Fetch tools
+- For bare `py -m pagefetch` fetches in this project, ALWAYS pass `--cache-dir .cache/fetch` (resolved from repo root) so the fetch shares the one project cache the brand tools use — never the package's CWD-relative default (which would spawn `tools/.cache/pagefetch`). Brand tools handle this automatically; only the bare CLI needs the flag.
 - WebFetch/Fetch truncates large pages through a small model, silently losing data
 - `pagefetch` auto-escalates: urllib (~1s) → Playwright (~5-9s) → Nodriver (~6-8s) → SeleniumBase UC (~18-24s)
 - Flags: `--html` (raw HTML), `--js` (force Playwright), `--nodriver` (force headed Chrome), `--uc` (force UC), `--batch urls.txt` (persistent browser session), `--no-cache` (bypass cache), `--clean-cache` (sweep bot/404 junk from the cache; add `--dry-run` to preview)

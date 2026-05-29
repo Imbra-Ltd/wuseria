@@ -190,25 +190,23 @@ genres (once genre formulas are implemented).
 **Fetch a web page (four-tier auto-escalation):**
 
 Run from the `tools/` directory so `python -m pagefetch` resolves the package.
-Set `PAGEFETCH_CACHE_DIR` so the bare CLI shares the one project cache
-(`.cache/fetch`) the brand tools use — otherwise the CLI's default creates a
-separate `tools/.cache/pagefetch`. The brand tools set this automatically (on
-`import brandkit`); for the bare CLI, export it:
+For bare CLI fetches, pass `--cache-dir ../.cache/fetch` so the fetch shares the
+one project cache the brand tools use — otherwise the CLI's default creates a
+separate `tools/.cache/pagefetch`. (Brand tools set the cache dir automatically;
+only the bare CLI needs the flag. `PAGEFETCH_CACHE_DIR` also works if you prefer
+an env var, but the flag is simpler for one-off fetches.)
 
 ```bash
-export PAGEFETCH_CACHE_DIR="$(git rev-parse --show-toplevel)/.cache/fetch"
-
+py -m pagefetch <url> --cache-dir ../.cache/fetch   # share the project cache
 py -m pagefetch <url>              # auto mode: urllib → Playwright → Nodriver → UC
 py -m pagefetch <url> --html       # raw HTML output
 py -m pagefetch <url> --js         # force Playwright (JS-rendered pages)
 py -m pagefetch <url> --nodriver   # force Nodriver (headed Chrome, bot bypass)
 py -m pagefetch <url> --uc         # force SeleniumBase UC (headless fallback)
 py -m pagefetch <url> --no-cache   # bypass cache, fetch fresh
-py -m pagefetch <url> --cache-dir DIR   # use a specific cache dir (overrides the env var)
 py -m pagefetch --batch urls.txt --nodriver --output-dir out/  # batch mode
-py -m pagefetch --clean-cache      # purge bot/404 junk entries from the cache
-py -m pagefetch --clean-cache --dry-run   # list junk entries, delete nothing
-py -m pagefetch --clean-cache --cache-dir DIR   # sweep a specific cache dir
+py -m pagefetch --clean-cache --cache-dir ../.cache/fetch          # purge bot/404 junk
+py -m pagefetch --clean-cache --dry-run --cache-dir ../.cache/fetch   # preview only
 ```
 
 (On Windows PowerShell: `$env:PAGEFETCH_CACHE_DIR = "$(git rev-parse --show-toplevel)/.cache/fetch"`.)
