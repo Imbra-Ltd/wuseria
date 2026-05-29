@@ -81,4 +81,30 @@ describe("mtf-readings data integrity", () => {
       }
     }
   });
+
+  // A lens with literally zero MTF at the optical centre is physically
+  // impossible — a centre reading of 0 means a curve was not detected and got
+  // emitted as 0 by the old extractor (the B2 zero-artifact found in the #726
+  // verify pass). Edge readings may legitimately approach 0, so this guard is
+  // scoped to position 0 only.
+  it("centre (position 0) MTF is never zero", () => {
+    for (const [slug, data] of entries) {
+      for (const chart of data.charts) {
+        const centre = chart.readings.find((r) => r.position === 0);
+        if (!centre) continue;
+        const fields = {
+          contrast10S: centre.contrast10S,
+          contrast10M: centre.contrast10M,
+          resolution30S: centre.resolution30S,
+          resolution30M: centre.resolution30M,
+        };
+        for (const [field, val] of Object.entries(fields)) {
+          expect(
+            val,
+            `${slug} ${chart.aperture}: centre ${field} is 0 (undetected curve?)`,
+          ).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
 });
