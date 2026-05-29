@@ -31,12 +31,12 @@
 - **hasCircularAperture:** false — official says only "13-blade diaphragm" (no "rounded"/
   "circular" wording), so `false` per the convention (set true only on explicit "rounded").
 - **isDiscontinued / afMotor:** correctly absent — active (`.js` available:true), manual focus.
-- **constructionDiagram:** found — `construction-diagram.jpg` (official product-page section
+- **constructionDiagram:** found — `construction-diagram.png` (official product-page section
   image `50mm-F0_6.jpg`; legend **"ED Glass"** red, shows 2 ED; 7 elements / 5 groups).
   Chosen over the PARAMETER-panel version (which labels the same element "HOYA Ultra-Low
   Dispersion Glass") because "ED Glass" matches the DB `specialElements: ["2 ED"]` term and
   the 25mm f/0.95 diagram's legend.
-- **MTF chart:** found — `mtf-chart.jpg` (official; from the same `50mm-F0_6.jpg`; T1/S1/T2/S2/T3/S3, 10/20/30 lp/mm)
+- **MTF chart:** found — `mtf-chart.png` (official; from the same `50mm-F0_6.jpg`; T1/S1/T2/S2/T3/S3, 10/20/30 lp/mm)
 
 ## Caveats
 

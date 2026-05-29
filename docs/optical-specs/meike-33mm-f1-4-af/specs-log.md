@@ -19,8 +19,8 @@
 - **coating:** HD double-sided multi-layer (official construction diagram)
 - **filterThread:** 55mm (official spec table image; DB corrected from 52mm)
 - **maxMagnification:** 0.1 (already in DB, confirmed by LensTip)
-- **constructionDiagram:** found — saved as `construction-diagram.jpg`
-- **MTF chart:** found — saved as `mtf-chart.jpg` (f/1.4, 10 + 30 lp/mm, S + M)
+- **constructionDiagram:** found — saved as `construction-diagram.png`
+- **MTF chart:** found — saved as `mtf-chart.png` (f/1.4, 10 + 30 lp/mm, S + M)
 
 ## MTF analysis
 

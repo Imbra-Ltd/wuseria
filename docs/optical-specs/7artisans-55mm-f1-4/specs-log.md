@@ -18,8 +18,8 @@
 - **specialElements:** none (no ED/aspherical on official or LensTip; the recovered construction diagram is plain line-art with no glass-type colour legend)
 - **coating:** multi-layer (official: "all multi-layer coated... effectively eliminate ghosting and glare")
 - **maxMagnification:** 0.24 (LensTip id 1733, "0.24x"; matches DB — unusually high for the focal length, but confirmed; official gives MFD 0.35m only)
-- **constructionDiagram:** found — `construction-diagram.jpg` (official 7Artisans lens design, 6 elements / 5 groups; via LeicaRumors' archive of the 2019 press kit)
-- **MTF chart:** found — `mtf-chart.jpg` (official; T10/S10/T30/S30 at F1.4 and F8, 0–~14)
+- **constructionDiagram:** found — `construction-diagram.png` (official 7Artisans lens design, 6 elements / 5 groups; via LeicaRumors' archive of the 2019 press kit)
+- **MTF chart:** found — `mtf-chart.png` (official; T10/S10/T30/S30 at F1.4 and F8, 0–~14)
 
 ## Notes
 

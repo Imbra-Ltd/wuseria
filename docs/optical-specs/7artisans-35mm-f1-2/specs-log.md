@@ -18,8 +18,8 @@
 - **specialElements:** none stated (neither official nor LensTip names ED/aspherical; line-art diagram has no glass-type legend)
 - **coating:** multi-layer (NOT on the official store page or LensTip; stated by Photosynthesis retailer — "multi-layer coating ... minimizes unwanted glare". Single retailer source here (the v1 is discontinued, so B&H now lists only the Mark II), but the Mark II is officially multi-coated and the brand pattern is consistent. Recorded as `["multi-layer"]`; single-source — lower confidence than the 25mm/50mm.)
 - **maxMagnification:** 0.13 (LensTip id 1727, "0.13x"; matches DB; not on official page) — matches DB value
-- **constructionDiagram:** found — `construction-diagram.jpg` (official; 6 elements / 5 groups)
-- **MTF chart:** found — `mtf-chart.jpg` (official; S10/T10/S30/T30 at f/1.2 and f/8)
+- **constructionDiagram:** found — `construction-diagram.png` (official; 6 elements / 5 groups)
+- **MTF chart:** found — `mtf-chart.png` (official; S10/T10/S30/T30 at f/1.2 and f/8)
 
 ## Caveats
 

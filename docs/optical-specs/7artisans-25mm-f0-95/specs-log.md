@@ -21,8 +21,8 @@
 - **minFocusDistance:** 0.25m / 250 (official "closest focusing distance of 0.25m" + B&H "9.84 in" + LensTip — DB's prior 350 corrected)
 - **filterThread:** 52mm (B&H "52 mm" + LensTip — DB's prior 58 corrected)
 - **year:** 2021 (announced Sept 2021, LensTip release 19.09.2021 — DB's prior 2020 corrected)
-- **constructionDiagram:** found — `construction-diagram.jpg` (official; legend "ED Glass" red, shows 3 ED elements — confirms 3 ED)
-- **MTF chart:** found — `mtf-chart.jpg` (official; S1/T1, 10/20/30 lp/mm)
+- **constructionDiagram:** found — `construction-diagram.png` (official; legend "ED Glass" red, shows 3 ED elements — confirms 3 ED)
+- **MTF chart:** found — `mtf-chart.png` (official; S1/T1, 10/20/30 lp/mm)
 
 ## Caveats
 

@@ -20,7 +20,7 @@
 - **opticalGroups:** 4 (official page)
 - **specialElements:** none — classic design, no ED/aspherical/HR elements mentioned
 - **coating:** multi-coated (official: "Highquality glasses including perfect coatings"; no proprietary name; Schott and O'Hara glass per PhotographyBlog)
-- **constructionDiagram:** found on DPReview Kickstarter article; saved as `construction-diagram.jpeg`; confirms 5E/4G with cemented doublet front group, no special elements
+- **constructionDiagram:** found on DPReview Kickstarter article; saved as `construction-diagram.png`; confirms 5E/4G with cemented doublet front group, no special elements
 - **MTF chart:** not found — character lens, manufacturer does not publish MTF
 
 ## Historical design lineage
@@ -31,7 +31,7 @@ The modern Primoplan 58 II (5E/4G) matches the **Goerz patent design (1926)**. B
 
 Saved files:
 
-- `construction-diagram.jpeg` — modern II version (from DPReview)
+- `construction-diagram.png` — modern II version (from DPReview)
 - `primoplan-optical-design.png` — comprehensive diagram from zeissikonveb.de: construction (5E/4G f/1.9), spherical aberration curves, astigmatism/field curvature, distortion (+1.5% pincushion at 15°)
 
 ## Physical spec corrections (2026-05-24)

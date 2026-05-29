@@ -18,8 +18,8 @@
 - **specialElements:** none stated
 - **coating:** multi-layer (official: "Multi-layer coating has been applied to individual elements"; confirmed by B&H with the same wording)
 - **maxMagnification:** 0.17 (LensTip id 1762, "0.17x"; matches DB; official gives MFD 0.28m only) — matches DB value
-- **constructionDiagram:** found — `construction-diagram.jpg` (official cross-section labeled "7Artisans 35mm F1.2 Mark II", from the gallery PARAMETER panel)
-- **MTF chart:** found — `mtf-chart.jpg` (official; "ZP1 - f35.720/Fn1.30 - INF" field-angle MTF, MTF 0–1 vs Y-field angle 0–21°, T/S Diff Limit + T/S 5/10/20/30 lpmm). NOTE: this is a field-angle MTF (Zemax-style), a different format from the lp/mm-vs-image-height charts on the manual primes.
+- **constructionDiagram:** found — `construction-diagram.png` (official cross-section labeled "7Artisans 35mm F1.2 Mark II", from the gallery PARAMETER panel)
+- **MTF chart:** found — `mtf-chart.png` (official; "ZP1 - f35.720/Fn1.30 - INF" field-angle MTF, MTF 0–1 vs Y-field angle 0–21°, T/S Diff Limit + T/S 5/10/20/30 lpmm). NOTE: this is a field-angle MTF (Zemax-style), a different format from the lp/mm-vs-image-height charts on the manual primes.
 
 ## Caveats
 

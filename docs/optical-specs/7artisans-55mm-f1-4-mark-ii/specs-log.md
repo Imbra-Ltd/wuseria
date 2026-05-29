@@ -18,8 +18,8 @@
 - **specialElements:** none (no ED/aspherical on official or LensTip; the recovered construction diagram is plain line-art with no glass-type colour legend)
 - **coating:** multi-layer (official: "multi-layer coating has been applied to individual elements... reduces flare and ghosting"; the Amazon SG panel repeats the same wording under a "Multi-layer Coating" header)
 - **maxMagnification:** 0.18 (LensTip id 1842, "0.18x"; matches DB; official gives MFD 0.42m only)
-- **constructionDiagram:** found — `construction-diagram.jpg` (official cross-section "7Artisans APS-C 55mm F1.4", 6/5; from the Amazon SG listing's coating panel)
-- **MTF chart:** found — `mtf-chart.jpg` (official; S1-S3 / T1-T3, 0–14.2; same Amazon panel)
+- **constructionDiagram:** found — `construction-diagram.png` (official cross-section "7Artisans APS-C 55mm F1.4", 6/5; from the Amazon SG listing's coating panel)
+- **MTF chart:** found — `mtf-chart.png` (official; S1-S3 / T1-T3, 0–14.2; same Amazon panel)
 
 ## Caveats
 

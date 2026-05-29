@@ -19,8 +19,8 @@
 - **specialElements:** none (official full page describes plain "6 elements in 5 groups for exceptional sharpness and minimal distortion" with no ED/aspherical/special glass; LensTip names none; the saved construction diagram is plain line-art with NO glass-type colour legend — three indicators of no special glass)
 - **coating:** multi-layer (NOT on the official store page or LensTip, but stated by two retailers: B&H — "Multi-layer coating ... applied to individual elements" (the maker's standard wording) — and Photosynthesis. Recorded as `["multi-layer"]` on retailer evidence, same basis as the 25mm f/1.8.)
 - **maxMagnification:** 0.13 (LensTip id 1732, "0.13x"; matches DB; official gives MFD 0.5m only) — matches DB value
-- **constructionDiagram:** found — `construction-diagram.jpg` (official; 6 elements / 5 groups)
-- **MTF chart:** found — `mtf-chart.jpg` (official; S10/T10/S30/T30)
+- **constructionDiagram:** found — `construction-diagram.png` (official; 6 elements / 5 groups)
+- **MTF chart:** found — `mtf-chart.png` (official; S10/T10/S30/T30)
 
 ## Caveats
 
