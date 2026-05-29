@@ -179,3 +179,13 @@ def test_cached_error_page_self_heals(fetcher, monkeypatch, cache):
     result = fetcher.fetch("https://x.test", FetchOptions(use_cache=True))
     assert calls == ["urllib"]
     assert result.content == "back online"
+
+
+def test_scrubbed_junk_cache_file_is_deleted(fetcher, monkeypatch, cache):
+    # On read, a junk cache entry is not just ignored — the dead file is
+    # removed so it does not linger. Here the re-fetch also fails (404),
+    # so nothing is re-written and the entry stays gone.
+    cache.write("https://x.test", ContentMode.TEXT, "Too Many Requests")
+    _stub_tiers(fetcher, monkeypatch, urllib_result=_ERROR_PAGE)
+    fetcher.fetch("https://x.test", FetchOptions(use_cache=True))
+    assert cache.read("https://x.test", ContentMode.TEXT) is None

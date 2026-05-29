@@ -36,6 +36,8 @@ py -m pagefetch <url> --nodriver   # force Nodriver (headed)
 py -m pagefetch <url> --uc         # force SeleniumBase UC
 py -m pagefetch <url> --wait 5000  # extra post-load wait (ms)
 py -m pagefetch <url> --no-cache   # bypass cache
+py -m pagefetch --clean-cache      # purge bot/404 junk from the cache
+py -m pagefetch --clean-cache --dry-run   # list junk, delete nothing
 
 py -m pagefetch --batch urls.txt              # batch from file
 py -m pagefetch --batch -                      # batch from stdin
@@ -142,9 +144,16 @@ changing it would invalidate existing caches.
 Only real content is cached: bot-blocked, 404/gone, and implausibly short
 responses are kept out of the cache (see Bot detection). On read, a cached
 body that is recognizably a bot/throttle page **or a 404/gone error page**
-is ignored and re-fetched — so a cache poisoned before this guard existed,
-or one whose product was discontinued after caching, self-heals on the next
-fetch rather than re-serving junk until `--no-cache`.
+is ignored, **deleted**, and re-fetched — so a cache poisoned before this
+guard existed, or one whose product was discontinued after caching,
+self-heals on the next fetch rather than re-serving junk (and the dead file
+does not linger).
+
+To purge accumulated junk in bulk, `py -m pagefetch --clean-cache` sweeps
+the cache and removes every bot-blocked / 404 entry, keeping real content;
+`--dry-run` lists what it would remove without deleting. The "junk"
+definition (`is_cacheable_junk`) is shared by the read-time scrub and the
+sweep, so they never drift.
 
 The cache has **no TTL** — validity is decided by content, not age. Specs
 rarely change; discontinuation surfaces as a 404 (handled above); price
@@ -206,6 +215,9 @@ require headed Chrome and are validated manually.
   404/410/soft-404 page is terminal (not cached, no escalation); cached
   error bodies self-heal on read (handles products discontinued after
   caching). No TTL — validity is content-based, not time-based.
+- **v9** — cache cleanup: junk entries are deleted (not just ignored) when
+  scrubbed on read, so dead files do not linger; `--clean-cache` (with
+  `--dry-run`) sweeps the cache of bot/404 entries on demand.
 
 ### Sites tested
 
