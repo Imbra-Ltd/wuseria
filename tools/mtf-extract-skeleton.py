@@ -433,20 +433,29 @@ def split_solid_dashed_cc(skeleton_uint8, y_top, y_bot, x_start, label=""):
               f"({dashed_area}px), threshold={width_threshold:.0f}px")
 
     def components_to_curve(comp_list):
-        """Pool all component pixels into an x -> y mapping."""
-        curve = {}
+        """Pool component pixels into an x -> y mapping.
+
+        Every component in comp_list belongs to the same logical curve (the
+        caller splits solid from dashed before calling), so at each x we take
+        the unweighted mean of all skeleton pixels there — that is the line's
+        own thickness, correctly centroided.
+
+        We must NOT cap or pairwise-average across a 5px window the way the
+        old code did (B3). Its `(curve[x] + y) / 2` running average was
+        order-dependent (the result depended on pixel iteration order, not the
+        true centroid), and its `< 5` guard silently dropped any pixel more
+        than 5px from the first one seen at that x — discarding real data on
+        steep segments. Pooling all pixels and taking their unweighted mean is
+        order-independent and keeps every pixel of the curve.
+        """
+        ys_by_x = {}
         for c in comp_list:
             component_mask = (labels == c["label"])
             ys, xs = np.where(component_mask)
             for x, y in zip(xs, ys):
                 if y_top <= y <= y_bot and x >= x_start:
-                    if x not in curve or abs(y - curve.get(x, y)) < 5:
-                        # For each x, keep the centroid of nearby skeleton pixels
-                        if x in curve:
-                            curve[x] = (curve[x] + y) / 2
-                        else:
-                            curve[x] = float(y)
-        return curve
+                    ys_by_x.setdefault(int(x), []).append(float(y))
+        return {x: sum(vals) / len(vals) for x, vals in ys_by_x.items()}
 
     solid_curve = components_to_curve(solid_components)
     dashed_curve = components_to_curve(dashed_components) if dashed_components else None
@@ -458,10 +467,25 @@ def split_solid_dashed_cc(skeleton_uint8, y_top, y_bot, x_start, label=""):
 # Interpolate curve values at grid positions
 # ---------------------------------------------------------------------------
 
+# Largest x-gap (px) between two detected curve points across which we trust a
+# linear interpolation. Beyond this the curve has no nearby data and we report
+# the position as missing rather than guessing — see MAX_EXACT_MATCH_PX.
+MAX_INTERP_GAP_PX = 100
+# An x within this distance of a detected point is treated as that point.
+MAX_EXACT_MATCH_PX = 3
+
+
 def interpolate_at(curve_map, target_x, y_top, y_bot):
     """Get MTF value at target_x from a curve map (x -> y).
 
-    Returns MTF value (0-1) or None.
+    Returns the MTF value (0-1), or None when the curve has no usable data at
+    target_x. A point is usable only if it is within MAX_EXACT_MATCH_PX of
+    target_x, or target_x falls between two detected points no more than
+    MAX_INTERP_GAP_PX apart. We deliberately do NOT fall back to the nearest
+    detected point when bracketing fails (B2): that reports a neighbor's
+    reading as if measured at target_x, fabricating data exactly where the
+    curve is occluded or runs off the plot. Missing reads are filled honestly
+    downstream (occlusion fill, M=S at center) — a fabricated read is not.
     """
     if not curve_map:
         return None
@@ -475,10 +499,10 @@ def interpolate_at(curve_map, target_x, y_top, y_bot):
 
     # Exact or very close match
     for x in xs:
-        if abs(x - target_x) <= 3:
+        if abs(x - target_x) <= MAX_EXACT_MATCH_PX:
             return to_mtf(curve_map[x])
 
-    # Find bracketing
+    # Find bracketing points
     left_x = None
     right_x = None
     for x in xs:
@@ -487,18 +511,14 @@ def interpolate_at(curve_map, target_x, y_top, y_bot):
         if x >= target_x and right_x is None:
             right_x = x
 
+    # Interpolate only when target_x is bracketed by points close enough to
+    # trust a straight line between them.
     if left_x is not None and right_x is not None:
         gap = right_x - left_x
-        if gap <= 100:
+        if gap <= MAX_INTERP_GAP_PX:
             t = (target_x - left_x) / gap
             y = curve_map[left_x] + t * (curve_map[right_x] - curve_map[left_x])
             return to_mtf(y)
-        # Gap too large for interpolation — fall through to nearest-point check
-
-    if left_x is not None and abs(left_x - target_x) <= 20:
-        return to_mtf(curve_map[left_x])
-    if right_x is not None and abs(right_x - target_x) <= 20:
-        return to_mtf(curve_map[right_x])
 
     return None
 
