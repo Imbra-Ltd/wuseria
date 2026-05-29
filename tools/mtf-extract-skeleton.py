@@ -30,26 +30,44 @@ from skimage.morphology import skeletonize
 # Chart type detection
 # ---------------------------------------------------------------------------
 
-def detect_chart_type(img):
-    """Detect whether chart is Samyang (4-color) or Sigma (red/blue).
+# Minimum fraction of image pixels a signature color must cover before we
+# trust a family classification. Size-relative so the same thresholds hold
+# regardless of chart resolution (a cropped or high-DPI chart shifts absolute
+# counts but not the fraction). Tuned against the reference Sigma/Samyang
+# charts, whose signature colors cover well above these floors.
+SIGMA_BLUE_MIN_FRACTION = 1.5e-4   # ~100px in a 600x900 chart
+SAMYANG_PINK_MIN_FRACTION = 7.5e-5  # ~50px in a 600x900 chart
 
-    Uses numpy for fast full-image scan — the curves may be concentrated
-    in a small vertical band that sparse sampling misses.
+
+def detect_chart_type(img):
+    """Detect the MTF chart family: 'sigma' (red/blue) or 'samyang' (4-color).
+
+    Returns 'unknown' when neither family's signature colors are present in
+    sufficient quantity. Callers MUST handle 'unknown' explicitly — this tool
+    only knows how to trace Sigma and Samyang charts, and running any other
+    brand through the wrong color masks produces silent garbage rather than an
+    error (the masks match almost nothing and the curves read as zeros). Other
+    brands must teach the tool their chart family before they can be traced.
+
+    Uses numpy for a fast full-image scan — the curves may be concentrated in
+    a small vertical band that sparse sampling misses. Thresholds are fractions
+    of total pixels so they hold across chart resolutions.
     """
     arr = np.array(img)
     r, g, b = arr[:, :, 0].astype(int), arr[:, :, 1].astype(int), arr[:, :, 2].astype(int)
+    total = arr.shape[0] * arr.shape[1]
 
-    blue_count = int(np.sum((b > 160) & (r < 130) & ((b - r) > 60)))
-    pink_count = int(np.sum(
+    blue_fraction = float(np.sum((b > 160) & (r < 130) & ((b - r) > 60))) / total
+    pink_fraction = float(np.sum(
         (r > 180) & (g > 80) & (b > 80) &
         ((r - g) > 30) & ((r - b) > 20) & (g < 190)
-    ))
+    )) / total
 
-    if blue_count > 100:
+    if blue_fraction > SIGMA_BLUE_MIN_FRACTION:
         return "sigma"
-    if pink_count > 50:
+    if pink_fraction > SAMYANG_PINK_MIN_FRACTION:
         return "samyang"
-    return "samyang"
+    return "unknown"
 
 
 # ---------------------------------------------------------------------------
@@ -928,6 +946,16 @@ def process_file(path, compare=False):
     w, h = img.size
     chart_type = detect_chart_type(img)
     print(f"\nImage: {path} ({w}x{h}) — detected: {chart_type}")
+
+    if chart_type == "unknown":
+        print(
+            "  SKIPPED: unrecognized chart family. This tool only traces "
+            "Sigma (red/blue) and Samyang (4-color) charts. Running another "
+            "brand through these color masks yields silent garbage, so it is "
+            "refused. Add a detector + color masks for this brand before "
+            "tracing it (see #790)."
+        )
+        return
 
     if chart_type == "sigma":
         result = process_sigma(img, arr)
