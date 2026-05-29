@@ -13,9 +13,12 @@ Approach: trace each curve across the entire plot width by finding all matching
 pixels, then interpolate values at grid positions. This handles steeply sloped
 curves that strip-scanning misses.
 
+Charts live per-lens under docs/optical-specs/<slug>/ (ADR-033) as
+mtf-chart.png. Superseded by mtf-extract-skeleton.py; kept for --compare.
+
 Usage:
-    py tools/mtf-extract-samyang.py docs/mtf-charts/samyang-35mm-f1-2.png
-    py tools/mtf-extract-samyang.py docs/mtf-charts/samyang-*.png
+    py tools/mtf-extract-samyang.py docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/mtf-chart.png
+    py tools/mtf-extract-samyang.py docs/optical-specs/samyang-*/mtf-chart.png
 """
 
 import sys
@@ -518,7 +521,7 @@ def process_file(path):
 def main():
     if len(sys.argv) < 2:
         print("Usage: py tools/mtf-extract-samyang.py <image.png> [image2.png ...]")
-        print("       py tools/mtf-extract-samyang.py docs/mtf-charts/samyang-*.png")
+        print("       py tools/mtf-extract-samyang.py docs/optical-specs/samyang-*/mtf-chart.png")
         sys.exit(1)
 
     files = []

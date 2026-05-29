@@ -1,7 +1,7 @@
 # Samyang Tilt/Shift 24mm f/3.5 ED AS UMC -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=266)
-Image: [samyang-ts-24mm-f3-5.png](samyang-ts-24mm-f3-5.png)
+Image: [samyang-tiltshift-24mm-f3-5-ed-as-umc-mtf.png](samyang-tiltshift-24mm-f3-5-ed-as-umc-mtf.png)
 
 ## Chart legend
 

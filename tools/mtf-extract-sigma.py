@@ -4,9 +4,12 @@ Auto-detects plot area, scans wide strips, and uses curve-following gap
 detection to reliably distinguish solid (S) from dashed (M) lines — even
 through crossings.
 
+Charts live per-lens under docs/optical-specs/<slug>/ (ADR-033) as
+mtf-chart.png. Superseded by mtf-extract-skeleton.py.
+
 Usage:
-    py tools/mtf-extract.py docs/mtf-charts/sigma-16mm-f1-4-dc-dn-c.png
-    py tools/mtf-extract.py docs/mtf-charts/sigma-56mm-f1-4-dc-dn-c.png
+    py tools/mtf-extract-sigma.py docs/optical-specs/sigma-16mm-f1-4-dc-dn-c/mtf-chart.png
+    py tools/mtf-extract-sigma.py docs/optical-specs/sigma-56mm-f1-4-dc-dn-c/mtf-chart.png
 """
 
 import sys
@@ -250,12 +253,18 @@ def classify_sm(img, x_center, groups, color_fn, yval_fn):
 
 
 def interpolate_missing(s_vals, m_vals):
-    """Fill in missing M values by estimating from neighbors.
+    """Fill in missing M values from neighbors.
 
-    At center positions where S and M merge (1 cluster), the lines are
-    genuinely overlapping. If the first detected M is after a crossing
-    (M > S), we can't extrapolate that gap backward — instead we set
-    M = S for merged positions.
+    Where the dashed M line merges into the solid S line (a single detected
+    cluster), the two genuinely coincide, so M = S there. This applies to both
+    the center positions before the first detected M and to the trailing edge
+    after the last one.
+
+    Earlier this function manufactured a center astigmatism gap with a magic
+    `gap_at_first * (0.6 + 0.4*t)` taper (B4 from the #726 audit) — an
+    unjustified shrinking gap with no basis in the chart. At the optical center
+    sagittal and meridional are identical (gap = 0), so M = S is the correct
+    fill. This matches the live skeleton tool's interpolate_missing_m.
     """
     result = list(m_vals)
     n = len(result)
@@ -264,24 +273,13 @@ def interpolate_missing(s_vals, m_vals):
     if first_m is None:
         return result
 
-    # Check if first detected M is before or after a crossing
-    gap_at_first = s_vals[first_m] - result[first_m]
+    # Center positions before the first detected M: S and M coincide → M = S.
+    for i in range(first_m):
+        if s_vals[i] is not None:
+            result[i] = s_vals[i]
 
-    if first_m > 0:
-        if gap_at_first >= 0:
-            # Normal: S > M, extrapolate gap backward (shrinking toward center)
-            for i in range(first_m):
-                if s_vals[i] is not None:
-                    t = i / first_m
-                    gap = gap_at_first * (0.6 + 0.4 * t)
-                    result[i] = round(s_vals[i] - gap, 3)
-        else:
-            # After crossing: M > S. Lines merged at center means S ≈ M.
-            for i in range(first_m):
-                if s_vals[i] is not None:
-                    result[i] = s_vals[i]
-
-    # Fill interior gaps by linear interpolation
+    # Fill interior gaps by linear interpolation; trailing edge gaps fall back
+    # to M = S (S and M coincide where the dashed line was not separable).
     for i in range(n):
         if result[i] is None and s_vals[i] is not None:
             left = next((j for j in range(i - 1, -1, -1) if result[j] is not None), None)
@@ -290,8 +288,7 @@ def interpolate_missing(s_vals, m_vals):
                 t = (i - left) / (right - left)
                 result[i] = round(result[left] + t * (result[right] - result[left]), 3)
             elif left is not None:
-                gap = s_vals[left] - result[left]
-                result[i] = round(s_vals[i] - gap, 3)
+                result[i] = s_vals[i]
 
     return result
 

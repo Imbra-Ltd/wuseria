@@ -177,7 +177,7 @@ infer from related fields or optical construction alone.
    lens entry in `src/data/lenses.ts`
 2. Add reference scoring table to `docs/optical-specs/<slug>/scoring-log.md`
 3. If astigmatism was scored from an official MTF chart, save the chart
-   image and a companion `.md` analysis in `docs/mtf-charts/`
+   image and a companion `.md` analysis in `docs/optical-specs/<slug>/`
 4. Run `npm run validate` to verify
 
 **Step 6 — Verify**
@@ -379,29 +379,33 @@ detectable by the tool; manual page inspection may find additional images.
 
 Skeleton tool (recommended — requires Python + scikit-image + opencv-python):
 
+Charts live per-lens under `docs/optical-specs/<slug>/` (ADR-033) as
+`mtf-chart.{png,jpg}`, or `mtf-f<aperture>.png` per aperture.
+
 ```bash
-py tools/mtf-extract-skeleton.py docs/mtf-charts/samyang-35mm-f1-2.png
-py tools/mtf-extract-skeleton.py docs/mtf-charts/sigma-56mm-f1-4-dc-dn-c.png
-py tools/mtf-extract-skeleton.py docs/mtf-charts/samyang-*.png   # batch
+py tools/mtf-extract-skeleton.py docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/mtf-chart.png
+py tools/mtf-extract-skeleton.py docs/optical-specs/sigma-56mm-f1-4-dc-dn-c/mtf-chart.png
+py tools/mtf-extract-skeleton.py docs/optical-specs/samyang-*/mtf-chart.png   # batch
 ```
 
-Auto-detects chart type (Samyang 4-color / Sigma solid+dashed). Uses
-color isolation → skeletonization → connected components for S/M
-classification. Handles occlusion fill, auto grid step detection (APS-C
-2.5mm / full-frame 5mm), and M-value interpolation. Copy the TypeScript
-output into `src/data/mtf-readings.ts`.
+Auto-detects chart family (Samyang 4-color / Sigma solid+dashed); any other
+brand is refused rather than mis-traced (see #726). Uses color isolation →
+skeletonization → connected components for S/M classification. Handles
+occlusion fill, auto grid step detection (APS-C 2.5mm / full-frame 5mm),
+and M-value interpolation. Copy the TypeScript output into
+`src/data/mtf-readings.ts`.
 
 Comparison mode (Samyang only — validates against old pixel-scan tool):
 
 ```bash
-py tools/mtf-extract-skeleton.py --compare docs/mtf-charts/samyang-35mm-f1-2.png
+py tools/mtf-extract-skeleton.py --compare docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/mtf-chart.png
 ```
 
 Legacy tools (Pillow only, no scikit-image needed):
 
 ```bash
-py tools/mtf-extract-samyang.py docs/mtf-charts/samyang-35mm-f1-2.png
-py tools/mtf-extract-sigma.py docs/mtf-charts/sigma-16mm-f1-4-dc-dn-c.png
+py tools/mtf-extract-samyang.py docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/mtf-chart.png
+py tools/mtf-extract-sigma.py docs/optical-specs/sigma-16mm-f1-4-dc-dn-c/mtf-chart.png
 ```
 
 **List unscored lenses:**
