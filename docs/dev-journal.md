@@ -3271,3 +3271,101 @@ GitHub Release with auto-generated notes; deploy green).
 - Backlog carried over: #894 (Python toolchain spike), #884 (specs-log
   backfill), pagefetch `download_bytes` escalation for Venus images,
   pagefetch→submodule extraction.
+
+---
+
+### Session 93 — pagefetch Cache Hardening
+
+Theme: pagefetch cache correctness and configuration. One cohesive arc on the
+`tools/pagefetch/` cache, six PRs, all merged. The cache had been silently
+re-serving throttle/404 pages; this session made it self-cleaning,
+self-healing, configurable, and unified, then swept the live cache.
+
+PRs merged: #919, #920, #922, #925, #927, #928.
+Issues closed: #881 (Expedite bug, by #919), #926 (by #927).
+Issues created: #923 (task — wire link-check + data validation into the 360),
+#924 (spike — standing semantic spec-vs-source re-verify audit?), #926
+(closed same session).
+
+#### Key changes
+
+- **#919 — throttle pages no longer poison the cache (closes #881).** The
+  Expedite bug: a throttle stub that slipped past `is_bot_blocked` (e.g. a
+  retailer's ~7-8 KB "slow down" page with no spec table, no meta-refresh) was
+  cached and re-served until `--no-cache`. Broadened `is_bot_blocked`
+  (429/Too Many Requests/rate-limit/"unusual traffic"/Cloudflare
+  `challenge-platform`/PerimeterX). Added `looks_like_real_content` size floor
+  (10 KB) so short stubs escalate instead of being cached. Cached bot bodies
+  scrubbed on read. NOTE: the issue text referenced the legacy `fetch-page.py`;
+  the fix landed in the post-ADR-035 `tools/pagefetch/` package.
+- **#920 — don't cache 404/non-200; self-heal (ADR-037).** `is_error_page`
+  recognizes 404/410 and soft-404s (discontinued product served HTTP 200 with
+  "not found"/"no longer available"). A 404 is terminal (not cached, no
+  pointless escalation). Cached error bodies self-heal on read. TTL decided
+  against — see ADR-037.
+- **#922 — cache cleanup.** Scrubbed junk is now deleted on read (no longer
+  lingers). New `--clean-cache [--dry-run]` CLI sweeps bot/404 junk, keeping
+  real content. `is_cacheable_junk` is the single shared "junk" definition.
+- **#925 — unify the cache dir.** Root cause of two cache dirs: the bare CLI
+  used the package's CWD-relative default while brand tools pin `.cache/fetch`.
+  Added `PAGEFETCH_CACHE_DIR` env support (precedence: explicit arg > env >
+  default); brandkit sets it on import. Removed the stray
+  `tools/.cache/pagefetch`.
+- **#927 — complete the config precedence (closes #926).** `--cache-dir` CLI
+  flag (highest precedence) + load-time validation (a bad path errors at
+  construction, not first write). Pydantic/`.env`-file deliberately NOT added
+  — zero-dependency contract (ADR-035); recorded in README "Config scope" with
+  a revisit trigger at the standalone-tool split.
+- **#928 — bare-CLI cache guarantee, no new code.** CLAUDE.md rule + PLAYBOOK
+  examples: always pass `--cache-dir ../.cache/fetch` on bare `py -m pagefetch`
+  fetches so they share the project cache. Chosen over a wrapper file or
+  machine-env script — bare fetches here are agent-run, so a CLAUDE.md rule is
+  the right enforcement point.
+- **Live cache swept:** 497 junk entries purged (405 404/error, 92
+  bot-blocked) from `.cache/fetch` + `tools/.cache/pagefetch`, 2,323 good pages
+  kept — a real-world validation that ~18% of the cache had been poison.
+
+#### Key decisions
+
+- **No cache TTL (ADR-037).** Validity is content-based, not time-based.
+  pagefetch is a research-time tool (not the live request path); specs rarely
+  change; discontinuation surfaces as a 404 (handled); price refresh is a
+  deliberate `--no-cache` pass. A timer cannot tell a price change from a
+  discontinuation and would add needless re-fetches. New 360 dimension
+  explicitly rejected — the 360's job is perspective coverage, not per-field
+  correctness.
+- **pagefetch stays zero-dependency; no Pydantic.** For a single config knob
+  (`cache_dir`), Pydantic + `python-dotenv` would break the stdlib-only
+  portability contract (ADR-035) for marginal gain. Stdlib env-read +
+  hand-rolled validation instead. Revisit at the pagefetch→standalone-tool
+  split (recorded on #926 and in the package README).
+- **Semantic "is the data valid?" validation gap surfaced.** Link validity
+  (`check-external-links`) and data consistency (`lenses.test`) exist but the
+  360 eyeballs rather than runs them (#923); spec-vs-source correctness has no
+  standing check at all (#924 spike). Filed, not built.
+
+#### Post-mortem — stacked-PR auto-closed on base-branch deletion (process slip, recovered)
+
+- **Symptom:** PR #921 (cache cleanup, based on #920's branch) was auto-CLOSED
+  when #920 merged and GitHub deleted its base branch.
+- **Root cause:** GitHub closes a PR whose base branch is deleted rather than
+  retargeting it to the default branch. Stacking #921 on #920's feature branch
+  created that dependency. Also, CI (`pull_request: branches:[main]`) never ran
+  on #921 because its base was not `main`.
+- **Why it didn't bite:** the branch and commit survived; no work lost.
+- **Fix:** cherry-picked the single cleanup commit onto a fresh branch off
+  `main` (no conflicts), reopened as #922 targeting `main`; CI then ran.
+- **Prevention:** prefer branching new work off `main` and merging the
+  prerequisite first, over stacking PRs on a soon-to-be-deleted feature branch.
+  If stacking is necessary, retarget the stacked PR to `main` before merging
+  the base.
+
+#### Next
+
+- Carry-over unchanged: #923 (wire validators into 360), #924 (spec-vs-source
+  re-verify spike), #894 (Python toolchain spike), #884 (specs-log backfill),
+  pagefetch `download_bytes` escalation for Venus images,
+  pagefetch→submodule extraction (now also the trigger to revisit Pydantic
+  config per #926).
+- v0.8.0 (MTF chart digitization, epic #790) remains the next feature theme;
+  the cache hardening makes the heavy scraping it needs more reliable.

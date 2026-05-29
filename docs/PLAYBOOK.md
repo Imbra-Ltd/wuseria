@@ -209,8 +209,6 @@ py -m pagefetch --clean-cache --cache-dir ../.cache/fetch          # purge bot/4
 py -m pagefetch --clean-cache --dry-run --cache-dir ../.cache/fetch   # preview only
 ```
 
-(On Windows PowerShell: `$env:PAGEFETCH_CACHE_DIR = "$(git rev-parse --show-toplevel)/.cache/fetch"`.)
-
 Responses are cached in `.cache/fetch/` (me-fuji points the cache there via
 `PAGEFETCH_CACHE_DIR`; the cache_dir precedence is `--cache-dir` / explicit
 arg > env var > CWD-relative default, validated at construction). Bot-blocked
