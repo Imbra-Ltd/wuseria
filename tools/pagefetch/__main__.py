@@ -20,16 +20,20 @@ Usage:
 
     py -m pagefetch --clean-cache                  # purge junk cache entries
     py -m pagefetch --clean-cache --dry-run        # list junk, delete nothing
+
+    py -m pagefetch <url> --cache-dir DIR          # use a specific cache dir
+                                                   # (overrides $PAGEFETCH_CACHE_DIR)
 """
 
 import sys
 from pathlib import Path
 
+from .cache import FileCache
 from .detection import is_bot_blocked, is_error_page
 from .network import NetworkFetcher
 from .source import ContentMode, FetchOptions, Transport
 
-_VALUE_FLAGS = {"--wait", "--batch", "--output-dir"}
+_VALUE_FLAGS = {"--wait", "--batch", "--output-dir", "--cache-dir"}
 _BARE_FLAGS = {
     "--html",
     "--no-cache",
@@ -99,11 +103,17 @@ def _classify_junk(body: str) -> str | None:
     return None
 
 
-def _clean_cache(dry_run: bool) -> None:
-    """Sweep the cache of bot-blocked / 404 entries, printing a summary."""
-    from .cache import FileCache
+def _make_cache(argv: list[str]) -> FileCache:
+    """Build a FileCache honoring --cache-dir. A CLI value is passed as the
+    explicit cache_dir (highest precedence: CLI > env > default); absent the
+    flag, FileCache resolves the env var / default itself."""
+    cli_dir = _flag_value(argv, "--cache-dir")
+    return FileCache(cache_dir=Path(cli_dir) if cli_dir else None)
 
-    report = FileCache().clean(_classify_junk, dry_run=dry_run)
+
+def _clean_cache(cache: FileCache, dry_run: bool) -> None:
+    """Sweep the cache of bot-blocked / 404 entries, printing a summary."""
+    report = cache.clean(_classify_junk, dry_run=dry_run)
     verb = "would remove" if dry_run else "removed"
     if report.removed:
         print(f"{verb} {len(report.removed)} junk entries:", file=sys.stderr)
@@ -121,8 +131,14 @@ def main() -> None:
         print(__doc__)
         sys.exit(1)
 
+    try:
+        cache = _make_cache(argv)
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
     if "--clean-cache" in argv:
-        _clean_cache(dry_run="--dry-run" in argv)
+        _clean_cache(cache, dry_run="--dry-run" in argv)
         return
 
     mode = ContentMode.HTML if "--html" in argv else ContentMode.TEXT
@@ -140,7 +156,7 @@ def main() -> None:
     opts = FetchOptions(
         mode=mode, transport=transport, wait_ms=wait_ms, use_cache=use_cache
     )
-    fetcher = NetworkFetcher()
+    fetcher = NetworkFetcher(cache=cache)
 
     if len(urls) == 1 and not output_dir:
         result = fetcher.fetch(urls[0], opts)
@@ -155,8 +171,6 @@ def main() -> None:
 def _write_batch_output(results, output_dir: str | None, mode: ContentMode) -> None:
     """Reproduce the original batch output: one file per URL to a
     directory (hash-named), or delimited blocks to stdout."""
-    from .cache import FileCache
-
     out_path = Path(output_dir) if output_dir else None
     if out_path:
         out_path.mkdir(parents=True, exist_ok=True)

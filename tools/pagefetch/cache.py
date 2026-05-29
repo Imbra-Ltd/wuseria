@@ -43,11 +43,48 @@ class FileCache:
         # default. The default stays portable (not tied to any project
         # layout); a consumer uses the env var to unify all entry points.
         if cache_dir is not None:
-            self.cache_dir = cache_dir
+            self.cache_dir = Path(cache_dir)
+            source = "cache_dir argument"
         elif os.environ.get(CACHE_DIR_ENV):
             self.cache_dir = Path(os.environ[CACHE_DIR_ENV])
+            source = f"${CACHE_DIR_ENV}"
         else:
             self.cache_dir = Path.cwd() / ".cache" / "pagefetch"
+            source = "default"
+        # Validate at construction, not at first write — a bad value (a path
+        # that is a file, or whose parent is missing/read-only) fails here
+        # with a clear message instead of cryptically on the first cache op.
+        self._validate_cache_dir(source)
+
+    def _validate_cache_dir(self, source: str) -> None:
+        """Fail fast if the resolved cache dir cannot be created/written.
+
+        Does not create the directory — that stays lazy (write()). It only
+        confirms the path is usable: not an existing non-directory, and the
+        nearest existing ancestor is a writable directory.
+        """
+        path = self.cache_dir
+        if path.exists() and not path.is_dir():
+            raise ValueError(
+                f"pagefetch cache dir (from {source}) is not a directory: {path}"
+            )
+        # Walk up to the nearest existing ancestor and check it is writable.
+        ancestor = path
+        while not ancestor.exists():
+            parent = ancestor.parent
+            if parent == ancestor:  # reached filesystem root
+                break
+            ancestor = parent
+        if not ancestor.is_dir():
+            raise ValueError(
+                f"pagefetch cache dir (from {source}) has a non-directory "
+                f"ancestor: {ancestor} (for {path})"
+            )
+        if not os.access(ancestor, os.W_OK):
+            raise ValueError(
+                f"pagefetch cache dir (from {source}) is not writable: "
+                f"{path} (nearest existing ancestor {ancestor} is read-only)"
+            )
 
     @staticmethod
     def url_hash(url: str) -> str:
