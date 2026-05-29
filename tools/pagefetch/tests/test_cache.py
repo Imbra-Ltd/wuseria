@@ -5,8 +5,10 @@ projects depend on sha256(url)[:16] + suffix. These tests pin it.
 """
 
 import hashlib
+from pathlib import Path
 
 from pagefetch import ContentMode, FileCache
+from pagefetch.cache import CACHE_DIR_ENV
 
 
 def test_url_hash_is_sha256_first_16_hex():
@@ -46,8 +48,28 @@ def test_modes_do_not_collide(cache: FileCache):
     assert cache.read(url, ContentMode.TEXT) == "text-content"
 
 
-def test_default_cache_dir_is_portable():
+def test_default_cache_dir_is_portable(monkeypatch):
     # Must not be tied to any project layout — CWD-relative default.
+    monkeypatch.delenv(CACHE_DIR_ENV, raising=False)
+    assert FileCache().cache_dir.name == "pagefetch"
+
+
+# --- cache_dir precedence: explicit > env > default ------------------
+
+
+def test_env_var_sets_cache_dir(monkeypatch, tmp_path):
+    monkeypatch.setenv(CACHE_DIR_ENV, str(tmp_path / "envcache"))
+    assert FileCache().cache_dir == tmp_path / "envcache"
+
+
+def test_explicit_arg_overrides_env(monkeypatch, tmp_path):
+    monkeypatch.setenv(CACHE_DIR_ENV, str(tmp_path / "envcache"))
+    explicit = tmp_path / "explicit"
+    assert FileCache(cache_dir=explicit).cache_dir == explicit
+
+
+def test_empty_env_var_falls_back_to_default(monkeypatch):
+    monkeypatch.setenv(CACHE_DIR_ENV, "")
     assert FileCache().cache_dir.name == "pagefetch"
 
 

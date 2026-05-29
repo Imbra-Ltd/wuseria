@@ -19,7 +19,21 @@ composes it with a PageSource from the pagefetch package:
     )
 
 Unlike pagefetch, brandkit is me-fuji-specific — it reads lenses.ts.
+
+On import it points pagefetch's cache at the project cache (`.cache/fetch`)
+by setting PAGEFETCH_CACHE_DIR if unset, so the bare `py -m pagefetch` CLI
+shares the one cache the brand tools use rather than creating a second
+`tools/.cache/pagefetch` from the package's CWD-relative default. brandkit
+is the right place for this: it is the me-fuji-specific layer and may know
+the project layout (pagefetch itself must not).
 """
+
+import os as _os
+from pathlib import Path as _Path
+
+# tools/brandkit/__init__.py -> repo root is two levels up.
+_ROOT = _Path(__file__).resolve().parent.parent.parent
+_os.environ.setdefault("PAGEFETCH_CACHE_DIR", str(_ROOT / ".cache" / "fetch"))
 
 from .audit import audit
 from .cli import format_ts_fields, run

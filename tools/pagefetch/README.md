@@ -166,6 +166,13 @@ from pagefetch import NetworkFetcher, FileCache
 fetcher = NetworkFetcher(cache=FileCache(cache_dir=Path("/my/cache")))
 ```
 
+The cache directory resolves in this precedence: an explicit `cache_dir=`
+argument, then the `PAGEFETCH_CACHE_DIR` environment variable, then the
+CWD-relative default `./.cache/pagefetch`. The env var lets a consuming
+project point every entry point — including the bare `py -m pagefetch`
+CLI — at one cache directory without the package hardcoding any project
+layout.
+
 ## Dependencies
 
 | Dependency        | Tier | Required |
