@@ -33,8 +33,8 @@
   CONFIRMED 5 (official wins over B&H/LensTip 7); weight/MFD/diameter/filter all confirmed;
   length (55 vs LensTip 63) and year (2021 vs LensTip 2019) flagged unresolved — no DB change,
   as only a single unreliable source disagrees.
-- **constructionDiagram:** found — `construction-diagram.jpg` (official 7Artisans lens-structure cross-section; ED elements shown in red, rear group)
-- **MTF chart:** found — `mtf-chart.jpg` (official; S1–S4 sagittal solid + T1–T4 meridional dashed, 0–12mm)
+- **constructionDiagram:** found — `construction-diagram.png` (official 7Artisans lens-structure cross-section; ED elements shown in red, rear group)
+- **MTF chart:** found — `mtf-chart.png` (official; S1–S4 sagittal solid + T1–T4 meridional dashed, 0–12mm)
 
 ## Caveats
 

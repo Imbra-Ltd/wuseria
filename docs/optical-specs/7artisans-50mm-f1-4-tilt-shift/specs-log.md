@@ -21,8 +21,8 @@
 - **specialElements:** none (official names only generic "Premium Optical Glass"; line-art "MIRROR STRUCTURE" diagram has no glass-type colour legend)
 - **coating:** multi-layer (the official 7Artisans Amazon brand-store listing states "Full metal and multi-coating"; the 7artisans.store page, LensTip, B&H, and Photosynthesis are silent. Recorded as `["multi-layer"]` on the maker's Amazon listing.)
 - **maxMagnification:** 0.13 (LensTip id 2124, "0.13x"; matches DB; official gives MFD 0.5m only) — matches DB value
-- **constructionDiagram:** found — `construction-diagram.jpg` (official "MIRROR STRUCTURE" line-art; 7 elements / 6 groups, no glass-type color legend)
-- **MTF chart:** found — `mtf-chart.jpg` (official; T1/S1/T2/S2, Y field of view in mm)
+- **constructionDiagram:** found — `construction-diagram.png` (official "MIRROR STRUCTURE" line-art; 7 elements / 6 groups, no glass-type color legend)
+- **MTF chart:** found — `mtf-chart.png` (official; T1/S1/T2/S2, Y field of view in mm)
 
 ## Caveats
 

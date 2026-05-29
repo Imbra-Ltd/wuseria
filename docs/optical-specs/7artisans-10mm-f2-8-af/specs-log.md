@@ -25,12 +25,12 @@
   A batch-research snippet claimed "IMC coating, 99.8% transmittance" but this could NOT be
   verified on any reachable source, so it is NOT recorded. Left undefined.)
 - **maxMagnification:** 0.04 (LensTip id 2273, "0.04x"; DB was unset — filled this PR)
-- **constructionDiagram:** found — `construction-diagram.jpg` (clean dedicated cross-section
+- **constructionDiagram:** found — `construction-diagram.png` (clean dedicated cross-section
   from the PhotoRumors press release; legend **translated to English** for site consistency:
   red=Aspherical / yellow=ED (Extra-low Dispersion) / blue=High Refraction. The diagram
   itself is unmodified; only the bottom legend text was redrawn. The verbatim Chinese-legend
-  original is preserved as `construction-diagram-original.jpg`.)
-- **MTF chart:** found — `mtf-chart.jpg` (official; OTF vs Y-field 0–14.2mm, T1-T3 / S1-S3. NOTE: the official page swaps the labels — the file captioned "AF/MF Switch Button" is the real MTF, the one captioned "MTF" is the construction diagram.)
+  original is preserved as `construction-diagram-original.png`.)
+- **MTF chart:** found — `mtf-chart.png` (official; OTF vs Y-field 0–14.2mm, T1-T3 / S1-S3. NOTE: the official page swaps the labels — the file captioned "AF/MF Switch Button" is the real MTF, the one captioned "MTF" is the construction diagram.)
 
 ## Caveats
 

@@ -20,8 +20,8 @@
 - **specialElements:** 1 ED (official: "built-in ED (extra-low dispersion lens)"; construction diagram shows 1 red HOYA Ultra-Low Dispersion element at the front)
 - **coating:** multi-layer (the official 7Artisans UK store states "multi-layer coatings reduce flare and ghosting" for the Mark II; the 7artisans.store .com page and B&H are silent. Recorded as `["multi-layer"]` on the official UK store.)
 - **maxMagnification:** 1.0 (official: 1:1 "life-size" / "1x macro telephoto", MFD 0.175m)
-- **constructionDiagram:** found — `construction-diagram.jpg` (official, from Amazon listing; cross-section with legend red = HOYA Ultra-Low Dispersion glass, confirms 1 ED)
-- **MTF chart:** found — `mtf-chart.jpg` (official; 10/20/30 lp/mm, 0–13.2). Sourced from
+- **constructionDiagram:** found — `construction-diagram.png` (official, from Amazon listing; cross-section with legend red = HOYA Ultra-Low Dispersion glass, confirms 1 ED)
+- **MTF chart:** found — `mtf-chart.png` (official; 10/20/30 lp/mm, 0–13.2). Sourced from
   the 7Artisans UK store's `MTF_Template_copy.jpg` section image — NOT in the product
   gallery (4 product photos) or the .com store / Amazon / B&H listings, which is why it
   was initially recorded "not found". Recovered on review.

@@ -23,8 +23,8 @@
 - **filterThread:** 52mm (LensTip)
 - **weight:** 369g (official "369g" + LensTip)
 - **dimensions:** 63 × 62mm (LensTip)
-- **constructionDiagram:** found — `construction-diagram.jpg` (official; red/blue glass legend, 11 elements / 8 groups; 2 ED shown red)
-- **MTF chart:** found — `mtf-chart.jpg` (official; S1-S3 / T1-T3)
+- **constructionDiagram:** found — `construction-diagram.png` (official; red/blue glass legend, 11 elements / 8 groups; 2 ED shown red)
+- **MTF chart:** found — `mtf-chart.png` (official; S1-S3 / T1-T3)
 
 ## Caveats
 

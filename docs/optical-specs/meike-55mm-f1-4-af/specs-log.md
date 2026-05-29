@@ -17,7 +17,7 @@
 - **specialElements:** 1 ED (construction diagram: "1 ED lens")
 - **coating:** dual-sided multi-layer (construction diagram: "Dual-sided multi-layer coatings")
 - **maxMagnification:** 0.11 (already in DB, confirmed by LensTip)
-- **constructionDiagram:** saved as construction-diagram.jpg (from Meike via Fujifilm User Group Malaysia Facebook post)
+- **constructionDiagram:** saved as construction-diagram.png (from Meike via Fujifilm User Group Malaysia Facebook post)
 - **MTF chart:** not found
 
 ## Caveats

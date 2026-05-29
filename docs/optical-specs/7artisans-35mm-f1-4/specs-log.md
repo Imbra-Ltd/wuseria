@@ -22,8 +22,8 @@
 - **weight:** 228g (official "Weighing only 228g" — DB's prior 160 corrected; LensTip's 298g also wrong)
 - **filterThread:** 46mm (DB + LensTip agree)
 - **apertureBlades:** UNRESOLVED — DB 10, B&H 9 (earlier read), LensTip 11 (unreliable). No two reachable sources agree; left at DB's 10 pending a confirmable B&H/official blade count. Do NOT adopt LensTip's 11.
-- **constructionDiagram:** found — `construction-diagram.jpg` (official line-art; 8 elements / 5 groups)
-- **MTF chart:** found — `mtf-chart.jpg` (official; T1-T3 / S1-S3)
+- **constructionDiagram:** found — `construction-diagram.png` (official line-art; 8 elements / 5 groups)
+- **MTF chart:** found — `mtf-chart.png` (official; T1-T3 / S1-S3)
 
 ## Caveats
 

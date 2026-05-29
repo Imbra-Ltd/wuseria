@@ -20,8 +20,8 @@
 - **apertureBlades / filterThread / minFocusDistance / weight / dimensions:** 11 / 55mm /
   0.7m (700) / 410g / 68×62mm — all confirmed by LensTip 2291 AND the official spec-table
   strip (this is a fresh 2025 entry; full field cross-check found everything correct except mag)
-- **constructionDiagram:** found — `construction-diagram.jpg` (official "Lens structure"; 1 ED + 3 HR, dark-background rendering)
-- **MTF chart:** found — `mtf-chart.jpg` (official; OTF vs Y-field of view 0–14, T1/T2/S1/S2)
+- **constructionDiagram:** found — `construction-diagram.png` (official "Lens structure"; 1 ED + 3 HR, dark-background rendering)
+- **MTF chart:** found — `mtf-chart.png` (official; OTF vs Y-field of view 0–14, T1/T2/S1/S2)
 
 ## Caveats
 
