@@ -21,7 +21,7 @@ from pathlib import Path
 
 from .cache import FileCache
 from .chrome import ChromeReaper
-from .detection import html_to_text, is_bot_blocked
+from .detection import html_to_text, is_bot_blocked, looks_like_real_content
 from .source import (
     ContentMode,
     FetchOptions,
@@ -138,8 +138,15 @@ class NetworkFetcher(PageSource):
             print(f"[urllib] {e}", file=sys.stderr)
             return None
 
-        if is_bot_blocked(html):
-            print("[urllib] Bot protection detected", file=sys.stderr)
+        # Treat bot-blocks AND implausibly short throttle/error stubs the
+        # same: signal escalation rather than accept (and later cache) junk.
+        # The size check runs on raw HTML — TEXT-mode content of a real page
+        # can be much shorter than the threshold after tag stripping.
+        if not looks_like_real_content(html):
+            print(
+                f"[urllib] Not real content ({len(html)} bytes) — escalating",
+                file=sys.stderr,
+            )
             return _BOT_BLOCKED
 
         if mode is ContentMode.HTML:
@@ -169,8 +176,11 @@ class NetworkFetcher(PageSource):
                 page.evaluate(_scroll_page_js())
 
                 html = page.content()
-                if is_bot_blocked(html):
-                    print("[playwright] Bot detection page received", file=sys.stderr)
+                if not looks_like_real_content(html):
+                    print(
+                        f"[playwright] Not real content ({len(html)} bytes)",
+                        file=sys.stderr,
+                    )
                     browser.close()
                     return None
 
@@ -259,8 +269,11 @@ class NetworkFetcher(PageSource):
             pass
 
         html = await page.get_content()
-        if is_bot_blocked(html):
-            print("[nodriver] Bot detection page still present", file=sys.stderr)
+        if not looks_like_real_content(html):
+            print(
+                f"[nodriver] Not real content ({len(html)} bytes)",
+                file=sys.stderr,
+            )
             return None
 
         return html if mode is ContentMode.HTML else html_to_text(html)
@@ -309,8 +322,8 @@ class NetworkFetcher(PageSource):
                 sb.sleep(wait_ms / 1000)
             self._uc_wait_for_scroll(sb)
             html = sb.get_page_source()
-            if is_bot_blocked(html):
-                print("[uc] Bot detection page still present", file=sys.stderr)
+            if not looks_like_real_content(html):
+                print(f"[uc] Not real content ({len(html)} bytes)", file=sys.stderr)
                 return None
             return html if mode is ContentMode.HTML else html_to_text(html)
         except Exception as e:
@@ -382,7 +395,12 @@ class NetworkFetcher(PageSource):
 
         if opts.use_cache:
             cached = self._cache.read(url, mode)
-            if cached is not None:
+            # Defend against pre-existing poisoned cache: a cached body that
+            # is recognizably a bot/throttle page is ignored and re-fetched.
+            # Only the pattern check applies here (not the size threshold) —
+            # cached TEXT-mode content of a real page can legitimately be
+            # short after tag stripping.
+            if cached is not None and not is_bot_blocked(cached):
                 return cached, "cache"
 
         content, tier = self._escalate(url, opts, sb_session)

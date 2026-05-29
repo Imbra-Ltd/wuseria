@@ -105,9 +105,18 @@ the same way) and the fetcher goes straight to Nodriver, then UC.
 ### Bot detection
 
 A response is treated as a bot-detection interstitial when it matches a
-known pattern (Cloudflare "Just a moment", "Checking your browser",
-403/Access Denied titles, "Verifying you are human", cookie walls) or is
-a short HTML page with a meta-refresh redirect. See `detection.py`.
+known pattern (Cloudflare "Just a moment" / `challenge-platform`,
+"Checking your browser", 403/429/Access Denied titles, "Too Many Requests"
+/ rate-limit / "unusual traffic" throttles, PerimeterX markers, cookie
+walls) or is a short HTML page with a meta-refresh redirect. See
+`detection.py`.
+
+`looks_like_real_content(html, min_bytes=10_000)` is the broader gate: a
+response that is bot-blocked **or implausibly short** (below the size
+floor) is not real content. This catches throttle/error stubs that carry
+no recognizable bot text (e.g. a retailer's ~7-8 KB "slow down" page).
+Such responses are never cached or re-served, and in AUTO mode they
+trigger escalation to a browser tier instead of being accepted as content.
 
 ### Event-driven waits (browser tiers)
 
@@ -123,6 +132,12 @@ Responses are cached by `sha256(url)[:16]` plus a `.txt`/`.html` suffix,
 under the directory passed to `FileCache` (default `./.cache/pagefetch`).
 Text and HTML variants are cached separately. The key scheme is fixed —
 changing it would invalidate existing caches.
+
+Only real content is cached: bot-blocked and implausibly short responses
+are kept out of the cache (see Bot detection). On read, a cached body that
+is recognizably a bot/throttle page is ignored and re-fetched — so a cache
+poisoned before this guard existed self-heals on the next fetch rather than
+re-serving junk until `--no-cache`.
 
 ```python
 from pathlib import Path
@@ -171,6 +186,11 @@ require headed Chrome and are validated manually.
 - **v6** — refactored from a single 748-line script into this package
   (PageSource ABC + NetworkFetcher + FakeFetcher), CLI wraps the class.
   Behavior preserved; see ADR-035.
+- **v7** — throttle pages no longer poison the cache (#881): broadened bot
+  detection (429 / rate-limit / "unusual traffic" / PerimeterX / Cloudflare
+  challenge runtime) and added a `looks_like_real_content` size floor so
+  implausibly short stubs escalate instead of being cached; cached bot/
+  throttle bodies are ignored on read and re-fetched.
 
 ### Sites tested
 

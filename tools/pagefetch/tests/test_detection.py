@@ -2,10 +2,16 @@
 
 import pytest
 
-from pagefetch import is_bot_blocked
-from pagefetch.detection import BOT_DETECTION_PATTERNS, html_to_text
+from pagefetch import is_bot_blocked, looks_like_real_content
+from pagefetch.detection import (
+    BOT_DETECTION_PATTERNS,
+    MIN_REAL_CONTENT_BYTES,
+    html_to_text,
+)
 
 REAL_PAGE = "<html><body>" + ("Lorem ipsum lens specs. " * 100) + "</body></html>"
+# A real content page comfortably above the size floor.
+BIG_REAL_PAGE = "<html><body>" + ("Lorem ipsum lens specs. " * 1000) + "</body></html>"
 
 
 def test_real_page_is_not_blocked():
@@ -36,6 +42,15 @@ def test_long_page_with_meta_refresh_is_not_short_circuited():
         "Verifying you are human",
         "Please allow cookies",
         "This page requires cookies to be enabled",
+        "<title>429 Too Many Requests</title>",
+        "Too Many Requests",
+        "Rate limit exceeded",
+        "Our systems have detected unusual traffic",
+        "We detected a translation service and are reloading",
+        '<script src="/cdn-cgi/challenge-platform/h/b/orchestrate"></script>',
+        '<div id="cf-challenge-running">',
+        '<div id="px-captcha">',
+        "_pxhd=abc123",
     ],
 )
 def test_each_bot_pattern_is_detected(snippet):
@@ -45,7 +60,7 @@ def test_each_bot_pattern_is_detected(snippet):
 
 def test_patterns_list_is_covered_by_parametrization():
     # Guard: if a new pattern is added, the parametrized test above must grow.
-    assert len(BOT_DETECTION_PATTERNS) == 10
+    assert len(BOT_DETECTION_PATTERNS) == 19
 
 
 def test_html_to_text_strips_scripts_styles_and_tags():
@@ -55,3 +70,30 @@ def test_html_to_text_strips_scripts_styles_and_tags():
         "<body><p>Hello   world</p></body></html>"
     )
     assert html_to_text(html) == "Hello world"
+
+
+# --- looks_like_real_content -----------------------------------------
+
+
+def test_big_real_page_is_real_content():
+    assert looks_like_real_content(BIG_REAL_PAGE) is True
+
+
+def test_bot_blocked_page_is_not_real_content():
+    # Recognized bot page fails regardless of size.
+    big_bot_page = "Too Many Requests" + ("x" * 20000)
+    assert looks_like_real_content(big_bot_page) is False
+
+
+def test_short_page_is_not_real_content():
+    # A throttle/error stub below the floor is rejected even with no
+    # recognizable bot text (the B&H ~7-8 KB throttle-page case).
+    stub = "<html><body>" + ("x" * 7700) + "</body></html>"
+    assert len(stub) < MIN_REAL_CONTENT_BYTES
+    assert looks_like_real_content(stub) is False
+
+
+def test_min_bytes_threshold_is_configurable():
+    page = "<html>" + ("x" * 2000) + "</html>"
+    assert looks_like_real_content(page, min_bytes=10_000) is False
+    assert looks_like_real_content(page, min_bytes=1_000) is True
