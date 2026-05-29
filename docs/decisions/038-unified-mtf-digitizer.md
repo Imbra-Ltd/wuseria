@@ -90,12 +90,14 @@ chart PNG (docs/optical-specs/<slug>/)
   -> skeletonize (Zhang-Suen)
   -> connected-components split S/M by fragment width (the same-color case)
   -> read curve value at the 11 fixed sample points (interpolated)
-  -> confidence score (slope jitter, gap jumps, missing points)
+  -> re-render readings to a curve layer, pixel-compare against the original
+     (round-trip render-match) + physical-plausibility priors -> confidence
        |
        +-- low confidence -> [optional] Real-ESRGAN super-resolution + CLAHE,
        |                      re-extract once
        v
   -> emit SVG (display + provenance) + readings + 3-panel review file
+  -> append a confidence line to the run log (high / low + reason)
 ```
 
 Three sound parts of the current tool are kept:
@@ -144,20 +146,93 @@ The overlay is registered using the same axis/grid anchors the extraction
 detected, so it is deterministic — no hand-tuned calibration, unlike the old
 `mtf-overlay.html`.
 
-A computed **slope-value correlation** per curve (numeric derivative of
-traced vs. original at the 11 points) scores shape agreement and drives
-auto-triage: low correlation flags a lens for scrutiny.
+#### Confidence signal: round-trip render-match + plausibility priors
 
-The maintainer reviews lens by lens and gives feedback in conversation; the
-agent adjusts the extraction (profile tuning, mask range, sample handling)
-and regenerates. There is no node-dragging editor.
+The goal is **high-confidence automation with bounded manual work**: most
+charts auto-commit, and the maintainer's attention goes only to the ones the
+tool is unsure about. That requires a confidence signal that catches the
+_confident-wrong_ failures, not just visibly-jagged tracing.
 
-**The correctness bar is derivative/shape agreement at the 11 points.** A
-uniform vertical offset within a tolerance band is acceptable. That band is
-left as an **open parameter**: it is set once a small set of charts has been
-visually confirmed correct. It cannot be derived from the existing
-`mtf-readings.ts` data, because that data is itself unverified — the verify
-pass _found_ two wrong entries in it.
+The **primary signal is round-trip render-match**. The extracted readings are
+re-rendered to a curve layer and pixel-compared against the original chart
+region; high pixel agreement means the whole pipeline output (shape _and_
+calibration) reproduces the original.
+
+```
+original chart --> [extract] --> readings --> [re-render curve layer]
+       |                                              |
+       +------------------> pixel-compare <-----------+
+                                  |
+                          match score (0-1)
+```
+
+This is deliberately stronger than a curve-smoothness score (the kind that
+measures slope jitter or gap jumps). A smoothness score only catches
+_extraction_ failures — a line that was hard to follow. It misses the two
+failure classes that produce smooth, plausible, **wrong** output:
+
+- **Calibration errors** — a wrong grid-step guess traces the curve
+  perfectly but places it at the wrong image-height. Round-trip render
+  catches this: a wrong x-scale lands the re-rendered curve in the wrong
+  place, so pixels disagree.
+- **Soft-chart curve merges** — a single curve re-rendered where the original
+  shows two distinct lines leaves the second line unmatched, dropping the
+  score.
+
+Round-trip render-match has **one blind spot**: legend/label semantics. If the
+tool swaps "10 lp/mm S" with "30 lp/mm M" but traces both curves correctly,
+the re-rendered image is pixel-identical to the original while the data is
+internally mislabeled (the caption-swap case some brand pages exhibit). Pixel
+comparison cannot see this.
+
+To cover that blind spot, **physical-plausibility priors** run as a cheap
+semantic guard (no external data needed). A chart fails the guard if it
+violates hard optical facts:
+
+- center MTF is not >= edge MTF;
+- 10 lp/mm is not >= 30 lp/mm at every point (swapping the bands inverts
+  this — a reliable tell);
+- values fall outside a plausible range.
+
+**A chart is high-confidence only when render-match clears its threshold AND
+the plausibility priors hold.** Anything else is flagged low-confidence.
+
+#### Workflow: confidence log + chat summary
+
+Every run appends a confidence line per chart to a log. The maintainer asks
+for a summary in chat and works only the low-confidence entries:
+
+```
+MTF digitization run -- 31 charts
+  HIGH confidence (auto-committed): 24
+  LOW confidence (needs review):     7
+    - samyang-300mm-reflex   : render-match 0.61  (grid-step ambiguous)
+    - 7artisans-35mm-f1-2-ii : plausibility FAIL  (10<30 at edge -- bands swapped?)
+    - meike-25mm-f0-95       : render-match 0.72  (dashed line merged -- soft JPEG)
+    ...
+```
+
+For a flagged chart the maintainer opens its 3-panel review file, sees what is
+wrong, and gives feedback in conversation; the agent adjusts the extraction
+(profile tuning, mask range, sample handling) and regenerates. There is no
+node-dragging editor. High-confidence charts are not shown — the point is that
+the maintainer is never asked to eyeball a chart the tool already verified two
+independent ways.
+
+The render-match **threshold needs calibration**, not a blind constant: soft
+JPEGs score lower even when correct, so the threshold must account for input
+quality or every promo chart false-flags. It is tuned against the reference
+set (the first work item), alongside the offset tolerance band.
+
+**What "correct" means** is shape agreement: at each sample point the traced
+curve's slope matches the original's, and a uniform vertical offset within a
+tolerance band is acceptable (the readings are approximate by nature). That is
+the optical definition of correct. Render-match is how the tool _measures_ it
+automatically — a high render-match score is shape agreement observed in
+pixels. The tolerance band is left as an **open parameter**, set against the
+reference set; it cannot be derived from the existing `mtf-readings.ts` data,
+because that data is itself unverified — the verify pass _found_ two wrong
+entries in it.
 
 ### 5. Output artifacts
 
@@ -170,22 +245,28 @@ pass _found_ two wrong entries in it.
 The SVG and the committed numbers carry the same readings — one source of
 truth, no drift between the picture and the data.
 
-Because the SVG is user-visible, **human verification is required before
-commit**: otherwise a digitization error would show on the live site, not
-just in scoring.
+Because the SVG is user-visible, a digitization error would show on the live
+site, not just in scoring — so commit is **gated on confidence, not on a
+manual pass for every chart**. High-confidence charts (render-match clears its
+threshold AND plausibility priors hold) commit automatically; low-confidence
+charts are held for the maintainer's review before commit. The confidence
+signal is the gate, which is why it must catch the confident-wrong cases, not
+just jagged tracing.
 
 ## Alternatives considered
 
-| Alternative                                  | Why rejected                                                                                                                                                                                                            |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Per-brand scraper scripts (#563)             | Multiplies the two-brand problem into ~24 bespoke scripts with no shared adaptation. Superseded by this ADR.                                                                                                            |
-| Auto-detect profile (no declaration)         | Mis-profiling is the exact silent-corruption failure B1 fixed. Declaration keeps the authority explicit (project value: explicit over implicit).                                                                        |
-| K-means color clustering to isolate lines    | Cannot separate two same-colored curves (the Chinese-brand case). Only the connected-components-by-width split can.                                                                                                     |
-| Raster-to-SVG vectorization (Potrace)        | Soft promo charts vectorize into hundreds of tiny path fragments; reconnecting them is the dash-bridging problem made harder, with color information thrown away. Generate the SVG from extracted numbers instead.      |
-| Super-resolution as a mandatory first stage  | The real failure modes are occlusion and dashed-line classification, which SR doesn't fix; SR helps only soft charts. Making it a low-confidence fallback keeps PyTorch (~2GB+, GPU) out of the default install and CI. |
-| Node-dragging correction UI                  | The largest build in the original sketch. The maintainer wants conversational per-lens feedback, not coordinate editing — a generated 3-panel review file plus chat feedback achieves the goal with no UI framework.    |
-| Absolute max-delta correctness bar           | False precision for approximate readings: a uniform offset is optically meaningless, while a wrong slope is not. Shape (derivative) agreement is the meaningful bar.                                                    |
-| Variable grid-locked sampling (keep current) | Sample counts vary by chart (5-8 points), are not cross-comparable, and complicate a uniform SVG/DB schema. Fixed 11-point percent-of-height sampling is uniform.                                                       |
+| Alternative                                                  | Why rejected                                                                                                                                                                                                                                                           |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Per-brand scraper scripts (#563)                             | Multiplies the two-brand problem into ~24 bespoke scripts with no shared adaptation. Superseded by this ADR.                                                                                                                                                           |
+| Auto-detect profile (no declaration)                         | Mis-profiling is the exact silent-corruption failure B1 fixed. Declaration keeps the authority explicit (project value: explicit over implicit).                                                                                                                       |
+| K-means color clustering to isolate lines                    | Cannot separate two same-colored curves (the Chinese-brand case). Only the connected-components-by-width split can.                                                                                                                                                    |
+| Raster-to-SVG vectorization (Potrace)                        | Soft promo charts vectorize into hundreds of tiny path fragments; reconnecting them is the dash-bridging problem made harder, with color information thrown away. Generate the SVG from extracted numbers instead.                                                     |
+| Super-resolution as a mandatory first stage                  | The real failure modes are occlusion and dashed-line classification, which SR doesn't fix; SR helps only soft charts. Making it a low-confidence fallback keeps PyTorch (~2GB+, GPU) out of the default install and CI.                                                |
+| Node-dragging correction UI                                  | The largest build in the original sketch. The maintainer wants conversational per-lens feedback, not coordinate editing — a generated 3-panel review file plus chat feedback achieves the goal with no UI framework.                                                   |
+| Absolute max-delta correctness bar                           | False precision for approximate readings: a uniform offset is optically meaningless, while a wrong slope is not. Shape (derivative) agreement is the meaningful bar.                                                                                                   |
+| Curve-smoothness confidence score (slope jitter / gap jumps) | Only catches extraction failures (hard-to-follow lines). Misses the confident-wrong cases — wrong calibration and soft-chart curve merges trace smoothly but are wrong. Round-trip render-match catches those by comparing the whole output to the original in pixels. |
+| Render-match alone as the confidence signal                  | Pixel comparison cannot see legend/label semantics: a chart with swapped S/M or 10/30 labels re-renders pixel-identical. Pair render-match with physical-plausibility priors to guard the semantic blind spot.                                                         |
+| Variable grid-locked sampling (keep current)                 | Sample counts vary by chart (5-8 points), are not cross-comparable, and complicate a uniform SVG/DB schema. Fixed 11-point percent-of-height sampling is uniform.                                                                                                      |
 
 ## Consequences
 
@@ -203,10 +284,11 @@ architectural step this ADR authorizes.
 never a default or CI dependency. The pipeline runs without them and flags
 charts that would need them.
 
-**Reference set comes first.** The offset tolerance band stays unspecified
-until a confirmed reference set exists. Building that set (a handful of
-visually-verified charts) is the first work item, ahead of the profile
-abstraction.
+**Reference set comes first.** Both the render-match threshold and the offset
+tolerance band stay unspecified until a confirmed reference set exists.
+Building that set (a handful of visually-verified charts) is the first work
+item, ahead of the profile abstraction — nothing in the confidence gate can be
+calibrated without it.
 
 **Lens pages improve.** Pages gain SVG MTF charts (sharper, themeable) in
 place of raster PNGs, once a lens is digitized and verified.
@@ -216,7 +298,14 @@ values stored for newly digitized lenses, relative to the five grid variants
 in the current data. Existing entries are re-digitized onto the new grid as
 they are reprocessed — not migrated blindly.
 
-**Workflow trade-off.** Per-lens conversational verification has zero UI
-build cost, but correction throughput is gated by the review cadence. That is
-acceptable for an agent-assisted catalog; it would not suit an independent
-contributor digitizing solo.
+**Bounded manual work.** High-confidence charts auto-commit; the maintainer
+reviews only the low-confidence ones, surfaced as a chat summary from the run
+log. This is high automation, not literally zero-touch — calibration and
+legend semantics cannot be self-verified from pixels for every chart, so the
+honest target is "auto-commit what two independent checks agree on, flag the
+rest," never "trust a single smoothness score and commit blind."
+
+**Workflow trade-off.** Conversational correction of flagged charts has zero
+UI build cost, but throughput on the low-confidence tail is gated by the review
+cadence. That is acceptable for an agent-assisted catalog; it would not suit an
+independent contributor digitizing solo.
