@@ -173,29 +173,44 @@ failure classes that produce smooth, plausible, **wrong** output:
 
 - **Calibration errors** — a wrong grid-step guess traces the curve
   perfectly but places it at the wrong image-height. Round-trip render
-  catches this: a wrong x-scale lands the re-rendered curve in the wrong
-  place, so pixels disagree.
+  catches this _when the curve has structure on the mis-scaled axis_: a wrong
+  x-scale lands a sloped curve in the wrong place, so pixels disagree.
 - **Soft-chart curve merges** — a single curve re-rendered where the original
   shows two distinct lines leaves the second line unmatched, dropping the
   score.
 
-Round-trip render-match has **one blind spot**: legend/label semantics. If the
-tool swaps "10 lp/mm S" with "30 lp/mm M" but traces both curves correctly,
-the re-rendered image is pixel-identical to the original while the data is
-internally mislabeled (the caption-swap case some brand pages exhibit). Pixel
-comparison cannot see this.
+Round-trip render-match has **two blind spots**, both confirmed by a
+de-risking probe on six representative charts.
 
-To cover that blind spot, **physical-plausibility priors** run as a cheap
+1. **Legend/label semantics.** If the tool swaps "10 lp/mm S" with "30 lp/mm
+   M" but traces both curves correctly, the re-rendered image is
+   pixel-identical to the original while the data is internally mislabeled
+   (the caption-swap case some brand pages exhibit). Pixel comparison cannot
+   see this.
+2. **Translation along a flat axis.** Render-match is translation-invariant
+   where the curve is flat. The probe shifted a flat chart's curves 8%
+   horizontally and render-match barely moved (IoU 0.86 -> 0.69), whereas a
+   sloped chart collapsed (0.83 -> 0.08). So a horizontal mis-calibration on a
+   horizontally-flat curve — exactly the idealized-flat charts like the
+   300mm reflex — slips through. (A vertical shift still collapses it to 0.00;
+   only the flat axis is blind.)
+
+To cover both blind spots, **physical-plausibility priors** run as a cheap
 semantic guard (no external data needed). A chart fails the guard if it
 violates hard optical facts:
 
 - center MTF is not >= edge MTF;
 - 10 lp/mm is not >= 30 lp/mm at every point (swapping the bands inverts
   this — a reliable tell);
+- a curve is suspiciously flat across the whole field at ~1.0 (no real lens
+  holds near-perfect MTF to the edge — this is the idealized/placeholder
+  chart, and the precise case render-match's flat-axis blind spot misses);
 - values fall outside a plausible range.
 
 **A chart is high-confidence only when render-match clears its threshold AND
-the plausibility priors hold.** Anything else is flagged low-confidence.
+the plausibility priors hold.** Anything else is flagged low-confidence. The
+probe confirmed this two-signal design is necessary, not redundant: neither
+signal alone is sufficient, but each covers the other's blind spots.
 
 #### Workflow: confidence log + chat summary
 
@@ -289,6 +304,13 @@ tolerance band stay unspecified until a confirmed reference set exists.
 Building that set (a handful of visually-verified charts) is the first work
 item, ahead of the profile abstraction — nothing in the confidence gate can be
 calibrated without it.
+
+**Confidence design validated by probe.** A de-risking probe on six
+representative charts (clean Sigma, mid Samyang, the flat 300mm reflex, small
+7Artisans) confirmed render-match separates good extractions (IoU 0.64-0.87)
+from mis-calibrated ones (IoU drops to 0.03-0.49 on sloped curves), and
+characterized its flat-axis blind spot — which the plausibility priors cover.
+The two-signal gate is empirically necessary, not belt-and-suspenders.
 
 **Lens pages improve.** Pages gain SVG MTF charts (sharper, themeable) in
 place of raster PNGs, once a lens is digitized and verified.
