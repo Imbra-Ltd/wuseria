@@ -141,3 +141,14 @@ def test_successful_fetch_is_written_to_cache(fetcher, monkeypatch, cache):
     _stub_tiers(fetcher, monkeypatch, urllib_result="fresh")
     fetcher.fetch("https://x.test", FetchOptions(use_cache=True))
     assert cache.read("https://x.test", ContentMode.TEXT) == "fresh"
+
+
+def test_poisoned_cache_is_ignored_and_refetched(fetcher, monkeypatch, cache):
+    # A pre-existing cached body that is recognizably a bot/throttle page
+    # must NOT be served — the fetch should re-run the tiers (#881).
+    cache.write("https://x.test", ContentMode.TEXT, "Too Many Requests")
+    calls = _stub_tiers(fetcher, monkeypatch, urllib_result="real content now")
+    result = fetcher.fetch("https://x.test", FetchOptions(use_cache=True))
+    assert calls == ["urllib"]  # cache was bypassed, real fetch ran
+    assert result.tier_used == "urllib"
+    assert result.content == "real content now"

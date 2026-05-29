@@ -18,7 +18,13 @@ be extracted into a standalone repository / git submodule.
 """
 
 from .cache import FileCache
-from .detection import BOT_DETECTION_PATTERNS, html_to_text, is_bot_blocked
+from .detection import (
+    BOT_DETECTION_PATTERNS,
+    MIN_REAL_CONTENT_BYTES,
+    html_to_text,
+    is_bot_blocked,
+    looks_like_real_content,
+)
 from .fake import FakeFetcher
 from .network import DEFAULT_USER_AGENT, NetworkFetcher
 from .source import (
@@ -39,7 +45,9 @@ __all__ = [
     "ContentMode",
     "Transport",
     "is_bot_blocked",
+    "looks_like_real_content",
     "html_to_text",
     "BOT_DETECTION_PATTERNS",
+    "MIN_REAL_CONTENT_BYTES",
     "DEFAULT_USER_AGENT",
 ]
