@@ -17,13 +17,14 @@ This package has no dependency on any consuming project — it is built to
 be extracted into a standalone repository / git submodule.
 """
 
-from .cache import FileCache
+from .cache import CleanReport, FileCache
 from .detection import (
     BOT_DETECTION_PATTERNS,
     ERROR_PAGE_PATTERNS,
     MIN_REAL_CONTENT_BYTES,
     html_to_text,
     is_bot_blocked,
+    is_cacheable_junk,
     is_error_page,
     looks_like_real_content,
 )
@@ -42,12 +43,14 @@ __all__ = [
     "NetworkFetcher",
     "FakeFetcher",
     "FileCache",
+    "CleanReport",
     "FetchOptions",
     "FetchResult",
     "ContentMode",
     "Transport",
     "is_bot_blocked",
     "is_error_page",
+    "is_cacheable_junk",
     "looks_like_real_content",
     "html_to_text",
     "BOT_DETECTION_PATTERNS",

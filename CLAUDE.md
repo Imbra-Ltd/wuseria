@@ -94,7 +94,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Use `py -m pagefetch <url>` (run from `tools/`) for all web page fetching — never WebFetch or Fetch tools
 - WebFetch/Fetch truncates large pages through a small model, silently losing data
 - `pagefetch` auto-escalates: urllib (~1s) → Playwright (~5-9s) → Nodriver (~6-8s) → SeleniumBase UC (~18-24s)
-- Flags: `--html` (raw HTML), `--js` (force Playwright), `--nodriver` (force headed Chrome), `--uc` (force UC), `--batch urls.txt` (persistent browser session), `--no-cache` (bypass cache)
+- Flags: `--html` (raw HTML), `--js` (force Playwright), `--nodriver` (force headed Chrome), `--uc` (force UC), `--batch urls.txt` (persistent browser session), `--no-cache` (bypass cache), `--clean-cache` (sweep bot/404 junk from the cache; add `--dry-run` to preview)
 - For bot-protected sites, auto mode skips Playwright and goes straight to Nodriver (headed Chrome, no driver binary)
 - Use DuckDuckGo HTML search (`html.duckduckgo.com/html/?q=...`) when Google/Bing block with CAPTCHAs — works with urllib (~1s)
 - This applies to both the main agent and all subagents — when spawning research agents, instruct them to use `py -m pagefetch`, not WebFetch

@@ -2,7 +2,12 @@
 
 import pytest
 
-from pagefetch import is_bot_blocked, is_error_page, looks_like_real_content
+from pagefetch import (
+    is_bot_blocked,
+    is_cacheable_junk,
+    is_error_page,
+    looks_like_real_content,
+)
 from pagefetch.detection import (
     BOT_DETECTION_PATTERNS,
     ERROR_PAGE_PATTERNS,
@@ -134,3 +139,18 @@ def test_error_page_even_when_large_is_not_real_content():
     assert len(soft_404) >= MIN_REAL_CONTENT_BYTES
     assert is_error_page(soft_404) is True
     assert looks_like_real_content(soft_404) is False
+
+
+# --- is_cacheable_junk -----------------------------------------------
+
+
+def test_real_page_is_not_cacheable_junk():
+    assert is_cacheable_junk(BIG_REAL_PAGE) is False
+
+
+def test_bot_page_is_cacheable_junk():
+    assert is_cacheable_junk("<body>Too Many Requests</body>") is True
+
+
+def test_error_page_is_cacheable_junk():
+    assert is_cacheable_junk("<title>404 Not Found</title>") is True

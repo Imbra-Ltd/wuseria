@@ -105,6 +105,17 @@ def is_error_page(html: str) -> bool:
     return False
 
 
+def is_cacheable_junk(html: str) -> bool:
+    """Return True if a body should never be served from cache.
+
+    A bot/throttle page or a 404/gone error page is junk: it must not be
+    re-served, and it can be swept from the cache. This is the single
+    definition of "junk" shared by the read-time scrub and the cleanup
+    sweep — keep them in lock-step here, not duplicated at the call sites.
+    """
+    return is_bot_blocked(html) or is_error_page(html)
+
+
 def html_to_text(html: str) -> str:
     """Strip script/style/tags and collapse whitespace to plain text."""
     text = re.sub(r"<script[^>]*>.*?</script>", "", html, flags=re.DOTALL | re.IGNORECASE)
