@@ -2,9 +2,10 @@
 
 import pytest
 
-from pagefetch import is_bot_blocked, looks_like_real_content
+from pagefetch import is_bot_blocked, is_error_page, looks_like_real_content
 from pagefetch.detection import (
     BOT_DETECTION_PATTERNS,
+    ERROR_PAGE_PATTERNS,
     MIN_REAL_CONTENT_BYTES,
     html_to_text,
 )
@@ -97,3 +98,39 @@ def test_min_bytes_threshold_is_configurable():
     page = "<html>" + ("x" * 2000) + "</html>"
     assert looks_like_real_content(page, min_bytes=10_000) is False
     assert looks_like_real_content(page, min_bytes=1_000) is True
+
+
+def test_big_real_page_is_not_an_error_page():
+    assert is_error_page(BIG_REAL_PAGE) is False
+
+
+@pytest.mark.parametrize(
+    "snippet",
+    [
+        "<title>404 Not Found</title>",
+        "<title>Page Not Found</title>",
+        "<title>410 Gone</title>",
+        "<h1>404 error</h1>",
+        "<p>Page Not Found</p>",
+        "The page you requested could not be found",
+        "This product is no longer available",
+        "This item is no longer available for purchase",
+        "This model has been discontinued",
+    ],
+)
+def test_each_error_pattern_is_detected(snippet):
+    html = f"<html><body>{snippet}</body></html>"
+    assert is_error_page(html) is True
+
+
+def test_error_patterns_list_is_covered_by_parametrization():
+    # Guard: if a new error pattern is added, the parametrized test must grow.
+    assert len(ERROR_PAGE_PATTERNS) == 9
+
+
+def test_error_page_even_when_large_is_not_real_content():
+    # A soft-404 served as a big HTTP-200 page is still not real content.
+    soft_404 = "<title>Page Not Found</title>" + ("filler " * 5000)
+    assert len(soft_404) >= MIN_REAL_CONTENT_BYTES
+    assert is_error_page(soft_404) is True
+    assert looks_like_real_content(soft_404) is False

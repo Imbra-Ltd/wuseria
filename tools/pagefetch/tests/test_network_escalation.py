@@ -8,7 +8,7 @@ scenario — this is the core escalation contract.
 import pytest
 
 from pagefetch import ContentMode, FetchOptions, NetworkFetcher, Transport
-from pagefetch.network import _BOT_BLOCKED
+from pagefetch.network import _BOT_BLOCKED, _ERROR_PAGE
 
 
 @pytest.fixture
@@ -152,3 +152,30 @@ def test_poisoned_cache_is_ignored_and_refetched(fetcher, monkeypatch, cache):
     assert calls == ["urllib"]  # cache was bypassed, real fetch ran
     assert result.tier_used == "urllib"
     assert result.content == "real content now"
+
+
+def test_error_page_is_terminal_and_does_not_escalate(fetcher, monkeypatch):
+    # A 404/gone page is terminal: no Playwright/Nodriver/UC (same error),
+    # no content. Only urllib runs.
+    calls = _stub_tiers(fetcher, monkeypatch, urllib_result=_ERROR_PAGE)
+    result = fetcher.fetch("https://x.test", FetchOptions(use_cache=False))
+    assert calls == ["urllib"]
+    assert result.ok is False
+    assert result.tier_used == "none"
+    assert result.content == ""
+
+
+def test_error_page_is_not_cached(fetcher, monkeypatch, cache):
+    _stub_tiers(fetcher, monkeypatch, urllib_result=_ERROR_PAGE)
+    fetcher.fetch("https://x.test", FetchOptions(use_cache=True))
+    assert cache.read("https://x.test", ContentMode.TEXT) is None
+
+
+def test_cached_error_page_self_heals(fetcher, monkeypatch, cache):
+    # A cached 404 body (e.g. product discontinued after caching) is ignored
+    # and re-fetched rather than re-served.
+    cache.write("https://x.test", ContentMode.TEXT, "<title>404 Not Found</title>")
+    calls = _stub_tiers(fetcher, monkeypatch, urllib_result="back online")
+    result = fetcher.fetch("https://x.test", FetchOptions(use_cache=True))
+    assert calls == ["urllib"]
+    assert result.content == "back online"

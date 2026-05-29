@@ -41,6 +41,23 @@ BOT_DETECTION_PATTERNS = [
 # (e.g. the B&H ~7-8 KB page that carries no spec table) fall under it.
 MIN_REAL_CONTENT_BYTES = 10_000
 
+# Patterns that indicate a "not found" / gone error page. These catch both
+# hard 404s (HTTP 404 body) and soft-404s — a discontinued product served
+# with HTTP 200 but a "no longer available" / "page not found" body. A
+# discontinued lens's page often becomes one of these, so detecting them on
+# read lets a stale cache self-heal (the product status really changed).
+ERROR_PAGE_PATTERNS = [
+    r"<title>\s*404\b",
+    r"<title>[^<]*\b(?:Page )?Not Found\b",
+    r"<title>\s*410\b",
+    r"\b404\b[^<]{0,40}\b(?:Not Found|error)\b",
+    r"Page Not Found",
+    r"page (?:you (?:requested|are looking for)|could not be found)",
+    r"This product is no longer available",
+    r"no longer available",
+    r"has been discontinued",
+]
+
 
 def is_bot_blocked(html: str) -> bool:
     """Return True if the response HTML looks like a bot-detection page."""
@@ -67,9 +84,25 @@ def looks_like_real_content(html: str, min_bytes: int = MIN_REAL_CONTENT_BYTES) 
     throttle/challenge pages that slip past the pattern list because they
     carry no recognizable bot-detection text.
     """
-    if is_bot_blocked(html):
+    if is_bot_blocked(html) or is_error_page(html):
         return False
     return len(html) >= min_bytes
+
+
+def is_error_page(html: str) -> bool:
+    """Return True if the response looks like a 404 / gone error page.
+
+    Covers hard 404s and soft-404s (HTTP 200 with a "not found" / "no longer
+    available" body). Used to keep error pages out of the cache and to scrub
+    a previously-cached error body so it self-heals on the next fetch.
+    """
+    text = re.sub(r"<[^>]+>", " ", html[:20000])
+    for pattern in ERROR_PAGE_PATTERNS:
+        if re.search(pattern, html[:5000], re.IGNORECASE):
+            return True
+        if re.search(pattern, text, re.IGNORECASE):
+            return True
+    return False
 
 
 def html_to_text(html: str) -> str:

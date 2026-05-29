@@ -21,7 +21,12 @@ from pathlib import Path
 
 from .cache import FileCache
 from .chrome import ChromeReaper
-from .detection import html_to_text, is_bot_blocked, looks_like_real_content
+from .detection import (
+    html_to_text,
+    is_bot_blocked,
+    is_error_page,
+    looks_like_real_content,
+)
 from .source import (
     ContentMode,
     FetchOptions,
@@ -38,6 +43,9 @@ DEFAULT_USER_AGENT = (
 
 # Sentinel: urllib detected bot protection (skip Playwright, go to Nodriver/UC).
 _BOT_BLOCKED = "@@BOT_BLOCKED@@"
+# Sentinel: response is a 404 / gone error page. Terminal — do not escalate
+# (every tier returns the same error) and do not cache.
+_ERROR_PAGE = "@@ERROR_PAGE@@"
 
 
 def _scroll_page_js() -> str:
@@ -122,8 +130,8 @@ class NetworkFetcher(PageSource):
     # --- tier 1: urllib ----------------------------------------------
 
     def _fetch_urllib(self, url: str, mode: ContentMode) -> str | None:
-        """Fetch via plain urllib. Returns content, the _BOT_BLOCKED
-        sentinel, or None."""
+        """Fetch via plain urllib. Returns content, the _BOT_BLOCKED /
+        _ERROR_PAGE sentinel, or None."""
         import urllib.error
         import urllib.request
 
@@ -132,11 +140,20 @@ class NetworkFetcher(PageSource):
             with urllib.request.urlopen(req, timeout=30) as resp:
                 html = resp.read().decode("utf-8", errors="replace")
         except urllib.error.HTTPError as e:
+            # Non-200: never cached. A hard 404/410 is terminal (escalation
+            # would hit the same error); other codes fall through to escalate.
             print(f"[urllib] HTTP {e.code}", file=sys.stderr)
-            return None
+            return _ERROR_PAGE if e.code in (404, 410) else None
         except Exception as e:
             print(f"[urllib] {e}", file=sys.stderr)
             return None
+
+        # A 404/gone body (incl. soft-404 served as HTTP 200) is terminal:
+        # don't cache, don't escalate — the product page is genuinely gone.
+        # Checked before the size/bot gate because error pages are also short.
+        if is_error_page(html):
+            print("[urllib] 404 / gone error page", file=sys.stderr)
+            return _ERROR_PAGE
 
         # Treat bot-blocks AND implausibly short throttle/error stubs the
         # same: signal escalation rather than accept (and later cache) junk.
@@ -395,12 +412,13 @@ class NetworkFetcher(PageSource):
 
         if opts.use_cache:
             cached = self._cache.read(url, mode)
-            # Defend against pre-existing poisoned cache: a cached body that
-            # is recognizably a bot/throttle page is ignored and re-fetched.
-            # Only the pattern check applies here (not the size threshold) —
-            # cached TEXT-mode content of a real page can legitimately be
-            # short after tag stripping.
-            if cached is not None and not is_bot_blocked(cached):
+            # Defend against a poisoned cache: a cached body that is
+            # recognizably a bot/throttle page OR a 404/gone error page is
+            # ignored and re-fetched, so a cache written before these guards
+            # (or before a product was discontinued) self-heals. Only the
+            # pattern checks apply here, not the size threshold — cached
+            # TEXT-mode content of a real page can legitimately be short.
+            if cached is not None and not is_bot_blocked(cached) and not is_error_page(cached):
                 return cached, "cache"
 
         content, tier = self._escalate(url, opts, sb_session)
@@ -429,8 +447,13 @@ class NetworkFetcher(PageSource):
 
         # AUTO: urllib first, then escalate.
         result = self._fetch_urllib(url, mode)
-        if result and result != _BOT_BLOCKED:
+        if result and result not in (_BOT_BLOCKED, _ERROR_PAGE):
             return result, "urllib"
+
+        if result == _ERROR_PAGE:
+            # Genuine 404/gone: terminal. No escalation (same error), no cache.
+            print("[auto] 404 / gone — not escalating", file=sys.stderr)
+            return "", "none"
 
         if result == _BOT_BLOCKED:
             # Bot protection: skip Playwright (it would fail too).
