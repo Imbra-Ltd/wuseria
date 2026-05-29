@@ -190,8 +190,14 @@ genres (once genre formulas are implemented).
 **Fetch a web page (four-tier auto-escalation):**
 
 Run from the `tools/` directory so `python -m pagefetch` resolves the package.
+Set `PAGEFETCH_CACHE_DIR` so the bare CLI shares the one project cache
+(`.cache/fetch`) the brand tools use — otherwise the CLI's default creates a
+separate `tools/.cache/pagefetch`. The brand tools set this automatically (on
+`import brandkit`); for the bare CLI, export it:
 
 ```bash
+export PAGEFETCH_CACHE_DIR="$(git rev-parse --show-toplevel)/.cache/fetch"
+
 py -m pagefetch <url>              # auto mode: urllib → Playwright → Nodriver → UC
 py -m pagefetch <url> --html       # raw HTML output
 py -m pagefetch <url> --js         # force Playwright (JS-rendered pages)
@@ -203,10 +209,14 @@ py -m pagefetch --clean-cache      # purge bot/404 junk entries from the cache
 py -m pagefetch --clean-cache --dry-run   # list junk entries, delete nothing
 ```
 
-Responses are cached in `.cache/fetch/` (me-fuji points the cache there).
-Bot-blocked and 404/gone responses are never cached and self-heal on read;
-`--clean-cache` sweeps any junk that accumulated (ADR-037 — content-based
-validity, no TTL). See `tools/pagefetch/README.md` for the architecture and
+(On Windows PowerShell: `$env:PAGEFETCH_CACHE_DIR = "$(git rev-parse --show-toplevel)/.cache/fetch"`.)
+
+Responses are cached in `.cache/fetch/` (me-fuji points the cache there via
+`PAGEFETCH_CACHE_DIR`; the cache_dir precedence is explicit arg > env var >
+CWD-relative default). Bot-blocked and 404/gone responses are never cached
+and self-heal on read; `--clean-cache` sweeps any junk that accumulated
+(ADR-037 — content-based validity, no TTL). See `tools/pagefetch/README.md`
+for the architecture and
 library API.
 
 **Run the Python tool tests:**

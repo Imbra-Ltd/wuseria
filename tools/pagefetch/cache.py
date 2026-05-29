@@ -12,11 +12,17 @@ cached file.
 """
 
 import hashlib
+import os
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from .source import ContentMode
+
+# A consuming project can point every entry point (CLI included) at one
+# cache directory by setting this env var, without the package hardcoding
+# any project layout. Explicit cache_dir= still wins over it.
+CACHE_DIR_ENV = "PAGEFETCH_CACHE_DIR"
 
 
 @dataclass
@@ -33,8 +39,15 @@ class FileCache:
     """A directory of cached page responses and screenshots."""
 
     def __init__(self, cache_dir: Path | None = None):
-        # Default is portable (CWD-relative), not tied to any project layout.
-        self.cache_dir = cache_dir or (Path.cwd() / ".cache" / "pagefetch")
+        # Precedence: explicit arg > PAGEFETCH_CACHE_DIR env > CWD-relative
+        # default. The default stays portable (not tied to any project
+        # layout); a consumer uses the env var to unify all entry points.
+        if cache_dir is not None:
+            self.cache_dir = cache_dir
+        elif os.environ.get(CACHE_DIR_ENV):
+            self.cache_dir = Path(os.environ[CACHE_DIR_ENV])
+        else:
+            self.cache_dir = Path.cwd() / ".cache" / "pagefetch"
 
     @staticmethod
     def url_hash(url: str) -> str:

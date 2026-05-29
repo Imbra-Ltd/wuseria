@@ -11,8 +11,14 @@ from pagefetch import ContentMode, FileCache
 from pagefetch.__main__ import _classify_junk, main
 
 
-def _seed_default_cache(tmp_path):
-    """Write one good + two junk entries into the CWD-default cache dir."""
+def _seed_default_cache(tmp_path, monkeypatch):
+    """Write one good + two junk entries into the CWD-default cache dir.
+
+    Clears PAGEFETCH_CACHE_DIR and chdirs into tmp_path so the CLI's default
+    FileCache() resolves to this temp cache — not the project cache (which a
+    leaked env var would otherwise point it at)."""
+    monkeypatch.delenv("PAGEFETCH_CACHE_DIR", raising=False)
+    monkeypatch.chdir(tmp_path)
     cache = FileCache(cache_dir=tmp_path / ".cache" / "pagefetch")
     cache.write("https://good.test", ContentMode.HTML, "real lens specs here")
     cache.write("https://gone.test", ContentMode.HTML, "<title>404 Not Found</title>")
@@ -27,8 +33,7 @@ def test_classify_junk_labels():
 
 
 def test_clean_cache_removes_only_junk(tmp_path, monkeypatch):
-    cache = _seed_default_cache(tmp_path)
-    monkeypatch.chdir(tmp_path)
+    cache = _seed_default_cache(tmp_path, monkeypatch)
     monkeypatch.setattr("sys.argv", ["pagefetch", "--clean-cache"])
 
     main()
@@ -39,8 +44,7 @@ def test_clean_cache_removes_only_junk(tmp_path, monkeypatch):
 
 
 def test_clean_cache_dry_run_keeps_everything(tmp_path, monkeypatch, capsys):
-    cache = _seed_default_cache(tmp_path)
-    monkeypatch.chdir(tmp_path)
+    cache = _seed_default_cache(tmp_path, monkeypatch)
     monkeypatch.setattr("sys.argv", ["pagefetch", "--clean-cache", "--dry-run"])
 
     main()
