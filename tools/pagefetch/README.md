@@ -166,12 +166,33 @@ from pagefetch import NetworkFetcher, FileCache
 fetcher = NetworkFetcher(cache=FileCache(cache_dir=Path("/my/cache")))
 ```
 
-The cache directory resolves in this precedence: an explicit `cache_dir=`
-argument, then the `PAGEFETCH_CACHE_DIR` environment variable, then the
-CWD-relative default `./.cache/pagefetch`. The env var lets a consuming
-project point every entry point — including the bare `py -m pagefetch`
-CLI — at one cache directory without the package hardcoding any project
-layout.
+The cache directory resolves in this precedence (highest wins):
+
+1. **`--cache-dir DIR`** CLI flag — overrides everything for one invocation
+2. **explicit `cache_dir=`** constructor argument (programmatic use)
+3. **`PAGEFETCH_CACHE_DIR`** environment variable
+4. **CWD-relative default** `./.cache/pagefetch`
+
+(The CLI flag and the constructor argument are the same tier — the flag is
+just how the CLI passes the explicit argument.) The env var lets a consuming
+project point every entry point at one cache directory without the package
+hardcoding any project layout.
+
+The resolved directory is **validated at construction**, not at first
+write: a path that is an existing file, or whose nearest existing ancestor
+is missing or read-only, raises a clear `ValueError` naming the source
+(`--cache-dir` / `$PAGEFETCH_CACHE_DIR` / default). The directory itself is
+still created lazily on first write.
+
+**Config scope (deliberate):** `cache_dir` is pagefetch's only configurable
+value, so configuration is intentionally lightweight — an env var plus a CLI
+flag, validated with the standard library. A typed settings object
+(Pydantic) and `.env`-file loading are **not** used: they would add
+dependencies that break the zero-dependency / stdlib-only contract (see
+Dependencies, ADR-035) and are overkill for a single knob. Revisit only if
+the package grows several config values (user-agent, timeouts, tier toggles,
+concurrency), at which point a typed settings object would be introduced
+across all of them.
 
 ## Dependencies
 

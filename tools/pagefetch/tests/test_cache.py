@@ -7,6 +7,8 @@ projects depend on sha256(url)[:16] + suffix. These tests pin it.
 import hashlib
 from pathlib import Path
 
+import pytest
+
 from pagefetch import ContentMode, FileCache
 from pagefetch.cache import CACHE_DIR_ENV
 
@@ -71,6 +73,45 @@ def test_explicit_arg_overrides_env(monkeypatch, tmp_path):
 def test_empty_env_var_falls_back_to_default(monkeypatch):
     monkeypatch.setenv(CACHE_DIR_ENV, "")
     assert FileCache().cache_dir.name == "pagefetch"
+
+
+# --- load-time validation --------------------------------------------
+
+
+def test_valid_nonexistent_dir_under_writable_parent_is_accepted(tmp_path):
+    # The dir need not exist yet — write() creates it lazily. Validation
+    # only requires a usable (writable) existing ancestor.
+    cache = FileCache(cache_dir=tmp_path / "a" / "b" / "c")
+    assert cache.cache_dir == tmp_path / "a" / "b" / "c"
+
+
+def test_cache_dir_pointing_at_a_file_is_rejected(tmp_path):
+    a_file = tmp_path / "not-a-dir.txt"
+    a_file.write_text("x", encoding="utf-8")
+    with pytest.raises(ValueError, match="not a directory"):
+        FileCache(cache_dir=a_file)
+
+
+def test_cache_dir_with_file_ancestor_is_rejected(tmp_path):
+    a_file = tmp_path / "file.txt"
+    a_file.write_text("x", encoding="utf-8")
+    with pytest.raises(ValueError, match="non-directory ancestor"):
+        FileCache(cache_dir=a_file / "sub" / "cache")
+
+
+def test_validation_error_names_the_source(tmp_path, monkeypatch):
+    a_file = tmp_path / "f.txt"
+    a_file.write_text("x", encoding="utf-8")
+    monkeypatch.setenv(CACHE_DIR_ENV, str(a_file))
+    with pytest.raises(ValueError, match=CACHE_DIR_ENV):
+        FileCache()
+
+
+def test_validation_does_not_create_the_dir(tmp_path):
+    target = tmp_path / "lazy" / "cache"
+    FileCache(cache_dir=target)
+    # Construction must not create the cache dir — that stays lazy (write()).
+    assert not target.exists()
 
 
 # --- delete / entries / clean ----------------------------------------

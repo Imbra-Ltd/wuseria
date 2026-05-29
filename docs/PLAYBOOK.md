@@ -204,16 +204,19 @@ py -m pagefetch <url> --js         # force Playwright (JS-rendered pages)
 py -m pagefetch <url> --nodriver   # force Nodriver (headed Chrome, bot bypass)
 py -m pagefetch <url> --uc         # force SeleniumBase UC (headless fallback)
 py -m pagefetch <url> --no-cache   # bypass cache, fetch fresh
+py -m pagefetch <url> --cache-dir DIR   # use a specific cache dir (overrides the env var)
 py -m pagefetch --batch urls.txt --nodriver --output-dir out/  # batch mode
 py -m pagefetch --clean-cache      # purge bot/404 junk entries from the cache
 py -m pagefetch --clean-cache --dry-run   # list junk entries, delete nothing
+py -m pagefetch --clean-cache --cache-dir DIR   # sweep a specific cache dir
 ```
 
 (On Windows PowerShell: `$env:PAGEFETCH_CACHE_DIR = "$(git rev-parse --show-toplevel)/.cache/fetch"`.)
 
 Responses are cached in `.cache/fetch/` (me-fuji points the cache there via
-`PAGEFETCH_CACHE_DIR`; the cache_dir precedence is explicit arg > env var >
-CWD-relative default). Bot-blocked and 404/gone responses are never cached
+`PAGEFETCH_CACHE_DIR`; the cache_dir precedence is `--cache-dir` / explicit
+arg > env var > CWD-relative default, validated at construction). Bot-blocked
+and 404/gone responses are never cached
 and self-heal on read; `--clean-cache` sweeps any junk that accumulated
 (ADR-037 — content-based validity, no TTL). See `tools/pagefetch/README.md`
 for the architecture and
