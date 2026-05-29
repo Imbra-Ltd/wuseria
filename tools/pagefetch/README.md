@@ -112,11 +112,17 @@ walls) or is a short HTML page with a meta-refresh redirect. See
 `detection.py`.
 
 `looks_like_real_content(html, min_bytes=10_000)` is the broader gate: a
-response that is bot-blocked **or implausibly short** (below the size
-floor) is not real content. This catches throttle/error stubs that carry
-no recognizable bot text (e.g. a retailer's ~7-8 KB "slow down" page).
-Such responses are never cached or re-served, and in AUTO mode they
-trigger escalation to a browser tier instead of being accepted as content.
+response that is bot-blocked, a 404/gone error page, **or implausibly
+short** (below the size floor) is not real content. This catches
+throttle/error stubs that carry no recognizable bot text (e.g. a
+retailer's ~7-8 KB "slow down" page). Such responses are never cached or
+re-served, and in AUTO mode a bot-block/short stub triggers escalation to a
+browser tier instead of being accepted as content.
+
+`is_error_page(html)` recognizes 404/410 and soft-404 bodies (a
+discontinued product served as HTTP 200 with a "page not found" / "no
+longer available" body). A genuine 404 is **terminal**: it is not cached
+and does not escalate (every tier returns the same error). See `detection.py`.
 
 ### Event-driven waits (browser tiers)
 
@@ -133,11 +139,16 @@ under the directory passed to `FileCache` (default `./.cache/pagefetch`).
 Text and HTML variants are cached separately. The key scheme is fixed —
 changing it would invalidate existing caches.
 
-Only real content is cached: bot-blocked and implausibly short responses
-are kept out of the cache (see Bot detection). On read, a cached body that
-is recognizably a bot/throttle page is ignored and re-fetched — so a cache
-poisoned before this guard existed self-heals on the next fetch rather than
-re-serving junk until `--no-cache`.
+Only real content is cached: bot-blocked, 404/gone, and implausibly short
+responses are kept out of the cache (see Bot detection). On read, a cached
+body that is recognizably a bot/throttle page **or a 404/gone error page**
+is ignored and re-fetched — so a cache poisoned before this guard existed,
+or one whose product was discontinued after caching, self-heals on the next
+fetch rather than re-serving junk until `--no-cache`.
+
+The cache has **no TTL** — validity is decided by content, not age. Specs
+rarely change; discontinuation surfaces as a 404 (handled above); price
+refreshes are deliberate `--no-cache` passes. See ADR-037.
 
 ```python
 from pathlib import Path
@@ -191,6 +202,10 @@ require headed Chrome and are validated manually.
   challenge runtime) and added a `looks_like_real_content` size floor so
   implausibly short stubs escalate instead of being cached; cached bot/
   throttle bodies are ignored on read and re-fetched.
+- **v8** — 404 / gone handling and cache validity by content (ADR-037): a
+  404/410/soft-404 page is terminal (not cached, no escalation); cached
+  error bodies self-heal on read (handles products discontinued after
+  caching). No TTL — validity is content-based, not time-based.
 
 ### Sites tested
 

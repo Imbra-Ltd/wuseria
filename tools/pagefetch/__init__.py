@@ -20,9 +20,11 @@ be extracted into a standalone repository / git submodule.
 from .cache import FileCache
 from .detection import (
     BOT_DETECTION_PATTERNS,
+    ERROR_PAGE_PATTERNS,
     MIN_REAL_CONTENT_BYTES,
     html_to_text,
     is_bot_blocked,
+    is_error_page,
     looks_like_real_content,
 )
 from .fake import FakeFetcher
@@ -45,9 +47,11 @@ __all__ = [
     "ContentMode",
     "Transport",
     "is_bot_blocked",
+    "is_error_page",
     "looks_like_real_content",
     "html_to_text",
     "BOT_DETECTION_PATTERNS",
+    "ERROR_PAGE_PATTERNS",
     "MIN_REAL_CONTENT_BYTES",
     "DEFAULT_USER_AGENT",
 ]
