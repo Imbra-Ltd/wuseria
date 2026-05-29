@@ -3369,3 +3369,78 @@ Issues created: #923 (task — wire link-check + data validation into the 360),
   config per #926).
 - v0.8.0 (MTF chart digitization, epic #790) remains the next feature theme;
   the cache hardening makes the heavy scraping it needs more reliable.
+
+---
+
+### Session 94 — MTF Tracing Audit, Fixes, and Digitizer Architecture
+
+Theme: get MTF curve tracing right _before_ the bulk digitization push (epic
+#790), then design the tool that replaces it. Started as a verification task,
+ended with the unified-digitizer architecture decided and de-risked. Six PRs,
+all merged.
+
+PRs merged: #931 (tracing fixes), #937 (JPG->PNG), #936 (ADR-038), #938
+(ADR-038 readability + render-match confidence signal), #939 (flatness prior).
+Issues closed: #726 (rescoped + done), #563 (superseded by #932).
+Issues created: #930 (bug — dead Image: links in 19 Samyang analysis.md),
+#932 (epic — unified MTF digitizer), #933/#934/#935 (digitizer foundation
+tasks), solid-ai-templates#342 (upstream — ASCII diagrams in ADRs).
+
+#### Key changes
+
+- **#931 — tracing correctness.** On-paper audit of `mtf-extract-skeleton.py`
+  found four bugs; all fixed with tests. B1: unknown chart families were
+  silently defaulted to the Samyang path — now refused (fail loud), thresholds
+  made size-relative. B2: `interpolate_at` fabricated a neighbor's value across
+  large gaps — now returns `None`. B3: `components_to_curve` used an
+  order-dependent running average + a 5px cap that dropped pixels — now a
+  per-column unweighted mean. B4: legacy `interpolate_missing` manufactured a
+  center astigmatism gap with a magic `0.6+0.4*t` taper — now `M=S` at center.
+  C2: dead `docs/mtf-charts/` paths (removed by ADR-033) repointed to
+  `docs/optical-specs/<slug>/` across the tools, overlay, and PLAYBOOK.
+- **Verify pass.** Re-extracted all 22 stored charts; median per-aperture delta
+  0.023 (tracing sound). Caught two entries with physically-impossible zero
+  readings (300mm reflex, AF 12mm) — old-tool artifacts where an undetected
+  curve was emitted as 0. Fixed both against the actual charts; added a
+  centre-zero guard test (the existing 0-1 range check passed zeros).
+- **#937 — JPG->PNG.** 38 JPG/JPEG optical-spec charts converted to PNG per
+  ADR-031; 18 specs-log local-file refs updated, source-URL refs preserved.
+  All optical-specs images now PNG (590) or SVG (13).
+- **Slug fix.** `samyang-tiltshift-...` reading key vs `samyang-tilt-shift-...`
+  folder — `toSlug` strips the slash, so the folder was unreachable by slug.
+  Renamed folder + files to canonical slug (provenance/tooling fix; live page
+  was unaffected).
+- **ADR-038 (#936, #938, #939) — unified MTF digitizer.** Declared per-brand
+  chart profiles (color x style axes) with advisory auto-suggest that fails
+  loud on mismatch; adaptive HSV-mask -> morphological-close -> skeletonize ->
+  connected-components pipeline reading 11 fixed points at percent of image
+  height; optional Real-ESRGAN fallback on low confidence; SVG output as both
+  display asset and provenance. Confidence = round-trip render-match +
+  physical-plausibility priors. De-risking probe on six charts validated
+  render-match (good IoU 0.64-0.87, mis-calibrated drops to 0.03-0.49) and
+  found its flat-axis blind spot, which the new "not suspiciously flat" prior
+  covers.
+
+#### Key decisions
+
+- **Verify before trusting a bulk pass** — the #906 lesson applied
+  preventively: a single systematic tracing bug corrupts every chart, so the
+  tool was audited and fixed before any multi-brand digitization.
+- **ADR-038** records the digitizer architecture; supersedes the flat
+  `mtf-extract-skeleton.py` and the per-brand-scraper task #563.
+- **Confidence is two independent signals, not one.** Render-match catches
+  calibration/merge errors; plausibility priors guard the legend-semantics and
+  flat-axis blind spots. The probe proved this is necessary, not redundant.
+- **High automation, not literal zero-touch** — calibration and legend
+  semantics can't be self-verified from pixels for every chart; the tool
+  auto-commits what two checks agree on and flags the rest via a chat summary.
+- **ASCII diagrams in ADRs** adopted as a convention (memory saved; flagged
+  upstream as solid-ai-templates#342).
+
+#### Next
+
+- Build epic #932, starting with **#933 (confirmed reference set)** — it
+  calibrates the render-match threshold and the offset tolerance band; nothing
+  downstream can be tuned without it. Then #934 (profiles), #935 (pipeline).
+- Backlog: #930 (Samyang dead Image: links), 34 optical-specs folders with no
+  chart image (need sourcing under #790).
