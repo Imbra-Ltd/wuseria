@@ -17,16 +17,28 @@ Usage:
     py -m pagefetch --batch urls.txt --output-dir out/  # save to files
     py -m pagefetch url1 url2 url3                 # batch from args
     echo url | py -m pagefetch --batch -           # batch from stdin
+
+    py -m pagefetch --clean-cache                  # purge junk cache entries
+    py -m pagefetch --clean-cache --dry-run        # list junk, delete nothing
 """
 
 import sys
 from pathlib import Path
 
+from .detection import is_bot_blocked, is_error_page
 from .network import NetworkFetcher
 from .source import ContentMode, FetchOptions, Transport
 
 _VALUE_FLAGS = {"--wait", "--batch", "--output-dir"}
-_BARE_FLAGS = {"--html", "--no-cache", "--js", "--nodriver", "--uc"}
+_BARE_FLAGS = {
+    "--html",
+    "--no-cache",
+    "--js",
+    "--nodriver",
+    "--uc",
+    "--clean-cache",
+    "--dry-run",
+}
 
 
 def _parse_transport(argv: list[str]) -> Transport:
@@ -77,11 +89,41 @@ def _collect_urls(argv: list[str], batch_file: str | None) -> list[str]:
     return urls
 
 
+def _classify_junk(body: str) -> str | None:
+    """Reason a cached body is junk, or None to keep it. Order matters only
+    for the label — a page that is both is reported as bot-blocked."""
+    if is_bot_blocked(body):
+        return "bot-blocked"
+    if is_error_page(body):
+        return "404/error"
+    return None
+
+
+def _clean_cache(dry_run: bool) -> None:
+    """Sweep the cache of bot-blocked / 404 entries, printing a summary."""
+    from .cache import FileCache
+
+    report = FileCache().clean(_classify_junk, dry_run=dry_run)
+    verb = "would remove" if dry_run else "removed"
+    if report.removed:
+        print(f"{verb} {len(report.removed)} junk entries:", file=sys.stderr)
+        for path, reason in report.removed:
+            print(f"    {path.name}  ({reason})", file=sys.stderr)
+    print(
+        f"{verb} {len(report.removed)} junk entries, kept {report.kept}",
+        file=sys.stderr,
+    )
+
+
 def main() -> None:
     argv = sys.argv
     if len(argv) < 2:
         print(__doc__)
         sys.exit(1)
+
+    if "--clean-cache" in argv:
+        _clean_cache(dry_run="--dry-run" in argv)
+        return
 
     mode = ContentMode.HTML if "--html" in argv else ContentMode.TEXT
     transport = _parse_transport(argv)

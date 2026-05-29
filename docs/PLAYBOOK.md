@@ -199,10 +199,15 @@ py -m pagefetch <url> --nodriver   # force Nodriver (headed Chrome, bot bypass)
 py -m pagefetch <url> --uc         # force SeleniumBase UC (headless fallback)
 py -m pagefetch <url> --no-cache   # bypass cache, fetch fresh
 py -m pagefetch --batch urls.txt --nodriver --output-dir out/  # batch mode
+py -m pagefetch --clean-cache      # purge bot/404 junk entries from the cache
+py -m pagefetch --clean-cache --dry-run   # list junk entries, delete nothing
 ```
 
 Responses are cached in `.cache/fetch/` (me-fuji points the cache there).
-See `tools/pagefetch/README.md` for the architecture and library API.
+Bot-blocked and 404/gone responses are never cached and self-heal on read;
+`--clean-cache` sweeps any junk that accumulated (ADR-037 — content-based
+validity, no TTL). See `tools/pagefetch/README.md` for the architecture and
+library API.
 
 **Run the Python tool tests:**
 

@@ -1,0 +1,54 @@
+"""CLI --clean-cache tests.
+
+Drive `main()` with `--clean-cache` against a temp cache. `_clean_cache`
+uses the default CWD-relative FileCache, so the test chdirs into tmp_path
+and seeds `.cache/pagefetch` there.
+"""
+
+import os
+
+from pagefetch import ContentMode, FileCache
+from pagefetch.__main__ import _classify_junk, main
+
+
+def _seed_default_cache(tmp_path):
+    """Write one good + two junk entries into the CWD-default cache dir."""
+    cache = FileCache(cache_dir=tmp_path / ".cache" / "pagefetch")
+    cache.write("https://good.test", ContentMode.HTML, "real lens specs here")
+    cache.write("https://gone.test", ContentMode.HTML, "<title>404 Not Found</title>")
+    cache.write("https://blocked.test", ContentMode.TEXT, "Too Many Requests")
+    return cache
+
+
+def test_classify_junk_labels():
+    assert _classify_junk("real content") is None
+    assert _classify_junk("Too Many Requests") == "bot-blocked"
+    assert _classify_junk("<title>404 Not Found</title>") == "404/error"
+
+
+def test_clean_cache_removes_only_junk(tmp_path, monkeypatch):
+    cache = _seed_default_cache(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr("sys.argv", ["pagefetch", "--clean-cache"])
+
+    main()
+
+    assert cache.read("https://good.test", ContentMode.HTML) == "real lens specs here"
+    assert cache.read("https://gone.test", ContentMode.HTML) is None
+    assert cache.read("https://blocked.test", ContentMode.TEXT) is None
+
+
+def test_clean_cache_dry_run_keeps_everything(tmp_path, monkeypatch, capsys):
+    cache = _seed_default_cache(tmp_path)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr("sys.argv", ["pagefetch", "--clean-cache", "--dry-run"])
+
+    main()
+
+    # Nothing deleted.
+    assert cache.read("https://gone.test", ContentMode.HTML) is not None
+    assert cache.read("https://blocked.test", ContentMode.TEXT) is not None
+    # Reports what it would do.
+    err = capsys.readouterr().err
+    assert "would remove 2 junk entries" in err
+    assert "kept 1" in err

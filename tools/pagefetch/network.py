@@ -24,6 +24,7 @@ from .chrome import ChromeReaper
 from .detection import (
     html_to_text,
     is_bot_blocked,
+    is_cacheable_junk,
     is_error_page,
     looks_like_real_content,
 )
@@ -412,14 +413,18 @@ class NetworkFetcher(PageSource):
 
         if opts.use_cache:
             cached = self._cache.read(url, mode)
-            # Defend against a poisoned cache: a cached body that is
-            # recognizably a bot/throttle page OR a 404/gone error page is
-            # ignored and re-fetched, so a cache written before these guards
-            # (or before a product was discontinued) self-heals. Only the
-            # pattern checks apply here, not the size threshold — cached
-            # TEXT-mode content of a real page can legitimately be short.
-            if cached is not None and not is_bot_blocked(cached) and not is_error_page(cached):
-                return cached, "cache"
+            if cached is not None:
+                # Defend against a poisoned cache: a cached body that is a
+                # bot/throttle page OR a 404/gone error page is ignored,
+                # deleted, and re-fetched — so a cache written before these
+                # guards (or before a product was discontinued) self-heals
+                # and the dead file does not linger. Only the pattern checks
+                # apply here, not the size threshold — cached TEXT-mode
+                # content of a real page can legitimately be short.
+                if is_cacheable_junk(cached):
+                    self._cache.delete(url, mode)
+                else:
+                    return cached, "cache"
 
         content, tier = self._escalate(url, opts, sb_session)
 
