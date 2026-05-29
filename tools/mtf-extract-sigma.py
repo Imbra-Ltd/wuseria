@@ -4,9 +4,12 @@ Auto-detects plot area, scans wide strips, and uses curve-following gap
 detection to reliably distinguish solid (S) from dashed (M) lines — even
 through crossings.
 
+Charts live per-lens under docs/optical-specs/<slug>/ (ADR-033) as
+mtf-chart.png. Superseded by mtf-extract-skeleton.py.
+
 Usage:
-    py tools/mtf-extract.py docs/mtf-charts/sigma-16mm-f1-4-dc-dn-c.png
-    py tools/mtf-extract.py docs/mtf-charts/sigma-56mm-f1-4-dc-dn-c.png
+    py tools/mtf-extract-sigma.py docs/optical-specs/sigma-16mm-f1-4-dc-dn-c/mtf-chart.png
+    py tools/mtf-extract-sigma.py docs/optical-specs/sigma-56mm-f1-4-dc-dn-c/mtf-chart.png
 """
 
 import sys

@@ -10,10 +10,13 @@ Samyang: 4 distinct colors, no S/M ambiguity — dilate + skeletonize + read.
 Sigma: 2 colors (red/blue), solid/dashed share color — skeletonize without
        dilation, then connected components classify S vs M by fragment width.
 
+Charts live per-lens under docs/optical-specs/<slug>/ (ADR-033):
+mtf-chart.{png,jpg} for a single chart, or mtf-f<aperture>.png per aperture.
+
 Usage:
-    py tools/mtf-extract-skeleton.py docs/mtf-charts/samyang-35mm-f1-2.png
-    py tools/mtf-extract-skeleton.py docs/mtf-charts/sigma-56mm-f1-4-dc-dn-c.png
-    py tools/mtf-extract-skeleton.py --compare docs/mtf-charts/samyang-35mm-f1-2.png
+    py tools/mtf-extract-skeleton.py docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/mtf-chart.png
+    py tools/mtf-extract-skeleton.py docs/optical-specs/sigma-56mm-f1-4-dc-dn-c/mtf-chart.png
+    py tools/mtf-extract-skeleton.py --compare docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/mtf-chart.png
 """
 
 import sys
