@@ -56,7 +56,7 @@ Two further facts, established in conversation, shape the decision:
 
 Build one unified MTF digitizer that supersedes
 `tools/mtf-extract-skeleton.py` and the per-brand-scraper task (#563). It
-rests on four pillars.
+rests on five pillars.
 
 ### 1. Declared chart profiles, with advisory auto-suggest
 
@@ -159,7 +159,7 @@ visually confirmed correct. It cannot be derived from the existing
 `mtf-readings.ts` data, because that data is itself unverified — the verify
 pass _found_ two wrong entries in it.
 
-### Output artifacts
+### 5. Output artifacts
 
 - **SVG**, committed to `docs/optical-specs/<slug>/`. It serves two roles:
   the lens-page display asset (sharp at any zoom, dark-theme recolorable)
