@@ -3954,3 +3954,152 @@ items (in dependency order):
 
 Lead recommendation: **render-match scorer** — it's the only one that
 directly advances "calibrate 0.75."
+
+---
+
+### Session 101 — MTF render-match IoU scorer
+
+Built the round-trip confidence signal half of epic #932 threshold
+calibration — sister to the offset distribution that landed in #955.
+The 0.75 IoU starting threshold turns out to fail 3/3 charts on real
+data; precision separates them cleanly. Discipline holds: the
+threshold moves, not the extractor.
+
+**Tool:** Claude Code (Opus 4.7, 1M context)
+
+#### PRs merged
+
+- **#964** — `feat(mtfdigitizer): render-match IoU scorer + shared
+dispatch (#963)`. +980 net lines: 5 new files, 2 refactored. 60/60
+  tests pass (44 existing + 16 new).
+
+#### Issues closed
+
+- **#963** — Render-match IoU scorer (round-trip confidence signal).
+  Auto-closed via PR #964.
+
+#### Key changes
+
+- `tools/mtfdigitizer/pipeline/rendermatch.py` (new): the IoU scorer.
+  `rasterize_readings()` redraws 11-point readings as 1px polylines in
+  plot-box coordinates, skipping `None` gaps (B2-honest — no bridging
+  segment crosses a missing reading). `dilate_for_iou()` symmetrically
+  expands both sides with an elliptical kernel matched to the sampling
+  bracket radius (`DEFAULT_DILATION_RADIUS_PX = 3`). `iou()` returns
+  `|A ∩ B| / |A ∪ B|`, defined as `None` when both empty (no surface
+  to compare) and `0.0` when one side is empty (genuine disagreement —
+  distinct case from no-data). `score_chart()` orchestrates into a
+  `RenderMatchScore` carrying per-field IoU + aggregate + raw pixel
+  counts for diagnosis.
+- `tools/mtfdigitizer/pipeline/dispatch.py` (new): the shared
+  `(style_axis, hue_meaning)` → committed-field skeletons table. Both
+  `extract_chart()` and `score_chart()` now consume `field_skeletons()`
+  — the dispatch lives exactly once. Pure refactor of `pipeline.py`
+  (-94 lines net), byte-identical calibration output afterwards
+  (median |d| = 0.0143, same as PR #955).
+- `tools/mtfdigitizer/scorer.py` (new): `py -m mtfdigitizer.scorer`
+  CLI mirroring `calibrate.py`'s shape. Prints per-field IoU + a
+  polyline-on-skeleton precision side metric (`intersection /
+rasterized`) + aggregate. Stdout-only; findings live in
+  `referenceset/scoring.md`.
+- `tools/mtfdigitizer/referenceset/scoring.md` (new): first-run
+  findings doc, sister to `calibration.md`. Six findings; threshold
+  conversation deliberately left open for next session.
+- `tests/test_rendermatch.py` (new, 16 tests): IoU primitive
+  (self=1.0, disjoint=0.0, both-empty=None, one-side-empty=0.0, half
+  overlap, shape mismatch), dilation (zero=noop, symmetric grow,
+  negative=raise), rasterize (flat→horizontal lines, skip None gaps,
+  all-None→empty raster, wrong length→raise, MTF clamp), integration
+  smoke on Samyang 85mm + polyline-on-skeleton precision check.
+
+#### Headline finding: the 0.75 IoU threshold fails 3/3 charts
+
+| Chart                        | Aggregate IoU | Aggregate precision |
+| ---------------------------- | ------------- | ------------------- |
+| Sigma 56mm                   | 0.223         | 0.440               |
+| Samyang 85mm                 | 0.224         | 0.861               |
+| Samyang 300mm idealized-flat | 0.273         | 0.991               |
+
+Root cause is geometric, not a calibration error: the rasterized
+polyline is ~`plot_box.width` pixels long; the dilated skeleton is 2×
+to 8× longer per field (branches and fat traces). Even when the
+polyline lies entirely on the skeleton, IoU caps near 0.5 because the
+union dominates. The epic-#932 probe (0.64–0.87 for good extractions)
+likely compared two like-for-like dense traces; we have a sparse
+reconstruction vs a dense skeleton.
+
+**Precision separates the runnable subset cleanly** (0.44 / 0.86 /
+0.99) — the signal `REFERENCE_SET.md` hoped IoU would give. The
+scorer reports both numbers; deciding whether to gate on precision ≥
+0.80, on revised IoU, or both, is the next-session conversation.
+Discipline preserved: "the threshold moves, not the extractor."
+
+#### Other findings the run surfaced
+
+- **Flat-axis blind spot confirmed**: Samyang 300mm reflex scores
+  precision 0.99 — the highest of the three — even though all its
+  curves are pinned at ~1.0 and a translation along x would be
+  invisible to render-match. ADR-038 §4 called this out; this run
+  proves the plausibility prior is essential, not optional.
+- **Sigma skeletons run 2-3× longer per field than Samyang's** despite
+  similar plot-box geometry. Suggests skeletonization is emitting
+  branches rather than 1px centerlines on certain curve shapes.
+  Separate task for another time.
+- **B2 sparsity propagates correctly**: Sigma 30M emits zero raster
+  pixels (calibration's 0/11 paired carries through the polyline-gap
+  rule into the rasterizer). Not a fault — contract working.
+- Samyang 300mm 30S still missing (chart-rendering-varies-by-brand-page
+  issue from `calibration.md` finding 3; out of scope here).
+
+#### Design decisions made this session
+
+- **Skeleton-based IoU**, not hue-mask-based. The skeleton is what
+  the extractor actually sampled — IoU against it is a direct
+  calibration signal, not a measure of mask-construction noise.
+  Confirmed with the user before writing code.
+- **Skip `None` gaps when rasterizing**, no interpolation. Bridging
+  the gap would mask B2 sparsity rather than measure it.
+- **Both-empty IoU returns `None`**, not 0.0. Treating "no surface to
+  compare" as a 0 score would be a misleading failure signal. The
+  one-side-empty case stays 0.0 (genuine disagreement).
+- **Precision as a side metric, reported alongside IoU** — not
+  renaming the gate from IoU to precision before the threshold
+  conversation happens. Honest about the asymmetry without pre-empting
+  the design choice.
+- **Refactor `pipeline.py` to share the dispatch** with the scorer.
+  The (style_axis, hue_meaning) routing was about to exist twice;
+  factoring it out is the cleanest place to draw the line. Verified
+  byte-identical calibration output before adding new code.
+
+#### Verification
+
+- `cd tools && py -m pytest mtfdigitizer/`: **60 passed** (44 before
+  this session + 16 new)
+- `py -m mtfdigitizer.calibrate`: byte-identical numbers to pre-
+  refactor (median |d| = 0.0143, 97 paired, 93/97 in-band)
+- `py -m mtfdigitizer.scorer`: produces stable per-chart and aggregate
+  IoU + precision
+
+#### Next priority candidates
+
+With both halves of the threshold calibration delivering numbers now,
+the remaining #932 work is independent and can be picked up in any
+order. Lead candidates for the next session:
+
+- **Threshold revision in REFERENCE_SET.md** — pick precision ≥ 0.80,
+  or revised IoU, or both. One-session task that uses this run's
+  numbers + one more run after the Sigma dashed-bridging improves.
+- **Plausibility priors** (the flat-axis blind-spot guard, center ≥
+  edge, 10 ≥ 30 lp/mm, not-suspiciously-flat-at-~1.0). The Samyang
+  300mm precision 0.99 result makes this the highest-value safety
+  layer.
+- **Declare profiles for the 3 remaining in-band families**
+  (7artisans, Tokina, Viltrox). Expands calibration coverage from 3
+  to 6 charts; informs whether the threshold generalizes.
+- **Sigma skeleton-branch investigation** — root-cause why Sigma
+  skeletons are 2-3× longer per field than expected.
+
+Lead recommendation: **plausibility priors** — they unblock the
+threshold decision (you can't gate on render-match alone once the
+flat-axis case is confirmed real), and they're the largest remaining
+gap in the confidence signal.
