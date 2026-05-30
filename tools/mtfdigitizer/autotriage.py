@@ -22,12 +22,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .pipeline import PlotBox, extract_chart, score_chart
+from .pipeline import ExtractedChart, PlotBox, extract_chart, score_chart
 from .pipeline.rendermatch import DEFAULT_DILATION_RADIUS_PX
 from .priors import check_all
 from .profiles import SAMYANG_4COLOR_ALL_SOLID, SIGMA_2COLOR_SOLID_DASHED
 from .profiles.types import MtfProfile
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
+from .review import write_review
 from .triage import (
     IOU_THRESHOLD,
     PRECISION_THRESHOLD,
@@ -58,8 +59,16 @@ def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
     )
 
 
-def triage_chart(chart: ReferenceChart) -> ChartVerdict:
-    """Run the full pipeline on one reference chart and return its verdict."""
+def _run_pipeline(
+    chart: ReferenceChart,
+) -> tuple[ChartVerdict, ExtractedChart, Path, PlotBox]:
+    """Run extract → score → priors → triage on one chart.
+
+    Returns the verdict plus everything the runner needs to also write
+    a 3-panel review file for LOW charts (#973): the extracted readings,
+    the source path, and the plot box. Kept private so callers go
+    through ``triage_chart()`` (verdict-only) or the runner.
+    """
     assert chart.plot_box is not None
     profile = _PROFILE_BY_STYLE.get(chart.style_family)
     if profile is None:
@@ -81,7 +90,14 @@ def triage_chart(chart: ReferenceChart) -> ChartVerdict:
         dilation_radius_px=DEFAULT_DILATION_RADIUS_PX,
     )
     violations = check_all(extracted.readings)
-    return triage(score, violations)
+    verdict = triage(score, violations)
+    return verdict, extracted, image_path, plot_box
+
+
+def triage_chart(chart: ReferenceChart) -> ChartVerdict:
+    """Run the full pipeline on one reference chart and return its verdict."""
+    verdict, _, _, _ = _run_pipeline(chart)
+    return verdict
 
 
 def _format_metric(value: float | None) -> str:
@@ -109,14 +125,29 @@ def main() -> None:
     print()
 
     verdicts: list[ChartVerdict] = []
+    reviews_written: list[Path] = []
     for chart in runnable:
-        verdict = triage_chart(chart)
+        verdict, extracted, image_path, plot_box = _run_pipeline(chart)
         verdicts.append(verdict)
         print(f"## {chart.slug} ({chart.style_family})")
         print(_format_verdict(verdict))
         if verdict.reasons:
             for reason in verdict.reasons:
                 print(f"    - {reason.value}")
+        if verdict.verdict == "LOW":
+            # ADR-038 §"Workflow": review file emitted only for LOW
+            # charts — HIGH charts auto-commit, the maintainer is never
+            # asked to eyeball a chart the gate already verified.
+            outputs = write_review(
+                extracted,
+                image_path,
+                plot_box=plot_box,
+                image_height_mm=chart.image_height_mm,
+                svg_path=image_path.with_suffix(".svg"),
+            )
+            reviews_written.append(outputs.html_path)
+            rel_html = outputs.html_path.relative_to(REPO_ROOT)
+            print(f"    review: {rel_html}")
         print()
 
     high = sum(1 for v in verdicts if v.verdict == "HIGH")
@@ -125,6 +156,7 @@ def main() -> None:
     print(f"  charts triaged:  {len(verdicts)}")
     print(f"  HIGH:            {high}")
     print(f"  LOW:             {low}")
+    print(f"  reviews written: {len(reviews_written)}  (one per LOW chart)")
     print()
     print("  Expected separation per scoring.md + plausibility.md:")
     print("    sigma-56mm           LOW  (precision_below_threshold)")
