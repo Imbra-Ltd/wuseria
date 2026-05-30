@@ -27,6 +27,7 @@ from typing import Sequence
 import cv2
 import numpy as np
 
+from ..loader import load_chart_hsv
 from .declared import DECLARED_PROFILES
 from .types import HueRange, MtfProfile, ProfileMatch, ProfileMismatch
 
@@ -45,15 +46,9 @@ _SUGGEST_MIN_SCORE = 0.60
 _SUGGEST_MIN_MARGIN = 0.20
 
 
-def _load_hsv(image_path: str | Path) -> np.ndarray:
-    """Load an image as HSV. Raises FileNotFoundError on missing path."""
-    path = Path(image_path)
-    if not path.is_file():
-        raise FileNotFoundError(f"image not found: {path}")
-    bgr = cv2.imread(str(path))
-    if bgr is None:
-        raise ValueError(f"could not decode image: {path}")
-    return cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+# `_load_hsv` was inlined here; now delegated to the shared loader so
+# alpha-aware loading is consistent across the package (see loader.py).
+_load_hsv = load_chart_hsv
 
 
 def _hue_pixel_count(hsv: np.ndarray, hue: HueRange) -> int:

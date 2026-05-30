@@ -47,8 +47,11 @@ SAMYANG_4COLOR_ALL_SOLID: MtfProfile = MtfProfile(
         HueRange(name="10S-red", h_lo=168, h_hi=179, s_min=140, v_min=60),
         HueRange(name="10M-pink", h_lo=0, h_hi=10, s_min=40, s_max=140, v_min=140),
         HueRange(name="10M-pink", h_lo=168, h_hi=179, s_min=40, s_max=140, v_min=140),
-        HueRange(name="30S-dark-grey", h_lo=0, h_hi=179, s_min=0, s_max=40, v_min=70, v_max=130),
-        HueRange(name="30M-light-grey", h_lo=0, h_hi=179, s_min=0, s_max=40, v_min=150, v_max=210),
+        # Samyang's greys sit in narrow V bands measured from real pixels —
+        # tight ranges prevent matching neutral midtones in unrelated charts'
+        # gridlines or anti-aliased backgrounds.
+        HueRange(name="30S-dark-grey", h_lo=0, h_hi=179, s_min=0, s_max=40, v_min=85, v_max=115),
+        HueRange(name="30M-light-grey", h_lo=0, h_hi=179, s_min=0, s_max=40, v_min=160, v_max=195),
     ),
     style_axis="HUE_IS_CURVE",
     hue_meaning="CURVE_IDENTITY",
