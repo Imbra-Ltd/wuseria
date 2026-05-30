@@ -78,6 +78,14 @@ Other combinations raise `NotImplementedError` (fail loud).
   hard and out of scope for #935. Test fixtures hardcode the reference
   charts' boxes; production callers will need a detector or per-chart
   hand entry until that task lands.
+- **Plot-box convention is data-edge, not axis-line.** Corners are the
+  first/last column with skeleton pixels, not the printed y-axis or
+  legend lines. On many charts these coincide (Samyang); on others the
+  printed axis sits 100+ pixels left of the first data column (Sigma).
+  Measuring to the axis line causes fraction-0.0 samples to return
+  `None` because the ±3 bracket window misses the first data column.
+  See #954 for the diagnosis and `referenceset/calibration.md` for the
+  measurement procedure.
 - **Samyang pink 10M reads low at the edge** — anti-aliased pink fades
   below the saturation threshold near the chart edge, dropping curve
   pixels. The 0.10-0.20 divergence at the edge is within the band PR

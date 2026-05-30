@@ -140,7 +140,15 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
         notes="canonical clean chart; 10S/M flat ~0.97 to 10mm then dips; 30S falls 0.86→0.3 at edge",
-        plot_box=PlotBoxCoords(x_left=186, x_right=2987, y_top=83, y_bottom=1700),
+        # Plot-box convention: corners at the **data edge**, not at the
+        # printed axis lines. Sigma's printed y-axis sits at x=186 but
+        # the leftmost curve column is x=311; the printed x-axis ends
+        # at x=2987 but the rightmost curve column is x=2980. Measuring
+        # to the data edge makes fraction-0.0 and fraction-1.0 samples
+        # land inside the curve mask. Verified by tick-position probe:
+        # the printed "0" tick is at x=309, "12.5" tick at x=2694, and
+        # image_height_mm=14.0 extends 1.5mm past "12.5" to x=2980. (#954)
+        plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
         ground_truth=_SIGMA_56_GT,
     ),
     ReferenceChart(

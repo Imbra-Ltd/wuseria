@@ -38,16 +38,16 @@ Reads the in-source ground truth from `referenceset/charts.py` and runs
 populated. Output: per-chart `|d|` (absolute offset) median + p95 per
 field, then an aggregate.
 
-## Run from 2026-05-30 (commit before this write-up)
+## Run 2 (after #954 plot-box fix)
 
 ### Per-chart
 
 ```
 sigma-56mm-f1-4-dc-dn-c (mainstream-2color-solid-dashed)
-  contrast10S     med |d| 0.007  p95 |d| 0.044  paired  9/11  ext-None  2
-  contrast10M     med |d| 0.009  p95 |d| 0.024  paired  2/11  ext-None  9
-  resolution30S   med |d| 0.009  p95 |d| 0.034  paired  9/11  ext-None  2
-  resolution30M   med |d| 0.009  p95 |d| 0.025  paired  2/11  ext-None  9
+  contrast10S     med |d| 0.006  p95 |d| 0.039  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.014  p95 |d| 0.094  paired  3/11  ext-None  8
+  resolution30S   med |d| 0.007  p95 |d| 0.044  paired 11/11  ext-None  0
+  resolution30M   med |d| 0.013  p95 |d| 0.015  paired  2/11  ext-None  9
 
 samyang-85mm-f1-4-as-if-umc (mainstream-4color-all-solid)
   contrast10S     med |d| 0.016  p95 |d| 0.029  paired 11/11  ext-None  0
@@ -60,6 +60,50 @@ samyang-300mm-f6-3-ed-umc-cs-reflex (idealized-flat)
   contrast10M     med |d| 0.012  p95 |d| 0.019  paired 10/11  ext-None  1
   resolution30S   med |d|   -    p95 |d|   -    paired  0/11  ext-None 11
   resolution30M   med |d| 0.021  p95 |d| 0.024  paired  5/11  ext-None  6
+```
+
+### Aggregate
+
+```
+paired comparisons:    97
+median |d|:           0.0143
+p95 |d|:              0.0400
+max |d|:              0.1467
+within +/-0.05:       93/97 (95.9%)
+```
+
+### What changed since run 1
+
+| Metric                | Run 1 (axis-line box) | Run 2 (data-edge box) |
+| --------------------- | --------------------- | --------------------- |
+| Sigma 10S paired      | 9/11                  | **11/11**             |
+| Sigma 30S paired      | 9/11                  | **11/11**             |
+| Sigma 10M paired      | 2/11                  | **3/11**              |
+| Aggregate paired      | 92                    | **97**                |
+| Median \|d\|          | 0.0147                | **0.0143**            |
+| p95 \|d\|             | 0.0366                | 0.0400                |
+| Within ±0.05          | 96.7%                 | 95.9%                 |
+
+5 paired comparisons recovered at the chart edges. The p95 and "within
+±0.05" numbers move slightly the wrong way because the recovered Sigma
+boundary readings sit further from ground truth than the interior ones
+do (Sigma 10S p95 went from 0.044 to 0.039, but 30S p95 went from 0.034
+to 0.044 — picking up the boundary point on a steeper curve adds a
+higher-error data point). Net: more honest data, similar quality.
+
+## Run from 2026-05-30 (run 1, pre-#954-fix, for reference)
+
+Original run before the Sigma plot-box was re-measured. The numbers
+above ("Run 2") supersede this; kept here for diff context.
+
+### Per-chart
+
+```
+sigma-56mm-f1-4-dc-dn-c (mainstream-2color-solid-dashed)
+  contrast10S     med |d| 0.007  p95 |d| 0.044  paired  9/11  ext-None  2
+  contrast10M     med |d| 0.009  p95 |d| 0.024  paired  2/11  ext-None  9
+  resolution30S   med |d| 0.009  p95 |d| 0.034  paired  9/11  ext-None  2
+  resolution30M   med |d| 0.009  p95 |d| 0.025  paired  2/11  ext-None  9
 ```
 
 ### Aggregate
@@ -81,21 +125,26 @@ comparisons land within ±0.05. The band's lower anchor (the #931 trace
 noise floor at Δ ≈ 0.023) sits cleanly between this median and the p95
 of 0.037. No reason to tighten or loosen.
 
-### 2. Plot-box boundaries clip data on the Sigma chart
+### 2. Plot-box boundary clipping was a convention mismatch (RESOLVED #954)
 
-`extract_chart()` returns `None` for **all four fields at positions
-0.00mm and 14.00mm** on the Sigma 56mm chart, but returns clean values
-on the same positions for both Samyang charts. The cause is the bracket
-window: at fraction 0.0 the window scans `[x_left - 3, x_left + 3]`,
-which sits in the y-axis label region on the Sigma chart but in the
-plot region on the Samyangs (because the Samyang plot box is measured
-tighter).
+Run 1 returned `None` for all four Sigma fields at fractions 0.0 and
+1.0. Root cause: the Sigma plot box was measured to the printed y-axis
+line (x=186), but the leftmost curve column sits at x=311 — a 125-pixel
+whitespace gap that exceeds the ±3 bracket window. The Samyang reference
+charts use a different convention (plot box measured to the first/last
+data column), which is why they extracted cleanly at the same fractions.
 
-This is a real defect surfaced by calibration — not a tolerance
-question. It costs 8 paired comparisons today (2 positions × 4 fields)
-and would cost more on any chart where the plot box doesn't include the
-axis line cleanly. Worth a follow-up issue against `pipeline/sampling.py`
-or `referenceset/charts.py` plot-box conventions.
+Fix: re-measure the Sigma plot box to `(309, 2980)`, aligned with the
+printed "0" and "12.5" tick label positions (verified by tick-spacing
+probe). The data-edge convention is now the project-wide standard.
+Bracket window stays at ±3 — widening it (tried during the fix) catches
+the Sigma edges but pulls in extra anti-aliased pixels on the Samyang
+charts and degrades their edge readings by 0.02–0.04.
+
+Convention for future plot-box measurements: **plot box corners are the
+first/last column with skeleton pixels, not the printed axis lines.**
+The two conventions can coincide (Samyang) or not (Sigma) — never
+assume.
 
 ### 3. The Samyang profile's dark-grey HSV band is brand-page-specific
 
@@ -149,7 +198,8 @@ this data alone**.
 Open items before the threshold conversation can close:
 
 - Render-match scorer (epic #932 confidence-signal sub-task).
-- Plot-box bracket-window fix or convention clarification — finding 2.
 - Cross-chart HSV calibration for the Samyang grey bands — finding 3.
 - Calibration coverage for the other 5 reference charts as their
   profiles are declared.
+
+Resolved since run 1: finding 2 (plot-box convention) — see fix #954.
