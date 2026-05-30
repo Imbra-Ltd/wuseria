@@ -1,5 +1,7 @@
 """Bot-detection tests — one per pattern plus the meta-refresh case."""
 
+from pathlib import Path
+
 import pytest
 
 from pagefetch import (
@@ -14,6 +16,8 @@ from pagefetch.detection import (
     MIN_REAL_CONTENT_BYTES,
     html_to_text,
 )
+
+FIXTURES = Path(__file__).parent / "fixtures"
 
 REAL_PAGE = "<html><body>" + ("Lorem ipsum lens specs. " * 100) + "</body></html>"
 # A real content page comfortably above the size floor.
@@ -67,6 +71,35 @@ def test_each_bot_pattern_is_detected(snippet):
 def test_patterns_list_is_covered_by_parametrization():
     # Guard: if a new pattern is added, the parametrized test above must grow.
     assert len(BOT_DETECTION_PATTERNS) == 19
+
+
+def test_dpreview_real_body_is_not_bot_blocked():
+    # #870 regression: a real 137 KB DPReview spec page embeds the substring
+    # "checking your browser extensions and settings" inside ad-blocker help
+    # text. The Cloudflare pattern must not false-match on that text.
+    html = (FIXTURES / "dpreview_specifications.html").read_text(
+        encoding="utf-8", errors="replace"
+    )
+    assert "checking your browser" in html.lower()  # the false-positive bait
+    assert is_bot_blocked(html) is False
+    assert looks_like_real_content(html) is True
+
+
+def test_cloudflare_checking_your_browser_still_detected():
+    # Guard against tightening the pattern so much that the real CF
+    # interstitial slips through. CF emits "Checking your browser before
+    # accessing <site>" — that exact shape must still register as a bot block.
+    cf = "<html><body>Checking your browser before accessing example.com</body></html>"
+    assert is_bot_blocked(cf) is True
+
+
+def test_checking_your_browser_substring_alone_is_not_bot_blocked():
+    # The bare substring without the " before " anchor (e.g. ad-blocker help
+    # text on real content pages) must not trigger a bot match.
+    benign = "<html><body>" + (
+        "We recommend checking your browser extensions and settings. " * 200
+    ) + "</body></html>"
+    assert is_bot_blocked(benign) is False
 
 
 def test_html_to_text_strips_scripts_styles_and_tags():
