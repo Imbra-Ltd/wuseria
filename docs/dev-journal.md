@@ -4190,3 +4190,108 @@ ticked.
 - **`NotImplementedError` for unknown prior names in
   `_PRIOR_NAME_TO_REASON`.** Mirrors `dispatch.py`'s B1 discipline —
   fail loud when a new prior is added without a mapping, never silent.
+
+---
+
+### Session 103 — MTF SVG emitter + 3-panel review-file generator
+
+#### PRs
+
+- #972 — SVG emitter from readings (#971)
+- #974 — 3-panel review-file generator + autotriage hook (#973)
+
+#### Issues opened
+
+- #971 — MTF SVG emitter (provenance + review-file right panel)
+- #973 — MTF 3-panel review-file generator + autotriage hook
+
+Both closed by their respective PRs.
+
+#### Epic #932 progress
+
+Two more checklist items ticked. The epic's two big workflow gates
+are now both delivered (SVG emitter + 3-panel review file). Remaining
+unchecked items (profile coverage for 3 in-band families, legacy
+retirement #563, lens-page SVG swap, optional Real-ESRGAN fallback) no
+longer depend on each other — independent next sessions.
+
+#### Key changes
+
+- `tools/mtfdigitizer/svg.py` — pure-Python SVG writer
+  (`render_svg(ExtractedChart) → str`) plus a CLI
+  (`py -m mtfdigitizer.svg [--check]`) that writes one provenance SVG
+  per runnable reference chart under `docs/optical-specs/<slug>/`. No
+  new dependencies — string templating.
+- `tools/mtfdigitizer/review.py` — HTML 3-panel composite per chart
+  (`render_overlay`, `render_review_html`, `write_review`) plus a CLI.
+  Left = original PNG, right = SVG from #971, bottom = overlay PNG
+  (extractor polylines drawn over the original chart, registered to
+  the same `PlotBox` the extractor used). HTML, not a single PNG
+  composite — avoids the `cairosvg` dependency choice.
+- `tools/mtfdigitizer/autotriage.py` — hooks `write_review()` after
+  the verdict prints; emits one review file per LOW chart, HIGH
+  charts skip (matches ADR-038 §"Workflow"). Pipeline refactored into
+  a private `_run_pipeline()` helper so the runner has access to
+  extracted readings + plot box; public `triage_chart()` signature
+  unchanged.
+- 30 new tests (16 svg, 14 review) — full mtfdigitizer suite now
+  137 passing (was 107 at the start of the session).
+- Committed artifacts under `docs/optical-specs/`: 3 provenance SVGs
+  (PR #972, all runnable charts) + 2 review HTMLs and 2 overlay PNGs
+  (PR #974, only LOW-verdict charts).
+
+#### Key decisions
+
+- **Option A (provenance-only) for the SVG emitter.** `MtfChart.astro`
+  already renders SVG from the same `MtfData` on lens pages. Building
+  the Python emitter to also serve as the lens-page display asset
+  (option B) would have required a CSS theming pass, layout migration,
+  and visual-diff tests for a swap we may never want. Option C
+  (byte-identical to the Astro component) is brittle across scoped
+  class hashes and whitespace. Option A scopes the Python emitter to
+  the role nothing else fills — the provenance / review-file role —
+  and leaves the lens-page question for its own task.
+- **HTML for the 3-panel composite, not a single PNG.** Rasterizing
+  the SVG (right panel) into a PNG would require `cairosvg` (new heavy
+  dep, Cairo binaries painful on Windows) or duplicating the SVG
+  drawing logic in raster form (DRY violation). HTML references the
+  SVG, the browser renders it natively — no rasterization, no new
+  dependency, vector-sharp. Matches the previous `mtf-overlay.html`
+  format (the only complaint about which was the hand-tuned
+  calibration this PR replaces with deterministic plot-box
+  registration).
+- **SVG viewBox is 320×218, not 320×200.** `MtfChart.astro` uses
+  320×200 and renders the legend as a sibling `<div>`. A standalone
+  provenance SVG cannot rely on a sibling DOM, so the legend has to
+  live in-document — the canvas is 18px taller to hold a legend strip
+  below the x-axis title. The data area, gridlines, and axis labels
+  sit at the same coordinates as the Astro component so a side-by-side
+  review reads as the same chart.
+- **Overlay reuses the SVG emitter's palette, not the source chart's.**
+  Maintainer reads the same field as the same color across the right
+  and bottom panels of the review file. Thicker strokes (3px) and
+  dashed-line M-fields keep the overlay legible against varied
+  underlying chart colors.
+- **`render_review` runner emits for all runnable charts; autotriage
+  hook only for LOW.** Two different consumers: the standalone runner
+  is for on-demand maintainer inspection (including HIGH charts if
+  they want to look); the autotriage hook is the production workflow
+  per ADR-038 ("the maintainer is never asked to eyeball a chart the
+  tool already verified two independent ways"). Documented the
+  divergence in the runner's CLI output.
+- **Committed only the LOW-verdict review files.** The standalone
+  runner generated all three (including the HIGH Samyang 85mm) but
+  committing the HIGH chart's review files would mislead future
+  readers into thinking it was flagged. The repo state matches the
+  autotriage gate's contract.
+- **Integration test asserts ≥1 polyline on the real Sigma chart,
+  not ≥4.** The extractor honestly returns sparse `contrast10M` (3
+  non-None) and `resolution30M` (2 non-None, non-adjacent), producing
+  3 polylines total. The SVG emitter has no business enforcing
+  extractor coverage assumptions — that belongs in `calibration.md` /
+  `scoring.md`. Same discipline as session 101's "thresholds move,
+  not the extractor."
+- **Test for the None-bridging contract probes the interior of the
+  gap, not the edges.** `cv2.line`'s endpoint rounding can spill one
+  pixel past the analytic endpoint. The honest test asserts the
+  middle of the gap is empty, not pixel-perfect endpoint termination.

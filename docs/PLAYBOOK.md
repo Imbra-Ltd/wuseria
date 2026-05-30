@@ -279,9 +279,45 @@ Combines both confidence signals into one HIGH/LOW verdict per chart:
 `precision ≥ 0.80 AND IoU ≥ 0.20 AND priors_pass` ⇒ HIGH, else LOW with
 reason codes. Reason codes route attention to extractor-side work
 (`precision_below_threshold`, `iou_below_threshold`,
-`render_match_undefined`) vs chart-side work (`prior_failed_*`). Output:
-stdout only. Findings live in `tools/mtfdigitizer/referenceset/triage.md` —
-update after a run that materially changes the numbers.
+`render_match_undefined`) vs chart-side work (`prior_failed_*`). Stdout
+prints the per-chart verdict and aggregate; also writes one 3-panel
+review file per LOW chart under `docs/optical-specs/<slug>/` (HIGH
+charts skip, per ADR-038 §"Workflow"). Findings live in
+`tools/mtfdigitizer/referenceset/triage.md` — update after a run that
+materially changes the numbers.
+
+**Render an MTF chart's provenance SVG from its readings:**
+
+```bash
+cd tools && py -m mtfdigitizer.svg              # writes SVGs for the 3 runnable charts
+cd tools && py -m mtfdigitizer.svg --check      # dry-run for CI/tests
+```
+
+Pure-Python SVG writer over `ExtractedChart` readings. Provenance role
+only: lens-page rendering stays with `src/components/static/MtfChart.astro`,
+which renders from the same `MtfData` shape at build time. Output:
+`docs/optical-specs/<slug>/<chart-stem>.svg`. ViewBox 320×218 — the data
+area is at the same coordinates as `MtfChart.astro` (320×200), the extra
+18px is a legend strip the standalone SVG carries in-document. Honors
+the B2 None contract: a None reading breaks the polyline at that vertex.
+
+**Render an MTF chart's 3-panel review file:**
+
+```bash
+cd tools && py -m mtfdigitizer.review           # writes review files for the 3 runnable charts
+cd tools && py -m mtfdigitizer.review --check   # dry-run for CI/tests
+```
+
+Emits one static HTML composite per chart (left = original PNG, right =
+SVG from #971, bottom = overlay PNG with extractor polylines registered
+to the same `PlotBox`). The standalone runner emits for every runnable
+chart (useful for on-demand maintainer inspection of a HIGH chart); the
+autotriage runner emits only for LOW charts (the production workflow,
+per ADR-038 §"Workflow"). Output: `<chart-stem>-review.html` +
+`<chart-stem>-overlay.png` under `docs/optical-specs/<slug>/`. HTML is
+JS-free per the ADR — a viewer, not an editor. Replaces the deprecated
+`tools/mtf-overlay.html` whose hand-tuned calibration is superseded by
+deterministic plot-box registration.
 
 **Audit spec field coverage per brand:**
 
