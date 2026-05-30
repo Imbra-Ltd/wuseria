@@ -13,7 +13,11 @@ import re
 BOT_DETECTION_PATTERNS = [
     r"<title>403\b",
     r"<title>Access Denied",
-    r"Checking your browser",
+    # Cloudflare interstitial. Anchored to the canonical CF phrasing
+    # ("Checking your browser before accessing …") so the substring does not
+    # false-match on ad-blocker help text like "checking your browser
+    # extensions and settings" embedded in real content pages (#870).
+    r"Checking your browser\b[^.]{0,40}\bbefore\b",
     r"Checking the site connection security",
     r"Enable JavaScript and cookies to continue",
     r"Attention Required.*Cloudflare",

@@ -1,0 +1,8 @@
+name: "Wuseria CodeQL config"
+
+# Captured third-party HTML used as offline parser test fixtures is not our
+# code. CodeQL otherwise reports false-positive alerts on minified JS embedded
+# in the saved pages (e.g. js/useless-regexp-character-escape on DPReview's
+# analytics blob — see PR #945, issue #870).
+paths-ignore:
+  - "tools/**/tests/fixtures/**"
