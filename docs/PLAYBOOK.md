@@ -221,7 +221,7 @@ library API.
 **Run the Python tool tests:**
 
 ```bash
-cd tools && py -m pytest pagefetch/tests/ brandkit/tests/ -v
+cd tools && py -m pytest pagefetch/tests/ brandkit/tests/ mtfdigitizer/tests/ -v
 ```
 
 **Audit spec field coverage per brand:**
