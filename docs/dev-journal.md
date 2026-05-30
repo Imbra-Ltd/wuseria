@@ -3842,3 +3842,115 @@ completes the foundation trio (#933 ✓, #934 ✓, #935 ✓).
 - Next priority candidate: **calibrate the 0.75 threshold** — uses the
   reference set + the new extractor end-to-end and produces a concrete
   value for the confidence gate the rest of the epic builds on.
+
+---
+
+### Session 100 — MTF calibration foundation + chart-edge plot-box fix
+
+**Date:** 2026-05-30
+**Tool:** Claude Code (Opus 4.7)
+**PRs merged:** [#955](https://github.com/Imbra-Ltd/wuseria/pull/955) (calibration foundation), [#956](https://github.com/Imbra-Ltd/wuseria/pull/956) (#954 fix)
+**Issues:** [#953](https://github.com/Imbra-Ltd/wuseria/issues/953) closed (task), [#954](https://github.com/Imbra-Ltd/wuseria/issues/954) closed (bug surfaced by calibration)
+
+#### Theme
+
+Calibrate the 0.75 render-match threshold against the reference set.
+
+Honest reframe up front: "calibrate 0.75" is not one session of work. It
+needs three artifacts that didn't exist — machine-readable ground truth,
+hand-measured plot boxes, and a render-match IoU scorer. The session
+scope locked to **the offset-distribution half** (the two artifacts that
+unblock real measurement against ground truth); the render-match scorer
+side stays open under epic #932.
+
+#### Key changes
+
+- **Ground truth records** in `tools/mtfdigitizer/referenceset/charts.py`:
+  eye-read MTF values at the 11 SAMPLE_FRACTIONS for the 3 reference
+  charts whose profile is declared today (Sigma 56mm, Samyang 85mm MAX,
+  Samyang 300mm reflex MAX). 363 values, same +/-0.02 provenance as the
+  prose shape notes in REFERENCE_SET.md.
+- **Plot-box manifest** lifted out of test code into `charts.py` so the
+  test suite and the calibration runner use the same hand-measured boxes
+  (re-measuring lives in one place).
+- **Calibration runner** `tools/mtfdigitizer/calibrate.py` — runs
+  `extract_chart()` against every chart with both fields populated,
+  reports |d| (absolute offset) median/p95/paired-count per field plus an
+  aggregate.
+- **calibration.md** next to REFERENCE_SET.md — first run's numbers and
+  six findings.
+- **#954 fix:** Sigma plot box re-measured from `(186, 2987)` to
+  `(309, 2980)` — aligned to the printed "0" and "12.5" tick label
+  positions. The original measurement followed the printed y-axis line,
+  but the leftmost curve column sits 125 px to the right (a wide
+  whitespace gap between axis and first plotted point). The ±3 bracket
+  window correctly returned `None` because there was nothing to read.
+  Data-edge plot-box convention now documented in mtfdigitizer/README.md.
+
+#### Empirical results
+
+**Aggregate calibration over 3 runnable charts × 4 fields × 11 sample
+positions (after both PRs):**
+
+- Paired comparisons: 97 (was 92 in run 1)
+- Median |d|: 0.0143 — half the proposed +/-0.05 band
+- p95 |d|: 0.0400
+- Max |d|: 0.1467 (single Samyang pink-edge point, README known-limit)
+- Within +/-0.05: 93/97 = 95.9%
+
+**Conclusion on the offset tolerance band:** the proposed +/-0.05 is
+justified by data. Do not move it on this run.
+
+**Conclusion on the 0.75 render-match threshold:** unchanged. The data
+needed to tune it (an IoU scorer) does not yet exist.
+
+#### Discovered bugs (this session also fixes)
+
+- **#954** — `extract_chart()` returned None at fractions 0.0 and 1.0
+  on the Sigma chart. Root cause was a plot-box convention mismatch
+  between Sigma (axis-line measurement) and Samyang (data-edge
+  measurement), not a bracket-window bug as initially framed. Fixed by
+  re-measuring Sigma; convention documented for future plot boxes.
+
+#### Findings recorded in calibration.md
+
+- Finding 1: the +/-0.05 band is justified by data.
+- Finding 2 (RESOLVED #954): plot-box convention mismatch was clipping
+  Sigma's edges.
+- Finding 3: Samyang's `30S-dark-grey` HSV band was calibrated on the
+  85mm chart; the 300mm reflex renders that curve at V≈190 outside the
+  declared V∈[85,115] band. ADR-038 §4 brand-page-rendering-varies
+  caveat observed in the wild. No fix attempted — needs cross-chart
+  HSV-calibration discussion.
+- Finding 4: idealized-flat (Samyang 300mm reflex) traces at median
+  |d| = 0.017 — confirms ADR-038 §4's prediction that render-match
+  alone scores this chart well; only the plausibility prior can flag
+  it correctly.
+- Finding 5: the known Samyang pink-edge limit dominates the max |d|.
+- Finding 6: Sigma dashed-M readings are sparse but honest (B2
+  contract working).
+
+#### Verification
+
+- `cd tools && py -m pytest mtfdigitizer/`: **44 passed** (43 before
+  this session + 1 new #954 regression test)
+- Calibration runner reproduces stable numbers across re-runs
+
+#### Next priority candidates
+
+The 0.75 threshold conversation now has three remaining unblocking
+items (in dependency order):
+
+- **Render-match IoU scorer** — closes the other half of the
+  calibration. Re-rasterize ExtractedChart readings onto the original
+  plot box, compute IoU against the source curves' masked pixels.
+  Biggest session of the three; once it lands, threshold tuning is one
+  command away.
+- **Declare profiles for the remaining 3 in-band families** (7artisans
+  same-color-dashed, Tokina 2-color-frequency, Viltrox B&W) — expands
+  calibration coverage from 3 to 6 charts. Independent of the scorer.
+- **Cross-chart HSV calibration** (Samyang grey-band finding 3) — fixes
+  one real recall hole in the existing profile.
+
+Lead recommendation: **render-match scorer** — it's the only one that
+directly advances "calibrate 0.75."
