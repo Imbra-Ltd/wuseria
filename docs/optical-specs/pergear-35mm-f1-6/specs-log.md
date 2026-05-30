@@ -2,22 +2,22 @@
 
 ## Sources checked
 
-| Source                       | URL                                                              | Date       | Result                                                 |
-| ---------------------------- | ---------------------------------------------------------------- | ---------- | ------------------------------------------------------ |
-| Official Pergear page (HTML) | pergear.com/products/pergear-35mm                                | 2026-05-23 | Found: 6 elements / 4 groups, "Multi-MC Layer Coating" |
-| Shopify JSON API             | pergear-35mm.json                                                | 2026-05-23 | Confirmed 6/4                                          |
-| allphotolenses.com           | allphotolenses.com/lenses/item/c_4867.html                       | 2026-05-23 | Confirmed 6/4                                          |
-| Dustin Abbott                | dustinabbott.net/2020/05/pergear-35mm-f1-6-image-gallery-review/ | 2026-05-23 | Image gallery only, no spec table, no magnification    |
-| Radojuva                     | radojuva.com/en/2022/02/pergear-35mm-1-6-hd-mc/                  | 2026-05-23 | Timeout (tried twice)                                  |
-| LensTip                      | lenstip.com                                                      | 2026-05-23 | Not covered                                            |
-| DPReview                     | dpreview.com/products/pergear/lenses                             | 2026-05-23 | No Pergear listings                                    |
-| Opticallimits / Photozone    | opticallimits.com                                                | 2026-05-23 | Not covered                                            |
-| cameradecision.com           | cameradecision.com                                               | 2026-05-23 | 404                                                    |
-| apotelyt.com                 | apotelyt.com                                                     | 2026-05-23 | Not listed                                             |
-| Amazon                       | amazon.com                                                       | 2026-05-23 | No magnification in spec table                         |
-| digitalkamera.de             | digitalkamera.de                                                 | 2026-05-23 | Consent wall, no data                                  |
-| B&H Photo                    | bhphotovideo.com                                                 | 2026-05-23 | Cookie wall, no data                                   |
-| Google Image Search          | google.com (construction diagram, MTF chart)                     | 2026-05-23 | Blocked by captcha                                     |
+| Source                       | URL                                                              | Date       | Result                                                    |
+| ---------------------------- | ---------------------------------------------------------------- | ---------- | --------------------------------------------------------- |
+| Official Pergear page (HTML) | pergear.com/products/pergear-35mm                                | 2026-05-23 | Found: 6 elements / 4 groups, "Multi-MC Layer Coating"    |
+| Shopify JSON API             | pergear-35mm.json                                                | 2026-05-23 | Confirmed 6/4                                             |
+| allphotolenses.com           | allphotolenses.com/lenses/item/c_4867.html                       | 2026-05-23 | Confirmed 6/4                                             |
+| Dustin Abbott                | dustinabbott.net/2020/05/pergear-35mm-f1-6-image-gallery-review/ | 2026-05-23 | Image gallery only, no spec table, no magnification       |
+| Radojuva                     | radojuva.com/en/2022/02/pergear-35mm-1-6-hd-mc/                  | 2026-05-23 | Timeout (tried twice)                                     |
+| LensTip                      | lenstip.com                                                      | 2026-05-23 | Not covered                                               |
+| DPReview                     | dpreview.com/products/pergear/lenses                             | 2026-05-23 | No Pergear listings                                       |
+| Opticallimits / Photozone    | opticallimits.com                                                | 2026-05-23 | Not covered                                               |
+| cameradecision.com           | cameradecision.com                                               | 2026-05-23 | 404                                                       |
+| apotelyt.com                 | apotelyt.com                                                     | 2026-05-23 | Not listed                                                |
+| Amazon                       | amazon.com                                                       | 2026-05-23 | No magnification in spec table                            |
+| digitalkamera.de             | digitalkamera.de                                                 | 2026-05-23 | No data sheet for this lens ("Kein Datenblatt vorhanden") |
+| B&H Photo                    | bhphotovideo.com                                                 | 2026-05-23 | Not listed (search returned no products)                  |
+| Google Image Search          | google.com (construction diagram, MTF chart)                     | 2026-05-23 | Blocked by captcha                                        |
 
 ## Findings
 

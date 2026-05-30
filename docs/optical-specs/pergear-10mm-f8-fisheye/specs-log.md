@@ -20,7 +20,7 @@
 | allphotolenses.com              | allphotolenses.com                                      | 2026-05-23 | Not listed                                                         |
 | apotelyt.com                    | apotelyt.com                                            | 2026-05-23 | Not listed                                                         |
 | Amazon                          | amazon.com                                              | 2026-05-23 | No magnification in spec table                                     |
-| digitalkamera.de                | digitalkamera.de                                        | 2026-05-23 | Consent wall, no data                                              |
+| digitalkamera.de                | digitalkamera.de                                        | 2026-05-23 | No data sheet for this lens ("Kein Datenblatt vorhanden")          |
 | Google Image Search             | google.com (construction diagram, MTF chart)            | 2026-05-23 | Blocked by captcha                                                 |
 
 ## Findings
