@@ -15,11 +15,12 @@ Under construction. Foundation work in progress:
 
 - [x] [#933](https://github.com/Imbra-Ltd/wuseria/issues/933) — reference set
 - [x] [#934](https://github.com/Imbra-Ltd/wuseria/issues/934) — profile abstraction + advisory auto-suggest
-- [ ] [#935](https://github.com/Imbra-Ltd/wuseria/issues/935) — extraction pipeline
+- [x] [#935](https://github.com/Imbra-Ltd/wuseria/issues/935) — adaptive extraction pipeline with 11-point sampling
 - [ ] Remaining tasks under epic [#932](https://github.com/Imbra-Ltd/wuseria/issues/932)
 
-The package does not yet expose a CLI or extraction API. See the epic for the
-full task list.
+`extract_chart(image_path, profile, plot_box, image_height_mm)` is the
+end-to-end entry point. CLI not yet exposed; the pipeline is callable
+from Python now.
 
 ## Layout
 
@@ -27,6 +28,7 @@ full task list.
 mtfdigitizer/
   README.md           # this file
   __init__.py         # package marker + module map
+  loader.py           # alpha-aware image loader (shared)
   referenceset/       # eye-verified ground-truth charts (#933)
     REFERENCE_SET.md  # what's in the set, why, verified-shape notes
     charts.py         # machine-readable manifest
@@ -34,8 +36,54 @@ mtfdigitizer/
     types.py          # MtfProfile, HueRange, ProfileMatch, ProfileMismatch
     declared.py       # SIGMA_2COLOR_SOLID_DASHED, SAMYANG_4COLOR_ALL_SOLID
     suggest.py        # suggest_profile() advisory + resolve() B1 entry point
+  pipeline/           # adaptive extraction pipeline (#935)
+    types.py          # PlotBox, SampledReading, ExtractedChart
+    plotbox.py        # pixel ↔ MTF / mm conversions
+    masks.py          # HueRange → binary mask, OR by name
+    skeleton.py       # close + skeletonize
+    split.py          # S/M split via connected-components-by-width
+    sampling.py       # 11-point sampling with B2 None-on-gap
+    pipeline.py       # extract_chart() orchestrator
   tests/              # pytest suite (matches brandkit/pagefetch pattern)
 ```
+
+## Pipeline
+
+```
+chart PNG
+  -> alpha composite onto white     (loader.py)
+  -> HSV mask per declared hue      (pipeline/masks.py)
+  -> morphological close + skel     (pipeline/skeleton.py)
+  -> S/M split (SPLIT_BY_DASH only) (pipeline/split.py)
+  -> 11-point sampling + interp     (pipeline/sampling.py)
+  -> ExtractedChart with 11 SampledReading rows
+```
+
+Per-profile dispatch in `pipeline.py`:
+
+- `(SPLIT_BY_DASH, FREQUENCY)` → Sigma dialect: each hue is a frequency,
+  CC-split gives S/M
+- `(HUE_IS_CURVE, CURVE_IDENTITY)` → Samyang dialect: hue name encodes
+  both frequency and S/M (e.g. `10S-red`)
+
+Other combinations raise `NotImplementedError` (fail loud).
+
+### Known limits, deferred
+
+- **Plot box is caller-supplied.** Auto-detection across the chart-style
+  zoo (multi-panel stacks, mixed backgrounds, transparency) is genuinely
+  hard and out of scope for #935. Test fixtures hardcode the reference
+  charts' boxes; production callers will need a detector or per-chart
+  hand entry until that task lands.
+- **Samyang pink 10M reads low at the edge** — anti-aliased pink fades
+  below the saturation threshold near the chart edge, dropping curve
+  pixels. The 0.10-0.20 divergence at the edge is within the band PR
+  #931 deemed legitimate; future refinement.
+- **Sigma dashed M is partial** — the morphological close bridges
+  *most* dash gaps but not all; positions with no bridged-skeleton
+  pixel correctly return `None` (B2), but the readings file will need
+  the M curve interpolated by the serializer (a later task) or accept
+  gaps.
 
 ## Profile system
 
