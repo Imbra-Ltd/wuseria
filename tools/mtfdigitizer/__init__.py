@@ -8,8 +8,9 @@ The package is scaffolded incrementally as epic #932 lands:
 
 - `referenceset/`   — eye-verified ground-truth charts (#933)
 - `profiles/`       — declared chart profiles + advisory auto-suggest (#934)
-- `pipeline.py`     — adaptive extraction pipeline (#935)
-- `confidence.py`   — render-match + plausibility priors
+- `pipeline/`       — adaptive extraction pipeline (#935)
+- `pipeline/rendermatch.py` — round-trip IoU + precision scorer (#963)
+- `priors.py`       — physical-plausibility priors (#966)
 - `svg.py`          — SVG emitter (from numbers)
 - `review.py`       — 3-panel review file generator
 """
