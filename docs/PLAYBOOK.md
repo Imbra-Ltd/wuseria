@@ -238,6 +238,22 @@ update the markdown after a run that changes the numbers materially. Reference
 the calibration entries when discussing the ADR-038 offset tolerance band or
 the 0.75 render-match threshold.
 
+**Run the MTF digitizer render-match scorer:**
+
+```bash
+cd tools && py -m mtfdigitizer.scorer
+```
+
+Sister to `calibrate`: runs `extract_chart()` then `score_chart()` against the
+same runnable subset, reports per-field render-match IoU + a polyline-on-skeleton
+precision side metric + an aggregate. The IoU half of the threshold calibration
+described in `tools/mtfdigitizer/referenceset/REFERENCE_SET.md` §"What
+'calibration against the set' actually means". Output: stdout only. Findings
+live in `tools/mtfdigitizer/referenceset/scoring.md` — update after a run that
+materially changes the numbers. Reference scoring entries when discussing the
+0.75 IoU threshold revision (the first run found the threshold fails 3/3
+charts due to sparse-polyline vs dense-skeleton size asymmetry).
+
 **Audit spec field coverage per brand:**
 
 ```bash
