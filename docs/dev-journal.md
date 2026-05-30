@@ -3444,3 +3444,45 @@ tasks), solid-ai-templates#342 (upstream — ASCII diagrams in ADRs).
   downstream can be tuned without it. Then #934 (profiles), #935 (pipeline).
 - Backlog: #930 (Samyang dead Image: links), 34 optical-specs folders with no
   chart image (need sourcing under #790).
+
+---
+
+### Session 95 — Memory Pointer Fix and Backlog Triage Decision
+
+Theme started as a status check; turned into two pieces of process work. No
+code, no data changes. One PR.
+
+PRs: #941 (open — wrap-up checklist memory-pointer step). Issues: none
+created or closed.
+
+#### Key changes
+
+- **Stale memory pointer.** The `session_next_theme` agent-memory file had
+  drifted from session 88 to 94 — six sessions stale. Root cause: it lives
+  outside the repo (`~/.claude/.../memory/`) and is not synced from git, and
+  no wrap-up step required refreshing it, so it silently froze while the
+  dev journal stayed current. Rewrote it to current state (v0.7.0 shipped,
+  MTF digitizer ADR-038 in progress, next = epic #932/#933) and fixed its
+  MEMORY.md index line.
+- **#941 — wrap-up checklist gains a memory step.** Added step 5 (memory
+  pointer refresh) to CLAUDE.md 6.3, next to the dev-journal step, with text
+  naming the failure mode (not git-synced -> goes stale). Renumbered 6-14.
+
+#### Key decisions
+
+- **Backlog triage: deferred, but the model is settled.** Discussed grooming
+  the 203-open backlog (147 are P3/P4). Rejected a multi-stage funnel as
+  YAGNI — the pile is self-generated deferred work, not unvetted intake, so
+  the need is one honest "parked" boundary, not an intake pipeline. Agreed
+  destination: a new **`Funnel` milestone holding parked issues, kept open**
+  (live list = `is:open -milestone:Funnel`), selected via an approved
+  shortlist. User deferred execution to a later session — nothing was
+  created or moved. Candidate clusters identified for next time: premature
+  per-brand MTF digitization (#791-814, blocked on #932/#933), add-missing-
+  lenses epic #820, score-all epic #655, dormant wiki/growth/spike groups.
+
+#### Next
+
+- Backlog triage execution when ready (decisions above are locked).
+- MTF digitizer epic #932 unchanged: start #933 (reference set), then
+  #934, #935.
