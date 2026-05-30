@@ -80,6 +80,66 @@ def test_chart_path_starts_with_docs_optical_specs() -> None:
         )
 
 
+def test_ground_truth_charts_carry_plot_box() -> None:
+    """A chart with ground truth must have a plot box (you need both
+    to run the calibration runner). The inverse is also enforced — a
+    chart with a plot box but no ground truth is unfinished work."""
+    for chart in REFERENCE_CHARTS:
+        if chart.ground_truth is not None:
+            assert chart.plot_box is not None, (
+                f"{chart.slug}: has ground_truth but no plot_box"
+            )
+        if chart.plot_box is not None:
+            assert chart.ground_truth is not None, (
+                f"{chart.slug}: has plot_box but no ground_truth"
+            )
+
+
+def test_ground_truth_has_eleven_values_per_curve() -> None:
+    """The 11-point sampling grid is fixed (ADR-038 §3); ground truth
+    rows must match it. A wrong length means the row was hand-typed
+    incorrectly and would silently mis-align with the extractor output."""
+    for chart in REFERENCE_CHARTS:
+        if chart.ground_truth is None:
+            continue
+        for aperture, fields in chart.ground_truth.items():
+            for field_name, values in fields.items():
+                assert len(values) == 11, (
+                    f"{chart.slug} [{aperture}] {field_name}: "
+                    f"expected 11 values, got {len(values)}"
+                )
+
+
+def test_ground_truth_values_in_mtf_range() -> None:
+    """MTF values must sit in [0, 1] — anything outside is a typo."""
+    for chart in REFERENCE_CHARTS:
+        if chart.ground_truth is None:
+            continue
+        for aperture, fields in chart.ground_truth.items():
+            for field_name, values in fields.items():
+                for i, v in enumerate(values):
+                    if v is None:
+                        continue
+                    assert 0.0 <= v <= 1.0, (
+                        f"{chart.slug} [{aperture}] {field_name}[{i}] = {v}: "
+                        f"out of MTF range [0, 1]"
+                    )
+
+
+def test_ground_truth_field_names_are_canonical() -> None:
+    """Field names must match the SampledReading schema in pipeline/types.py."""
+    canonical = {"contrast10S", "contrast10M", "resolution30S", "resolution30M"}
+    for chart in REFERENCE_CHARTS:
+        if chart.ground_truth is None:
+            continue
+        for aperture, fields in chart.ground_truth.items():
+            unknown = set(fields) - canonical
+            assert not unknown, (
+                f"{chart.slug} [{aperture}]: unknown fields {unknown}; "
+                f"must be a subset of {canonical}"
+            )
+
+
 # Note: a specs-log.md check belongs to a project-wide audit, not to the
 # reference-set sanity tests. CLAUDE.md §1.2 requires it for every lens
 # folder; verifying that is out of scope for #933 and tracked separately.
