@@ -4103,3 +4103,90 @@ Lead recommendation: **plausibility priors** — they unblock the
 threshold decision (you can't gate on render-match alone once the
 flat-axis case is confirmed real), and they're the largest remaining
 gap in the confidence signal.
+
+---
+
+### Session 102 — MTF plausibility priors + auto-triage gate
+
+Closed out epic #932's "Confidence signal" item end-to-end. Built the
+second of the two confidence signals (plausibility priors) and then
+the gate that combines both signals into a single binary verdict per
+chart. All three sub-checkboxes (render-match, priors, auto-triage)
+ticked.
+
+**Tool:** Claude Code (Opus 4.7, 1M context)
+
+#### PRs merged
+
+- **#967** — Physical-plausibility priors (#966). Four pure functions
+  over `tuple[SampledReading, ...]`: `check_center_ge_edge`,
+  `check_10_ge_30`, `check_not_suspiciously_flat`, `check_in_range`.
+  `check_all()` aggregates; empty list = HIGH plausibility, any
+  violation = LOW. `py -m mtfdigitizer.plausibility` runs them against
+  the reference set; findings in `referenceset/plausibility.md`.
+  Reference-set separation matched prediction on first run, no
+  tuning: Sigma 56mm PASS, Samyang 85mm MAX PASS, Samyang 300mm reflex
+  FAIL flatness on 3/4 fields (30S sparse, skipped — `statistics.stdev`
+  needs ≥ 2 points). 27 unit tests + 3 reference-set integration
+  assertions; 87/87 across full mtfdigitizer suite.
+- **#969** — Auto-triage gate (#968). Pure function
+  `triage(score, violations) → ChartVerdict` combining both signals:
+  `precision ≥ 0.80 AND IoU ≥ 0.20 AND priors_pass` ⇒ HIGH, else LOW
+  with reason codes. 7 `LowReason` enum values route maintainer
+  attention to extractor-side work (`*_below_threshold`,
+  `render_match_undefined`) vs chart-side work (`prior_failed_*`).
+  Promoted `scoring.md` finding 2's tentative thresholds to default,
+  pinned empirically. `py -m mtfdigitizer.autotriage` runner; findings
+  in `referenceset/triage.md`. Refactor: `precision_of()` moved from
+  `scorer.py`'s inline `_polyline_precision` into `triage.py`; scorer
+  output byte-identical. 20 unit tests + 3 reference-set integration
+  assertions; 107/107 across the full suite.
+
+#### Issues closed
+
+- #966 — physical-plausibility priors
+- #968 — auto-triage gate
+
+#### Key changes
+
+- New: `tools/mtfdigitizer/priors.py` — four priors + `check_all()`
+- New: `tools/mtfdigitizer/plausibility.py` — reference-set runner
+- New: `tools/mtfdigitizer/referenceset/plausibility.md` — findings
+- New: `tools/mtfdigitizer/triage.py` — gate + `precision_of()` (now
+  shared with scorer.py)
+- New: `tools/mtfdigitizer/autotriage.py` — gate runner
+- New: `tools/mtfdigitizer/referenceset/triage.md` — findings
+- Modified: `tools/mtfdigitizer/scorer.py` — imports `precision_of`
+  from triage (DRY)
+- Modified: `tools/mtfdigitizer/__init__.py` — module roster updated
+- Modified: `CLAUDE.md` — `tools/mtfdigitizer/` blurb extended with
+  priors + triage modules
+- Epic #932 checklist: "Confidence signal" item fully delivered;
+  remaining epic work (SVG emitter, 3-panel review file, profiles for
+  other 3 families, legacy retirement) now independent
+
+#### Key decisions
+
+- **Flatness thresholds: mean ≥ 0.95 AND stdev ≤ 0.02.** Picked
+  before the first run; separated the 3 charts cleanly without tuning.
+  The Samyang 85mm 10M curve sits at mean ~0.93 (just below the floor)
+  — comfortable margin. Worth re-evaluating once more charts can run.
+- **Auto-triage rule: strict AND across all three signals.** Sigma
+  56mm classifies LOW today because its render-match precision is
+  0.44 (sparse dashed-M bridging). That's the _desired_ signal — it
+  routes the maintainer to the upstream extractor fix instead of
+  hiding the weakness behind a green light. Considered OR-logic; kept
+  the predicate simple and predictable.
+- **Reason codes routed by category, not severity.** Three groups:
+  extractor-side (`*_below_threshold`, `render_match_undefined`),
+  chart-side (`prior_failed_*`). The 3-panel review-file generator
+  (separate task) can consume the codes to decide what to show.
+- **IoU rule is `>= 0.20` not `> 0.20`.** Samyang 85mm scores IoU
+  0.224 — one one-hundredth above the floor. Inclusive comparison
+  pinned in test, prevents oscillation on tiny calibration drift.
+- **`precision_of()` lives in `triage.py`, not `rendermatch.py`.**
+  Both `scorer.py` and `triage.py` import it. Single definition;
+  scorer output byte-identical to pre-refactor.
+- **`NotImplementedError` for unknown prior names in
+  `_PRIOR_NAME_TO_REASON`.** Mirrors `dispatch.py`'s B1 discipline —
+  fail loud when a new prior is added without a mapping, never silent.
