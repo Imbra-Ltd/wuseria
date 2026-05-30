@@ -3645,3 +3645,200 @@ from `mtf-readings.ts` because PR #931 found two wrong entries in it.
 - Next foundation task on epic #932 is **#934** — MTF profile abstraction
   with advisory auto-suggest (generalizes PR #931's B1 fail-loud gate).
   Builds directly on `STYLE_FAMILIES` from this PR's `charts.py`.
+
+---
+
+### Session 98 — MTF profile abstraction
+
+**Tool:** Claude Opus 4.7 (1M context, Claude Code)
+**Branch:** `feat/mtf-profile-abstraction` → PR #949 (merged)
+**Closes:** #934
+
+#### Goal
+
+Generalize PR #931's B1 fail-loud gate from a hardcoded two-brand path
+into a declared-profile system that refuses anything it does not
+understand. Foundation task #2 of epic #932 (ADR-038); blocks the
+extraction pipeline (#935).
+
+#### Key changes
+
+- **`tools/mtfdigitizer/profiles/`** — new sub-package:
+  - `types.py` — `MtfProfile`, `HueRange`, `ProfileMatch`,
+    `ProfileMismatch`, `StyleAxis`, `HueMeaning`. Frozen dataclasses,
+    no behavior.
+  - `declared.py` — `SIGMA_2COLOR_SOLID_DASHED`,
+    `SAMYANG_4COLOR_ALL_SOLID`, `DECLARED_PROFILES`. HSV bands
+    measured from real reference chart pixels (sampling script in
+    commit message).
+  - `suggest.py` — `suggest_profile()` advisory inspection,
+    `resolve()` enforces the B1 fail-loud contract.
+- **`HueRange` gained `s_max` and `v_max`** during design — Samyang
+  distinguishes pink (low S) from red (high S) and dark grey (low V)
+  from light grey (high V). A pure-hue model couldn't separate the
+  four Samyang curves; the extension to full HSV-box bands matched
+  the data.
+- **19 new pytest cases** covering all 4 acceptance criteria from #934
+  plus the ADR-038 §4 flat-axis blind-spot separation.
+
+#### Key decisions
+
+- **Profile per-style-family, not per-brand.** ADR-038 §1 phrases it as
+  "declared per brand," but multiple brands share a profile (Fujifilm +
+  Sigma both fit `SIGMA_2COLOR_SOLID_DASHED`) and one brand may
+  eventually use multiple profiles. Treating profiles as reusable
+  style declarations preserves the "declared per brand" property
+  without forcing N copies of the same profile.
+- **`STYLE_FAMILIES` from #933 set the agenda but did not become the
+  type.** They are a diagnostic tag (helps humans pick reference
+  charts); `MtfProfile.name` is the operational identifier. Decoupling
+  them matched how the data actually shaped up.
+- **Auto-suggest signal is hue-count via HSV histogram, with a margin
+  requirement.** Best wins by ≥0.20 above runner-up AND ≥0.60
+  absolute, else refuse as ambiguous. This is the simplest signal that
+  works for the two declared profiles; #935 can sharpen with
+  skeleton-aware signals once the extraction pipeline exists.
+- **HSV bands measured from real pixels, not invented.** A sampling
+  probe (embedded in the commit message) gave Sigma's red and blue
+  hue peaks and Samyang's red/pink/grey separations. Made-up bands
+  would have drifted.
+
+#### Verification
+
+- Auto-suggest probed against all 8 reference charts:
+  - Sigma 56 → Sigma profile (score 1.00) ✓
+  - Samyang 85 → Samyang profile (score 1.00) ✓
+  - Samyang 300 reflex → Samyang profile (score 1.00) ✓ (correct
+    dialect; flatness is the plausibility prior's job in #935)
+  - 7Artisans 50, 7Artisans 35 promo, Tokina 23, Viltrox 75, Zeiss
+    Touit — all correctly refused as undeclared / ambiguous /
+    out-of-band
+- `cd tools && py -m pytest`: **314 passed** (was 295 + 19 new, no regressions)
+- `npm run validate`: clean (461 pages built)
+
+#### Next
+
+- After #949 merges: tick `- [x] #934` in epic #932's task list.
+- Next foundation task on epic #932 is **#935** — adaptive extraction
+  pipeline with 11-point sampling. This is the first task that can
+  measure render-match IoU against the reference set and refine the
+  proposed 0.75 threshold.
+
+---
+
+### Session 99 — MTF extraction pipeline
+
+**Tool:** Claude Opus 4.7 (1M context, Claude Code)
+**Branch:** `feat/mtf-extraction-pipeline` → PR #951 (merged)
+**Closes:** #935
+**Filed:** #950 (auto-detect plot box)
+
+#### Goal
+
+Build the core tracing engine: HSV mask → close → skeletonize → S/M
+split → 11-point sampling. Foundation task #3 of epic #932 (ADR-038);
+completes the foundation trio (#933 ✓, #934 ✓, #935 ✓).
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/`** — new sub-package, 7 small composable modules:
+  - `types.py` — `PlotBox`, `SampledReading`, `ExtractedChart`
+  - `plotbox.py` — pixel ↔ MTF/mm conversions
+  - `masks.py` — `HueRange` → binary mask, OR by name
+  - `skeleton.py` — morphological close + Zhang-Suen skeletonize
+  - `split.py` — S/M split via connected-components-by-width
+    (preserves B3: per-column unweighted mean, no order-dependent
+    running average with a 5px cap)
+  - `sampling.py` — 11-point sampling with B2 None-on-gap (no fabrication)
+  - `pipeline.py` — `extract_chart()` orchestrator with per-profile dispatch
+- **`tools/mtfdigitizer/loader.py`** — new shared alpha-aware image loader.
+  Discovered during the plot-box probe: many MTF charts are RGBA with
+  transparent background that `cv2.imread` silently drops, leaving
+  pre-multiplied black. The loader composites onto white before any
+  downstream stage runs. The profile system (`profiles/suggest.py`) now
+  uses it too.
+- **`samyang-4color-all-solid` grey bands tightened** — V 85-115 and
+  160-195 instead of 70-130 / 150-210. The loose previous bands matched
+  generic midtones, which the loader fix exposed: previously the Sigma
+  chart loaded as pre-multiplied black, hiding the over-match. With
+  proper alpha-composite the over-match became visible and was fixed.
+- **14 new pytest cases** covering all 4 acceptance criteria.
+
+#### Key decisions
+
+- **Pipeline decomposed into 7 single-responsibility modules**, not
+  one 1000-line file like the legacy `mtf-extract-skeleton.py`. Each
+  stage is independently testable. The orchestrator (`pipeline.py`)
+  only does composition; per-profile dispatch lives in one place.
+- **Plot box is caller-supplied, not auto-detected.** Detection across
+  the chart-style zoo (multi-panel stacks, mixed backgrounds,
+  transparency, dashed axes) is genuinely hard. The clean cut: take
+  `PlotBox` as input, hardcode the two reference boxes in test
+  fixtures, file detection as #950. The pipeline proves it can extract
+  curves _given_ a box; productionizing detection is the next
+  productivity step, not a #935 requirement.
+- **Per-profile dispatch on `(style_axis, hue_meaning)` tuple,
+  unimplemented combinations raise.** ADR-038 §1 spirit: fail loud
+  rather than silently mis-extract. Two combinations wired:
+  - `(SPLIT_BY_DASH, FREQUENCY)` → Sigma
+  - `(HUE_IS_CURVE, CURVE_IDENTITY)` → Samyang
+- **`CURVE_IDENTITY` hue names must follow `<freq><sm>-<color>`
+  convention** (e.g. `10S-red`, `30M-light-grey`), enforced by regex
+  in `_parse_curve_identity_name`. A typo in `declared.py` fails loud
+  here rather than silently mis-mapping.
+- **B2 contract surfaces in the test suite.** Sigma's dashed-M curve
+  legitimately reads `None` at multiple sample points because the
+  close-kernel doesn't bridge every dash gap. The test asserts "some
+  Ms are None" rather than specific positions — tightening would
+  couple the test to morphological-kernel tuning that future work may
+  rebalance.
+
+#### Discovered bugs in upstream sessions (this PR also fixes)
+
+- **Loader alpha drop** (silently affected #934's profile system).
+  Previous Sigma "score 1.00" was an accident — the curves are opaque
+  in the source PNG so red curve pixels survived even when the
+  background became pre-multiplied black. After the loader fix, the
+  too-loose Samyang grey bands matched the now-white background and
+  the test suite caught it, forcing a band tightening that genuinely
+  hardens the profile.
+
+#### Empirical validation
+
+- **Sigma 56 f/1.4**: 10S extracts 0.97 at center (reference: ~0.97),
+  knees to 0.90 at 12.6mm. 30S extracts 0.86 at center, drops to 0.57
+  at edge. Dashed-M positions partially read `None` — B2 working as
+  designed.
+- **Samyang 85 MAX panel**: all 4 fields populated at all 11 points.
+  Center values within ±0.05 of reference shapes (10S/M ~0.91, 30S/M
+  ~0.70); 10S knees at edge as documented.
+
+#### Known limits (documented in README)
+
+- **Samyang pink 10M reads low at edge** — anti-aliased pink fades
+  below the saturation threshold; 0.10-0.20 divergence within PR #931's
+  deemed-legitimate band. Future refinement.
+- **Sigma dashed M is partial** — close-kernel bridges most but not all
+  dash gaps; B2 returns `None` for unbridged positions. Serializer
+  (future task) decides whether to interpolate.
+
+#### Verification
+
+- `cd tools && py -m pytest`: **328 passed** (was 314 + 14 new, no regressions)
+- `npm run validate`: clean (461 pages built)
+
+#### Next
+
+- Foundation trio (#933 #934 #935) all complete. Epic #932's remaining
+  tasks are now genuinely independent:
+  - Confidence signal: render-match + plausibility priors + auto-triage
+  - SVG emitter (display + provenance, from readings)
+  - 3-panel review-file generator + run-log
+  - Optional Real-ESRGAN low-confidence fallback
+  - Calibrate the 0.75 threshold against the reference set (now that the
+    extractor exists to measure real IoU)
+  - Retire `mtf-extract-skeleton.py` / `-samyang.py` / `-sigma.py` (close #563)
+  - Lens pages render SVG MTF charts in place of raster PNGs
+- Next priority candidate: **calibrate the 0.75 threshold** — uses the
+  reference set + the new extractor end-to-end and produces a concrete
+  value for the confidence gate the rest of the epic builds on.
