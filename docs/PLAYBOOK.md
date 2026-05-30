@@ -254,6 +254,35 @@ materially changes the numbers. Reference scoring entries when discussing the
 0.75 IoU threshold revision (the first run found the threshold fails 3/3
 charts due to sparse-polyline vs dense-skeleton size asymmetry).
 
+**Run the MTF digitizer plausibility-priors runner:**
+
+```bash
+cd tools && py -m mtfdigitizer.plausibility
+```
+
+Runs `extract_chart()` then `check_all()` against the same runnable subset,
+reports which of the four physical-plausibility priors (`center_ge_edge`,
+`ten_ge_thirty`, `not_suspiciously_flat`, `in_range`) fire per chart. The
+second of the two confidence signals ADR-038 §"Confidence signal" requires —
+catches render-match's flat-axis blind spot (the 300mm reflex case).
+Output: stdout only. Findings live in
+`tools/mtfdigitizer/referenceset/plausibility.md` — update after a run that
+materially changes the numbers.
+
+**Run the MTF digitizer auto-triage gate:**
+
+```bash
+cd tools && py -m mtfdigitizer.autotriage
+```
+
+Combines both confidence signals into one HIGH/LOW verdict per chart:
+`precision ≥ 0.80 AND IoU ≥ 0.20 AND priors_pass` ⇒ HIGH, else LOW with
+reason codes. Reason codes route attention to extractor-side work
+(`precision_below_threshold`, `iou_below_threshold`,
+`render_match_undefined`) vs chart-side work (`prior_failed_*`). Output:
+stdout only. Findings live in `tools/mtfdigitizer/referenceset/triage.md` —
+update after a run that materially changes the numbers.
+
 **Audit spec field coverage per brand:**
 
 ```bash
