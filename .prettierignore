@@ -5,6 +5,11 @@ docs/solid-ai-templates/
 docs/prototype/
 downloaded_files/
 
+# MTF digitizer generated artifacts — tool-emitted by
+# tools/mtfdigitizer/{svg,review}.py, not hand-edited source.
+docs/optical-specs/**/*-review.html
+docs/optical-specs/**/*-mtf*.svg
+
 # Python tooling — own pytest suites, not part of the front-end gate
 tools/
 
