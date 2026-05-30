@@ -26,17 +26,24 @@ The pipeline retains the three sound parts of the legacy
 Public surface:
 
 - `extract_chart(image_path, profile, image_height_mm) -> ExtractedChart`
+- `score_chart(image_path, profile, plot_box, image_height_mm, readings)
+   -> RenderMatchScore` — round-trip IoU confidence signal (#963)
 - `SAMPLE_POINTS` — the 11 fractional sample heights (0.0, 0.1, ..., 1.0)
 - `PlotBox`, `ExtractedChart`, `SampledReading` (types)
+- `FieldIou`, `RenderMatchScore` (render-match types)
 """
 
 from .pipeline import extract_chart, SAMPLE_POINTS
+from .rendermatch import FieldIou, RenderMatchScore, score_chart
 from .types import ExtractedChart, PlotBox, SampledReading
 
 __all__ = [
     "ExtractedChart",
+    "FieldIou",
     "PlotBox",
+    "RenderMatchScore",
     "SAMPLE_POINTS",
     "SampledReading",
     "extract_chart",
+    "score_chart",
 ]
