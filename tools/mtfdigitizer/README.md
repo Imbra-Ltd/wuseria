@@ -16,6 +16,7 @@ Under construction. Foundation work in progress:
 - [x] [#933](https://github.com/Imbra-Ltd/wuseria/issues/933) — reference set
 - [x] [#934](https://github.com/Imbra-Ltd/wuseria/issues/934) — profile abstraction + advisory auto-suggest
 - [x] [#935](https://github.com/Imbra-Ltd/wuseria/issues/935) — adaptive extraction pipeline with 11-point sampling
+- [x] [#953](https://github.com/Imbra-Ltd/wuseria/issues/953) — ground truth + plot boxes; offset distribution measured (calibration half 1 of 2)
 - [ ] Remaining tasks under epic [#932](https://github.com/Imbra-Ltd/wuseria/issues/932)
 
 `extract_chart(image_path, profile, plot_box, image_height_mm)` is the
@@ -29,9 +30,11 @@ mtfdigitizer/
   README.md           # this file
   __init__.py         # package marker + module map
   loader.py           # alpha-aware image loader (shared)
+  calibrate.py        # reference-set calibration runner (#953)
   referenceset/       # eye-verified ground-truth charts (#933)
     REFERENCE_SET.md  # what's in the set, why, verified-shape notes
-    charts.py         # machine-readable manifest
+    calibration.md    # latest calibration run + findings (#953)
+    charts.py         # machine-readable manifest (chart + plot box + ground truth)
   profiles/           # declared chart profiles + auto-suggest (#934)
     types.py          # MtfProfile, HueRange, ProfileMatch, ProfileMismatch
     declared.py       # SIGMA_2COLOR_SOLID_DASHED, SAMYANG_4COLOR_ALL_SOLID
@@ -131,9 +134,22 @@ The two open ADR-038 parameters proposed against this set:
 - **Render-match threshold** — `0.75` IoU initial value
 - **Offset tolerance band** — `±0.05` MTF units (uniform vertical offset)
 
-Reasoning in `referenceset/REFERENCE_SET.md` §Proposed thresholds. Both will
-be refined against the real extractor in #935 — these are starting points,
-not final.
+Reasoning in `referenceset/REFERENCE_SET.md` §Proposed thresholds. The
+offset band side of the calibration ran in #953 against the 3 charts whose
+profile is declared today; see `referenceset/calibration.md` for the
+measurement and findings. Render-match calibration is still blocked on the
+confidence-signal sub-task of #932.
+
+## Calibration
+
+```bash
+cd tools
+py -m mtfdigitizer.calibrate
+```
+
+Runs `extract_chart()` for every reference chart with both `plot_box` and
+`ground_truth` populated and reports the |d| (absolute offset) distribution
+per field. See `referenceset/calibration.md` for the latest run's findings.
 
 ## Running the tests
 

@@ -8,10 +8,8 @@ Acceptance criteria from issue #935:
 - Reproduces the reference set's shapes
 - Tests pass
 
-Plot boxes for the two reference charts were measured during this
-session's probe pass (`y_top`/`y_bottom` from the long vertical-axis
-run, `x_left`/`x_right` from the long horizontal-axis run, all on
-alpha-composited images).
+Plot boxes are pulled from `referenceset/charts.py` so the calibration
+runner and the test suite use the same hand-measured boxes — see #953.
 """
 
 from __future__ import annotations
@@ -38,18 +36,31 @@ from mtfdigitizer.profiles import (
     SAMYANG_4COLOR_ALL_SOLID,
     SIGMA_2COLOR_SOLID_DASHED,
 )
+from mtfdigitizer.referenceset import REFERENCE_CHARTS
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
-SIGMA_56_CHART = REPO_ROOT / "docs/optical-specs/sigma-56mm-f1-4-dc-dn-c/sigma-56mm-f1-4-dc-dn-c-mtf-1.png"
-SAMYANG_85_CHART = REPO_ROOT / "docs/optical-specs/samyang-85mm-f1-4-as-if-umc/samyang-85mm-f1-4-as-if-umc-mtf.png"
+def _ref(slug: str) -> tuple[Path, PlotBox, float]:
+    """Pull (chart_path, plot_box, image_height_mm) from the reference set.
 
-# Reference plot boxes measured by axis-line search on the alpha-composited
-# reference charts. See session 99's commit message for the probe code.
-SIGMA_56_PLOT_BOX = PlotBox(x_left=186, x_right=2987, y_top=83, y_bottom=1700)
-SAMYANG_85_MAX_PLOT_BOX = PlotBox(x_left=31, x_right=461, y_top=43, y_bottom=463)
+    Tests use the same plot boxes the calibration runner uses, so re-measuring
+    one only happens in `referenceset/charts.py`.
+    """
+    chart = next(c for c in REFERENCE_CHARTS if c.slug == slug)
+    assert chart.plot_box is not None, f"{slug}: no plot_box in referenceset"
+    box = PlotBox(
+        x_left=chart.plot_box.x_left,
+        x_right=chart.plot_box.x_right,
+        y_top=chart.plot_box.y_top,
+        y_bottom=chart.plot_box.y_bottom,
+    )
+    return REPO_ROOT / chart.chart_path, box, chart.image_height_mm
+
+
+SIGMA_56_CHART, SIGMA_56_PLOT_BOX, _ = _ref("sigma-56mm-f1-4-dc-dn-c")
+SAMYANG_85_CHART, SAMYANG_85_MAX_PLOT_BOX, _ = _ref("samyang-85mm-f1-4-as-if-umc")
 
 
 # --- Acceptance: 11 fixed points ------------------------------------------
