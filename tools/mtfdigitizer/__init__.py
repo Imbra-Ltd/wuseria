@@ -6,8 +6,8 @@ legacy `mtf-extract-skeleton.py`.
 
 The package is scaffolded incrementally as epic #932 lands:
 
-- `referenceset/`   — eye-verified ground-truth charts (#933, this PR)
-- `profiles/`       — declared chart profiles (#934)
+- `referenceset/`   — eye-verified ground-truth charts (#933)
+- `profiles/`       — declared chart profiles + advisory auto-suggest (#934)
 - `pipeline.py`     — adaptive extraction pipeline (#935)
 - `confidence.py`   — render-match + plausibility priors
 - `svg.py`          — SVG emitter (from numbers)

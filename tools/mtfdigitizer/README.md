@@ -13,8 +13,8 @@ fixed sample points → confidence score (render-match + plausibility priors)
 
 Under construction. Foundation work in progress:
 
-- [x] [#933](https://github.com/Imbra-Ltd/wuseria/issues/933) — reference set (this scaffold)
-- [ ] [#934](https://github.com/Imbra-Ltd/wuseria/issues/934) — profile abstraction
+- [x] [#933](https://github.com/Imbra-Ltd/wuseria/issues/933) — reference set
+- [x] [#934](https://github.com/Imbra-Ltd/wuseria/issues/934) — profile abstraction + advisory auto-suggest
 - [ ] [#935](https://github.com/Imbra-Ltd/wuseria/issues/935) — extraction pipeline
 - [ ] Remaining tasks under epic [#932](https://github.com/Imbra-Ltd/wuseria/issues/932)
 
@@ -30,8 +30,32 @@ mtfdigitizer/
   referenceset/       # eye-verified ground-truth charts (#933)
     REFERENCE_SET.md  # what's in the set, why, verified-shape notes
     charts.py         # machine-readable manifest
+  profiles/           # declared chart profiles + auto-suggest (#934)
+    types.py          # MtfProfile, HueRange, ProfileMatch, ProfileMismatch
+    declared.py       # SIGMA_2COLOR_SOLID_DASHED, SAMYANG_4COLOR_ALL_SOLID
+    suggest.py        # suggest_profile() advisory + resolve() B1 entry point
   tests/              # pytest suite (matches brandkit/pagefetch pattern)
 ```
+
+## Profile system
+
+A *profile* declares a chart's visual dialect along three axes (ADR-038 §1):
+
+- **Color axis** — one HSV band per curve color (with S and V bounds, so
+  pink-vs-red and dark-grey-vs-light-grey are distinguishable)
+- **Style axis** — `SPLIT_BY_DASH` for one-hue-per-frequency dialects
+  (Sigma); `HUE_IS_CURVE` for one-hue-per-curve dialects (Samyang)
+- **Frequency count** — declaring 2 frequencies refuses 3-frequency charts
+
+`resolve(image, declared)` is the entry point: it returns the declared
+profile when the image agrees, raises `ProfileMismatch` when they
+disagree, and falls back to the advisory auto-suggest only when
+nothing is declared. **A declared profile is never silently switched** —
+that's the B1 fail-loud gate from PR #931 generalized.
+
+Two profiles ship to start (the YAGNI cut from #934 — Sigma and
+Samyang are the brands we have reference data for). Other dialects
+land per-brand as the digitizer encounters them in #935.
 
 ## Reference set
 
