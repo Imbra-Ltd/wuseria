@@ -3486,3 +3486,72 @@ created or closed.
 - Backlog triage execution when ready (decisions above are locked).
 - MTF digitizer epic #932 unchanged: start #933 (reference set), then
   #934, #935.
+
+---
+
+### Session 96 — DPReview Bot-Detection False Positive and Specs-Log Cleanup
+
+Theme started as a v0.8.0 status check; spotted that issue #870 still framed
+the DPReview fetch failure as a "GDPR consent wall." Re-investigated and found
+the actual root cause was a substring false-positive on the Cloudflare bot
+pattern. Two PRs, both merged.
+
+PRs: #944 (docs — specs-log correction), #945 (fix — pagefetch bot pattern,
+closes #870). Issues: #870 closed; #870 rewritten earlier in the session to
+shed the misleading GDPR framing before fixing it.
+
+#### Key changes
+
+- **#870 rewritten then fixed.** The original title and body described
+  DPReview as a GDPR consent wall. Live re-test: urllib actually returns
+  137 KB of real content (`<title>Fujifilm X-T5 Specs: DPReview...</title>`),
+  no Sourcepoint/OneTrust/Didomi/Quantcast markers. The block was a substring
+  false-positive on `BOT_DETECTION_PATTERNS[2]` (`Checking your browser`) —
+  DPReview embeds ad-blocker help text "We recommend checking your browser
+  extensions and settings" around offset 8149 of every page. All four fetch
+  tiers (urllib → Playwright skipped → Nodriver → UC) discarded the body.
+- **Pattern tightened** (`tools/pagefetch/detection.py:18`):
+  `r"Checking your browser"` → `r"Checking your browser\b[^.]{0,40}\bbefore\b"`.
+  Real CF challenges say "Checking your browser before accessing …"; the
+  ad-blocker substring lacks the "before" continuation. Verified end-to-end:
+  Canon EOS R5 Mark II spec page now fetches at the urllib tier (no
+  escalation, 131 KB, correct title).
+- **Regression tests + fixture** (`tools/pagefetch/tests/`): saved the 137 KB
+  DPReview body as `fixtures/dpreview_specifications.html` and added three
+  tests — the fixture is not bot-blocked, the canonical CF phrase still is,
+  and the bare substring without "before" isn't. Suite: 98 pass.
+- **CodeQL fixture exclusion** (`.github/codeql-config.yml` +
+  `codeql.yml`): the DPReview HTML fixture contains minified analytics JS
+  that tripped `js/useless-regexp-character-escape` as 3 "high severity"
+  alerts. Excluded `tools/**/tests/fixtures/**` from CodeQL globally —
+  this also pre-fixes the same risk for the 15+ existing brand fixtures
+  (`tools/<brand>/tests/fixtures/*.html`).
+- **Specs-log corrections** (PR #944): four `specs-log.md` files had five
+  rows attributing fetch failures to "Consent wall, no data" / "Cookie wall,
+  no data" / "GDPR consent wall blocked all tiers." Re-tested on 2026-05-30
+  and corrected each:
+  - 3× digitalkamera.de → `No data sheet for this lens ("Kein Datenblatt
+vorhanden")` — the lens isn't in their catalog; not a wall
+  - 1× B&H Photo on Pergear 35mm → `Not listed (search returned no products)`
+    — cookie banner present in body but page rendered fine
+  - 1× DPReview on Mitakon → `All tiers failed — false-positive bot-pattern
+match on a 136 KB real body (#870)`
+
+#### Key decisions
+
+- **"GDPR consent wall" framing was wrong project-wide.** Server-side fetchers
+  bypass JavaScript-rendered consent dialogs because the consent UI is
+  injected client-side. The HTML on the wire is the real page. Past entries
+  attributing missing data to "consent walls" were misreadings of "no data
+  sheet exists" or rate-limits or false-positive bot detection. Going
+  forward, before logging a "consent wall," verify the HTML on the wire —
+  not the rendered browser view.
+- **CodeQL paths-ignore for fixtures is correct.** Captured third-party HTML
+  is not our code; any complaint about its embedded JS is a false alert.
+  One-time CI hardening, not per-PR exclusion.
+
+#### Next
+
+- session_next_theme priority unchanged: epic #932 / #933 — confirmed MTF
+  reference set for digitizer calibration.
+- Backlog-triage Funnel milestone still deferred.
