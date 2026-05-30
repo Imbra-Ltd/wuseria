@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       code: ${{ steps.filter.outputs.code }}
+      lighthouse: ${{ steps.filter.outputs.lighthouse }}
     steps:
       - uses: actions/checkout@v6
       - uses: dorny/paths-filter@v4
@@ -25,6 +26,17 @@ jobs:
               - 'tsconfig.json'
               - 'package.json'
               - 'package-lock.json'
+              - 'lighthouserc.json'
+              - '.github/workflows/**'
+            # Same paths as `code` minus the lockfile/manifest pair —
+            # dependency-only PRs produce byte-identical site output
+            # (see ADR-039), so re-measuring perf on them is single-run
+            # noise. Build still runs to verify deps compile.
+            lighthouse:
+              - 'src/**'
+              - 'public/**'
+              - 'astro.config.mjs'
+              - 'tsconfig.json'
               - 'lighthouserc.json'
               - '.github/workflows/**'
 
@@ -48,7 +60,7 @@ jobs:
   lighthouse:
     runs-on: ubuntu-latest
     needs: [build, changes]
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.lighthouse == 'true'
     steps:
       - uses: actions/checkout@v6
         with:
