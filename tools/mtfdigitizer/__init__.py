@@ -12,6 +12,6 @@ The package is scaffolded incrementally as epic #932 lands:
 - `pipeline/rendermatch.py` — round-trip IoU + precision scorer (#963)
 - `priors.py`       — physical-plausibility priors (#966)
 - `triage.py`       — auto-triage gate combining both signals (#968)
-- `svg.py`          — SVG emitter (from numbers)
+- `svg.py`          — SVG emitter from readings (#971)
 - `review.py`       — 3-panel review file generator
 """
