@@ -35,6 +35,7 @@ from .pipeline.rendermatch import (
 from .profiles import SAMYANG_4COLOR_ALL_SOLID, SIGMA_2COLOR_SOLID_DASHED
 from .profiles.types import MtfProfile
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
+from .triage import precision_of
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -86,19 +87,9 @@ def _score_one(chart: ReferenceChart) -> RenderMatchScore:
     )
 
 
-def _polyline_precision(fs: FieldIou) -> float | None:
-    """`intersection / rasterized` — what fraction of the redrawn
-    polyline lands inside the dilated skeleton. Robust to the
-    sparse-polyline vs dense-skeleton size asymmetry that depresses
-    pure IoU; pairs with IoU rather than replacing it."""
-    if fs.rasterized_px == 0:
-        return None
-    return fs.intersection_px / fs.rasterized_px
-
-
 def _format_field_row(fs: FieldIou) -> str:
     iou_s = f"{fs.score:.3f}" if fs.score is not None else "  -  "
-    prec = _polyline_precision(fs)
+    prec = precision_of(fs)
     prec_s = f"{prec:.3f}" if prec is not None else "  -  "
     return (
         f"  {fs.field:<14}  IoU {iou_s}  precision {prec_s}  "
@@ -128,7 +119,7 @@ def main() -> None:
         else:
             print("  aggregate IoU:                  -")
         # Mean polyline-on-skeleton precision across defined fields.
-        precs = [_polyline_precision(fs) for fs in result.field_scores]
+        precs = [precision_of(fs) for fs in result.field_scores]
         defined = [p for p in precs if p is not None]
         if defined:
             mean_prec = statistics.mean(defined)
