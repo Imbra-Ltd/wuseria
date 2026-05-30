@@ -3555,3 +3555,93 @@ match on a 136 KB real body (#870)`
 - session_next_theme priority unchanged: epic #932 / #933 — confirmed MTF
   reference set for digitizer calibration.
 - Backlog-triage Funnel milestone still deferred.
+
+---
+
+### Session 97 — MTF digitizer reference set scaffold
+
+**Tool:** Claude Opus 4.7 (1M context, Claude Code)
+**Branch:** `feat/mtf-reference-set` → PR #948
+**Closes:** #933
+**Filed:** #947
+
+#### Goal
+
+Land the first foundation task of epic #932 (ADR-038): the eye-verified
+reference set that calibrates the unified MTF digitizer's two open
+parameters (render-match threshold + offset tolerance band). ADR-038
+calls this out as the prerequisite — neither parameter can be derived
+from `mtf-readings.ts` because PR #931 found two wrong entries in it.
+
+#### Key changes
+
+- **Scaffolded `tools/mtfdigitizer/`** (the package directory ADR-038
+  §Consequences authorizes). Matches the `brandkit` / `pagefetch`
+  pattern: `__init__.py` module-map, `README.md`, `tests/`.
+- **Reference set in `tools/mtfdigitizer/referenceset/`:**
+  - `charts.py` — `REFERENCE_CHARTS: tuple[ReferenceChart, ...]` of 8
+    eye-verified entries, one per chart-style family observed across
+    `docs/optical-specs/`. Frozen dataclass with slug, chart_path,
+    style_family, apertures, frequencies, image-height, notes.
+  - `REFERENCE_SET.md` — verified curve shapes per chart (key
+    inflection points, S/M divergence, edge falloff), plus the
+    reasoning for the proposed thresholds.
+- **Eight style families covered** in one chart each:
+  `mainstream-2color-solid-dashed` (Sigma 56), `mainstream-4color-all-solid`
+  (Samyang 85), `idealized-flat` (Samyang 300 reflex — the ADR-038
+  flat-axis blind-spot probe case), `samecolor-dashed-sm` (7Artisans 50),
+  `soft-multicurve-promo` (7Artisans 35), `2color-frequency` (Tokina 23),
+  `bw-dashed-promo` (Viltrox 75), `multifreq-press-kit` (Zeiss Touit 32).
+- **6 pytest internal-consistency tests** — size in 6-10, no duplicates,
+  every chart file exists, every declared family has a reference chart,
+  no empty fields, chart_path under `docs/optical-specs/<slug>/`.
+- **Proposed starting values** (open in ADR-038, refined in #935):
+  render-match IoU ≥ **0.75**; offset tolerance band **±0.05** MTF units.
+
+#### Key decisions
+
+- **Eye-verified shapes as the source of truth**, not the existing
+  `mtf-readings.ts`. PR #931 found two impossible-zero entries in
+  that file, so the data set we _have_ cannot ground-truth the digitizer
+  we're _building_. The reference set is built from chart images directly,
+  by eye, with the verified shape recorded next to each entry in
+  REFERENCE_SET.md.
+- **One chart per style family, not per brand.** A multi-brand reference
+  set would over-sample mainstream Sigma/Samyang dialects and under-sample
+  the unusual cases that actually break the digitizer (idealized-flat,
+  same-color S/M, 3-frequency press kit). Style coverage is what the
+  thresholds need to separate.
+- **The 300mm reflex stays in the set as an anti-pattern.** ADR-038 §4
+  identifies it as the flat-axis blind-spot probe case. It must trip the
+  "suspiciously flat at ~1.0" plausibility prior, not pass it via clean
+  tracing. A test that proves the prior fires is more valuable than a
+  test that proves clean extraction.
+- **The proposed-thresholds doc collapses task #5 into task #4.** ADR-038
+  was already explicit that the reference set determines the thresholds;
+  documenting both in REFERENCE_SET.md §Proposed thresholds keeps them
+  in one place with the data they're derived from.
+- **Dropped a specs-log.md test from this PR.** A draft test caught 5 of
+  the 8 reference lens folders missing the CLAUDE.md §1.2-mandated
+  `specs-log.md`. That is real, pre-existing data debt — but it belongs
+  to a project-wide audit, not the reference set's internal-consistency
+  suite. Filed as #947 instead; kept the scaffold focused.
+
+#### Out of scope (filed)
+
+- **#947** — Audit and backfill missing `specs-log.md` across optical-specs
+  folders. CLAUDE.md §1.2 mandates the file; sample test against 8 folders
+  found 5 missing. Pre-existing debt.
+
+#### Verification
+
+- `cd tools && py -m pytest`: **295 passed** (existing 289 + new 6)
+- `npm run validate`: clean (461 pages built, 213 Vitest passes)
+- PR #948 CI: pending at wrap-up
+
+#### Next
+
+- After #948 merges: tick `- [x] #933` in epic #932's task list (does not
+  auto-update from PR closure).
+- Next foundation task on epic #932 is **#934** — MTF profile abstraction
+  with advisory auto-suggest (generalizes PR #931's B1 fail-loud gate).
+  Builds directly on `STYLE_FAMILIES` from this PR's `charts.py`.
