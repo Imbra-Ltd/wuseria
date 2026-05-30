@@ -236,6 +236,34 @@ def test_sigma_56_10S_holds_high_until_knee() -> None:
     )
 
 
+def test_sigma_56_reads_at_both_chart_edges() -> None:
+    """#954 regression — extract_chart MUST return a value at fractions
+    0.0 and 1.0 on the Sigma chart. Both edges returned None before the
+    plot-box convention was fixed (axis-line measurement instead of
+    data-edge). A future re-measurement that drifts back to the axis
+    line would silently re-break boundary readings."""
+    result = extract_chart(
+        SIGMA_56_CHART,
+        SIGMA_2COLOR_SOLID_DASHED,
+        SIGMA_56_PLOT_BOX,
+        image_height_mm=14.0,
+    )
+    center = result.readings[0]   # fraction 0.0
+    edge = result.readings[-1]    # fraction 1.0
+    assert center.contrast10S is not None, (
+        "Sigma 10S at fraction 0.0 must read a value, not None (#954)"
+    )
+    assert center.resolution30S is not None, (
+        "Sigma 30S at fraction 0.0 must read a value, not None (#954)"
+    )
+    assert edge.contrast10S is not None, (
+        "Sigma 10S at fraction 1.0 must read a value, not None (#954)"
+    )
+    assert edge.resolution30S is not None, (
+        "Sigma 30S at fraction 1.0 must read a value, not None (#954)"
+    )
+
+
 # --- Plot-box arithmetic --------------------------------------------------
 
 
