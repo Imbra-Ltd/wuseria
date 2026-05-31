@@ -472,35 +472,26 @@ detectable by the tool; manual page inspection may find additional images.
 
 **Extract MTF readings from chart PNGs:**
 
-Skeleton tool (recommended — requires Python + scikit-image + opencv-python):
+Use `tools/mtfdigitizer/` — unified digitizer per ADR-038. Requires Python
+
+- scikit-image + opencv-python.
 
 Charts live per-lens under `docs/optical-specs/<slug>/` (ADR-033) as
 `mtf-chart.{png,jpg}`, or `mtf-f<aperture>.png` per aperture.
 
-```bash
-py tools/mtf-extract-skeleton.py docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/mtf-chart.png
-py tools/mtf-extract-skeleton.py docs/optical-specs/sigma-56mm-f1-4-dc-dn-c/mtf-chart.png
-py tools/mtf-extract-skeleton.py docs/optical-specs/samyang-*/mtf-chart.png   # batch
-```
+Five chart families have declared profiles today (Sigma, Samyang,
+7Artisans, Tokina, Viltrox). Profile declaration is the authority; an
+unrecognized chart fails loud rather than being mis-traced (ADR-038 §1).
 
-Auto-detects chart family (Samyang 4-color / Sigma solid+dashed); any other
-brand is refused rather than mis-traced (see #726). Uses color isolation →
-skeletonization → connected components for S/M classification. Handles
-occlusion fill, auto grid step detection (APS-C 2.5mm / full-frame 5mm),
-and M-value interpolation. Copy the TypeScript output into
-`src/data/mtf-readings.ts`.
+The end-to-end entry point is `extract_chart(image_path, profile,
+plot_box, image_height_mm)` (no CLI yet — callable from Python). See
+`tools/mtfdigitizer/README.md` for the dispatch table and known limits.
 
-Comparison mode (Samyang only — validates against old pixel-scan tool):
+Run the calibration suite against the reference set:
 
 ```bash
-py tools/mtf-extract-skeleton.py --compare docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/mtf-chart.png
-```
-
-Legacy tools (Pillow only, no scikit-image needed):
-
-```bash
-py tools/mtf-extract-samyang.py docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/mtf-chart.png
-py tools/mtf-extract-sigma.py docs/optical-specs/sigma-16mm-f1-4-dc-dn-c/mtf-chart.png
+cd tools
+py -m mtfdigitizer.calibrate
 ```
 
 **List unscored lenses:**

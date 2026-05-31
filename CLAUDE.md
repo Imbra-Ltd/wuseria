@@ -85,16 +85,15 @@ Docs and reference data:
 
 Python tooling (`tools/`):
 
-| Path                     | Purpose                                                                                      |
-| ------------------------ | -------------------------------------------------------------------------------------------- |
-| `tools/<brand>/`         | per-brand optical spec extraction (11 brands). See ADR-035, ADR-036, PLAYBOOK §2.8           |
-| `tools/brandkit/`        | shared brand-tool library. See ADR-035                                                       |
-| `tools/pagefetch/`       | submodule-ready web fetcher. See `tools/pagefetch/README.md`, ADR-035, ADR-037               |
-| `tools/mtfdigitizer/`    | unified MTF chart digitizer. See `tools/mtfdigitizer/README.md`, ADR-038                     |
-| `tools/lenstip/`         | LensTip lens index (2300+ lenses for instant ID lookup)                                      |
-| `tools/lookup.py`        | unified lens lookup; generates research URLs for all PLAYBOOK §2.8 sources                   |
-| `tools/crop-artifact.py` | content-aware cropper for diagrams / MTF charts                                              |
-| `tools/mtf-extract-*.py` | legacy MTF scrapers, superseded by `tools/mtfdigitizer/` (ADR-038); retired when #563 closes |
+| Path                     | Purpose                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------- |
+| `tools/<brand>/`         | per-brand optical spec extraction (11 brands). See ADR-035, ADR-036, PLAYBOOK §2.8 |
+| `tools/brandkit/`        | shared brand-tool library. See ADR-035                                             |
+| `tools/pagefetch/`       | submodule-ready web fetcher. See `tools/pagefetch/README.md`, ADR-035, ADR-037     |
+| `tools/mtfdigitizer/`    | unified MTF chart digitizer. See `tools/mtfdigitizer/README.md`, ADR-038           |
+| `tools/lenstip/`         | LensTip lens index (2300+ lenses for instant ID lookup)                            |
+| `tools/lookup.py`        | unified lens lookup; generates research URLs for all PLAYBOOK §2.8 sources         |
+| `tools/crop-artifact.py` | content-aware cropper for diagrams / MTF charts                                    |
 
 `tools/` is Python with its own pytest suites — excluded from the front-end
 quality gate (`.prettierignore`, `eslint.config.js`, `ci.yml` path filter).
