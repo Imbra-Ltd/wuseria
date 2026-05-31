@@ -4413,3 +4413,34 @@ longer depend on each other — independent next sessions.
 - **Tackle Viltrox 30 lp/mm** with a CC-rank dispatch (separate the 4 curves by mean-y after skeletonization, no fixed split fraction). Would close the chart-bunched-B&W class of charts and likely improve calibration noticeably.
 - **Retire legacy `mtf-extract-*.py` scrapers (#563).** All five in-band families now have profiles, so the legacy two-brand extractors are redundant.
 - **Lens-page SVG swap.** Once a brand's MTF set is digitized through the new pipeline, swap the lens-page chart asset to the SVG output.
+
+---
+
+### Session 107 — Retire legacy mtf-extract scrapers
+
+#### PRs
+
+- #991 — delete `tools/mtf-extract-{skeleton,samyang,sigma}.py` (~2006 lines) and their pytest suites (~234 lines); update CLAUDE.md §1.2, PLAYBOOK.md MTF extraction section, ADR-029 reference, and mtfdigitizer README + docstrings; net 2283 deletions, 31 insertions
+
+#### Issues
+
+- #990 (task) — Retire legacy mtf-extract-\*.py scrapers (closed by #991)
+- #992 (task) — CC-rank dispatch for Viltrox-style B&W charts (filed for next session under epic #932)
+
+#### Key changes
+
+- Five files deleted: `tools/mtf-extract-skeleton.py` (1043 lines), `tools/mtf-extract-samyang.py` (540), `tools/mtf-extract-sigma.py` (423), and their two pytest suites (171 + 63).
+- Doc updates: removed the `tools/mtf-extract-*.py` row from CLAUDE.md §1.2; replaced the legacy block in `docs/PLAYBOOK.md` with a pointer to `tools/mtfdigitizer/` and the `py -m mtfdigitizer.calibrate` runner; fixed the ADR-029 reference; softened the legacy mention in `tools/mtfdigitizer/pipeline/__init__.py` to "legacy skeleton-trace approach" (the design provenance still matters); dropped the retirement open-item from `tools/mtfdigitizer/README.md`.
+- Historical references intentionally preserved: `docs/dev-journal.md` (immutable session log), ADR-038 Context (names what it retired), and per-lens `docs/optical-specs/sigma-*/analysis.md` provenance notes (accurate history of how those readings were produced).
+
+#### Key decisions
+
+- **`#563` stays `wontdo`, retirement tracked as `#990`.** #563 had been closed as `wontdo` (superseded by ADR-038's unified-tool decision). Rather than reopen and re-close, a separate retirement task (#990) cited the original close in its body and `Closes #990` in the PR closed it cleanly. The epic's checklist line was ticked with a note pointing at both.
+- **Leave `docs/optical-specs/sigma-*/analysis.md` provenance untouched.** Those files document how the original readings were extracted ("Values extracted by pixel scanning (tools/mtf-extract-sigma.py)"). Rewriting them would be revisionist; the script no longer exists but the readings produced by it still live in `mtf-readings.ts` and the historical method is accurate.
+- **Auto-merge consent honored explicitly.** The user authorized `--auto` for this PR specifically (per [[feedback-ask-before-automerge]]); not a standing change to default behavior.
+
+#### Notes for next session
+
+- **CC-rank dispatch for Viltrox 30 lp/mm (#992).** The next iteration's lever — separates the 4 tightly-bunched B&W curves by skeleton mean-y rank instead of a fixed `y_band_split`. Target: bring Viltrox 30 lp/mm aggregate |d| within the ±0.05 band (Run 3 baseline 0.258–0.524). No regression on the five existing in-band families.
+- **Lens-page SVG swap.** Once a brand's MTF set is digitized through the new pipeline, swap the lens-page asset to SVG (still queued from session 106).
+- **Easy alternative:** Tokina (#795) calibrates cleanly today — could be a low-friction digitization run if architectural work feels heavy.
