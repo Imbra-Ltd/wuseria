@@ -276,11 +276,22 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         image_height_mm=14.0,
         notes="soft B&W promo; all dashed at different patterns; F8 panel is nearly idealized-flat (border case to idealized-flat)",
         # f/1.2 panel only (top). Vertical axis line at x=287 (0mm tick),
-        # plot frame ends at x=653 (14mm). Y-label scan placed OTF=1.0 at
-        # y=130 and OTF=0 baseline at y=365 (~23.5 px per 0.1 OTF). F8
-        # panel calibration deferred — single light-blue curve doesn't fit
-        # the 4-field extractor.
-        plot_box=PlotBoxCoords(x_left=287, x_right=653, y_top=130, y_bottom=365),
+        # plot frame ends at x=653 (14mm). Y-axis calibration measured by
+        # gridline scan (#994): full-width horizontal lines sit at y=153
+        # (OTF=1.0) and y=393 (OTF=0.0), giving 240 px per 1.0 OTF (24 px
+        # per 0.1 step matches the printed minor tick spacing).
+        #
+        # The pre-#994 calibration used y_top=130, y_bottom=365 — which
+        # placed OTF=1.0 at the printed "1" label rather than at the
+        # gridline 23 px below it. That mis-calibration was hidden in
+        # Run 4 because CC_RANK_BY_MEAN_Y read the y=130 plot-frame
+        # border line as 10S, and the border mapped to MTF=1.0 under the
+        # wrong y_top — a coincidental match to ground truth. The
+        # plot-box and dispatch fixes land together in this PR.
+        #
+        # F8 panel calibration deferred — single light-blue curve doesn't
+        # fit the 4-field extractor.
+        plot_box=PlotBoxCoords(x_left=287, x_right=653, y_top=153, y_bottom=393),
         ground_truth=_VILTROX_75_GT,
     ),
     ReferenceChart(

@@ -46,12 +46,22 @@ StyleAxis = Literal["SPLIT_BY_DASH", "HUE_IS_CURVE"]
 #                             bottom two = lower frequency (30). Within
 #                             each band, the wider CC is solid (S) and
 #                             the rest is dashed (M). No y_band_split.
+# - `RIDGE_TRACKING`        — geometric (not topological) extraction for
+#                             charts where curves visually overlap or sit
+#                             within antialiasing distance, fusing into
+#                             one CC. Per-column ridge centroids are
+#                             clustered into 4 tracks; top two by mean-y
+#                             = upper frequency, bottom two = lower
+#                             frequency; within each pair the higher-
+#                             coverage track is solid (S by default).
+#                             See `pipeline/ridge.py`.
 HueMeaning = Literal[
     "FREQUENCY",
     "SAGITTAL_MERIDIONAL",
     "CURVE_IDENTITY",
     "Y_BAND_IS_FREQUENCY",
     "CC_RANK_BY_MEAN_Y",
+    "RIDGE_TRACKING",
 ]
 
 

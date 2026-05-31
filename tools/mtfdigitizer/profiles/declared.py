@@ -120,18 +120,23 @@ TOKINA_2COLOR_FREQUENCY: MtfProfile = MtfProfile(
 # Viltrox B&W all-dashed promo: f/1.2 panel only. No informative hue;
 # the four curves are grey/black at different y-positions and dash
 # patterns. The four curves are tightly bunched between OTF 0.65 and
-# 1.00 with heavy overlap between the 10 and 30 lp/mm pairs — there is
-# no clean y-band gap separating them at any fixed fraction. The
-# previous Y_BAND_IS_FREQUENCY dispatch with y_band_split=0.30 yielded
-# 30 lp/mm |d| of 0.258–0.524 (Run 3 baseline).
+# 1.00 with heavy overlap between the 10 and 30 lp/mm pairs.
 #
-# CC_RANK_BY_MEAN_Y skeletonizes the neutral mask first, then ranks the
-# resulting connected components by mean y-position and splits at the
-# largest y-gap. This adapts to wherever the natural break between the
-# 10 and 30 lp/mm clusters lands on a given chart, rather than relying
-# on a hand-tuned fraction. The F8 panel (lower in the source PNG) is
-# idealized-flat single light-blue curve — out of scope for the 4-field
-# extractor; not declared.
+# CC-based dispatches (Y_BAND_IS_FREQUENCY, CC_RANK_BY_MEAN_Y) fail
+# here because the dashes of adjacent frequencies sit within
+# antialiasing distance in this small 366x235px f/1.2 panel — even the
+# raw neutral mask fuses all four curves into one 2012-px component
+# spanning the full plot height. The CC_RANK shipped in #992 picked the
+# printed top plot-box border (which sits at OTF ~ 1.0 by coincidence)
+# as the 10S track, while 10M reported 0/11 paired (#994 probe). The
+# Y_BAND_IS_FREQUENCY predecessor yielded 30 lp/mm |d| of 0.258-0.524.
+#
+# RIDGE_TRACKING (#994) is geometric: per column it finds local mask
+# runs as ridge centroids, then clusters across columns into tracks.
+# Two curves separated by 2-3 px yield 2 distinct ridges even when
+# their masks merge into one CC. See `pipeline/ridge.py`. The F8 panel
+# (lower in the source PNG) is idealized-flat single light-blue curve
+# — out of scope for the 4-field extractor; not declared.
 VILTROX_BW_DASHED_F12: MtfProfile = MtfProfile(
     name="viltrox-bw-dashed-f1.2",
     hues=(
@@ -141,13 +146,13 @@ VILTROX_BW_DASHED_F12: MtfProfile = MtfProfile(
         HueRange(name="neutral", h_lo=0, h_hi=179, s_min=0, s_max=60, v_min=0, v_max=110),
     ),
     style_axis="SPLIT_BY_DASH",
-    hue_meaning="CC_RANK_BY_MEAN_Y",
+    hue_meaning="RIDGE_TRACKING",
     frequencies_lpmm=(10, 30),
     # Not auto-suggestable: the neutral hue range matches axis labels and
     # gridlines on EVERY chart, so leaving it in the suggest pool would
     # poison disambiguation. Must be explicitly declared.
     auto_suggestable=False,
-    notes="Viltrox promo, f/1.2 panel only; single neutral mask skeletonized, components ranked by mean-y and split at the largest gap into 10 (upper) / 30 (lower); within each cluster longest CC = S, rest = M; F8 panel not declared",
+    notes="Viltrox promo, f/1.2 panel only; ridge-tracking dispatch handles four curves that fuse into one CC under skeletonization (#994); per-column ridge centroids clustered into 4 tracks, upper 2 = 10 lp/mm, lower 2 = 30 lp/mm, S/M by coverage within each pair; F8 panel not declared",
 )
 
 

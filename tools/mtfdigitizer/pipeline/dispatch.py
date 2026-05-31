@@ -31,6 +31,10 @@ Out-of-band combinations raise `NotImplementedError` — generalizing PR
   CC-width split picks solid (S by default; M if `dashed_is_sagittal`)
   from dashed. Adapts to fragmented dashed lines (more than 4 CCs total)
   without depending on a fixed `y_band_split` fraction.
+- `(SPLIT_BY_DASH, RIDGE_TRACKING)` — geometric per-column ridge
+  extraction for charts where CC-based dispatches fuse curves into one
+  component (Viltrox AF 75mm f/1.2). See `pipeline/ridge.py` for the
+  full algorithm.
 """
 
 from __future__ import annotations
@@ -42,6 +46,7 @@ import numpy as np
 
 from ..profiles.types import MtfProfile
 from .masks import masks_by_curve_name
+from .ridge import ridge_tracks_to_fields
 from .skeleton import close_and_skeletonize
 from .split import split_sm_by_cc_width
 from .types import PlotBox
@@ -316,6 +321,29 @@ def field_skeletons(
                 field = curve_field(freq, sm)
                 if field is not None:
                     out[field] = sk
+    elif (
+        profile.style_axis == "SPLIT_BY_DASH"
+        and profile.hue_meaning == "RIDGE_TRACKING"
+    ):
+        if len(curve_masks) != 1:
+            raise ValueError(
+                f"RIDGE_TRACKING expects one neutral hue; "
+                f"profile {profile.name!r} declares {len(curve_masks)}"
+            )
+        if plot_box is None:
+            raise ValueError("RIDGE_TRACKING requires plot_box")
+        single_mask = next(iter(curve_masks.values()))
+        upper_freq, lower_freq = (
+            profile.frequencies_lpmm[0],
+            profile.frequencies_lpmm[1],
+        )
+        out = ridge_tracks_to_fields(
+            single_mask,
+            plot_box,
+            upper_freq=upper_freq,
+            lower_freq=lower_freq,
+            dashed_is_sagittal=profile.dashed_is_sagittal,
+        )
     elif (
         profile.style_axis == "SPLIT_BY_DASH"
         and profile.hue_meaning == "CC_RANK_BY_MEAN_Y"
