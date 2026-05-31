@@ -42,31 +42,10 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from .family_profile import profile_for
 from .pipeline import PlotBox, extract_chart
 from .pipeline.types import ExtractedChart, SampledReading
-from .profiles import (
-    SAMYANG_4COLOR_ALL_SOLID,
-    SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
-    SIGMA_2COLOR_SOLID_DASHED,
-    TOKINA_2COLOR_FREQUENCY,
-    VILTROX_BW_DASHED_F12,
-)
-from .profiles.types import MtfProfile
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
-
-
-# Map style_family declared on each reference chart to the runtime
-# profile. Centralised so we don't sprinkle per-family lookups across
-# the codebase. Kept here rather than `referenceset/` because the
-# binding is profile-side, not reference-side.
-_FAMILY_TO_PROFILE: dict[str, MtfProfile] = {
-    "mainstream-2color-solid-dashed": SIGMA_2COLOR_SOLID_DASHED,
-    "mainstream-4color-all-solid": SAMYANG_4COLOR_ALL_SOLID,
-    "idealized-flat": SAMYANG_4COLOR_ALL_SOLID,
-    "samecolor-dashed-sm": SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
-    "2color-frequency": TOKINA_2COLOR_FREQUENCY,
-    "bw-dashed-promo": VILTROX_BW_DASHED_F12,
-}
 
 
 def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
@@ -170,11 +149,7 @@ def emit_lens(
             f"reference chart {chart.slug!r} has no plot_box or ground_truth — "
             f"emit only supports charts that calibrate"
         )
-    profile = _FAMILY_TO_PROFILE.get(chart.style_family)
-    if profile is None:
-        raise ValueError(
-            f"no runtime profile mapped for style_family {chart.style_family!r}"
-        )
+    profile = profile_for(chart.style_family, chart.slug)
 
     root = repo_root or Path(__file__).resolve().parents[2]
     extracted: ExtractedChart = extract_chart(

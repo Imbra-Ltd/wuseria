@@ -40,8 +40,7 @@ from pathlib import Path
 from .pipeline import ExtractedChart, SampledReading, extract_chart
 from .pipeline.rendermatch import CURVE_FIELDS
 from .pipeline.types import PlotBox
-from .profiles import SAMYANG_4COLOR_ALL_SOLID, SIGMA_2COLOR_SOLID_DASHED
-from .profiles.types import MtfProfile
+from .family_profile import profile_for
 from .referenceset import REFERENCE_CHARTS
 from .referenceset.charts import PlotBoxCoords, ReferenceChart
 
@@ -333,13 +332,6 @@ def _render_legend() -> list[str]:
 # --- CLI -------------------------------------------------------------
 
 
-_PROFILE_BY_STYLE: dict[str, MtfProfile] = {
-    "mainstream-2color-solid-dashed": SIGMA_2COLOR_SOLID_DASHED,
-    "mainstream-4color-all-solid": SAMYANG_4COLOR_ALL_SOLID,
-    "idealized-flat": SAMYANG_4COLOR_ALL_SOLID,  # same 4-color template
-}
-
-
 def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
     return PlotBox(
         x_left=coords.x_left,
@@ -352,11 +344,7 @@ def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
 def _emit_chart(chart: ReferenceChart, *, check_only: bool) -> Path:
     """Extract one reference chart and write its SVG. Returns the output path."""
     assert chart.plot_box is not None
-    profile = _PROFILE_BY_STYLE.get(chart.style_family)
-    if profile is None:
-        raise ValueError(
-            f"{chart.slug}: no declared profile for style_family={chart.style_family!r}"
-        )
+    profile = profile_for(chart.style_family, chart.slug)
     image_path = REPO_ROOT / chart.chart_path
     extracted = extract_chart(
         image_path,

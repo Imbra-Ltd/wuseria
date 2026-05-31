@@ -25,34 +25,13 @@ import statistics
 from dataclasses import dataclass
 from pathlib import Path
 
+from .family_profile import profile_for
 from .pipeline import PlotBox, SampledReading, extract_chart
 from .pipeline.sampling import SAMPLE_FRACTIONS
-from .profiles import (
-    SAMYANG_4COLOR_ALL_SOLID,
-    SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
-    SIGMA_2COLOR_SOLID_DASHED,
-    TOKINA_2COLOR_FREQUENCY,
-    VILTROX_BW_DASHED_F12,
-)
-from .profiles.types import MtfProfile
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-
-
-# Style family → declared profile. Five families wired today; the two
-# absent ones (`soft-multicurve-promo`, `multifreq-press-kit`) are
-# deliberately out-of-band fail-loud cases (the 7Artisans 35mm promo and
-# Zeiss Touit press kit) and have no profile.
-_PROFILE_BY_STYLE: dict[str, MtfProfile] = {
-    "mainstream-2color-solid-dashed": SIGMA_2COLOR_SOLID_DASHED,
-    "mainstream-4color-all-solid": SAMYANG_4COLOR_ALL_SOLID,
-    "idealized-flat": SAMYANG_4COLOR_ALL_SOLID,  # same 4-color template
-    "samecolor-dashed-sm": SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
-    "2color-frequency": TOKINA_2COLOR_FREQUENCY,
-    "bw-dashed-promo": VILTROX_BW_DASHED_F12,
-}
 
 
 @dataclass(frozen=True)
@@ -133,11 +112,7 @@ def _calibrate_chart(chart: ReferenceChart) -> list[FieldDelta]:
     """
     assert chart.plot_box is not None
     assert chart.ground_truth is not None
-    profile = _PROFILE_BY_STYLE.get(chart.style_family)
-    if profile is None:
-        raise ValueError(
-            f"{chart.slug}: no declared profile for style_family={chart.style_family!r}"
-        )
+    profile = profile_for(chart.style_family, chart.slug)
 
     image_path = REPO_ROOT / chart.chart_path
     plot_box = _to_plotbox(chart.plot_box)
