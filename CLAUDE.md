@@ -59,29 +59,46 @@ Project-specific overrides and additions follow below.
 
 ### 1.2 Project layout conventions
 
-- `src/pages/` — Astro file-based routing (explore with `ls`)
-- `src/layouts/` — shared page shells
-- `src/components/static/` — `.astro` components that ship zero JS
-- `src/components/interactive/` — React islands, each in its own directory with co-located tests, CSS module, and sub-components
-- `src/components/interactive/shared/` — reusable UI pieces shared across islands
-- `src/data/` — all editable content as TypeScript files (not JSON)
-- `src/types/` — shared type definitions
-- `src/hooks/` — reusable React hooks
-- `src/utils/` — pure utility functions with co-located tests
-- `src/styles/global.css` — CSS custom properties, base styles, dark theme
-- `src/test/` — Vitest setup and test factories
-- `public/` — static assets (favicon, icons, CNAME, robots.txt)
-- `docs/audits/` — 360-degree audits (timestamped) and SEO test plan
-- `docs/optical-specs/<slug>/` — per-lens optical reference data: `analysis.md`, `scoring-log.md`, `specs-log.md`, construction diagrams, MTF charts. See ADR-031, ADR-033
-- `tools/<brand>/` — per-brand optical spec extraction (11 brands), all on `brandkit` + `pagefetch`. See ADR-035 (architecture), ADR-036 (Viltrox theme-HTML), PLAYBOOK §2.8 (per-brand commands incl. `--verify`)
-- `tools/brandkit/` — shared brand-tool library (BrandTool + BrandExtractor strategy). See ADR-035
-- `tools/pagefetch/` — submodule-ready web fetcher. See `tools/pagefetch/README.md`, ADR-035, ADR-037
-- `tools/mtfdigitizer/` — unified MTF chart digitizer. See `tools/mtfdigitizer/README.md` and ADR-038
-- `tools/lenstip/` — LensTip lens index (2300+ lenses for instant ID lookup)
-- `tools/lookup.py` — unified lens lookup; generates research URLs for all PLAYBOOK 2.8 sources
-- `tools/crop-artifact.py` — content-aware cropper for diagrams / MTF charts
-- `tools/mtf-extract-*.py` — legacy MTF scrapers, superseded by `tools/mtfdigitizer/` (ADR-038); retired when #563 closes
-- `tools/` is Python tooling with its own pytest suites — excluded from the front-end quality gate (`.prettierignore`, `eslint.config.js`, `ci.yml` path filter). Verify with `py -m pytest` from `tools/`, never `npm run validate`.
+Front-end source (`src/`):
+
+| Path                                 | Purpose                                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `src/pages/`                         | Astro file-based routing                                                                   |
+| `src/layouts/`                       | shared page shells                                                                         |
+| `src/components/static/`             | `.astro` components (zero JS)                                                              |
+| `src/components/interactive/`        | React islands; each in its own directory with co-located tests, CSS module, sub-components |
+| `src/components/interactive/shared/` | reusable UI shared across islands                                                          |
+| `src/data/`                          | all editable content as TypeScript files                                                   |
+| `src/types/`                         | shared type definitions                                                                    |
+| `src/hooks/`                         | reusable React hooks                                                                       |
+| `src/utils/`                         | pure utility functions with co-located tests                                               |
+| `src/styles/global.css`              | CSS custom properties, base styles, dark theme                                             |
+| `src/test/`                          | Vitest setup and test factories                                                            |
+| `public/`                            | static assets (favicon, icons, CNAME, robots.txt)                                          |
+
+Docs and reference data:
+
+| Path                         | Purpose                                                                                                              |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `docs/audits/`               | 360-degree audits (timestamped) and SEO test plan                                                                    |
+| `docs/optical-specs/<slug>/` | per-lens reference data: `analysis.md`, `scoring-log.md`, `specs-log.md`, diagrams, MTF charts. See ADR-031, ADR-033 |
+
+Python tooling (`tools/`):
+
+| Path                     | Purpose                                                                                      |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| `tools/<brand>/`         | per-brand optical spec extraction (11 brands). See ADR-035, ADR-036, PLAYBOOK §2.8           |
+| `tools/brandkit/`        | shared brand-tool library. See ADR-035                                                       |
+| `tools/pagefetch/`       | submodule-ready web fetcher. See `tools/pagefetch/README.md`, ADR-035, ADR-037               |
+| `tools/mtfdigitizer/`    | unified MTF chart digitizer. See `tools/mtfdigitizer/README.md`, ADR-038                     |
+| `tools/lenstip/`         | LensTip lens index (2300+ lenses for instant ID lookup)                                      |
+| `tools/lookup.py`        | unified lens lookup; generates research URLs for all PLAYBOOK §2.8 sources                   |
+| `tools/crop-artifact.py` | content-aware cropper for diagrams / MTF charts                                              |
+| `tools/mtf-extract-*.py` | legacy MTF scrapers, superseded by `tools/mtfdigitizer/` (ADR-038); retired when #563 closes |
+
+`tools/` is Python with its own pytest suites — excluded from the front-end
+quality gate (`.prettierignore`, `eslint.config.js`, `ci.yml` path filter).
+Verify with `py -m pytest` from `tools/`, never `npm run validate`.
 
 ### 1.3 Commands
 
@@ -179,32 +196,52 @@ npm run validate     # lint + format + check + test + build — full CI suite
 
 ### 2.6 Data rules
 
+#### Content storage
+
 - All editable content in `src/data/*.ts` — never hardcode data in components
-- Never hardcode derived counts or statistics — compute them from the data source at build time
 - TypeScript files, not JSON — gives type checking at build time and IDE autocomplete on the data itself; a missing field is a compile error, not a runtime surprise
 - Astro imports `.ts` data at build time; data never ships as JS to the browser
+- Never hardcode derived counts or statistics — compute them from the data source at build time
+
+#### Pricing
+
 - Prices in USD by default (configurable in `src/data/config.ts`), rounded up to nearest $50
 - All prices are approximate estimates — no `priceEstimated` flag needed
-- UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`) — no separate footnote needed
-- Review source directory in `src/data/reviews.ts` — methodology and trust per source
+- UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`)
+
+#### Naming
+
 - Lens model names MUST match official manufacturer naming — include all optical suffixes (ED, UMC, AS IF, APO, etc.), generation markers (II, Mark II), and series names (Argus, Athena Prime, Sniper)
 - Aperture in model names always uses `f/X.X` format — never `fX.X`, `FX.X`, or `f/X` (omitting trailing `.0`)
+- Products without glass elements (pinhole lenses, cap lenses) are accessories (`lens-accessory`), not lenses
+
+#### Required fields
+
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
 - Review source links use `rel="nofollow sponsored"` and `target="_blank"`
 - All computed `genreMarks` MUST be stored on the lens — no omissions, even low scores (e.g. macro=1). Transparency over curation.
-- Scoring methodology and fallback rules are defined in `docs/decisions/014-optical-quality-rubric.md` — trust hierarchy, rubric thresholds, trust-2 aggregation, community consensus fallback, optical construction inference
-- Scoring log format and field completeness rules are defined in `docs/decisions/022-scoring-log-and-mtf-charts.md` — every entry must list all 14 optical fields with explicit undefined markers
-- When scoring lenses, save official MTF charts and analysis to the per-lens folder in `docs/optical-specs/<slug>/`
+- `maxMagnification` MUST come from spec sheets or review measurements — never estimate from focal length and minimum focus distance (thin lens formula has ~39% median error)
+
+#### Scoring
+
+- Scoring methodology and fallback rules: `docs/decisions/014-optical-quality-rubric.md` — trust hierarchy, rubric thresholds, trust-2 aggregation, community consensus fallback, optical construction inference
+- Scoring log format and field completeness rules: `docs/decisions/022-scoring-log-and-mtf-charts.md` — every entry must list all 14 optical fields with explicit undefined markers
+- When scoring lenses, save official MTF charts and analysis to `docs/optical-specs/<slug>/`
+- Review source directory: `src/data/reviews.ts` — methodology and trust per source
+
+#### Specs-log workflow
+
 - Every lens folder in `docs/optical-specs/<slug>/` MUST have a `specs-log.md` technical specs provenance log — document every source checked for construction diagrams, MTF charts, element counts, coatings, special glass, magnification (URL, date, result: found/not found/404/paywall), whether the search was successful or not, plus any caveats (e.g. different optical designs across mounts); distinct from `scoring-log.md` which covers OQ field scoring
-- When verifying or adding optical specs, follow PLAYBOOK §2.8 step 6: specs-log first, then `lenses.ts`, no exceptions — and update `specs-log.md` in the same commit as any artifact added (construction diagram, MTF chart)
+- When verifying or adding optical specs, follow PLAYBOOK §2.8 step 6: specs-log first, then `lenses.ts`, no exceptions — and update `specs-log.md` in the same commit as any artifact added
 - `specs-log.md` findings MUST use DB field names — `specialElements` (not `edElements`, `asphericalElements`, `hrElements`), `coating`, `maxMagnification`, etc.
+
+#### Sources
+
 - Samyang lenses are sold under multiple brand aliases (Rokinon, Bower, Walimex Pro, Vivitar) — search all aliases when looking for reviews
 - optyczne.pl and lenstip.com are the same company (CO-NET Robert Olech) — never count as separate sources for trust-2 aggregation
 - Verify lens mount availability before adding to the database — check official manufacturer pages and third-party lens lists; do not assume a lens exists in X-mount or GFX just because it exists in other mounts
-- `maxMagnification` MUST come from spec sheets or review measurements — never estimate from focal length and minimum focus distance (thin lens formula has ~39% median error)
 - Source-conflict resolution: the official manufacturer page wins on any contested field; when a secondary source (incl. LensTip) is provably wrong on one verifiable field, distrust its other fields for that lens — it is likely mis-cataloged (e.g. LensTip listed 35mm f/1.4 as 10/9 vs official 8/5; do not adopt its physical specs either)
 - Before a bulk `--verify` data pass, confirm the extractor is reliable first — see PLAYBOOK §2.8 for the workflow and the #906 / #896 cautionary tale
-- Products without glass elements (pinhole lenses, cap lenses) are accessories (`lens-accessory`), not lenses — they have no optical parameters to measure or score
 
 ## 3. Quality
 
