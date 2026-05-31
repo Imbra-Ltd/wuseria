@@ -135,17 +135,17 @@ TOKINA_2COLOR_FREQUENCY: MtfProfile = MtfProfile(
 # Same palette/saturation/value bounds as the y-band variant; only the
 # dispatch differs.
 TOKINA_2COLOR_FREQUENCY_CC_RANK: MtfProfile = MtfProfile(
-    name="tokina-2color-frequency-per-column-ridge",
+    name="tokina-2color-frequency-skeleton-pick",
     hues=(
         HueRange(name="S-red", h_lo=0, h_hi=12, s_min=80, v_min=120),
         HueRange(name="S-red", h_lo=168, h_hi=179, s_min=80, v_min=120),
         HueRange(name="M-blue", h_lo=90, h_hi=115, s_min=80, v_min=120),
     ),
     style_axis="HUE_IS_CURVE",
-    hue_meaning="PER_COLUMN_RIDGE",
+    hue_meaning="SKELETON_CONTINUOUS_PICK",
     frequencies_lpmm=(10, 30),
     auto_suggestable=False,
-    notes="Tokina wide-zoom variant: per-hue, per-column ridge tracking; topmost run per column = 10 lp/mm, bottommost = 30 lp/mm; handles dashed-line interleaving that defeats CC-rank",
+    notes="Tokina wide-zoom variant: dilate+skeletonize, CC-split by mean-y (top=10, bottom=30), greedy y-continuity pick per CC; ports the legacy mtf-extract-skeleton.py approach for robust dashed-line extraction",
 )
 
 

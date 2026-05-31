@@ -30,6 +30,14 @@ Out-of-band combinations raise `NotImplementedError` — generalizing PR
   arbitrary curve overlap as long as the two curves of one color never
   cross within a column: the upper run per column = upper frequency,
   the lower run = lower frequency. Uses `ridge.ridge_tracks_for_hue`.
+- `(HUE_IS_CURVE, SKELETON_CONTINUOUS_PICK)` — robust per-hue variant
+  ported from the retired mtf-extract-skeleton.py. Dilate + skeletonize
+  per hue, split into connected components by mean-y (top = upper
+  freq, bottom = lower freq), then walk each CC column-by-column
+  picking the branch closest to the previous y (greedy y-continuity).
+  Replaces per-column ridge for the Tokina wide-zoom case: the per-
+  CC continuity walk handles fragmented dashed curves AND curve
+  coincidence cleanly. See `pipeline/continuous_pick.py`.
 - `(SPLIT_BY_DASH, Y_BAND_IS_FREQUENCY)` — Viltrox B&W dialect: a single
   neutral mask is split by `y_band_split` into frequency groups, then by
   CC-width within each group for S/M.
@@ -54,6 +62,7 @@ import cv2
 import numpy as np
 
 from ..profiles.types import MtfProfile
+from .continuous_pick import extract_two_curves_per_hue
 from .masks import masks_by_curve_name
 from .ridge import ridge_tracks_for_hue, ridge_tracks_to_fields
 from .skeleton import close_and_skeletonize
@@ -319,6 +328,35 @@ def field_skeletons(
                 mask, plot_box, sm, upper_freq=upper_freq, lower_freq=lower_freq
             )
             out.update(hue_fields)
+    elif (
+        profile.style_axis == "HUE_IS_CURVE"
+        and profile.hue_meaning == "SKELETON_CONTINUOUS_PICK"
+    ):
+        # Each hue carries S or M. Per hue: dilate+skeletonize, split
+        # CCs by mean-y (top = upper-freq, bottom = lower-freq), then
+        # per CC walk columns picking the branch closest to the
+        # previous y. Ports the legacy mtf-extract-skeleton.py approach
+        # for robust extraction of dashed-line curves and coincident-
+        # curve regions. See `pipeline/continuous_pick.py`.
+        if plot_box is None:
+            raise ValueError(
+                "SKELETON_CONTINUOUS_PICK profile requires plot_box"
+            )
+        upper_freq, lower_freq = profile.frequencies_lpmm[0], profile.frequencies_lpmm[1]
+        for hue_name, mask in curve_masks.items():
+            sm = parse_sagittal_meridional_name(hue_name)
+            upper_curve, lower_curve = extract_two_curves_per_hue(mask, plot_box)
+            for freq, curve in (
+                (upper_freq, upper_curve),
+                (lower_freq, lower_curve),
+            ):
+                field = curve_field(freq, sm)
+                if field is None or not curve.points:
+                    continue
+                sk = np.zeros(mask.shape, dtype=np.uint8)
+                for x, y in curve.points:
+                    sk[int(round(y)), x] = 1
+                out[field] = sk
     elif (
         profile.style_axis == "SPLIT_BY_DASH"
         and profile.hue_meaning == "Y_BAND_IS_FREQUENCY"
