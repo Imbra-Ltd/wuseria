@@ -4381,4 +4381,7 @@ longer depend on each other — independent next sessions.
 #### Notes for next session
 
 - `mtfdigitizer/` epic #932 work (declare profiles for the 3 in-band families: 7artisans `samecolor-dashed-sm`, Tokina `2color-frequency`, Viltrox `bw-dashed-promo`) still queued; unchanged from session 103-104.
-- Possible flag: `docs/solid-ai-templates/` is referenced as a git submodule in CLAUDE.md but there is no `.gitmodules` entry and `git ls-tree` shows nothing at that path from the me-fuji root. Reads succeed at session start, so it resolves _somewhere_ — likely a worktree or harness checkout convention. Worth investigating.
+
+#### Post-session correction
+
+- Wrap-up step 11 (Submodules) initially flagged `docs/solid-ai-templates/` as missing from `.gitmodules` and not in the git tree. Investigated after wrap-up: the flag was operator error. The submodule IS correctly registered in `.gitmodules`, pinned at `b381154` (visible as `git ls-tree` mode `160000`), checked out, and equal to upstream `origin/main` — no update needed. Root cause: the bash shell had `cd`'d into the submodule earlier in the session (during the wrap-up checklist for step 4) and persisted that directory across subsequent commands; path-based queries silently resolved against the submodule's own root instead of the me-fuji root. Lesson recorded in [[feedback-pwd-on-path-failure]] — always verify `pwd` when a path-based query unexpectedly fails.
