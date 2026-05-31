@@ -215,7 +215,7 @@ def score_chart(
     rasterized = rasterize_readings(
         readings, plot_box, image_shape=(h, w), image_height_mm=image_height_mm
     )
-    skeletons = field_skeletons(bgr, profile)
+    skeletons = field_skeletons(bgr, profile, plot_box)
 
     field_scores: list[FieldIou] = []
     defined_scores: list[float] = []

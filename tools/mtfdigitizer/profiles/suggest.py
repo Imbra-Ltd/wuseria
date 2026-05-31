@@ -102,7 +102,20 @@ def suggest_profile(
             detected_hue_peaks=0,
         )
 
-    scored = [(profile, *_profile_match_score(hsv, profile)) for profile in candidates]
+    # Profiles marked auto_suggestable=False are explicit-declaration-only
+    # (e.g. Viltrox's neutral mask matches every chart). Keep them out of
+    # the suggestion pool but still allow resolve() to honor them when
+    # explicitly declared.
+    suggestable = [p for p in candidates if p.auto_suggestable]
+    if not suggestable:
+        return ProfileMatch(
+            profile=None,
+            confidence=0.0,
+            reason="no auto-suggestable candidate profiles",
+            detected_hue_peaks=0,
+        )
+
+    scored = [(profile, *_profile_match_score(hsv, profile)) for profile in suggestable]
     scored.sort(key=lambda item: item[1], reverse=True)
     best, best_score, best_hues = scored[0]
     second_score = scored[1][1] if len(scored) > 1 else 0.0
@@ -150,7 +163,16 @@ def resolve(
     See module docstring for the full truth table. The fail-loud
     contract: a declared profile is never silently switched, and an
     image that matches no candidate is refused rather than guessed.
+
+    When `declared.auto_suggestable` is False, the suggest gate is
+    bypassed entirely — those profiles (e.g. Viltrox's neutral-mask
+    dialect) have hue ranges too broad to participate in disambiguation,
+    so the declaration is the sole authority. The caller takes
+    responsibility for the chart-profile match in that case.
     """
+    if declared is not None and not declared.auto_suggestable:
+        return declared
+
     suggestion = suggest_profile(image_path, candidates=candidates)
 
     if declared is not None:

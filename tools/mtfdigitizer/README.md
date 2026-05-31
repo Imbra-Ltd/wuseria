@@ -23,7 +23,8 @@ legacy retirement, lens-page SVG swap, optional Real-ESRGAN fallback).
 - [x] [#968](https://github.com/Imbra-Ltd/wuseria/issues/968) — `triage.py` auto-triage gate combining both signals (`precision ≥ 0.80 AND IoU ≥ 0.20 AND priors_pass` ⇒ HIGH, else LOW); `precision_of()` lives in triage and `scorer.py` imports it (see `referenceset/triage.md`)
 - [x] [#971](https://github.com/Imbra-Ltd/wuseria/issues/971) — `svg.py` provenance SVG emitter; viewBox 320×218 (data area matches `MtfChart.astro` 320×200, extra 18px legend strip)
 - [x] [#973](https://github.com/Imbra-Ltd/wuseria/issues/973) — `review.py` 3-panel HTML composite (original PNG + SVG + overlay); only LOW-verdict review files are committed per ADR-038 §"Workflow"
-- [ ] Remaining tasks under epic [#932](https://github.com/Imbra-Ltd/wuseria/issues/932): profiles for the other 3 in-band families (7artisans samecolor-dashed-sm, Tokina 2color-frequency, Viltrox bw-dashed-promo), legacy `mtf-extract-*.py` retirement (#563), lens-page SVG swap, optional Real-ESRGAN fallback
+- [x] Profiles for the 3 remaining in-band families (7Artisans samecolor-dashed-sm, Tokina 2color-frequency, Viltrox bw-dashed-promo); adds `Y_BAND_IS_FREQUENCY` hue meaning, `y_band_split` profile field, and `auto_suggestable` opt-out for profiles whose hue range is too broad to participate in disambiguation
+- [ ] Remaining tasks under epic [#932](https://github.com/Imbra-Ltd/wuseria/issues/932): legacy `mtf-extract-*.py` retirement (#563), lens-page SVG swap, optional Real-ESRGAN fallback, Viltrox 30 lp/mm tracking (y-band heuristic fails on tightly-clustered B&W charts — calibration documents the limit at 50%+ |d|)
 
 The 0.75 IoU threshold proposed in `referenceset/REFERENCE_SET.md` fails 3/3
 runnable charts due to sparse-polyline vs dense-skeleton geometric asymmetry
@@ -73,12 +74,18 @@ chart PNG
   -> ExtractedChart with 11 SampledReading rows
 ```
 
-Per-profile dispatch in `pipeline.py`:
+Per-profile dispatch in `dispatch.py`:
 
-- `(SPLIT_BY_DASH, FREQUENCY)` → Sigma dialect: each hue is a frequency,
-  CC-split gives S/M
+- `(SPLIT_BY_DASH, FREQUENCY)` → Sigma + 7Artisans dialects: each hue is
+  a frequency, CC-split gives S/M (7Artisans flips the convention via
+  `dashed_is_sagittal=True`)
 - `(HUE_IS_CURVE, CURVE_IDENTITY)` → Samyang dialect: hue name encodes
   both frequency and S/M (e.g. `10S-red`)
+- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` → Tokina dialect: hue carries
+  S/M, `y_band_split` separates frequencies within each hue
+- `(SPLIT_BY_DASH, Y_BAND_IS_FREQUENCY)` → Viltrox B&W dialect: single
+  neutral mask split by `y_band_split` for frequency, then CC-split
+  within each band for S/M
 
 Other combinations raise `NotImplementedError` (fail loud).
 
@@ -123,9 +130,17 @@ disagree, and falls back to the advisory auto-suggest only when
 nothing is declared. **A declared profile is never silently switched** —
 that's the B1 fail-loud gate from PR #931 generalized.
 
-Two profiles ship to start (the YAGNI cut from #934 — Sigma and
-Samyang are the brands we have reference data for). Other dialects
-land per-brand as the digitizer encounters them in #935.
+Five profiles ship today (Sigma, Samyang, 7Artisans, Tokina, Viltrox)
+— one per in-band reference chart family. Two more reference charts
+(7Artisans 35mm soft promo, Zeiss Touit press kit) are deliberately
+out-of-band fail-loud cases and do not have profiles.
+
+Profiles with broad hue ranges that cannot disambiguate themselves
+from other profiles (Viltrox's neutral mask matches every chart's
+gridlines; Tokina's red+blue overlaps Sigma) opt out of auto-suggest
+via `auto_suggestable=False`. They are still callable through
+`resolve(image, declared=...)` — the caller takes responsibility for
+the chart/profile match.
 
 ## Reference set
 

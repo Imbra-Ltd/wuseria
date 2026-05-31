@@ -70,7 +70,7 @@ def extract_chart(
     combinations not yet wired by `dispatch.field_skeletons()`.
     """
     bgr = load_chart_bgr(image_path)
-    skeletons = field_skeletons(bgr, profile)
+    skeletons = field_skeletons(bgr, profile, plot_box)
 
     samples_per_field: dict[str, tuple[float | None, ...]] = {
         field: _sample_curve(skel, plot_box) for field, skel in skeletons.items()

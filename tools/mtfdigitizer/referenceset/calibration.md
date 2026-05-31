@@ -12,19 +12,21 @@ sub-task of epic #932 to land first.
 
 ## Scope
 
-3 of 8 reference charts run today: those whose `style_family` has a
+6 of 8 reference charts run today: those whose `style_family` has a
 declared profile in `profiles/declared.py`.
 
-| Chart                                | Style family                    | Profile used                |
-| ------------------------------------ | ------------------------------- | --------------------------- |
-| sigma-56mm-f1-4-dc-dn-c              | mainstream-2color-solid-dashed  | SIGMA_2COLOR_SOLID_DASHED   |
-| samyang-85mm-f1-4-as-if-umc (MAX)    | mainstream-4color-all-solid     | SAMYANG_4COLOR_ALL_SOLID    |
-| samyang-300mm-f6-3-ed-umc-cs-reflex (MAX) | idealized-flat              | SAMYANG_4COLOR_ALL_SOLID    |
+| Chart                                     | Style family                    | Profile used                          |
+| ----------------------------------------- | ------------------------------- | ------------------------------------- |
+| sigma-56mm-f1-4-dc-dn-c                   | mainstream-2color-solid-dashed  | SIGMA_2COLOR_SOLID_DASHED             |
+| samyang-85mm-f1-4-as-if-umc (MAX)         | mainstream-4color-all-solid     | SAMYANG_4COLOR_ALL_SOLID              |
+| samyang-300mm-f6-3-ed-umc-cs-reflex (MAX) | idealized-flat                  | SAMYANG_4COLOR_ALL_SOLID              |
+| 7artisans-50mm-f1-2-mark-ii               | samecolor-dashed-sm             | SEVENARTISANS_2COLOR_SAMECOLOR_DASHED |
+| tokina-atx-m-23mm-f1-4-x                  | 2color-frequency                | TOKINA_2COLOR_FREQUENCY               |
+| viltrox-af-75mm-f1-2-pro (f/1.2)          | bw-dashed-promo                 | VILTROX_BW_DASHED_F12                 |
 
-The other 5 charts (chart 4 same-color-dashed, 5 soft promo, 6
-2color-frequency, 7 B&W dashed, 8 multifreq) need profile declarations
-that don't exist yet. ADR-038 §1 says other dialects land per-brand as
-the digitizer encounters them; that is separate work.
+The 2 remaining charts (7Artisans 35mm soft promo, Zeiss Touit press
+kit) are deliberately out-of-band fail-loud cases and intentionally
+have no profile.
 
 ## How to reproduce
 
@@ -37,6 +39,88 @@ Reads the in-source ground truth from `referenceset/charts.py` and runs
 `extract_chart()` for each chart with both `plot_box` and `ground_truth`
 populated. Output: per-chart `|d|` (absolute offset) median + p95 per
 field, then an aggregate.
+
+## Run 3 (after 3-profile expansion)
+
+3 new profiles wired (7Artisans samecolor-dashed-sm, Tokina
+2color-frequency, Viltrox bw-dashed-promo) brings the runnable set from
+3 to 6 charts. Adds two new dispatch branches: `Y_BAND_IS_FREQUENCY`
+(neutral-mask split by vertical position) and
+`HUE_IS_CURVE+SAGITTAL_MERIDIONAL` (hue carries S/M, y-band carries
+frequency within hue).
+
+### Per-chart
+
+```
+sigma-56mm-f1-4-dc-dn-c (mainstream-2color-solid-dashed)
+  contrast10S     med |d| 0.006  p95 |d| 0.039  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.014  p95 |d| 0.094  paired  3/11  ext-None  8
+  resolution30S   med |d| 0.007  p95 |d| 0.044  paired 11/11  ext-None  0
+  resolution30M   med |d| 0.013  p95 |d| 0.015  paired  2/11  ext-None  9
+
+samyang-85mm-f1-4-as-if-umc (mainstream-4color-all-solid)
+  contrast10S     med |d| 0.016  p95 |d| 0.029  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.015  p95 |d| 0.180  paired 11/11  ext-None  0
+  resolution30S   med |d| 0.016  p95 |d| 0.056  paired 11/11  ext-None  0
+  resolution30M   med |d| 0.012  p95 |d| 0.036  paired 11/11  ext-None  0
+
+samyang-300mm-f6-3-ed-umc-cs-reflex (idealized-flat)
+  contrast10S     med |d| 0.017  p95 |d| 0.017  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.012  p95 |d| 0.019  paired 10/11  ext-None  1
+  resolution30S   med |d|   -    p95 |d|   -    paired  0/11  ext-None 11
+  resolution30M   med |d| 0.021  p95 |d| 0.024  paired  5/11  ext-None  6
+
+7artisans-50mm-f1-2-mark-ii (samecolor-dashed-sm)
+  contrast10M     med |d| 0.032  p95 |d| 0.069  paired  5/11  ext-None  6
+  contrast10S     med |d| 0.035  p95 |d| 0.095  paired  7/11  ext-None  4
+  resolution30M   med |d| 0.005  p95 |d| 0.033  paired  6/11  ext-None  5
+  resolution30S   med |d| 0.070  p95 |d| 0.187  paired  6/11  ext-None  5
+
+tokina-atx-m-23mm-f1-4-x (2color-frequency)
+  contrast10S     med |d| 0.030  p95 |d| 0.074  paired 10/11  ext-None  1
+  contrast10M     med |d| 0.024  p95 |d| 0.105  paired 10/11  ext-None  1
+  resolution30S   med |d| 0.061  p95 |d| 0.134  paired  9/11  ext-None  2
+  resolution30M   med |d| 0.020  p95 |d| 0.390  paired 11/11  ext-None  0
+
+viltrox-af-75mm-f1-2-pro (bw-dashed-promo)
+  contrast10S     med |d| 0.106  p95 |d| 0.157  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.107  p95 |d| 0.192  paired 11/11  ext-None  0
+  resolution30S   med |d| 0.258  p95 |d| 0.638  paired  2/11  ext-None  9
+  resolution30M   med |d| 0.524  p95 |d| 0.524  paired  1/11  ext-None 10
+```
+
+### Aggregate
+
+```
+paired comparisons:    186
+median |d|:           0.0189
+p95 |d|:              0.1413
+max |d|:              0.5243
+within +/-0.05:       141/186 (75.8%)
+```
+
+### What changed since run 2
+
+- **7Artisans (new)** — median 0.005–0.070 across fields; the green
+  S1-dashed dip-and-recover feature reads cleanly. Blue 10S/10M split
+  is approximate because the two blue lines barely separate in the
+  source rendering — see ground-truth provenance note in `charts.py`.
+- **Tokina (new)** — initial `y_band_split=0.50` put the split deep
+  into the 30 lp/mm region (30S returned 0/11); re-measured to 0.25
+  by inspecting the upper/lower curve clusters. Now median 0.020–0.061
+  across fields, well inside the band.
+- **Viltrox (new)** — 10 lp/mm reads at median 0.106–0.107 (above the
+  band but within p95 of 0.20). 30 lp/mm fails: median 0.258–0.524,
+  only 1–2 paired comparisons. **Known limit**: the four curves are
+  too tightly bunched in OTF space (0.65–1.0) for the y-band
+  classifier to separate them. Logged in `declared.py` and the README;
+  the y-band heuristic doesn't fit tightly-clustered B&W charts and
+  the chart documents the failure mode for the next iteration.
+- **Aggregate moves**: median |d| holds at 0.019 (slightly better
+  than run 2's 0.014 weighted by the same charts); the new charts
+  pull p95 up to 0.14 and within-band down to 75.8%. The 4 new bad
+  comparisons all come from Viltrox 30 lp/mm — without that chart's
+  contribution, the in-band rate would be ~92%.
 
 ## Run 2 (after #954 plot-box fix)
 

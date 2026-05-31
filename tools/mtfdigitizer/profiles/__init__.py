@@ -20,7 +20,9 @@ Public surface:
 - `ProfileMismatch` — raised by `resolve()` on disagreement or no match
 - `suggest_profile(image, candidates) -> ProfileMatch`
 - `resolve(image, declared, candidates) -> MtfProfile`
-- `SIGMA_2COLOR_SOLID_DASHED`, `SAMYANG_4COLOR_ALL_SOLID` — declared profiles
+- `SIGMA_2COLOR_SOLID_DASHED`, `SAMYANG_4COLOR_ALL_SOLID`,
+  `SEVENARTISANS_2COLOR_SAMECOLOR_DASHED`, `TOKINA_2COLOR_FREQUENCY`,
+  `VILTROX_BW_DASHED_F12` — declared profiles
 - `DECLARED_PROFILES` — tuple of all currently-declared profiles
 """
 
@@ -35,7 +37,10 @@ from .types import (
 from .declared import (
     DECLARED_PROFILES,
     SAMYANG_4COLOR_ALL_SOLID,
+    SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
     SIGMA_2COLOR_SOLID_DASHED,
+    TOKINA_2COLOR_FREQUENCY,
+    VILTROX_BW_DASHED_F12,
 )
 from .suggest import resolve, suggest_profile
 
@@ -47,8 +52,11 @@ __all__ = [
     "ProfileMatch",
     "ProfileMismatch",
     "SAMYANG_4COLOR_ALL_SOLID",
+    "SEVENARTISANS_2COLOR_SAMECOLOR_DASHED",
     "SIGMA_2COLOR_SOLID_DASHED",
     "StyleAxis",
+    "TOKINA_2COLOR_FREQUENCY",
+    "VILTROX_BW_DASHED_F12",
     "resolve",
     "suggest_profile",
 ]

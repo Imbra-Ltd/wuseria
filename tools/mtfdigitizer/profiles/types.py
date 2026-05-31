@@ -26,12 +26,20 @@ StyleAxis = Literal["SPLIT_BY_DASH", "HUE_IS_CURVE"]
 # - `FREQUENCY`             — hue = spatial frequency (red=10 lp/mm,
 #                             blue=30 lp/mm in the Sigma dialect)
 # - `SAGITTAL_MERIDIONAL`   — hue = S vs M (red=S, blue=M in the Tokina
-#                             dialect; frequency is then carried by
-#                             line style or by curve y-position)
+#                             dialect); frequency is then carried by
+#                             curve y-position, declared via
+#                             `MtfProfile.y_band_split`
 # - `CURVE_IDENTITY`        — hue uniquely identifies one curve out of
 #                             {10S, 10M, 30S, 30M} (the Samyang 4-color
 #                             dialect)
-HueMeaning = Literal["FREQUENCY", "SAGITTAL_MERIDIONAL", "CURVE_IDENTITY"]
+# - `Y_BAND_IS_FREQUENCY`   — there is no informative hue (B&W chart);
+#                             a single neutral mask carries all curves
+#                             and they're separated into frequency
+#                             groups by y-position, then into S/M by
+#                             dash pattern within each band (Viltrox).
+HueMeaning = Literal[
+    "FREQUENCY", "SAGITTAL_MERIDIONAL", "CURVE_IDENTITY", "Y_BAND_IS_FREQUENCY"
+]
 
 
 @dataclass(frozen=True)
@@ -62,7 +70,15 @@ class HueRange:
 
 @dataclass(frozen=True)
 class MtfProfile:
-    """A declared MTF chart profile (ADR-038 §1)."""
+    """A declared MTF chart profile (ADR-038 §1).
+
+    `y_band_split` is set when a profile needs to separate curves into
+    frequency groups by vertical position (Tokina, Viltrox). The value
+    is the y-fraction of the plot box at which the upper and lower bands
+    are split — pixels above the line group as the first frequency, below
+    as the second. None for profiles where hue or curve identity alone
+    determines the (frequency, S/M) mapping.
+    """
 
     name: str  # stable identifier, e.g. "sigma-2color-solid-dashed"
     hues: tuple[HueRange, ...]
@@ -70,6 +86,19 @@ class MtfProfile:
     hue_meaning: HueMeaning
     frequencies_lpmm: tuple[int, ...]  # e.g. (10, 30)
     notes: str = ""
+    y_band_split: float | None = None  # 0.0..1.0 fraction of plot height
+    # Convention for SPLIT_BY_DASH dispatch: True means dashed lines are
+    # the sagittal (S) curve and solid lines are meridional (M). 7Artisans
+    # labels the meridional pair "T1/T2" and sagittal pair "S1/S2", which
+    # is the inverse of Sigma's "S=solid". Default matches Sigma.
+    dashed_is_sagittal: bool = False
+    # When False, this profile is excluded from `suggest_profile()` and
+    # may only be used by explicit declaration in `resolve()`. Required
+    # for profiles whose hue band is so broad that it false-matches every
+    # chart (Viltrox's neutral-greys mask matches any image with text or
+    # gridlines, so it can never be auto-suggested without poisoning the
+    # disambiguation of every other profile).
+    auto_suggestable: bool = True
 
     @property
     def hue_count(self) -> int:
