@@ -1,7 +1,7 @@
 # Samyang 16mm f/2 ED AS UMC CS -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=347)
-Image: [samyang-16mm-f2.png](samyang-16mm-f2.png)
+Image: [samyang-16mm-f2-0-ed-as-umc-cs-mtf.png](samyang-16mm-f2-0-ed-as-umc-cs-mtf.png)
 
 ## Chart legend
 

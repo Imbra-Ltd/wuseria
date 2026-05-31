@@ -1,7 +1,7 @@
 # Samyang 100mm f/2.8 ED UMC Macro -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=331)
-Image: [samyang-100mm-f2-8-macro.png](samyang-100mm-f2-8-macro.png)
+Image: [samyang-100mm-f2-8-ed-umc-macro-mtf.png](samyang-100mm-f2-8-ed-umc-macro-mtf.png)
 
 ## Chart legend
 

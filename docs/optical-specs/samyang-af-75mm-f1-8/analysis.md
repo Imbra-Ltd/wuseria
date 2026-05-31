@@ -1,7 +1,7 @@
 # Samyang AF 75mm f/1.8 -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=617)
-Image: [samyang-af-75mm-f1-8.png](samyang-af-75mm-f1-8.png)
+Image: [samyang-af-75mm-f1-8-mtf.png](samyang-af-75mm-f1-8-mtf.png)
 
 ## Chart legend
 

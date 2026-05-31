@@ -1,7 +1,7 @@
 # Samyang 35mm f/1.4 AS UMC -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=287)
-Image: [samyang-35mm-f1-4.png](samyang-35mm-f1-4.png)
+Image: [samyang-35mm-f1-4-as-umc-mtf.png](samyang-35mm-f1-4-as-umc-mtf.png)
 
 ## Chart legend
 

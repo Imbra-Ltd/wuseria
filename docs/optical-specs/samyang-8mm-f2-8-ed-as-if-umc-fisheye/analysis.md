@@ -1,7 +1,7 @@
 # Samyang 8mm f/2.8 ED AS IF UMC Fisheye -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=339)
-Image: [samyang-8mm-f2-8-ed-as-if-umc-fisheye.png](samyang-8mm-f2-8-ed-as-if-umc-fisheye.png)
+Image: [samyang-8mm-f2-8-ed-as-if-umc-fisheye-mtf.png](samyang-8mm-f2-8-ed-as-if-umc-fisheye-mtf.png)
 
 ## Chart legend
 

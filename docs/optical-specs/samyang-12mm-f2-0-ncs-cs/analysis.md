@@ -1,7 +1,7 @@
 # Samyang 12mm f/2 NCS CS -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=351)
-Image: [samyang-12mm-f2.png](samyang-12mm-f2.png)
+Image: [samyang-12mm-f2-0-ncs-cs-mtf.png](samyang-12mm-f2-0-ncs-cs-mtf.png)
 
 ## Chart legend
 

@@ -1,7 +1,7 @@
 # Samyang 300mm f/6.3 ED UMC CS -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=355)
-Image: [samyang-300mm-f6-3-ed-umc-cs.png](samyang-300mm-f6-3-ed-umc-cs.png)
+Image: [samyang-300mm-f6-3-ed-umc-cs-reflex-mtf.png](samyang-300mm-f6-3-ed-umc-cs-reflex-mtf.png)
 
 ## Chart legend
 

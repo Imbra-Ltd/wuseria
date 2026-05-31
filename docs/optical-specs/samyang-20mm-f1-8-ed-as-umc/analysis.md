@@ -1,7 +1,7 @@
 # Samyang 20mm f/1.8 ED AS UMC -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=182)
-Image: [samyang-20mm-f1-8.png](samyang-20mm-f1-8.png)
+Image: [samyang-20mm-f1-8-ed-as-umc-mtf.png](samyang-20mm-f1-8-ed-as-umc-mtf.png)
 
 ## Chart legend
 

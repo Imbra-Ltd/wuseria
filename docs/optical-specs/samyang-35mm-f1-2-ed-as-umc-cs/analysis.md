@@ -1,7 +1,7 @@
 # Samyang 35mm f/1.2 ED AS UMC CS -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=186)
-Image: [samyang-35mm-f1-2.png](samyang-35mm-f1-2.png)
+Image: [samyang-35mm-f1-2-ed-as-umc-cs-mtf.png](samyang-35mm-f1-2-ed-as-umc-cs-mtf.png)
 
 ## Chart legend
 

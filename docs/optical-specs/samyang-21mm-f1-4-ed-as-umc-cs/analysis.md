@@ -1,7 +1,7 @@
 # Samyang 21mm F1.4 ED AS UMC CS -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=367)
-Image: [samyang-21mm-f1-4.png](samyang-21mm-f1-4.png)
+Image: [samyang-21mm-f1-4-ed-as-umc-cs-mtf.png](samyang-21mm-f1-4-ed-as-umc-cs-mtf.png)
 
 ## Chart legend
 
