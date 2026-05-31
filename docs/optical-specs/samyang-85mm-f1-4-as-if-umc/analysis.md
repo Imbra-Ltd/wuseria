@@ -1,7 +1,7 @@
 # Samyang 85mm f/1.4 AS IF UMC -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=311)
-Image: [samyang-85mm-f1-4.png](samyang-85mm-f1-4.png)
+Image: [samyang-85mm-f1-4-as-if-umc-mtf.png](samyang-85mm-f1-4-as-if-umc-mtf.png)
 
 ## Chart legend
 

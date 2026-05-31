@@ -1,7 +1,7 @@
 # Samyang 135mm f/2 ED UMC -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=323)
-Image: [samyang-135mm-f2-ed-umc.png](samyang-135mm-f2-ed-umc.png)
+Image: [samyang-135mm-f2-0-ed-umc-mtf.png](samyang-135mm-f2-0-ed-umc-mtf.png)
 
 ## Chart legend
 

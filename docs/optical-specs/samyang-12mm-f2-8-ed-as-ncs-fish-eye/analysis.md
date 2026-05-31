@@ -1,7 +1,7 @@
 # Samyang 12mm f/2.8 ED AS NCS Fish-eye -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=190)
-Image: [samyang-12mm-f2-8.png](samyang-12mm-f2-8.png)
+Image: [samyang-12mm-f2-8-ed-as-ncs-fish-eye-mtf.png](samyang-12mm-f2-8-ed-as-ncs-fish-eye-mtf.png)
 
 ## Chart legend
 

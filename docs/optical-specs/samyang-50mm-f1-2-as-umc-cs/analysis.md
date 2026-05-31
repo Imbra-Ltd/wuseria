@@ -1,7 +1,7 @@
 # Samyang 50mm f/1.2 AS UMC CS -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=363)
-Image: [samyang-50mm-f1-2.png](samyang-50mm-f1-2.png)
+Image: [samyang-50mm-f1-2-as-umc-cs-mtf.png](samyang-50mm-f1-2-as-umc-cs-mtf.png)
 
 ## Chart legend
 

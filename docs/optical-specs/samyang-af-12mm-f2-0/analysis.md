@@ -1,7 +1,7 @@
 # Samyang AF 12mm f/2.0 -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=543)
-Image: [samyang-af-12mm-f2-0.png](samyang-af-12mm-f2-0.png)
+Image: [samyang-af-12mm-f2-0-mtf.png](samyang-af-12mm-f2-0-mtf.png)
 
 ## Chart legend
 

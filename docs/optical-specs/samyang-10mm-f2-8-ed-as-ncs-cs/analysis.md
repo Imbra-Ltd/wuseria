@@ -1,7 +1,7 @@
 # Samyang 10mm f/2.8 ED AS NCS CS -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=343)
-Image: [samyang-10mm-f2-8.png](samyang-10mm-f2-8.png)
+Image: [samyang-10mm-f2-8-ed-as-ncs-cs-mtf.png](samyang-10mm-f2-8-ed-as-ncs-cs-mtf.png)
 
 ## Chart legend
 

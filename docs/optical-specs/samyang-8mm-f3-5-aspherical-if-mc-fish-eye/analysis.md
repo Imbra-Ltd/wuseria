@@ -1,7 +1,7 @@
 # Samyang 8mm f/3.5 Aspherical IF MC Fish-eye -- MTF Chart Analysis
 
 Source: [Official Samyang product page](https://www.lksamyang.com/en/product/product-view.php?seq=335)
-Image: [samyang-8mm-f3-5.png](samyang-8mm-f3-5.png)
+Image: [samyang-8mm-f3-5-aspherical-if-mc-fish-eye-mtf.png](samyang-8mm-f3-5-aspherical-if-mc-fish-eye-mtf.png)
 
 ## Chart legend
 
