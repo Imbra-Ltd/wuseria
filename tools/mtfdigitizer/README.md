@@ -11,13 +11,24 @@ fixed sample points → confidence score (render-match + plausibility priors)
 
 ## Status
 
-Under construction. Foundation work in progress:
+Foundation complete; remaining epic work is independent (additional profiles,
+legacy retirement, lens-page SVG swap, optional Real-ESRGAN fallback).
 
 - [x] [#933](https://github.com/Imbra-Ltd/wuseria/issues/933) — reference set
 - [x] [#934](https://github.com/Imbra-Ltd/wuseria/issues/934) — profile abstraction + advisory auto-suggest
 - [x] [#935](https://github.com/Imbra-Ltd/wuseria/issues/935) — adaptive extraction pipeline with 11-point sampling
-- [x] [#953](https://github.com/Imbra-Ltd/wuseria/issues/953) — ground truth + plot boxes; offset distribution measured (calibration half 1 of 2)
-- [ ] Remaining tasks under epic [#932](https://github.com/Imbra-Ltd/wuseria/issues/932)
+- [x] [#953](https://github.com/Imbra-Ltd/wuseria/issues/953) — ground truth + plot boxes; offset distribution measured (see `referenceset/calibration.md`)
+- [x] [#963](https://github.com/Imbra-Ltd/wuseria/issues/963) — `dispatch.py` shared `(style_axis, hue_meaning)` table; `rendermatch.py` round-trip IoU scorer + precision side metric (see `referenceset/scoring.md`)
+- [x] [#966](https://github.com/Imbra-Ltd/wuseria/issues/966) — `priors.py` four physical-plausibility priors + `plausibility.py` runner (see `referenceset/plausibility.md`); closes the second confidence signal required by ADR-038 §"Confidence signal"
+- [x] [#968](https://github.com/Imbra-Ltd/wuseria/issues/968) — `triage.py` auto-triage gate combining both signals (`precision ≥ 0.80 AND IoU ≥ 0.20 AND priors_pass` ⇒ HIGH, else LOW); `precision_of()` lives in triage and `scorer.py` imports it (see `referenceset/triage.md`)
+- [x] [#971](https://github.com/Imbra-Ltd/wuseria/issues/971) — `svg.py` provenance SVG emitter; viewBox 320×218 (data area matches `MtfChart.astro` 320×200, extra 18px legend strip)
+- [x] [#973](https://github.com/Imbra-Ltd/wuseria/issues/973) — `review.py` 3-panel HTML composite (original PNG + SVG + overlay); only LOW-verdict review files are committed per ADR-038 §"Workflow"
+- [ ] Remaining tasks under epic [#932](https://github.com/Imbra-Ltd/wuseria/issues/932): profiles for the other 3 in-band families (7artisans samecolor-dashed-sm, Tokina 2color-frequency, Viltrox bw-dashed-promo), legacy `mtf-extract-*.py` retirement (#563), lens-page SVG swap, optional Real-ESRGAN fallback
+
+The 0.75 IoU threshold proposed in `referenceset/REFERENCE_SET.md` fails 3/3
+runnable charts due to sparse-polyline vs dense-skeleton geometric asymmetry
+(precision separates them cleanly: 0.44 / 0.86 / 0.99). Threshold revision is
+deferred — the discipline is "the threshold moves, not the extractor."
 
 `extract_chart(image_path, profile, plot_box, image_height_mm)` is the
 end-to-end entry point. CLI not yet exposed; the pipeline is callable

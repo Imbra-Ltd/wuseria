@@ -34,6 +34,13 @@ Quality conventions (SOLID, readability, code style, testing) are defined in
 `docs/solid-ai-templates/` — a git submodule from
 [Imbra-Ltd/solid-ai-templates](https://github.com/Imbra-Ltd/solid-ai-templates).
 
+> **Note**: this CLAUDE.md is a known signal in the
+> [solid-ai-templates viability audit](https://github.com/braboj/solid-ai-templates/issues/350)
+> (meta-spike on whether templates deliver repeatable SOLID-grade quality)
+> and the [deep-knowledge / tutorial-extraction spike](https://github.com/braboj/solid-ai-templates/issues/349).
+> Bloat and the MANDATORY STARTUP block above are symptoms under
+> investigation — do not replicate the pattern in other projects.
+
 Project-specific overrides and additions follow below.
 
 ## 1. Project
@@ -52,29 +59,46 @@ Project-specific overrides and additions follow below.
 
 ### 1.2 Project layout conventions
 
-- `src/pages/` — Astro file-based routing (explore with `ls`)
-- `src/layouts/` — shared page shells
-- `src/components/static/` — `.astro` components that ship zero JS
-- `src/components/interactive/` — React islands, each in its own directory with co-located tests, CSS module, and sub-components
-- `src/components/interactive/shared/` — reusable UI pieces shared across islands
-- `src/data/` — all editable content as TypeScript files (not JSON)
-- `src/types/` — shared type definitions
-- `src/hooks/` — reusable React hooks
-- `src/utils/` — pure utility functions with co-located tests
-- `src/styles/global.css` — CSS custom properties, base styles, dark theme
-- `src/test/` — Vitest setup and test factories
-- `public/` — static assets (favicon, icons, CNAME, robots.txt)
-- `docs/audits/` — 360-degree audits (timestamped) and SEO test plan
-- `docs/optical-specs/` — verified per-lens optical reference data, one subfolder per lens (ADR-031, ADR-033): `analysis.md` (MTF readings, predictions), `scoring-log.md` (per-lens scoring justification), `specs-log.md` (mandatory technical specs provenance log), construction diagrams and MTF charts as PNG or SVG
-- `tools/<brand>/` — per-brand optical spec extraction, all 11 migrated onto `brandkit` + `pagefetch` (ADR-035): each is a `<Brand>Extractor(BrandExtractor)` in `extractor.py` plus thin `fetch_specs.py`/`audit.py` that delegate to the shared brandkit runners. Brands: fujifilm (Playwright + live-page image fallback), samyang, sigma, tamron (dual-page via `extra_paths`), tokina, ttartisan, viltrox (theme-HTML spec table, X-mount column selected dynamically, ADR-036; `download_images.py` theme scraper for images), zeiss (PDF-only, `save_pdf`), mitakon (UC), venus (UC), voigtlander (Playwright). Transport per brand via `BrandConfig.transport`; import the extractor brand-qualified (`from tokina.extractor import ...`). `extract_physical` (#779 cross-validation) implemented for all brands except zeiss (N/A, PDF-only); Sigma and Fujifilm `--verify` divergences reconciled to clean (#902, #896), which also fixed a Fujifilm comma-weight extractor bug (#906)
-- `tools/lenstip/` — LensTip lens index (build_index, search); local JSON index of 2300+ lenses for instant ID lookup
-- `tools/lookup.py` — unified lens lookup; generates research URLs for all PLAYBOOK 2.8 sources in one shot
-- `tools/crop-artifact.py` — content-aware cropper for construction diagrams / MTF charts; detects content bbox from corner-median background (no hand-guessed pixel coords), splits composites (`--split --left/--right`), supports explicit `--region`, `--margin`, advisory `--check`
-- `tools/pagefetch/` — standalone, importable web-fetch package (PageSource ABC + NetworkFetcher + FakeFetcher, four-tier auto-escalation, configurable cache); submodule-ready, zero project coupling; own pytest suite + README (ADR-035). Cache validity is content-based, not time-based (no TTL, ADR-037): bot-blocked/throttle pages (#881), 404/gone pages, and implausibly short stubs are never cached and self-heal on read; refresh deliberately with `--no-cache`. Cache dir resolves `--cache-dir`/explicit arg > `PAGEFETCH_CACHE_DIR` env > CWD-relative default (validated at construction — a bad path errors at load, not first write); brandkit sets the env to `.cache/fetch` on import so brand tools share one cache; bare `py -m pagefetch` fetches must pass `--cache-dir` (see web-fetching rules) instead of spawning `tools/.cache/pagefetch`. Pydantic/`.env`-file config deliberately not used for a single-knob portable package (README config scope)
-- `tools/brandkit/` — shared brand-tool library (BrandTool orchestrator + BrandExtractor strategy via composition, lenses.ts parser, slug + specs-dir helpers); eliminates per-brand scaffolding duplication (ADR-035)
-- `tools/mtfdigitizer/` — unified MTF chart digitizer package (ADR-038, foundation complete); `referenceset/` holds 8 eye-verified ground-truth charts + proposed thresholds in `REFERENCE_SET.md` (#933) and per-position MTF ground truth + hand-measured plot boxes on the 3 runnable charts in `charts.py` (#953); `profiles/` declares chart dialects (`MtfProfile`, `HueRange` with full HSV-box bounds, `SIGMA_2COLOR_SOLID_DASHED`, `SAMYANG_4COLOR_ALL_SOLID`) + `resolve()` enforces B1 fail-loud (#934); `pipeline/` is 8 small modules wired by `extract_chart(image_path, profile, plot_box, image_height_mm)` → `ExtractedChart` with 11 sample points and B2 None-on-gap (#935); `dispatch.py` is the shared `(style_axis, hue_meaning)` → committed-field skeletons table that `extract_chart` and `score_chart` both consume so the dispatch lives exactly once (#963); `rendermatch.py` is the round-trip IoU scorer (`score_chart` redraws readings as 1px polylines, dilates symmetrically, computes IoU + a polyline-on-skeleton precision side metric — #963); `loader.py` composites RGBA charts onto white so downstream stages see a stable white background; `calibrate.py` runs `py -m mtfdigitizer.calibrate` to report per-position offset |d| against ground truth (#953), findings in `referenceset/calibration.md`; `scorer.py` runs `py -m mtfdigitizer.scorer` to report per-field render-match IoU + precision, findings in `referenceset/scoring.md` (#963); `priors.py` is the four physical-plausibility priors (center≥edge, 10≥30, not-suspiciously-flat-at-~1.0, in-range — pure functions over `tuple[SampledReading, ...]`, return `list[PriorViolation]`, empty = HIGH plausibility) and `plausibility.py` runs `py -m mtfdigitizer.plausibility` to report which priors fire per chart, findings in `referenceset/plausibility.md` (#966 — closes the second of the two confidence signals ADR-038 §"Confidence signal" requires; flatness thresholds `mean ≥ 0.95 AND stdev ≤ 0.02` separate the 3 runnable charts cleanly on first run, the Samyang 300mm reflex fires flatness on 3/4 fields while Sigma 56mm and Samyang 85mm pass all priors); `triage.py` is the auto-triage gate that combines both signals into one binary verdict per chart (`precision ≥ 0.80 AND IoU ≥ 0.20 AND priors_pass` ⇒ HIGH, else LOW with reason codes routing to extractor-side vs chart-side work), `autotriage.py` runs `py -m mtfdigitizer.autotriage`, findings in `referenceset/triage.md` (#968 — Sigma 56mm = LOW `precision_below_threshold` because dashed-M is sparse, Samyang 85mm = HIGH at IoU 0.224 just above the 0.20 floor, Samyang 300mm reflex = LOW `prior_failed_not_suspiciously_flat`; `precision_of()` lives in triage and `scorer.py` imports it so the metric has a single definition); `svg.py` is the provenance SVG emitter (`render_svg(ExtractedChart) → str`, pure string templating, no new deps; `py -m mtfdigitizer.svg [--check]` writes one `.svg` per runnable reference chart under `docs/optical-specs/<slug>/`; viewBox 320×218 — data area at the same coordinates as `MtfChart.astro` 320×200, extra 18px is a legend strip the standalone SVG carries in-document, #971); `review.py` is the 3-panel review-file generator (HTML composite: left = original PNG, right = SVG, bottom = overlay PNG with extractor polylines registered against the same `PlotBox`; HTML not raster so the SVG renders vector-sharp without `cairosvg`; `py -m mtfdigitizer.review [--check]` runs standalone for any runnable chart; the autotriage runner hooks `write_review()` per LOW chart and skips HIGH — only LOW-verdict review files are committed, per ADR-038 §"Workflow", #973). **Plot-box corners are measured at the data edge (first/last column with skeleton pixels), not at the printed axis lines** — the two conventions can coincide or not, never assume (#954). Plot-box auto-detection deferred (#950 — caller-supplied today). The 0.75 IoU threshold proposed in `REFERENCE_SET.md` fails 3/3 charts due to sparse-polyline vs dense-skeleton geometric asymmetry (precision separates them cleanly 0.44/0.86/0.99) — threshold revision deferred to a follow-up session, the discipline is "the threshold moves, not the extractor." Remaining epic #932 work (profiles for the other 3 in-band families, legacy retirement, lens-page SVG swap, optional Real-ESRGAN fallback) is now independent
-- `tools/` — legacy MTF extraction tools (mtf-extract-skeleton.py / -sigma.py / -samyang.py — superseded by `tools/mtfdigitizer/` per ADR-038, retired once #563 is closed)
-- `tools/` is Python tooling with its own pytest suites — it is excluded from the front-end quality gate (`.prettierignore` and `eslint.config.js` ignore `tools`), matching the `ci.yml` `changes` path-filter which does not trigger the build job on `tools/`-only changes. Verify `tools/` Python with `py -m pytest` (run from `tools/`), never `npm run validate`.
+Front-end source (`src/`):
+
+| Path                                 | Purpose                                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `src/pages/`                         | Astro file-based routing                                                                   |
+| `src/layouts/`                       | shared page shells                                                                         |
+| `src/components/static/`             | `.astro` components (zero JS)                                                              |
+| `src/components/interactive/`        | React islands; each in its own directory with co-located tests, CSS module, sub-components |
+| `src/components/interactive/shared/` | reusable UI shared across islands                                                          |
+| `src/data/`                          | all editable content as TypeScript files                                                   |
+| `src/types/`                         | shared type definitions                                                                    |
+| `src/hooks/`                         | reusable React hooks                                                                       |
+| `src/utils/`                         | pure utility functions with co-located tests                                               |
+| `src/styles/global.css`              | CSS custom properties, base styles, dark theme                                             |
+| `src/test/`                          | Vitest setup and test factories                                                            |
+| `public/`                            | static assets (favicon, icons, CNAME, robots.txt)                                          |
+
+Docs and reference data:
+
+| Path                         | Purpose                                                                                                              |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `docs/audits/`               | 360-degree audits (timestamped) and SEO test plan                                                                    |
+| `docs/optical-specs/<slug>/` | per-lens reference data: `analysis.md`, `scoring-log.md`, `specs-log.md`, diagrams, MTF charts. See ADR-031, ADR-033 |
+
+Python tooling (`tools/`):
+
+| Path                     | Purpose                                                                                      |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| `tools/<brand>/`         | per-brand optical spec extraction (11 brands). See ADR-035, ADR-036, PLAYBOOK §2.8           |
+| `tools/brandkit/`        | shared brand-tool library. See ADR-035                                                       |
+| `tools/pagefetch/`       | submodule-ready web fetcher. See `tools/pagefetch/README.md`, ADR-035, ADR-037               |
+| `tools/mtfdigitizer/`    | unified MTF chart digitizer. See `tools/mtfdigitizer/README.md`, ADR-038                     |
+| `tools/lenstip/`         | LensTip lens index (2300+ lenses for instant ID lookup)                                      |
+| `tools/lookup.py`        | unified lens lookup; generates research URLs for all PLAYBOOK §2.8 sources                   |
+| `tools/crop-artifact.py` | content-aware cropper for diagrams / MTF charts                                              |
+| `tools/mtf-extract-*.py` | legacy MTF scrapers, superseded by `tools/mtfdigitizer/` (ADR-038); retired when #563 closes |
+
+`tools/` is Python with its own pytest suites — excluded from the front-end
+quality gate (`.prettierignore`, `eslint.config.js`, `ci.yml` path filter).
+Verify with `py -m pytest` from `tools/`, never `npm run validate`.
 
 ### 1.3 Commands
 
@@ -92,16 +116,10 @@ npm run validate     # lint + format + check + test + build — full CI suite
 
 ### 1.4 Web fetching
 
-- Use `py -m pagefetch <url>` (run from `tools/`) for all web page fetching — never WebFetch or Fetch tools
-- For bare `py -m pagefetch` fetches in this project, ALWAYS pass `--cache-dir .cache/fetch` (resolved from repo root) so the fetch shares the one project cache the brand tools use — never the package's CWD-relative default (which would spawn `tools/.cache/pagefetch`). Brand tools handle this automatically; only the bare CLI needs the flag.
-- WebFetch/Fetch truncates large pages through a small model, silently losing data
-- `pagefetch` auto-escalates: urllib (~1s) → Playwright (~5-9s) → Nodriver (~6-8s) → SeleniumBase UC (~18-24s)
-- Flags: `--html` (raw HTML), `--js` (force Playwright), `--nodriver` (force headed Chrome), `--uc` (force UC), `--batch urls.txt` (persistent browser session), `--no-cache` (bypass cache), `--clean-cache` (sweep bot/404 junk from the cache; add `--dry-run` to preview)
-- For bot-protected sites, auto mode skips Playwright and goes straight to Nodriver (headed Chrome, no driver binary)
-- Use DuckDuckGo HTML search (`html.duckduckgo.com/html/?q=...`) when Google/Bing block with CAPTCHAs — works with urllib (~1s)
-- This applies to both the main agent and all subagents — when spawning research agents, instruct them to use `py -m pagefetch`, not WebFetch
-- In code, import the package: `from pagefetch import NetworkFetcher, FetchOptions, ContentMode` (inject a `PageSource`; use `FakeFetcher` in tests)
-- See `tools/pagefetch/README.md` for architecture details and performance history
+- Use `py -m pagefetch <url>` (run from `tools/`) for all web page fetching — never WebFetch or Fetch tools. WebFetch truncates large pages silently. This applies to subagents too: instruct them to use `py -m pagefetch`.
+- For bare CLI fetches in this project pass `--cache-dir ../.cache/fetch` so the fetch shares the project cache. Brand tools handle this automatically; only the bare CLI needs the flag.
+- Use DuckDuckGo HTML search (`html.duckduckgo.com/html/?q=...`) when Google/Bing return CAPTCHAs.
+- See `tools/pagefetch/README.md` (architecture, all CLI flags, cache rules, library API) and PLAYBOOK §2.7 (project-specific workflows).
 
 ## 2. Code conventions
 
@@ -178,33 +196,52 @@ npm run validate     # lint + format + check + test + build — full CI suite
 
 ### 2.6 Data rules
 
+#### Content storage
+
 - All editable content in `src/data/*.ts` — never hardcode data in components
-- Never hardcode derived counts or statistics — compute them from the data source at build time
 - TypeScript files, not JSON — gives type checking at build time and IDE autocomplete on the data itself; a missing field is a compile error, not a runtime surprise
 - Astro imports `.ts` data at build time; data never ships as JS to the browser
+- Never hardcode derived counts or statistics — compute them from the data source at build time
+
+#### Pricing
+
 - Prices in USD by default (configurable in `src/data/config.ts`), rounded up to nearest $50
 - All prices are approximate estimates — no `priceEstimated` flag needed
-- UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`) — no separate footnote needed
-- Review source directory in `src/data/reviews.ts` — methodology and trust per source
+- UI renders prices with `~` prefix and currency symbol from config (e.g. `~$750`)
+
+#### Naming
+
 - Lens model names MUST match official manufacturer naming — include all optical suffixes (ED, UMC, AS IF, APO, etc.), generation markers (II, Mark II), and series names (Argus, Athena Prime, Sniper)
 - Aperture in model names always uses `f/X.X` format — never `fX.X`, `FX.X`, or `f/X` (omitting trailing `.0`)
+- Products without glass elements (pinhole lenses, cap lenses) are accessories (`lens-accessory`), not lenses
+
+#### Required fields
+
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
 - Review source links use `rel="nofollow sponsored"` and `target="_blank"`
 - All computed `genreMarks` MUST be stored on the lens — no omissions, even low scores (e.g. macro=1). Transparency over curation.
-- Scoring methodology and fallback rules are defined in `docs/decisions/014-optical-quality-rubric.md` — trust hierarchy, rubric thresholds, trust-2 aggregation, community consensus fallback, optical construction inference
-- Scoring log format and field completeness rules are defined in `docs/decisions/022-scoring-log-and-mtf-charts.md` — every entry must list all 14 optical fields with explicit undefined markers
-- When scoring lenses, save official MTF charts and analysis to the per-lens folder in `docs/optical-specs/<slug>/`
+- `maxMagnification` MUST come from spec sheets or review measurements — never estimate from focal length and minimum focus distance (thin lens formula has ~39% median error)
+
+#### Scoring
+
+- Scoring methodology and fallback rules: `docs/decisions/014-optical-quality-rubric.md` — trust hierarchy, rubric thresholds, trust-2 aggregation, community consensus fallback, optical construction inference
+- Scoring log format and field completeness rules: `docs/decisions/022-scoring-log-and-mtf-charts.md` — every entry must list all 14 optical fields with explicit undefined markers
+- When scoring lenses, save official MTF charts and analysis to `docs/optical-specs/<slug>/`
+- Review source directory: `src/data/reviews.ts` — methodology and trust per source
+
+#### Specs-log workflow
+
 - Every lens folder in `docs/optical-specs/<slug>/` MUST have a `specs-log.md` technical specs provenance log — document every source checked for construction diagrams, MTF charts, element counts, coatings, special glass, magnification (URL, date, result: found/not found/404/paywall), whether the search was successful or not, plus any caveats (e.g. different optical designs across mounts); distinct from `scoring-log.md` which covers OQ field scoring
-- When verifying or adding optical specs, follow the per-lens provenance workflow in PLAYBOOK 2.8 step 6 — specs-log first, lenses.ts second, no exceptions
-- When adding any artifact (construction diagram, MTF chart) to an optical-specs folder, update `specs-log.md` findings in the same commit — never add files without updating the log
+- When verifying or adding optical specs, follow PLAYBOOK §2.8 step 6: specs-log first, then `lenses.ts`, no exceptions — and update `specs-log.md` in the same commit as any artifact added
 - `specs-log.md` findings MUST use DB field names — `specialElements` (not `edElements`, `asphericalElements`, `hrElements`), `coating`, `maxMagnification`, etc.
+
+#### Sources
+
 - Samyang lenses are sold under multiple brand aliases (Rokinon, Bower, Walimex Pro, Vivitar) — search all aliases when looking for reviews
 - optyczne.pl and lenstip.com are the same company (CO-NET Robert Olech) — never count as separate sources for trust-2 aggregation
 - Verify lens mount availability before adding to the database — check official manufacturer pages and third-party lens lists; do not assume a lens exists in X-mount or GFX just because it exists in other mounts
-- `maxMagnification` MUST come from spec sheets or review measurements — never estimate from focal length and minimum focus distance (thin lens formula has ~39% median error)
 - Source-conflict resolution: the official manufacturer page wins on any contested field; when a secondary source (incl. LensTip) is provably wrong on one verifiable field, distrust its other fields for that lens — it is likely mis-cataloged (e.g. LensTip listed 35mm f/1.4 as 10/9 vs official 8/5; do not adopt its physical specs either)
-- Before a bulk `--verify` data pass, confirm the extractor is reliable first — a single systematic extraction bug makes `--verify` lie and blindly applying its page values corrupts correct stored data (e.g. #906: the Fujifilm weight regex truncated comma-formatted weights `2,265g`→`265`, masking the real #896 divergences). When a `--verify` page value is physically implausible (a supertele "weighing" 265g) or one field of a group looks wrong, treat the extraction as suspect, fix the tool, then re-verify. When a single official page itself looks wrong (e.g. an `/en-us/` spec page serving another lens's data), cross-check the `/global/` page or an independent source before overwriting
-- Products without glass elements (pinhole lenses, cap lenses) are accessories (`lens-accessory`), not lenses — they have no optical parameters to measure or score
+- Before a bulk `--verify` data pass, confirm the extractor is reliable first — see PLAYBOOK §2.8 for the workflow and the #906 / #896 cautionary tale
 
 ## 3. Quality
 
