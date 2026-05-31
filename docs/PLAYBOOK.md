@@ -792,9 +792,15 @@ npm run lint
 
 ### 3.7 Site quality (Lighthouse)
 
-Lighthouse runs automatically on every PR against 4 key pages
-(`/`, `/lenses/`, `/cameras/`, `/genre/`). Configuration is in
-`lighthouserc.json`.
+Lighthouse runs automatically on every PR that affects the served bytes,
+against 4 key pages (`/`, `/lenses/`, `/cameras/`, `/genre/`).
+Configuration is in `lighthouserc.json`.
+
+PRs that change only `package.json` and `package-lock.json` (e.g.
+Dependabot bumps) skip the Lighthouse job — the build still runs to
+verify deps compile, but Lighthouse does not. See ADR-039 for the
+rationale. Code, content, workflow, and `lighthouserc.json` changes
+continue to trigger Lighthouse as before.
 
 | Category       | Threshold | Level |
 | -------------- | --------- | ----- |

@@ -4295,3 +4295,50 @@ longer depend on each other — independent next sessions.
   gap, not the edges.** `cv2.line`'s endpoint rounding can spill one
   pixel past the analytic endpoint. The honest test asserts the
   middle of the gap is empty, not pixel-perfect endpoint termination.
+
+---
+
+### Session 104 — Dependabot batch + Lighthouse CI noise ADR
+
+#### PRs
+
+- #958 — bump typescript-eslint 8.59.4 → 8.60.0 (dev)
+- #959 — bump eslint 10.4.0 → 10.4.1 (dev)
+- #960 — bump @astrojs/sitemap 3.7.2 → 3.7.3
+- #961 — bump astro 6.3.7 → 6.4.2 (originally held; merged after #980 unblocked it)
+- #962 — bump @astrojs/react 5.0.5 → 5.0.6
+- #979 — ADR-039: skip Lighthouse CI on lockfile-only PRs
+- #980 — `.github/workflows/ci.yml` filter implementing ADR-039
+
+#### Issues opened
+
+- #978 — spike: Lighthouse CI variance (closed by #980)
+- #981 — bug (minor, P3, Backlog): PR #979's merge updated main but no `PushEvent` was emitted and no Deploy workflow ran; site unaffected because the merge was docs-only. One-off GitHub Actions event-loss; the next push (#980 merge) dispatched normally.
+- #982 — spike: does lab Lighthouse on a shared CI VM measure user experience, or do we want RUM / post-deploy / a different model entirely? Captures the deeper concern that ADR-039 deliberately scoped around.
+
+#### Key changes
+
+- Five Dependabot PRs merged sequentially with main deploy verified green between each: typescript-eslint, eslint, @astrojs/sitemap, @astrojs/react, then astro 6.4.2 last.
+- ADR-039 added at `docs/decisions/039-lighthouse-ci-noise-and-assertion-model.md` documenting the false-positive evidence and the chosen workflow-layer fix.
+- `.github/workflows/ci.yml` gained a second `dorny/paths-filter` output named `lighthouse` whose path set is the existing `code` set minus `package.json` and `package-lock.json`. The lighthouse job now gates on `needs.changes.outputs.lighthouse` instead of `code`. Lockfile-only PRs skip lighthouse; build still runs to verify deps compile. Inline comment in the workflow references ADR-039.
+
+#### Key decisions
+
+- **Skip Lighthouse on lockfile-only PRs; leave the 1× / 0.80 model alone for code PRs (ADR-039).** Chosen over six alternatives (3-run median, 2-run optimistic, lower threshold, per-metric assertions, downgrade to warn, remove from PRs) because the cause of today's false positives is "measuring perf on byte-identical artifacts," not "measuring perf with the wrong threshold." Workflow-layer filtering addresses the actual problem cheaply. Tightening or loosening the model on code PRs is a separate decision deferred to future evidence — explicit in the ADR.
+- **PR #961 held until #980 landed instead of admin-bypassed.** Local back-to-back builds proved astro 6.3.7 and 6.4.2 emit byte-identical output (483/483 files match SHA-256), so the CI lighthouse failure was confirmed noise — the build was safe. But admin-merging into a known-broken gate hides the operational problem; landing the fix first and then verifying the rebased #961 cleanly skipped lighthouse (third filter outcome confirmed live) is the durable answer.
+- **ADR is immutable.** Per `base/docs.md`, ADR-039 was not edited after merge to add a forward-link to spike #982; the spike stands on its own and any model change it produces becomes ADR-040.
+- **Lab Lighthouse on a shared CI VM is a fundamentally questionable PR gate.** Honest finding raised after ADR-039 landed: the runner is not the user's platform, the score doesn't describe user experience, and the relative signal is buried under shared-CPU noise at single-run sample size. ADR-039 is a workaround for the dependency-bump subset; #982 captures the deeper model question for a future session.
+
+#### Notes for next session
+
+- Session 103's next-priority (declare the 3 in-band MTF profiles: 7artisans samecolor-dashed-sm, Tokina 2color-frequency, Viltrox bw-dashed-promo) was not touched this session. Still queued as the natural mtfdigitizer follow-up.
+- #981 (missed deploy) is informational — no action needed unless it recurs.
+- #982 (lab Lighthouse → RUM question) is the strategic perf-monitoring spike; not urgent, but the right time to investigate is before the next code-PR Lighthouse misfire.
+
+#### Post-mortem — #981 missed deploy
+
+- **Symptom:** PR #979 merged into main as `8762f8d`, but no `PushEvent` to `refs/heads/main` was emitted by GitHub and no Deploy workflow ran on the new SHA.
+- **Root cause:** Upstream GitHub Actions event-dispatch hiccup. Confirmed not a config issue on our side: `deploy.yml` triggers on `push: branches: [main]` with no path filter; the four sibling merges earlier the same day all dispatched normally; the next push after #979 (#980 merge) also dispatched normally. The event itself never fired for that one specific ref update.
+- **Why missed:** Not preventable on our side — the dispatcher dropped the event silently.
+- **Fix:** None needed for this instance. PR #979 was docs-only so the served bytes don't change; the site continues serving the previous build correctly. The next push (#980's merge to main) implicitly carried the missing change into a successful deploy.
+- **Prevention:** Out of scope this session, but documented in #981 as a follow-up: a periodic check that `main`'s `HEAD` SHA matches the SHA of the most recent successful Deploy run, alerting on persistent divergence. Captured rather than implemented because the event-loss appears genuinely one-off (immediately self-corrected on the next push).
