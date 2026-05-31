@@ -80,13 +80,24 @@ Per-profile dispatch in `dispatch.py`:
   `dashed_is_sagittal=True`)
 - `(HUE_IS_CURVE, CURVE_IDENTITY)` → Samyang dialect: hue name encodes
   both frequency and S/M (e.g. `10S-red`)
-- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` → Tokina dialect: hue carries
-  S/M, `y_band_split` separates frequencies within each hue
+- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` → Tokina prime dialect: hue
+  carries S/M, `y_band_split` separates frequencies within each hue
+- `(HUE_IS_CURVE, PER_COLUMN_RIDGE)` → Tokina wide-zoom variant: hue
+  carries S/M, per-column ridge tracking separates frequencies (topmost
+  run per column = upper freq, bottommost = lower freq). Used when the
+  y-bands intersect or dashed fragments interleave in y so neither
+  `y_band_split` nor CC-rank can group them. See `pipeline/ridge.py`
 - `(SPLIT_BY_DASH, Y_BAND_IS_FREQUENCY)` → Viltrox B&W dialect: single
   neutral mask split by `y_band_split` for frequency, then CC-split
   within each band for S/M
+- `(SPLIT_BY_DASH, CC_RANK_BY_MEAN_Y)` → Viltrox B&W tightly-clustered
+  variant: same single neutral mask, but components ranked by mean-y
+  and split at the largest y-gap instead of a fixed band
+- `(SPLIT_BY_DASH, RIDGE_TRACKING)` → Viltrox AF 75mm f/1.2 variant:
+  per-column ridge centroids clustered into 4 tracks for charts where
+  even raw masks fuse all four curves into one CC. See `pipeline/ridge.py`
 
-Other combinations raise `NotImplementedError` (fail loud).
+Other combinations raise `NotImplementedError` (fail loud, per B1).
 
 ### Known limits, deferred
 
@@ -112,6 +123,36 @@ Other combinations raise `NotImplementedError` (fail loud).
   pixel correctly return `None` (B2), but the readings file will need
   the M curve interpolated by the serializer (a later task) or accept
   gaps.
+
+## B-rule contracts (B1–B4)
+
+The codebase refers to four named contracts ("B1", "B2", "B3", "B4")
+in docstrings, comments, and ADR-038. They originate in the PR #931
+on-paper audit of the predecessor `mtf-extract-skeleton.py` tool,
+which found four bugs of the same shape — quietly fabricating data
+when the honest answer was "no data here." Each contract names the
+fix; subsequent code that touches the same surface must uphold it.
+
+| Contract | Concern | Rule |
+| --- | --- | --- |
+| **B1** | Profile mismatch | An unknown or mismatched chart profile MUST be refused (fail loud), not silently defaulted to the most common path. Implementation: `profiles/suggest.py::resolve()` raises `ProfileMismatch`; `pipeline/dispatch.py` raises `NotImplementedError` for `(style_axis, hue_meaning)` combinations without a wired branch. |
+| **B2** | Missing samples | At any sample column where no usable curve pixel exists in the bracket window, the extractor MUST return `None`. Never interpolate across, extrapolate beyond, or copy from a neighbor. Implementation: `pipeline/sampling.py::sample_skeleton_at_fraction()` returns `None` when the bracket window is empty; `pipeline/types.py::SampledReading` and `src/types/mtf.ts::MtfReading` declare every per-field value as nullable; `pipeline/rendermatch.py`, `svg.py`, `review.py` break polylines at `None`; `emit.py` passes `None` through as TypeScript `null`. |
+| **B3** | Curve aggregation | Per-column aggregation MUST be order-independent and lossless. The legacy running-average + 5px cap is replaced by an unweighted per-column mean. Implementation: `pipeline/sampling.py` and `pipeline/ridge.py` aggregate by mean / median over column runs, not running averages. |
+| **B4** | Center astigmatism | At the optical axis (position 0), sagittal and meridional MTF are equal by physics. The extractor MUST NOT fabricate divergence at center. Implementation: no caller manufactures an S/M gap at position 0; readings come from the chart pixels at the center column or are `None`. |
+
+The "B2 contract" is the most-referenced of the four because
+nullable readings flow through every downstream stage — the mask
+extractor, the sampler, the rendermatch scorer, the SVG emitter,
+the 3-panel review file, the TypeScript schema, the lens-page
+table renderer. Each stage has its own way of honoring it
+(`None` → broken polyline, em-dash cell, skipped IoU
+contribution); a new stage that consumes `SampledReading` or
+`MtfReading` MUST do the same.
+
+Origin: see the Session 80 dev-journal entry for PR #931 — the
+on-paper audit of `mtf-extract-skeleton.py` that named all four
+contracts. ADR-038 references B1 (§1, §2) and B2 (§2). The
+contracts predate the unified digitizer but apply to it in full.
 
 ## Profile system
 
