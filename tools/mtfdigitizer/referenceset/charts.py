@@ -365,14 +365,15 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
         notes="11mm wide-end panel of the 11-18mm zoom; white bg, red solid = S, blue dashed = M, gridlines every 20%; per-column ridge dispatch handles the curve-overlap that defeated the older y_band_split=0.25 path",
-        # Plot box at the data edge, not the printed plot frame
-        # (calibration.md convention). The printed 0mm tick sits at col
-        # 331 and the 14mm tick at col 1676, but the chart artist drew
-        # the curves only from col 333..1670 — measured via the
-        # data-extent probe. Aligning the plot box to data extent makes
-        # fraction-0.0 and fraction-1.0 samples actually land on curve
-        # pixels instead of returning None.
-        plot_box=PlotBoxCoords(x_left=333, x_right=1670, y_top=235, y_bottom=996),
+        # X bounds at the data edge (curves drawn from col 333..1670).
+        # Y bounds derived from the printed 20%-spaced gridlines (at
+        # y=374, 529, 683, 840) — extrapolating one 155-px step above
+        # the 80% gridline puts the MTF=100% line at y=219, one step
+        # below the 20% gridline puts MTF=0% at y=995. The earlier
+        # y_top=235 sat 16 px below the actual 100% line, clipping
+        # away the upper red curve where it tracks at 100% in the
+        # left half — extractor returned None there. (#795)
+        plot_box=PlotBoxCoords(x_left=333, x_right=1670, y_top=219, y_bottom=995),
         ground_truth=_TOKINA_11_18_AT_11_GT,
     ),
     ReferenceChart(
@@ -383,8 +384,10 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
         notes="18mm long-end panel of the 11-18mm zoom; same template as the 11mm panel; per-column ridge dispatch",
-        # Data-edge plot box (curves end at col 1673, not 1676).
-        plot_box=PlotBoxCoords(x_left=331, x_right=1673, y_top=235, y_bottom=996),
+        # X bounds at the data edge (curves end at col 1673, not 1676).
+        # Y bounds from the same gridline-extrapolation as the 11mm panel
+        # (identical chart template, identical 155-px gridline spacing).
+        plot_box=PlotBoxCoords(x_left=331, x_right=1673, y_top=219, y_bottom=995),
         ground_truth=_TOKINA_11_18_AT_18_GT,
     ),
     ReferenceChart(
