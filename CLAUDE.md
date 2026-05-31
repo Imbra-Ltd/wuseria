@@ -72,10 +72,10 @@ Project-specific overrides and additions follow below.
 - `src/test/` — Vitest setup and test factories
 - `public/` — static assets (favicon, icons, CNAME, robots.txt)
 - `docs/audits/` — 360-degree audits (timestamped) and SEO test plan
-- `docs/optical-specs/` — verified per-lens optical reference data, one subfolder per lens (ADR-031, ADR-033): `analysis.md` (MTF readings, predictions), `scoring-log.md` (per-lens scoring justification), `specs-log.md` (mandatory technical specs provenance log), construction diagrams and MTF charts as PNG or SVG
+- `docs/optical-specs/<slug>/` — per-lens optical reference data: `analysis.md`, `scoring-log.md`, `specs-log.md`, construction diagrams, MTF charts. See ADR-031, ADR-033
 - `tools/<brand>/` — per-brand optical spec extraction (11 brands), all on `brandkit` + `pagefetch`. See ADR-035 (architecture), ADR-036 (Viltrox theme-HTML), PLAYBOOK §2.8 (per-brand commands incl. `--verify`)
 - `tools/brandkit/` — shared brand-tool library (BrandTool + BrandExtractor strategy). See ADR-035
-- `tools/pagefetch/` — auto-escalating web fetcher (urllib → Playwright → Nodriver → UC), submodule-ready. See `tools/pagefetch/README.md`, ADR-035, ADR-037 (cache validity)
+- `tools/pagefetch/` — submodule-ready web fetcher. See `tools/pagefetch/README.md`, ADR-035, ADR-037
 - `tools/mtfdigitizer/` — unified MTF chart digitizer. See `tools/mtfdigitizer/README.md` and ADR-038
 - `tools/lenstip/` — LensTip lens index (2300+ lenses for instant ID lookup)
 - `tools/lookup.py` — unified lens lookup; generates research URLs for all PLAYBOOK 2.8 sources
@@ -196,8 +196,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 - Scoring log format and field completeness rules are defined in `docs/decisions/022-scoring-log-and-mtf-charts.md` — every entry must list all 14 optical fields with explicit undefined markers
 - When scoring lenses, save official MTF charts and analysis to the per-lens folder in `docs/optical-specs/<slug>/`
 - Every lens folder in `docs/optical-specs/<slug>/` MUST have a `specs-log.md` technical specs provenance log — document every source checked for construction diagrams, MTF charts, element counts, coatings, special glass, magnification (URL, date, result: found/not found/404/paywall), whether the search was successful or not, plus any caveats (e.g. different optical designs across mounts); distinct from `scoring-log.md` which covers OQ field scoring
-- When verifying or adding optical specs, follow the per-lens provenance workflow in PLAYBOOK 2.8 step 6 — specs-log first, lenses.ts second, no exceptions
-- When adding any artifact (construction diagram, MTF chart) to an optical-specs folder, update `specs-log.md` findings in the same commit — never add files without updating the log
+- When verifying or adding optical specs, follow PLAYBOOK §2.8 step 6: specs-log first, then `lenses.ts`, no exceptions — and update `specs-log.md` in the same commit as any artifact added (construction diagram, MTF chart)
 - `specs-log.md` findings MUST use DB field names — `specialElements` (not `edElements`, `asphericalElements`, `hrElements`), `coating`, `maxMagnification`, etc.
 - Samyang lenses are sold under multiple brand aliases (Rokinon, Bower, Walimex Pro, Vivitar) — search all aliases when looking for reviews
 - optyczne.pl and lenstip.com are the same company (CO-NET Robert Olech) — never count as separate sources for trust-2 aggregation
