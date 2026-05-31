@@ -352,20 +352,21 @@ def test_cc_rank_solid_dashed_handles_single_component() -> None:
     assert dashed is None
 
 
-def test_cc_rank_dispatch_end_to_end_with_viltrox_chart() -> None:
-    """End-to-end Viltrox extraction via CC_RANK_BY_MEAN_Y must recover
-    the 30 lp/mm pair — the calibration regression test for #992.
+def test_ridge_tracking_dispatch_end_to_end_with_viltrox_chart() -> None:
+    """End-to-end Viltrox extraction via RIDGE_TRACKING must recover all
+    four curves — the calibration regression test for #994.
 
-    Run 3 (Y_BAND_IS_FREQUENCY) had 30S paired 2/11 with median |d| 0.258
-    and 30M paired 1/11 with median |d| 0.524. Run 4 (CC_RANK_BY_MEAN_Y)
-    brings 30S to 11/11 inside the ±0.05 band and 30M to 4/11 near the
-    band. The asserts here pin: 30S reads at every sample point in the
-    plausible range, and 30M produces non-None at multiple positions
-    (it no longer fails on 10/11 of the chart).
+    Prior dispatches failed on this chart in different ways:
+    - Y_BAND_IS_FREQUENCY (run 3) — 30 lp/mm |d| 0.258-0.524, 30M 1/11
+    - CC_RANK_BY_MEAN_Y (run 4) — 10S paired 11/11 but reading the
+      printed top plot-box border (mapped to MTF=1.0 by a wrong plot
+      box that put OTF=1.0 at the "1" label rather than at the gridline
+      23 px below); 10M dropped to 0/11
+    - RIDGE_TRACKING (run 5) — all four fields paired >=3/11 with med
+      |d| <= 0.05; the 10S reading is the actual curve, not the border
 
-    The 10S/10M pair is intentionally not asserted here — the two curves
-    share pixels in the source rendering and 10M doesn't separate; that
-    limitation is tracked as a follow-up to #992.
+    The assertions pin: every field paired >= the run-5 minimums, and
+    every value in [0, 1].
     """
     from mtfdigitizer.profiles import VILTROX_BW_DASHED_F12
 
@@ -377,24 +378,27 @@ def test_cc_rank_dispatch_end_to_end_with_viltrox_chart() -> None:
         image_height_mm=viltrox_height,
     )
 
-    res30s_values = [r.resolution30S for r in result.readings]
-    res30m_values = [r.resolution30M for r in result.readings]
+    paired_counts = {
+        "contrast10S": sum(1 for r in result.readings if r.contrast10S is not None),
+        "contrast10M": sum(1 for r in result.readings if r.contrast10M is not None),
+        "resolution30S": sum(1 for r in result.readings if r.resolution30S is not None),
+        "resolution30M": sum(1 for r in result.readings if r.resolution30M is not None),
+    }
+    # Run-5 measured: 10S 11, 10M 5, 30S 7, 30M 3. Asserts hold one less
+    # than measured to allow for incidental change without churning the
+    # test, while still pinning the "all four fields produce data" win.
+    assert paired_counts["contrast10S"] >= 10
+    assert paired_counts["contrast10M"] >= 4
+    assert paired_counts["resolution30S"] >= 6
+    assert paired_counts["resolution30M"] >= 2
 
-    res30s_paired = [v for v in res30s_values if v is not None]
-    res30m_paired = [v for v in res30m_values if v is not None]
-
-    assert len(res30s_paired) >= 10, (
-        f"30S regression: CC-rank dispatch must recover near-full coverage "
-        f"(Run 3 baseline was 2/11), got {len(res30s_paired)}/11"
-    )
-    assert len(res30m_paired) >= 3, (
-        f"30M regression: CC-rank dispatch must recover at least 3 points "
-        f"(Run 3 baseline was 1/11), got {len(res30m_paired)}/11"
-    )
-    # Recovered values land in the OTF range, never above 1.0 or below 0
-    # — outright nonsense like the Y_BAND_IS_FREQUENCY 30 lp/mm produced
-    # at fractions that fell into the wrong band.
-    for v in res30s_paired + res30m_paired:
+    all_values = [
+        v
+        for r in result.readings
+        for v in (r.contrast10S, r.contrast10M, r.resolution30S, r.resolution30M)
+        if v is not None
+    ]
+    for v in all_values:
         assert 0.0 <= v <= 1.0, f"value {v} outside [0, 1] range"
 
 

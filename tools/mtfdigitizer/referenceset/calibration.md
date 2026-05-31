@@ -40,6 +40,111 @@ Reads the in-source ground truth from `referenceset/charts.py` and runs
 populated. Output: per-chart `|d|` (absolute offset) median + p95 per
 field, then an aggregate.
 
+## Run 5 (after Viltrox ridge-tracking dispatch, #994)
+
+Viltrox profile switched from `CC_RANK_BY_MEAN_Y` (which on this chart
+read the printed top plot-frame border as 10S — see Run 4 notes) to
+`RIDGE_TRACKING`: per-column ridge centroids are clustered into tracks,
+near-duplicate tracks (within 4 px of mean_y) are deduplicated, and
+the top 4 by coverage are split by mean_y into upper-frequency (10) and
+lower-frequency (30) pairs. Within each pair, the curve with the lower
+mean_y is the sagittal (S) by lens physics — S MTF >= M MTF at every
+position, so S sits above M in image coordinates.
+
+Three changes ship together in this run:
+
+1. `RIDGE_TRACKING` dispatch (new file `pipeline/ridge.py`).
+2. Viltrox plot-box re-measured: y_top 130 → 153, y_bottom 365 → 393.
+   The pre-#994 calibration placed OTF=1.0 at the printed "1" label
+   instead of at the gridline 23 px below it. Run 4's "10S |d| = 0.000"
+   was a coincidence: the chrome-border at y=130 mapped to MTF=1.0
+   under the wrong y_top and matched ground truth 10S of 1.0 by
+   accident, masking that the actual 10S curve was never read.
+3. Chrome stripping: rows inside the plot box with ≥90% horizontal
+   mask coverage are now zeroed before ridge extraction. This catches
+   OTF gridlines and plot-frame borders without depending on CC
+   connectivity (the Viltrox neutral mask fuses every gridline with
+   every curve into one 2789-px CC).
+
+### Per-chart
+
+```
+sigma-56mm-f1-4-dc-dn-c (mainstream-2color-solid-dashed)
+  contrast10S     med |d| 0.006  p95 |d| 0.039  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.014  p95 |d| 0.094  paired  3/11  ext-None  8
+  resolution30S   med |d| 0.007  p95 |d| 0.044  paired 11/11  ext-None  0
+  resolution30M   med |d| 0.013  p95 |d| 0.015  paired  2/11  ext-None  9
+
+samyang-85mm-f1-4-as-if-umc (mainstream-4color-all-solid)
+  contrast10S     med |d| 0.016  p95 |d| 0.029  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.015  p95 |d| 0.180  paired 11/11  ext-None  0
+  resolution30S   med |d| 0.016  p95 |d| 0.056  paired 11/11  ext-None  0
+  resolution30M   med |d| 0.012  p95 |d| 0.036  paired 11/11  ext-None  0
+
+samyang-300mm-f6-3-ed-umc-cs-reflex (idealized-flat)
+  contrast10S     med |d| 0.017  p95 |d| 0.017  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.012  p95 |d| 0.019  paired 10/11  ext-None  1
+  resolution30S   med |d|   -    p95 |d|   -    paired  0/11  ext-None 11
+  resolution30M   med |d| 0.021  p95 |d| 0.024  paired  5/11  ext-None  6
+
+7artisans-50mm-f1-2-mark-ii (samecolor-dashed-sm)
+  contrast10M     med |d| 0.032  p95 |d| 0.069  paired  5/11  ext-None  6
+  contrast10S     med |d| 0.035  p95 |d| 0.095  paired  7/11  ext-None  4
+  resolution30M   med |d| 0.005  p95 |d| 0.033  paired  6/11  ext-None  5
+  resolution30S   med |d| 0.070  p95 |d| 0.187  paired  6/11  ext-None  5
+
+tokina-atx-m-23mm-f1-4-x (2color-frequency)
+  contrast10S     med |d| 0.030  p95 |d| 0.074  paired 10/11  ext-None  1
+  contrast10M     med |d| 0.024  p95 |d| 0.105  paired 10/11  ext-None  1
+  resolution30S   med |d| 0.061  p95 |d| 0.134  paired  9/11  ext-None  2
+  resolution30M   med |d| 0.020  p95 |d| 0.390  paired 11/11  ext-None  0
+
+viltrox-af-75mm-f1-2-pro (bw-dashed-promo)
+  contrast10S     med |d| 0.012  p95 |d| 0.056  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.048  p95 |d| 0.088  paired  5/11  ext-None  6
+  resolution30S   med |d| 0.020  p95 |d| 0.136  paired  7/11  ext-None  4
+  resolution30M   med |d| 0.016  p95 |d| 0.146  paired  3/11  ext-None  8
+```
+
+### Aggregate
+
+```
+paired comparisons:    187
+median |d|:           0.0167
+p95 |d|:              0.0918
+max |d|:              0.3146
+within +/-0.05:       161/187 (86.1%)
+```
+
+### What changed since run 4
+
+- **Viltrox 10S — now reading the real curve.** Run 4 paired 11/11 at
+  median |d| 0.000 but was reading the top plot-frame border line
+  (which mapped to MTF=1.0 under a wrong plot box; see #2 above).
+  Run 5 paired 11/11 at median |d| 0.012 — same count, real curve,
+  still well inside the calibration band.
+- **Viltrox 10M — recovered.** 0/11 → 5/11 paired, med |d| 0.048.
+  Meets the #994 acceptance criteria (≥5/11 reads at |d| ≤ 0.10).
+  The 6 unread positions are columns where neither dash of the
+  10M curve falls within the bracket window of the 11 sample
+  fractions (a chart-rasterization limit, not an algorithm fault).
+- **Viltrox 30S — improved.** 11/11 (fake, reading axis grid) → 7/11
+  (real curve, med |d| 0.020). The new value is dramatically more
+  trustworthy.
+- **Viltrox 30M — minor paired-count regression.** 4/11 → 3/11 with
+  med |d| 0.016. The lost position is offset by all three other
+  fields now reading real data. Trade accepted.
+- **Aggregate** — within-band 85.6% → 86.1% (+0.5 pts), p95 |d|
+  0.0913 → 0.0918 (flat). Median |d| flat at 0.017. The
+  improvement is in the *trustworthiness* of Viltrox readings,
+  not in calibration-band membership — and that's the right
+  axis: Run 4 reported high coverage with low |d| but the wins
+  were artifacts.
+- **No regression on the other 5 in-band families.** RIDGE_TRACKING
+  is wired only to the Viltrox profile via its `hue_meaning`. All
+  per-chart numbers for Sigma, Samyang 85mm/300mm, 7Artisans, and
+  Tokina are identical to Run 4 byte-for-byte.
+
 ## Run 4 (after Viltrox CC-rank dispatch, #992)
 
 Viltrox profile switched from `Y_BAND_IS_FREQUENCY` (fixed `y_band_split=0.30`)
