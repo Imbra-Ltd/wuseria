@@ -117,33 +117,35 @@ TOKINA_2COLOR_FREQUENCY: MtfProfile = MtfProfile(
 )
 
 
-# Tokina 2-color frequency-by-color, CC-rank variant: same hue palette
-# as `TOKINA_2COLOR_FREQUENCY` but dispatches by connected-component
-# rank instead of a fixed y_band_split.
+# Tokina 2-color frequency-by-color, ridge-tracking variant: same hue
+# palette as `TOKINA_2COLOR_FREQUENCY` but dispatches by per-column
+# ridge tracking instead of y_band_split.
 #
-# Used by the 11-18mm wide-zoom panels where the 30 lp/mm pair starts at
-# OTF ~0.90 (vs 1.00 for 10 lp/mm) — the two frequencies' y-bands
-# intersect near center, so any fixed y_band_split misclassifies one
-# region. The CC-rank dispatch makes no y-position assumption: per hue
-# (red, blue) it groups skeleton components into two clusters at the
-# largest y-gap and assigns upper = 10 lp/mm, lower = 30 lp/mm. Works
-# because the two curves of one color never cross spatially even when
-# their OTF values overlap.
+# Used by the 11-18mm wide-zoom panels where the 30 lp/mm pair starts
+# at OTF ~0.90 (vs 1.00 for 10 lp/mm). Both fixed-y splits AND CC-rank
+# fail here: the two pairs' y-bands intersect near center, dashed-line
+# fragments of 10M and 30M interleave in y across the field, and any
+# CC-by-rank-of-mean-y groups dashes from both curves together. Per-
+# column ridge tracking handles this geometry: scan each x column and
+# pick the topmost mask run as the upper-frequency point, the
+# bottommost as the lower-frequency point. Works as long as the two
+# curves of one color never cross spatially (which they don't on this
+# chart family).
 #
 # Same palette/saturation/value bounds as the y-band variant; only the
 # dispatch differs.
 TOKINA_2COLOR_FREQUENCY_CC_RANK: MtfProfile = MtfProfile(
-    name="tokina-2color-frequency-cc-rank",
+    name="tokina-2color-frequency-per-column-ridge",
     hues=(
         HueRange(name="S-red", h_lo=0, h_hi=12, s_min=80, v_min=120),
         HueRange(name="S-red", h_lo=168, h_hi=179, s_min=80, v_min=120),
         HueRange(name="M-blue", h_lo=90, h_hi=115, s_min=80, v_min=120),
     ),
     style_axis="HUE_IS_CURVE",
-    hue_meaning="CC_RANK_BY_MEAN_Y",
+    hue_meaning="PER_COLUMN_RIDGE",
     frequencies_lpmm=(10, 30),
     auto_suggestable=False,
-    notes="Tokina wide-zoom variant: per-hue CC-rank assigns upper CC = 10 lp/mm, lower CC = 30 lp/mm; no y_band_split (handles 11-18mm wide-zoom curve geometry where 10 and 30 bands intersect)",
+    notes="Tokina wide-zoom variant: per-hue, per-column ridge tracking; topmost run per column = 10 lp/mm, bottommost = 30 lp/mm; handles dashed-line interleaving that defeats CC-rank",
 )
 
 

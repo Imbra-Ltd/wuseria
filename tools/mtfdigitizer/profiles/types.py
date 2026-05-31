@@ -55,6 +55,17 @@ StyleAxis = Literal["SPLIT_BY_DASH", "HUE_IS_CURVE"]
 #                             frequency; within each pair the higher-
 #                             coverage track is solid (S by default).
 #                             See `pipeline/ridge.py`.
+# - `PER_COLUMN_RIDGE`      — per-hue variant of `RIDGE_TRACKING`. Each
+#                             hue carries S or M (named "S-*"/"M-*"),
+#                             and within the hue the two curves at
+#                             different y-positions are separated by
+#                             ridge tracking per-column. Upper track =
+#                             upper frequency, lower track = lower
+#                             frequency. Used by the Tokina wide-zoom
+#                             panels where the dashed-curve fragments
+#                             interleave in y-space and CC-rank
+#                             cannot separate them, but the two curves
+#                             of one color never cross within a column.
 HueMeaning = Literal[
     "FREQUENCY",
     "SAGITTAL_MERIDIONAL",
@@ -62,6 +73,7 @@ HueMeaning = Literal[
     "Y_BAND_IS_FREQUENCY",
     "CC_RANK_BY_MEAN_Y",
     "RIDGE_TRACKING",
+    "PER_COLUMN_RIDGE",
 ]
 
 

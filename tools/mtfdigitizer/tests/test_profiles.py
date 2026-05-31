@@ -67,7 +67,7 @@ def test_declared_profiles_cover_in_band_families() -> None:
         "samyang-4color-all-solid",
         "7artisans-2color-samecolor-dashed",
         "tokina-2color-frequency",
-        "tokina-2color-frequency-cc-rank",
+        "tokina-2color-frequency-per-column-ridge",
         "viltrox-bw-dashed-f1.2",
     }
 

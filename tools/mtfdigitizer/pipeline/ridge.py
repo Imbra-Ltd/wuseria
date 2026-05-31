@@ -319,6 +319,47 @@ def _rasterize(track: Track, shape: tuple[int, int]) -> np.ndarray:
     return sk
 
 
+def ridge_tracks_for_hue(
+    mask: np.ndarray,
+    plot_box: PlotBox,
+    sm: str,
+    upper_freq: int,
+    lower_freq: int,
+) -> dict[str, np.ndarray]:
+    """Per-hue, 2-curve variant: returns one track per (freq, sm).
+
+    Used by the Tokina wide-zoom dispatch where each hue (red, blue)
+    encodes S or M (via the profile's hue name) and within the hue the
+    two curves at different y-positions encode the two frequencies.
+    Upper track in y → `upper_freq`; lower track → `lower_freq`. The
+    sm parameter is taken from the hue name (S-red → 'S', M-blue → 'M').
+
+    Distinct from `ridge_tracks_to_fields` (which expects 4 curves in
+    one neutral mask and recovers both freq AND sm from track ranking).
+    """
+    from .dispatch import curve_field  # imported here to avoid module cycle
+
+    cleaned = _strip_chrome(mask, plot_box)
+    points = _extract_ridge_points(cleaned, plot_box)
+    tracks = _cluster_into_tracks(points)
+    kept = _select_top_n_tracks(tracks, n=2, plot_width=plot_box.width + 1)
+
+    out: dict[str, np.ndarray] = {}
+    if not kept:
+        return out
+    by_y = sorted(kept, key=lambda t: t.mean_y)
+    upper_track = by_y[0]
+    field = curve_field(upper_freq, sm)
+    if field is not None:
+        out[field] = _rasterize(upper_track, mask.shape)
+    if len(by_y) > 1:
+        lower_track = by_y[1]
+        field = curve_field(lower_freq, sm)
+        if field is not None:
+            out[field] = _rasterize(lower_track, mask.shape)
+    return out
+
+
 def ridge_tracks_to_fields(
     mask: np.ndarray,
     plot_box: PlotBox,
