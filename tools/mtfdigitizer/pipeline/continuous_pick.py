@@ -126,6 +126,40 @@ def _pick_continuous_curve(branches_by_x: dict[int, list[float]]) -> CurvePoints
     return CurvePoints(points=tuple(points))
 
 
+def _densify_curve(curve: CurvePoints) -> CurvePoints:
+    """Linearly interpolate y across missing columns inside a curve's span.
+
+    Skeletonization of a near-horizontal stroke produces a sparse
+    "staircase" — one pixel every few columns, not one per column. The
+    sampler's narrow bracket window then returns None at columns that
+    happen to fall in the gaps, even though the curve is visually
+    continuous. Filling missing columns between adjacent real samples
+    by linear interpolation gives the sampler a dense input without
+    extrapolating past either endpoint of the actual data.
+
+    B2 is preserved: the filled range is bounded by the first and last
+    real points; columns outside that span are still absent (genuinely
+    no data). The two real anchors that bracket each interpolated
+    column belong to the same CC by construction — no curve-identity
+    hopping. Only intra-curve gaps are bridged.
+    """
+    if len(curve.points) < 2:
+        return curve
+    sorted_pts = sorted(curve.points, key=lambda p: p[0])
+    dense: list[tuple[int, float]] = []
+    for i in range(len(sorted_pts) - 1):
+        x0, y0 = sorted_pts[i]
+        x1, y1 = sorted_pts[i + 1]
+        dense.append((x0, y0))
+        if x1 - x0 > 1:
+            span = x1 - x0
+            for x in range(x0 + 1, x1):
+                t = (x - x0) / span
+                dense.append((x, y0 + t * (y1 - y0)))
+    dense.append(sorted_pts[-1])
+    return CurvePoints(points=tuple(dense))
+
+
 # Two CCs at the same hue whose mean_y are within this many pixels of
 # each other are fragments of one curve (the horizontal close didn't
 # bridge every dash gap, especially near steep slopes). Merging them
@@ -243,6 +277,6 @@ def extract_two_curves_per_hue(
 
     upper_branches = _skeleton_to_branches(upper_cc, plot_box)
     lower_branches = _skeleton_to_branches(lower_cc, plot_box)
-    upper = _pick_continuous_curve(upper_branches)
-    lower = _pick_continuous_curve(lower_branches)
+    upper = _densify_curve(_pick_continuous_curve(upper_branches))
+    lower = _densify_curve(_pick_continuous_curve(lower_branches))
     return upper, lower
