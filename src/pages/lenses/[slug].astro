@@ -404,10 +404,10 @@ const jsonLd = {
                         <td>
                           {r.position === 0 ? "Center" : `${r.position}mm`}
                         </td>
-                        <td>{r.contrast10S.toFixed(2)}</td>
-                        <td>{r.contrast10M.toFixed(2)}</td>
-                        <td>{r.resolution30S.toFixed(2)}</td>
-                        <td>{r.resolution30M.toFixed(2)}</td>
+                        <td>{r.contrast10S?.toFixed(2) ?? DASH}</td>
+                        <td>{r.contrast10M?.toFixed(2) ?? DASH}</td>
+                        <td>{r.resolution30S?.toFixed(2) ?? DASH}</td>
+                        <td>{r.resolution30M?.toFixed(2) ?? DASH}</td>
                       </tr>
                     ))}
                   </tbody>
