@@ -4,11 +4,12 @@ Eight eye-verified charts spanning the chart-style families found in
 `docs/optical-specs/`. Used to calibrate the render-match threshold and
 offset tolerance band of the digitizer (ADR-038 §4).
 
-Three of the eight charts carry ground-truth values + a hand-measured
-plot box — the subset `extract_chart()` can run today (Sigma 2-color
-and Samyang 4-color profiles, the two declared in `profiles/declared.py`).
-The other five are tracked for shape coverage; calibration on them
-unblocks once their profile lands.
+Six of the eight charts carry ground-truth values + a hand-measured
+plot box — the subset `extract_chart()` can run today (the five declared
+profiles in `profiles/declared.py`: Sigma, Samyang, 7Artisans, Tokina,
+Viltrox). The two remaining (the 7Artisans 35mm soft promo and the
+Zeiss Touit press kit) are tracked for fail-loud shape coverage; both
+are deliberately out-of-band and must be refused by the profile gate.
 
 Field semantics:
 
@@ -130,6 +131,57 @@ _SAMYANG_300_GT: GroundTruthCurves = {
     },
 }
 
+# 7Artisans 50mm — x positions: 0, 1.4, 2.8, 4.2, 5.6, 7.0, 8.4, 9.8, 11.2, 12.6, 14.0
+# Eye-read against chart's 0.2 OTF gridlines. The blue (10 lp/mm) pair
+# appears nearly overlapping in the source rendering; S/M separation
+# is small (~0.02 OTF). Green (30 lp/mm) has the more interesting
+# astigmatism feature: S1 (dashed = sagittal per dashed_is_sagittal)
+# dips to ~0.45 around 9.8mm then recovers to ~0.47 at the edge.
+_SEVENARTISANS_50_GT: GroundTruthCurves = {
+    "f/1.2": {
+        # Blue solid — 10M — upper of the blue pair (T1 label)
+        "contrast10M": (0.92, 0.92, 0.92, 0.92, 0.92, 0.91, 0.90, 0.89, 0.88, 0.85, 0.78),
+        # Blue dashed — 10S — lower of the blue pair (T2 label)
+        "contrast10S": (0.91, 0.91, 0.91, 0.90, 0.89, 0.88, 0.86, 0.82, 0.78, 0.74, 0.70),
+        # Green solid — 30M — middle curve (S2 label); smooth fall
+        "resolution30M": (0.79, 0.78, 0.76, 0.72, 0.68, 0.64, 0.62, 0.60, 0.55, 0.50, 0.47),
+        # Green dashed — 30S — the curve with the dip-and-recover (S1 label)
+        "resolution30S": (0.78, 0.76, 0.72, 0.66, 0.58, 0.52, 0.48, 0.46, 0.45, 0.46, 0.47),
+    },
+}
+
+# Tokina atx-m 23mm — x positions: 0, 1.4, 2.8, ..., 14.0
+# Beige bg, red = S (solid), blue = M (dotted), upper pair = 10 lp/mm,
+# lower pair = 30 lp/mm. The 30S red has a curious local maximum near
+# 5mm (rising from ~0.67 to ~0.73). Gridlines at 0/50/100% only — eye
+# precision is ~±0.03.
+_TOKINA_23_GT: GroundTruthCurves = {
+    "f/1.4": {
+        # Red solid upper — 10S
+        "contrast10S": (0.95, 0.97, 0.95, 0.92, 0.93, 0.92, 0.92, 0.90, 0.92, 0.85, 0.82),
+        # Blue dotted upper — 10M
+        "contrast10M": (0.94, 0.93, 0.91, 0.92, 0.90, 0.90, 0.87, 0.82, 0.74, 0.68, 0.62),
+        # Red solid lower — 30S — has the local max near 5mm
+        "resolution30S": (0.67, 0.70, 0.73, 0.72, 0.62, 0.55, 0.58, 0.55, 0.65, 0.58, 0.55),
+        # Blue dotted lower — 30M — steepest edge falloff
+        "resolution30M": (0.68, 0.65, 0.60, 0.57, 0.58, 0.58, 0.58, 0.55, 0.55, 0.48, 0.32),
+    },
+}
+
+# Viltrox 75mm — x positions: 0, 1.4, 2.8, ..., 14.0
+# f/1.2 panel only (top). All B&W curves; per the legend, solid = S,
+# dashed = M. Curves bunch tightly near 1.0 at center; 30M (lowest
+# dashed grey) has the most edge falloff (~0.65). F8 panel (single
+# light-blue curve, idealized-flat) is not declared.
+_VILTROX_75_GT: GroundTruthCurves = {
+    "f/1.2": {
+        "contrast10S": (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.99, 0.99, 0.97, 0.95, 0.95),
+        "contrast10M": (0.99, 0.99, 0.98, 0.98, 0.97, 0.97, 0.95, 0.92, 0.88, 0.85, 0.82),
+        "resolution30S": (0.93, 0.93, 0.93, 0.93, 0.92, 0.92, 0.91, 0.90, 0.87, 0.82, 0.75),
+        "resolution30M": (0.92, 0.91, 0.90, 0.90, 0.89, 0.88, 0.86, 0.82, 0.78, 0.72, 0.65),
+    },
+}
+
 
 REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ReferenceChart(
@@ -184,6 +236,12 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
         notes="blue=T(10), green=S(30); within each color solid/dashed split S/M; green S1 dips to 0.45 at 11mm before recovering",
+        # Plot box from vertical-gridline + y-label scan: x-ticks every
+        # 1.4mm at ~57.5px spacing (x_left at 0mm tick = 78, x_right at
+        # 14mm = 653); y-labels every 0.2 OTF at ~52px (1.0 line at y=75,
+        # 0 baseline at y=335). See `probe_three_profiles.py` history.
+        plot_box=PlotBoxCoords(x_left=78, x_right=653, y_top=75, y_bottom=335),
+        ground_truth=_SEVENARTISANS_50_GT,
     ),
     ReferenceChart(
         slug="7artisans-35mm-f1-2-mark-ii",
@@ -202,6 +260,12 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
         notes="red=S solid, blue=M dotted; both 10 and 30 curves share style, separated by y-position; non-Sigma convention",
+        # Plot box from gridline scan: vertical lines at x=186 (0mm tick),
+        # 607 (5mm), 1030 (10mm) → 84.4 px/mm; x_right at 14mm = 1368.
+        # Horizontal gridlines at y=149 (100%), 331 (75%), 513 (50%),
+        # 695 (25%) → 728 px per 100% of OTF; y_bottom (0%) = 877.
+        plot_box=PlotBoxCoords(x_left=186, x_right=1368, y_top=149, y_bottom=877),
+        ground_truth=_TOKINA_23_GT,
     ),
     ReferenceChart(
         slug="viltrox-af-75mm-f1-2-pro",
@@ -211,6 +275,13 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
         notes="soft B&W promo; all dashed at different patterns; F8 panel is nearly idealized-flat (border case to idealized-flat)",
+        # f/1.2 panel only (top). Vertical axis line at x=287 (0mm tick),
+        # plot frame ends at x=653 (14mm). Y-label scan placed OTF=1.0 at
+        # y=130 and OTF=0 baseline at y=365 (~23.5 px per 0.1 OTF). F8
+        # panel calibration deferred — single light-blue curve doesn't fit
+        # the 4-field extractor.
+        plot_box=PlotBoxCoords(x_left=287, x_right=653, y_top=130, y_bottom=365),
+        ground_truth=_VILTROX_75_GT,
     ),
     ReferenceChart(
         slug="zeiss-touit-32mm-f1-8",

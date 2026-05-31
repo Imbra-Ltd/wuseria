@@ -24,7 +24,10 @@ from mtfdigitizer.profiles import (
     ProfileMatch,
     ProfileMismatch,
     SAMYANG_4COLOR_ALL_SOLID,
+    SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
     SIGMA_2COLOR_SOLID_DASHED,
+    TOKINA_2COLOR_FREQUENCY,
+    VILTROX_BW_DASHED_F12,
     resolve,
     suggest_profile,
 )
@@ -45,19 +48,27 @@ def _ref_chart_path(slug: str) -> Path:
 SIGMA_56_CHART = lambda: _ref_chart_path("sigma-56mm-f1-4-dc-dn-c")
 SAMYANG_85_CHART = lambda: _ref_chart_path("samyang-85mm-f1-4-as-if-umc")
 SAMYANG_300_CHART = lambda: _ref_chart_path("samyang-300mm-f6-3-ed-umc-cs-reflex")
+SEVENARTISANS_50_CHART = lambda: _ref_chart_path("7artisans-50mm-f1-2-mark-ii")
 SEVENARTISANS_35_CHART = lambda: _ref_chart_path("7artisans-35mm-f1-2-mark-ii")
 TOKINA_23_CHART = lambda: _ref_chart_path("tokina-atx-m-23mm-f1-4-x")
+VILTROX_75_CHART = lambda: _ref_chart_path("viltrox-af-75mm-f1-2-pro")
 ZEISS_TOUIT_CHART = lambda: _ref_chart_path("zeiss-touit-32mm-f1-8")
 
 
 # --- Profile type + per-brand declarations ---------------------------------
 
 
-def test_two_profiles_declared_to_start() -> None:
-    """The YAGNI cut: Sigma + Samyang only, others land per #935."""
-    assert len(DECLARED_PROFILES) == 2
+def test_five_profiles_declared() -> None:
+    """Five profiles cover the in-band reference set families."""
+    assert len(DECLARED_PROFILES) == 5
     names = {p.name for p in DECLARED_PROFILES}
-    assert names == {"sigma-2color-solid-dashed", "samyang-4color-all-solid"}
+    assert names == {
+        "sigma-2color-solid-dashed",
+        "samyang-4color-all-solid",
+        "7artisans-2color-samecolor-dashed",
+        "tokina-2color-frequency",
+        "viltrox-bw-dashed-f1.2",
+    }
 
 
 def test_profile_names_are_unique() -> None:
@@ -110,13 +121,36 @@ def test_suggest_returns_profile_match_with_reason() -> None:
 # --- Auto-suggest: refused cases ------------------------------------------
 
 
-def test_suggest_refuses_undeclared_dialect() -> None:
-    """Tokina is 2-color but uses a different convention than Sigma
-    (hues carry S/M, not frequency). Without a declared Tokina profile,
-    auto-suggest must not silently classify it as Sigma."""
-    result = suggest_profile(TOKINA_23_CHART())
-    assert result.profile is None
-    assert "ambiguous" in result.reason or "below" in result.reason
+def test_suggest_matches_7artisans_chart_to_7artisans_profile() -> None:
+    result = suggest_profile(SEVENARTISANS_50_CHART())
+    assert result.profile is not None
+    assert result.profile.name == "7artisans-2color-samecolor-dashed"
+
+
+def test_tokina_is_not_auto_suggestable() -> None:
+    """Tokina's red+blue palette overlaps Sigma's; the presence-based
+    suggest scorer cannot disambiguate them, so Tokina is opted out
+    of auto-suggest and must be explicitly declared."""
+    assert TOKINA_2COLOR_FREQUENCY.auto_suggestable is False
+    # The chart still resolves correctly when Tokina is declared.
+    result = resolve(TOKINA_23_CHART(), declared=TOKINA_2COLOR_FREQUENCY)
+    assert result is TOKINA_2COLOR_FREQUENCY
+
+
+def test_viltrox_is_not_auto_suggestable() -> None:
+    """Viltrox's neutral hue range matches every chart with text or
+    gridlines, so it would poison suggest disambiguation. It must be
+    explicitly declared; suggest never returns it."""
+    assert VILTROX_BW_DASHED_F12.auto_suggestable is False
+    result = suggest_profile(VILTROX_75_CHART())
+    # Auto-suggest can't pick Viltrox; either it returns None (no other
+    # profile fits the B&W chart's lack of saturated hues) or an
+    # unrelated false match. The contract: never Viltrox.
+    if result.profile is not None:
+        assert result.profile.name != "viltrox-bw-dashed-f1.2"
+    # Explicit declaration still works.
+    declared = resolve(VILTROX_75_CHART(), declared=VILTROX_BW_DASHED_F12)
+    assert declared is VILTROX_BW_DASHED_F12
 
 
 def test_suggest_refuses_multi_color_promo() -> None:

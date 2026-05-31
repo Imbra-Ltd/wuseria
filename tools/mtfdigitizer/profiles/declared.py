@@ -1,15 +1,13 @@
 """Declared MTF chart profiles (#934, ADR-038 §1).
 
-Two profiles to start, matching the brands we have reference data for
-(the YAGNI hint in #934 — "Sigma, Samyang to start"). Other brands'
-profiles get declared as the digitizer encounters them in #935 and
-onwards.
+Five profiles. The first two (Sigma, Samyang) shipped with #934. The
+three families added here cover the rest of the in-band reference set
+(epic #932): same-color dashed-S/M (7Artisans), color-carries-frequency
+with sagittal/meridional-by-color (Tokina), and pure B&W dashed (Viltrox).
 
-The HSV bands were measured from the reference set's actual chart
-pixels — not invented. The sampling script logs are in commit
-message; rerun by stepping a histogram over each reference chart and
-reading the dominant saturated-hue peaks plus any achromatic grey
-bands.
+The HSV bands were measured from the reference set's actual chart pixels
+— never invented. See `probe_three_profiles.py` history (deleted post-merge)
+for the sampling script.
 """
 
 from __future__ import annotations
@@ -60,7 +58,105 @@ SAMYANG_4COLOR_ALL_SOLID: MtfProfile = MtfProfile(
 )
 
 
+# 7Artisans 2-color same-color-dashed: blue 10 lp/mm, green 30 lp/mm.
+# Within each color, solid = T (meridional), dashed = S (sagittal). The
+# legend in `7artisans-50mm-f1-2-mark-ii/mtf-chart.png` labels them T1/T2
+# (blue meridional pair) and S1/S2 (green sagittal pair) — Chinese MTFs
+# label the meridional curve "T" (tangential) by convention, the inverse
+# of the Sigma "S=solid" convention. Dispatch-wise: same path as Sigma
+# (one hue per frequency, CC-split for S/M). The S<->M label swap is a
+# semantic concern handled in dispatch.
+#
+# Measured peaks on `mtf-chart.png` (730x435 dark background):
+#   blue   h~105-115 S~80-170  V~80-200  → 10 lp/mm pair
+#   green  h~40-55   S~80-200  V~80-220  → 30 lp/mm pair
+# Lower s_min than Sigma — the curves are mid-saturation, not vivid.
+SEVENARTISANS_2COLOR_SAMECOLOR_DASHED: MtfProfile = MtfProfile(
+    name="7artisans-2color-samecolor-dashed",
+    hues=(
+        HueRange(name="blue", h_lo=95, h_hi=120, s_min=60, v_min=70),
+        HueRange(name="green", h_lo=35, h_hi=60, s_min=60, v_min=70),
+    ),
+    style_axis="SPLIT_BY_DASH",
+    hue_meaning="FREQUENCY",
+    frequencies_lpmm=(10, 30),
+    dashed_is_sagittal=True,
+    notes="7Artisans/Chinese convention: blue=10, green=30; T1/T2 (blue) = M pair, S1/S2 (green) = S pair; dashed=S within hue",
+)
+
+
+# Tokina 2-color frequency-by-color: red = S, blue = M (dotted). Frequency
+# is carried by y-position — upper pair (10 lp/mm) sits ~OTF 0.62-0.97 and
+# the lower pair (30 lp/mm) sits ~OTF 0.32-0.73. The pairs overlap in OTF
+# but a visual gap centered around OTF ≈ 0.75 (y_fraction ≈ 0.25 of plot
+# box) separates them cleanly. The first version of this profile used
+# y_band_split=0.50, which put the split deep into the 30 lp/mm region and
+# left 30S almost empty; 0.25 was measured from the curve clusters seen on
+# the calibration chart.
+#
+# Measured peaks on `tokina-atx-m-23mm-f1-4-x-mtf.png` (1541x1028):
+#   red   h~0 + h~170-179 S~120-250 V~160-255 → S (solid)
+#   blue  h~95-105        S~140-250 V~160-255 → M (dotted)
+TOKINA_2COLOR_FREQUENCY: MtfProfile = MtfProfile(
+    name="tokina-2color-frequency",
+    hues=(
+        HueRange(name="S-red", h_lo=0, h_hi=12, s_min=80, v_min=120),
+        HueRange(name="S-red", h_lo=168, h_hi=179, s_min=80, v_min=120),
+        HueRange(name="M-blue", h_lo=90, h_hi=115, s_min=80, v_min=120),
+    ),
+    style_axis="HUE_IS_CURVE",
+    hue_meaning="SAGITTAL_MERIDIONAL",
+    frequencies_lpmm=(10, 30),
+    y_band_split=0.25,
+    # Not auto-suggestable: red+blue palette overlaps Sigma's; the current
+    # suggest scorer is presence-based and cannot disambiguate them
+    # (both score 1.0 on either chart). Sigma wins by default for red+blue
+    # autosuggest; Tokina must be explicitly declared.
+    auto_suggestable=False,
+    notes="Tokina/atx-m convention: red=S solid, blue=M dotted; frequency by y-band (upper=10, lower=30); both hues split by y_band_split",
+)
+
+
+# Viltrox B&W all-dashed promo: f/1.2 panel only. No informative hue;
+# the four curves are grey/black at different y-positions and dash
+# patterns. Y-band first splits 10 lp/mm (upper) from 30 lp/mm (lower),
+# then within each band the longest connected component is S (solid)
+# and the rest is M (dashed). The F8 panel (lower in the source PNG)
+# is idealized-flat single light-blue curve — out of scope for the
+# 4-field extractor; not declared.
+#
+# The four curves are tightly bunched between OTF 0.65 and 1.00 with
+# heavy overlap between the 10 and 30 lp/mm pairs — there is no clean
+# y-band gap separating them on this chart. y_band_split=0.30 puts the
+# split at OTF ≈ 0.70, which roughly catches the 30M curve's edge
+# falloff in the lower band but misses most of the 30S/30M central
+# region. The Viltrox calibration is poor as a result (50%+ |d| on 30
+# lp/mm) — accepted as a known limit; the chart documents that the
+# y-band heuristic doesn't work on tightly-clustered B&W charts.
+VILTROX_BW_DASHED_F12: MtfProfile = MtfProfile(
+    name="viltrox-bw-dashed-f1.2",
+    hues=(
+        # Black-to-mid-grey curve pixels; tight V cap rejects axis labels
+        # and background. S<60 admits both pure black and anti-aliased grey
+        # along curve edges.
+        HueRange(name="neutral", h_lo=0, h_hi=179, s_min=0, s_max=60, v_min=0, v_max=110),
+    ),
+    style_axis="SPLIT_BY_DASH",
+    hue_meaning="Y_BAND_IS_FREQUENCY",
+    frequencies_lpmm=(10, 30),
+    y_band_split=0.30,
+    # Not auto-suggestable: the neutral hue range matches axis labels and
+    # gridlines on EVERY chart, so leaving it in the suggest pool would
+    # poison disambiguation. Must be explicitly declared.
+    auto_suggestable=False,
+    notes="Viltrox promo, f/1.2 panel only; single neutral mask split by y-band (10 above, 30 below) then by dash within each band; F8 panel not declared",
+)
+
+
 DECLARED_PROFILES: tuple[MtfProfile, ...] = (
     SIGMA_2COLOR_SOLID_DASHED,
     SAMYANG_4COLOR_ALL_SOLID,
+    SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
+    TOKINA_2COLOR_FREQUENCY,
+    VILTROX_BW_DASHED_F12,
 )
