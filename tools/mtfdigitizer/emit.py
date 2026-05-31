@@ -42,7 +42,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from .family_profile import profile_for
+from .family_profile import profile_for_chart
 from .pipeline import PlotBox, extract_chart
 from .pipeline.types import ExtractedChart, SampledReading
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
@@ -149,7 +149,7 @@ def emit_lens(
             f"reference chart {chart.slug!r} has no plot_box or ground_truth — "
             f"emit only supports charts that calibrate"
         )
-    profile = profile_for(chart.style_family, chart.slug)
+    profile = profile_for_chart(chart)
 
     root = repo_root or Path(__file__).resolve().parents[2]
     extracted: ExtractedChart = extract_chart(

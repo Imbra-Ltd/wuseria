@@ -22,7 +22,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from .family_profile import profile_for
+from .family_profile import profile_for_chart
 from .pipeline import PlotBox, extract_chart
 from .priors import PriorViolation, check_all
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
@@ -43,7 +43,7 @@ def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
 def _check_one(chart: ReferenceChart) -> list[PriorViolation]:
     """Extract one reference chart and run all priors over the readings."""
     assert chart.plot_box is not None
-    profile = profile_for(chart.style_family, chart.slug)
+    profile = profile_for_chart(chart)
     image_path = REPO_ROOT / chart.chart_path
     plot_box = _to_plotbox(chart.plot_box)
     extracted = extract_chart(

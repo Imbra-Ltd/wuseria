@@ -32,7 +32,7 @@ from .pipeline.rendermatch import (
     FieldIou,
     RenderMatchScore,
 )
-from .family_profile import profile_for
+from .family_profile import profile_for_chart
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
 from .triage import precision_of
 
@@ -57,7 +57,7 @@ def _score_one(chart: ReferenceChart) -> RenderMatchScore:
     compare to eye-read values, only to the chart's own skeleton.
     """
     assert chart.plot_box is not None
-    profile = profile_for(chart.style_family, chart.slug)
+    profile = profile_for_chart(chart)
     image_path = REPO_ROOT / chart.chart_path
     plot_box = _to_plotbox(chart.plot_box)
     extracted = extract_chart(

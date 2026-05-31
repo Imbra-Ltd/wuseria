@@ -25,7 +25,7 @@ from pathlib import Path
 from .pipeline import ExtractedChart, PlotBox, extract_chart, score_chart
 from .pipeline.rendermatch import DEFAULT_DILATION_RADIUS_PX
 from .priors import check_all
-from .family_profile import profile_for
+from .family_profile import profile_for_chart
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
 from .review import write_review
 from .triage import (
@@ -59,7 +59,7 @@ def _run_pipeline(
     through ``triage_chart()`` (verdict-only) or the runner.
     """
     assert chart.plot_box is not None
-    profile = profile_for(chart.style_family, chart.slug)
+    profile = profile_for_chart(chart)
     image_path = REPO_ROOT / chart.chart_path
     plot_box = _to_plotbox(chart.plot_box)
 

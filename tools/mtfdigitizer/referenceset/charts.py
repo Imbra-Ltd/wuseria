@@ -80,6 +80,14 @@ class ReferenceChart:
     # plot-box hasn't been declared yet.
     plot_box: PlotBoxCoords | None = None
     ground_truth: GroundTruthCurves | None = None
+    # Optional per-chart override for the profile's `y_band_split`.
+    # The Tokina profile defaults to 0.25 (measured from the 23mm/33mm/56mm
+    # prime charts where the 30 lp/mm pair sits at y_fraction 0.27+). On the
+    # 11-18mm wide zoom panels the 30 lp/mm pair sits at y_fraction 0.10-0.15
+    # near center — the default would misclassify them as 10 lp/mm. Set this
+    # field per-chart when the profile default doesn't match the chart's
+    # actual curve geometry.
+    y_band_split_override: float | None = None
 
 
 # Eye-read ground truth tables for the runnable subset. Each tuple holds
@@ -198,34 +206,33 @@ _TOKINA_56_GT: GroundTruthCurves = {
     },
 }
 
-# Tokina atx-m 11-18mm at 11mm panel — white bg, orange solid = S,
+# Tokina atx-m 11-18mm at 11mm panel — white bg, red solid = S,
 # blue dashed = M. Different visual style from 23mm (white bg, gridlines
 # every 20%) but same color/style convention; profile still
-# TOKINA_2COLOR_FREQUENCY.
+# TOKINA_2COLOR_FREQUENCY. Ground truth is pixel-level (see
+# `tools/_probe_tokina_centerread.py` history) — eye-reading at the
+# 20% gridline spacing was producing systematic errors; mechanical
+# read from the source PNG is the corrected single source of truth.
+# Positions 0.0 and 14.0 are None: the source curves don't extend to
+# the printed y-axis line / right plot border in the chart artwork.
 _TOKINA_11_18_AT_11_GT: GroundTruthCurves = {
     "F2.8": {
-        # Orange solid upper — 10S; near-flat to mid, gentle edge drop
-        "contrast10S": (1.00, 1.00, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.95, 0.88, 0.81),
-        # Blue dashed upper — 10M; gentle decline
-        "contrast10M": (0.96, 0.97, 0.95, 0.92, 0.92, 0.92, 0.91, 0.90, 0.88, 0.86, 0.85),
-        # Orange solid lower — 30S; dip ~5mm, recovers ~8mm, edge crash
-        "resolution30S": (0.95, 0.95, 0.92, 0.86, 0.84, 0.83, 0.83, 0.84, 0.78, 0.62, 0.41),
-        # Blue dashed lower — 30M; bump ~5mm then steep mid-to-edge fall
-        "resolution30M": (0.93, 0.92, 0.90, 0.88, 0.91, 0.85, 0.76, 0.66, 0.55, 0.45, 0.37),
+        "contrast10S": (None, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.98, 0.92, None),
+        "contrast10M": (None, 1.00, 1.00, 1.00, 0.99, 0.98, 0.95, 0.92, 0.91, 0.88, None),
+        "resolution30S": (None, 0.98, 0.94, 0.88, 0.84, 0.83, 0.85, 0.84, 0.76, 0.60, None),
+        "resolution30M": (None, 0.96, 0.90, 0.89, 0.89, 0.79, 0.69, 0.59, 0.54, 0.48, None),
     },
 }
 
-# Tokina atx-m 11-18mm at 18mm panel — same template.
+# Tokina atx-m 11-18mm at 18mm panel — same template, same pixel-probe
+# methodology. 18mm shows steeper edge falloff than 11mm (expected for
+# the long end of a wide zoom).
 _TOKINA_11_18_AT_18_GT: GroundTruthCurves = {
     "F2.8": {
-        # Orange solid upper — 10S
-        "contrast10S": (0.99, 0.99, 0.98, 0.97, 0.97, 0.96, 0.95, 0.93, 0.88, 0.80, 0.72),
-        # Blue dashed upper — 10M; holds higher than S at the edge
-        "contrast10M": (0.99, 0.97, 0.98, 0.97, 0.96, 0.95, 0.93, 0.92, 0.90, 0.86, 0.83),
-        # Orange solid lower — 30S; steady decline
-        "resolution30S": (0.92, 0.90, 0.87, 0.83, 0.80, 0.78, 0.72, 0.62, 0.52, 0.47, 0.42),
-        # Blue dashed lower — 30M; falls faster than S, steepest edge drop
-        "resolution30M": (0.92, 0.85, 0.78, 0.77, 0.76, 0.72, 0.62, 0.51, 0.40, 0.33, 0.26),
+        "contrast10S": (None, 1.00, 1.00, 1.00, 1.00, 0.99, 0.98, 0.95, 0.91, 0.83, 0.74),
+        "contrast10M": (None, 1.00, 1.00, 0.99, 0.99, 0.98, 0.96, 0.93, 0.90, 0.88, None),
+        "resolution30S": (None, 0.91, 0.88, 0.83, 0.79, 0.74, 0.66, 0.55, 0.49, 0.48, 0.43),
+        "resolution30M": (None, 0.89, 0.82, 0.79, 0.78, 0.71, 0.61, 0.51, 0.42, 0.35, None),
     },
 }
 
@@ -364,13 +371,19 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("F2.8",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="11mm wide-end panel of the 11-18mm zoom; white bg, orange/red solid = S, blue dashed = M, gridlines every 20%; same profile dialect as the beige-bg primes",
+        notes="11mm wide-end panel of the 11-18mm zoom; white bg, red solid = S, blue dashed = M, gridlines every 20%; same profile dialect as the beige-bg primes but the 30 lp/mm pair sits much higher in y (OTF 0.90+ at center) so y_band_split must be lowered",
         # Vertical lines: 291 detected near 331 is "0" label digit; 331 = 0mm
         # tick, 810 = 5mm, 1292 = 10mm → 96.1 px/mm; x_right at 14mm = 1676.
         # Horizontal: 235 = 100%, 996 = 0%; the 217 detection is the "100"
         # label sitting above the gridline (verified by overlay).
         plot_box=PlotBoxCoords(x_left=331, x_right=1676, y_top=235, y_bottom=996),
         ground_truth=_TOKINA_11_18_AT_11_GT,
+        # Wide-zoom 30 lp/mm sits at y_fraction 0.10 at center; the
+        # profile default 0.25 misclassifies the entire 30 lp/mm region
+        # as 10 lp/mm. 0.08 admits the 30 lp/mm peak into the 30 band
+        # while leaving the 10 lp/mm curves (at y_frac 0-0.05) cleanly
+        # on the 10 side.
+        y_band_split_override=0.08,
     ),
     ReferenceChart(
         slug="tokina-atx-m-11-18mm-f2-8-x-at-18mm",
@@ -379,9 +392,10 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("F2.8",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="18mm long-end panel of the 11-18mm zoom; same template as the 11mm panel",
+        notes="18mm long-end panel of the 11-18mm zoom; same template as the 11mm panel; same y_band_split override needed",
         plot_box=PlotBoxCoords(x_left=331, x_right=1676, y_top=235, y_bottom=996),
         ground_truth=_TOKINA_11_18_AT_18_GT,
+        y_band_split_override=0.08,
     ),
     ReferenceChart(
         slug="viltrox-af-75mm-f1-2-pro",

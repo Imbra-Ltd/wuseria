@@ -17,6 +17,9 @@ the `ReferenceChart` itself (a chart without `plot_box` /
 
 from __future__ import annotations
 
+from dataclasses import replace
+from typing import TYPE_CHECKING
+
 from .profiles import (
     SAMYANG_4COLOR_ALL_SOLID,
     SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
@@ -25,6 +28,9 @@ from .profiles import (
     VILTROX_BW_DASHED_F12,
 )
 from .profiles.types import MtfProfile
+
+if TYPE_CHECKING:
+    from .referenceset.charts import ReferenceChart
 
 
 # Five declared profiles wired today. The two absent style families
@@ -46,10 +52,29 @@ def profile_for(style_family: str, slug: str) -> MtfProfile:
 
     Raises ValueError with the chart slug in the message so failures
     are debuggable without a stack trace alone.
+
+    For callers that have a ReferenceChart available, prefer
+    `profile_for_chart()` — it also applies any per-chart override
+    (e.g. y_band_split for wide-zoom variants).
     """
     profile = PROFILE_BY_STYLE.get(style_family)
     if profile is None:
         raise ValueError(
             f"{slug}: no declared profile for style_family={style_family!r}"
         )
+    return profile
+
+
+def profile_for_chart(chart: "ReferenceChart") -> MtfProfile:
+    """Look up the runtime profile and apply any per-chart overrides.
+
+    Currently the only override is `y_band_split_override` — used when
+    a chart's curve geometry differs enough from the profile's defaults
+    that the profile's `y_band_split` would misclassify curves (e.g.
+    the 11-18mm wide-zoom Tokina panels where 30 lp/mm sits much higher
+    in y than on the prime charts the default was measured against).
+    """
+    profile = profile_for(chart.style_family, chart.slug)
+    if chart.y_band_split_override is not None:
+        profile = replace(profile, y_band_split=chart.y_band_split_override)
     return profile

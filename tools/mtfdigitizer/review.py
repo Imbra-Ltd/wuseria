@@ -49,7 +49,7 @@ from .pipeline import ExtractedChart, SampledReading, extract_chart
 from .pipeline.plotbox import image_height_mm_to_x_pixel
 from .pipeline.rendermatch import CURVE_FIELDS
 from .pipeline.types import PlotBox
-from .family_profile import profile_for
+from .family_profile import profile_for_chart
 from .referenceset import REFERENCE_CHARTS
 from .referenceset.charts import PlotBoxCoords, ReferenceChart
 
@@ -339,7 +339,7 @@ def _emit_chart(chart: ReferenceChart, *, check_only: bool) -> ReviewOutputs | N
     """Render one reference chart's review file. Returns ``None`` in
     ``--check`` mode after rendering everything in memory."""
     assert chart.plot_box is not None
-    profile = profile_for(chart.style_family, chart.slug)
+    profile = profile_for_chart(chart)
     image_path = REPO_ROOT / chart.chart_path
     plot_box = _to_plotbox(chart.plot_box)
     extracted = extract_chart(

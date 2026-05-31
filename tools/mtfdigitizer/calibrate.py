@@ -25,7 +25,7 @@ import statistics
 from dataclasses import dataclass
 from pathlib import Path
 
-from .family_profile import profile_for
+from .family_profile import profile_for_chart
 from .pipeline import PlotBox, SampledReading, extract_chart
 from .pipeline.sampling import SAMPLE_FRACTIONS
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
@@ -112,7 +112,7 @@ def _calibrate_chart(chart: ReferenceChart) -> list[FieldDelta]:
     """
     assert chart.plot_box is not None
     assert chart.ground_truth is not None
-    profile = profile_for(chart.style_family, chart.slug)
+    profile = profile_for_chart(chart)
 
     image_path = REPO_ROOT / chart.chart_path
     plot_box = _to_plotbox(chart.plot_box)

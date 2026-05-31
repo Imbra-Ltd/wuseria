@@ -24,39 +24,40 @@
 <text class="axis-label axis-x" x="277.2" y="186">12.6</text>
 <text class="axis-label axis-x" x="304.0" y="186">14</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
-<polyline class="curve curve-10" points="36.0,24.0 62.8,25.7 89.6,31.2 116.4,38.6 143.2,45.4 170.0,13.7 196.8,15.7 223.6,19.9 250.4,26.9 277.2,38.8"/>
-<polyline class="curve curve-10 curve-m" points="62.8,29.7 89.6,41.4 116.4,45.6 143.2,30.5 170.0,15.5 196.8,19.3 223.6,23.6 250.4,27.7 277.2,31.0" stroke-dasharray="4 2"/>
-<polyline class="curve curve-30" points="170.0,53.2 196.8,66.7 223.6,84.0 250.4,92.8 277.2,94.9"/>
-<polyline class="curve curve-30 curve-m" points="170.0,57.6 196.8,75.1 223.6,90.7 250.4,105.4 277.2,116.5" stroke-dasharray="4 2"/>
+<polyline class="curve curve-10" points="116.4,12.0 143.2,12.6 170.0,13.7 196.8,15.7 223.6,19.9"/>
+<polyline class="curve curve-10 curve-m" points="89.6,12.0 116.4,13.1 143.2,13.6 170.0,15.5 196.8,19.3 223.6,23.6" stroke-dasharray="4 2"/>
+<polyline class="curve curve-30" points="62.8,25.7 89.6,31.2 116.4,38.7 143.2,45.5 170.0,53.2 196.8,66.7 223.6,84.0 250.4,27.1 277.2,39.0"/>
+<polyline class="curve curve-30 curve-m" points="62.8,29.7 89.6,41.5 116.4,45.7 143.2,47.4 170.0,57.6 196.8,75.1 223.6,90.7 250.4,27.8 277.2,31.1" stroke-dasharray="4 2"/>
 <circle class="dot dot-10" cx="36.0" cy="24.0" r="2"/>
-<circle class="dot dot-10" cx="62.8" cy="25.7" r="2"/>
-<circle class="dot dot-10" cx="89.6" cy="31.2" r="2"/>
-<circle class="dot dot-10" cx="116.4" cy="38.6" r="2"/>
-<circle class="dot dot-10" cx="143.2" cy="45.4" r="2"/>
+<circle class="dot dot-10" cx="116.4" cy="12.0" r="2"/>
+<circle class="dot dot-10" cx="143.2" cy="12.6" r="2"/>
 <circle class="dot dot-10" cx="170.0" cy="13.7" r="2"/>
 <circle class="dot dot-10" cx="196.8" cy="15.7" r="2"/>
 <circle class="dot dot-10" cx="223.6" cy="19.9" r="2"/>
-<circle class="dot dot-10" cx="250.4" cy="26.9" r="2"/>
-<circle class="dot dot-10" cx="277.2" cy="38.8" r="2"/>
-<circle class="dot dot-10" cx="62.8" cy="29.7" r="2"/>
-<circle class="dot dot-10" cx="89.6" cy="41.4" r="2"/>
-<circle class="dot dot-10" cx="116.4" cy="45.6" r="2"/>
-<circle class="dot dot-10" cx="143.2" cy="30.5" r="2"/>
+<circle class="dot dot-10" cx="89.6" cy="12.0" r="2"/>
+<circle class="dot dot-10" cx="116.4" cy="13.1" r="2"/>
+<circle class="dot dot-10" cx="143.2" cy="13.6" r="2"/>
 <circle class="dot dot-10" cx="170.0" cy="15.5" r="2"/>
 <circle class="dot dot-10" cx="196.8" cy="19.3" r="2"/>
 <circle class="dot dot-10" cx="223.6" cy="23.6" r="2"/>
-<circle class="dot dot-10" cx="250.4" cy="27.7" r="2"/>
-<circle class="dot dot-10" cx="277.2" cy="31.0" r="2"/>
+<circle class="dot dot-30" cx="62.8" cy="25.7" r="2"/>
+<circle class="dot dot-30" cx="89.6" cy="31.2" r="2"/>
+<circle class="dot dot-30" cx="116.4" cy="38.7" r="2"/>
+<circle class="dot dot-30" cx="143.2" cy="45.5" r="2"/>
 <circle class="dot dot-30" cx="170.0" cy="53.2" r="2"/>
 <circle class="dot dot-30" cx="196.8" cy="66.7" r="2"/>
 <circle class="dot dot-30" cx="223.6" cy="84.0" r="2"/>
-<circle class="dot dot-30" cx="250.4" cy="92.8" r="2"/>
-<circle class="dot dot-30" cx="277.2" cy="94.9" r="2"/>
+<circle class="dot dot-30" cx="250.4" cy="27.1" r="2"/>
+<circle class="dot dot-30" cx="277.2" cy="39.0" r="2"/>
+<circle class="dot dot-30" cx="62.8" cy="29.7" r="2"/>
+<circle class="dot dot-30" cx="89.6" cy="41.5" r="2"/>
+<circle class="dot dot-30" cx="116.4" cy="45.7" r="2"/>
+<circle class="dot dot-30" cx="143.2" cy="47.4" r="2"/>
 <circle class="dot dot-30" cx="170.0" cy="57.6" r="2"/>
 <circle class="dot dot-30" cx="196.8" cy="75.1" r="2"/>
 <circle class="dot dot-30" cx="223.6" cy="90.7" r="2"/>
-<circle class="dot dot-30" cx="250.4" cy="105.4" r="2"/>
-<circle class="dot dot-30" cx="277.2" cy="116.5" r="2"/>
+<circle class="dot dot-30" cx="250.4" cy="27.8" r="2"/>
+<circle class="dot dot-30" cx="277.2" cy="31.1" r="2"/>
 <line x1="36" y1="209" x2="48" y2="209" stroke="#c89b3c" stroke-width="1.5"/>
 <text class="legend-text" x="51" y="212">10 lp/mm S</text>
 <line x1="92" y1="209" x2="104" y2="209" stroke="#c89b3c" stroke-width="1.5" stroke-dasharray="3 2"/>
