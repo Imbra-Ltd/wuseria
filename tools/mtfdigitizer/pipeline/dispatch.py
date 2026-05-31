@@ -24,6 +24,13 @@ Out-of-band combinations raise `NotImplementedError` — generalizing PR
 - `(SPLIT_BY_DASH, Y_BAND_IS_FREQUENCY)` — Viltrox B&W dialect: a single
   neutral mask is split by `y_band_split` into frequency groups, then by
   CC-width within each group for S/M.
+- `(SPLIT_BY_DASH, CC_RANK_BY_MEAN_Y)` — Viltrox B&W tightly-clustered
+  variant. Skeletonize the single neutral mask once, then rank connected
+  components by mean y-position and split at the largest y-gap into
+  upper-frequency and lower-frequency clusters. Within each cluster,
+  CC-width split picks solid (S by default; M if `dashed_is_sagittal`)
+  from dashed. Adapts to fragmented dashed lines (more than 4 CCs total)
+  without depending on a fixed `y_band_split` fraction.
 """
 
 from __future__ import annotations
@@ -121,6 +128,77 @@ def split_by_y_band(
     upper[:split_y, :] = mask[:split_y, :]
     lower[split_y:, :] = mask[split_y:, :]
     return upper, lower
+
+
+def _component_masks_with_mean_y(
+    skeleton: np.ndarray, min_area: int = 5
+) -> list[tuple[np.ndarray, float]]:
+    """Return (component_mask, mean_y) for each connected component above
+    the area floor.
+
+    The area floor rejects single-pixel skeleton noise without dropping
+    short dashed fragments — Viltrox's dashes skeletonize to ~10-40
+    pixels each.
+    """
+    sk = skeleton.astype(np.uint8)
+    num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(
+        sk, connectivity=8
+    )
+    out: list[tuple[np.ndarray, float]] = []
+    for label in range(1, num_labels):
+        if int(stats[label, cv2.CC_STAT_AREA]) < min_area:
+            continue
+        component = (labels == label).astype(np.uint8)
+        ys = np.nonzero(component)[0]
+        if ys.size == 0:
+            continue
+        out.append((component, float(ys.mean())))
+    return out
+
+
+def _split_components_at_largest_y_gap(
+    components: list[tuple[np.ndarray, float]],
+) -> tuple[list[np.ndarray], list[np.ndarray]]:
+    """Sort components by mean-y and split at the largest gap into upper
+    (smaller y) and lower (larger y) clusters.
+
+    With 4 ideal CCs (2 solid + 2 solid-bridged-dashed) this returns 2+2.
+    With more (fragmented dashed lines), the largest-gap heuristic still
+    picks the band boundary — within each band the longest CC is the
+    solid line; the remainder is dashed. Returns ([], []) when fewer than
+    two components are present (caller treats as missing data).
+    """
+    if len(components) < 2:
+        return [], []
+    components_sorted = sorted(components, key=lambda c: c[1])
+    mean_ys = [c[1] for c in components_sorted]
+    gaps = [mean_ys[i + 1] - mean_ys[i] for i in range(len(mean_ys) - 1)]
+    split_idx = int(np.argmax(gaps)) + 1
+    upper = [c[0] for c in components_sorted[:split_idx]]
+    lower = [c[0] for c in components_sorted[split_idx:]]
+    return upper, lower
+
+
+def _solid_dashed_from_components(
+    component_masks: list[np.ndarray],
+) -> tuple[np.ndarray | None, np.ndarray | None]:
+    """Pick the largest CC as solid; OR the rest as dashed.
+
+    Returns (None, None) for an empty cluster; (solid, None) when only
+    one CC is present (no dashed pixels to bundle).
+    """
+    if not component_masks:
+        return None, None
+    areas = [int(m.sum()) for m in component_masks]
+    largest_idx = int(np.argmax(areas))
+    solid = component_masks[largest_idx]
+    remainder = [m for i, m in enumerate(component_masks) if i != largest_idx]
+    if not remainder:
+        return solid, None
+    dashed = np.zeros_like(solid)
+    for m in remainder:
+        dashed = dashed | m
+    return solid, dashed
 
 
 def field_skeletons(
@@ -237,6 +315,35 @@ def field_skeletons(
             for sm, sk in ((solid_sm, split.sagittal), (dashed_sm, split.meridional)):
                 field = curve_field(freq, sm)
                 if field is not None:
+                    out[field] = sk
+    elif (
+        profile.style_axis == "SPLIT_BY_DASH"
+        and profile.hue_meaning == "CC_RANK_BY_MEAN_Y"
+    ):
+        # Single neutral mask, no informative hue. Skeletonize once,
+        # rank connected components by mean y, then split at the largest
+        # y-gap into upper- and lower-frequency clusters. Within each
+        # cluster the longest CC is the solid line (S by default, M when
+        # dashed_is_sagittal); the rest are dashed fragments.
+        if len(curve_masks) != 1:
+            raise ValueError(
+                f"CC_RANK_BY_MEAN_Y expects one neutral hue; "
+                f"profile {profile.name!r} declares {len(curve_masks)}"
+            )
+        upper_freq, lower_freq = profile.frequencies_lpmm[0], profile.frequencies_lpmm[1]
+        solid_sm, dashed_sm = ("M", "S") if profile.dashed_is_sagittal else ("S", "M")
+        single_mask = next(iter(curve_masks.values()))
+        skeleton = close_and_skeletonize(single_mask)
+        components = _component_masks_with_mean_y(skeleton)
+        upper_cluster, lower_cluster = _split_components_at_largest_y_gap(components)
+        for freq, cluster in (
+            (upper_freq, upper_cluster),
+            (lower_freq, lower_cluster),
+        ):
+            solid, dashed = _solid_dashed_from_components(cluster)
+            for sm, sk in ((solid_sm, solid), (dashed_sm, dashed)):
+                field = curve_field(freq, sm)
+                if field is not None and sk is not None:
                     out[field] = sk
     else:
         raise NotImplementedError(

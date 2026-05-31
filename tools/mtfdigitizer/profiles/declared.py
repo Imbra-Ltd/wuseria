@@ -119,20 +119,19 @@ TOKINA_2COLOR_FREQUENCY: MtfProfile = MtfProfile(
 
 # Viltrox B&W all-dashed promo: f/1.2 panel only. No informative hue;
 # the four curves are grey/black at different y-positions and dash
-# patterns. Y-band first splits 10 lp/mm (upper) from 30 lp/mm (lower),
-# then within each band the longest connected component is S (solid)
-# and the rest is M (dashed). The F8 panel (lower in the source PNG)
-# is idealized-flat single light-blue curve — out of scope for the
-# 4-field extractor; not declared.
+# patterns. The four curves are tightly bunched between OTF 0.65 and
+# 1.00 with heavy overlap between the 10 and 30 lp/mm pairs — there is
+# no clean y-band gap separating them at any fixed fraction. The
+# previous Y_BAND_IS_FREQUENCY dispatch with y_band_split=0.30 yielded
+# 30 lp/mm |d| of 0.258–0.524 (Run 3 baseline).
 #
-# The four curves are tightly bunched between OTF 0.65 and 1.00 with
-# heavy overlap between the 10 and 30 lp/mm pairs — there is no clean
-# y-band gap separating them on this chart. y_band_split=0.30 puts the
-# split at OTF ≈ 0.70, which roughly catches the 30M curve's edge
-# falloff in the lower band but misses most of the 30S/30M central
-# region. The Viltrox calibration is poor as a result (50%+ |d| on 30
-# lp/mm) — accepted as a known limit; the chart documents that the
-# y-band heuristic doesn't work on tightly-clustered B&W charts.
+# CC_RANK_BY_MEAN_Y skeletonizes the neutral mask first, then ranks the
+# resulting connected components by mean y-position and splits at the
+# largest y-gap. This adapts to wherever the natural break between the
+# 10 and 30 lp/mm clusters lands on a given chart, rather than relying
+# on a hand-tuned fraction. The F8 panel (lower in the source PNG) is
+# idealized-flat single light-blue curve — out of scope for the 4-field
+# extractor; not declared.
 VILTROX_BW_DASHED_F12: MtfProfile = MtfProfile(
     name="viltrox-bw-dashed-f1.2",
     hues=(
@@ -142,14 +141,13 @@ VILTROX_BW_DASHED_F12: MtfProfile = MtfProfile(
         HueRange(name="neutral", h_lo=0, h_hi=179, s_min=0, s_max=60, v_min=0, v_max=110),
     ),
     style_axis="SPLIT_BY_DASH",
-    hue_meaning="Y_BAND_IS_FREQUENCY",
+    hue_meaning="CC_RANK_BY_MEAN_Y",
     frequencies_lpmm=(10, 30),
-    y_band_split=0.30,
     # Not auto-suggestable: the neutral hue range matches axis labels and
     # gridlines on EVERY chart, so leaving it in the suggest pool would
     # poison disambiguation. Must be explicitly declared.
     auto_suggestable=False,
-    notes="Viltrox promo, f/1.2 panel only; single neutral mask split by y-band (10 above, 30 below) then by dash within each band; F8 panel not declared",
+    notes="Viltrox promo, f/1.2 panel only; single neutral mask skeletonized, components ranked by mean-y and split at the largest gap into 10 (upper) / 30 (lower); within each cluster longest CC = S, rest = M; F8 panel not declared",
 )
 
 

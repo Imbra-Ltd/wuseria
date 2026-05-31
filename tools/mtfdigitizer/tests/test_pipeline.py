@@ -286,6 +286,118 @@ def test_x_pixel_to_image_height_mm_roundtrip() -> None:
         assert back == pytest.approx(mm, abs=1e-6)
 
 
+# --- CC_RANK_BY_MEAN_Y dispatch (#992) ----------------------------------
+
+
+def test_cc_rank_split_at_largest_y_gap_separates_two_clusters() -> None:
+    """Four CCs at y=10, 12, 80, 82 must split into (10, 12) and (80, 82) —
+    the largest gap sits at 12→80."""
+    import numpy as np
+
+    from mtfdigitizer.pipeline.dispatch import (
+        _component_masks_with_mean_y,
+        _split_components_at_largest_y_gap,
+    )
+
+    skeleton = np.zeros((100, 200), dtype=np.uint8)
+    skeleton[10, 10:60] = 1   # long solid, upper
+    skeleton[12, 70:90] = 1   # short dashed fragment, upper
+    skeleton[80, 10:60] = 1   # long solid, lower
+    skeleton[82, 70:90] = 1   # short dashed fragment, lower
+
+    components = _component_masks_with_mean_y(skeleton)
+    assert len(components) == 4
+    upper, lower = _split_components_at_largest_y_gap(components)
+    assert len(upper) == 2
+    assert len(lower) == 2
+    upper_ys = [np.nonzero(m)[0].mean() for m in upper]
+    lower_ys = [np.nonzero(m)[0].mean() for m in lower]
+    assert max(upper_ys) < min(lower_ys)
+
+
+def test_cc_rank_solid_dashed_picks_longest_as_solid() -> None:
+    """Inside a cluster, the largest CC by area is the solid line; the
+    rest are ORed into the dashed mask."""
+    import numpy as np
+
+    from mtfdigitizer.pipeline.dispatch import _solid_dashed_from_components
+
+    long_solid = np.zeros((20, 100), dtype=np.uint8)
+    long_solid[5, 10:90] = 1
+    short_frag_a = np.zeros((20, 100), dtype=np.uint8)
+    short_frag_a[8, 10:25] = 1
+    short_frag_b = np.zeros((20, 100), dtype=np.uint8)
+    short_frag_b[8, 40:55] = 1
+
+    solid, dashed = _solid_dashed_from_components(
+        [short_frag_a, long_solid, short_frag_b]
+    )
+    assert solid is not None and dashed is not None
+    assert solid[5, 50] == 1  # the long line is solid
+    assert dashed[8, 15] == 1 and dashed[8, 45] == 1  # both short frags
+    assert dashed[5, 50] == 0  # long line not in dashed
+
+
+def test_cc_rank_solid_dashed_handles_single_component() -> None:
+    """One CC in a cluster — solid gets it, dashed is None (no fragments)."""
+    import numpy as np
+
+    from mtfdigitizer.pipeline.dispatch import _solid_dashed_from_components
+
+    only = np.zeros((20, 100), dtype=np.uint8)
+    only[5, 10:90] = 1
+
+    solid, dashed = _solid_dashed_from_components([only])
+    assert solid is not None
+    assert dashed is None
+
+
+def test_cc_rank_dispatch_end_to_end_with_viltrox_chart() -> None:
+    """End-to-end Viltrox extraction via CC_RANK_BY_MEAN_Y must recover
+    the 30 lp/mm pair — the calibration regression test for #992.
+
+    Run 3 (Y_BAND_IS_FREQUENCY) had 30S paired 2/11 with median |d| 0.258
+    and 30M paired 1/11 with median |d| 0.524. Run 4 (CC_RANK_BY_MEAN_Y)
+    brings 30S to 11/11 inside the ±0.05 band and 30M to 4/11 near the
+    band. The asserts here pin: 30S reads at every sample point in the
+    plausible range, and 30M produces non-None at multiple positions
+    (it no longer fails on 10/11 of the chart).
+
+    The 10S/10M pair is intentionally not asserted here — the two curves
+    share pixels in the source rendering and 10M doesn't separate; that
+    limitation is tracked as a follow-up to #992.
+    """
+    from mtfdigitizer.profiles import VILTROX_BW_DASHED_F12
+
+    viltrox_chart, viltrox_box, viltrox_height = _ref("viltrox-af-75mm-f1-2-pro")
+    result = extract_chart(
+        viltrox_chart,
+        VILTROX_BW_DASHED_F12,
+        viltrox_box,
+        image_height_mm=viltrox_height,
+    )
+
+    res30s_values = [r.resolution30S for r in result.readings]
+    res30m_values = [r.resolution30M for r in result.readings]
+
+    res30s_paired = [v for v in res30s_values if v is not None]
+    res30m_paired = [v for v in res30m_values if v is not None]
+
+    assert len(res30s_paired) >= 10, (
+        f"30S regression: CC-rank dispatch must recover near-full coverage "
+        f"(Run 3 baseline was 2/11), got {len(res30s_paired)}/11"
+    )
+    assert len(res30m_paired) >= 3, (
+        f"30M regression: CC-rank dispatch must recover at least 3 points "
+        f"(Run 3 baseline was 1/11), got {len(res30m_paired)}/11"
+    )
+    # Recovered values land in the OTF range, never above 1.0 or below 0
+    # — outright nonsense like the Y_BAND_IS_FREQUENCY 30 lp/mm produced
+    # at fractions that fell into the wrong band.
+    for v in res30s_paired + res30m_paired:
+        assert 0.0 <= v <= 1.0, f"value {v} outside [0, 1] range"
+
+
 # --- Profile dispatch fail-loud -----------------------------------------
 
 
