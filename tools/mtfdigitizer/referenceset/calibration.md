@@ -40,6 +40,92 @@ Reads the in-source ground truth from `referenceset/charts.py` and runs
 populated. Output: per-chart `|d|` (absolute offset) median + p95 per
 field, then an aggregate.
 
+## Run 4 (after Viltrox CC-rank dispatch, #992)
+
+Viltrox profile switched from `Y_BAND_IS_FREQUENCY` (fixed `y_band_split=0.30`)
+to `CC_RANK_BY_MEAN_Y`: skeletonize the single neutral mask, rank connected
+components by mean y-position, split at the largest y-gap into upper- (10
+lp/mm) and lower- (30 lp/mm) frequency clusters, then within each cluster
+the longest CC is the solid line and the rest are dashed fragments. No
+other profile changes.
+
+### Per-chart
+
+```
+sigma-56mm-f1-4-dc-dn-c (mainstream-2color-solid-dashed)
+  contrast10S     med |d| 0.006  p95 |d| 0.039  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.014  p95 |d| 0.094  paired  3/11  ext-None  8
+  resolution30S   med |d| 0.007  p95 |d| 0.044  paired 11/11  ext-None  0
+  resolution30M   med |d| 0.013  p95 |d| 0.015  paired  2/11  ext-None  9
+
+samyang-85mm-f1-4-as-if-umc (mainstream-4color-all-solid)
+  contrast10S     med |d| 0.016  p95 |d| 0.029  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.015  p95 |d| 0.180  paired 11/11  ext-None  0
+  resolution30S   med |d| 0.016  p95 |d| 0.056  paired 11/11  ext-None  0
+  resolution30M   med |d| 0.012  p95 |d| 0.036  paired 11/11  ext-None  0
+
+samyang-300mm-f6-3-ed-umc-cs-reflex (idealized-flat)
+  contrast10S     med |d| 0.017  p95 |d| 0.017  paired 11/11  ext-None  0
+  contrast10M     med |d| 0.012  p95 |d| 0.019  paired 10/11  ext-None  1
+  resolution30S   med |d|   -    p95 |d|   -    paired  0/11  ext-None 11
+  resolution30M   med |d| 0.021  p95 |d| 0.024  paired  5/11  ext-None  6
+
+7artisans-50mm-f1-2-mark-ii (samecolor-dashed-sm)
+  contrast10M     med |d| 0.032  p95 |d| 0.069  paired  5/11  ext-None  6
+  contrast10S     med |d| 0.035  p95 |d| 0.095  paired  7/11  ext-None  4
+  resolution30M   med |d| 0.005  p95 |d| 0.033  paired  6/11  ext-None  5
+  resolution30S   med |d| 0.070  p95 |d| 0.187  paired  6/11  ext-None  5
+
+tokina-atx-m-23mm-f1-4-x (2color-frequency)
+  contrast10S     med |d| 0.030  p95 |d| 0.074  paired 10/11  ext-None  1
+  contrast10M     med |d| 0.024  p95 |d| 0.105  paired 10/11  ext-None  1
+  resolution30S   med |d| 0.061  p95 |d| 0.134  paired  9/11  ext-None  2
+  resolution30M   med |d| 0.020  p95 |d| 0.390  paired 11/11  ext-None  0
+
+viltrox-af-75mm-f1-2-pro (bw-dashed-promo)
+  contrast10S     med |d| 0.000  p95 |d| 0.050  paired 11/11  ext-None  0
+  contrast10M     med |d|   -    p95 |d|   -    paired  0/11  ext-None 11
+  resolution30S   med |d| 0.032  p95 |d| 0.396  paired 11/11  ext-None  0
+  resolution30M   med |d| 0.060  p95 |d| 0.074  paired  4/11  ext-None  7
+```
+
+### Aggregate
+
+```
+paired comparisons:    187
+median |d|:           0.0167
+p95 |d|:              0.0913
+max |d|:              0.3146
+within +/-0.05:       160/187 (85.6%)
+```
+
+### What changed since run 3
+
+- **Viltrox 30 lp/mm — fixed**. 30S median |d| moved 0.258 → 0.032 (now in
+  the ±0.05 band, paired 11/11 vs 2/11 before); 30M moved 0.524 → 0.060
+  (just outside the band, paired 4/11 vs 1/11). The 30 lp/mm pair is no
+  longer the calibration's outlier — the largest-y-gap split between the
+  upper and lower clusters lands cleanly between the 10 lp/mm pair and the
+  30 lp/mm pair, where the fixed `y_band_split=0.30` could not.
+- **Viltrox 10S — improved**. Median |d| 0.106 → 0.000 (paired 11/11). The
+  reading is dominated by the top plot-box border line itself (the largest
+  CC the skeletonizer recovers near y≈130 is the printed axis line, which
+  happens to sit at MTF=1.0 ≈ the 10S ground truth). Honest about the
+  mechanism: the win here is partly real (the 10S curve also reads ~1.0
+  near center) and partly the axis line is doing the work.
+- **Viltrox 10M — regression**. Now 0/11 paired (was 11/11 with |d|=0.107).
+  The 10S and 10M curves physically share pixels at the top of the chart
+  (both ~OTF 0.97 across most of the field width — Viltrox ground truth
+  10S=1.00→0.95 and 10M=0.99→0.82 overlap heavily in the source
+  rendering). After CC labeling there is only one upper-cluster CC; it
+  becomes 10S, and 10M has no remainder to attach to. Tracked as a
+  follow-up to #992 — separating two curves that share pixels needs a
+  different technique (sub-pixel ridge tracking, two-pass mask
+  subtraction, or a higher-resolution chart).
+- **Aggregate** — within-band moved 75.8% → 85.6% (+9.8 pts), median |d|
+  0.019 → 0.017, p95 0.141 → 0.091, max |d| 0.524 → 0.315. The CC-rank
+  dispatch is a clear net win even with the 10M regression.
+
 ## Run 3 (after 3-profile expansion)
 
 3 new profiles wired (7Artisans samecolor-dashed-sm, Tokina

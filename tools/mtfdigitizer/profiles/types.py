@@ -37,8 +37,21 @@ StyleAxis = Literal["SPLIT_BY_DASH", "HUE_IS_CURVE"]
 #                             and they're separated into frequency
 #                             groups by y-position, then into S/M by
 #                             dash pattern within each band (Viltrox).
+# - `CC_RANK_BY_MEAN_Y`     — variant of the above for tightly-clustered
+#                             B&W charts where the four curves overlap in
+#                             OTF space too much for a fixed y_band_split
+#                             to separate them. Skeletonize the single
+#                             neutral mask, then rank connected components
+#                             by mean y: top two = upper frequency (10),
+#                             bottom two = lower frequency (30). Within
+#                             each band, the wider CC is solid (S) and
+#                             the rest is dashed (M). No y_band_split.
 HueMeaning = Literal[
-    "FREQUENCY", "SAGITTAL_MERIDIONAL", "CURVE_IDENTITY", "Y_BAND_IS_FREQUENCY"
+    "FREQUENCY",
+    "SAGITTAL_MERIDIONAL",
+    "CURVE_IDENTITY",
+    "Y_BAND_IS_FREQUENCY",
+    "CC_RANK_BY_MEAN_Y",
 ]
 
 
