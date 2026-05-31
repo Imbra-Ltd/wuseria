@@ -222,6 +222,18 @@ _DEFAULT_SOURCES: dict[str, str] = {
     "tokina-atx-m-23mm-f1-4-x": (
         "https://www.lenstip.com/665.1-Lens_review-Tokina_atx-m_23_mm_f_1.4_X-Introduction.html"
     ),
+    "tokina-atx-m-33mm-f1-4-x": (
+        "https://tokinalens.com/product/atx_m_33mm_f1_4_x/"
+    ),
+    "tokina-atx-m-56mm-f1-4-x": (
+        "https://tokinalens.com/product/atx_m_56mm_f1_4_x/"
+    ),
+    "tokina-atx-m-11-18mm-f2-8-x-at-11mm": (
+        "https://tokinalens.com/product/atx_m_11_18mm_f2_8_x/"
+    ),
+    "tokina-atx-m-11-18mm-f2-8-x-at-18mm": (
+        "https://tokinalens.com/product/atx_m_11_18mm_f2_8_x/"
+    ),
     "7artisans-50mm-f1-2-mark-ii": (
         "https://7artisans.store/products/7artisans-50mm-f-1-2-mark-ii-prime-lens"
     ),

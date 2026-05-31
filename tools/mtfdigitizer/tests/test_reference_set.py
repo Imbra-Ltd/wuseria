@@ -35,8 +35,11 @@ EXPECTED_FAMILIES = frozenset(
 
 
 def test_reference_set_size_is_within_target() -> None:
-    """#933 acceptance: ~6-10 charts spanning the style range."""
-    assert 6 <= len(REFERENCE_CHARTS) <= 10
+    """#933 acceptance was ~6-10 style-spanning charts; the set now also
+    holds calibrated charts emitted to the site (one per lens slug as
+    each brand's #795-style digitization task ships). Upper bound is a
+    loose sanity check, not a design ceiling — bump as needed."""
+    assert 6 <= len(REFERENCE_CHARTS) <= 50
 
 
 def test_no_duplicate_slugs() -> None:
@@ -71,9 +74,15 @@ def test_no_empty_fields() -> None:
 
 
 def test_chart_path_starts_with_docs_optical_specs() -> None:
-    """All reference charts live under docs/optical-specs/<slug>/ (ADR-031)."""
+    """All reference charts live under docs/optical-specs/<lens_slug>/
+    (ADR-031). The reference-set slug MAY append a `-at-XXmm` panel
+    suffix to disambiguate zoom focal-length panels (e.g. the 11-18mm
+    zoom has two MTF panels); chart_path uses the lens slug regardless."""
+    import re
+    panel_suffix = re.compile(r"-at-\d+(\.\d+)?mm$")
     for chart in REFERENCE_CHARTS:
-        prefix = f"docs/optical-specs/{chart.slug}/"
+        lens_slug = panel_suffix.sub("", chart.slug)
+        prefix = f"docs/optical-specs/{lens_slug}/"
         assert chart.chart_path.startswith(prefix), (
             f"{chart.slug}: chart_path should start with {prefix!r}, "
             f"got {chart.chart_path!r}"
