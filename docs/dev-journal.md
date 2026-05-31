@@ -4347,76 +4347,38 @@ longer depend on each other — independent next sessions.
 
 ### Session 105 — CLAUDE.md bloat audit + trim
 
-Triggered by perceived Claude Code slowdown on this project. Audited
-CLAUDE.md, found ~30 KB of which one bullet alone was 4,361 chars
-(the `tools/mtfdigitizer/` package summary, accreted across ~20 sessions).
-Coverage audit confirmed ~85% of removable content was already
-duplicated in ADRs (035, 036, 037, 038), package READMEs
-(`tools/pagefetch/README.md`, `tools/mtfdigitizer/README.md`), or
-PLAYBOOK §2.7 / §2.8.
+#### PRs
 
-**PRs merged:**
+- #984 — trim and restructure CLAUDE.md (three commits: collapse mega-bullets to one-line pointers; small second-pass trims; restructure §1.2 as tables and §2.6 as sub-grouped lists); refresh `tools/mtfdigitizer/README.md` Status section as authoritative for #963/#966/#968/#971/#973
+- #985 — rewrite §6.3 end-of-session step 7 around content rules; new decision tree code/JSDoc → ADR → README → PLAYBOOK → CLAUDE.md (last resort, gated on "the agent must apply it on every turn")
+- #986 — session 105 dev journal entry
 
-- **#984** — three-commit cleanup: (1) collapsed the 4 KB mtfdigitizer
-  mega-bullet, §1.4 Web fetching, and the 696-char `--verify`
-  cautionary tale into one-line pointers to their authoritative homes;
-  (2) second-pass small trims in §1.2 and §2.6; (3) restructured §1.2
-  as three labeled tables and §2.6 as seven sub-grouped lists.
-  Also refreshed `tools/mtfdigitizer/README.md` Status section with
-  #963, #966, #968, #971, #973 so the README is authoritative.
-  Result: CLAUDE.md 29.9 KB → 21.9 KB (~27% byte reduction), 23-bullet
-  and 26-bullet walls split into scannable groups.
-- **#985** — rewrote §6.3 end-of-session step 7 around content rules
-  rather than byte counts. New decision tree: code/JSDoc → ADR → README
-  → PLAYBOOK → CLAUDE.md (last resort, gated on "the agent must apply
-  it on every turn"). Spells out what CLAUDE.md is NOT (changelogs,
-  package architecture, per-feature progress, session logs).
+#### Memory additions
 
-**Memory additions:**
+- `feedback_concise_output.md` — user prefers terse, scannable output; bullets over paragraphs; no throat-clearing
+- `feedback_suggest_doc_home.md` — when asked to save a convention, suggest the correct home before saving; do not default to CLAUDE.md or memory
 
-- `feedback_concise_output.md` — user prefers terse, scannable output;
-  bullets over paragraphs; no throat-clearing. Triggered when a long
-  structured response on the mandatory startup block trade-offs was
-  flagged as "dense and wordy."
-- `feedback_suggest_doc_home.md` — when asked to save a convention,
-  suggest the correct home before saving; do not default to CLAUDE.md
-  or memory. Addresses the "I never push back" cause from the bloat
-  root-cause analysis.
+#### Upstream issues filed on `braboj/solid-ai-templates`
 
-**Upstream issues filed on `braboj/solid-ai-templates`:**
+- #351 — add agent-output conventions (terse, scannable, no throat-clearing) to a base template
+- #354 — add doc-placement decision tree; agent suggests the right home, doesn't default to CLAUDE.md
+- #355 — rewrite end-of-session step 6 in `base/workflow/scope.md` around content rules (matches the #985 fix)
+- #356 — document latency vs quality trade-offs for CLAUDE.md and template loading under `docs/`; captures the prompt-cache / attention-dilution / convention-compliance discussion
 
-- **#351** — add agent-output conventions (terse, scannable, no
-  throat-clearing) to a base template
-- **#354** — add doc-placement decision tree; agent suggests the right
-  home, doesn't default to CLAUDE.md
-- **#355** — rewrite end-of-session step 6 in `base/workflow/scope.md`
-  around content rules (matches the #985 fix)
-- **#356** — document latency vs quality trade-offs for CLAUDE.md and
-  template loading under `docs/`; captures the prompt-cache /
-  attention-dilution / convention-compliance discussion so future
-  template users can reason about CLAUDE.md size before bloat compounds
+#### Key changes
 
-**Key decisions:**
+- CLAUDE.md 29.9 KB → 21.9 KB (~27% byte reduction). One bullet was 4,361 chars (the `tools/mtfdigitizer/` package summary, accreted across ~20 sessions). Coverage audit confirmed ~85% of removable content was already duplicated in ADRs (035, 036, 037, 038), package READMEs (`tools/pagefetch/README.md`, `tools/mtfdigitizer/README.md`), or PLAYBOOK §2.7 / §2.8.
+- §1.2 restructured as three labeled tables (front-end src / docs / tools). §2.6 restructured as seven sub-grouped lists (Content storage, Pricing, Naming, Required fields, Scoring, Specs-log workflow, Sources). No rules added or removed; bullet count unchanged.
+- `tools/mtfdigitizer/README.md` Status section now lists every completed task with reference-set findings file refs; the README is the authoritative status, not CLAUDE.md.
 
-- Mandatory 17-template startup block left untouched. Discussion in
-  this session established the ~5s cold-start cost is a fair trade for
-  reliable convention compliance — the user prioritizes "don't worry
-  about omissions" over speed. The real lever is CLAUDE.md content
-  discipline (now enforced by #985), not the template block.
-- Three root causes of bloat identified: (1) wrap-up step asked "does
-  it belong?" without offering alternatives, (2) CLAUDE.md was the
-  lowest-friction home for any new convention, (3) agent never pushed
-  back on placement. All three addressed (#985 for 1+2, memory for 3).
-- Optimization target reframed from "smallest CLAUDE.md" to "the model
-  sees each rule clearly enough to apply it reliably" — attention
-  clarity, not byte count.
+#### Key decisions
 
-**Not addressed (deferred):**
+- **Mandatory 17-template startup block left untouched.** ~5 s cold-start cost is a fair trade for reliable convention compliance — user prioritizes "don't worry about omissions" over speed. The real lever is CLAUDE.md content discipline (enforced by #985), not the template block.
+- **Three root causes of bloat identified and addressed.** (1) wrap-up step asked "does it belong?" without offering alternatives → #985 decision tree; (2) CLAUDE.md was the lowest-friction home for any new convention → same #985 edit; (3) agent never pushed back on placement → memory `feedback_suggest_doc_home`.
+- **Optimization target reframed** from "smallest CLAUDE.md" to "the model sees each rule clearly enough to apply it reliably" — attention clarity, not byte count.
+- **CLAUDE.md one-liner pointing at the concise-output convention deferred** until upstream #351 lands — avoids project-local divergence while the upstream pattern is still being decided.
 
-- The CLAUDE.md one-liner pointing at the concise-output convention
-  was deferred until upstream issue #351 lands — avoids project-local
-  divergence while the upstream pattern is still being decided.
-- `mtfdigitizer/` epic #932 work (declare profiles for the 3 in-band
-  families: 7artisans samecolor-dashed-sm, Tokina 2color-frequency,
-  Viltrox bw-dashed-promo) — still the concrete next priority for the
-  next coding-focused session.
+#### Notes for next session
+
+- `mtfdigitizer/` epic #932 work (declare profiles for the 3 in-band families: 7artisans `samecolor-dashed-sm`, Tokina `2color-frequency`, Viltrox `bw-dashed-promo`) still queued; unchanged from session 103-104.
+- Possible flag: `docs/solid-ai-templates/` is referenced as a git submodule in CLAUDE.md but there is no `.gitmodules` entry and `git ls-tree` shows nothing at that path from the me-fuji root. Reads succeed at session start, so it resolves _somewhere_ — likely a worktree or harness checkout convention. Worth investigating.
