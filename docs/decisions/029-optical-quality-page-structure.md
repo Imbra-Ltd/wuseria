@@ -357,7 +357,7 @@ words** — well above thin-content thresholds.
 
 To populate Design Analysis at scale:
 
-1. **MTF readings** — continue digitizing with `mtf-extract-skeleton.py`
+1. **MTF readings** — continue digitizing with `tools/mtfdigitizer/`
    (22 lenses done, 31 charts available)
 2. **MTF source type** — track whether each lens's MTF is computed or
    measured. New field: `mtfType?: "computed" | "measured"` on the MTF

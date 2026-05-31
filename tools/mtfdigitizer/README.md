@@ -3,16 +3,15 @@
 Unified MTF chart digitizer for the wuseria optical database. Implements
 [ADR-038](../../docs/decisions/038-unified-mtf-digitizer.md).
 
-One adaptive pipeline replaces the per-brand scraper sprawl
-(`mtf-extract-skeleton.py`, `-samyang.py`, `-sigma.py`): declared chart
-profile → HSV mask → skeletonize → connected-components S/M split → 11
-fixed sample points → confidence score (render-match + plausibility priors)
-→ SVG + readings.
+One adaptive pipeline replaces the retired per-brand scrapers: declared
+chart profile → HSV mask → skeletonize → connected-components S/M split
+→ 11 fixed sample points → confidence score (render-match + plausibility
+priors) → SVG + readings.
 
 ## Status
 
 Foundation complete; remaining epic work is independent (additional profiles,
-legacy retirement, lens-page SVG swap, optional Real-ESRGAN fallback).
+lens-page SVG swap, optional Real-ESRGAN fallback).
 
 - [x] [#933](https://github.com/Imbra-Ltd/wuseria/issues/933) — reference set
 - [x] [#934](https://github.com/Imbra-Ltd/wuseria/issues/934) — profile abstraction + advisory auto-suggest
@@ -24,7 +23,7 @@ legacy retirement, lens-page SVG swap, optional Real-ESRGAN fallback).
 - [x] [#971](https://github.com/Imbra-Ltd/wuseria/issues/971) — `svg.py` provenance SVG emitter; viewBox 320×218 (data area matches `MtfChart.astro` 320×200, extra 18px legend strip)
 - [x] [#973](https://github.com/Imbra-Ltd/wuseria/issues/973) — `review.py` 3-panel HTML composite (original PNG + SVG + overlay); only LOW-verdict review files are committed per ADR-038 §"Workflow"
 - [x] Profiles for the 3 remaining in-band families (7Artisans samecolor-dashed-sm, Tokina 2color-frequency, Viltrox bw-dashed-promo); adds `Y_BAND_IS_FREQUENCY` hue meaning, `y_band_split` profile field, and `auto_suggestable` opt-out for profiles whose hue range is too broad to participate in disambiguation
-- [ ] Remaining tasks under epic [#932](https://github.com/Imbra-Ltd/wuseria/issues/932): legacy `mtf-extract-*.py` retirement (#563), lens-page SVG swap, optional Real-ESRGAN fallback, Viltrox 30 lp/mm tracking (y-band heuristic fails on tightly-clustered B&W charts — calibration documents the limit at 50%+ |d|)
+- [ ] Remaining tasks under epic [#932](https://github.com/Imbra-Ltd/wuseria/issues/932): lens-page SVG swap, optional Real-ESRGAN fallback, Viltrox 30 lp/mm tracking (y-band heuristic fails on tightly-clustered B&W charts — calibration documents the limit at 50%+ |d|)
 
 The 0.75 IoU threshold proposed in `referenceset/REFERENCE_SET.md` fails 3/3
 runnable charts due to sparse-polyline vs dense-skeleton geometric asymmetry

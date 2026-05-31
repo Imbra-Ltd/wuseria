@@ -15,8 +15,8 @@ Each stage is a small composable function with frozen-dataclass IO so
 the pipeline can be tested stage-by-stage and orchestrated through one
 top-level `extract_chart()` entry point.
 
-The pipeline retains the three sound parts of the legacy
-`mtf-extract-skeleton.py` that ADR-038 §2 explicitly keeps:
+The pipeline retains the three sound parts of the legacy skeleton-trace
+approach that ADR-038 §2 explicitly keeps:
 
 - axis/grid detection
 - `interpolate_at` semantics (returns None outside bracketing data — B2)

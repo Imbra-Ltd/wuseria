@@ -1,8 +1,7 @@
 """Unified MTF chart digitizer (ADR-038).
 
 One adaptive tool that digitizes MTF charts across all brands into uniform,
-confidence-scored readings + SVG, superseding the per-brand scrapers and the
-legacy `mtf-extract-skeleton.py`.
+confidence-scored readings + SVG.
 
 The package is scaffolded incrementally as epic #932 lands:
 
