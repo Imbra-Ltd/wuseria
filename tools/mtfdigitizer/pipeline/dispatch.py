@@ -18,9 +18,17 @@ Out-of-band combinations raise `NotImplementedError` — generalizing PR
   S/M labels: dashed = S, solid = M; opt in via `profile.dashed_is_sagittal`.)
 - `(HUE_IS_CURVE, CURVE_IDENTITY)` — Samyang dialect: each hue uniquely
   identifies one curve; the name encodes both frequency and S/M.
-- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` — Tokina dialect: hue carries S/M
-  (named "S-*"/"M-*"); within each hue, `y_band_split` separates the
-  upper frequency from the lower.
+- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` — Tokina prime dialect: hue carries
+  S/M (named "S-*"/"M-*"); within each hue, `y_band_split` separates the
+  upper frequency from the lower. Works when the two frequencies sit in
+  cleanly separable y-bands.
+- `(HUE_IS_CURVE, CC_RANK_BY_MEAN_Y)` — Tokina wide-zoom variant where the
+  two frequencies overlap in y near center (30 lp/mm starts at OTF ~0.90
+  while 10 lp/mm starts at 1.00; their y-bands intersect). Per hue, find
+  connected components, rank by mean-y; the upper CC is the upper
+  frequency, the lower CC is the lower frequency. Works because within
+  one color the two curves are spatially separate (they don't cross),
+  even when their OTF values are close. No `y_band_split` required.
 - `(SPLIT_BY_DASH, Y_BAND_IS_FREQUENCY)` — Viltrox B&W dialect: a single
   neutral mask is split by `y_band_split` into frequency groups, then by
   CC-width within each group for S/M.
@@ -287,6 +295,46 @@ def field_skeletons(
                 field = curve_field(freq, sm)
                 if field is not None and band_mask.any():
                     out[field] = close_and_skeletonize(band_mask)
+    elif (
+        profile.style_axis == "HUE_IS_CURVE"
+        and profile.hue_meaning == "CC_RANK_BY_MEAN_Y"
+    ):
+        # Each hue carries S or M (same naming as SAGITTAL_MERIDIONAL).
+        # Two curves per hue at different y positions. Use a wide
+        # horizontal close to bridge dashed-line gaps into ONE CC per
+        # curve, then split components by mean-y (largest y-gap) into
+        # upper-frequency and lower-frequency clusters.
+        #
+        # The default `close_and_skeletonize` uses a 7px kernel that's
+        # enough for Sigma/Samyang dashes but too small for the Tokina
+        # wide-zoom blue dashes (~20-30px gaps). With a small kernel
+        # each dash becomes its own CC and the largest-gap heuristic
+        # misclassifies adjacent dashes of the SAME curve as a band
+        # boundary. A wider kernel (~31px ≈ 1.6% of plot width) merges
+        # the dashes within one curve while leaving the gap between the
+        # two curves intact.
+        upper_freq, lower_freq = profile.frequencies_lpmm[0], profile.frequencies_lpmm[1]
+        wide_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (31, 1))
+        for hue_name, mask in curve_masks.items():
+            sm = parse_sagittal_meridional_name(hue_name)
+            closed = cv2.morphologyEx(
+                mask.astype(np.uint8), cv2.MORPH_CLOSE, wide_kernel
+            )
+            from skimage.morphology import skeletonize as _skeletonize
+            skeleton = _skeletonize(closed.astype(bool)).astype(np.uint8)
+            components = _component_masks_with_mean_y(skeleton)
+            upper_masks, lower_masks = _split_components_at_largest_y_gap(components)
+            for freq, cluster in (
+                (upper_freq, upper_masks),
+                (lower_freq, lower_masks),
+            ):
+                field = curve_field(freq, sm)
+                if field is None or not cluster:
+                    continue
+                merged = cluster[0].copy()
+                for m in cluster[1:]:
+                    merged = merged | m
+                out[field] = merged
     elif (
         profile.style_axis == "SPLIT_BY_DASH"
         and profile.hue_meaning == "Y_BAND_IS_FREQUENCY"

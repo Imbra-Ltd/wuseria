@@ -26,6 +26,7 @@ EXPECTED_FAMILIES = frozenset(
         "mainstream-4color-all-solid",
         "samecolor-dashed-sm",
         "2color-frequency",
+        "2color-frequency-cc-rank",
         "bw-dashed-promo",
         "multifreq-press-kit",
         "idealized-flat",

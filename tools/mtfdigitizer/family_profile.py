@@ -17,7 +17,6 @@ the `ReferenceChart` itself (a chart without `plot_box` /
 
 from __future__ import annotations
 
-from dataclasses import replace
 from typing import TYPE_CHECKING
 
 from .profiles import (
@@ -25,6 +24,7 @@ from .profiles import (
     SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
     SIGMA_2COLOR_SOLID_DASHED,
     TOKINA_2COLOR_FREQUENCY,
+    TOKINA_2COLOR_FREQUENCY_CC_RANK,
     VILTROX_BW_DASHED_F12,
 )
 from .profiles.types import MtfProfile
@@ -43,6 +43,7 @@ PROFILE_BY_STYLE: dict[str, MtfProfile] = {
     "idealized-flat": SAMYANG_4COLOR_ALL_SOLID,  # same 4-color template
     "samecolor-dashed-sm": SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
     "2color-frequency": TOKINA_2COLOR_FREQUENCY,
+    "2color-frequency-cc-rank": TOKINA_2COLOR_FREQUENCY_CC_RANK,
     "bw-dashed-promo": VILTROX_BW_DASHED_F12,
 }
 
@@ -66,15 +67,10 @@ def profile_for(style_family: str, slug: str) -> MtfProfile:
 
 
 def profile_for_chart(chart: "ReferenceChart") -> MtfProfile:
-    """Look up the runtime profile and apply any per-chart overrides.
+    """Look up the runtime profile for one reference chart.
 
-    Currently the only override is `y_band_split_override` — used when
-    a chart's curve geometry differs enough from the profile's defaults
-    that the profile's `y_band_split` would misclassify curves (e.g.
-    the 11-18mm wide-zoom Tokina panels where 30 lp/mm sits much higher
-    in y than on the prime charts the default was measured against).
+    Thin wrapper over `profile_for` that takes a `ReferenceChart`
+    directly. Reserved for future per-chart overrides; today it just
+    routes through the style-family lookup.
     """
-    profile = profile_for(chart.style_family, chart.slug)
-    if chart.y_band_split_override is not None:
-        profile = replace(profile, y_band_split=chart.y_band_split_override)
-    return profile
+    return profile_for(chart.style_family, chart.slug)

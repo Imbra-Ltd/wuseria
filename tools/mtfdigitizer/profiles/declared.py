@@ -113,7 +113,37 @@ TOKINA_2COLOR_FREQUENCY: MtfProfile = MtfProfile(
     # (both score 1.0 on either chart). Sigma wins by default for red+blue
     # autosuggest; Tokina must be explicitly declared.
     auto_suggestable=False,
-    notes="Tokina/atx-m convention: red=S solid, blue=M dotted; frequency by y-band (upper=10, lower=30); both hues split by y_band_split",
+    notes="Tokina/atx-m convention: red=S solid, blue=M dotted; frequency by y-band (upper=10, lower=30); both hues split by y_band_split (works on prime charts where 10 and 30 lp/mm pairs sit in separate y-bands)",
+)
+
+
+# Tokina 2-color frequency-by-color, CC-rank variant: same hue palette
+# as `TOKINA_2COLOR_FREQUENCY` but dispatches by connected-component
+# rank instead of a fixed y_band_split.
+#
+# Used by the 11-18mm wide-zoom panels where the 30 lp/mm pair starts at
+# OTF ~0.90 (vs 1.00 for 10 lp/mm) — the two frequencies' y-bands
+# intersect near center, so any fixed y_band_split misclassifies one
+# region. The CC-rank dispatch makes no y-position assumption: per hue
+# (red, blue) it groups skeleton components into two clusters at the
+# largest y-gap and assigns upper = 10 lp/mm, lower = 30 lp/mm. Works
+# because the two curves of one color never cross spatially even when
+# their OTF values overlap.
+#
+# Same palette/saturation/value bounds as the y-band variant; only the
+# dispatch differs.
+TOKINA_2COLOR_FREQUENCY_CC_RANK: MtfProfile = MtfProfile(
+    name="tokina-2color-frequency-cc-rank",
+    hues=(
+        HueRange(name="S-red", h_lo=0, h_hi=12, s_min=80, v_min=120),
+        HueRange(name="S-red", h_lo=168, h_hi=179, s_min=80, v_min=120),
+        HueRange(name="M-blue", h_lo=90, h_hi=115, s_min=80, v_min=120),
+    ),
+    style_axis="HUE_IS_CURVE",
+    hue_meaning="CC_RANK_BY_MEAN_Y",
+    frequencies_lpmm=(10, 30),
+    auto_suggestable=False,
+    notes="Tokina wide-zoom variant: per-hue CC-rank assigns upper CC = 10 lp/mm, lower CC = 30 lp/mm; no y_band_split (handles 11-18mm wide-zoom curve geometry where 10 and 30 bands intersect)",
 )
 
 
@@ -161,5 +191,6 @@ DECLARED_PROFILES: tuple[MtfProfile, ...] = (
     SAMYANG_4COLOR_ALL_SOLID,
     SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
     TOKINA_2COLOR_FREQUENCY,
+    TOKINA_2COLOR_FREQUENCY_CC_RANK,
     VILTROX_BW_DASHED_F12,
 )

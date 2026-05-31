@@ -30,7 +30,8 @@ Style families (single source of truth):
 - `mainstream-2color-solid-dashed`  — Sigma-style: two hues, S solid / M dashed
 - `mainstream-4color-all-solid`     — Samyang-style: 4 hues, all solid
 - `samecolor-dashed-sm`             — Chinese: one hue per frequency, S/M = solid/dashed
-- `2color-frequency`                — Tokina-style: colors carry frequency, S/M = solid/dotted
+- `2color-frequency`                — Tokina prime: red=S/blue=M, frequency by y-band
+- `2color-frequency-cc-rank`        — Tokina wide-zoom: same palette, frequency by per-hue CC rank
 - `bw-dashed-promo`                 — soft B&W promo, all-dashed
 - `multifreq-press-kit`             — German press kit, 3 frequencies, B&W solid/dashed
 - `idealized-flat`                  — placeholder/marketing flat at ~1.0
@@ -80,14 +81,6 @@ class ReferenceChart:
     # plot-box hasn't been declared yet.
     plot_box: PlotBoxCoords | None = None
     ground_truth: GroundTruthCurves | None = None
-    # Optional per-chart override for the profile's `y_band_split`.
-    # The Tokina profile defaults to 0.25 (measured from the 23mm/33mm/56mm
-    # prime charts where the 30 lp/mm pair sits at y_fraction 0.27+). On the
-    # 11-18mm wide zoom panels the 30 lp/mm pair sits at y_fraction 0.10-0.15
-    # near center — the default would misclassify them as 10 lp/mm. Set this
-    # field per-chart when the profile default doesn't match the chart's
-    # actual curve geometry.
-    y_band_split_override: float | None = None
 
 
 # Eye-read ground truth tables for the runnable subset. Each tuple holds
@@ -367,35 +360,28 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ReferenceChart(
         slug="tokina-atx-m-11-18mm-f2-8-x-at-11mm",
         chart_path="docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-1.png",
-        style_family="2color-frequency",
+        style_family="2color-frequency-cc-rank",
         apertures=("F2.8",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="11mm wide-end panel of the 11-18mm zoom; white bg, red solid = S, blue dashed = M, gridlines every 20%; same profile dialect as the beige-bg primes but the 30 lp/mm pair sits much higher in y (OTF 0.90+ at center) so y_band_split must be lowered",
+        notes="11mm wide-end panel of the 11-18mm zoom; white bg, red solid = S, blue dashed = M, gridlines every 20%; CC-rank dispatch handles the curve-overlap that defeated the older y_band_split=0.25 path",
         # Vertical lines: 291 detected near 331 is "0" label digit; 331 = 0mm
         # tick, 810 = 5mm, 1292 = 10mm → 96.1 px/mm; x_right at 14mm = 1676.
         # Horizontal: 235 = 100%, 996 = 0%; the 217 detection is the "100"
         # label sitting above the gridline (verified by overlay).
         plot_box=PlotBoxCoords(x_left=331, x_right=1676, y_top=235, y_bottom=996),
         ground_truth=_TOKINA_11_18_AT_11_GT,
-        # Wide-zoom 30 lp/mm sits at y_fraction 0.10 at center; the
-        # profile default 0.25 misclassifies the entire 30 lp/mm region
-        # as 10 lp/mm. 0.08 admits the 30 lp/mm peak into the 30 band
-        # while leaving the 10 lp/mm curves (at y_frac 0-0.05) cleanly
-        # on the 10 side.
-        y_band_split_override=0.08,
     ),
     ReferenceChart(
         slug="tokina-atx-m-11-18mm-f2-8-x-at-18mm",
         chart_path="docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-2.png",
-        style_family="2color-frequency",
+        style_family="2color-frequency-cc-rank",
         apertures=("F2.8",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="18mm long-end panel of the 11-18mm zoom; same template as the 11mm panel; same y_band_split override needed",
+        notes="18mm long-end panel of the 11-18mm zoom; same template as the 11mm panel; CC-rank dispatch",
         plot_box=PlotBoxCoords(x_left=331, x_right=1676, y_top=235, y_bottom=996),
         ground_truth=_TOKINA_11_18_AT_18_GT,
-        y_band_split_override=0.08,
     ),
     ReferenceChart(
         slug="viltrox-af-75mm-f1-2-pro",
