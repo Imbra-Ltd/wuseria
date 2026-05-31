@@ -4487,3 +4487,56 @@ longer depend on each other — independent next sessions.
 - **Lens-page SVG swap.** Still queued from session 106 — once a brand's MTF set runs cleanly end-to-end through the new pipeline, swap the lens-page asset to SVG.
 - **Digitize MTF data for a brand that already calibrates cleanly.** Tokina (#795), Viltrox 30 lp/mm now (#797), or 7Artisans (#801). Tokina is easiest; Viltrox 30 lp/mm now possible after this PR (but the 10 lp/mm half is still pending #994).
 - **#994 — separate Viltrox 10S/10M.** Three options floated in the issue body. Sub-pixel ridge tracking is the most general, two-pass mask subtraction the simplest, higher-res chart source the laziest.
+
+---
+
+### Session 109 — Epic #932 cleanup: dead links, ridge tracking, lens-page MTF
+
+Three PRs in a row through epic #932's remaining checklist — ending with the digitizer→site pipeline finally closed end-to-end.
+
+#### PRs
+
+- #997 — `fix(docs): dead Image links in 19 Samyang analysis.md files (#930)` — mechanical link-rename pass; the in-doc `Image: [...](short.png)` references from the pre-ADR-031 flat layout still pointed at filenames that no longer existed.
+- #999 — `feat(mtfdigitizer): RIDGE_TRACKING dispatch for tightly-clustered curves (#994)` — new `pipeline/ridge.py` module + a hidden plot-box calibration bug fix that was masking the real Viltrox extraction failure.
+- #1000 — `feat: render digitizer-emitted MTF charts on lens pages` — new `tools/mtfdigitizer/emit.py` script bridges `ExtractedChart` → TS literal; lens pages now render the digitizer's output via the existing `MtfChart.astro` component. First emitted lens: Viltrox AF 75mm f/1.2 Pro.
+
+#### Issues
+
+- #930 (bug) — closed by #997
+- #994 (task) — closed by #999
+- #998 (bug) — opened mid-session: orphan `samyang-135mm-f2-ed-umc/` folder with only `scoring-log.md` (sibling `samyang-135mm-f2-0-ed-umc/` has the construction + MTF png but no scoring-log; needs consolidation per CLAUDE.md §1.2)
+- Epic #932 — ticked #994 and "Lens pages render SVG MTF charts" (the untracked body item PR #1000 satisfied)
+
+#### Key changes
+
+- **`RIDGE_TRACKING` is geometric, not topological.** Per-column local mask runs become ridge centroids; centroids cluster across columns into tracks via a greedy nearest-neighbor walk that bridges x-gaps up to 40 columns (so dashed curves stay one track). Near-duplicate tracks within 4 px of mean_y are deduplicated (anti-aliased halos), then the 4 longest are split by mean_y into upper/lower frequency pairs. Within each pair, the track with lower mean_y is the sagittal — S MTF ≥ M MTF at every position is guaranteed by lens physics, no `dashed_is_sagittal` flag needed for this dispatch.
+- **Row-based chrome stripping** instead of CC-based. The Viltrox neutral mask fuses every gridline with every curve into one 2789-px CC, so CC-based stripping can't pull chrome out without also pulling curves. Row stripping (zero any row in the plot box with ≥90% horizontal coverage) works regardless of vertical connectivity.
+- **Viltrox plot-box re-measured.** Pre-#994 calibration placed OTF=1.0 at the printed "1" label (y=130) instead of at the actual gridline 23 px below (y=153). Run 4's "10S \|d\|=0.000 paired 11/11" was the plot-frame border at y=130 mapping to MTF=1.0 under the wrong `y_top` and matching ground truth 10S=1.0 by coincidence — the actual 10S curve was never being read. Plot box corrected to y_top=153, y_bottom=393 in the same PR.
+- **`MtfReading` fields nullable** (`number | null`). Lens-page polylines break into segments at nulls; table cells show em-dash. The 22 hand-curated entries stay unchanged.
+- **`tools/mtfdigitizer/emit.py`** — invoke via `py -m mtfdigitizer.emit <slug>`, prints a TS object literal ready to drop into `src/data/mtf-readings.ts`. Schema-matched, prettier-clean, position-sparse for partial-coverage charts.
+- **Test counts:** 213 vitest pass (data-integrity tests refactored to admit null), 170 pytest pass in tools (15 new ridge tests + 12 new emit tests).
+
+#### Viltrox calibration delta (Run 4 → Run 5)
+
+- **10S:** 11/11 fake-from-border → 11/11 real curve, med \|d\| 0.000 → **0.012**
+- **10M:** 0/11 → **5/11**, med \|d\| **0.048** (meets #994 acceptance: ≥5/11 at ≤±0.10)
+- **30S:** 11/11 fake-from-axis-grid → 7/11 real curve, med \|d\| 0.032 → **0.020**
+- **30M:** 4/11 → 3/11 minor regress, med \|d\| 0.060 → 0.016 — accepted as fair trade for all four fields now real
+- **Aggregate within ±0.05:** 85.6% → **86.1%**. No regression on other 5 in-band families (RIDGE_TRACKING is Viltrox-only).
+
+#### Key decisions
+
+- **Ridge tracking, not patches to CC-rank.** Discussed the trade-off: keep CC-rank + add chrome-stripping + post-cluster splitting (cheaper), vs. new geometric dispatch (more code, generalizes past the CC bottleneck for any future tightly-bundled chart). Picked geometric on the principle "robust and reliable" — the topology-based dispatches will hit the same wall every time a chart sub-pixel-bundles curves.
+- **Diagnose before patching.** The probe (`_probe_viltrox_10m.py`, then `_probe_viltrox_ycal.py`, both deleted before commit) revealed two distinct bugs: the chart-chrome capture _and_ the wrong y-axis calibration. Patching only one wouldn't have surfaced the other; Run 4's deceptive 11/11 paired count would still look like a win. The y-axis calibration finding was the real unlock.
+- **Don't overwrite hand-curated data with digitizer output.** Three of the digitizer's reference-set lenses (sigma-56, samyang-85, samyang-300) already had hand-curated `mtf-readings.ts` entries. Manufacturer-published readings beat the digitizer's ±0.02-0.05 band — kept them, added only the net-new Viltrox.
+- **Make `MtfReading` nullable, not "filter out partial rows."** First emit attempt with the all-or-nothing filter produced 0/11 rows (because no single position has all 4 readings non-None on Viltrox). The schema change is small and one-time; data filtering would lose every digitized chart with any null.
+- **No new ADR.** Ridge tracking is an extension of ADR-038 §1's profile-and-dispatch surface (same shape as `CC_RANK_BY_MEAN_Y` before it). Nullable `MtfReading` is a small type adjustment, not architectural.
+- **PR #1000 by accident.** Round number coincidence, not engineered. Worth noting.
+
+#### Notes for next session
+
+- **#998 — orphan Samyang 135mm folder.** Quick consolidation: move `scoring-log.md` from `samyang-135mm-f2-ed-umc/` into `samyang-135mm-f2-0-ed-umc/` (the `f2-0` slug matches the CLAUDE.md naming rule), delete the empty folder. Filed during the #930 sweep.
+- **#950 — auto-detect plot box.** P2, the next big infra unlock — would have caught the Viltrox y-axis bug automatically. The Viltrox y-calibration probe in this session shows the gridline-detection technique works; could form the core of the detector.
+- **#947 — specs-log.md backfill.** P3 data debt. CLAUDE.md §1.2 makes specs-log mandatory; ~5 of 8 sampled folders are missing it.
+- **Digitize more brands now that the pipeline is end-to-end.** Tokina (#795, 5 charts) is the cleanest first pickup — calibrates well, dispatches correctly, no known pathologies. Each digitized chart now flows straight to lens pages via `emit.py`.
+- **Real-ESRGAN/CLAHE low-confidence fallback.** Still on the epic #932 body checklist as optional. Pluggable, no CI dependency; only worth building when a specific chart genuinely needs it.

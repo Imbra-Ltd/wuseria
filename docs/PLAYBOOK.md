@@ -319,6 +319,28 @@ JS-free per the ADR — a viewer, not an editor. Replaces the deprecated
 `tools/mtf-overlay.html` whose hand-tuned calibration is superseded by
 deterministic plot-box registration.
 
+**Emit a digitized chart's readings as a TypeScript literal for the site:**
+
+```bash
+cd tools && py -m mtfdigitizer.emit <slug>          # one lens
+cd tools && py -m mtfdigitizer.emit <slug> <slug>   # multiple
+```
+
+Bridges the digitizer's `ExtractedChart` Python output to the site's
+`MtfData` shape in `src/data/mtf-readings.ts`. Prints the TS object
+literal to stdout; per-field null counts to stderr. Paste into
+`mtf-readings.ts` and `npm run check && npm run build` to verify.
+The lens page picks it up via `mtfReadings[slug]` and renders via
+`MtfChart.astro` (themed inline SVG + table). Closes the digitizer→site
+loop ADR-038 §"Output" envisaged; the committed provenance SVG (from
+`mtfdigitizer.svg`) stays an artifact, not the display source.
+
+The slug must be in `referenceset/charts.py` with a populated plot box,
+and the source URL must be in `_DEFAULT_SOURCES` (in `emit.py`).
+`MtfReading` fields are `number | null` (since the lens-page MTF
+rendering work) so the B2 None contract flows through; rows with all
+four fields null are dropped.
+
 **Audit spec field coverage per brand:**
 
 ```bash
