@@ -1,9 +1,15 @@
 interface MtfReading {
   position: number; // image height in mm (0 = center)
-  contrast10S: number; // 10 lp/mm sagittal
-  contrast10M: number; // 10 lp/mm meridional
-  resolution30S: number; // 30 lp/mm sagittal
-  resolution30M: number; // 30 lp/mm meridional
+  // Per-field values may be null when the chart extractor (or hand
+  // curator) has no usable data for that frequency / orientation at
+  // this position. Renderers break the polyline at nulls; tables show
+  // a dash. Hand-curated entries from official manufacturer charts
+  // typically have all four populated; digitizer-emitted entries may
+  // not (per the ADR-038 B2 contract — never fabricate).
+  contrast10S: number | null; // 10 lp/mm sagittal
+  contrast10M: number | null; // 10 lp/mm meridional
+  resolution30S: number | null; // 30 lp/mm sagittal
+  resolution30M: number | null; // 30 lp/mm meridional
 }
 
 interface MtfChart {

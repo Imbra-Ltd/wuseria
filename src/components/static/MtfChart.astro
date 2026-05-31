@@ -19,14 +19,25 @@ const maxPos = Math.max(...chart.readings.map((r) => r.position));
 const xScale = (pos: number): number => PAD.left + (pos / maxPos) * plotW;
 const yScale = (val: number): number => PAD.top + (1 - val) * plotH;
 
-// Build SVG polyline points
-function toPoints(values: number[]): string {
-  return chart.readings
-    .map(
-      (r, i) =>
-        `${xScale(r.position).toFixed(1)},${yScale(values[i]).toFixed(1)}`,
-    )
-    .join(" ");
+// Build SVG polyline-segment strings, breaking at nulls so a missing
+// reading creates a visible gap rather than a straight interpolation
+// across it. Returns one points-string per contiguous run of non-null
+// readings — the renderer emits one <polyline> per run.
+function toSegments(values: (number | null)[]): string[] {
+  const segments: string[] = [];
+  let current: string[] = [];
+  for (let i = 0; i < chart.readings.length; i++) {
+    const v = values[i];
+    if (v == null) {
+      if (current.length >= 2) segments.push(current.join(" "));
+      current = [];
+      continue;
+    }
+    const r = chart.readings[i];
+    current.push(`${xScale(r.position).toFixed(1)},${yScale(v).toFixed(1)}`);
+  }
+  if (current.length >= 2) segments.push(current.join(" "));
+  return segments;
 }
 
 const contrast10S = chart.readings.map((r) => r.contrast10S);
@@ -84,41 +95,65 @@ const xTicks = chart.readings.map((r) => r.position);
   </text>
 
   {/* Data lines — 10 lp/mm (contrast) */}
-  <polyline points={toPoints(contrast10S)} class="line line-10s"></polyline>
-  <polyline points={toPoints(contrast10M)} class="line line-10m"></polyline>
+  {
+    toSegments(contrast10S).map((seg) => (
+      <polyline points={seg} class="line line-10s" />
+    ))
+  }
+  {
+    toSegments(contrast10M).map((seg) => (
+      <polyline points={seg} class="line line-10m" />
+    ))
+  }
 
   {/* Data lines — 30 lp/mm (resolution) */}
-  <polyline points={toPoints(resolution30S)} class="line line-30s"></polyline>
-  <polyline points={toPoints(resolution30M)} class="line line-30m"></polyline>
+  {
+    toSegments(resolution30S).map((seg) => (
+      <polyline points={seg} class="line line-30s" />
+    ))
+  }
+  {
+    toSegments(resolution30M).map((seg) => (
+      <polyline points={seg} class="line line-30m" />
+    ))
+  }
 
-  {/* Data points */}
+  {/* Data points — skip null fields */}
   {
     chart.readings.map((r) => (
       <>
-        <circle
-          cx={xScale(r.position)}
-          cy={yScale(r.contrast10S)}
-          r="2"
-          class="dot dot-10"
-        />
-        <circle
-          cx={xScale(r.position)}
-          cy={yScale(r.contrast10M)}
-          r="2"
-          class="dot dot-10"
-        />
-        <circle
-          cx={xScale(r.position)}
-          cy={yScale(r.resolution30S)}
-          r="2"
-          class="dot dot-30"
-        />
-        <circle
-          cx={xScale(r.position)}
-          cy={yScale(r.resolution30M)}
-          r="2"
-          class="dot dot-30"
-        />
+        {r.contrast10S != null && (
+          <circle
+            cx={xScale(r.position)}
+            cy={yScale(r.contrast10S)}
+            r="2"
+            class="dot dot-10"
+          />
+        )}
+        {r.contrast10M != null && (
+          <circle
+            cx={xScale(r.position)}
+            cy={yScale(r.contrast10M)}
+            r="2"
+            class="dot dot-10"
+          />
+        )}
+        {r.resolution30S != null && (
+          <circle
+            cx={xScale(r.position)}
+            cy={yScale(r.resolution30S)}
+            r="2"
+            class="dot dot-30"
+          />
+        )}
+        {r.resolution30M != null && (
+          <circle
+            cx={xScale(r.position)}
+            cy={yScale(r.resolution30M)}
+            r="2"
+            class="dot dot-30"
+          />
+        )}
       </>
     ))
   }

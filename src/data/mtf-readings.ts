@@ -2247,6 +2247,94 @@ const mtfReadings: Record<string, MtfData> = {
       },
     ],
   },
+  "viltrox-af-75mm-f1-2-pro": {
+    source: "https://viltrox.com/products/75mm-f12-xf-lens",
+    mtfType: "measured",
+    charts: [
+      {
+        aperture: "f/1.2",
+        readings: [
+          {
+            position: 0,
+            contrast10S: 0.99,
+            contrast10M: 0.94,
+            resolution30S: null,
+            resolution30M: null,
+          },
+          {
+            position: 1.4,
+            contrast10S: 0.99,
+            contrast10M: 0.94,
+            resolution30S: null,
+            resolution30M: null,
+          },
+          {
+            position: 2.8,
+            contrast10S: 0.99,
+            contrast10M: 0.95,
+            resolution30S: null,
+            resolution30M: null,
+          },
+          {
+            position: 4.2,
+            contrast10S: 0.99,
+            contrast10M: null,
+            resolution30S: 0.93,
+            resolution30M: null,
+          },
+          {
+            position: 5.6,
+            contrast10S: 0.99,
+            contrast10M: 0.94,
+            resolution30S: 0.9,
+            resolution30M: null,
+          },
+          {
+            position: 7,
+            contrast10S: 0.98,
+            contrast10M: 0.9,
+            resolution30S: null,
+            resolution30M: null,
+          },
+          {
+            position: 8.4,
+            contrast10S: 0.98,
+            contrast10M: null,
+            resolution30S: 0.88,
+            resolution30M: 0.84,
+          },
+          {
+            position: 9.8,
+            contrast10S: 0.97,
+            contrast10M: null,
+            resolution30S: 0.88,
+            resolution30M: 0.82,
+          },
+          {
+            position: 11.2,
+            contrast10S: 0.98,
+            contrast10M: null,
+            resolution30S: 0.88,
+            resolution30M: null,
+          },
+          {
+            position: 12.6,
+            contrast10S: 0.97,
+            contrast10M: null,
+            resolution30S: 0.87,
+            resolution30M: 0.81,
+          },
+          {
+            position: 14,
+            contrast10S: 1,
+            contrast10M: null,
+            resolution30S: 0.85,
+            resolution30M: null,
+          },
+        ],
+      },
+    ],
+  },
 };
 
 export { mtfReadings };
