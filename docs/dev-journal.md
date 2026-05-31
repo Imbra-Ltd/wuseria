@@ -4342,3 +4342,43 @@ longer depend on each other — independent next sessions.
 - **Why missed:** Not preventable on our side — the dispatcher dropped the event silently.
 - **Fix:** None needed for this instance. PR #979 was docs-only so the served bytes don't change; the site continues serving the previous build correctly. The next push (#980's merge to main) implicitly carried the missing change into a successful deploy.
 - **Prevention:** Out of scope this session, but documented in #981 as a follow-up: a periodic check that `main`'s `HEAD` SHA matches the SHA of the most recent successful Deploy run, alerting on persistent divergence. Captured rather than implemented because the event-loss appears genuinely one-off (immediately self-corrected on the next push).
+
+---
+
+### Session 105 — CLAUDE.md bloat audit + trim
+
+#### PRs
+
+- #984 — trim and restructure CLAUDE.md (three commits: collapse mega-bullets to one-line pointers; small second-pass trims; restructure §1.2 as tables and §2.6 as sub-grouped lists); refresh `tools/mtfdigitizer/README.md` Status section as authoritative for #963/#966/#968/#971/#973
+- #985 — rewrite §6.3 end-of-session step 7 around content rules; new decision tree code/JSDoc → ADR → README → PLAYBOOK → CLAUDE.md (last resort, gated on "the agent must apply it on every turn")
+- #986 — session 105 dev journal entry
+
+#### Memory additions
+
+- `feedback_concise_output.md` — user prefers terse, scannable output; bullets over paragraphs; no throat-clearing
+- `feedback_suggest_doc_home.md` — when asked to save a convention, suggest the correct home before saving; do not default to CLAUDE.md or memory
+
+#### Upstream issues filed on `braboj/solid-ai-templates`
+
+- #351 — add agent-output conventions (terse, scannable, no throat-clearing) to a base template
+- #354 — add doc-placement decision tree; agent suggests the right home, doesn't default to CLAUDE.md
+- #355 — rewrite end-of-session step 6 in `base/workflow/scope.md` around content rules (matches the #985 fix)
+- #356 — document latency vs quality trade-offs for CLAUDE.md and template loading under `docs/`; captures the prompt-cache / attention-dilution / convention-compliance discussion
+
+#### Key changes
+
+- CLAUDE.md 29.9 KB → 21.9 KB (~27% byte reduction). One bullet was 4,361 chars (the `tools/mtfdigitizer/` package summary, accreted across ~20 sessions). Coverage audit confirmed ~85% of removable content was already duplicated in ADRs (035, 036, 037, 038), package READMEs (`tools/pagefetch/README.md`, `tools/mtfdigitizer/README.md`), or PLAYBOOK §2.7 / §2.8.
+- §1.2 restructured as three labeled tables (front-end src / docs / tools). §2.6 restructured as seven sub-grouped lists (Content storage, Pricing, Naming, Required fields, Scoring, Specs-log workflow, Sources). No rules added or removed; bullet count unchanged.
+- `tools/mtfdigitizer/README.md` Status section now lists every completed task with reference-set findings file refs; the README is the authoritative status, not CLAUDE.md.
+
+#### Key decisions
+
+- **Mandatory 17-template startup block left untouched.** ~5 s cold-start cost is a fair trade for reliable convention compliance — user prioritizes "don't worry about omissions" over speed. The real lever is CLAUDE.md content discipline (enforced by #985), not the template block.
+- **Three root causes of bloat identified and addressed.** (1) wrap-up step asked "does it belong?" without offering alternatives → #985 decision tree; (2) CLAUDE.md was the lowest-friction home for any new convention → same #985 edit; (3) agent never pushed back on placement → memory `feedback_suggest_doc_home`.
+- **Optimization target reframed** from "smallest CLAUDE.md" to "the model sees each rule clearly enough to apply it reliably" — attention clarity, not byte count.
+- **CLAUDE.md one-liner pointing at the concise-output convention deferred** until upstream #351 lands — avoids project-local divergence while the upstream pattern is still being decided.
+
+#### Notes for next session
+
+- `mtfdigitizer/` epic #932 work (declare profiles for the 3 in-band families: 7artisans `samecolor-dashed-sm`, Tokina `2color-frequency`, Viltrox `bw-dashed-promo`) still queued; unchanged from session 103-104.
+- Possible flag: `docs/solid-ai-templates/` is referenced as a git submodule in CLAUDE.md but there is no `.gitmodules` entry and `git ls-tree` shows nothing at that path from the me-fuji root. Reads succeed at session start, so it resolves _somewhere_ — likely a worktree or harness checkout convention. Worth investigating.
