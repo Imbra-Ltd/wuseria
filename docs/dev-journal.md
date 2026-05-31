@@ -4444,3 +4444,46 @@ longer depend on each other — independent next sessions.
 - **CC-rank dispatch for Viltrox 30 lp/mm (#992).** The next iteration's lever — separates the 4 tightly-bunched B&W curves by skeleton mean-y rank instead of a fixed `y_band_split`. Target: bring Viltrox 30 lp/mm aggregate |d| within the ±0.05 band (Run 3 baseline 0.258–0.524). No regression on the five existing in-band families.
 - **Lens-page SVG swap.** Once a brand's MTF set is digitized through the new pipeline, swap the lens-page asset to SVG (still queued from session 106).
 - **Easy alternative:** Tokina (#795) calibrates cleanly today — could be a low-friction digitization run if architectural work feels heavy.
+
+---
+
+### Session 108 — CC-rank dispatch for Viltrox B&W charts
+
+#### PRs
+
+- #995 — `feat(mtfdigitizer): CC-rank dispatch for Viltrox B&W charts (#992)` — new `(SPLIT_BY_DASH, CC_RANK_BY_MEAN_Y)` dispatch branch, Viltrox profile switched, 4 new tests, Run 4 calibration log. 333 insertions / 17 deletions across 5 files.
+
+#### Issues
+
+- #992 (task) — closed by #995
+- #994 (task) — opened as the immediate follow-up: separate Viltrox 10S/10M curves that share pixels in the source rendering
+- Epic #932 — ticked #992 done, added #994 to the checklist
+
+#### Key changes
+
+- `HueMeaning` gains `CC_RANK_BY_MEAN_Y` (variant for tightly-clustered B&W charts where no fixed `y_band_split` works).
+- New dispatch branch in `pipeline/dispatch.py`: skeletonize the single neutral mask once, rank connected components by mean y-position, split at the **largest y-gap** into upper- (10 lp/mm) and lower- (30 lp/mm) frequency clusters. Within each cluster the longest CC is the solid line (S by default, M when `dashed_is_sagittal`); the rest are ORed into the dashed mask. Adapts to wherever the natural break lands on a given chart — no hand-tuned fraction.
+- Three helper functions: `_component_masks_with_mean_y()`, `_split_components_at_largest_y_gap()`, `_solid_dashed_from_components()`. Each has unit-test coverage.
+- `VILTROX_BW_DASHED_F12` switched from `Y_BAND_IS_FREQUENCY` to `CC_RANK_BY_MEAN_Y`; `y_band_split` dropped from the profile.
+- Calibration Run 4 logged in `referenceset/calibration.md` with per-chart numbers, aggregate stats, and an honest "what changed" section.
+
+#### Calibration delta (Run 3 → Run 4)
+
+- **Viltrox 30S** median \|d\| 0.258 → **0.032** (paired 2/11 → 11/11) — inside ±0.05 ✅
+- **Viltrox 30M** median \|d\| 0.524 → **0.060** (paired 1/11 → 4/11) — just outside ±0.05, huge improvement ✅
+- **Viltrox 10S** median \|d\| 0.106 → **0.000** (paired 11/11) — partly the curve, partly the top axis line reading at MTF=1.0 (honest in the log)
+- **Viltrox 10M** — **regression**, now 0/11 paired (was 11/11 @ 0.107) — 10S and 10M share pixels at the top of the chart and don't separate by CC labeling
+- **Aggregate within ±0.05** 75.8% → **85.6%** (+9.8 pts); median \|d\| 0.019 → 0.017; p95 0.141 → 0.091
+- Sigma / Samyang / 7Artisans / Tokina — numbers byte-identical to Run 3
+
+#### Key decisions
+
+- **Ship the win, document the 10M regression honestly.** Viltrox 30 lp/mm went from "fundamentally broken" to in/near band; that's the acceptance-criteria target. The 10M regression is a separate, harder problem (the two curves physically share pixels in the source PNG) — bundled into #994 with explicit options (sub-pixel ridge tracking, two-pass mask subtraction, higher-res source). Better to ship the 30 lp/mm improvement now than block on a separation technique that needs its own spike.
+- **Reject the plot-box inset.** Tried clipping the mask 3px inside the plot box to strip axis lines from the neutral mask; it dropped the win (Viltrox 30S med \|d\| 0.032 → 0.116). The axis lines incidentally help on this chart by giving the upper cluster a reliable y-anchor; removing them shifts the largest-gap split into the wrong place. Reverted.
+- **No new ADR.** ADR-038 §1 already declares the profile system is the surface for dialect expansion. `CC_RANK_BY_MEAN_Y` is an extension of the existing `Y_BAND_IS_FREQUENCY` branch (same problem space: B&W single-neutral-mask charts), not a new architectural concept. Knob-level changes documented inline.
+
+#### Notes for next session
+
+- **Lens-page SVG swap.** Still queued from session 106 — once a brand's MTF set runs cleanly end-to-end through the new pipeline, swap the lens-page asset to SVG.
+- **Digitize MTF data for a brand that already calibrates cleanly.** Tokina (#795), Viltrox 30 lp/mm now (#797), or 7Artisans (#801). Tokina is easiest; Viltrox 30 lp/mm now possible after this PR (but the 10 lp/mm half is still pending #994).
+- **#994 — separate Viltrox 10S/10M.** Three options floated in the issue body. Sub-pixel ridge tracking is the most general, two-pass mask subtraction the simplest, higher-res chart source the laziest.
