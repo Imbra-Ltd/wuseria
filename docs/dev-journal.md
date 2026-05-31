@@ -4385,3 +4385,31 @@ longer depend on each other — independent next sessions.
 #### Post-session correction
 
 - Wrap-up step 11 (Submodules) initially flagged `docs/solid-ai-templates/` as missing from `.gitmodules` and not in the git tree. Investigated after wrap-up: the flag was operator error. The submodule IS correctly registered in `.gitmodules`, pinned at `b381154` (visible as `git ls-tree` mode `160000`), checked out, and equal to upstream `origin/main` — no update needed. Root cause: the bash shell had `cd`'d into the submodule earlier in the session (during the wrap-up checklist for step 4) and persisted that directory across subsequent commands; path-based queries silently resolved against the submodule's own root instead of the me-fuji root. Lesson recorded in [[feedback-pwd-on-path-failure]] — always verify `pwd` when a path-based query unexpectedly fails.
+
+---
+
+### Session 106 — Mtfdigitizer 3-profile expansion
+
+#### PRs
+
+- #988 — declare 7Artisans `samecolor-dashed-sm`, Tokina `2color-frequency`, Viltrox `bw-dashed-promo`; add two new dispatch branches (`HUE_IS_CURVE+SAGITTAL_MERIDIONAL`, `SPLIT_BY_DASH+Y_BAND_IS_FREQUENCY`); plot-box now threads through `field_skeletons()` and clips masks; 5 declared profiles total (was 2); 6 of 8 reference charts now calibrate (was 3)
+
+#### Key changes
+
+- `MtfProfile` grows three optional knobs: `y_band_split: float | None` (split fraction of plot box, required for the new dispatch paths), `dashed_is_sagittal: bool` (Chinese T1/T2 convention inverts Sigma's "S=solid"), `auto_suggestable: bool` (opt-out for profiles whose hue ranges over-match — Viltrox's neutral mask catches every chart's gridlines, Tokina's red+blue overlaps Sigma).
+- `HueMeaning` gains `Y_BAND_IS_FREQUENCY` (no informative hue; single neutral mask split by vertical position).
+- `resolve()` bypasses the suggest-gate when `declared.auto_suggestable=False` — caller is sole authority for those profiles (no mechanical second-check possible).
+- `field_skeletons(bgr, profile, plot_box)` — `plot_box` required for y-band profiles; clipping to plot box added unconditionally (necessary for Viltrox; harmless for the color-specific profiles).
+- Calibration run 3: aggregate median |d| = 0.019, 75.8% within ±0.05 band. Tokina 0.020–0.061 median per field; 7Artisans 0.005–0.070; Viltrox 10 lp/mm 0.106–0.107 (above band but stable); Viltrox 30 lp/mm 0.258–0.524 (1–2 paired) — known limit, documented.
+
+#### Key decisions
+
+- **`auto_suggestable=False` for Viltrox and Tokina** rather than a more discriminating suggest scorer. The presence-based scorer can't distinguish profiles that share hues. Per-hue median or saturation-bin scoring is a real spike (more code, more knobs); opting profiles out is the pragmatic floor that preserves the B1 fail-loud gate where it works (Sigma/Samyang/7Artisans) and trusts the caller where it can't.
+- **Viltrox 30 lp/mm failure documented, not fixed.** The four curves are too tightly bunched in OTF space (0.65–1.0) for any single `y_band_split` to separate them. The fix would be CC-rank by mean-y (no fixed split fraction) — a different dispatch entirely. Logged in `declared.py`, README, and calibration.md Run 3 as the next iteration's lever.
+- **No new ADR.** ADR-038 §1 already declares that the profile system is the surface for dialect expansion; these are concrete declarations following its contract. The two new `HueMeaning`/dispatch branches are extensions of the existing architecture, not new architecture. Knobs (`y_band_split`, `dashed_is_sagittal`, `auto_suggestable`) documented inline on the dataclass.
+
+#### Notes for next session
+
+- **Tackle Viltrox 30 lp/mm** with a CC-rank dispatch (separate the 4 curves by mean-y after skeletonization, no fixed split fraction). Would close the chart-bunched-B&W class of charts and likely improve calibration noticeably.
+- **Retire legacy `mtf-extract-*.py` scrapers (#563).** All five in-band families now have profiles, so the legacy two-brand extractors are redundant.
+- **Lens-page SVG swap.** Once a brand's MTF set is digitized through the new pipeline, swap the lens-page chart asset to the SVG output.
