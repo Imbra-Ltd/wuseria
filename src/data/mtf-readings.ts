@@ -2324,6 +2324,13 @@ const mtfReadings: Record<string, MtfData> = {
             resolution30S: 0.6,
             resolution30M: null,
           },
+          {
+            position: 14,
+            contrast10S: 0.82,
+            contrast10M: 0.85,
+            resolution30S: 0.43,
+            resolution30M: null,
+          },
         ],
       },
       {
@@ -2374,7 +2381,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 8.4,
             contrast10S: 0.98,
-            contrast10M: 0.95,
+            contrast10M: 0.96,
             resolution30S: 0.66,
             resolution30M: null,
           },
@@ -2401,7 +2408,7 @@ const mtfReadings: Record<string, MtfData> = {
           },
           {
             position: 14,
-            contrast10S: null,
+            contrast10S: 0.74,
             contrast10M: null,
             resolution30S: 0.43,
             resolution30M: null,

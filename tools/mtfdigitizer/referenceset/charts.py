@@ -364,12 +364,15 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("F2.8",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="11mm wide-end panel of the 11-18mm zoom; white bg, red solid = S, blue dashed = M, gridlines every 20%; CC-rank dispatch handles the curve-overlap that defeated the older y_band_split=0.25 path",
-        # Vertical lines: 291 detected near 331 is "0" label digit; 331 = 0mm
-        # tick, 810 = 5mm, 1292 = 10mm → 96.1 px/mm; x_right at 14mm = 1676.
-        # Horizontal: 235 = 100%, 996 = 0%; the 217 detection is the "100"
-        # label sitting above the gridline (verified by overlay).
-        plot_box=PlotBoxCoords(x_left=331, x_right=1676, y_top=235, y_bottom=996),
+        notes="11mm wide-end panel of the 11-18mm zoom; white bg, red solid = S, blue dashed = M, gridlines every 20%; per-column ridge dispatch handles the curve-overlap that defeated the older y_band_split=0.25 path",
+        # Plot box at the data edge, not the printed plot frame
+        # (calibration.md convention). The printed 0mm tick sits at col
+        # 331 and the 14mm tick at col 1676, but the chart artist drew
+        # the curves only from col 333..1670 — measured via the
+        # data-extent probe. Aligning the plot box to data extent makes
+        # fraction-0.0 and fraction-1.0 samples actually land on curve
+        # pixels instead of returning None.
+        plot_box=PlotBoxCoords(x_left=333, x_right=1670, y_top=235, y_bottom=996),
         ground_truth=_TOKINA_11_18_AT_11_GT,
     ),
     ReferenceChart(
@@ -379,8 +382,9 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("F2.8",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="18mm long-end panel of the 11-18mm zoom; same template as the 11mm panel; CC-rank dispatch",
-        plot_box=PlotBoxCoords(x_left=331, x_right=1676, y_top=235, y_bottom=996),
+        notes="18mm long-end panel of the 11-18mm zoom; same template as the 11mm panel; per-column ridge dispatch",
+        # Data-edge plot box (curves end at col 1673, not 1676).
+        plot_box=PlotBoxCoords(x_left=331, x_right=1673, y_top=235, y_bottom=996),
         ground_truth=_TOKINA_11_18_AT_18_GT,
     ),
     ReferenceChart(
