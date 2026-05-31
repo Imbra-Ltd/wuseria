@@ -40,7 +40,7 @@ LENSES = {
     "475": "samyang-50mm-f1-2",
     "311": "samyang-85mm-f1-4",
     "343": "samyang-100mm-f2-8-macro",
-    "299": "samyang-135mm-f2-ed-umc",
+    "299": "samyang-135mm-f2-0-ed-umc",
     "313": "samyang-300mm-f6-3-ed-umc-cs",
     "543": "samyang-af-12mm-f2-0",
     "617": "samyang-af-75mm-f1-8",
