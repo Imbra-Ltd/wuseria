@@ -4540,3 +4540,64 @@ Three PRs in a row through epic #932's remaining checklist — ending with the d
 - **#947 — specs-log.md backfill.** P3 data debt. CLAUDE.md §1.2 makes specs-log mandatory; ~5 of 8 sampled folders are missing it.
 - **Digitize more brands now that the pipeline is end-to-end.** Tokina (#795, 5 charts) is the cleanest first pickup — calibrates well, dispatches correctly, no known pathologies. Each digitized chart now flows straight to lens pages via `emit.py`.
 - **Real-ESRGAN/CLAHE low-confidence fallback.** Still on the epic #932 body checklist as optional. Pluggable, no CI dependency; only worth building when a specific chart genuinely needs it.
+
+---
+
+### Session 110 — Tokina MTF digitization end-to-end + digitization-log formalized
+
+#### PRs
+
+- **#1003** — feat(mtfdigitizer): digitize 4 Tokina MTF charts (#795). Squash-merged 11 commits.
+- **#1013** — docs(mtfdigitizer): formalize digitization-log (ADR-040 + --check).
+
+#### Issues
+
+- **#795** closed (Tokina digitization done, all 4 panels read with paired ≥9/11)
+- **#884** closed as duplicate (consolidated into #1004)
+- **#947** reparented under #1004 as the cross-cutting CI-guard task
+- **#1004** opened — epic "Backfill specs-log.md across all optical-specs folders"
+- **#1005-#1012** opened — 8 per-brand sub-tasks under #1004
+- **#1005** closed (Tokina specs-logs landed in this session)
+
+#### Key changes
+
+- **GEODESIC_DP dispatch** for the Tokina family — per-hue Viterbi shortest path through the dilated mask. Replaces the legacy SKELETON_CONTINUOUS_PICK / PER_COLUMN_RIDGE that fragmented dashed curves at coincidence regions. Aggregate calibration: paired 315 → 356, median \|d\| 0.022 → 0.020, in-band 86.3% → 88.2%.
+- **Plot-box y_top correction for Tokina 11-18.** Pre-correction y_top=235 was at the printed frame; mechanical gridline-derived value is y_top=219 (one 155-px step above the 80% gridline). The 16-px error was clipping the upper red curve where it tracks at 100% MTF in the left half. Same correction applied to the 18mm panel.
+- **Sister-curve fallback and center symmetry as post-extraction physics.** When a curve has no raw ink within ±10 cols of a sample, the reading falls back to the sister curve (10S↔10M and 30S↔30M). At fraction 0.0, S is copied to M (B4 enforcement, not averaging — averaging splits the difference between the right value and a drifted DP-path value).
+- **Sampler snap-to-raw-centroid.** The DP path's y is biased ~1-2 px low for solid strokes because of dilation + antialiasing. At sample time, snap to the raw-mask ink centroid in a tight ±5 col × ±8 row window when ink exists; fall back to the DP skeleton's y when it doesn't (preserves dash-gap interpolation). Restored the per-pixel accuracy the early raw-anchoring DP gave us without re-introducing the failures that motivated dropping it.
+- **`py -m mtfdigitizer.log`** — new per-lens digitization-log generator. One markdown per lens (multi-panel lenses like Tokina 11-18 group under one lens slug). Each log carries: legend, per-field stats (paired / med \|Δ\| / p95 \|Δ\| / sister-fill), Unicode sparklines for visual at-a-glance shape, four narrow 4-column tables (frac, EYE, EX, Δ — phone-friendly), center/edge summary, shape metrics (peak position, half-falloff).
+- **`--write-readings` flag** on `mtfdigitizer.calibrate` — writes per-chart audit grids under `referenceset/readings/<slug>.md`. Diff across algorithm changes to see exactly what moved.
+- **`--check` flag** on `mtfdigitizer.log` — re-renders in memory and exits non-zero on diff or missing file. Catches stale logs and hand-edits.
+- **ADR-040** documents the digitization-log: structure, banner, narrow-table constraint, relation to the three sibling logs (specs-log / scoring-log / analysis).
+- **EYE / EX / Δ terminology.** EYE = eye-read ground truth from `referenceset/charts.py`. EX = extractor output. Δ = `|EX − EYE|`. Legend block at the top of every generated log.
+- **Sparklines.** 11 Unicode-block characters per curve (`▁▂▃▄▅▆▇█`) encoding MTF value; `·` for None. Stacked EX/EYE pairs make divergence visible at a glance — useful when the overlay PNG is hard to read on a phone.
+- **`docs/optical-specs/<lens-slug>/digitization-log.md`** now in 4 Tokina folders. **`specs-log.md`** backfilled for 4 Tokina folders.
+- **Test counts:** 182 pytest pass (5 new dp_extract tests, refactored continuous_pick test set).
+
+#### Tokina calibration delta (start of session → end)
+
+- Aggregate paired: 315 → **356** (+41)
+- Aggregate median \|d\|: 0.022 → **0.020**
+- Aggregate within ±0.05: 86.3% → **88.2%**
+- 11mm 10M @ frac 0.0: 0.96 (wrong, sat on 30M ink) → **1.00** (B4 via S→M copy)
+- 11mm 30M paired: 3/11 → **9/11**
+- 18mm 10S paired: 7/11 → **10/11**
+- 23/33/56 prime coverage: 6-11/11 (variable) → **11/11 across the board**
+
+#### Key decisions
+
+- **Drop B2 as per-column gate inside the DP dispatch, keep it only at sample time.** B2 was returning None at columns where dashed lines have a gap — the curve clearly exists there but no ink lands at the exact sample column. The DP smoothness prior is the right interpolation; the per-column gate was producing false Nones inside the curve. Refused to make B2 a support-interval test (too complex); refused to drop it entirely (loses safety). Sample-time check against the raw mask is the compromise: gate fires only at the 11 fixed sample positions, not every column.
+- **Sister fallback is per-physics, not per-algorithm.** When 10M's raw ink is absent at a sample, the value is 10S's value (same frequency, sister polarization). This is what a human reading the chart does — the two curves of the same frequency are coupled by physics at the optical axis and tightly correlated elsewhere. Better than letting the DP path drift onto another curve's ink and report a value that looks reasonable but isn't.
+- **Center symmetry copies S to M, not the average.** Averaging splits the difference between a correct S reading and a drifted M reading. The S curve is solid and less prone to centroid drift; trust it.
+- **Snap sampling to raw-mask centroid for accuracy.** Reads from the actual stroke center, not the DP-smoothed centerline. Without this, all 10 lp/mm readings sat ~0.01-0.02 below the chart's true 100% line.
+- **Narrow tables (≤4 data columns), not wide grids.** User feedback: 13-column wide grid is unreadable on a phone. Per-field 4-column tables (frac, EYE, EX, Δ) fit any screen.
+- **`digitization-log.md` is generated, not authored.** First per-lens file in `docs/optical-specs/` that's tool-emitted. Banner at the top + `--check` for CI staleness detection. ADR-040 documents this and contrasts with the three hand-written sibling logs.
+- **Auto-merge once trust is established.** PR #1003 used auto-merge (squash) after the user explicitly opted in. PR #1013 was merged manually because auto-merge didn't take and CI was already green.
+
+#### Notes for next session
+
+- **Push 7 remaining per-brand sub-tasks of #1004.** Order roughly easiest first: Sigma (2), Voigtlander (3), Zeiss (3), Tamron (4), then Viltrox (14), Samyang (20), Fujifilm (23). Resolve `_pending-mitakon-cine/` as part of #1004.
+- **#947 CI guard for specs-log presence.** Now that 4 Tokina folders are documented, the CI hook that fails when a new folder ships without specs-log.md is the natural way to keep the gap from regressing.
+- **Digitize more brands.** The DP pipeline + sister fallback + center symmetry combination is now stable. Sigma, Viltrox, and 7Artisans charts are next candidates; their reference set entries already have plot boxes.
+- **Real-ESRGAN/CLAHE fallback.** Still on epic #932 as optional.
+- **Investigate the 0.04-0.10 p95 outliers on Tokina 23mm.** `resolution30S` p95 \|d\| 0.130 at frac 0.8 is the worst remaining sample — the chart has the curves crossing in that region, which the DP path may not handle perfectly.
