@@ -64,11 +64,18 @@ _FREQ_PAIRS: tuple[tuple[str, str], ...] = (
 
 # --- Tuning knobs ----------------------------------------------------
 # Documented in `referenceset/plausibility.md`. Picked so the Samyang
-# 300mm reflex (all 1.0) fires the flatness prior cleanly while the
-# Samyang 85mm 10M (mean ~0.93, stdev ~0.01) does not.
+# 300mm reflex (all 1.0, stdev ~0.001) fires the flatness prior cleanly
+# while genuinely near-flat real curves do not: the Samyang 85mm 10M
+# (mean ~0.93) is saved by the mean gate, and the Sigma 56mm 10M
+# (mean ~0.967, stdev ~0.016 — a sharp lens barely tapering at 10 lp/mm)
+# is saved by the stdev gate. The stdev bound tightened 0.02 → 0.01 when
+# the (SPLIT_BY_DASH, GEODESIC_DP) dispatch gave Sigma a complete 10M
+# curve: a dead-flat placeholder sits at stdev ~0.001, a real near-flat
+# curve at ~0.016, so 0.01 separates them with margin. Tightening can
+# only remove firings, never add them — no previously-clean chart regresses.
 
 FLATNESS_MEAN_THRESHOLD: float = 0.95
-FLATNESS_STDEV_THRESHOLD: float = 0.02
+FLATNESS_STDEV_THRESHOLD: float = 0.01
 
 # Per-position tolerance for the inequality priors. Eye-reading is
 # ~+/-0.02 (one half-gridline tick — same precision the reference set

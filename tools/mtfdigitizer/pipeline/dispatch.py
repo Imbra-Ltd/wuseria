@@ -70,7 +70,9 @@ import numpy as np
 from ..profiles.types import MtfProfile
 from .continuous_pick import extract_two_curves_per_hue
 from .dp_extract import (
+    curve_to_field_skeleton,
     curves_to_field_skeletons,
+    extract_one_curve_dp,
     extract_two_curves_dp,
 )
 from .masks import masks_by_curve_name
@@ -281,6 +283,36 @@ def field_skeletons(
                 field = curve_field(freq, sm)
                 if field is not None:
                     out[field] = sk
+    elif (
+        profile.style_axis == "SPLIT_BY_DASH"
+        and profile.hue_meaning == "GEODESIC_DP"
+    ):
+        # Same dash split as (SPLIT_BY_DASH, FREQUENCY): each hue is one
+        # frequency, the longest CC is the solid line and the remainder
+        # is the dashed line. The difference is the dashed line — its
+        # fragments leave the legacy skeleton gappy, so the sampler
+        # returns None at any sample column that lands in a dash gap.
+        # Here the dashed curve gets a single Viterbi DP pass that
+        # bridges the gaps (the smoothness prior IS the interpolation),
+        # while the solid line keeps its already-continuous skeleton
+        # unchanged. See `pipeline/dp_extract.py::extract_one_curve_dp`.
+        if plot_box is None:
+            raise ValueError("(SPLIT_BY_DASH, GEODESIC_DP) requires plot_box")
+        solid_sm, dashed_sm = ("M", "S") if profile.dashed_is_sagittal else ("S", "M")
+        freq_by_color = dict(zip(unique_named_hues(profile), profile.frequencies_lpmm))
+        for color_name, mask in curve_masks.items():
+            skeleton = close_and_skeletonize(mask)
+            split = split_sm_by_cc_width(skeleton)
+            freq = freq_by_color[color_name]
+            solid_field = curve_field(freq, solid_sm)
+            if solid_field is not None:
+                out[solid_field] = split.sagittal
+            dashed_field = curve_field(freq, dashed_sm)
+            if dashed_field is not None and split.meridional.any():
+                curve = extract_one_curve_dp(split.meridional, plot_box)
+                out[dashed_field] = curve_to_field_skeleton(curve, mask)
+            elif dashed_field is not None:
+                out[dashed_field] = split.meridional
     elif (
         profile.style_axis == "HUE_IS_CURVE"
         and profile.hue_meaning == "CURVE_IDENTITY"

@@ -36,7 +36,7 @@ to run all four priors over them.
 | -------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | `center_ge_edge`           | Per field, MTF(center) ≥ MTF(edge)                                               | `INEQUALITY_TOLERANCE = 0.02` (one half-gridline tick) |
 | `ten_ge_thirty`            | Per position, 10 lp/mm ≥ 30 lp/mm on the same S/M side                           | `INEQUALITY_TOLERANCE = 0.02`                          |
-| `not_suspiciously_flat`    | Per field, NOT (mean ≥ 0.95 AND stdev ≤ 0.02) — no real lens holds ~1.0 at edge  | `FLATNESS_MEAN_THRESHOLD = 0.95`, `FLATNESS_STDEV_THRESHOLD = 0.02` |
+| `not_suspiciously_flat`    | Per field, NOT (mean ≥ 0.95 AND stdev ≤ 0.01) — no real lens holds ~1.0 at edge  | `FLATNESS_MEAN_THRESHOLD = 0.95`, `FLATNESS_STDEV_THRESHOLD = 0.01` |
 | `in_range`                 | Every defined value in [0.0, 1.0]                                                | hard bounds                                            |
 
 The verdict is binary by design — these are physical facts, not
@@ -55,9 +55,9 @@ statistical signals; either the data violates them or it doesn't.
 
 ## samyang-300mm-f6-3-ed-umc-cs-reflex (idealized-flat)
   FAIL not_suspiciously_flat    (3 hits on contrast10M, contrast10S, resolution30M)
-  [not_suspiciously_flat   ] contrast10S    whole   mean 0.984 >= 0.95 and stdev 0.001 <= 0.02 (11/11 defined) — idealized/placeholder?
-  [not_suspiciously_flat   ] contrast10M    whole   mean 0.988 >= 0.95 and stdev 0.002 <= 0.02 (10/11 defined) — idealized/placeholder?
-  [not_suspiciously_flat   ] resolution30M  whole   mean 0.978 >= 0.95 and stdev 0.001 <= 0.02 (5/11 defined) — idealized/placeholder?
+  [not_suspiciously_flat   ] contrast10S    whole   mean 0.984 >= 0.95 and stdev 0.001 <= 0.01 (11/11 defined) — idealized/placeholder?
+  [not_suspiciously_flat   ] contrast10M    whole   mean 0.988 >= 0.95 and stdev 0.002 <= 0.01 (10/11 defined) — idealized/placeholder?
+  [not_suspiciously_flat   ] resolution30M  whole   mean 0.978 >= 0.95 and stdev 0.001 <= 0.01 (5/11 defined) — idealized/placeholder?
 ```
 
 ### Aggregate

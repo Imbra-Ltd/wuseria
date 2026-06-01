@@ -227,6 +227,61 @@ def extract_two_curves_dp(
     return CurvePoints(points=upper_pts), CurvePoints(points=lower_pts)
 
 
+def extract_one_curve_dp(
+    mask: np.ndarray,
+    plot_box: PlotBox,
+    *,
+    alpha: float = _ALPHA,
+    max_jump: int = _MAX_JUMP,
+    dilate_kernel_w: int = _DILATE_KERNEL_W,
+) -> CurvePoints:
+    """Extract a single curve from a one-curve mask via one Viterbi pass.
+
+    Used by the ``(SPLIT_BY_DASH, GEODESIC_DP)`` dispatch: after the
+    dash split isolates the dashed (meridional) line, its fragments are
+    one curve with gaps. A single DP path through the horizontally
+    dilated mask bridges those gaps with the smoothness prior — the
+    same machinery ``extract_two_curves_dp`` uses, minus the second
+    erase-and-rerun pass (there is only one curve here).
+
+    Returns one (x, y) per plot column in absolute image coordinates;
+    the B2 honesty check runs later, at sampling time.
+    """
+    box = mask[
+        plot_box.y_top : plot_box.y_bottom + 1,
+        plot_box.x_left : plot_box.x_right + 1,
+    ].astype(np.uint8)
+    kernel = cv2.getStructuringElement(
+        cv2.MORPH_RECT, (dilate_kernel_w, _DILATE_KERNEL_H)
+    )
+    dilated = cv2.dilate(box, kernel)
+    emission = (dilated == 0).astype(np.float64)
+    trace = _viterbi_path(emission, alpha, max_jump)
+    pts = tuple(
+        (x + plot_box.x_left, float(y + plot_box.y_top))
+        for x, y in enumerate(trace)
+    )
+    return CurvePoints(points=pts)
+
+
+def curve_to_field_skeleton(
+    curve: CurvePoints, raw_mask: np.ndarray
+) -> np.ndarray:
+    """Rasterize one DP path into a full-image skeleton mask.
+
+    Single-curve counterpart of ``curves_to_field_skeletons``; the path
+    is the answer at every column (gaps already bridged), so this just
+    plots one pixel per column. ``raw_mask`` is used only for its shape.
+    """
+    h, w = raw_mask.shape
+    sk = np.zeros(raw_mask.shape, dtype=np.uint8)
+    for x, y in curve.points:
+        xi, yi = int(x), int(round(y))
+        if 0 <= yi < h and 0 <= xi < w:
+            sk[yi, xi] = 1
+    return sk
+
+
 def curves_to_field_skeletons(
     upper_curve: CurvePoints,
     lower_curve: CurvePoints,

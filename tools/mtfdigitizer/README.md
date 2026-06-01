@@ -75,9 +75,17 @@ chart PNG
 
 Per-profile dispatch in `dispatch.py`:
 
-- `(SPLIT_BY_DASH, FREQUENCY)` → Sigma + 7Artisans dialects: each hue is
-  a frequency, CC-split gives S/M (7Artisans flips the convention via
-  `dashed_is_sagittal=True`)
+- `(SPLIT_BY_DASH, FREQUENCY)` → 7Artisans dialect (and legacy Sigma):
+  each hue is a frequency, CC-split gives S/M (7Artisans flips the
+  convention via `dashed_is_sagittal=True`). The dashed (M) curve's
+  skeleton is gappy, so the sampler returns `None` at dash-gap columns.
+- `(SPLIT_BY_DASH, GEODESIC_DP)` → Sigma dialect: same per-hue dash
+  split, but the dashed (M) sub-skeleton is bridged by a single Viterbi
+  DP pass (`extract_one_curve_dp`) so M is covered end to end; the solid
+  (S) line keeps its already-continuous skeleton. Presence for the
+  sister-fallback runs on a widely-dilated dashed mask so a curve whose
+  last dash falls just short of the plot edge still trusts the DP path
+  there. See `pipeline/dp_extract.py`, `pipeline/pipeline.py`
 - `(HUE_IS_CURVE, CURVE_IDENTITY)` → Samyang dialect: hue name encodes
   both frequency and S/M (e.g. `10S-red`)
 - `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` → legacy Tokina prime dialect:

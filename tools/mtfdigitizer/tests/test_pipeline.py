@@ -149,25 +149,28 @@ def test_b2_returns_none_when_skeleton_has_no_data_at_target() -> None:
         assert sample_skeleton_at_fraction(empty, fraction, plot_box) is None
 
 
-def test_b2_sigma_M_returns_none_where_dashed_has_no_skeleton_pixel() -> None:
-    """The Sigma extraction has positions where the dashed M curve's
-    bridged skeleton has no pixel within the bracket window — those
-    must report None, not the nearby S value."""
+def test_sigma_dashed_M_curves_fully_covered_by_dp_bridging() -> None:
+    """Under (SPLIT_BY_DASH, GEODESIC_DP) the dashed M curves are bridged
+    end to end: the DP smoothness prior carries a continuous path across
+    every dash gap, so both M fields report a value at all 11 samples
+    instead of the None-at-gap behaviour of the legacy FREQUENCY dispatch.
+
+    (Before #1015's DP port this chart left contrast10M at 4/11 and
+    resolution30M at 3/11 defined; the gaps were dash periods, not
+    genuine curve absence — exactly what the DP path is meant to fix.)"""
     result = extract_chart(
         SIGMA_56_CHART,
         SIGMA_2COLOR_SOLID_DASHED,
         SIGMA_56_PLOT_BOX,
         image_height_mm=14.0,
     )
-    none_count = sum(
+    m_none = sum(
         1 for r in result.readings if r.contrast10M is None or r.resolution30M is None
     )
-    # On Sigma, dashed-M fragments aren't long-enough CCs at every sample
-    # point — multiple positions legitimately read None. The test is
-    # "some are None," not "specifically positions X". Tightening this
-    # would couple the test to morphological-kernel tuning that #935+
-    # work may rebalance.
-    assert none_count > 0, "B2 contract: at least some Sigma M readings should be None"
+    assert m_none == 0, (
+        "DP bridging should leave no None in the dashed M curves of a "
+        f"full-field Sigma chart; got {m_none}"
+    )
 
 
 # --- Acceptance: reference set shapes reproduced --------------------------
