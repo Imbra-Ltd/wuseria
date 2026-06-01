@@ -42,31 +42,10 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from .family_profile import profile_for_chart
 from .pipeline import PlotBox, extract_chart
 from .pipeline.types import ExtractedChart, SampledReading
-from .profiles import (
-    SAMYANG_4COLOR_ALL_SOLID,
-    SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
-    SIGMA_2COLOR_SOLID_DASHED,
-    TOKINA_2COLOR_FREQUENCY,
-    VILTROX_BW_DASHED_F12,
-)
-from .profiles.types import MtfProfile
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
-
-
-# Map style_family declared on each reference chart to the runtime
-# profile. Centralised so we don't sprinkle per-family lookups across
-# the codebase. Kept here rather than `referenceset/` because the
-# binding is profile-side, not reference-side.
-_FAMILY_TO_PROFILE: dict[str, MtfProfile] = {
-    "mainstream-2color-solid-dashed": SIGMA_2COLOR_SOLID_DASHED,
-    "mainstream-4color-all-solid": SAMYANG_4COLOR_ALL_SOLID,
-    "idealized-flat": SAMYANG_4COLOR_ALL_SOLID,
-    "samecolor-dashed-sm": SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
-    "2color-frequency": TOKINA_2COLOR_FREQUENCY,
-    "bw-dashed-promo": VILTROX_BW_DASHED_F12,
-}
 
 
 def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
@@ -170,11 +149,7 @@ def emit_lens(
             f"reference chart {chart.slug!r} has no plot_box or ground_truth — "
             f"emit only supports charts that calibrate"
         )
-    profile = _FAMILY_TO_PROFILE.get(chart.style_family)
-    if profile is None:
-        raise ValueError(
-            f"no runtime profile mapped for style_family {chart.style_family!r}"
-        )
+    profile = profile_for_chart(chart)
 
     root = repo_root or Path(__file__).resolve().parents[2]
     extracted: ExtractedChart = extract_chart(
@@ -221,6 +196,18 @@ _DEFAULT_SOURCES: dict[str, str] = {
     ),
     "tokina-atx-m-23mm-f1-4-x": (
         "https://www.lenstip.com/665.1-Lens_review-Tokina_atx-m_23_mm_f_1.4_X-Introduction.html"
+    ),
+    "tokina-atx-m-33mm-f1-4-x": (
+        "https://tokinalens.com/product/atx_m_33mm_f1_4_x/"
+    ),
+    "tokina-atx-m-56mm-f1-4-x": (
+        "https://tokinalens.com/product/atx_m_56mm_f1_4_x/"
+    ),
+    "tokina-atx-m-11-18mm-f2-8-x-at-11mm": (
+        "https://tokinalens.com/product/atx_m_11_18mm_f2_8_x/"
+    ),
+    "tokina-atx-m-11-18mm-f2-8-x-at-18mm": (
+        "https://tokinalens.com/product/atx_m_11_18mm_f2_8_x/"
     ),
     "7artisans-50mm-f1-2-mark-ii": (
         "https://7artisans.store/products/7artisans-50mm-f-1-2-mark-ii-prime-lens"

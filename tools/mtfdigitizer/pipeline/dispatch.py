@@ -18,9 +18,32 @@ Out-of-band combinations raise `NotImplementedError` — generalizing PR
   S/M labels: dashed = S, solid = M; opt in via `profile.dashed_is_sagittal`.)
 - `(HUE_IS_CURVE, CURVE_IDENTITY)` — Samyang dialect: each hue uniquely
   identifies one curve; the name encodes both frequency and S/M.
-- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` — Tokina dialect: hue carries S/M
-  (named "S-*"/"M-*"); within each hue, `y_band_split` separates the
-  upper frequency from the lower.
+- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` — Tokina prime dialect: hue carries
+  S/M (named "S-*"/"M-*"); within each hue, `y_band_split` separates the
+  upper frequency from the lower. Works when the two frequencies sit in
+  cleanly separable y-bands.
+- `(HUE_IS_CURVE, PER_COLUMN_RIDGE)` — Tokina wide-zoom variant where the
+  two frequencies overlap in y near center (30 lp/mm starts at OTF ~0.90
+  while 10 lp/mm starts at 1.00; their y-bands intersect AND dashed-line
+  fragments of the two curves interleave in y across the field, so any
+  CC-based partition misclassifies). Per-column ridge tracking handles
+  arbitrary curve overlap as long as the two curves of one color never
+  cross within a column: the upper run per column = upper frequency,
+  the lower run = lower frequency. Uses `ridge.ridge_tracks_for_hue`.
+- `(HUE_IS_CURVE, SKELETON_CONTINUOUS_PICK)` — robust per-hue variant
+  ported from the retired mtf-extract-skeleton.py. Dilate + skeletonize
+  per hue, split into connected components by mean-y (top = upper
+  freq, bottom = lower freq), then walk each CC column-by-column
+  picking the branch closest to the previous y (greedy y-continuity).
+  Replaces per-column ridge for the Tokina wide-zoom case: the per-
+  CC continuity walk handles fragmented dashed curves AND curve
+  coincidence cleanly. See `pipeline/continuous_pick.py`.
+- `(HUE_IS_CURVE, GEODESIC_DP)` — per-hue Viterbi shortest path
+  through the dilated mask. Replaces skeletonization with a global-
+  optimum DP whose smoothness prior bridges dashed-line gaps without
+  the staircase coverage holes that defeat sampling, and refuses to
+  hop to a parallel curve at near-touching regions. Default for the
+  Tokina family (5 charts). See `pipeline/dp_extract.py`.
 - `(SPLIT_BY_DASH, Y_BAND_IS_FREQUENCY)` — Viltrox B&W dialect: a single
   neutral mask is split by `y_band_split` into frequency groups, then by
   CC-width within each group for S/M.
@@ -45,8 +68,13 @@ import cv2
 import numpy as np
 
 from ..profiles.types import MtfProfile
+from .continuous_pick import extract_two_curves_per_hue
+from .dp_extract import (
+    curves_to_field_skeletons,
+    extract_two_curves_dp,
+)
 from .masks import masks_by_curve_name
-from .ridge import ridge_tracks_to_fields
+from .ridge import ridge_tracks_for_hue, ridge_tracks_to_fields
 from .skeleton import close_and_skeletonize
 from .split import split_sm_by_cc_width
 from .types import PlotBox
@@ -287,6 +315,84 @@ def field_skeletons(
                 field = curve_field(freq, sm)
                 if field is not None and band_mask.any():
                     out[field] = close_and_skeletonize(band_mask)
+    elif (
+        profile.style_axis == "HUE_IS_CURVE"
+        and profile.hue_meaning == "PER_COLUMN_RIDGE"
+    ):
+        # Each hue carries S or M (same naming as SAGITTAL_MERIDIONAL).
+        # Within each hue, run per-column ridge tracking: for every x
+        # column the topmost run is the upper-frequency point, the
+        # bottommost run is the lower-frequency point. The greedy
+        # cluster-by-tracks step in `ridge.py` then assembles per-column
+        # points into two coherent tracks per hue. Works for charts where
+        # the two curves of one color never cross spatially, regardless
+        # of whether their dashed fragments interleave in y-space.
+        if plot_box is None:
+            raise ValueError(
+                "PER_COLUMN_RIDGE profile requires plot_box for per-column scanning"
+            )
+        upper_freq, lower_freq = profile.frequencies_lpmm[0], profile.frequencies_lpmm[1]
+        for hue_name, mask in curve_masks.items():
+            sm = parse_sagittal_meridional_name(hue_name)
+            hue_fields = ridge_tracks_for_hue(
+                mask, plot_box, sm, upper_freq=upper_freq, lower_freq=lower_freq
+            )
+            out.update(hue_fields)
+    elif (
+        profile.style_axis == "HUE_IS_CURVE"
+        and profile.hue_meaning == "SKELETON_CONTINUOUS_PICK"
+    ):
+        # Each hue carries S or M. Per hue: dilate+skeletonize, split
+        # CCs by mean-y (top = upper-freq, bottom = lower-freq), then
+        # per CC walk columns picking the branch closest to the
+        # previous y. Ports the legacy mtf-extract-skeleton.py approach
+        # for robust extraction of dashed-line curves and coincident-
+        # curve regions. See `pipeline/continuous_pick.py`.
+        if plot_box is None:
+            raise ValueError(
+                "SKELETON_CONTINUOUS_PICK profile requires plot_box"
+            )
+        upper_freq, lower_freq = profile.frequencies_lpmm[0], profile.frequencies_lpmm[1]
+        for hue_name, mask in curve_masks.items():
+            sm = parse_sagittal_meridional_name(hue_name)
+            upper_curve, lower_curve = extract_two_curves_per_hue(mask, plot_box)
+            for freq, curve in (
+                (upper_freq, upper_curve),
+                (lower_freq, lower_curve),
+            ):
+                field = curve_field(freq, sm)
+                if field is None or not curve.points:
+                    continue
+                sk = np.zeros(mask.shape, dtype=np.uint8)
+                for x, y in curve.points:
+                    sk[int(round(y)), x] = 1
+                out[field] = sk
+    elif (
+        profile.style_axis == "HUE_IS_CURVE"
+        and profile.hue_meaning == "GEODESIC_DP"
+    ):
+        # Each hue carries S or M. Per hue: Viterbi shortest path through
+        # the dilated mask finds the two curves; the smoothness prior
+        # bridges dashed-line gaps and refuses to hop to a parallel
+        # curve at near-touching regions. The B2-honest rasterizer
+        # only emits skeleton pixels where the dilated mask had ink
+        # near the predicted point — DP extrapolation through pure
+        # white sections does not fabricate samples.
+        # See `pipeline/dp_extract.py`.
+        if plot_box is None:
+            raise ValueError("GEODESIC_DP profile requires plot_box")
+        upper_freq, lower_freq = profile.frequencies_lpmm[0], profile.frequencies_lpmm[1]
+        for hue_name, mask in curve_masks.items():
+            sm = parse_sagittal_meridional_name(hue_name)
+            upper_curve, lower_curve = extract_two_curves_dp(mask, plot_box)
+            upper_sk, lower_sk = curves_to_field_skeletons(
+                upper_curve, lower_curve, mask, plot_box
+            )
+            for freq, sk in ((upper_freq, upper_sk), (lower_freq, lower_sk)):
+                field = curve_field(freq, sm)
+                if field is None or sk is None or not sk.any():
+                    continue
+                out[field] = sk
     elif (
         profile.style_axis == "SPLIT_BY_DASH"
         and profile.hue_meaning == "Y_BAND_IS_FREQUENCY"

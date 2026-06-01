@@ -56,3 +56,15 @@ class ExtractedChart:
     plot_box: PlotBox
     image_height_mm: float
     readings: tuple[SampledReading, ...]  # length 11
+    # Per-field diagnostic counters surfaced for the digitization log.
+    # `sister_fallback_count[field]` is the number of the 11 sample
+    # fractions whose value was filled from the sister curve because
+    # the raw ink mask of this field was empty there. 0 means every
+    # sample came from direct extraction. Default empty dict means
+    # diagnostics weren't tracked (e.g. legacy callers).
+    sister_fallback_count: dict[str, int] = None  # type: ignore[assignment]
+
+    def __post_init__(self) -> None:
+        # Frozen dataclass + mutable default; resolve None to {} after init.
+        if self.sister_fallback_count is None:
+            object.__setattr__(self, "sister_fallback_count", {})

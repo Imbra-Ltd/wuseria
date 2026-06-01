@@ -30,7 +30,8 @@ Style families (single source of truth):
 - `mainstream-2color-solid-dashed`  — Sigma-style: two hues, S solid / M dashed
 - `mainstream-4color-all-solid`     — Samyang-style: 4 hues, all solid
 - `samecolor-dashed-sm`             — Chinese: one hue per frequency, S/M = solid/dashed
-- `2color-frequency`                — Tokina-style: colors carry frequency, S/M = solid/dotted
+- `2color-frequency`                — Tokina prime: red=S/blue=M, frequency by y-band
+- `2color-frequency-cc-rank`        — Tokina wide-zoom: same palette, frequency by per-hue CC rank
 - `bw-dashed-promo`                 — soft B&W promo, all-dashed
 - `multifreq-press-kit`             — German press kit, 3 frequencies, B&W solid/dashed
 - `idealized-flat`                  — placeholder/marketing flat at ~1.0
@@ -168,6 +169,66 @@ _TOKINA_23_GT: GroundTruthCurves = {
     },
 }
 
+# Tokina atx-m 33mm — same chart template as the 23mm.
+# Beige bg, red solid = S, blue dotted = M; upper pair = 10 lp/mm,
+# lower pair = 30 lp/mm. Sample positions every 1.4mm to 14mm.
+_TOKINA_33_GT: GroundTruthCurves = {
+    "f/1.4": {
+        # Red solid upper — 10S
+        "contrast10S": (0.95, 0.96, 0.93, 0.95, 0.91, 0.92, 0.91, 0.92, 0.87, 0.81, 0.76),
+        # Blue dotted upper — 10M; gentler decline to edge
+        "contrast10M": (0.95, 0.94, 0.96, 0.95, 0.92, 0.90, 0.85, 0.80, 0.74, 0.67, 0.60),
+        # Red solid lower — 30S; small peak ~5mm, dip then edge fall
+        "resolution30S": (0.72, 0.69, 0.71, 0.72, 0.71, 0.65, 0.55, 0.50, 0.57, 0.55, 0.30),
+        # Blue dotted lower — 30M; steady decline, edge crash
+        "resolution30M": (0.72, 0.67, 0.62, 0.58, 0.55, 0.50, 0.45, 0.42, 0.45, 0.41, 0.30),
+    },
+}
+
+# Tokina atx-m 56mm — same chart template as the 23mm/33mm.
+_TOKINA_56_GT: GroundTruthCurves = {
+    "f/1.4": {
+        # Red solid upper — 10S; bumpy with small peak near 4mm
+        "contrast10S": (0.93, 0.90, 0.88, 0.93, 0.87, 0.86, 0.85, 0.78, 0.72, 0.70, 0.65),
+        # Blue dotted upper — 10M; smoother, holds high then drops at edge
+        "contrast10M": (0.93, 0.90, 0.88, 0.90, 0.89, 0.87, 0.88, 0.85, 0.80, 0.75, 0.62),
+        # Red solid lower — 30S; mid-field bumpy, falls to ~0.45 plateau
+        "resolution30S": (0.72, 0.65, 0.60, 0.65, 0.62, 0.65, 0.63, 0.55, 0.45, 0.43, 0.45),
+        # Blue dotted lower — 30M; plateau then crash past 12mm
+        "resolution30M": (0.70, 0.65, 0.62, 0.58, 0.55, 0.55, 0.55, 0.55, 0.52, 0.45, 0.18),
+    },
+}
+
+# Tokina atx-m 11-18mm at 11mm panel — white bg, red solid = S,
+# blue dashed = M. Different visual style from 23mm (white bg, gridlines
+# every 20%) but same color/style convention; profile still
+# TOKINA_2COLOR_FREQUENCY. Ground truth is pixel-level (see
+# `tools/_probe_tokina_centerread.py` history) — eye-reading at the
+# 20% gridline spacing was producing systematic errors; mechanical
+# read from the source PNG is the corrected single source of truth.
+# Positions 0.0 and 14.0 are None: the source curves don't extend to
+# the printed y-axis line / right plot border in the chart artwork.
+_TOKINA_11_18_AT_11_GT: GroundTruthCurves = {
+    "F2.8": {
+        "contrast10S": (None, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.98, 0.92, None),
+        "contrast10M": (None, 1.00, 1.00, 1.00, 0.99, 0.98, 0.95, 0.92, 0.91, 0.88, None),
+        "resolution30S": (None, 0.98, 0.94, 0.88, 0.84, 0.83, 0.85, 0.84, 0.76, 0.60, None),
+        "resolution30M": (None, 0.96, 0.90, 0.89, 0.89, 0.79, 0.69, 0.59, 0.54, 0.48, None),
+    },
+}
+
+# Tokina atx-m 11-18mm at 18mm panel — same template, same pixel-probe
+# methodology. 18mm shows steeper edge falloff than 11mm (expected for
+# the long end of a wide zoom).
+_TOKINA_11_18_AT_18_GT: GroundTruthCurves = {
+    "F2.8": {
+        "contrast10S": (None, 1.00, 1.00, 1.00, 1.00, 0.99, 0.98, 0.95, 0.91, 0.83, 0.74),
+        "contrast10M": (None, 1.00, 1.00, 0.99, 0.99, 0.98, 0.96, 0.93, 0.90, 0.88, None),
+        "resolution30S": (None, 0.91, 0.88, 0.83, 0.79, 0.74, 0.66, 0.55, 0.49, 0.48, 0.43),
+        "resolution30M": (None, 0.89, 0.82, 0.79, 0.78, 0.71, 0.61, 0.51, 0.42, 0.35, None),
+    },
+}
+
 # Viltrox 75mm — x positions: 0, 1.4, 2.8, ..., 14.0
 # f/1.2 panel only (top). All B&W curves; per the legend, solid = S,
 # dashed = M. Curves bunch tightly near 1.0 at center; 30M (lowest
@@ -266,6 +327,68 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         # 695 (25%) → 728 px per 100% of OTF; y_bottom (0%) = 877.
         plot_box=PlotBoxCoords(x_left=186, x_right=1368, y_top=149, y_bottom=877),
         ground_truth=_TOKINA_23_GT,
+    ),
+    ReferenceChart(
+        slug="tokina-atx-m-33mm-f1-4-x",
+        chart_path="docs/optical-specs/tokina-atx-m-33mm-f1-4-x/tokina-atx-m-33mm-f1-4-x-mtf.png",
+        style_family="2color-frequency",
+        apertures=("f/1.4",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="same press-kit template as 23mm/56mm; 10S/M flat to ~10mm then S drops to 0.76 / M to 0.60; 30S has dip-recovery shape, 30M smooth fall to 0.30 at edge",
+        # Plot box from gridline scan: vertical lines at x=182 (0mm tick),
+        # 594 (5mm), 1008 (10mm) → 82.6 px/mm; x_right at 14mm = 1338.
+        # Horizontal gridlines at y=144 (100%), 322 (75%), 500 (50%),
+        # 677 (25%), 855 (0%). Overlay verified the 100% line sits at y=144.
+        plot_box=PlotBoxCoords(x_left=182, x_right=1338, y_top=144, y_bottom=855),
+        ground_truth=_TOKINA_33_GT,
+    ),
+    ReferenceChart(
+        slug="tokina-atx-m-56mm-f1-4-x",
+        chart_path="docs/optical-specs/tokina-atx-m-56mm-f1-4-x/tokina-atx-m-56mm-f1-4-x-mtf.png",
+        style_family="2color-frequency",
+        apertures=("f/1.4",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="same press-kit template as 23mm/33mm; bumpy 10S with peak near 4mm; 30M plateau ~0.55 across mid-field then crash to 0.18 at edge",
+        # Vertical lines at x=338 (0mm), 812 (5mm), 1288 (10mm) → 95.0 px/mm;
+        # x_right at 14mm = 1668. Horizontal lines at y=188/393/597/802/1006
+        # for 100/75/50/25/0%; full five gridlines visible.
+        plot_box=PlotBoxCoords(x_left=338, x_right=1668, y_top=188, y_bottom=1006),
+        ground_truth=_TOKINA_56_GT,
+    ),
+    ReferenceChart(
+        slug="tokina-atx-m-11-18mm-f2-8-x-at-11mm",
+        chart_path="docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-1.png",
+        style_family="2color-frequency-cc-rank",
+        apertures=("F2.8",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="11mm wide-end panel of the 11-18mm zoom; white bg, red solid = S, blue dashed = M, gridlines every 20%; per-column ridge dispatch handles the curve-overlap that defeated the older y_band_split=0.25 path",
+        # X bounds at the data edge (curves drawn from col 333..1670).
+        # Y bounds derived from the printed 20%-spaced gridlines (at
+        # y=374, 529, 683, 840) — extrapolating one 155-px step above
+        # the 80% gridline puts the MTF=100% line at y=219, one step
+        # below the 20% gridline puts MTF=0% at y=995. The earlier
+        # y_top=235 sat 16 px below the actual 100% line, clipping
+        # away the upper red curve where it tracks at 100% in the
+        # left half — extractor returned None there. (#795)
+        plot_box=PlotBoxCoords(x_left=333, x_right=1670, y_top=219, y_bottom=995),
+        ground_truth=_TOKINA_11_18_AT_11_GT,
+    ),
+    ReferenceChart(
+        slug="tokina-atx-m-11-18mm-f2-8-x-at-18mm",
+        chart_path="docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-2.png",
+        style_family="2color-frequency-cc-rank",
+        apertures=("F2.8",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="18mm long-end panel of the 11-18mm zoom; same template as the 11mm panel; per-column ridge dispatch",
+        # X bounds at the data edge (curves end at col 1673, not 1676).
+        # Y bounds from the same gridline-extrapolation as the 11mm panel
+        # (identical chart template, identical 155-px gridline spacing).
+        plot_box=PlotBoxCoords(x_left=331, x_right=1673, y_top=219, y_bottom=995),
+        ground_truth=_TOKINA_11_18_AT_18_GT,
     ),
     ReferenceChart(
         slug="viltrox-af-75mm-f1-2-pro",

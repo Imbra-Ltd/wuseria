@@ -32,22 +32,12 @@ from .pipeline.rendermatch import (
     FieldIou,
     RenderMatchScore,
 )
-from .profiles import SAMYANG_4COLOR_ALL_SOLID, SIGMA_2COLOR_SOLID_DASHED
-from .profiles.types import MtfProfile
+from .family_profile import profile_for_chart
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
 from .triage import precision_of
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-
-
-# Style family → declared profile. Same table as `calibrate.py` — kept
-# in sync by hand for now (two entries; not worth a shared module yet).
-_PROFILE_BY_STYLE: dict[str, MtfProfile] = {
-    "mainstream-2color-solid-dashed": SIGMA_2COLOR_SOLID_DASHED,
-    "mainstream-4color-all-solid": SAMYANG_4COLOR_ALL_SOLID,
-    "idealized-flat": SAMYANG_4COLOR_ALL_SOLID,  # same 4-color template
-}
 
 
 def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
@@ -67,11 +57,7 @@ def _score_one(chart: ReferenceChart) -> RenderMatchScore:
     compare to eye-read values, only to the chart's own skeleton.
     """
     assert chart.plot_box is not None
-    profile = _PROFILE_BY_STYLE.get(chart.style_family)
-    if profile is None:
-        raise ValueError(
-            f"{chart.slug}: no declared profile for style_family={chart.style_family!r}"
-        )
+    profile = profile_for_chart(chart)
     image_path = REPO_ROOT / chart.chart_path
     plot_box = _to_plotbox(chart.plot_box)
     extracted = extract_chart(

@@ -80,13 +80,30 @@ Per-profile dispatch in `dispatch.py`:
   `dashed_is_sagittal=True`)
 - `(HUE_IS_CURVE, CURVE_IDENTITY)` → Samyang dialect: hue name encodes
   both frequency and S/M (e.g. `10S-red`)
-- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` → Tokina dialect: hue carries
-  S/M, `y_band_split` separates frequencies within each hue
+- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` → legacy Tokina prime dialect:
+  hue carries S/M, `y_band_split` separates frequencies within each hue
+  (superseded by `GEODESIC_DP` for the current Tokina charts)
+- `(HUE_IS_CURVE, PER_COLUMN_RIDGE)` → Tokina wide-zoom variant: hue
+  carries S/M, per-column ridge tracking separates frequencies (topmost
+  run per column = upper freq, bottommost = lower freq). Used when the
+  y-bands intersect or dashed fragments interleave in y so neither
+  `y_band_split` nor CC-rank can group them. See `pipeline/ridge.py`
+- `(HUE_IS_CURVE, GEODESIC_DP)` → Tokina default dialect (5 charts):
+  per-hue Viterbi shortest path through the dilated mask finds two
+  curves per color. The smoothness prior bridges dashed-line gaps
+  without skeletonization staircase artefacts and refuses to hop to a
+  parallel curve at near-touching regions. See `pipeline/dp_extract.py`
 - `(SPLIT_BY_DASH, Y_BAND_IS_FREQUENCY)` → Viltrox B&W dialect: single
   neutral mask split by `y_band_split` for frequency, then CC-split
   within each band for S/M
+- `(SPLIT_BY_DASH, CC_RANK_BY_MEAN_Y)` → Viltrox B&W tightly-clustered
+  variant: same single neutral mask, but components ranked by mean-y
+  and split at the largest y-gap instead of a fixed band
+- `(SPLIT_BY_DASH, RIDGE_TRACKING)` → Viltrox AF 75mm f/1.2 variant:
+  per-column ridge centroids clustered into 4 tracks for charts where
+  even raw masks fuse all four curves into one CC. See `pipeline/ridge.py`
 
-Other combinations raise `NotImplementedError` (fail loud).
+Other combinations raise `NotImplementedError` (fail loud, per B1).
 
 ### Known limits, deferred
 
@@ -109,9 +126,42 @@ Other combinations raise `NotImplementedError` (fail loud).
   #931 deemed legitimate; future refinement.
 - **Sigma dashed M is partial** — the morphological close bridges
   *most* dash gaps but not all; positions with no bridged-skeleton
-  pixel correctly return `None` (B2), but the readings file will need
-  the M curve interpolated by the serializer (a later task) or accept
-  gaps.
+  pixel correctly return `None` under the legacy strict-B2 dispatch.
+  The Tokina family addresses the same shape of failure via
+  `GEODESIC_DP` (per-curve support interval + intra-interval
+  interpolation); Sigma still uses the older `SPLIT_BY_DASH +
+  FREQUENCY` dispatch and inherits the gap behaviour. A future
+  refactor may migrate Sigma to the support-interval model too.
+
+## B-rule contracts (B1–B4)
+
+The codebase refers to four named contracts ("B1", "B2", "B3", "B4")
+in docstrings, comments, and ADR-038. They originate in the PR #931
+on-paper audit of the predecessor `mtf-extract-skeleton.py` tool,
+which found four bugs of the same shape — quietly fabricating data
+when the honest answer was "no data here." Each contract names the
+fix; subsequent code that touches the same surface must uphold it.
+
+| Contract | Concern | Rule |
+| --- | --- | --- |
+| **B1** | Profile mismatch | An unknown or mismatched chart profile MUST be refused (fail loud), not silently defaulted to the most common path. Implementation: `profiles/suggest.py::resolve()` raises `ProfileMismatch`; `pipeline/dispatch.py` raises `NotImplementedError` for `(style_axis, hue_meaning)` combinations without a wired branch. |
+| **B2** | Missing samples | Under the legacy dispatches (`continuous_pick.py`, `ridge.py`, `SPLIT_BY_DASH + FREQUENCY`), the sampler MUST return `None` at any sample column where no skeleton pixel exists in the bracket window — never extrapolate, never interpolate across, never copy from a neighbour. Under the DP dispatch (`GEODESIC_DP`), the DP smoothness prior IS the interpolation: each path is a single continuous curve, and its y at every column is that curve's value. Two curves of the same hue can converge to one ink stripe and both still report the shared value — which is the optical reality. `None` only ever appears when a curve has no DP path at all (e.g. hue mask is empty). `pipeline/types.py::SampledReading` and `src/types/mtf.ts::MtfReading` keep every per-field value nullable; `pipeline/rendermatch.py`, `svg.py`, `review.py` break polylines at `None`; `emit.py` passes `None` through as TypeScript `null`. |
+| **B3** | Curve aggregation | Per-column aggregation MUST be order-independent and lossless. The legacy running-average + 5px cap is replaced by an unweighted per-column mean. Implementation: `pipeline/sampling.py` and `pipeline/ridge.py` aggregate by mean / median over column runs, not running averages. |
+| **B4** | Center astigmatism | At the optical axis (position 0), sagittal and meridional MTF are equal by physics. The extractor MUST NOT fabricate divergence at center. Implementation: no caller manufactures an S/M gap at position 0; readings come from the chart pixels at the center column or are `None`. |
+
+The "B2 contract" is the most-referenced of the four because
+nullable readings flow through every downstream stage — the mask
+extractor, the sampler, the rendermatch scorer, the SVG emitter,
+the 3-panel review file, the TypeScript schema, the lens-page
+table renderer. Each stage has its own way of honoring it
+(`None` → broken polyline, em-dash cell, skipped IoU
+contribution); a new stage that consumes `SampledReading` or
+`MtfReading` MUST do the same.
+
+Origin: see the Session 80 dev-journal entry for PR #931 — the
+on-paper audit of `mtf-extract-skeleton.py` that named all four
+contracts. ADR-038 references B1 (§1, §2) and B2 (§2). The
+contracts predate the unified digitizer but apply to it in full.
 
 ## Profile system
 
@@ -178,11 +228,28 @@ confidence-signal sub-task of #932.
 ```bash
 cd tools
 py -m mtfdigitizer.calibrate
+py -m mtfdigitizer.calibrate --write-readings
 ```
 
 Runs `extract_chart()` for every reference chart with both `plot_box` and
 `ground_truth` populated and reports the |d| (absolute offset) distribution
-per field. See `referenceset/calibration.md` for the latest run's findings.
+per field. With `--write-readings`, additionally writes one markdown grid
+per chart under `referenceset/readings/<slug>.md` for diffing across
+algorithm changes. See `referenceset/calibration.md` for the latest
+run's findings.
+
+## Per-lens digitization log
+
+```bash
+cd tools
+py -m mtfdigitizer.log              # Tokina lenses (default)
+py -m mtfdigitizer.log --all        # every lens with a runnable chart
+```
+
+Writes `docs/optical-specs/<lens-slug>/digitization-log.md` with the
+GT-vs-extracted-vs-Δ grid, sister-fallback counters, center/edge
+summary, and shape metrics (peak position, half-falloff). Multi-panel
+lenses (e.g. Tokina 11-18 zoom) get one log with all panels grouped.
 
 ## Running the tests
 

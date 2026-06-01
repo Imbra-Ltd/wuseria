@@ -1,0 +1,133 @@
+# Digitization log: tokina-atx-m-11-18mm-f2-8-x
+
+This lens has 2 reference panels (different focal lengths of the same zoom). One section per panel.
+
+**Legend.**
+
+- **EYE** — eye-read ground truth from the chart, set by a maintainer in `tools/mtfdigitizer/referenceset/charts.py`.
+- **EX** — what the extractor computed for the same sample point.
+- **Δ** — `|EX − EYE|`; the calibration tolerance band is ±0.05.
+- **sister-fill** — count of samples filled from the sister curve.
+- **·** in a sparkline — EYE marked the value as None at that point.
+
+See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi shortest path + raw-centroid snap + sister fallback + center symmetry).
+
+## Panel at 11mm
+
+- **Chart:** `docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-1.png`
+- **Style family:** `2color-frequency-cc-rank`
+- **Dispatch profile:** `tokina-2color-frequency-geodesic-dp`
+- **Plot box (pixels):** x=[333, 1670], y=[219, 995]
+- **Image height:** 14.0 mm
+
+### Sample grid (EYE vs EX)
+
+| Field         | paired | med \|Δ\| | p95 \|Δ\| | sister-fill |
+| ------------- | ------ | --------- | --------- | ----------- |
+| contrast10S   | 9/11   | 0.021     | 0.036     | 0/11        |
+| contrast10M   | 9/11   | 0.017     | 0.029     | 0/11        |
+| resolution30S | 9/11   | 0.022     | 0.051     | 0/11        |
+| resolution30M | 9/11   | 0.031     | 0.043     | 0/11        |
+
+```
+  EX   contrast10S    █████████▇▇  (1.00 → 0.83)
+  EYE  contrast10S    ·████████▇·
+  EX   contrast10M    ██████▇▇▇▇▇  (1.00 → 0.84)
+  EYE  contrast10M    ·██████▇▇▇·
+  EX   resolution30S  ██▇▇▇▇▇▇▆▅▄  (0.97 → 0.45)
+  EYE  resolution30S  ·██▇▇▇▇▇▆▅·
+  EX   resolution30M  ██▇▇▇▆▆▅▅▄▄  (0.97 → 0.40)
+  EYE  resolution30M  ·█▇▇▇▇▆▅▅▄·
+```
+
+| frac | contrast10S EYE | contrast10S EX | contrast10S Δ | contrast10M EYE | contrast10M EX | contrast10M Δ | resolution30S EYE | resolution30S EX | resolution30S Δ | resolution30M EYE | resolution30M EX | resolution30M Δ |
+| ---- | --------------- | -------------- | ------------- | --------------- | -------------- | ------------- | ----------------- | ---------------- | --------------- | ----------------- | ---------------- | --------------- |
+| 0.0  | —               | 1.00           | —             | —               | 1.00           | —             | —                 | 0.97             | —               | —                 | 0.97             | —               |
+| 0.1  | 1.00            | 1.00           | 0.005         | 1.00            | 0.99           | 0.012         | 0.98              | 0.96             | 0.022           | 0.96              | 0.93             | 0.026           |
+| 0.2  | 1.00            | 0.99           | 0.008         | 1.00            | 0.98           | 0.017         | 0.94              | 0.92             | 0.021           | 0.90              | 0.88             | 0.021           |
+| 0.3  | 1.00            | 0.99           | 0.015         | 1.00            | 0.98           | 0.021         | 0.88              | 0.86             | 0.023           | 0.89              | 0.87             | 0.015           |
+| 0.4  | 1.00            | 0.98           | 0.021         | 0.99            | 0.97           | 0.017         | 0.84              | 0.82             | 0.021           | 0.89              | 0.86             | 0.034           |
+| 0.5  | 1.00            | 0.98           | 0.021         | 0.98            | 0.95           | 0.027         | 0.83              | 0.81             | 0.019           | 0.79              | 0.75             | 0.040           |
+| 0.6  | 1.00            | 0.98           | 0.019         | 0.95            | 0.93           | 0.023         | 0.85              | 0.83             | 0.023           | 0.69              | 0.65             | 0.042           |
+| 0.7  | 1.00            | 0.98           | 0.024         | 0.92            | 0.90           | 0.017         | 0.84              | 0.82             | 0.017           | 0.59              | 0.56             | 0.031           |
+| 0.8  | 0.98            | 0.95           | 0.027         | 0.91            | 0.89           | 0.023         | 0.76              | 0.72             | 0.043           | 0.54              | 0.53             | 0.013           |
+| 0.9  | 0.92            | 0.89           | 0.033         | 0.88            | 0.86           | 0.016         | 0.60              | 0.55             | 0.048           | 0.48              | 0.45             | 0.033           |
+| 1.0  | —               | 0.83           | —             | —               | 0.84           | —             | —                 | 0.45             | —               | —                 | 0.40             | —               |
+
+### Center / edge summary
+
+| Field         | center (0.0) | edge (0.9) | corner (1.0) |
+| ------------- | ------------ | ---------- | ------------ |
+| contrast10S   | 1.00         | 0.89       | 0.83         |
+| contrast10M   | 1.00         | 0.86       | 0.84         |
+| resolution30S | 0.97         | 0.55       | 0.45         |
+| resolution30M | 0.97         | 0.45       | 0.40         |
+
+### Shape metrics
+
+| Field         | peak frac | peak value | half-falloff frac |
+| ------------- | --------- | ---------- | ----------------- |
+| contrast10S   | 0.0       | 1.00       | —                 |
+| contrast10M   | 0.0       | 1.00       | —                 |
+| resolution30S | 0.0       | 0.97       | 1.0               |
+| resolution30M | 0.0       | 0.97       | 0.9               |
+
+## Panel at 18mm
+
+- **Chart:** `docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-2.png`
+- **Style family:** `2color-frequency-cc-rank`
+- **Dispatch profile:** `tokina-2color-frequency-geodesic-dp`
+- **Plot box (pixels):** x=[331, 1673], y=[219, 995]
+- **Image height:** 14.0 mm
+
+### Sample grid (EYE vs EX)
+
+| Field         | paired | med \|Δ\| | p95 \|Δ\| | sister-fill |
+| ------------- | ------ | --------- | --------- | ----------- |
+| contrast10S   | 10/11  | 0.021     | 0.038     | 0/11        |
+| contrast10M   | 9/11   | 0.021     | 0.030     | 0/11        |
+| resolution30S | 10/11  | 0.018     | 0.042     | 0/11        |
+| resolution30M | 9/11   | 0.027     | 0.041     | 0/11        |
+
+```
+  EX   contrast10S    ████████▇▇▆  (0.99 → 0.75)
+  EYE  contrast10S    ·███████▇▇▆
+  EX   contrast10M    ███████▇▇▇▇  (0.99 → 0.83)
+  EYE  contrast10M    ·███████▇▇·
+  EX   resolution30S  ▇▇▇▇▆▆▅▅▄▄▄  (0.91 → 0.44)
+  EYE  resolution30S  ·▇▇▇▇▆▆▅▄▄▄
+  EX   resolution30M  ▇▇▇▆▆▆▅▄▄▃▃  (0.91 → 0.28)
+  EYE  resolution30M  ·▇▇▇▆▆▅▅▄▃·
+```
+
+| frac | contrast10S EYE | contrast10S EX | contrast10S Δ | contrast10M EYE | contrast10M EX | contrast10M Δ | resolution30S EYE | resolution30S EX | resolution30S Δ | resolution30M EYE | resolution30M EX | resolution30M Δ |
+| ---- | --------------- | -------------- | ------------- | --------------- | -------------- | ------------- | ----------------- | ---------------- | --------------- | ----------------- | ---------------- | --------------- |
+| 0.0  | —               | 0.99           | —             | —               | 0.99           | —             | —                 | 0.91             | —               | —                 | 0.91             | —               |
+| 0.1  | 1.00            | 0.99           | 0.011         | 1.00            | 0.98           | 0.015         | 0.91              | 0.89             | 0.017           | 0.89              | 0.85             | 0.036           |
+| 0.2  | 1.00            | 0.98           | 0.015         | 1.00            | 0.98           | 0.022         | 0.88              | 0.86             | 0.021           | 0.82              | 0.79             | 0.025           |
+| 0.3  | 1.00            | 0.98           | 0.019         | 0.99            | 0.97           | 0.018         | 0.83              | 0.81             | 0.016           | 0.79              | 0.77             | 0.018           |
+| 0.4  | 1.00            | 0.98           | 0.024         | 0.99            | 0.97           | 0.021         | 0.79              | 0.77             | 0.019           | 0.78              | 0.76             | 0.018           |
+| 0.5  | 0.99            | 0.97           | 0.022         | 0.98            | 0.96           | 0.021         | 0.74              | 0.71             | 0.030           | 0.71              | 0.68             | 0.031           |
+| 0.6  | 0.98            | 0.96           | 0.024         | 0.96            | 0.93           | 0.027         | 0.66              | 0.62             | 0.038           | 0.61              | 0.57             | 0.039           |
+| 0.7  | 0.95            | 0.93           | 0.020         | 0.93            | 0.91           | 0.021         | 0.55              | 0.52             | 0.031           | 0.51              | 0.48             | 0.032           |
+| 0.8  | 0.91            | 0.88           | 0.025         | 0.90            | 0.88           | 0.016         | 0.49              | 0.48             | 0.008           | 0.42              | 0.39             | 0.027           |
+| 0.9  | 0.83            | 0.80           | 0.034         | 0.88            | 0.86           | 0.019         | 0.48              | 0.47             | 0.011           | 0.35              | 0.34             | 0.014           |
+| 1.0  | 0.74            | 0.75           | 0.006         | —               | 0.83           | —             | 0.43              | 0.44             | 0.007           | —                 | 0.28             | —               |
+
+### Center / edge summary
+
+| Field         | center (0.0) | edge (0.9) | corner (1.0) |
+| ------------- | ------------ | ---------- | ------------ |
+| contrast10S   | 0.99         | 0.80       | 0.75         |
+| contrast10M   | 0.99         | 0.86       | 0.83         |
+| resolution30S | 0.91         | 0.47       | 0.44         |
+| resolution30M | 0.91         | 0.34       | 0.28         |
+
+### Shape metrics
+
+| Field         | peak frac | peak value | half-falloff frac |
+| ------------- | --------- | ---------- | ----------------- |
+| contrast10S   | 0.0       | 0.99       | —                 |
+| contrast10M   | 0.0       | 0.99       | —                 |
+| resolution30S | 0.0       | 0.91       | 1.0               |
+| resolution30M | 0.0       | 0.91       | 0.8               |
