@@ -126,9 +126,12 @@ Other combinations raise `NotImplementedError` (fail loud, per B1).
   #931 deemed legitimate; future refinement.
 - **Sigma dashed M is partial** — the morphological close bridges
   *most* dash gaps but not all; positions with no bridged-skeleton
-  pixel correctly return `None` (B2), but the readings file will need
-  the M curve interpolated by the serializer (a later task) or accept
-  gaps.
+  pixel correctly return `None` under the legacy strict-B2 dispatch.
+  The Tokina family addresses the same shape of failure via
+  `GEODESIC_DP` (per-curve support interval + intra-interval
+  interpolation); Sigma still uses the older `SPLIT_BY_DASH +
+  FREQUENCY` dispatch and inherits the gap behaviour. A future
+  refactor may migrate Sigma to the support-interval model too.
 
 ## B-rule contracts (B1–B4)
 
@@ -142,7 +145,7 @@ fix; subsequent code that touches the same surface must uphold it.
 | Contract | Concern | Rule |
 | --- | --- | --- |
 | **B1** | Profile mismatch | An unknown or mismatched chart profile MUST be refused (fail loud), not silently defaulted to the most common path. Implementation: `profiles/suggest.py::resolve()` raises `ProfileMismatch`; `pipeline/dispatch.py` raises `NotImplementedError` for `(style_axis, hue_meaning)` combinations without a wired branch. |
-| **B2** | Missing samples | At any sample column where no usable curve pixel exists in the bracket window, the extractor MUST return `None`. Never interpolate across, extrapolate beyond, or copy from a neighbor. Implementation: `pipeline/sampling.py::sample_skeleton_at_fraction()` returns `None` when the bracket window is empty; `pipeline/types.py::SampledReading` and `src/types/mtf.ts::MtfReading` declare every per-field value as nullable; `pipeline/rendermatch.py`, `svg.py`, `review.py` break polylines at `None`; `emit.py` passes `None` through as TypeScript `null`. |
+| **B2** | Missing samples | A curve exists across a contiguous *support interval* — the range of columns where the chart artist drew it. Inside the interval the curve is continuous (dash gaps and antialiasing leave columns without ink, but the value still exists); outside the interval the curve genuinely doesn't exist. The extractor MUST return `None` only for sample fractions outside the curve's support interval. Inside the interval, dash gaps and antialiasing holes MUST be filled by linear interpolation between the nearest anchored columns of the same curve. Never extrapolate beyond the support interval, never invent ink where the chart has none. Implementation: `pipeline/dp_extract.py::curves_to_field_skeletons()` builds a per-curve support interval from labelled columns and draws one skeleton pixel per column inside, interpolating across gaps; `pipeline/sampling.py::sample_skeleton_at_fraction()` returns `None` only when the skeleton has no pixel within the bracket window (i.e. outside the support interval); legacy dispatches (`continuous_pick.py`, `ridge.py`) still use strict per-column anchoring. `pipeline/types.py::SampledReading` and `src/types/mtf.ts::MtfReading` declare every per-field value as nullable; `pipeline/rendermatch.py`, `svg.py`, `review.py` break polylines at `None`; `emit.py` passes `None` through as TypeScript `null`. |
 | **B3** | Curve aggregation | Per-column aggregation MUST be order-independent and lossless. The legacy running-average + 5px cap is replaced by an unweighted per-column mean. Implementation: `pipeline/sampling.py` and `pipeline/ridge.py` aggregate by mean / median over column runs, not running averages. |
 | **B4** | Center astigmatism | At the optical axis (position 0), sagittal and meridional MTF are equal by physics. The extractor MUST NOT fabricate divergence at center. Implementation: no caller manufactures an S/M gap at position 0; readings come from the chart pixels at the center column or are `None`. |
 

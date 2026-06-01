@@ -90,3 +90,28 @@ def test_dilate_for_dp_bridges_dash_gaps_within_kernel_width() -> None:
     mask[5, 50] = 1
     dilated = dilate_for_dp(mask)
     assert dilated[5, 35] == 1  # midway between the dashes
+
+
+def test_curves_to_field_skeletons_interpolates_across_dash_gaps() -> None:
+    # A dashed curve: ink at y=10 in columns 100..110, 130..140, 160..170,
+    # plus a stripe at y=30 in columns 100..170 (the lower curve, solid).
+    # The support interval for the upper curve is [100, 170]; the
+    # rasterizer should produce a continuous skeleton across the
+    # 110..130 and 140..160 gaps by interpolating between anchors.
+    mask = np.zeros((40, 300), dtype=np.uint8)
+    mask[10, 100:111] = 1
+    mask[10, 130:141] = 1
+    mask[10, 160:171] = 1
+    mask[30, 100:171] = 1
+    plot_box = PlotBox(x_left=0, x_right=299, y_top=0, y_bottom=39)
+    upper, lower = extract_two_curves_dp(mask, plot_box)
+    upper_sk, lower_sk = curves_to_field_skeletons(upper, lower, mask, plot_box)
+    # Inside the support interval, every column should have an upper
+    # skeleton pixel — including columns inside the dash gaps.
+    for x in range(100, 171):
+        assert upper_sk[:, x].any(), f"upper missing at x={x}"
+    # Well outside the support interval (beyond the 51-wide dilation
+    # kernel's reach from the leftmost / rightmost ink), no upper
+    # skeleton pixel.
+    assert not upper_sk[:, 50].any()
+    assert not upper_sk[:, 220].any()

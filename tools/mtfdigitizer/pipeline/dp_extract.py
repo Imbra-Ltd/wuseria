@@ -246,29 +246,36 @@ def curves_to_field_skeletons(
     raw_mask: np.ndarray,
     plot_box: PlotBox,
 ) -> tuple[np.ndarray | None, np.ndarray | None]:
-    """Rasterize two DP paths into two skeleton masks with B2 reconciliation.
+    """Rasterize two DP paths into two skeleton masks using support-interval B2.
 
-    Per-column algorithm:
-      1. Anchor each path to a raw-mask ink centroid in a small window.
-      2. If both paths anchor to the same patch of ink (within
-         ``_SAME_INK_PX``), only one curve has ink at this column — keep
-         the closer path and drop the other.
-      3. Determine each surviving anchor's curve label by comparing its
-         y to the *global* median y of each path (computed once across
-         all verified columns). The path whose median is smaller is the
-         upper-MTF curve.
-      4. Emit one skeleton pixel per surviving anchor on the matching
-         curve's mask; columns where a curve has no anchor produce no
-         pixel (B2 honest).
+    Conceptual model: a curve exists across a contiguous interval of
+    columns determined by where the chart artist drew it. Inside that
+    interval the curve is continuous — dashes and anti-aliasing leave
+    individual columns without ink, but the curve's value still exists
+    there. Outside the interval the curve genuinely doesn't exist.
 
-    Returns ``(upper_skeleton, lower_skeleton)``. Either may be all
-    zeros if that curve has no verified column anywhere in the plot.
+    Algorithm:
+      1. For each column, anchor each DP path to the centroid of raw
+         ink in a small window of the path's predicted y. Anchors
+         categorise the column.
+      2. Label anchors per column:
+         - Two anchors well-separated -> sort by y, smaller = upper-MTF.
+         - Two anchors at the same y (within _SAME_INK_PX) -> one
+           physical curve; keep the closer path.
+         - One anchor -> the path with the smaller *predicted* y is the
+           upper-MTF curve at this column; assign the lone anchor to
+           the matching slot.
+      3. Compute each curve's support interval as [leftmost, rightmost]
+         column where the curve had a labelled anchor.
+      4. Inside the support interval, emit one skeleton pixel per
+         column using the DP path's y (not the anchor). The smoothness
+         prior of DP makes the path the right interpolation across dash
+         gaps and antialiasing holes.
 
-    Step 3 fixes the leftmost-column failure mode where one curve has
-    no ink in the chart (e.g. Tokina 11-18 panels where the 30M dashed
-    line doesn't reach frac 0.0): the single verified anchor gets the
-    correct curve label by y-position, not by which DP path picked it
-    up.
+    Outside the support interval, no pixel — the curve genuinely
+    doesn't exist there. This preserves the failure mode that B2 was
+    written to prevent (silent fabrication beyond chart data) while
+    eliminating false `None`s inside the curve from dashed-line gaps.
     """
     shape = raw_mask.shape
     upper_sk = np.zeros(shape, dtype=np.uint8)
@@ -277,86 +284,10 @@ def curves_to_field_skeletons(
     upper_by_x = {int(x): float(y) for x, y in upper_curve.points}
     lower_by_x = {int(x): float(y) for x, y in lower_curve.points}
 
-    # Pre-compute each path's global verified median y so single-anchor
-    # columns can be labelled by y-position, not by path identity.
-    upper_anchors: list[float] = []
-    lower_anchors: list[float] = []
-    for x_abs in range(plot_box.x_left, plot_box.x_right + 1):
-        yu_path = upper_by_x.get(x_abs)
-        yl_path = lower_by_x.get(x_abs)
-        if yu_path is not None:
-            au = _raw_centroid_in_window(
-                raw_mask, x_abs, int(yu_path), _RAW_DX_HALF, _RAW_DY_HALF
-            )
-            if au is not None:
-                upper_anchors.append(au)
-        if yl_path is not None:
-            al = _raw_centroid_in_window(
-                raw_mask, x_abs, int(yl_path), _RAW_DX_HALF, _RAW_DY_HALF
-            )
-            if al is not None:
-                lower_anchors.append(al)
-    if not upper_anchors and not lower_anchors:
-        return upper_sk, lower_sk
-    upper_median = (
-        float(np.median(upper_anchors)) if upper_anchors else float("inf")
-    )
-    lower_median = (
-        float(np.median(lower_anchors)) if lower_anchors else float("inf")
-    )
-
-    # A column's anchors are "trusted" for trajectory reconstruction when
-    # both paths anchored to ink and the two anchors are well-separated
-    # (i.e. each path is on its own curve, not both grabbing the same
-    # ink). These trusted columns form a clean trajectory per path that
-    # the drift check can use as a baseline.
-    upper_clean: dict[int, float] = {}
-    lower_clean: dict[int, float] = {}
-    for x in range(plot_box.x_left, plot_box.x_right + 1):
-        yu = upper_by_x.get(x)
-        yl = lower_by_x.get(x)
-        if yu is None or yl is None:
-            continue
-        au = _raw_centroid_in_window(
-            raw_mask, x, int(yu), _RAW_DX_HALF, _RAW_DY_HALF
-        )
-        al = _raw_centroid_in_window(
-            raw_mask, x, int(yl), _RAW_DX_HALF, _RAW_DY_HALF
-        )
-        if au is None or al is None:
-            continue
-        if abs(au - al) < _SAME_INK_PX:
-            continue
-        # Both anchored, well-separated: this column is trusted.
-        upper_clean[x] = au
-        lower_clean[x] = al
-
-    def _expected_y_at(x: int, clean: dict[int, float]) -> float | None:
-        """Interpolate the path's expected y at column x from the nearest
-        cleanly-anchored neighbours. Returns None when the path has no
-        verified anchor anywhere."""
-        if not clean:
-            return None
-        xs = sorted(clean.keys())
-        # Find neighbours
-        left = None
-        right = None
-        for k in xs:
-            if k <= x:
-                left = k
-            if k >= x and right is None:
-                right = k
-                break
-        if left is None and right is None:
-            return None
-        if left is None:
-            return clean[right]
-        if right is None or left == right:
-            return clean[left]
-        # Linear interpolation between the two neighbours
-        t = (x - left) / (right - left)
-        return clean[left] + t * (clean[right] - clean[left])
-
+    # Per-column labelling: for each curve, build (column -> anchor_y)
+    # for columns where the curve was identified.
+    upper_anchors_by_x: dict[int, float] = {}
+    lower_anchors_by_x: dict[int, float] = {}
     for x_abs in range(plot_box.x_left, plot_box.x_right + 1):
         yu_path = upper_by_x.get(x_abs)
         yl_path = lower_by_x.get(x_abs)
@@ -374,57 +305,78 @@ def curves_to_field_skeletons(
             if yl_path is not None
             else None
         )
-        # Drift rejection: if the anchor's y is too far from the path's
-        # expected y (interpolated from cleanly-anchored neighbours),
-        # the path has reached across its own curve's absence to grab
-        # another curve's ink. Refuse.
-        if anchor_u is not None:
-            expected_u = _expected_y_at(x_abs, upper_clean)
-            if expected_u is not None and abs(anchor_u - expected_u) > _DRIFT_REJECT_PX:
-                anchor_u = None
-        if anchor_l is not None:
-            expected_l = _expected_y_at(x_abs, lower_clean)
-            if expected_l is not None and abs(anchor_l - expected_l) > _DRIFT_REJECT_PX:
-                anchor_l = None
         if (
             anchor_u is not None
             and anchor_l is not None
             and abs(anchor_u - anchor_l) < _SAME_INK_PX
         ):
             # Same physical curve. Keep whichever path is closer.
-            if abs(yu_path - anchor_u) <= abs(yl_path - anchor_l):
+            if (
+                yu_path is not None
+                and (yl_path is None or abs(yu_path - anchor_u) <= abs(yl_path - anchor_l))
+            ):
                 anchor_l = None
             else:
                 anchor_u = None
         if anchor_u is not None and anchor_l is not None:
             # Two distinct curves present: smaller anchored y is upper-MTF.
             if anchor_u <= anchor_l:
-                upper_sk[int(round(anchor_u)), x_abs] = 1
-                lower_sk[int(round(anchor_l)), x_abs] = 1
+                upper_anchors_by_x[x_abs] = anchor_u
+                lower_anchors_by_x[x_abs] = anchor_l
             else:
-                upper_sk[int(round(anchor_l)), x_abs] = 1
-                lower_sk[int(round(anchor_u)), x_abs] = 1
+                upper_anchors_by_x[x_abs] = anchor_l
+                lower_anchors_by_x[x_abs] = anchor_u
             continue
         if anchor_u is None and anchor_l is None:
             continue
-        # Exactly one anchor: label by comparing the two paths' predicted
-        # y at this column. The path with the smaller predicted y is the
-        # upper-MTF curve; if its anchor exists it gets the upper slot,
-        # else the lone anchor (which belongs to the other path) gets
-        # the lower slot.
-        y_only = anchor_u if anchor_u is not None else anchor_l
+        # One anchor: label by comparing the two paths' predicted y.
+        # The path with the smaller predicted y is the upper-MTF curve;
+        # the lone anchor goes to whichever path anchored.
         upper_path_is_smaller = (
             yu_path is not None
             and yl_path is not None
             and yu_path <= yl_path
         )
-        # Did the smaller-y path anchor? (i.e. is its anchor non-None)
         smaller_anchored = anchor_u if upper_path_is_smaller else anchor_l
+        y_only = anchor_u if anchor_u is not None else anchor_l
         if smaller_anchored is not None:
-            upper_sk[int(round(y_only)), x_abs] = 1
+            upper_anchors_by_x[x_abs] = y_only  # type: ignore[assignment]
         else:
-            lower_sk[int(round(y_only)), x_abs] = 1
+            lower_anchors_by_x[x_abs] = y_only  # type: ignore[assignment]
+
+    # Each curve's support interval = [min, max] of the labelled columns.
+    # Inside the interval, interpolate the y between the nearest
+    # anchored columns on either side. Outside the interval, no pixel.
+    h, w = shape
+    _draw_curve_within_support(upper_sk, upper_anchors_by_x, h, w)
+    _draw_curve_within_support(lower_sk, lower_anchors_by_x, h, w)
     return upper_sk, lower_sk
+
+
+def _draw_curve_within_support(
+    sk: np.ndarray, anchors_by_x: dict[int, float], h: int, w: int
+) -> None:
+    """Rasterise a curve at every column inside its support interval.
+
+    For columns where the curve has an anchor, use the anchor's y.
+    For columns between two anchors (dash gaps, antialiasing holes),
+    linearly interpolate y between the nearest anchored columns on
+    either side. Outside the support interval, do not draw.
+    """
+    if not anchors_by_x:
+        return
+    xs = sorted(anchors_by_x.keys())
+    x_lo, x_hi = xs[0], xs[-1]
+    # Build a sorted lookup for interpolation.
+    xs_arr = np.array(xs)
+    ys_arr = np.array([anchors_by_x[x] for x in xs])
+    for x_abs in range(x_lo, x_hi + 1):
+        # np.interp is linear between adjacent xs; outside [x_lo, x_hi]
+        # it clamps to endpoints, but our loop stays inside the interval.
+        y = float(np.interp(x_abs, xs_arr, ys_arr))
+        yi = int(round(y))
+        if 0 <= yi < h and 0 <= x_abs < w:
+            sk[yi, x_abs] = 1
 
 
 def dilate_for_dp(mask: np.ndarray) -> np.ndarray:
