@@ -228,11 +228,28 @@ confidence-signal sub-task of #932.
 ```bash
 cd tools
 py -m mtfdigitizer.calibrate
+py -m mtfdigitizer.calibrate --write-readings
 ```
 
 Runs `extract_chart()` for every reference chart with both `plot_box` and
 `ground_truth` populated and reports the |d| (absolute offset) distribution
-per field. See `referenceset/calibration.md` for the latest run's findings.
+per field. With `--write-readings`, additionally writes one markdown grid
+per chart under `referenceset/readings/<slug>.md` for diffing across
+algorithm changes. See `referenceset/calibration.md` for the latest
+run's findings.
+
+## Per-lens digitization log
+
+```bash
+cd tools
+py -m mtfdigitizer.log              # Tokina lenses (default)
+py -m mtfdigitizer.log --all        # every lens with a runnable chart
+```
+
+Writes `docs/optical-specs/<lens-slug>/digitization-log.md` with the
+GT-vs-extracted-vs-Δ grid, sister-fallback counters, center/edge
+summary, and shape metrics (peak position, half-falloff). Multi-panel
+lenses (e.g. Tokina 11-18 zoom) get one log with all panels grouped.
 
 ## Running the tests
 

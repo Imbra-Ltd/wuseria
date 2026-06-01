@@ -110,34 +110,38 @@ def _ink_presence_per_field(
 def _apply_sister_fallback(
     samples: dict[str, tuple[float | None, ...]],
     presence: dict[str, tuple[bool, ...]],
-) -> dict[str, tuple[float | None, ...]]:
+) -> tuple[dict[str, tuple[float | None, ...]], dict[str, int]]:
     """Replace samples where ink is absent with the sister curve's value.
 
-    A sample at (field, frac) keeps its extracted value when
-    presence[field][frac] is True. When False, the reading is
-    overridden by the sister's value at the same fraction (if the
-    sister has one). When both members of a sister pair lack ink at
-    a fraction, both stay as `None`.
+    Returns ``(samples, fallback_count_by_field)``. The counter
+    records how many of a field's 11 samples were filled from the
+    sister curve (i.e. the field's own raw ink was absent and the
+    sister's was present); samples that stayed `None` because both
+    curves lacked ink do not count as fallbacks.
     """
     out: dict[str, tuple[float | None, ...]] = {}
+    fallback_count: dict[str, int] = {}
     for field, values in samples.items():
         sister = _SISTER_OF.get(field)
         sister_values = samples.get(sister, (None,) * len(SAMPLE_FRACTIONS)) if sister else (None,) * len(SAMPLE_FRACTIONS)
         field_presence = presence.get(field, (False,) * len(SAMPLE_FRACTIONS))
         sister_presence = presence.get(sister, (False,) * len(SAMPLE_FRACTIONS)) if sister else (False,) * len(SAMPLE_FRACTIONS)
         fixed: list[float | None] = []
+        count = 0
         for i, v in enumerate(values):
             if field_presence[i]:
                 fixed.append(v)
             elif sister_presence[i]:
                 # Sister has real ink here; trust it over our drifted value.
                 fixed.append(sister_values[i])
+                count += 1
             else:
                 # Neither curve has ink — keep whatever the DP path
                 # interpolated (or None if the curve was missing entirely).
                 fixed.append(v)
         out[field] = tuple(fixed)
-    return out
+        fallback_count[field] = count
+    return out, fallback_count
 
 
 def _apply_center_symmetry(
@@ -267,8 +271,11 @@ def extract_chart(
     presence = (
         _ink_presence_per_field(presence_masks, plot_box) if presence_masks else {}
     )
+    fallback_count: dict[str, int] = {}
     if presence:
-        samples_per_field = _apply_sister_fallback(samples_per_field, presence)
+        samples_per_field, fallback_count = _apply_sister_fallback(
+            samples_per_field, presence
+        )
     samples_per_field = _apply_center_symmetry(samples_per_field)
 
     return ExtractedChart(
@@ -277,4 +284,5 @@ def extract_chart(
         plot_box=plot_box,
         image_height_mm=image_height_mm,
         readings=_readings_to_dict(samples_per_field, plot_box, image_height_mm),
+        sister_fallback_count=fallback_count,
     )
