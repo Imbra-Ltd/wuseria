@@ -46,9 +46,15 @@ SAMPLE_POINTS: tuple[float, ...] = SAMPLE_FRACTIONS  # re-export
 
 # Half-width of the column window in which raw ink is required for a
 # sample to count as "really there" (i.e. not eligible for sister
-# fallback). Roughly one dash period; wider than the skeleton's own
-# bracket window since dashed M curves can have larger gaps.
-_INK_PRESENCE_HALF_WIDTH: int = 30
+# fallback). About half a dash period — small enough that a normal
+# dashed curve still passes (dashes are ~10 px wide; even mid-gap
+# columns find ink within ~10 px), but big enough to fire when the
+# curve is genuinely absent (Tokina 11-18 left edge where 10M
+# starts ~25 px right of the plot box). Earlier values of 30 were
+# overshooting: single dashes were not enough to trigger fallback,
+# but their ~0.01 anti-aliasing biases were inheriting from the
+# sister and broadcasting across the curve.
+_INK_PRESENCE_HALF_WIDTH: int = 10
 
 
 # Sister-curve pairs by committed field name. Both directions so the
@@ -62,11 +68,18 @@ _SISTER_OF: dict[str, str] = {
 
 
 def _sample_curve(
-    skeleton, plot_box: PlotBox
+    skeleton, plot_box: PlotBox, raw_mask=None
 ) -> tuple[float | None, ...]:
-    """11-point sample of one skeleton, returns one MTF value per fraction."""
+    """11-point sample of one skeleton, returns one MTF value per fraction.
+
+    When ``raw_mask`` is supplied, each sample is snapped to the raw
+    ink centroid in a tight window around the skeleton's predicted y —
+    restores pixel-accuracy on solid strokes without losing DP
+    interpolation across dash gaps.
+    """
     return tuple(
-        sample_skeleton_at_fraction(skeleton, f, plot_box) for f in SAMPLE_FRACTIONS
+        sample_skeleton_at_fraction(skeleton, f, plot_box, raw_mask=raw_mask)
+        for f in SAMPLE_FRACTIONS
     )
 
 
@@ -235,15 +248,23 @@ def extract_chart(
     bgr = load_chart_bgr(image_path)
     skeletons = field_skeletons(bgr, profile, plot_box)
 
+    # Re-derive per-field raw masks for two uses: (1) tight-window
+    # raw-centroid snapping at sample time (restores pixel-accuracy
+    # on solid strokes), (2) wider-window ink-presence check for the
+    # sister fallback. Cheap — HSV + range threshold on the chart.
+    presence_masks = _hue_masks_for_presence(bgr, profile, plot_box)
+
     samples_per_field: dict[str, tuple[float | None, ...]] = {
-        field: _sample_curve(skel, plot_box) for field, skel in skeletons.items()
+        field: _sample_curve(skel, plot_box, raw_mask=presence_masks.get(field))
+        for field, skel in skeletons.items()
     }
 
     # Sister fallback: replace samples where the raw ink is absent
     # with the sister curve's value. Use the raw per-hue mask, not
     # the DP-rasterised skeleton (which has ink everywhere).
-    presence_masks = _hue_masks_for_presence(bgr, profile, plot_box)
-    presence = _ink_presence_per_field(presence_masks, plot_box) if presence_masks else {}
+    presence = (
+        _ink_presence_per_field(presence_masks, plot_box) if presence_masks else {}
+    )
     if presence:
         samples_per_field = _apply_sister_fallback(samples_per_field, presence)
     samples_per_field = _apply_center_symmetry(samples_per_field)

@@ -33,17 +33,41 @@ SAMPLE_FRACTIONS: tuple[float, ...] = tuple(round(i * 0.1, 1) for i in range(11)
 # B2 contract: empty window → None, never extrapolate.
 _BRACKET_HALF_WIDTH = 3
 
+# Half-width of the tight column window used to snap a DP-rasterised
+# sample to the raw-mask centroid. When the raw mask has ink within
+# this window of the sample target, the centroid of that ink is more
+# faithful to the chart artist's stroke than the dilated DP path's
+# centerline (which sits ~half a stroke width below the true line
+# because of dilation + antialiasing). When the raw mask is empty,
+# we fall back to the skeleton's own y — preserving DP continuity
+# across dash gaps.
+_RAW_SNAP_HALF_WIDTH = 5
+
+# Half-width of the y window in which raw-mask ink near the
+# skeleton's predicted y counts as "this curve's ink." A bit wider
+# than half a typical stroke thickness so the snap finds the line
+# even when the DP path is biased away from its true centerline.
+_RAW_SNAP_DY_HALF = 8
+
 
 def sample_skeleton_at_fraction(
     skeleton: np.ndarray,
     fraction: float,
     plot_box: PlotBox,
+    raw_mask: np.ndarray | None = None,
 ) -> float | None:
     """Sample a skeleton at one fraction of plot width.
 
     Returns the MTF value (0..1) at that point, or `None` when no
     skeleton pixel exists within `_BRACKET_HALF_WIDTH` columns of the
     target — B2 fail-safe.
+
+    When ``raw_mask`` is supplied (DP dispatch), the sample is snapped
+    to the raw-mask ink centroid within a tight window around the
+    skeleton's predicted y. This restores the pixel-accuracy that
+    raw-mask anchoring gave on solid strokes, without losing the DP
+    smoothness prior's interpolation across dash gaps (the snap is a
+    no-op when no raw ink is present).
     """
     if not 0.0 <= fraction <= 1.0:
         raise ValueError(f"fraction out of range: {fraction}")
@@ -56,8 +80,41 @@ def sample_skeleton_at_fraction(
     ys_in_window = np.where(window.any(axis=1))[0]
     if ys_in_window.size == 0:
         return None
-    median_y = float(np.median(ys_in_window)) + plot_box.y_top
-    return y_pixel_to_mtf(median_y, plot_box)
+    skel_y_abs = float(np.median(ys_in_window)) + plot_box.y_top
+
+    if raw_mask is not None:
+        snap_y = _snap_to_raw_centroid(
+            raw_mask, target_x, int(round(skel_y_abs)), plot_box
+        )
+        if snap_y is not None:
+            return y_pixel_to_mtf(snap_y, plot_box)
+
+    return y_pixel_to_mtf(skel_y_abs, plot_box)
+
+
+def _snap_to_raw_centroid(
+    raw_mask: np.ndarray, target_x: int, skel_y: int, plot_box: PlotBox
+) -> float | None:
+    """Centroid y of raw-mask ink in a tight window around (target_x, skel_y).
+
+    Returns None when the window has no ink, so the caller can fall
+    back to the skeleton's own y. The window is intentionally small
+    (a few columns, a few rows): wide enough to find the real stroke
+    around an anti-aliased DP centerline, narrow enough that we won't
+    snap to a different curve's ink.
+    """
+    h, w = raw_mask.shape
+    x0 = max(plot_box.x_left, target_x - _RAW_SNAP_HALF_WIDTH)
+    x1 = min(plot_box.x_right, target_x + _RAW_SNAP_HALF_WIDTH)
+    y0 = max(plot_box.y_top, skel_y - _RAW_SNAP_DY_HALF)
+    y1 = min(plot_box.y_bottom, skel_y + _RAW_SNAP_DY_HALF)
+    if x1 < x0 or y1 < y0:
+        return None
+    sub = raw_mask[y0 : y1 + 1, x0 : x1 + 1]
+    if not sub.any():
+        return None
+    ys, _ = np.nonzero(sub)
+    return float(ys.mean()) + y0
 
 
 def sample_positions_mm(
