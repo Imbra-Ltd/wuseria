@@ -294,6 +294,49 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
         ground_truth=_SIGMA_30_GT,
     ),
+    # Sigma DC DN C primes — scaffolded for the brand campaign (#1018).
+    # Same official template family as 30mm/56mm; canonical diffraction
+    # chart is `-mtf-1.png` per ADR-033. Plot box and ground truth are
+    # left None until a maintainer eye-reads the 11x4 GT values and
+    # confirms the plot-box pixel coordinates. 16mm and 23mm should
+    # transfer the 56mm box unchanged (both are 2991x1964); 12mm
+    # (2988x1954) and 15mm (2993x1953) need a fresh measurement.
+    ReferenceChart(
+        slug="sigma-12mm-f1-4-dc-dn-c",
+        chart_path="docs/optical-specs/sigma-12mm-f1-4-dc-dn-c/sigma-12mm-f1-4-dc-dn-c-mtf-1.png",
+        style_family="mainstream-2color-solid-dashed",
+        apertures=("f/1.4",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="brand campaign (#1018) — pending plot box and GT. Image 2988x1954 (smaller than 56mm template, needs fresh measurement).",
+    ),
+    ReferenceChart(
+        slug="sigma-15mm-f1-4-dc-dn-c",
+        chart_path="docs/optical-specs/sigma-15mm-f1-4-dc-dn-c/sigma-15mm-f1-4-dc-dn-c-mtf-1.png",
+        style_family="mainstream-2color-solid-dashed",
+        apertures=("f/1.4",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="brand campaign (#1018) — pending plot box and GT. Image 2993x1953 (different from 56mm template, needs fresh measurement).",
+    ),
+    ReferenceChart(
+        slug="sigma-16mm-f1-4-dc-dn-c",
+        chart_path="docs/optical-specs/sigma-16mm-f1-4-dc-dn-c/sigma-16mm-f1-4-dc-dn-c-mtf-1.png",
+        style_family="mainstream-2color-solid-dashed",
+        apertures=("f/1.4",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="brand campaign (#1018) — pending GT. Image 2991x1964 matches 56mm template; 56mm plot box (x=[309,2980], y=[83,1700]) should transfer.",
+    ),
+    ReferenceChart(
+        slug="sigma-23mm-f1-4-dc-dn-c",
+        chart_path="docs/optical-specs/sigma-23mm-f1-4-dc-dn-c/sigma-23mm-f1-4-dc-dn-c-mtf-1.png",
+        style_family="mainstream-2color-solid-dashed",
+        apertures=("f/1.4",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="brand campaign (#1018) — pending GT. Image 2991x1964 matches 56mm template; 56mm plot box (x=[309,2980], y=[83,1700]) should transfer.",
+    ),
     ReferenceChart(
         slug="samyang-85mm-f1-4-as-if-umc",
         chart_path="docs/optical-specs/samyang-85mm-f1-4-as-if-umc/samyang-85mm-f1-4-as-if-umc-mtf.png",
