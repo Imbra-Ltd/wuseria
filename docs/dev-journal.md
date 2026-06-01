@@ -4601,3 +4601,54 @@ Three PRs in a row through epic #932's remaining checklist — ending with the d
 - **Digitize more brands.** The DP pipeline + sister fallback + center symmetry combination is now stable. Sigma, Viltrox, and 7Artisans charts are next candidates; their reference set entries already have plot boxes.
 - **Real-ESRGAN/CLAHE fallback.** Still on epic #932 as optional.
 - **Investigate the 0.04-0.10 p95 outliers on Tokina 23mm.** `resolution30S` p95 \|d\| 0.130 at frac 0.8 is the worst remaining sample — the chart has the curves crossing in that region, which the DP path may not handle perfectly.
+
+---
+
+### Session 111 — Sigma GEODESIC_DP port + ADR-033 MTF naming
+
+Tool: Claude Code (Opus 4.7). Branch: `claude/status-update-dEIXK`. PR: [#1016](https://github.com/Imbra-Ltd/wuseria/pull/1016) (open at session end).
+
+#### What shipped
+
+This session adopted an orphan branch (`claude/status-update-dEIXK`) — 5 unmerged commits from a prior agent run that had Sigma digitization work but no PR. Reviewed, validated (182 pytest pass, `npm run validate` clean), opened **PR #1016**, then added two follow-on commits during the session.
+
+PR contents (7 commits):
+
+- **GEODESIC_DP ported to Sigma solid/dashed family** (commit c112844). Previously Tokina-only. Adds `(SPLIT_BY_DASH, GEODESIC_DP)` dispatch so dashed M curves get gap-bridging instead of returning None at every dash-gap sample column. Sister-fallback presence runs on a widely-dilated mask. Sigma 56mm reference calibration delta — 10M: 4/11 → **11/11** paired, median |Δ| 0.011 → **0.006**; 30M: 3/11 → **11/11** paired, p95 |Δ| 0.367 → **0.024**. Solid curves byte-identical. 7Artisans/Samyang/Tokina/Viltrox profiles unchanged.
+- **Sigma 30mm f/1.4 DC DN C digitized** (commit 8114e1b). First lens of the brand-by-brand campaign. Reuses 56mm's data-edge plot box (identical official template, 2991×1964). Draft GT pending maintainer verification; not yet emitted to `src/data/mtf-readings.ts`.
+- **Sigma overlays regenerated** (commit 84e6d2f) — committed overlays predated the GEODESIC_DP port; regen so provenance artifacts show the bridged dashed-M curves.
+- **Digitization-logs backfilled** (commit 562551d) for the 5 non-Tokina runnable reference charts (Sigma 56mm, Samyang 85mm/300mm, 7Artisans 50mm, Viltrox 75mm). `log --all` now covers the full reference set.
+- **ADR-033 flagged for analysis.md amendment** (commit 8b66d3b) — tracks the digitization-log overlap with `analysis.md` "Readings" sections (#1015).
+- **ADR-033 amended for MTF naming convention** (commit 9666e43) — added during this session. New "MTF chart naming and canonical selection" subsection. Named suffixes (`-mtf-diffraction`, `-mtf-geometric-wide`, etc.) replace numeric `-mtf-1`, `-mtf-2`. Diffraction is canonical for digitization/scoring; geometrical is provenance-only and MUST NOT drive OQ field scores (ignores diffraction, consistently optimistic). For zooms, wide-end diffraction is canonical unless the lens is marketed by its tele behaviour. Existing files stay numeric until #1017 lands; analysis.md MUST label each numeric file with chart type until then. Rationale: numeric suffixes carry no semantic info — a reader must open analysis.md to know which is which. The 20+ lenses with multiple MTF charts (Sigma DC DN C primes, Sigma zooms, Tamron Di III zooms, Venus/Laowa, Tokina 11-18) all need rename.
+- **Sigma DC DN C prime scaffolding** (commit e785ac7) — added during this session. 4 placeholder `ReferenceChart` entries (12mm, 15mm, 16mm, 23mm) in `tools/mtfdigitizer/referenceset/charts.py` with `plot_box=None, ground_truth=None` (deferred together per the `test_ground_truth_charts_carry_plot_box` invariant). `notes` field carries template-reuse hints — 16/23mm match 56mm template, 12/15mm need fresh plot-box measurement.
+
+Branch cleanup at start of session: deleted 3 squash-merged local branches and 7 remote branches whose PRs were already merged. Preserved `claude/status-update-dEIXK` (the orphan that became PR #1016) and `main`.
+
+#### Issues opened / closed
+
+- **#1016** — `feat(mtfdigitizer): port GEODESIC_DP to Sigma + 30mm pilot + log backfill` (open at session end)
+- **#1017** opened — Rename optical-specs MTF files from numeric to named suffixes (P3, task; touches ~50 files across 20+ folders + analysis.md links + `referenceset/charts.py` + site emitter)
+- **#1018** opened — Digitize remaining Sigma DC DN C primes (12mm, 15mm, 16mm, 23mm) (P2, task; scaffolding now in place, maintainer GT reads pending)
+- No issues closed this session.
+
+#### Key changes
+
+- **GEODESIC_DP dispatch now spans two profiles.** Tokina-only → Tokina + Sigma. Flatness prior `stdev` bound tightened 0.02 → 0.01: the now-complete, genuinely near-flat 10M (stdev 0.016) must pass while the dead-flat idealized placeholder (stdev 0.002) still fires; tightening can only remove firings, no clean chart regresses.
+- **REFERENCE_CHARTS grew from 9 to 13.** Sigma 30mm fully calibrated, Sigma 12/15/16/23mm scaffolded (deferred). Test size cap (50) unchanged.
+- **ADR-033 now documents canonical chart selection.** First time the rule "diffraction wins for digitization, geometrical is provenance-only" is written down — was implicit convention before.
+
+#### Key decisions
+
+- **Diffraction is canonical, geometrical is provenance-only.** Geometrical MTF describes a hypothetical lens without diffraction and is consistently optimistic — scoring against it would inflate every field for the ~20 lenses where manufacturers publish both. Diffraction is what the optics actually deliver.
+- **Wide-end is canonical for zooms.** Marketed-on-tele exceptions (super-telephoto zooms) document the deviation in `specs-log.md`. Avoids the "do we score the lens by its best or its worst end?" debate by picking the more common use case.
+- **Named MTF suffixes, not numeric.** Numeric suffixes (`-mtf-1.png`, `-mtf-2.png`) carry no semantic info — a reader must open `analysis.md` to know which is which. Named suffixes (`-mtf-diffraction.png`, `-mtf-geometric-wide.png`) are self-describing. Rename deferred to #1017 to keep PR #1016 scoped.
+- **Scaffolding entries use `plot_box=None, ground_truth=None` together.** The `test_ground_truth_charts_carry_plot_box` invariant requires GT whenever a plot box is set, so partial scaffolding (plot box only) would fail tests. Full deferral keeps tests green and matches the existing 7Artisans 35mm soft promo / Zeiss Touit pattern.
+- **Maintainer eye-reads ground truth, agent does not.** GT is the calibration anchor — the extractor is validated against it. An agent-produced GT would make the whole calibration self-confirming. The session explicitly stopped at the boundary: scaffold the structure, document what's needed, defer the GT reads to the maintainer.
+- **Stop adding lens digitizations to this PR.** The session asked "continue with the other sigma lenses before we wrap up" — declined to expand PR #1016 beyond scaffolding because (a) each lens needs maintainer eye-reads I can't fake, (b) PR is already 7 commits and mixes feat + docs + ADR amendment, (c) wrap was approaching. Tracking via #1018 lets the work resume one-commit-per-lens next session.
+
+#### Notes for next session
+
+- **PR #1016 awaiting review/merge.** 7 commits; calibration metrics in the body; needs maintainer eye-check on Sigma 30mm overlay before readings emit to `src/data/mtf-readings.ts`.
+- **#1018 next**: pick lens by ease — 16mm and 23mm reuse 56mm plot box unchanged, GT-only. 12mm and 15mm need fresh plot-box measurement. Workflow per lens: eye-read 11×4 GT → fill `_SIGMA_NN_GT` and plot box → `py -m mtfdigitizer.calibrate` → eye-check overlay → `py -m mtfdigitizer.log` → commit.
+- **#1017 deferred**: rename ~50+ files touches `analysis.md` links + `referenceset/charts.py` + site emitter; do as a focused mechanical pass.
+- **#1015 still pending**: ADR-033 amendment for analysis.md ↔ digitization-log overlap; required before #1015's analysis.md backfill task can author new files.
