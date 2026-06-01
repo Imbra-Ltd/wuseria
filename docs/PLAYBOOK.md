@@ -238,6 +238,20 @@ update the markdown after a run that changes the numbers materially. Reference
 the calibration entries when discussing the ADR-038 offset tolerance band or
 the 0.75 render-match threshold.
 
+**Refresh per-lens digitization logs:**
+
+```bash
+cd tools && py -m mtfdigitizer.log              # Tokina lenses (default)
+cd tools && py -m mtfdigitizer.log --all        # every lens with a runnable chart
+cd tools && py -m mtfdigitizer.log --check      # verify committed logs are up to date
+```
+
+Writes `docs/optical-specs/<lens-slug>/digitization-log.md`. Each log is a
+**generated** file — never hand-edit. Run `--check` before committing any
+change that affects pipeline output (algorithm tweaks, ground-truth
+corrections, plot-box edits) and refresh the logs if it reports stale.
+See ADR-040 for the file format.
+
 **Run the MTF digitizer render-match scorer:**
 
 ```bash

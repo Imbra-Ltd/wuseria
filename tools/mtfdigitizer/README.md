@@ -244,12 +244,20 @@ run's findings.
 cd tools
 py -m mtfdigitizer.log              # Tokina lenses (default)
 py -m mtfdigitizer.log --all        # every lens with a runnable chart
+py -m mtfdigitizer.log --check      # CI: fail if any committed log is stale
 ```
 
 Writes `docs/optical-specs/<lens-slug>/digitization-log.md` with the
-GT-vs-extracted-vs-Δ grid, sister-fallback counters, center/edge
-summary, and shape metrics (peak position, half-falloff). Multi-panel
-lenses (e.g. Tokina 11-18 zoom) get one log with all panels grouped.
+EYE-vs-EX-vs-Δ tables, sister-fallback counters, center/edge summary,
+and shape metrics (peak position, half-falloff). Multi-panel lenses
+(e.g. Tokina 11-18 zoom) get one log with all panels grouped.
+
+`digitization-log.md` is a **generated** file (banner at the top of
+each one notes this). `--check` re-renders in memory and exits
+non-zero when a committed log differs — intended for CI to catch
+stale checkouts and accidental hand-edits. See ADR-040 for the file
+format and its relation to the other per-lens logs (specs-log,
+scoring-log, analysis).
 
 ## Running the tests
 
