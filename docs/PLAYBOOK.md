@@ -228,15 +228,19 @@ cd tools && py -m pytest pagefetch/tests/ brandkit/tests/ mtfdigitizer/tests/ -v
 
 ```bash
 cd tools && py -m mtfdigitizer.calibrate
+cd tools && py -m mtfdigitizer.calibrate --write-readings
 ```
 
 Runs `extract_chart()` against every reference chart with both a hand-measured
 plot box and eye-read ground truth (`tools/mtfdigitizer/referenceset/charts.py`),
 reports per-field absolute offset distribution + an aggregate. Output: stdout
-only. Findings live in `tools/mtfdigitizer/referenceset/calibration.md` —
-update the markdown after a run that changes the numbers materially. Reference
-the calibration entries when discussing the ADR-038 offset tolerance band or
-the 0.75 render-match threshold.
+only by default. With `--write-readings`, additionally writes one markdown
+grid per chart to `tools/mtfdigitizer/referenceset/readings/<slug>.md` for
+diffing across algorithm changes. Findings live in
+`tools/mtfdigitizer/referenceset/calibration.md` — update the markdown after a
+run that changes the numbers materially. Reference the calibration entries
+when discussing the ADR-038 offset tolerance band or the 0.75 render-match
+threshold.
 
 **Refresh per-lens digitization logs:**
 
