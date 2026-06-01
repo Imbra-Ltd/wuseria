@@ -76,6 +76,14 @@ StyleAxis = Literal["SPLIT_BY_DASH", "HUE_IS_CURVE"]
 #                             Robust to dashed-line fragments and
 #                             curve coincidence. See
 #                             `pipeline/continuous_pick.py`.
+# - `GEODESIC_DP`           — per-hue Viterbi shortest path through the
+#                             dilated mask. The smoothness prior bridges
+#                             dash gaps without skeletonization staircase
+#                             artefacts and refuses to switch to a
+#                             parallel curve at near-touching regions.
+#                             Same per-hue convention as
+#                             `SKELETON_CONTINUOUS_PICK`. See
+#                             `pipeline/dp_extract.py`.
 HueMeaning = Literal[
     "FREQUENCY",
     "SAGITTAL_MERIDIONAL",
@@ -85,6 +93,7 @@ HueMeaning = Literal[
     "RIDGE_TRACKING",
     "PER_COLUMN_RIDGE",
     "SKELETON_CONTINUOUS_PICK",
+    "GEODESIC_DP",
 ]
 
 

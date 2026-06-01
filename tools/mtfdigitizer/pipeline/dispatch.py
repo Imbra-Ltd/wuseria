@@ -38,6 +38,12 @@ Out-of-band combinations raise `NotImplementedError` — generalizing PR
   Replaces per-column ridge for the Tokina wide-zoom case: the per-
   CC continuity walk handles fragmented dashed curves AND curve
   coincidence cleanly. See `pipeline/continuous_pick.py`.
+- `(HUE_IS_CURVE, GEODESIC_DP)` — per-hue Viterbi shortest path
+  through the dilated mask. Replaces skeletonization with a global-
+  optimum DP whose smoothness prior bridges dashed-line gaps without
+  the staircase coverage holes that defeat sampling, and refuses to
+  hop to a parallel curve at near-touching regions. Default for the
+  Tokina family (5 charts). See `pipeline/dp_extract.py`.
 - `(SPLIT_BY_DASH, Y_BAND_IS_FREQUENCY)` — Viltrox B&W dialect: a single
   neutral mask is split by `y_band_split` into frequency groups, then by
   CC-width within each group for S/M.
@@ -63,6 +69,11 @@ import numpy as np
 
 from ..profiles.types import MtfProfile
 from .continuous_pick import extract_two_curves_per_hue
+from .dp_extract import (
+    curve_to_skeleton_b2,
+    dilate_for_dp,
+    extract_two_curves_dp,
+)
 from .masks import masks_by_curve_name
 from .ridge import ridge_tracks_for_hue, ridge_tracks_to_fields
 from .skeleton import close_and_skeletonize
@@ -357,6 +368,33 @@ def field_skeletons(
                 for x, y in curve.points:
                     sk[int(round(y)), x] = 1
                 out[field] = sk
+    elif (
+        profile.style_axis == "HUE_IS_CURVE"
+        and profile.hue_meaning == "GEODESIC_DP"
+    ):
+        # Each hue carries S or M. Per hue: Viterbi shortest path through
+        # the dilated mask finds the two curves; the smoothness prior
+        # bridges dashed-line gaps and refuses to hop to a parallel
+        # curve at near-touching regions. The B2-honest rasterizer
+        # only emits skeleton pixels where the dilated mask had ink
+        # near the predicted point — DP extrapolation through pure
+        # white sections does not fabricate samples.
+        # See `pipeline/dp_extract.py`.
+        if plot_box is None:
+            raise ValueError("GEODESIC_DP profile requires plot_box")
+        upper_freq, lower_freq = profile.frequencies_lpmm[0], profile.frequencies_lpmm[1]
+        for hue_name, mask in curve_masks.items():
+            sm = parse_sagittal_meridional_name(hue_name)
+            upper_curve, lower_curve = extract_two_curves_dp(mask, plot_box)
+            dilated = dilate_for_dp(mask)
+            for freq, curve in (
+                (upper_freq, upper_curve),
+                (lower_freq, lower_curve),
+            ):
+                field = curve_field(freq, sm)
+                if field is None or not curve.points:
+                    continue
+                out[field] = curve_to_skeleton_b2(curve, dilated, mask.shape)
     elif (
         profile.style_axis == "SPLIT_BY_DASH"
         and profile.hue_meaning == "Y_BAND_IS_FREQUENCY"

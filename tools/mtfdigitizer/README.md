@@ -80,13 +80,19 @@ Per-profile dispatch in `dispatch.py`:
   `dashed_is_sagittal=True`)
 - `(HUE_IS_CURVE, CURVE_IDENTITY)` → Samyang dialect: hue name encodes
   both frequency and S/M (e.g. `10S-red`)
-- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` → Tokina prime dialect: hue
-  carries S/M, `y_band_split` separates frequencies within each hue
+- `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` → legacy Tokina prime dialect:
+  hue carries S/M, `y_band_split` separates frequencies within each hue
+  (superseded by `GEODESIC_DP` for the current Tokina charts)
 - `(HUE_IS_CURVE, PER_COLUMN_RIDGE)` → Tokina wide-zoom variant: hue
   carries S/M, per-column ridge tracking separates frequencies (topmost
   run per column = upper freq, bottommost = lower freq). Used when the
   y-bands intersect or dashed fragments interleave in y so neither
   `y_band_split` nor CC-rank can group them. See `pipeline/ridge.py`
+- `(HUE_IS_CURVE, GEODESIC_DP)` → Tokina default dialect (5 charts):
+  per-hue Viterbi shortest path through the dilated mask finds two
+  curves per color. The smoothness prior bridges dashed-line gaps
+  without skeletonization staircase artefacts and refuses to hop to a
+  parallel curve at near-touching regions. See `pipeline/dp_extract.py`
 - `(SPLIT_BY_DASH, Y_BAND_IS_FREQUENCY)` → Viltrox B&W dialect: single
   neutral mask split by `y_band_split` for frequency, then CC-split
   within each band for S/M

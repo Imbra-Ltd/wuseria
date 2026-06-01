@@ -105,47 +105,38 @@ TOKINA_2COLOR_FREQUENCY: MtfProfile = MtfProfile(
         HueRange(name="M-blue", h_lo=90, h_hi=115, s_min=80, v_min=120),
     ),
     style_axis="HUE_IS_CURVE",
-    hue_meaning="SAGITTAL_MERIDIONAL",
+    hue_meaning="GEODESIC_DP",
     frequencies_lpmm=(10, 30),
-    y_band_split=0.25,
     # Not auto-suggestable: red+blue palette overlaps Sigma's; the current
     # suggest scorer is presence-based and cannot disambiguate them
     # (both score 1.0 on either chart). Sigma wins by default for red+blue
     # autosuggest; Tokina must be explicitly declared.
     auto_suggestable=False,
-    notes="Tokina/atx-m convention: red=S solid, blue=M dotted; frequency by y-band (upper=10, lower=30); both hues split by y_band_split (works on prime charts where 10 and 30 lp/mm pairs sit in separate y-bands)",
+    notes="Tokina/atx-m convention: red=S solid, blue=M dotted; per-hue Viterbi shortest path through the dilated mask extracts both curves of one color (upper=10, lower=30) with dash-gap bridging baked into the smoothness prior",
 )
 
 
-# Tokina 2-color frequency-by-color, ridge-tracking variant: same hue
-# palette as `TOKINA_2COLOR_FREQUENCY` but dispatches by per-column
-# ridge tracking instead of y_band_split.
+# Tokina 2-color frequency-by-color, wide-zoom variant: same hue palette
+# as `TOKINA_2COLOR_FREQUENCY`, identical DP dispatch — the two profiles
+# stay separate because they may diverge if a future Tokina prime needs
+# a different DP parameterisation. Today they share one algorithm.
 #
-# Used by the 11-18mm wide-zoom panels where the 30 lp/mm pair starts
-# at OTF ~0.90 (vs 1.00 for 10 lp/mm). Both fixed-y splits AND CC-rank
-# fail here: the two pairs' y-bands intersect near center, dashed-line
-# fragments of 10M and 30M interleave in y across the field, and any
-# CC-by-rank-of-mean-y groups dashes from both curves together. Per-
-# column ridge tracking handles this geometry: scan each x column and
-# pick the topmost mask run as the upper-frequency point, the
-# bottommost as the lower-frequency point. Works as long as the two
-# curves of one color never cross spatially (which they don't on this
-# chart family).
-#
-# Same palette/saturation/value bounds as the y-band variant; only the
-# dispatch differs.
+# Used by the 11-18mm wide-zoom panels where the 10 lp/mm and 30 lp/mm
+# pairs sit close in y-space and where the blue dashed lines have wider
+# dash gaps than on the prime charts. The DP smoothness prior bridges
+# both without skeletonization staircase artefacts.
 TOKINA_2COLOR_FREQUENCY_CC_RANK: MtfProfile = MtfProfile(
-    name="tokina-2color-frequency-skeleton-pick",
+    name="tokina-2color-frequency-geodesic-dp",
     hues=(
         HueRange(name="S-red", h_lo=0, h_hi=12, s_min=80, v_min=120),
         HueRange(name="S-red", h_lo=168, h_hi=179, s_min=80, v_min=120),
         HueRange(name="M-blue", h_lo=90, h_hi=115, s_min=80, v_min=120),
     ),
     style_axis="HUE_IS_CURVE",
-    hue_meaning="SKELETON_CONTINUOUS_PICK",
+    hue_meaning="GEODESIC_DP",
     frequencies_lpmm=(10, 30),
     auto_suggestable=False,
-    notes="Tokina wide-zoom variant: dilate+skeletonize, CC-split by mean-y (top=10, bottom=30), greedy y-continuity pick per CC; ports the legacy mtf-extract-skeleton.py approach for robust dashed-line extraction",
+    notes="Tokina wide-zoom variant: per-hue Viterbi shortest path through the dilated mask; same algorithm as the prime profile but kept separate so a per-profile DP parameterisation can diverge later",
 )
 
 
