@@ -70,8 +70,7 @@ import numpy as np
 from ..profiles.types import MtfProfile
 from .continuous_pick import extract_two_curves_per_hue
 from .dp_extract import (
-    curve_to_skeleton_b2,
-    dilate_for_dp,
+    curves_to_field_skeletons,
     extract_two_curves_dp,
 )
 from .masks import masks_by_curve_name
@@ -386,15 +385,14 @@ def field_skeletons(
         for hue_name, mask in curve_masks.items():
             sm = parse_sagittal_meridional_name(hue_name)
             upper_curve, lower_curve = extract_two_curves_dp(mask, plot_box)
-            dilated = dilate_for_dp(mask)
-            for freq, curve in (
-                (upper_freq, upper_curve),
-                (lower_freq, lower_curve),
-            ):
+            upper_sk, lower_sk = curves_to_field_skeletons(
+                upper_curve, lower_curve, mask, plot_box
+            )
+            for freq, sk in ((upper_freq, upper_sk), (lower_freq, lower_sk)):
                 field = curve_field(freq, sm)
-                if field is None or not curve.points:
+                if field is None or sk is None or not sk.any():
                     continue
-                out[field] = curve_to_skeleton_b2(curve, dilated, mask.shape)
+                out[field] = sk
     elif (
         profile.style_axis == "SPLIT_BY_DASH"
         and profile.hue_meaning == "Y_BAND_IS_FREQUENCY"

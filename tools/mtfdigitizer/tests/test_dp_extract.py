@@ -7,7 +7,7 @@ import numpy as np
 from mtfdigitizer.pipeline.dp_extract import (
     CurvePoints,
     _viterbi_path,
-    curve_to_skeleton_b2,
+    curves_to_field_skeletons,
     dilate_for_dp,
     extract_two_curves_dp,
 )
@@ -26,7 +26,7 @@ def test_viterbi_respects_smoothness_prior_over_one_bright_pixel() -> None:
     # The path should stay on the dark row even when one column on
     # that row is briefly bright — the alternative dark row is 3 rows
     # away and reaching it costs 2 * alpha * 3 = 60 (down then back up).
-    emission = np.full((7, 5), 100.0, dtype=np.float64)  # solid wall everywhere
+    emission = np.full((7, 5), 100.0, dtype=np.float64)
     emission[3, :] = 0.0  # cheap row
     emission[3, 2] = 5.0  # one spike on the cheap row
     emission[6, 2] = 0.0  # tempting one-column gap on another row
@@ -47,16 +47,39 @@ def test_extract_two_curves_returns_upper_then_lower_by_mean_y() -> None:
     assert all(abs(y - 40) <= 1 for _, y in lower.points)
 
 
-def test_curve_to_skeleton_b2_skips_columns_with_no_nearby_ink() -> None:
-    # Two-column curve. The first column has ink in the dilated mask; the
-    # second column is in pure white (DP-extrapolated). Only the first
-    # column should rasterize.
-    dilated = np.zeros((20, 20), dtype=np.uint8)
-    dilated[8:12, 4:6] = 1  # ink near (x=5, y=10)
-    curve = CurvePoints(points=((5, 10.0), (15, 10.0)))
-    sk = curve_to_skeleton_b2(curve, dilated, dilated.shape)
-    assert sk[10, 5] == 1
-    assert sk[10, 15] == 0
+def test_curves_to_field_skeletons_emits_only_columns_with_real_ink() -> None:
+    # Two horizontal stripes at y=10 and y=30, ink only in columns
+    # 100..200 of a 300-wide plot — outside columns far enough from
+    # the ink that the dilation kernel can't reach. DP runs across
+    # the full width but the B2 rasterizer should only emit pixels
+    # where the raw mask has real ink.
+    mask = np.zeros((40, 300), dtype=np.uint8)
+    mask[10, 100:201] = 1
+    mask[30, 100:201] = 1
+    plot_box = PlotBox(x_left=0, x_right=299, y_top=0, y_bottom=39)
+    upper, lower = extract_two_curves_dp(mask, plot_box)
+    upper_sk, lower_sk = curves_to_field_skeletons(upper, lower, mask, plot_box)
+    # Columns inside [100, 200] should rasterize.
+    assert upper_sk[:, 150].any()
+    assert lower_sk[:, 150].any()
+    # Columns well outside (beyond DX tolerance) should not.
+    assert not upper_sk[:, 50].any()
+    assert not lower_sk[:, 50].any()
+    assert not upper_sk[:, 270].any()
+    assert not lower_sk[:, 270].any()
+
+
+def test_curves_to_field_skeletons_assigns_lone_ink_to_one_curve_only() -> None:
+    # Only one stripe at y=5 exists; the second DP path will hit white.
+    # The rasterizer should emit only ONE skeleton — the curve whose
+    # anchored y matches the ink.
+    mask = np.zeros((20, 50), dtype=np.uint8)
+    mask[5, :] = 1
+    plot_box = PlotBox(x_left=0, x_right=49, y_top=0, y_bottom=19)
+    upper, lower = extract_two_curves_dp(mask, plot_box)
+    upper_sk, lower_sk = curves_to_field_skeletons(upper, lower, mask, plot_box)
+    # Exactly one of the two skeletons should be populated.
+    assert (upper_sk.sum() > 0) != (lower_sk.sum() > 0)
 
 
 def test_dilate_for_dp_bridges_dash_gaps_within_kernel_width() -> None:
