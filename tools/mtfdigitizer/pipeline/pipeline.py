@@ -143,12 +143,16 @@ def _apply_sister_fallback(
 def _apply_center_symmetry(
     samples: dict[str, tuple[float | None, ...]],
 ) -> dict[str, tuple[float | None, ...]]:
-    """Force S = M at the optical axis (fraction 0.0) by averaging.
+    """Force S = M at the optical axis (fraction 0.0) by copying S to M.
 
     At position 0 sagittal and meridional MTF are equal by physics
-    (B4). After sister fallback they may still differ by a pixel or
-    two of anti-aliasing — collapse to the mean so the readings match
-    exactly.
+    (B4). Take S as the source of truth and override M with it (not
+    the average): on charts where the DP path for the M curve has
+    drifted near center (Tokina 11-18, where 10M's ink doesn't
+    quite reach frac 0.0 and the path lands on a nearby curve's
+    stripe), averaging would split the difference between the right
+    value and the drifted value. The S curve is solid-line, less
+    susceptible to drift, and almost always the cleaner anchor.
     """
     out = {field: list(values) for field, values in samples.items()}
     for s_field, m_field in (
@@ -163,12 +167,10 @@ def _apply_center_symmetry(
             continue
         if s_val is None:
             out[s_field][0] = m_val
-        elif m_val is None:
-            out[m_field][0] = s_val
         else:
-            avg = (s_val + m_val) / 2.0
-            out[s_field][0] = avg
-            out[m_field][0] = avg
+            # B4: at the optical axis, S=M. Use S for both — solid
+            # strokes are less prone to centroid drift than dashed.
+            out[m_field][0] = s_val
     return {field: tuple(values) for field, values in out.items()}
 
 

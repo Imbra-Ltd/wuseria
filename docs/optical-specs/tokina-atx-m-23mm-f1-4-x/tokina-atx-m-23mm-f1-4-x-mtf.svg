@@ -26,8 +26,8 @@
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
 <polyline class="curve curve-10" points="36.0,23.0 62.8,24.7 89.6,27.2 116.4,22.2 143.2,23.5 170.0,30.4 196.8,31.2 223.6,32.1 250.4,35.5 277.2,33.2 304.0,39.3"/>
 <polyline class="curve curve-10 curve-m" points="36.0,23.0 62.8,26.1 89.6,23.0 116.4,29.1 143.2,30.9 170.0,28.1 196.8,27.8 223.6,30.6 250.4,38.2 277.2,51.7 304.0,64.7" stroke-dasharray="4 2"/>
-<polyline class="curve curve-30" points="36.0,64.9 62.8,70.2 89.6,69.2 116.4,60.5 143.2,60.0 170.0,77.2 196.8,79.7 223.6,79.3 250.4,87.5 277.2,84.6 304.0,100.4"/>
-<polyline class="curve curve-30 curve-m" points="36.0,64.9 62.8,71.3 89.6,74.8 116.4,77.1 143.2,78.4 170.0,77.0 196.8,76.6 223.6,77.8 250.4,76.9 277.2,92.9 304.0,117.9" stroke-dasharray="4 2"/>
+<polyline class="curve curve-30" points="36.0,65.0 62.8,70.2 89.6,69.2 116.4,60.5 143.2,60.0 170.0,77.2 196.8,79.7 223.6,79.3 250.4,87.5 277.2,84.6 304.0,100.4"/>
+<polyline class="curve curve-30 curve-m" points="36.0,65.0 62.8,71.3 89.6,74.8 116.4,77.1 143.2,78.4 170.0,77.0 196.8,76.6 223.6,77.8 250.4,76.9 277.2,92.9 304.0,117.9" stroke-dasharray="4 2"/>
 <circle class="dot dot-10" cx="36.0" cy="23.0" r="2"/>
 <circle class="dot dot-10" cx="62.8" cy="24.7" r="2"/>
 <circle class="dot dot-10" cx="89.6" cy="27.2" r="2"/>
@@ -50,7 +50,7 @@
 <circle class="dot dot-10" cx="250.4" cy="38.2" r="2"/>
 <circle class="dot dot-10" cx="277.2" cy="51.7" r="2"/>
 <circle class="dot dot-10" cx="304.0" cy="64.7" r="2"/>
-<circle class="dot dot-30" cx="36.0" cy="64.9" r="2"/>
+<circle class="dot dot-30" cx="36.0" cy="65.0" r="2"/>
 <circle class="dot dot-30" cx="62.8" cy="70.2" r="2"/>
 <circle class="dot dot-30" cx="89.6" cy="69.2" r="2"/>
 <circle class="dot dot-30" cx="116.4" cy="60.5" r="2"/>
@@ -61,7 +61,7 @@
 <circle class="dot dot-30" cx="250.4" cy="87.5" r="2"/>
 <circle class="dot dot-30" cx="277.2" cy="84.6" r="2"/>
 <circle class="dot dot-30" cx="304.0" cy="100.4" r="2"/>
-<circle class="dot dot-30" cx="36.0" cy="64.9" r="2"/>
+<circle class="dot dot-30" cx="36.0" cy="65.0" r="2"/>
 <circle class="dot dot-30" cx="62.8" cy="71.3" r="2"/>
 <circle class="dot dot-30" cx="89.6" cy="74.8" r="2"/>
 <circle class="dot dot-30" cx="116.4" cy="77.1" r="2"/>

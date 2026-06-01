@@ -24,11 +24,11 @@
 <text class="axis-label axis-x" x="277.2" y="186">12.6</text>
 <text class="axis-label axis-x" x="304.0" y="186">14</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
-<polyline class="curve curve-10" points="36.0,15.4 62.8,12.7 89.6,13.2 116.4,14.4 143.2,15.4 170.0,15.4 196.8,15.1 223.6,15.8 250.4,19.5 277.2,30.0 304.0,39.2"/>
-<polyline class="curve curve-10 curve-m" points="36.0,15.4 62.8,13.9 89.6,14.7 116.4,15.3 143.2,16.3 170.0,19.5 196.8,23.7 223.6,27.5 250.4,30.0 277.2,33.7 304.0,37.8" stroke-dasharray="4 2"/>
-<polyline class="curve curve-30" points="36.0,15.5 62.8,18.7 89.6,24.9 116.4,35.0 143.2,40.9 170.0,42.2 196.8,39.7 223.6,40.3 250.4,57.3 277.2,83.8 304.0,99.2"/>
-<polyline class="curve curve-30 curve-m" points="36.0,15.5 62.8,22.5 89.6,31.4 116.4,32.0 143.2,35.1 170.0,52.0 196.8,68.3 223.6,82.5 250.4,87.7 277.2,100.5 304.0,107.9" stroke-dasharray="4 2"/>
-<circle class="dot dot-10" cx="36.0" cy="15.4" r="2"/>
+<polyline class="curve curve-10" points="36.0,12.4 62.8,12.7 89.6,13.2 116.4,14.4 143.2,15.4 170.0,15.4 196.8,15.1 223.6,15.8 250.4,19.5 277.2,30.0 304.0,39.2"/>
+<polyline class="curve curve-10 curve-m" points="36.0,12.4 62.8,13.9 89.6,14.7 116.4,15.3 143.2,16.3 170.0,19.5 196.8,23.7 223.6,27.5 250.4,30.0 277.2,33.7 304.0,37.8" stroke-dasharray="4 2"/>
+<polyline class="curve curve-30" points="36.0,17.5 62.8,18.7 89.6,24.9 116.4,35.0 143.2,40.9 170.0,42.2 196.8,39.7 223.6,40.3 250.4,57.3 277.2,83.8 304.0,99.2"/>
+<polyline class="curve curve-30 curve-m" points="36.0,17.5 62.8,22.5 89.6,31.4 116.4,32.0 143.2,35.1 170.0,52.0 196.8,68.3 223.6,82.5 250.4,87.7 277.2,100.5 304.0,107.9" stroke-dasharray="4 2"/>
+<circle class="dot dot-10" cx="36.0" cy="12.4" r="2"/>
 <circle class="dot dot-10" cx="62.8" cy="12.7" r="2"/>
 <circle class="dot dot-10" cx="89.6" cy="13.2" r="2"/>
 <circle class="dot dot-10" cx="116.4" cy="14.4" r="2"/>
@@ -39,7 +39,7 @@
 <circle class="dot dot-10" cx="250.4" cy="19.5" r="2"/>
 <circle class="dot dot-10" cx="277.2" cy="30.0" r="2"/>
 <circle class="dot dot-10" cx="304.0" cy="39.2" r="2"/>
-<circle class="dot dot-10" cx="36.0" cy="15.4" r="2"/>
+<circle class="dot dot-10" cx="36.0" cy="12.4" r="2"/>
 <circle class="dot dot-10" cx="62.8" cy="13.9" r="2"/>
 <circle class="dot dot-10" cx="89.6" cy="14.7" r="2"/>
 <circle class="dot dot-10" cx="116.4" cy="15.3" r="2"/>
@@ -50,7 +50,7 @@
 <circle class="dot dot-10" cx="250.4" cy="30.0" r="2"/>
 <circle class="dot dot-10" cx="277.2" cy="33.7" r="2"/>
 <circle class="dot dot-10" cx="304.0" cy="37.8" r="2"/>
-<circle class="dot dot-30" cx="36.0" cy="15.5" r="2"/>
+<circle class="dot dot-30" cx="36.0" cy="17.5" r="2"/>
 <circle class="dot dot-30" cx="62.8" cy="18.7" r="2"/>
 <circle class="dot dot-30" cx="89.6" cy="24.9" r="2"/>
 <circle class="dot dot-30" cx="116.4" cy="35.0" r="2"/>
@@ -61,7 +61,7 @@
 <circle class="dot dot-30" cx="250.4" cy="57.3" r="2"/>
 <circle class="dot dot-30" cx="277.2" cy="83.8" r="2"/>
 <circle class="dot dot-30" cx="304.0" cy="99.2" r="2"/>
-<circle class="dot dot-30" cx="36.0" cy="15.5" r="2"/>
+<circle class="dot dot-30" cx="36.0" cy="17.5" r="2"/>
 <circle class="dot dot-30" cx="62.8" cy="22.5" r="2"/>
 <circle class="dot dot-30" cx="89.6" cy="31.4" r="2"/>
 <circle class="dot dot-30" cx="116.4" cy="32.0" r="2"/>
