@@ -5,10 +5,12 @@ docs/solid-ai-templates/
 docs/prototype/
 downloaded_files/
 
-# MTF digitizer generated artifacts — tool-emitted by
-# tools/mtfdigitizer/{svg,review}.py, not hand-edited source.
+# MTF digitizer generated artifacts — tool-emitted, not hand-edited
+# source. Prettier would reformat the digitization logs in ways
+# `py -m mtfdigitizer.log --check` would then flag as stale.
 docs/optical-specs/**/*-review.html
 docs/optical-specs/**/*-mtf*.svg
+docs/optical-specs/**/digitization-log.md
 
 # Python tooling — own pytest suites, not part of the front-end gate
 tools/
