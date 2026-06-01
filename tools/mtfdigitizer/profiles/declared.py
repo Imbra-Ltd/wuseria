@@ -25,7 +25,7 @@ SIGMA_2COLOR_SOLID_DASHED: MtfProfile = MtfProfile(
         HueRange(name="blue", h_lo=100, h_hi=120, s_min=60, v_min=60),
     ),
     style_axis="SPLIT_BY_DASH",
-    hue_meaning="FREQUENCY",  # red=10 lp/mm, blue=30 lp/mm
+    hue_meaning="GEODESIC_DP",  # red=10 lp/mm, blue=30 lp/mm; DP bridges dashed-M gaps
     frequencies_lpmm=(10, 30),
     notes="Sigma global product pages; red solid=S, red dashed=M, blue solid=S, blue dashed=M",
 )

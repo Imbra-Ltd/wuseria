@@ -3,6 +3,18 @@
 **Status:** Accepted
 **Date:** 2026-05-20
 
+> **Pending amendment (2026-06-01, tracked in #1015).** ADR-040 introduced
+> the generated `digitization-log.md`, which now carries the MTF readings
+> tables, center/edge summary, and shape metrics — data the hand-written
+> `analysis.md` "Readings" section duplicated in older folders. Before the
+> `analysis.md` backfill (#1015) authors new files, this ADR will be amended
+> so that, where a `digitization-log.md` exists, `analysis.md` **references**
+> the digitized readings rather than re-tabulating them, and its remit
+> narrows to the interpretive layer (astigmatism/field-curvature assessment,
+> construction-based predictions, the bridge from numbers to OQ scoring
+> fields). Do not author new inline-readings `analysis.md` files for lenses
+> that already have a digitization-log until this is resolved.
+
 ## Context
 
 Each lens in `docs/optical-specs/<slug>/` has accumulated files
@@ -26,7 +38,7 @@ Formalize the per-lens folder structure under `docs/optical-specs/<slug>/`:
 ```
 docs/optical-specs/<slug>/
   <slug>-construction.{png,svg} # required — optical construction diagram
-  <slug>-mtf-*.{png,svg}        # required — MTF chart images
+  <slug>-mtf-<variant>.{png,svg} # required — MTF chart images (see naming below)
   analysis.md                   # required — predictions from construction
                                 #   parameters and MTF charts (readings,
                                 #   astigmatism assessment, quality predictions)
@@ -34,6 +46,54 @@ docs/optical-specs/<slug>/
                                 #   justification (same format as ADR-022)
   specs-log.md                      # required — technical specs provenance log
 ```
+
+### MTF chart naming and canonical selection
+
+Manufacturers commonly publish more than one MTF chart per lens:
+
+- **Diffraction MTF** — realistic prediction including wave-optics effects
+- **Geometrical MTF** — idealized ray-tracing; ignores diffraction and
+  overstates performance, especially in the corners and at high
+  frequencies
+- **Per-focal-length charts** — zooms typically publish wide and tele;
+  some publish intermediate focal lengths as well
+
+Numeric suffixes (`-mtf-1`, `-mtf-2`, ...) carry no semantic information —
+a reader must open `analysis.md` to know which file is which. New folders
+MUST use named suffixes that encode the chart type and (for zooms) the
+focal length:
+
+```
+<slug>-mtf.{png,svg}                                # single chart, no variants
+<slug>-mtf-diffraction.{png,svg}                    # prime, diffraction only
+<slug>-mtf-geometric.{png,svg}                      # prime, geometric variant
+<slug>-mtf-diffraction-<focal>.{png,svg}            # zoom, e.g. -wide / -tele / -50mm
+<slug>-mtf-geometric-<focal>.{png,svg}              # zoom geometric variant
+```
+
+`<focal>` is `wide`, `tele`, or an explicit focal length (e.g. `50mm`,
+`150mm`) when the manufacturer publishes more than two charts on a zoom.
+Use `wide`/`tele` when the manufacturer labels them that way; use the
+numeric focal length when intermediate values are published.
+
+**Canonical chart.** When more than one chart is present, the
+**diffraction** chart is canonical for digitization, scoring, and any
+data-extraction tool (`tools/mtfdigitizer/`). Geometrical charts are
+committed for provenance only — they are not digitized and MUST NOT
+drive OQ field scores. For zooms, the **wide-end diffraction chart** is
+canonical unless the lens is marketed by its tele behaviour
+(super-telephoto zooms — document the exception in `specs-log.md`).
+
+**Rationale.** Diffraction MTF is what the optics deliver; geometrical
+MTF describes a hypothetical lens without diffraction and is consistently
+optimistic. Scoring against the geometrical chart would inflate every
+field for the ~20 lenses whose manufacturers publish both.
+
+**Existing folders.** Files committed under the old numeric scheme
+(`-mtf-1`, `-mtf-2`, ...) stay as-is until rename — tracked in #1017.
+Until that rename lands, `analysis.md` MUST label each numeric file with
+its chart type and focal length in the MTF charts list at the top of the
+file (current convention already in use).
 
 ### Image format
 

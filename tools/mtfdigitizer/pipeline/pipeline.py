@@ -31,8 +31,10 @@ import numpy as np
 
 from ..loader import load_chart_bgr
 from ..profiles.types import MtfProfile
-from .dispatch import field_skeletons
+from .dispatch import curve_field, field_skeletons, unique_named_hues
 from .masks import masks_by_curve_name
+from .skeleton import close_and_skeletonize
+from .split import split_sm_by_cc_width
 from .sampling import (
     SAMPLE_FRACTIONS,
     sample_positions_mm,
@@ -55,6 +57,17 @@ SAMPLE_POINTS: tuple[float, ...] = SAMPLE_FRACTIONS  # re-export
 # but their ~0.01 anti-aliasing biases were inheriting from the
 # sister and broadcasting across the curve.
 _INK_PRESENCE_HALF_WIDTH: int = 10
+
+
+# Horizontal kernel width used to bridge a dashed curve's gaps when
+# building its sister-fallback presence mask under the
+# (SPLIT_BY_DASH, GEODESIC_DP) dispatch. Wide enough (~0.5 mm at Sigma
+# plot scale) that a curve whose last dash falls just short of the plot
+# edge still reads "present" at the field-edge sample — so the DP path's
+# extrapolated value is kept instead of being overwritten by the
+# diverging solid (sister) curve. Vertical extent stays 3 px so the mask
+# does not pull the raw-centroid snap off the true stroke.
+_DASH_PRESENCE_BRIDGE_W: int = 121
 
 
 # Sister-curve pairs by committed field name. Both directions so the
@@ -223,8 +236,40 @@ def _hue_masks_for_presence(
     # The mapping depends on the profile; we read it from the hue
     # name convention ("S-red" → contrast10S + resolution30S, etc).
     out: dict[str, np.ndarray] = {}
-    if profile.hue_meaning in ("SAGITTAL_MERIDIONAL", "PER_COLUMN_RIDGE",
-                                "SKELETON_CONTINUOUS_PICK", "GEODESIC_DP"):
+    if profile.style_axis == "SPLIT_BY_DASH" and profile.hue_meaning == "GEODESIC_DP":
+        # Color-named hues (one per frequency); each splits into a solid
+        # (S) and dashed (M) sub-skeleton. The dashed sub-skeleton is
+        # horizontally dilated to bridge dash gaps before it becomes the
+        # presence signal: a raw gappy dashed skeleton makes the
+        # ink-presence check read "absent" mid-gap and triggers a
+        # spurious sister fallback (M←S), which is wrong precisely where
+        # the dashed curve diverges from the solid one (the field edge).
+        # Dilating leaves presence False only past the curve's true
+        # extent, where sister fallback is genuinely warranted.
+        solid_sm, dashed_sm = ("M", "S") if profile.dashed_is_sagittal else ("S", "M")
+        freq_by_color = dict(zip(unique_named_hues(profile), profile.frequencies_lpmm))
+        bridge = cv2.getStructuringElement(
+            cv2.MORPH_RECT, (_DASH_PRESENCE_BRIDGE_W, 3)
+        )
+        for color_name, mask in curve_masks.items():
+            split = split_sm_by_cc_width(close_and_skeletonize(mask))
+            freq = freq_by_color[color_name]
+            # Solid line is continuous — its own skeleton is the presence
+            # signal. Dashed line is bridged so a dash within ~half a mm
+            # of the field edge still marks the edge sample present; the
+            # DP path holds the curve's real value there, whereas sister
+            # fallback would wrongly copy the (diverging) solid value.
+            for sm, sub in (
+                (solid_sm, split.sagittal),
+                (dashed_sm, cv2.dilate(split.meridional.astype(np.uint8), bridge)),
+            ):
+                field = curve_field(freq, sm)
+                if field is not None:
+                    out[field] = sub
+    elif profile.style_axis == "HUE_IS_CURVE" and profile.hue_meaning in (
+        "SAGITTAL_MERIDIONAL", "PER_COLUMN_RIDGE",
+        "SKELETON_CONTINUOUS_PICK", "GEODESIC_DP",
+    ):
         for hue_name, mask in curve_masks.items():
             sm = hue_name[0]  # "S" or "M"
             out[f"contrast10{sm}"] = mask

@@ -363,9 +363,13 @@ def _triage_reference(slug: str):
 
 
 def test_reference_sigma_56_classified_low_for_precision() -> None:
-    """Sparse dashed-M bridging keeps precision below 0.80 — the LOW
-    signal correctly routes the maintainer to the upstream extractor
-    work, not to a chart review."""
+    """Render-match precision stays below 0.80 on this chart, so the LOW
+    signal still routes the maintainer to extractor work, not a chart
+    review — even after the (SPLIT_BY_DASH, GEODESIC_DP) port gave the
+    dashed M curves full coverage. The DP bridging fixed the coverage
+    gap and the flatness false-positive (FLATNESS_STDEV_THRESHOLD 0.02 →
+    0.01), but the round-trip render precision is a separate signal that
+    this Sigma chart does not clear."""
     verdict = _triage_reference("sigma-56mm-f1-4-dc-dn-c")
     assert verdict.verdict == "LOW"
     assert LowReason.PRECISION_BELOW_THRESHOLD in verdict.reasons
