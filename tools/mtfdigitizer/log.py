@@ -64,6 +64,28 @@ def _panel_focal_label(chart_slug: str) -> str | None:
     return m.group(1) if m else None
 
 
+_SPARK_CHARS: tuple[str, ...] = ("▁", "▂", "▃", "▄", "▅", "▆", "▇", "█")
+
+
+def _spark(values: tuple[float | None, ...]) -> str:
+    """Render a curve as a row of Unicode block characters.
+
+    Each MTF value 0..1 maps to one of 8 block heights. None becomes
+    a low dot so gaps remain visible. The output is one character per
+    sample — 11 characters for the standard sample grid.
+    """
+    out: list[str] = []
+    n = len(_SPARK_CHARS)
+    for v in values:
+        if v is None:
+            out.append("·")
+        else:
+            clamped = max(0.0, min(1.0, v))
+            idx = min(n - 1, int(round(clamped * (n - 1))))
+            out.append(_SPARK_CHARS[idx])
+    return "".join(out)
+
+
 def _format_value(v: float | None) -> str:
     return f"{v:.2f}" if v is not None else "—"
 
@@ -146,10 +168,34 @@ def _render_readings_grid(extracted: ExtractedChart, ground_truth: dict) -> list
             )
         lines.append("")
 
-        # Wide grid: rows = sample fractions, columns = (GT, EX, Δ) per field
+        # Sparkline block: 11 Unicode-block characters per curve, side
+        # by side. Each block's height encodes the MTF value (0..1).
+        # Reads at a glance how each curve drops across the image
+        # height — useful when the overlay PNG is hard to see.
+        lines.append("```")
+        for f in fields:
+            if f not in gt_by_field:
+                continue
+            ex_values = tuple(getattr(r, f) for r in extracted.readings)
+            gt_values = gt_by_field[f]
+            ex_endpoints = (
+                f"{ex_values[0]:.2f}" if ex_values[0] is not None else " — ",
+                f"{ex_values[-1]:.2f}" if ex_values[-1] is not None else " — ",
+            )
+            lines.append(
+                f"  EX   {f:<14} {_spark(ex_values)}  "
+                f"({ex_endpoints[0]} → {ex_endpoints[1]})"
+            )
+            lines.append(f"  EYE  {f:<14} {_spark(gt_values)}")
+        lines.append("```")
+        lines.append("")
+
+        # Wide grid: rows = sample fractions, columns = (EYE, EX, Δ) per field.
+        # EYE = eye-read ground truth from `referenceset/charts.py`; EX = what
+        # the extractor computed; Δ = |EX - EYE|.
         header_parts = ["frac"]
         for f in fields:
-            header_parts.extend([f"{f} GT", f"{f} EX", f"{f} Δ"])
+            header_parts.extend([f"{f} EYE", f"{f} EX", f"{f} Δ"])
         lines.append("| " + " | ".join(header_parts) + " |")
         lines.append("| " + " | ".join(["---"] * len(header_parts)) + " |")
         for i, frac in enumerate(SAMPLE_FRACTIONS):
@@ -231,6 +277,19 @@ def _render_lens_log(
     else:
         lines.append("This lens has one reference panel.")
     lines.append("")
+    lines.append("**Legend.**")
+    lines.append("")
+    lines.append(
+        "- **EYE** — eye-read ground truth from the chart, set by a "
+        "maintainer in `tools/mtfdigitizer/referenceset/charts.py`."
+    )
+    lines.append(
+        "- **EX** — what the extractor computed for the same sample point."
+    )
+    lines.append("- **Δ** — `|EX − EYE|`; the calibration tolerance band is ±0.05.")
+    lines.append("- **sister-fill** — count of samples filled from the sister curve.")
+    lines.append("- **·** in a sparkline — EYE marked the value as None at that point.")
+    lines.append("")
     lines.append(
         "See `tools/mtfdigitizer/README.md` for the dispatch algorithm "
         "(per-hue Viterbi shortest path + raw-centroid snap + sister "
@@ -256,7 +315,7 @@ def _render_lens_log(
         lines.append(f"- **Image height:** {chart.image_height_mm} mm")
         lines.append("")
 
-        lines.append("### Sample grid (GT vs extracted)")
+        lines.append("### Sample grid (EYE vs EX)")
         lines.append("")
         lines.extend(_render_readings_grid(extracted, chart.ground_truth))
 
