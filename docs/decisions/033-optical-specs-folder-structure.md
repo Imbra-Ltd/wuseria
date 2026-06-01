@@ -3,6 +3,18 @@
 **Status:** Accepted
 **Date:** 2026-05-20
 
+> **Pending amendment (2026-06-01, tracked in #1015).** ADR-040 introduced
+> the generated `digitization-log.md`, which now carries the MTF readings
+> tables, center/edge summary, and shape metrics — data the hand-written
+> `analysis.md` "Readings" section duplicated in older folders. Before the
+> `analysis.md` backfill (#1015) authors new files, this ADR will be amended
+> so that, where a `digitization-log.md` exists, `analysis.md` **references**
+> the digitized readings rather than re-tabulating them, and its remit
+> narrows to the interpretive layer (astigmatism/field-curvature assessment,
+> construction-based predictions, the bridge from numbers to OQ scoring
+> fields). Do not author new inline-readings `analysis.md` files for lenses
+> that already have a digitization-log until this is resolved.
+
 ## Context
 
 Each lens in `docs/optical-specs/<slug>/` has accumulated files
