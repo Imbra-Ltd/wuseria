@@ -336,7 +336,8 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("f/1.4",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="brand campaign (#1018) — pending GT. Image 2991x1964 matches 56mm template; 56mm plot box (x=[309,2980], y=[83,1700]) should transfer.",
+        notes="Tier 2 (ADR-041) — #1018. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged.",
+        plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
     ),
     ReferenceChart(
         slug="samyang-85mm-f1-4-as-if-umc",
