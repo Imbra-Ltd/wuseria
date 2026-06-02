@@ -3,6 +3,35 @@
 **Status:** Accepted
 **Date:** 2026-05-29
 
+> **Pending amendment (2026-06-02, tracked in #1018).** The current text
+> reads as if every digitized lens needs eye-read ground truth, because the
+> reference set was the first work item and #1003/#1016 built the runnable
+> charts through `_<LENS>_GT` tuples. In practice the reference set and the
+> production digitization queue are two different jobs: GT is required for
+> **calibration anchors** (proves the extractor works for a `(brand,
+style_family)` pair), but not for every subsequent lens in that family.
+>
+> The amendment will codify a two-tier rule:
+>
+> - **Calibration anchors** — one per `(brand, style_family)` carries
+>   eye-read GT, sits in `referenceset/charts.py` with `plot_box` and
+>   `ground_truth` populated, and feeds the calibration runner. The
+>   maintainer eye-reads these; the agent does not.
+> - **Production digitizations** — every other lens runs the proven
+>   extractor with no per-lens GT. The acceptance signal is the two-signal
+>   confidence gate this ADR already specifies (render-match score +
+>   plausibility priors) plus a maintainer overlay glance at the generated
+>   review PNG. No `_<LENS>_GT`, no `plot_box`/`ground_truth` on the
+>   `ReferenceChart` entry. Readings emit to `src/data/mtf-readings.ts`
+>   directly.
+>
+> ADR-040's gate ("logs only when `plot_box` and `ground_truth` are
+> populated") narrows in scope to **calibration logs** under the new rule.
+> Production digitizations emit the SVG + readings + lens-folder
+> `digitization-log.md` through a parallel non-calibration path. Until the
+> amendment lands, do not block #1018 (Sigma DC DN C primes 12/15/16/23mm)
+> on eye-read GT — the Sigma 56mm anchor covers them.
+
 ## Context
 
 Digitizing MTF charts into structured readings (`src/data/mtf-readings.ts`)
