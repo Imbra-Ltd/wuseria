@@ -308,7 +308,8 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("f/1.4",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="brand campaign (#1018) — pending plot box and GT. Image 2988x1954 (smaller than 56mm template, needs fresh measurement).",
+        notes="Tier 2 (ADR-041) — #1018. Image 2988x1954 (10 px shorter than 56mm template); plot box auto-detected via #950 detect_sigma_plot_box().",
+        plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=77, y_bottom=1694),
     ),
     ReferenceChart(
         slug="sigma-15mm-f1-4-dc-dn-c",
@@ -317,7 +318,8 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("f/1.4",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="brand campaign (#1018) — pending plot box and GT. Image 2993x1953 (different from 56mm template, needs fresh measurement).",
+        notes="Tier 2 (ADR-041) — #1018. Image 2993x1953 (different origin from 56mm template); plot box auto-detected via #950 detect_sigma_plot_box().",
+        plot_box=PlotBoxCoords(x_left=314, x_right=2985, y_top=75, y_bottom=1693),
     ),
     ReferenceChart(
         slug="sigma-16mm-f1-4-dc-dn-c",

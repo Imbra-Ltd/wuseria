@@ -6,17 +6,20 @@ area, because:
 - y-pixel → MTF value mapping uses `y_top` (MTF=1) and `y_bottom` (MTF=0)
 - x-pixel → image-height-mm mapping uses `x_left` (mm=0) and `x_right` (mm=max)
 
-Detection across chart styles is genuinely hard (multi-panel stacks,
-solid vs dashed axes, dark vs white backgrounds, transparency). For the
-two profiles #935 ships with — Sigma and Samyang — call sites supply
-the box directly (measured against the reference set). Auto-detection
-arrives later as a separate task.
+For most chart families a hand-measured box is recorded against the
+reference set. `detect_sigma_plot_box()` (#950, Sigma family only)
+automates that step for the `mainstream-2color-solid-dashed` template
+shared by every Sigma DC DN C prime — see its docstring for the
+detection rule and the Sigma-only scope. Other families still rely on
+hand-measured boxes pending family-specific detectors.
 
 The `bbox_to_mtf_value` and `bbox_to_image_height_mm` helpers convert
 between pixel coordinates and chart-space values given a `PlotBox`.
 """
 
 from __future__ import annotations
+
+import numpy as np
 
 from .types import PlotBox
 
@@ -57,3 +60,143 @@ def image_height_mm_to_x_pixel(
     if image_height_mm == 0:
         raise ValueError("image_height_mm cannot be zero")
     return plot_box.x_left + (mm / image_height_mm) * plot_box.width
+
+
+# --- Sigma family auto-detection (#950) -----------------------------------
+#
+# Detection rule (validated against all six Sigma DC DN C primes in the
+# reference set — 12mm, 15mm, 16mm, 23mm, 30mm, 56mm):
+#
+# - The chart has a printed black axis frame on a white background. The
+#   left frame column coincides with the 0 mm vertical dashed gridline;
+#   the right frame is the printed plot frame.
+# - Both frames produce the two columns with the longest contiguous
+#   vertical black runs in the image — order of magnitude longer than
+#   any dashed gridline segment, axis label glyph, or curve line.
+# - The top frame coincides with the OTF=1.0 horizontal gridline; the
+#   bottom frame coincides with the OTF=0.0 horizontal gridline. Both
+#   appear as the first and last rows whose horizontal black ink fraction
+#   exceeds ~30% of image width.
+#
+# The data-edge convention (per `referenceset/charts.py` for the 56mm
+# anchor) sits 1 px inside the left frame and 6 px inside the right
+# frame — empirically the rightmost data column the curves ever paint.
+# Those offsets are identical on every Sigma DC DN C chart measured.
+
+_SIGMA_INK_THRESHOLD: int = 100
+_SIGMA_X_LEFT_OFFSET: int = -1
+_SIGMA_X_RIGHT_OFFSET: int = -6
+_SIGMA_MIN_AXIS_RUN_FRACTION: float = 0.45
+_SIGMA_MIN_GRIDLINE_INK_FRACTION: float = 0.30
+
+
+def _longest_contiguous_run(mask_column: np.ndarray) -> int:
+    """Length of the longest run of True values in a 1-D boolean array."""
+    if not mask_column.any():
+        return 0
+    # Indices where the value flips.
+    padded = np.concatenate(([False], mask_column, [False]))
+    diff = np.diff(padded.astype(np.int8))
+    starts = np.where(diff == 1)[0]
+    ends = np.where(diff == -1)[0]
+    return int((ends - starts).max())
+
+
+def detect_sigma_plot_box(image_bgr: np.ndarray) -> PlotBox:
+    """Detect the data-edge plot box on a Sigma MTF chart (#950).
+
+    Only valid for the `mainstream-2color-solid-dashed` family used by
+    the Sigma DC DN C primes — calling this on a different chart style
+    (multi-panel, dark background, non-Sigma template) raises
+    `ValueError` rather than guessing.
+
+    Detection (see module-level note for the validated rule):
+
+    1. Build a black-ink mask (every channel < threshold).
+    2. Pick the two columns with the longest contiguous vertical ink
+       runs — these are the printed left and right axis frames. The
+       runs must each span at least 45 % of image height; otherwise the
+       chart does not have the expected frame and we refuse.
+    3. Pick the first and last rows whose horizontal ink fraction
+       exceeds 30 % of image width — these are the top (OTF=1.0) and
+       bottom (OTF=0.0) gridlines.
+    4. Apply the Sigma data-edge offsets (-1 px to x_left, -6 px to
+       x_right) and return the box.
+
+    Fail-loud per ADR-038 §4 B1: any missing signal raises rather than
+    falls back to a guess.
+    """
+    if image_bgr.ndim != 3 or image_bgr.shape[2] != 3:
+        raise ValueError(
+            f"expected BGR image with 3 channels, got shape {image_bgr.shape}"
+        )
+
+    height, width = image_bgr.shape[:2]
+    ink = (image_bgr < _SIGMA_INK_THRESHOLD).all(axis=2)
+
+    # --- Left and right axis frames -------------------------------------
+    min_axis_run = int(height * _SIGMA_MIN_AXIS_RUN_FRACTION)
+    column_run_lengths = np.array(
+        [_longest_contiguous_run(ink[:, x]) for x in range(width)]
+    )
+    qualifying = np.where(column_run_lengths >= min_axis_run)[0]
+    if qualifying.size == 0:
+        raise ValueError(
+            "no column has a solid vertical run >= "
+            f"{_SIGMA_MIN_AXIS_RUN_FRACTION:.0%} of image height — chart "
+            "does not look like a Sigma plot frame"
+        )
+
+    # Cluster adjacent columns (the printed frame is often 1-2 px wide
+    # so adjacent x values share the same axis); take the leftmost
+    # cluster and the rightmost cluster.
+    clusters = _cluster_consecutive(qualifying.tolist(), gap=3)
+    if len(clusters) < 2:
+        raise ValueError(
+            f"expected at least two axis-frame columns; found {len(clusters)} "
+            f"clusters of long-solid columns: {clusters}"
+        )
+    # Use the inside edge of each printed frame: the rightmost column of
+    # the left cluster, the leftmost column of the right cluster. The
+    # printed axis lines are 1-2 px wide; the inside edge is what the
+    # data-edge convention measures against.
+    left_frame = max(clusters[0])
+    right_frame = min(clusters[-1])
+
+    # --- Top and bottom horizontal gridlines ----------------------------
+    min_gridline_ink = int(width * _SIGMA_MIN_GRIDLINE_INK_FRACTION)
+    row_ink_counts = ink.sum(axis=1)
+    qualifying_rows = np.where(row_ink_counts >= min_gridline_ink)[0]
+    if qualifying_rows.size == 0:
+        raise ValueError(
+            "no row has horizontal ink coverage >= "
+            f"{_SIGMA_MIN_GRIDLINE_INK_FRACTION:.0%} of image width — chart "
+            "does not look like a Sigma plot frame"
+        )
+    row_clusters = _cluster_consecutive(qualifying_rows.tolist(), gap=3)
+    y_top = min(row_clusters[0])
+    y_bottom = max(row_clusters[-1])
+
+    box = PlotBox(
+        x_left=left_frame + _SIGMA_X_LEFT_OFFSET,
+        x_right=right_frame + _SIGMA_X_RIGHT_OFFSET,
+        y_top=y_top,
+        y_bottom=y_bottom,
+    )
+    if box.width <= 0 or box.height <= 0:
+        raise ValueError(f"degenerate detected box: {box}")
+    return box
+
+
+def _cluster_consecutive(values: list[int], gap: int) -> list[list[int]]:
+    """Group sorted integers into runs where consecutive values differ
+    by at most `gap`."""
+    if not values:
+        return []
+    clusters: list[list[int]] = [[values[0]]]
+    for v in values[1:]:
+        if v - clusters[-1][-1] <= gap:
+            clusters[-1].append(v)
+        else:
+            clusters.append([v])
+    return clusters
