@@ -16,7 +16,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 
 ## Panel
 
-- **Chart:** `docs/optical-specs/sigma-56mm-f1-4-dc-dn-c/sigma-56mm-f1-4-dc-dn-c-mtf-1.png`
+- **Chart:** `docs/optical-specs/sigma-56mm-f1-4-dc-dn-c/sigma-56mm-f1-4-dc-dn-c-mtf-diffraction.png`
 - **Style family:** `mainstream-2color-solid-dashed`
 - **Dispatch profile:** `sigma-2color-solid-dashed`
 - **Plot box (pixels):** x=[309, 2980], y=[83, 1700]

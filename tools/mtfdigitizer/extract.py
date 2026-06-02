@@ -102,14 +102,17 @@ def _resolve_chart_image(chart: ReferenceChart) -> Path:
 
     Honors ADR-033's canonical `-mtf-diffraction.png` (or
     `-mtf-diffraction-<focal>.png` for zooms) if present; otherwise
-    falls back to the path the `ReferenceChart` declares (legacy
-    `-mtf-1.png` scheme). The fallback drops when #1017 renames every
-    optical-specs MTF file to the new scheme.
+    falls back to the path the `ReferenceChart` declares. As of #1017
+    the Sigma DC DN C primes are renamed and their `chart_path` already
+    points at the canonical name, so both branches resolve to the same
+    file. The fallback remains for the multi-chart zooms still on the
+    numeric scheme (tokina-atx-m-11-18, sigma zooms) and drops in the
+    follow-up PR that renames them.
 
     Resolution order:
 
     1. `<slug>-mtf-diffraction.png` in the same folder as the declared path
-    2. `chart.chart_path` (legacy, what `referenceset/charts.py` records today)
+    2. `chart.chart_path` (legacy `-mtf-1.png` for the remaining zooms)
     """
     declared = REPO_ROOT / chart.chart_path
     canonical_name = f"{chart.slug}-mtf-diffraction.png"
