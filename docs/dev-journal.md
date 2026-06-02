@@ -4767,3 +4767,54 @@ Three sequential PRs took the digitization stack from "ADR-041 accepted, no impl
 - **Then `src/data/mtf-readings.ts`** — batch-emit readings for all 4 Sigma DC DN C primes using `py -m mtfdigitizer.emit`. Sigma-16mm + 23mm production logs are already committed; just need to fold them into the TS data and verify the lens pages render.
 - **Then #1017** — the rename pass. Mechanical; write `tools/mtfdigitizer/rename.py` with `--dry-run`. Drop the legacy `-mtf-1.png` fallback from `extract.py` in the same PR.
 - **Then the rest of #790 brand campaign** — Voigtlander (3), Zeiss (3), Tamron (4), Viltrox (14), Samyang (20), etc. Each ~5 min per 5-lens batch.
+
+---
+
+### Session 114 — Sigma plot-box auto-detection unblocks #1018
+
+Date: 2026-06-02 · Tool: Claude Code (Opus 4.7, 1M context)
+
+User opened the session refusing the maintainer eye-measurement path Session 113 had ended on ("i do not want to eye measure, i do not have the time for this. We agreed you automate"). Pivot: instead of measuring the 12mm/15mm plot boxes by hand, build the Sigma-family detector that #950 had been deferring. Reversed Session 113's "honest failure" conclusion with a structural insight the prior probe missed.
+
+#### Branch / merge state
+
+- Started on `main` at `7b5bab0` (Session 113 wrap).
+- Branch `feat/sigma-plot-box-detect` — one PR, not merged yet (awaits user merge).
+- No other branch activity.
+
+#### PRs
+
+- **PR #1027** — `feat(mtfdigitizer): auto-detect Sigma plot box + close #1018`. `detect_sigma_plot_box()` + 6 tests + Sigma 12mm/15mm production logs + plot-box entries in `referenceset/charts.py`. Verdict LOW on both (precision 0.64/0.74) — same as already-accepted 23mm; shipped via `--accept` after overlay glance. 11 files, +810/-7. Open / mergeable.
+
+#### Issues opened / closed / updated
+
+- **#1018** closes when PR #1027 merges (PR body: "Closes #1018"). All four Sigma DC DN C primes now digitized.
+- **#950** partial — Sigma family covered; Samyang, Tokina, 7Artisans, Viltrox, Zeiss still need family-specific detectors. Stays open.
+- **#793** (Sigma digitization umbrella) — added a state comment listing the 5 remaining zooms (10-18, 17-40, 18-50, 100-400, 16-300) explicitly punted by #1018's Out-of-scope section. No new issue opened — these track against #793 already.
+- **#1017** (MTF rename pass) discussed and deferred — explicitly scoped as a separate session (write `rename.py`, run on single-chart folders first, leave zooms for a follow-up once `analysis.md` carries per-chart labels). Out of scope for this session.
+- No new issues filed.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/plotbox.py`** — `detect_sigma_plot_box(image_bgr)` plus a private `_longest_contiguous_run` helper and a `_cluster_consecutive` grouper. ~80 lines of new code with a long module-level note documenting the validated detection rule and the data-edge offset convention. Fail-loud per ADR-038 §4 B1 on missing axis frame, missing gridline, or wrong image shape.
+- **`tools/mtfdigitizer/tests/test_plotbox_detect.py`** — new file, 6 tests. Parameterised over the four hand-measured Sigma anchors (56mm/30mm/16mm/23mm) with ±2 px tolerance; in practice every corner matches exactly. Two negative tests: pure-white image and grayscale input both raise.
+- **`tools/mtfdigitizer/referenceset/charts.py`** — sigma-12mm and sigma-15mm `ReferenceChart` entries gain `plot_box=PlotBoxCoords(...)` populated by the detector. 12mm: `(309, 2980, 77, 1694)`; 15mm: `(314, 2985, 75, 1693)`. Notes updated to reference #950.
+- **Sigma 12mm + 15mm digitization artifacts** — overlay PNG, SVG, review HTML, `digitization-log.md` per lens (8 files). Both gates returned LOW; logs written via `--accept` after maintainer overlay glance.
+- **Full suite passes** — 205/205 mtfdigitizer tests; `--check` clean across 4 production logs.
+
+#### Key decisions
+
+- **Structural reframe over heuristic tuning.** Session 113's deleted probe tried to compute the box from curve-pixel extents (which couldn't recover the y axis because gridlines are not curve pixels). The new probe instead detects the _printed black axis frame_ — the two columns with the longest contiguous vertical ink runs — and the top/bottom horizontal gridlines (the only rows that span ≥30% image width). Both signals are uniquely identifiable because the printed frame is order-of-magnitude longer than any dashed segment or curve line. Validation against the four anchors: every corner matches within ±1 px after fixing one off-by-one (took the rightmost rather than leftmost column of the right-frame cluster — corrected by using the cluster's inside edge in both directions). Lesson: when a previous attempt fails, before declaring the problem hard, re-examine whether the _features_ being measured are actually the right ones.
+- **Tier A scope: Sigma-only, not the broad detector.** Offered Tier A (Sigma only, 1 hour) / Tier B (family-dispatched, real work) / Tier C (fully general, "genuinely hard" per the issue body). User picked A. Resisted the temptation to generalize the API ahead of need — function is named `detect_sigma_plot_box`, not `detect_plot_box(family=...)`. When the second family lands, that's the right moment to abstract.
+- **Asked before `--accept`.** Even though the overlays looked clean, did not bypass the production gate without the user's explicit go-ahead. The gate exists precisely for the human-in-the-loop step, and committing the production log is the load-bearing artifact for OQ scoring — exactly the kind of action [[feedback_executing_with_care]] / the CLAUDE.md "Executing actions with care" section calls out.
+- **Spurious git churn caught and reverted.** The comparison runs on 16mm/23mm regenerated their inspection artifacts with LF line endings (the committed files have CRLF). Reverted those modifications before staging — they had no content delta, only line-ending noise. Kept PR #1027 focused on the new work.
+- **Did not extend the rename pass into this session.** User asked for the rename ("now please rename all mtf charts using the conventions"); refused the maximum-scope interpretation and offered three narrower options. User picked (a) — defer to a separate session — keeping #1017 atomic. Same scope-guard discipline as Session 113.
+- **Bug-report exchange clarified scope, not correctness.** User said "sigma is not ready yet" — first read as a defect in PR #1027, but the actual point was about the 5 zooms still being undone. Resolved by commenting on #793 rather than reopening anything. Reminder: ask "what specifically is the bug" before assuming the wrong thing is wrong.
+
+#### Notes for next session
+
+- **Merge PR #1027** when ready. After merge, #1018 auto-closes.
+- **Then `src/data/mtf-readings.ts`** — batch-emit readings for all 4 Sigma DC DN C primes (#1024/1025 already shipped 16/23mm logs; this PR added 12/15mm). All four primes now have production logs ready to fold into the TS data layer. Same `py -m mtfdigitizer.emit` flow from prior sessions. Verify lens pages render before committing.
+- **Then #1017 rename pass** — write `tools/mtfdigitizer/rename.py` with `--dry-run` mode. Start with single-chart folders (no FL suffix needed); leave multi-chart zoom folders for a follow-up PR after their `analysis.md` files carry per-chart labels per ADR-033 §"Existing folders". Drop the `-mtf-1.png` fallback from `extract.py` in the same PR.
+- **Then Sigma zoom digitization (#793, remaining 5)** — needs a template-survey pass first to determine which families they fall in. Likely multi-panel (wide+tele), so probably a new dispatch profile rather than a fit for the existing `mainstream-2color-solid-dashed` detector. Out of scope until #1017 lands.
+- **Then the rest of #790 brand campaign** — Voigtlander (3), Zeiss (3), Tamron (4), Viltrox (14), Samyang (20), etc.
