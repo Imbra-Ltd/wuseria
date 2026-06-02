@@ -242,7 +242,26 @@ run that changes the numbers materially. Reference the calibration entries
 when discussing the ADR-038 offset tolerance band or the 0.75 render-match
 threshold.
 
-**Refresh per-lens digitization logs:**
+**Run the MTF digitizer production extractor (Tier 2 per ADR-041):**
+
+```bash
+cd tools && py -m mtfdigitizer.extract <lens-slug>            # one lens, gated commit
+cd tools && py -m mtfdigitizer.extract <lens-slug> --accept   # bypass HOLD, write log
+cd tools && py -m mtfdigitizer.extract --all                  # every pending Tier 2 lens; stops on first HOLD
+cd tools && py -m mtfdigitizer.extract --check                # re-render all production logs, fail on staleness
+```
+
+Sister to `calibrate` for production-tier lenses (Tier 2 = `plot_box` set but no
+`ground_truth`). Always writes overlay PNG + SVG + 3-panel review HTML under
+`docs/optical-specs/<lens-slug>/`; writes the production
+`digitization-log.md` only when the confidence gate accepts (render-match
+precision ≥ 0.80 AND IoU ≥ 0.20 AND all plausibility priors hold) OR
+`--accept` is passed. `OVERLAY_GLANCE_REQUIRED=True` is the initial gate
+posture — HIGH verdict alone does not auto-commit; maintainer glances at the
+overlay PNG and re-runs with `--accept`. See ADR-041 for the two-tier
+rationale and `tools/mtfdigitizer/extract.py` for the gate knob.
+
+**Refresh per-lens calibration-tier digitization logs (Tier 1 per ADR-041):**
 
 ```bash
 cd tools && py -m mtfdigitizer.log              # Tokina lenses (default)
@@ -250,11 +269,13 @@ cd tools && py -m mtfdigitizer.log --all        # every lens with a runnable cha
 cd tools && py -m mtfdigitizer.log --check      # verify committed logs are up to date
 ```
 
-Writes `docs/optical-specs/<lens-slug>/digitization-log.md`. Each log is a
-**generated** file — never hand-edit. Run `--check` before committing any
-change that affects pipeline output (algorithm tweaks, ground-truth
-corrections, plot-box edits) and refresh the logs if it reports stale.
-See ADR-040 for the file format.
+Writes `docs/optical-specs/<lens-slug>/digitization-log.md` for **Tier 1
+calibration anchors** (lenses with eye-read ground truth). Tier 2 production
+lenses use the parallel writer baked into `py -m mtfdigitizer.extract` above —
+their logs omit the EYE column per ADR-041. Each log is a **generated** file —
+never hand-edit. Run `--check` before committing any change that affects
+pipeline output (algorithm tweaks, ground-truth corrections, plot-box edits)
+and refresh the logs if it reports stale. See ADR-040 for the file format.
 
 **Run the MTF digitizer render-match scorer:**
 
