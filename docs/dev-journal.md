@@ -4713,3 +4713,57 @@ Per-lens time after #1021 lands: ~1 min (overlay glance + accept). Per-PR time a
 - **Then #1017.** Mechanical rename pass; write `tools/mtfdigitizer/rename.py` with `--dry-run` first. Drop the #1021 legacy fallback in the same PR.
 - **Then #1018.** ~5 minutes; just runs the extractor on each Sigma DC DN C prime, glance, accept, commit.
 - **Submodule lag**: `solid-ai-templates` is ~5 commits behind upstream main as of 2026-06-02 (latest committed locally is `b381154`). Worth a focused submodule-bump PR next session to pick up the testing/quality-gates rules updates.
+
+---
+
+### Session 113 — Production extractor shipped + first two Sigma primes
+
+Date: 2026-06-02 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Three sequential PRs took the digitization stack from "ADR-041 accepted, no implementation" to "production extractor running on two Sigma primes." The half-day estimate on #1021 held.
+
+#### Branch / merge state
+
+- Started on `main` at `311abdc` (Session 112 wrap doc PR #1022 still open).
+- Merged the three open PRs from Session 112's tail and the new work in sequence: #1022 → #1023 → #1024 → #1025. Main ends at `61872ec`.
+- Three feature branches, all squash-merged and auto-deleted: `chore/bump-solid-ai-templates-v2.5.0`, `feat/mtfdigitizer-production-extract`, `feat/sigma-dc-dn-c-primes-extract`.
+- One process correction: created `chore/bump-solid-ai-templates-v2.5.0` inside the submodule by mistake (shell drift after a `cd docs/solid-ai-templates`); caught via `pwd` check, cleaned up, re-created in the project root. [[feedback_pwd_on_path_failure]] applied — should have checked sooner.
+
+#### PRs
+
+- **PR #1022** (Session 112 wrap) — squash-merged at `10c440b`.
+- **PR #1023** — `chore: bump solid-ai-templates to v2.5.0`. Submodule pointer bump 17 commits (b381154 → 00e77ae); CLAUDE.md startup block grew 17 → 19 files (adds `ai-workflow.md` + `release.md`); §6.3 step 7 collapsed from an inline doc-placement priority list to a one-line reference to the upstream decision tree in `ai-workflow.md`. Squash-merged at `4a1abba`.
+- **PR #1024** — `feat(mtfdigitizer): production extractor entry point per ADR-041 (#1021)`. New `extract.py` CLI + `production_log.py` renderer + 15 tests; pilot lens sigma-16mm-f1-4-dc-dn-c with all four artifacts committed for in-PR overlay eye-check. All 7 acceptance criteria from #1021 met. Squash-merged at `6cb7f5a`.
+- **PR #1025** — `data(mtfdigitizer): sigma-23mm-f1-4-dc-dn-c via production extractor (#1018, partial)`. Second prime through the production path; plot_box transferred from 56mm. Squash-merged at `61872ec`.
+
+#### Issues opened / closed / updated
+
+- **#1021** closed by #1024 (production extractor entry point shipped).
+- **#1018** stays open — 16mm + 23mm done; 12mm + 15mm pending. The blockquote workflow in #1018's body remains accurate.
+- No new issues filed.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/extract.py`** — Tier 2 production CLI. `<slug>` / `--accept` / `--all` / `--check`. Canonical chart selection prefers `<slug>-mtf-diffraction.png` (ADR-033) with legacy `<slug>-mtf-1.png` fallback for the #1017 rename transition. Gate at commit time composes `triage.triage()` with an `OVERLAY_GLANCE_REQUIRED=True` knob (initial recommended setting per #1021).
+- **`tools/mtfdigitizer/production_log.py`** — sister to `log.py` minus the EYE column. Chart metadata + EX-only sample grid + center/edge + shape metrics + confidence signals + gate verdict. Banner + `--check` semantics per ADR-040.
+- **15 new tests in `tools/mtfdigitizer/tests/test_extract.py`** — gate decision matrix, Tier 2 filter, canonical chart selection, production log renderer, end-to-end integration on sigma-16mm.
+- **Tier 2 charts populated in `referenceset/charts.py`** — sigma-16mm (#1024) and sigma-23mm (#1025) plot_box transferred from 56mm.
+- **`test_ground_truth_charts_carry_plot_box` loosened** — the "plot_box implies ground_truth" inverse no longer holds under ADR-041; the forward direction still does.
+- **CLAUDE.md startup block: 17 → 19 files** — adds `ai-workflow.md` + `release.md` from the v2.5.0 submodule bump.
+- **CLAUDE.md §6.3 step 7 collapsed** — inline doc-placement priority list replaced with a one-line reference to the upstream decision tree (single source of truth).
+- **`session_next_theme` memory** — needs rewrite for Session 113 state.
+
+#### Key decisions
+
+- **Plot-box auto-detection is #950's job, not #1018's.** Attempted Sigma-specific programmatic measurement during #1025 (one-off `tools/measure_sigma_plotbox.py`, deleted after the experiment). Validation against 56mm/30mm/16mm correctly failed — the bbox of curve pixels gives the horizontal data extent but NOT the vertical, because y_top/y_bottom represent MTF=1.0/0.0 axis positions (semantic), not curve-pixel extent (geometric). The 12mm/15mm boxes need maintainer eye-measurement of the gridlines; ~10 px disagreement between proportional-scaling and fixed-offset strategies can't be resolved programmatically. Honest failure was the right outcome.
+- **Pre-commit prettier doesn't drift the renderer output.** First time the production log went through `lint-staged`, the rendered markdown round-tripped cleanly — `--check` passed after prettier ran. This means the production log format is stable under prettier without renderer changes; good for ADR-040's `--check` semantics.
+- **Asked before automerge on every PR.** Per [[feedback_ask_before_automerge]]: when the user said "merge auto and continue" on PR #1023 that was the explicit OK; otherwise each PR's `gh pr merge` waited for the user's "merge #NNNN" instruction.
+- **Q1-Q4 design questions on #1021 were front-loaded.** Stopped to ask plot-box source / PR scope / test strategy / build mode before writing any code. Clean separation of decisions from implementation; the implementation then ran without revisiting choices.
+
+#### Notes for next session
+
+- **Pick up the 12mm / 15mm plot-box measurements.** The maintainer task: open `docs/optical-specs/sigma-12mm-f1-4-dc-dn-c/sigma-12mm-f1-4-dc-dn-c-mtf-1.png` and `sigma-15mm-f1-4-dc-dn-c/sigma-15mm-f1-4-dc-dn-c-mtf-1.png` in an image viewer, find the y pixel of the MTF=1.0 gridline (y_top) and MTF=0.0 gridline (y_bottom), give the four numbers per chart. Horizontal coords transfer from 56mm (`x_left=309, x_right=2980` validated within ±1 px by the deleted measurement script).
+- **Then #1018 closes** with one short PR per remaining prime (12mm, 15mm) using the same `py -m mtfdigitizer.extract <slug> --accept` flow as #1025.
+- **Then `src/data/mtf-readings.ts`** — batch-emit readings for all 4 Sigma DC DN C primes using `py -m mtfdigitizer.emit`. Sigma-16mm + 23mm production logs are already committed; just need to fold them into the TS data and verify the lens pages render.
+- **Then #1017** — the rename pass. Mechanical; write `tools/mtfdigitizer/rename.py` with `--dry-run`. Drop the legacy `-mtf-1.png` fallback from `extract.py` in the same PR.
+- **Then the rest of #790 brand campaign** — Voigtlander (3), Zeiss (3), Tamron (4), Viltrox (14), Samyang (20), etc. Each ~5 min per 5-lens batch.
