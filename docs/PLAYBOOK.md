@@ -361,8 +361,9 @@ deterministic plot-box registration.
 **Emit a digitized chart's readings as a TypeScript literal for the site:**
 
 ```bash
-cd tools && py -m mtfdigitizer.emit <slug>          # one lens
-cd tools && py -m mtfdigitizer.emit <slug> <slug>   # multiple
+cd tools && py -m mtfdigitizer.emit <slug>                        # measured (default)
+cd tools && py -m mtfdigitizer.emit --mtf-type=computed <slug>   # Sigma / Fujifilm
+cd tools && py -m mtfdigitizer.emit <slug> <slug>                # multiple
 ```
 
 Bridges the digitizer's `ExtractedChart` Python output to the site's
@@ -374,11 +375,17 @@ The lens page picks it up via `mtfReadings[slug]` and renders via
 loop ADR-038 §"Output" envisaged; the committed provenance SVG (from
 `mtfdigitizer.svg`) stays an artifact, not the display source.
 
-The slug must be in `referenceset/charts.py` with a populated plot box,
-and the source URL must be in `_DEFAULT_SOURCES` (in `emit.py`).
-`MtfReading` fields are `number | null` (since the lens-page MTF
-rendering work) so the B2 None contract flows through; rows with all
-four fields null are dropped.
+`--mtf-type` selects the `mtfType` field on the emitted entry: `computed`
+for manufacturer optical-design charts (Sigma, Fujifilm), `measured` for
+review-lab charts from a tested sample (LensTip, Optical Limits). Default:
+`measured` (matches the campaign's majority case).
+
+The slug must be in `referenceset/charts.py` with a populated `plot_box`,
+and the source URL must be in `_DEFAULT_SOURCES` (in `emit.py`). Per
+ADR-041 production-tier charts can emit with `ground_truth=None`. Rows
+with all four fields null are dropped; `MtfReading` fields are
+`number | null` (since the lens-page MTF rendering work) so the B2 None
+contract flows through.
 
 **Audit spec field coverage per brand:**
 

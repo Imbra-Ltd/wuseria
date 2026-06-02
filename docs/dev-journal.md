@@ -4818,3 +4818,53 @@ User opened the session refusing the maintainer eye-measurement path Session 113
 - **Then #1017 rename pass** — write `tools/mtfdigitizer/rename.py` with `--dry-run` mode. Start with single-chart folders (no FL suffix needed); leave multi-chart zoom folders for a follow-up PR after their `analysis.md` files carry per-chart labels per ADR-033 §"Existing folders". Drop the `-mtf-1.png` fallback from `extract.py` in the same PR.
 - **Then Sigma zoom digitization (#793, remaining 5)** — needs a template-survey pass first to determine which families they fall in. Likely multi-panel (wide+tele), so probably a new dispatch profile rather than a fit for the existing `mainstream-2color-solid-dashed` detector. Out of scope until #1017 lands.
 - **Then the rest of #790 brand campaign** — Voigtlander (3), Zeiss (3), Tamron (4), Viltrox (14), Samyang (20), etc.
+
+---
+
+### Session 115 — emit production-tier + computed; Sigma DC DN C batch
+
+Date: 2026-06-02 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Picked up where Session 114 left off: merge #1027, then batch-emit the four Sigma DC DN C primes into `src/data/mtf-readings.ts`. The merge was clean; the batch surfaced two stale gates in `emit.py` that the production extractor pipeline (ADR-041) had outgrown, so the work expanded to a focused tooling fix bundled with the data.
+
+#### Branch / merge state
+
+- Started on `feat/sigma-plot-box-detect` (carrying uncommitted Session 114 dev-journal entry); committed `fc2e773`, pushed, merged PR #1027 — `feat/sigma-plot-box-detect` deleted (remote + local).
+- Branched `feat/sigma-mtf-readings-batch` off updated main for the batch + emit fixes; merged PR #1028, branch deleted.
+
+#### PRs
+
+- **PR #1027** merged (squash → `a54191e`). Session 114's Sigma plot-box auto-detector + 12mm/15mm production logs; closed #1018 on merge. All 8 checks green.
+- **PR #1028** merged (squash → `168db9b`). `feat(mtfdigitizer): emit production-tier + computed MTF; batch Sigma DC DN C primes` — 3 files, +316/-6. All 8 checks green including full build + Lighthouse (changed `src/`).
+
+#### Issues opened / closed / updated
+
+- **#1018** auto-closed at 18:28 UTC when #1027 merged (`Closes #1018` in PR body).
+- **#793** (Sigma digitization umbrella) — added a progress comment listing the four DC DN C primes as digitized via `src/data/mtf-readings.ts`, and reiterating that the 5 remaining zooms still need template-survey + dispatch-profile work. Stays open.
+- No new issues filed.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/emit.py`** — two gate fixes the production extractor needed:
+  - **GT requirement dropped.** `emit_lens` was demanding both `plot_box` AND `ground_truth`; per ADR-041 §"ADR-040 gate narrowing" production-tier charts intentionally lack GT. Gate now requires only `plot_box`. Error message rewritten to match.
+  - **`mtf_type` parameter + CLI flag.** Function hardcoded `mtfType: "measured"` in the emitted literal, but Sigma publishes _computed_ MTF (optical-design simulation), not _measured_ (review-lab tested sample). Added `mtf_type: str = "measured"` parameter to `emit_lens` and `_format_entry`, plus `--mtf-type={computed,measured}` argparse flag on the CLI. Default stays `"measured"` because the existing manufacturer set in `_DEFAULT_SOURCES` (Samyang, Viltrox, Tokina, 7Artisans) is review-lab-sourced; only Sigma uses `"computed"` today.
+  - Added the three new Sigma DC DN C prime slugs (12mm/15mm/23mm) to `_DEFAULT_SOURCES` with the correct `sigma-global.com/en/lenses/cNNN_FF_14/` URLs.
+- **`tools/mtfdigitizer/tests/test_emit.py`** — `test_format_entry_wraps_a_lens_block` and `test_format_entry_empty_readings_block_is_valid_ts` updated for the new `mtf_type` parameter; new `test_format_entry_emits_computed_mtf_type_when_requested` covers the Sigma path. 13/13 emit tests pass; 206/206 full suite pass (up from 205, one new test).
+- **`src/data/mtf-readings.ts`** — 264 lines added: three new `Record` entries for `sigma-12mm-f1-4-dc-dn-c`, `sigma-15mm-f1-4-dc-dn-c`, `sigma-23mm-f1-4-dc-dn-c`. Each is 11/11 positions with zero nulls; ordered alphabetically among the existing 16mm + 56mm entries. All four DC DN C primes (plus the 56mm anchor — five Sigma DC DN C lenses total) now render MTF on their lens pages. Verified by `grep "sigma-global"` against `dist/lenses/sigma-{12,15,23}mm-f1-4-dc-dn-c/index.html`.
+- **`npm run validate` clean** — astro check 0 errors / 0 warnings on project code, full build of 461 pages, link check passes, all 206 mtfdigitizer pytest tests green.
+
+#### Key decisions
+
+- **Bundled the two emit fixes with the data batch instead of splitting.** Both gates were on the path to closing the digitizer→site loop the same way: production-tier charts couldn't emit (GT gate) and Sigma's emitted output would be type-wrong (`measured` vs `computed`). Splitting would have meant landing the GT relaxation, hand-editing `mtfType` on three entries (fragile — re-emit would overwrite it), then a follow-up to add the CLI flag. Asked the user explicitly via `AskUserQuestion` before bundling; user chose option 1 (recommended). Single focused PR, both bugs killed at the source, no hand-edits to generated output.
+- **Default for `--mtf-type` stayed `measured`.** Sigma is the only manufacturer-published computed-MTF lens in the reference set today; Samyang / Viltrox / Tokina / 7Artisans all emit from LensTip-measured charts. Defaulting to `measured` keeps the CLI ergonomic for the campaign's majority case while making the Sigma path explicit. If a second computed-MTF manufacturer lands (Fujifilm GF, Nikon NIKKOR — both publish computed), the default still holds; the flag scales.
+- **No new `ReferenceChart` field for `mtf_type`.** Tempting to model it on the chart entry, but the same chart could in principle be emitted under different attribution rules and the field would just shadow what the CLI already says. Kept it as an emit-step concern alongside `source_url` — both already live in `_DEFAULT_SOURCES` not on the chart. If usage grows past one-off CLI invocations, a `mtf_type` column in `_DEFAULT_SOURCES` (or a `_DEFAULT_MTF_TYPES` companion map) becomes the natural next step; YAGNI until then.
+- **`emit_lens` validates `mtf_type` at the boundary.** New `if mtf_type not in ("computed", "measured")` raise prevents silent typos from emitting an invalid TS literal that astro check would catch later. Pure-function fail-fast pattern matching base-quality.md §"Fail Fast".
+- **Production logs left untouched.** `py -m mtfdigitizer.extract --check` ran clean after the changes — the emit-step edits did not regenerate any `digitization-log.md` files, so PR #1028 stays narrowly scoped to the three new lens-page entries and the emit module.
+- **Asked before merging.** Per `feedback_ask_before_automerge` did not set `--auto`; explicit user go-ahead obtained at each merge step.
+
+#### Notes for next session
+
+- **#1017 — MTF rename pass.** Write `tools/mtfdigitizer/rename.py` with `--dry-run` mode. Start with single-chart folders (the easy case — no FL suffix needed). Leave multi-chart zoom folders for a follow-up PR once their `analysis.md` files carry per-chart labels per ADR-033 §"Existing folders". Drop the `-mtf-1.png` fallback from `extract.py` in the same PR — the rename pass standardizes the convention, so the fallback is no longer needed.
+- **Sigma zoom digitization (#793, remaining 5).** 10-18, 17-40, 18-50, 100-400, 16-300. Template-survey pass first: open each chart, classify by panel layout. Likely multi-panel (wide+tele) which means a new dispatch profile rather than reusing `mainstream-2color-solid-dashed`. Out of scope until #1017 lands so the renames stop perturbing chart paths during digitization.
+- **#790 brand campaign continues.** Voigtlander (3 lenses with charts), Zeiss (3), Tamron (4), Viltrox (14), Samyang (20). Each ~5 min per 5-lens batch once the dispatch profile is known.
+- **`_DEFAULT_SOURCES` is growing — review for clustering.** 11 entries now. If it crosses ~20, consider grouping by brand into nested dicts or extracting to a YAML file. Not urgent.
