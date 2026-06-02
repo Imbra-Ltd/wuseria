@@ -19,11 +19,13 @@
 > 10. `docs/solid-ai-templates/templates/base/workflow/scope.md`
 > 11. `docs/solid-ai-templates/templates/base/workflow/issues.md`
 > 12. `docs/solid-ai-templates/templates/base/workflow/quality-gates.md`
-> 13. `docs/solid-ai-templates/templates/frontend/quality.md`
-> 14. `docs/solid-ai-templates/templates/frontend/ux.md`
-> 15. `docs/solid-ai-templates/templates/frontend/static-site.md`
-> 16. `docs/solid-ai-templates/templates/stack/static-site-astro.md`
-> 17. `docs/solid-ai-templates/templates/platform/github.md`
+> 13. `docs/solid-ai-templates/templates/base/workflow/ai-workflow.md`
+> 14. `docs/solid-ai-templates/templates/base/workflow/release.md`
+> 15. `docs/solid-ai-templates/templates/frontend/quality.md`
+> 16. `docs/solid-ai-templates/templates/frontend/ux.md`
+> 17. `docs/solid-ai-templates/templates/frontend/static-site.md`
+> 18. `docs/solid-ai-templates/templates/stack/static-site-astro.md`
+> 19. `docs/solid-ai-templates/templates/platform/github.md`
 
 Fujifilm lens and camera explorer with genre-based scoring.
 Domain: wuseria.com. By braboj.me.
@@ -374,7 +376,7 @@ execution prevents missed steps.
 [ ] 4. Dev journal entry (### heading, --- separator, PRs, issues, key changes, key decisions with ADR refs)
 [ ] 5. Memory pointer — rewrite the `session_next_theme` memory file (and its MEMORY.md index line) to the current state: session number, what shipped, and the concrete next priority. This is the agent's only cross-session "where we left off" note and is NOT synced from git — if skipped it silently goes stale.
 [ ] 6. ADRs — record any architectural decisions in docs/decisions/. Check: were any new directories created or content moved between documents? Each one needs an ADR.
-[ ] 7. CLAUDE.md — for each new convention/rule, decide the correct home in this order: (1) code/JSDoc if it's a naming/typing rule a developer reads while editing, (2) ADR if it's an architectural decision with alternatives weighed, (3) README (project or package) if it's discoverable user-facing setup/usage, (4) PLAYBOOK if it's an operational workflow, (5) CLAUDE.md ONLY if the agent must apply it on every turn. CLAUDE.md contains rules only — not changelogs, package architecture, per-feature progress, or session logs. Each rule fits on one line; if it needs a paragraph, it belongs in an ADR with a one-line pointer here. Evaluate items individually; do not batch-dismiss.
+[ ] 7. CLAUDE.md — for each new convention/rule, apply the doc-placement decision tree in `base/workflow/ai-workflow.md` §"Doc placement decision tree" (code → ADR → README → PLAYBOOK → CLAUDE.md → memory). CLAUDE.md contains rules only — not changelogs, package architecture, per-feature progress, or session logs. Each rule fits on one line; if it needs a paragraph, write an ADR and leave a one-line pointer here. Evaluate items individually; do not batch-dismiss.
 [ ] 8. README.md — for each new command, dependency, or structural change, is it reflected? Name the section.
 [ ] 9. ONBOARDING.md — for each new tool, prerequisite, or setup step, is it documented? Name the section.
 [ ] 10. PLAYBOOK.md — first list every new command and script introduced this session. Then check: is each one documented? Name the section. Do not batch-dismiss.
