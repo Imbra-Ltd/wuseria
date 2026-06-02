@@ -4652,3 +4652,64 @@ Branch cleanup at start of session: deleted 3 squash-merged local branches and 7
 - **#1018 next**: pick lens by ease — 16mm and 23mm reuse 56mm plot box unchanged, GT-only. 12mm and 15mm need fresh plot-box measurement. Workflow per lens: eye-read 11×4 GT → fill `_SIGMA_NN_GT` and plot box → `py -m mtfdigitizer.calibrate` → eye-check overlay → `py -m mtfdigitizer.log` → commit.
 - **#1017 deferred**: rename ~50+ files touches `analysis.md` links + `referenceset/charts.py` + site emitter; do as a focused mechanical pass.
 - **#1015 still pending**: ADR-033 amendment for analysis.md ↔ digitization-log overlap; required before #1015's analysis.md backfill task can author new files.
+
+---
+
+### Session 112 — ADR-041 splits digitization into calibration vs production tiers
+
+Date: 2026-06-02 · Tool: Claude Code (Opus 4.7, 1M context)
+
+This session began as "verify deploy went green" + "review PR #1016" and ended with a structural ADR that unblocks the brand-by-brand digitization campaign across all ~24 brands of epic #790.
+
+#### Branch / merge state
+
+- Started on `main` at `06b907f` (PR #1016 already merged, deploy green).
+- Created `feat/sigma-16mm-gt-scaffold` to prep a `_SIGMA_16_GT` placeholder for #1018 — committed at `273fb26`, then deleted after the user reframed the problem ("I can't do this for each lens").
+- Created `docs/adr-038-amendment-production-digitization` for the first attempt at the rule change — opened PR #1019. Closed without merging once we recognised the right framing was a new ADR (per `base/docs.md` immutability), not an amendment to ADR-038.
+- Created `docs/adr-041-production-digitization-tiers` for the correct framing — opened PR #1020 with ADR-041 + cross-references on ADR-038 and ADR-040. Self-review caught an anchor-table correctness defect (claimed 7 anchors, code has 11); fix pushed as commit `2bc3092` with the rule softened to "minimum one per `(brand, style_family)`, no ceiling." Merged at `db1b3e0`.
+- Closed stale remote branch `docs/adr-038-amendment-production-digitization` (the closed PR's branch).
+
+#### PRs
+
+- **PR #1019** opened then closed without review — incorrect framing as ADR-038 amendment (ADRs are immutable).
+- **PR #1020** opened, two commits (initial draft + self-review fix), merged at `db1b3e0`. Squash merge; branch deleted.
+
+#### Issues opened / closed / updated
+
+- **#1021** opened — Build production extractor entry point per ADR-041 (P2, task, v0.8.0). Half-day effort. Implements ADR-041's Tier 2 path.
+- **#1017** updated — Bumped P3 → P2; body rewritten to add the `rename.py` helper plan + dependency on #1021's legacy-name fallback.
+- **#1018** updated — Body now points at ADR-041 (accepted) and the dependency chain (#1021 → #1017 → #1018). Old GT-eye-read workflow explicitly marked superseded.
+- No issues closed.
+
+#### Key changes
+
+- **ADR-041 added** — Splits MTF digitization into Tier 1 (calibration anchors, GT required, maintainer-only eye-read) and Tier 2 (production digitizations, no per-lens GT, accepted on render-match + plausibility priors + maintainer overlay glance).
+- **ADR-038 superseded partially** — Status line + supersession blockquote at top point readers at ADR-041 for the two-tier rule. Body unchanged (per immutability).
+- **ADR-040 narrowed** — Scope section gets a blockquote noting the GT-gated log path is now the calibration log; production digitizations emit a parallel production log.
+- **`feedback_agent_no_gt_eye_read` memory** — scope tightened to Tier 1 only. Production digitizations need no GT at all.
+- **`session_next_theme` memory** — full rewrite for Session 112 state and the new dependency queue.
+
+#### Key decisions
+
+- **ADRs are immutable; new rules supersede.** PR #1019's framing-as-amendment was wrong. `base/docs.md` says ADRs are immutable once merged — write a new ADR that partially supersedes the old one instead. This is a process lesson worth carrying forward.
+- **Calibration anchor = minimum one per `(brand, style_family)`, no maximum.** Self-review of ADR-041 caught that the code already has 11 GT-populated entries across 7 family pairs (the original draft said 7 total, treating extras as redundant). Adding anchors widens the confidence-gate signal at the cost of maintainer time — that is a tradeoff, not a violation.
+- **Production tier acceptance signal = render-match + plausibility priors + maintainer overlay glance.** The first two were already in ADR-038 §4 but latent (every chart in the runnable subset also had GT). ADR-041 activates them. Overlay glance is the bridge until the confidence gate has been tuned across many brands.
+- **Promotion path = maintainer overlay glance during Tier 2 commit reveals a profile-level failure.** Demote-back is unspecified and intentionally not addressed.
+- **Don't let a one-shot PR carry the rule change.** PR #1019 was framed as an amendment because that's what was on the working tree; closing it cleanly was cheaper than landing the wrong shape and fixing it later. Worth remembering when a draft drifts mid-session.
+
+#### Three-issue follow-up plan filed
+
+After the ADR landed and the user said "I want to automate the process," sketched the dependency chain and filed:
+
+1. **#1021** (production extractor entry point) — implements ADR-041
+2. **#1017** (rename pass) — depends on #1021's legacy fallback
+3. **#1018** (Sigma DC DN C primes) — unblocked by #1021
+
+Per-lens time after #1021 lands: ~1 min (overlay glance + accept). Per-PR time at recommended 5-lens-per-batch cadence: ~5 min. The Sigma sub-stream (4 primes) becomes one ~5-minute session.
+
+#### Notes for next session
+
+- **Pick up #1021.** Build the `py -m mtfdigitizer.extract <slug>` entry point + production log writer. Half-day. Three decisions to settle during implementation: overlay-glance mandatory vs optional, one-PR-per-lens vs batched, where the render-match threshold lives.
+- **Then #1017.** Mechanical rename pass; write `tools/mtfdigitizer/rename.py` with `--dry-run` first. Drop the #1021 legacy fallback in the same PR.
+- **Then #1018.** ~5 minutes; just runs the extractor on each Sigma DC DN C prime, glance, accept, commit.
+- **Submodule lag**: `solid-ai-templates` is ~5 commits behind upstream main as of 2026-06-02 (latest committed locally is `b381154`). Worth a focused submodule-bump PR next session to pick up the testing/quality-gates rules updates.
