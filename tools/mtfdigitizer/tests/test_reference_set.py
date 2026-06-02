@@ -92,16 +92,16 @@ def test_chart_path_starts_with_docs_optical_specs() -> None:
 
 def test_ground_truth_charts_carry_plot_box() -> None:
     """A chart with ground truth must have a plot box (you need both
-    to run the calibration runner). The inverse is also enforced — a
-    chart with a plot box but no ground truth is unfinished work."""
+    to run the calibration runner).
+
+    The inverse no longer holds: ADR-041 introduced Tier 2 charts that
+    carry a plot box (the extractor needs one to run) but no ground
+    truth (the production tier accepts on render-match + plausibility
+    priors, not eye-reads). See `extract.py`."""
     for chart in REFERENCE_CHARTS:
         if chart.ground_truth is not None:
             assert chart.plot_box is not None, (
                 f"{chart.slug}: has ground_truth but no plot_box"
-            )
-        if chart.plot_box is not None:
-            assert chart.ground_truth is not None, (
-                f"{chart.slug}: has plot_box but no ground_truth"
             )
 
 

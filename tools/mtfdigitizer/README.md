@@ -23,6 +23,7 @@ lens-page SVG swap, optional Real-ESRGAN fallback).
 - [x] [#971](https://github.com/Imbra-Ltd/wuseria/issues/971) — `svg.py` provenance SVG emitter; viewBox 320×218 (data area matches `MtfChart.astro` 320×200, extra 18px legend strip)
 - [x] [#973](https://github.com/Imbra-Ltd/wuseria/issues/973) — `review.py` 3-panel HTML composite (original PNG + SVG + overlay); only LOW-verdict review files are committed per ADR-038 §"Workflow"
 - [x] Profiles for the 3 remaining in-band families (7Artisans samecolor-dashed-sm, Tokina 2color-frequency, Viltrox bw-dashed-promo); adds `Y_BAND_IS_FREQUENCY` hue meaning, `y_band_split` profile field, and `auto_suggestable` opt-out for profiles whose hue range is too broad to participate in disambiguation
+- [x] [#1021](https://github.com/Imbra-Ltd/wuseria/issues/1021) — `extract.py` + `production_log.py` production-tier CLI per [ADR-041](../../docs/decisions/041-production-digitization-no-per-lens-gt.md); runs the proven extractor on Tier 2 lenses (no per-lens GT), emits overlay PNG + SVG + review HTML + production `digitization-log.md` gated by render-match + plausibility priors
 - [ ] Remaining tasks under epic [#932](https://github.com/Imbra-Ltd/wuseria/issues/932): lens-page SVG swap, optional Real-ESRGAN fallback, Viltrox 30 lp/mm tracking (y-band heuristic fails on tightly-clustered B&W charts — calibration documents the limit at 50%+ |d|)
 
 The 0.75 IoU threshold proposed in `referenceset/REFERENCE_SET.md` fails 3/3
@@ -31,8 +32,18 @@ runnable charts due to sparse-polyline vs dense-skeleton geometric asymmetry
 deferred — the discipline is "the threshold moves, not the extractor."
 
 `extract_chart(image_path, profile, plot_box, image_height_mm)` is the
-end-to-end entry point. CLI not yet exposed; the pipeline is callable
-from Python now.
+library entry point. Two CLIs sit on top:
+
+- `py -m mtfdigitizer.calibrate` — runs every Tier 1 reference chart
+  (those with both `plot_box` and `ground_truth`) and reports the
+  per-position Δ vs the eye-read values. Use after any extractor or
+  threshold change.
+- `py -m mtfdigitizer.extract <slug>` — runs one Tier 2 lens (those
+  with `plot_box` but no `ground_truth`) and emits the four artifacts
+  per ADR-041. `--accept` bypasses the gate after an overlay glance;
+  `--all` runs every pending Tier 2 lens, stopping on the first HOLD;
+  `--check` re-renders every committed production log and fails on
+  staleness.
 
 ## Layout
 
@@ -41,7 +52,9 @@ mtfdigitizer/
   README.md           # this file
   __init__.py         # package marker + module map
   loader.py           # alpha-aware image loader (shared)
-  calibrate.py        # reference-set calibration runner (#953)
+  calibrate.py        # Tier 1 reference-set calibration runner (#953)
+  extract.py          # Tier 2 production extractor CLI (#1021, ADR-041)
+  production_log.py   # Tier 2 digitization-log renderer (sister to log.py)
   referenceset/       # eye-verified ground-truth charts (#933)
     REFERENCE_SET.md  # what's in the set, why, verified-shape notes
     calibration.md    # latest calibration run + findings (#953)
