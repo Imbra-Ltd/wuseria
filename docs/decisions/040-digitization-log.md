@@ -98,6 +98,17 @@ without ground truth (the digitizer can extract them, but there's
 nothing to compare against) get no log. This matches the calibration
 runner's scope.
 
+> **Narrowed by [ADR-041](041-production-digitization-no-per-lens-gt.md)
+> (2026-06-02).** The GT-gated path above is the **calibration log**.
+> Production digitizations (lenses without per-lens GT, riding a
+> calibration anchor in the same `(brand, style_family)`) emit a
+> **production log** through a parallel path: same file name, same
+> banner / `--check` semantics, no EYE column, with chart metadata,
+> sample grid, sparklines, sister-fill counts, plausibility-prior
+> outcomes, and the render-match score. Both paths produce one
+> `digitization-log.md` per lens so the discovery story stays
+> uniform.
+
 ### Multi-panel lenses
 
 Zoom lenses with multiple MTF panels (e.g. Tokina 11-18 with charts

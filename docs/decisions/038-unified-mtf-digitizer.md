@@ -1,7 +1,17 @@
 # ADR-038: Unified MTF chart digitizer with declared profiles and shape-based verification
 
-**Status:** Accepted
+**Status:** Accepted; partially superseded by [ADR-041](041-production-digitization-no-per-lens-gt.md)
 **Date:** 2026-05-29
+
+> **Partially superseded by ADR-041 (2026-06-02).** This ADR's
+> reference-set bootstrap was read as if every digitized lens needed
+> eye-read ground truth. ADR-041 splits the workflow into two tiers:
+> calibration anchors (one per `(brand, style_family)`, GT required,
+> maintainer-only eye-read) and production digitizations (everything
+> else, render-match + plausibility priors + overlay glance, no per-lens
+> GT). The five pillars below still describe the calibration tier; the
+> production tier reuses pillars 1–3 unchanged and replaces the §4 GT
+> dependency with the confidence gate this ADR already specifies.
 
 ## Context
 
