@@ -4868,3 +4868,51 @@ Picked up where Session 114 left off: merge #1027, then batch-emit the four Sigm
 - **Sigma zoom digitization (#793, remaining 5).** 10-18, 17-40, 18-50, 100-400, 16-300. Template-survey pass first: open each chart, classify by panel layout. Likely multi-panel (wide+tele) which means a new dispatch profile rather than reusing `mainstream-2color-solid-dashed`. Out of scope until #1017 lands so the renames stop perturbing chart paths during digitization.
 - **#790 brand campaign continues.** Voigtlander (3 lenses with charts), Zeiss (3), Tamron (4), Viltrox (14), Samyang (20). Each ~5 min per 5-lens batch once the dispatch profile is known.
 - **`_DEFAULT_SOURCES` is growing — review for clustering.** 11 entries now. If it crosses ~20, consider grouping by brand into nested dicts or extracting to a YAML file. Not urgent.
+
+---
+
+### Session 116 — #1017 rename pass, first slice (Sigma DC DN C primes)
+
+Date: 2026-06-02 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Picked up #1017 from the Session 115 carry-list. The work decomposed naturally into two pieces: write the rename driver, then run it against the easiest folders (single-chart-per-type primes with `analysis.md` labels already in place). Multi-chart zooms (sigma-10-18, 100-400, 16-300, 17-40, 18-50, tokina-atx-m-11-18, tamron-{11-20, 150-500, 17-70, 18-300}) get deferred to a follow-up because their `analysis.md` files don't yet carry per-focal-length labels and the script (by design) refuses to guess.
+
+#### Branch / merge state
+
+- Started on `main`, clean. Branched `feat/mtf-rename-script`. Single commit (`1ee66f1`), pushed, PR #1030 open. Not merged this session.
+
+#### PRs
+
+- **PR #1030** open (not merged). 49 files, +749 / -57. CI: `gate` / `changes` / `gitleaks` / `links` pass; `build` + `lighthouse` correctly skipped by ADR-039 paths-filter (no `src/` changes); `analyze` (CodeQL) still pending at session end.
+
+#### Issues opened / closed / updated
+
+- **#1017** stays open — only the first slice landed. No comment added (PR description carries the scope/defer detail).
+- No new issues filed.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/rename.py`** (new, 305 lines). Walks `docs/optical-specs/*/`, reads each `analysis.md` MTF charts list, maps numeric-suffix files (`-mtf-1.png`, `-mtf-2.png`) to canonical named suffixes (`-mtf-diffraction.png`, `-mtf-geometric.png`) per ADR-033 §"MTF chart naming", and produces a deterministic rename plan. `--dry-run` prints; `--apply` executes (moves files, rewrites `analysis.md` link tables, rewrites `chart_path="..."` literals in `referenceset/charts.py`). Sidecar discovery handles each PNG's `.svg`, `-overlay.png`, `-review.html` companions. Fails loud on missing labels, unrecognised labels, or two files mapping to the same suffix (the zoom case it intentionally won't touch).
+- **`tools/mtfdigitizer/tests/test_rename.py`** (new, 14 tests). Covers the markdown parser, sidecar discovery, the `_is_numeric_stem` filter (excludes already-canonical files), `_rewrite_analysis` plain-string replacement, end-to-end folder planning (happy path + the three fail-loud cases), and the `charts.py` rewriter (dry-run leaves the file alone; apply only touches `chart_path="..."` literals, never prose). All green.
+- **Six Sigma DC DN C prime folders renamed.** 30 files moved in lockstep (5 per folder: `-mtf-1.{png,svg}`, `-mtf-1-overlay.png`, `-mtf-1-review.html`, `-mtf-2.png`). Six `analysis.md` files updated. Tier 2 production logs (12/15/16/23mm) regenerated via `py -m mtfdigitizer.extract --accept <slug>` — precision/IoU identical to pre-rename runs, confirming the operation was pure-path. Tier 1 logs (30/56mm) regenerated via `py -m mtfdigitizer.log --all`.
+- **`tools/mtfdigitizer/referenceset/charts.py`** — 6 `chart_path` literals rewritten by the script + a comment line manually corrected (was `"canonical diffraction chart is -mtf-1.png per ADR-033"` — outdated by this very PR).
+- **`tools/mtfdigitizer/extract.py`** — `_resolve_chart_image` docstring updated to note that Sigma primes now have canonical paths but the fallback stays for the remaining numeric-scheme zoom folders. Fallback drops in the follow-up PR.
+- **`tools/mtfdigitizer/profiles/declared.py`** — one comment line updated (`sigma-56mm-...-mtf-1.png` → `-mtf-diffraction.png`).
+- **`tools/mtfdigitizer/tests/test_extract.py`** — two artifact-path assertions updated from `-mtf-1-overlay.png` to `-mtf-diffraction-overlay.png` (the extractor names artifacts after the input chart's basename, which is now canonical).
+- **`docs/PLAYBOOK.md`** — new "Rename optical-specs MTF files to named suffixes" subsection under the digitizer commands, documenting `--dry-run` / `--apply` and the regenerate-logs follow-up step.
+
+#### Key decisions
+
+- **Single-PR strategy over per-folder commits.** Issue #1017 suggested "per-folder commits via `git add docs/optical-specs/<slug>/` so each lens folder is its own atomic rename". Rejected: this repo squash-merges, so the per-folder split would be squashed away on merge anyway. The commit history reviewer-convenience benefit doesn't survive the merge model. Single commit, six folders, kept as one atomic change.
+- **Labels source: `analysis.md` only, no sidecar.** The script reads its rename plan from the labelled MTF charts list each `analysis.md` already carries (per ADR-033 §"Existing folders" — that's the convention's _whole point_ for the transitional period). A separate `rename-plan.yaml` would duplicate state; CLI-arg-per-file would have no audit trail. Folder owns the truth; script transcribes.
+- **`charts.py` rewriter: regex on `chart_path="..."` only.** AST-based rewriting would be overkill — the literal is unique per chart (lens slug prefix prevents collisions), and the regex pattern matches only the keyword-arg form, never prose mentions. A test fixture explicitly verifies that a prose mention of the same filename in a comment is left untouched.
+- **Fallback in `extract.py` retained.** The issue allows dropping it in this PR _or_ a follow-up. Dropped now would break tokina-atx-m-11-18 + the sigma zooms whose `chart_path` still declares the numeric form. Stays until the next #1017 slice. Docstring updated to explain why.
+- **Trust git's rename detection over hand-tagging.** Worried briefly that git would record the moves as delete+add (bloating the diff) but `git status -s` shows the rename pairs as `R` entries; commit message records `rename ... (100%)` for every PNG and 76% for the small review.html files. Diff stays readable.
+- **CRLF noise sidestepped.** First pass of `py -m mtfdigitizer.log --all` accidentally touched 8 unrelated lens folders (out-of-scope Samyang/Tokina/etc) with LF-vs-CRLF-only changes. Reverted those with `git checkout HEAD --` before staging; `--check` then confirmed all logs (including the reverted ones) were still up to date. Kept the diff narrowly scoped to the Sigma primes touched in this PR.
+
+#### Notes for next session
+
+- **Next slice of #1017 — multi-chart zooms.** Requires `analysis.md` enrichment first: each `MTF charts:` bullet needs a per-focal-length disambiguator (`diffraction MTF (wide)` / `(tele)` / `(50mm)` or however the manufacturer labels them). Then the rename script's parser needs to accept the `(suffix)` form. Folders: sigma-10-18, sigma-100-400 (16 PNGs!), sigma-16-300, sigma-17-40, sigma-18-50, tokina-atx-m-11-18, tamron-{11-20, 150-500, 17-70, 18-300}. Once they're done, drop the `_resolve_chart_image` legacy fallback from `extract.py` in the same PR.
+- **Sigma zoom digitization (#793, 5 remaining).** Still blocked on #1017 finishing so the renames stop perturbing chart paths during digitization. Template-survey pass needed before writing the dispatch profile.
+- **Then the rest of the #790 brand campaign.** Voigtlander/Zeiss/Tamron/Viltrox/Samyang/Fujifilm — order TBD per ease and reference-set coverage.
+- **The Tier 1 `log.py --check` "false OK" mystery.** Before regenerating, `--check` reported "OK: 4 digitization log(s) up to date" even though the committed file still referenced `-mtf-1.png` and the extractor would now read `-mtf-diffraction.png`. Worth a glance: either the check ignores the chart-path metadata line in its byte-compare, or there's a normalisation step that hides path differences. Not blocking — `--all` then `--check` returned to clean state — but the false OK could mask future staleness if not pinned down.
