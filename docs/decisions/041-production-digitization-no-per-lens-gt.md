@@ -65,24 +65,31 @@ dispatch produces calibrated readings for that family of charts.
 - Drives the digitization log gate per ADR-040
 - Eye-reading is done **by the maintainer only**
   ([[feedback_agent_no_gt_eye_read]] remains in force at this tier)
-- Granularity: one per `(brand, style_family)`. Add a second anchor in
-  the same family **only** when extraction visibly fails on a new chart
-  and the failure is profile-level (not chart-quality-level)
+- Granularity: **minimum one per `(brand, style_family)`**. Adding more
+  anchors in the same family is allowed and useful — every additional
+  anchor cross-validates the dispatch against a chart the maintainer
+  has already eye-verified, which widens the band of profile quirks the
+  confidence gate has been tuned against. The minimum is enforced (a
+  family with zero anchors has no Tier 1 calibration); the maximum is
+  not (more anchors = more confidence-gate signal, at the cost of
+  maintainer time).
 
-Current anchors at the time of writing (2026-06-02):
+Current anchors at the time of writing (2026-06-02) — 11 lenses with
+GT-populated entries in `referenceset/charts.py`:
 
-| Brand     | Style family                     | Anchor lens                           |
-| --------- | -------------------------------- | ------------------------------------- |
-| Sigma     | `mainstream-2color-solid-dashed` | `sigma-56mm-f1-4-dc-dn-c`             |
-| Samyang   | `mainstream-4color-all-solid`    | `samyang-85mm-f1-4-as-if-umc` (MAX)   |
-| Samyang   | `idealized-flat`                 | `samyang-300mm-f6-3-ed-umc-cs-reflex` |
-| 7Artisans | `samecolor-dashed-sm`            | `7artisans-50mm-f1-2-mark-ii`         |
-| Tokina    | `2color-frequency`               | `tokina-atx-m-23mm-f1-4-x` (+33, 56)  |
-| Tokina    | `2color-frequency-cc-rank`       | `tokina-atx-m-11-18mm-f2-8-x` (×2)    |
-| Viltrox   | `bw-dashed-promo`                | `viltrox-af-75mm-f1-2-pro`            |
+| Brand     | Style family                     | Anchor lenses                                                                      |
+| --------- | -------------------------------- | ---------------------------------------------------------------------------------- |
+| Sigma     | `mainstream-2color-solid-dashed` | `sigma-56mm-f1-4-dc-dn-c`, `sigma-30mm-f1-4-dc-dn-c`                               |
+| Samyang   | `mainstream-4color-all-solid`    | `samyang-85mm-f1-4-as-if-umc` (MAX panel)                                          |
+| Samyang   | `idealized-flat`                 | `samyang-300mm-f6-3-ed-umc-cs-reflex`                                              |
+| 7Artisans | `samecolor-dashed-sm`            | `7artisans-50mm-f1-2-mark-ii`                                                      |
+| Tokina    | `2color-frequency`               | `tokina-atx-m-23mm-f1-4-x`, `tokina-atx-m-33mm-f1-4-x`, `tokina-atx-m-56mm-f1-4-x` |
+| Tokina    | `2color-frequency-cc-rank`       | `tokina-atx-m-11-18mm-f2-8-x` at 11mm, `tokina-atx-m-11-18mm-f2-8-x` at 18mm       |
+| Viltrox   | `bw-dashed-promo`                | `viltrox-af-75mm-f1-2-pro`                                                         |
 
-(The Sigma 30mm and the four Sigma DC DN C primes are **not** anchors —
-they ride the 56mm anchor.)
+(The four scaffolded Sigma DC DN C primes — 12mm, 15mm, 16mm, 23mm —
+are **not** anchors; they ride the existing Sigma anchors as Tier 2
+production digitizations. See #1018.)
 
 ### Tier 2 — Production digitizations
 
@@ -149,6 +156,9 @@ A production lens becomes a calibration anchor by:
 Promotion is triggered when extraction visibly fails on a chart in an
 existing family and the failure is profile-level (e.g. a new Sigma chart
 in 2028 uses a redesigned palette and the existing profile mismatches).
+The signal is the maintainer's overlay glance during the normal
+production workflow — the same step that approves Tier 2 commits is also
+the early-warning that a chart needs Tier 1 treatment.
 
 ## Alternatives considered
 
@@ -171,19 +181,19 @@ ground_truth=None`, OR get a measured `plot_box` if their template
 - **Epic #790 unblocks at scale.** Production digitizations across all
   ~24 brands become possible at one-lens-per-commit cadence without
   bottlenecking on the maintainer.
-- **ADR-038's body gets the pending-amendment blockquote removed** when
-  this ADR merges, replaced with a one-line `> See ADR-041 for the
-two-tier rule.` pointer at the same location. ADR-038's `Status:`
-  line gains `; partially superseded by ADR-041`.
-- **ADR-040's `## Scope` section** picks up a one-line note pointing
-  at this ADR for the production log path.
-- **`tools/mtfdigitizer/extract.py` needs a production entry point** —
-  current pipeline assumes the calibration path (`mtfdigitizer.calibrate`
-  - `mtfdigitizer.log` against GT). Building the
-    `py -m mtfdigitizer.extract <slug>` command and the production
-    log-writer is a follow-up implementation task; this ADR authorizes the
-    shape, not the code change. Tracked in a follow-up issue once this
-    ADR merges.
+- **ADR-038 and ADR-040 pick up cross-references in the same PR** —
+  ADR-038's `Status:` line gains `; partially superseded by ADR-041`
+  and a blockquote at the top points readers here; ADR-040's `Scope`
+  section gets a blockquote noting that the GT-gated log path is now
+  the calibration log and that production digitizations emit a parallel
+  log. Both edits are atomic with this ADR so the chain stays
+  internally consistent at merge time.
+- **`tools/mtfdigitizer/extract.py` needs a production entry point.**
+  The current pipeline assumes the calibration path
+  (`mtfdigitizer.calibrate` plus `mtfdigitizer.log` against GT).
+  Building the `py -m mtfdigitizer.extract <slug>` command and the
+  production log writer is a follow-up implementation task; this ADR
+  authorizes the shape, not the code change. Tracked in #1021.
 - **The "agent does not eye-read GT" rule
   ([[feedback_agent_no_gt_eye_read]]) stands.** Its scope tightens to
   calibration anchors only — explicit, not implicit.
