@@ -96,6 +96,7 @@ def test_format_entry_wraps_a_lens_block() -> None:
     out = _format_entry(
         slug="test-lens",
         source="https://example.com/lens",
+        mtf_type="measured",
         aperture="f/2.8",
         paired=rows,
     )
@@ -107,8 +108,24 @@ def test_format_entry_wraps_a_lens_block() -> None:
     assert out.count("position:") == 2
 
 
+def test_format_entry_emits_computed_mtf_type_when_requested() -> None:
+    out = _format_entry(
+        slug="sigma-lens",
+        source="https://sigma-global.com/x",
+        mtf_type="computed",
+        aperture="f/1.4",
+        paired=(_r(pos=0),),
+    )
+    assert 'mtfType: "computed",' in out
+    assert 'mtfType: "measured",' not in out
+
+
 def test_format_entry_empty_readings_block_is_valid_ts() -> None:
     out = _format_entry(
-        slug="test-lens", source="https://x", aperture="f/2", paired=()
+        slug="test-lens",
+        source="https://x",
+        mtf_type="measured",
+        aperture="f/2",
+        paired=(),
     )
     assert "readings: [\n\n        ]," in out

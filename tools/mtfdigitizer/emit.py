@@ -115,6 +115,7 @@ def _format_chart(
 def _format_entry(
     slug: str,
     source: str,
+    mtf_type: str,
     aperture: str,
     paired: tuple[SampledReading, ...],
 ) -> str:
@@ -122,7 +123,7 @@ def _format_entry(
     return (
         f"  \"{slug}\": {{\n"
         f"    source: \"{source}\",\n"
-        "    mtfType: \"measured\",\n"
+        f"    mtfType: \"{mtf_type}\",\n"
         "    charts: [\n"
         f"{chart_block}\n"
         "    ],\n"
@@ -133,6 +134,7 @@ def _format_entry(
 def emit_lens(
     chart: ReferenceChart,
     source_url: str,
+    mtf_type: str = "measured",
     aperture: str | None = None,
     repo_root: Path | None = None,
 ) -> EmitResult:
@@ -140,14 +142,21 @@ def emit_lens(
 
     `source_url` becomes the `source` field on the emitted entry — the
     canonical attribution URL that the lens page renders below the chart.
+    `mtf_type` becomes the `mtfType` field — "computed" for manufacturer
+    charts derived from optical design (Sigma, Fujifilm, Nikon), "measured"
+    for review-lab charts from a tested sample (LensTip, Optical Limits).
     `aperture` overrides the chart's first declared aperture (useful when
     the reference chart declares multiple panels but only the first is
     extracted by the current pipeline).
     """
-    if chart.plot_box is None or chart.ground_truth is None:
+    if chart.plot_box is None:
         raise ValueError(
-            f"reference chart {chart.slug!r} has no plot_box or ground_truth — "
-            f"emit only supports charts that calibrate"
+            f"reference chart {chart.slug!r} has no plot_box — "
+            f"emit requires a calibrated or measured plot box"
+        )
+    if mtf_type not in ("computed", "measured"):
+        raise ValueError(
+            f"mtf_type must be 'computed' or 'measured', got {mtf_type!r}"
         )
     profile = profile_for_chart(chart)
 
@@ -170,6 +179,7 @@ def emit_lens(
         ts_literal=_format_entry(
             slug=chart.slug,
             source=source_url,
+            mtf_type=mtf_type,
             aperture=aperture or chart.apertures[0],
             paired=rows,
         ),
@@ -182,6 +192,15 @@ def emit_lens(
 # should cite. Kept here rather than on ReferenceChart because
 # attribution is an emit-step concern, not a calibration concern.
 _DEFAULT_SOURCES: dict[str, str] = {
+    "sigma-12mm-f1-4-dc-dn-c": (
+        "https://www.sigma-global.com/en/lenses/c025_12_14/"
+    ),
+    "sigma-15mm-f1-4-dc-dn-c": (
+        "https://www.sigma-global.com/en/lenses/c026_15_14/"
+    ),
+    "sigma-23mm-f1-4-dc-dn-c": (
+        "https://www.sigma-global.com/en/lenses/c023_23_14/"
+    ),
     "sigma-56mm-f1-4-dc-dn-c": (
         "https://www.sigma-global.com/en/lenses/c018_56_14/"
     ),
@@ -222,6 +241,16 @@ def main(argv: list[str] | None = None) -> int:
         nargs="+",
         help="reference-set lens slug(s) to emit",
     )
+    parser.add_argument(
+        "--mtf-type",
+        choices=("computed", "measured"),
+        default="measured",
+        help=(
+            "MTF provenance for the emitted entries: 'computed' for "
+            "manufacturer optical-design charts (Sigma, Fujifilm), "
+            "'measured' for review-lab charts (LensTip). Default: measured."
+        ),
+    )
     args = parser.parse_args(argv)
 
     chart_by_slug = {c.slug: c for c in REFERENCE_CHARTS}
@@ -239,7 +268,7 @@ def main(argv: list[str] | None = None) -> int:
                 file=sys.stderr,
             )
             return 1
-        result = emit_lens(chart, source_url=source)
+        result = emit_lens(chart, source_url=source, mtf_type=args.mtf_type)
         print(result.ts_literal)
         nulls = ", ".join(
             f"{field}={count}" for field, count in result.null_counts.items()
