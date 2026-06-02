@@ -1,0 +1,417 @@
+"""Production extraction CLI (ADR-041 Tier 2).
+
+Sister to `calibrate.py`: where calibration runs the extractor against
+charts with eye-read ground truth and reports per-position offsets,
+this entry point runs the extractor against production-tier lenses
+(no per-lens GT) and emits four artifacts per lens, gated by the two
+confidence signals ADR-038 §4 already specifies (render-match +
+plausibility priors).
+
+Emitted artifacts under `docs/optical-specs/<lens-slug>/`:
+
+- `<chart-stem>-overlay.png` — extractor's 11-point polylines drawn over
+  the original chart (mandatory maintainer glance until ~20 lenses ship
+  without a false-positive auto-accept).
+- `<chart-stem>-review.html` — the 3-panel composite from `review.py`
+  (original + SVG + overlay). Same as the calibration-tier review file.
+- `<chart-stem>.svg` — provenance SVG from `svg.py`.
+- `digitization-log.md` — production log written by `production_log.py`
+  (no EYE column, lists the gate decision + signal values).
+
+Usage::
+
+    cd tools
+    py -m mtfdigitizer.extract <lens-slug>            # one lens, gated commit
+    py -m mtfdigitizer.extract <lens-slug> --accept   # bypass HOLD, write anyway
+    py -m mtfdigitizer.extract --all                  # every Tier 2 lens that has no log yet
+    py -m mtfdigitizer.extract --check                # re-render all production logs, fail on staleness
+
+Gate at commit time:
+
+The extractor always writes the overlay, SVG, and review HTML — those
+are inspection artifacts the maintainer needs even when reviewing a
+HOLD. The production `digitization-log.md` is written only when the
+gate accepts. With `--accept` the maintainer overrides the gate and
+the log is written regardless.
+
+Implements #1021 per the ADR-041 Tier 2 design.
+"""
+
+from __future__ import annotations
+
+import argparse
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Iterable
+
+from .family_profile import profile_for_chart
+from .pipeline import PlotBox, extract_chart, score_chart
+from .pipeline.rendermatch import DEFAULT_DILATION_RADIUS_PX
+from .pipeline.types import ExtractedChart
+from .priors import check_all
+from .production_log import ProductionPanel, render_production_log
+from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
+from .review import write_review
+from .svg import render_svg
+from .triage import ChartVerdict, triage
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+# --- Configuration knobs --------------------------------------------------
+# Centralised here per #1021. Tuning data lives in `referenceset/triage.md`
+# (thresholds) and `referenceset/plausibility.md` (priors); the gate itself
+# is `triage.triage()`.
+
+# Whether a HIGH verdict alone is sufficient to write the production log,
+# or whether the maintainer must glance at the overlay first. Mandatory
+# until ~20 production lenses ship without a false-positive auto-accept
+# (per #1021's recommended initial setting); becomes a config toggle once
+# trust data exists.
+OVERLAY_GLANCE_REQUIRED: bool = True
+
+
+# --- Tier 2 chart filter --------------------------------------------------
+
+
+def _is_tier2(chart: ReferenceChart) -> bool:
+    """A Tier 2 chart has a `plot_box` (extractor can run) and no
+    `ground_truth` (no calibration anchor — production tier per ADR-041).
+    """
+    return chart.plot_box is not None and chart.ground_truth is None
+
+
+def _tier2_charts() -> list[ReferenceChart]:
+    return [c for c in REFERENCE_CHARTS if _is_tier2(c)]
+
+
+def _chart_by_slug(slug: str) -> ReferenceChart | None:
+    for c in REFERENCE_CHARTS:
+        if c.slug == slug:
+            return c
+    return None
+
+
+# --- Canonical chart path with legacy fallback ----------------------------
+
+
+def _resolve_chart_image(chart: ReferenceChart) -> Path:
+    """Return the absolute path to the chart raster.
+
+    Honors ADR-033's canonical `-mtf-diffraction.png` (or
+    `-mtf-diffraction-<focal>.png` for zooms) if present; otherwise
+    falls back to the path the `ReferenceChart` declares (legacy
+    `-mtf-1.png` scheme). The fallback drops when #1017 renames every
+    optical-specs MTF file to the new scheme.
+
+    Resolution order:
+
+    1. `<slug>-mtf-diffraction.png` in the same folder as the declared path
+    2. `chart.chart_path` (legacy, what `referenceset/charts.py` records today)
+    """
+    declared = REPO_ROOT / chart.chart_path
+    canonical_name = f"{chart.slug}-mtf-diffraction.png"
+    canonical = declared.parent / canonical_name
+    if canonical.exists():
+        return canonical
+    return declared
+
+
+# --- Pipeline orchestration -----------------------------------------------
+
+
+def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
+    return PlotBox(
+        x_left=coords.x_left,
+        x_right=coords.x_right,
+        y_top=coords.y_top,
+        y_bottom=coords.y_bottom,
+    )
+
+
+@dataclass(frozen=True)
+class ExtractRun:
+    """The full output of one chart's extraction pass."""
+
+    chart: ReferenceChart
+    image_path: Path
+    plot_box: PlotBox
+    extracted: ExtractedChart
+    verdict: ChartVerdict
+
+
+def _run_one(chart: ReferenceChart) -> ExtractRun:
+    """extract → score → priors → triage. No I/O beyond reading the chart."""
+    assert chart.plot_box is not None, (
+        f"chart {chart.slug!r} has no plot_box — cannot run extractor"
+    )
+    profile = profile_for_chart(chart)
+    image_path = _resolve_chart_image(chart)
+    plot_box = _to_plotbox(chart.plot_box)
+
+    extracted = extract_chart(
+        image_path, profile, plot_box, image_height_mm=chart.image_height_mm
+    )
+    score = score_chart(
+        image_path,
+        profile,
+        plot_box,
+        image_height_mm=chart.image_height_mm,
+        readings=extracted.readings,
+        dilation_radius_px=DEFAULT_DILATION_RADIUS_PX,
+    )
+    violations = check_all(extracted.readings)
+    verdict = triage(score, violations)
+    return ExtractRun(
+        chart=chart,
+        image_path=image_path,
+        plot_box=plot_box,
+        extracted=extracted,
+        verdict=verdict,
+    )
+
+
+# --- Acceptance decision --------------------------------------------------
+
+
+def _should_write_log(
+    verdict: ChartVerdict, *, accept_override: bool
+) -> tuple[bool, str]:
+    """The gate-at-commit decision.
+
+    Returns (write: bool, reason: str). When the maintainer passed
+    `--accept`, the log is written regardless of verdict — the reason
+    is recorded as 'accept-override' so the run output is honest about
+    bypassing the gate.
+
+    With overlay-glance mandatory (the current default), a HIGH verdict
+    on its own is not enough — the operator must run with `--accept`
+    after eyeballing the overlay. This is intentional; the toggle to
+    let HIGH auto-write lives in `OVERLAY_GLANCE_REQUIRED` above.
+    """
+    if accept_override:
+        return True, "accept-override"
+    if verdict.verdict == "HIGH" and not OVERLAY_GLANCE_REQUIRED:
+        return True, "gate-high-auto"
+    if verdict.verdict == "HIGH":
+        return False, "gate-high-pending-glance"
+    return False, "gate-low"
+
+
+# --- Artifact writers -----------------------------------------------------
+
+
+def _lens_dir_for(chart: ReferenceChart) -> Path:
+    # Reference charts live at docs/optical-specs/<slug>/<file>;
+    # the lens dir is the parent of the declared chart path.
+    return (REPO_ROOT / chart.chart_path).parent
+
+
+def _write_inspection_artifacts(run: ExtractRun) -> tuple[Path, Path, Path]:
+    """Write SVG + overlay PNG + review HTML. Always written; the
+    maintainer needs them whether the gate accepted or held.
+    """
+    lens_dir = _lens_dir_for(run.chart)
+    lens_dir.mkdir(parents=True, exist_ok=True)
+
+    svg_path = lens_dir / f"{run.image_path.stem}.svg"
+    svg_path.write_text(render_svg(run.extracted), encoding="utf-8")
+
+    outputs = write_review(
+        run.extracted,
+        run.image_path,
+        plot_box=run.plot_box,
+        image_height_mm=run.chart.image_height_mm,
+        svg_path=svg_path,
+        out_dir=lens_dir,
+    )
+    return svg_path, outputs.overlay_path, outputs.html_path
+
+
+def _render_log_for(run: ExtractRun) -> str:
+    plot_box_tuple = (
+        run.plot_box.x_left,
+        run.plot_box.x_right,
+        run.plot_box.y_top,
+        run.plot_box.y_bottom,
+    )
+    panel = ProductionPanel(
+        chart_slug=run.chart.slug,
+        chart_path=run.chart.chart_path,
+        style_family=run.chart.style_family,
+        plot_box=plot_box_tuple,
+        image_height_mm=run.chart.image_height_mm,
+        extracted=run.extracted,
+        verdict=run.verdict,
+    )
+    return render_production_log(run.chart.slug, [panel])
+
+
+def _log_path_for(chart: ReferenceChart) -> Path:
+    return _lens_dir_for(chart) / "digitization-log.md"
+
+
+# --- Top-level commands ---------------------------------------------------
+
+
+def extract_lens(slug: str, *, accept_override: bool) -> int:
+    """Extract one lens. Returns 0 on success, non-zero on error."""
+    chart = _chart_by_slug(slug)
+    if chart is None:
+        print(f"ERROR: unknown lens slug {slug!r}", file=sys.stderr)
+        return 1
+    if not _is_tier2(chart):
+        print(
+            f"ERROR: {slug!r} is not a Tier 2 chart "
+            f"(needs plot_box set and ground_truth None). "
+            f"plot_box={'present' if chart.plot_box else 'missing'}, "
+            f"ground_truth={'present' if chart.ground_truth else 'missing'}.",
+            file=sys.stderr,
+        )
+        return 1
+
+    print(f"Extracting {slug} ({chart.style_family})...")
+    run = _run_one(chart)
+
+    svg_path, overlay_path, html_path = _write_inspection_artifacts(run)
+    rel = lambda p: p.relative_to(REPO_ROOT)
+    print(f"  wrote {rel(svg_path)}")
+    print(f"  wrote {rel(overlay_path)}")
+    print(f"  wrote {rel(html_path)}")
+
+    precision = run.verdict.render_match_precision
+    iou = run.verdict.render_match_iou
+    p_str = f"{precision:.3f}" if precision is not None else "—"
+    i_str = f"{iou:.3f}" if iou is not None else "—"
+    print(
+        f"  verdict: {run.verdict.verdict}  "
+        f"(precision={p_str}, IoU={i_str}, "
+        f"prior_violations={len(run.verdict.prior_violations)})"
+    )
+
+    write, reason = _should_write_log(
+        run.verdict, accept_override=accept_override
+    )
+    if not write:
+        print(
+            f"  HOLD ({reason}): overlay PNG written for maintainer glance; "
+            f"re-run with --accept to commit the production log."
+        )
+        return 0
+
+    log_path = _log_path_for(chart)
+    log_path.write_text(_render_log_for(run), encoding="utf-8")
+    print(f"  wrote {rel(log_path)}  ({reason})")
+    return 0
+
+
+def extract_all(*, accept_override: bool) -> int:
+    """Run every Tier 2 lens that does not yet have a committed
+    `digitization-log.md`. Stops on the first HOLD so the maintainer
+    can review before continuing.
+    """
+    pending: list[ReferenceChart] = []
+    for chart in _tier2_charts():
+        if not _log_path_for(chart).exists():
+            pending.append(chart)
+    if not pending:
+        print("No pending Tier 2 lenses — every chart already has a log.")
+        return 0
+
+    print(f"Pending: {len(pending)} Tier 2 lens(es).")
+    for chart in pending:
+        rc = extract_lens(chart.slug, accept_override=accept_override)
+        if rc != 0:
+            return rc
+        if not _log_path_for(chart).exists():
+            print(
+                f"\nStopping on HOLD at {chart.slug}. "
+                f"Inspect the overlay and re-run with --accept "
+                f"(or fix the chart) before continuing.",
+                file=sys.stderr,
+            )
+            return 0
+    return 0
+
+
+def check_logs(charts: Iterable[ReferenceChart] | None = None) -> int:
+    """Re-render every production log in memory and compare to disk.
+
+    Returns 0 when every committed log matches; 1 when any differ or
+    are missing. Mirrors `log._check_logs` for the calibration tier.
+    """
+    target = list(charts) if charts is not None else _tier2_charts()
+    target = [c for c in target if _log_path_for(c).exists()]
+    if not target:
+        print("OK: no production logs to check (none committed yet).")
+        return 0
+
+    failures: list[str] = []
+    for chart in target:
+        run = _run_one(chart)
+        expected = _render_log_for(run)
+        path = _log_path_for(chart)
+        rel = path.relative_to(REPO_ROOT)
+        actual = path.read_text(encoding="utf-8")
+        if actual != expected:
+            failures.append(f"  STALE    {rel}")
+    if failures:
+        print(
+            f"{len(failures)} production log(s) out of date. "
+            f"Re-run `py -m mtfdigitizer.extract <slug>` to refresh:"
+        )
+        for line in failures:
+            print(line)
+        return 1
+    print(f"OK: {len(target)} production log(s) up to date.")
+    return 0
+
+
+# --- CLI -----------------------------------------------------------------
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument(
+        "slug",
+        nargs="?",
+        help="reference-set lens slug to extract (Tier 2 only). "
+        "Omit when using --all or --check.",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="run every Tier 2 lens that does not yet have a "
+        "committed digitization-log.md; stops on first HOLD",
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="re-render every committed production log and exit "
+        "non-zero if any differ from the fresh render. No writes.",
+    )
+    parser.add_argument(
+        "--accept",
+        action="store_true",
+        help="bypass the gate / overlay-glance requirement and write "
+        "the production digitization-log.md regardless of verdict",
+    )
+    args = parser.parse_args(argv)
+
+    mode_count = sum([bool(args.slug), args.all, args.check])
+    if mode_count == 0:
+        parser.error("must pass a lens slug, --all, or --check")
+    if mode_count > 1:
+        parser.error("slug, --all, and --check are mutually exclusive")
+
+    if args.check:
+        return check_logs()
+    if args.all:
+        return extract_all(accept_override=args.accept)
+    return extract_lens(args.slug, accept_override=args.accept)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
