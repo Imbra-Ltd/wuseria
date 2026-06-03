@@ -60,7 +60,7 @@ def test_detect_matches_known_box(chart) -> None:
 def test_refuses_image_without_frame() -> None:
     """A pure-white image has no axis frame — detection must raise."""
     blank = np.full((1000, 1500, 3), 255, dtype=np.uint8)
-    with pytest.raises(ValueError, match="solid vertical run"):
+    with pytest.raises(ValueError, match="total vertical ink coverage"):
         detect_sigma_plot_box(blank)
 
 

@@ -346,10 +346,10 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     # ADR-033, taken from the Fujifilm X mount edition where the source
     # publishes a separate X-mount chart set (only the 100-400mm does).
     # Plot box transferred from the 56mm template — verified by
-    # detect_sigma_plot_box() returning (309, 2980, 83, 1700) on every
-    # entry below. The 17-40mm Art is intentionally omitted: its image
-    # dimensions are 2988x1953 and detect_sigma_plot_box() finds only
-    # one axis-frame cluster instead of two — handle in a follow-up.
+    # detect_sigma_plot_box() returning the same (309, 2980, 83, 1700)
+    # coordinates on the four 2991x1964 entries. The 17-40mm Art uses
+    # a slightly different rendering (2988x1953, with a hand-measured
+    # offset) and required the #1036 detector fix to be added at all.
     ReferenceChart(
         slug="sigma-10-18mm-f2-8-dc-dn-c",
         chart_path="docs/optical-specs/sigma-10-18mm-f2-8-dc-dn-c/sigma-10-18mm-f2-8-dc-dn-c-mtf-diffraction-wide.png",
@@ -389,6 +389,16 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         image_height_mm=14.0,
         notes="Tier 2 (ADR-041) — #793. Fujifilm X mount edition; source publishes parallel L/Sony FF and TC chart sets (deleted per #1032). Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Canonical chart is wide-end (100mm).",
         plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+    ),
+    ReferenceChart(
+        slug="sigma-17-40mm-f1-8-dc-art",
+        chart_path="docs/optical-specs/sigma-17-40mm-f1-8-dc-art/sigma-17-40mm-f1-8-dc-art-mtf-diffraction-wide.png",
+        style_family="mainstream-2color-solid-dashed",
+        apertures=("f/1.8",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="Tier 2 (ADR-041) — #793. Image 2988x1953 with the wide-end 30 lp/mm curves crossing the right axis frame; required the #1036 detector fix (total ink fraction instead of longest contiguous run). Plot box auto-detected via detect_sigma_plot_box().",
+        plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=75, y_bottom=1693),
     ),
     ReferenceChart(
         slug="samyang-85mm-f1-4-as-if-umc",

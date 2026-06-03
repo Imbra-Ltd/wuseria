@@ -65,14 +65,15 @@ def image_height_mm_to_x_pixel(
 # --- Sigma family auto-detection (#950) -----------------------------------
 #
 # Detection rule (validated against all six Sigma DC DN C primes in the
-# reference set — 12mm, 15mm, 16mm, 23mm, 30mm, 56mm):
+# reference set — 12mm, 15mm, 16mm, 23mm, 30mm, 56mm — plus the five
+# Sigma zooms scaffolded in #793):
 #
 # - The chart has a printed black axis frame on a white background. The
 #   left frame column coincides with the 0 mm vertical dashed gridline;
 #   the right frame is the printed plot frame.
-# - Both frames produce the two columns with the longest contiguous
-#   vertical black runs in the image — order of magnitude longer than
-#   any dashed gridline segment, axis label glyph, or curve line.
+# - Both frames produce the two columns with the highest total black
+#   ink coverage in the image — order of magnitude denser than any
+#   dashed gridline, axis label glyph, or curve line.
 # - The top frame coincides with the OTF=1.0 horizontal gridline; the
 #   bottom frame coincides with the OTF=0.0 horizontal gridline. Both
 #   appear as the first and last rows whose horizontal black ink fraction
@@ -82,41 +83,39 @@ def image_height_mm_to_x_pixel(
 # anchor) sits 1 px inside the left frame and 6 px inside the right
 # frame — empirically the rightmost data column the curves ever paint.
 # Those offsets are identical on every Sigma DC DN C chart measured.
+#
+# Historical note: the original rule used "longest contiguous vertical
+# ink run" instead of "total ink fraction". That failed on the
+# sigma-17-40mm-f1-8-dc-art wide-end chart, where the 30 lp/mm curves
+# cross the right axis frame at four points on their way down to the
+# bottom edge — the frame is still 82% inked total, but its longest
+# unbroken segment is only 40% of image height. Total ink fraction
+# captures the actual phenomenon (a printed line, with or without small
+# gaps from curve crossings) rather than its visual coincidence. (#1036)
 
 _SIGMA_INK_THRESHOLD: int = 100
 _SIGMA_X_LEFT_OFFSET: int = -1
 _SIGMA_X_RIGHT_OFFSET: int = -6
-_SIGMA_MIN_AXIS_RUN_FRACTION: float = 0.45
+_SIGMA_MIN_AXIS_INK_FRACTION: float = 0.70
 _SIGMA_MIN_GRIDLINE_INK_FRACTION: float = 0.30
-
-
-def _longest_contiguous_run(mask_column: np.ndarray) -> int:
-    """Length of the longest run of True values in a 1-D boolean array."""
-    if not mask_column.any():
-        return 0
-    # Indices where the value flips.
-    padded = np.concatenate(([False], mask_column, [False]))
-    diff = np.diff(padded.astype(np.int8))
-    starts = np.where(diff == 1)[0]
-    ends = np.where(diff == -1)[0]
-    return int((ends - starts).max())
 
 
 def detect_sigma_plot_box(image_bgr: np.ndarray) -> PlotBox:
     """Detect the data-edge plot box on a Sigma MTF chart (#950).
 
     Only valid for the `mainstream-2color-solid-dashed` family used by
-    the Sigma DC DN C primes — calling this on a different chart style
-    (multi-panel, dark background, non-Sigma template) raises
-    `ValueError` rather than guessing.
+    the Sigma DC DN C primes and the Sigma zooms scaffolded in #793 —
+    calling this on a different chart style (multi-panel, dark
+    background, non-Sigma template) raises `ValueError` rather than
+    guessing.
 
     Detection (see module-level note for the validated rule):
 
     1. Build a black-ink mask (every channel < threshold).
-    2. Pick the two columns with the longest contiguous vertical ink
-       runs — these are the printed left and right axis frames. The
-       runs must each span at least 45 % of image height; otherwise the
-       chart does not have the expected frame and we refuse.
+    2. Pick the columns whose total ink coverage is at least 70 % of
+       image height — these are the printed left and right axis frames.
+       Total coverage (not longest contiguous run) survives the case
+       where the frame is interrupted by curves crossing it (#1036).
     3. Pick the first and last rows whose horizontal ink fraction
        exceeds 30 % of image width — these are the top (OTF=1.0) and
        bottom (OTF=0.0) gridlines.
@@ -135,15 +134,13 @@ def detect_sigma_plot_box(image_bgr: np.ndarray) -> PlotBox:
     ink = (image_bgr < _SIGMA_INK_THRESHOLD).all(axis=2)
 
     # --- Left and right axis frames -------------------------------------
-    min_axis_run = int(height * _SIGMA_MIN_AXIS_RUN_FRACTION)
-    column_run_lengths = np.array(
-        [_longest_contiguous_run(ink[:, x]) for x in range(width)]
-    )
-    qualifying = np.where(column_run_lengths >= min_axis_run)[0]
+    min_axis_ink = int(height * _SIGMA_MIN_AXIS_INK_FRACTION)
+    column_ink_counts = ink.sum(axis=0)
+    qualifying = np.where(column_ink_counts >= min_axis_ink)[0]
     if qualifying.size == 0:
         raise ValueError(
-            "no column has a solid vertical run >= "
-            f"{_SIGMA_MIN_AXIS_RUN_FRACTION:.0%} of image height — chart "
+            "no column has total vertical ink coverage >= "
+            f"{_SIGMA_MIN_AXIS_INK_FRACTION:.0%} of image height — chart "
             "does not look like a Sigma plot frame"
         )
 
@@ -154,7 +151,7 @@ def detect_sigma_plot_box(image_bgr: np.ndarray) -> PlotBox:
     if len(clusters) < 2:
         raise ValueError(
             f"expected at least two axis-frame columns; found {len(clusters)} "
-            f"clusters of long-solid columns: {clusters}"
+            f"clusters of high-ink columns: {clusters}"
         )
     # Use the inside edge of each printed frame: the rightmost column of
     # the left cluster, the leftmost column of the right cluster. The
