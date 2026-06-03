@@ -2,24 +2,17 @@
 
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c020_100_400_5_63/)
 
-MTF charts:
+> **Warning (2026-06-03):** the prose mapping below is **unverified** and
+> demonstrably wrong — see #1032. Sigma's actual chart annotations include
+> 140mm and 560mm (bare lens + TC-1411 1.4x: 100×1.4=140, 400×1.4=560), and
+> the file-creation order on disk does not follow this sequence. Do not
+> author an ADR-033 labelled MTF charts list from this prose without first
+> reading each chart's upper-right focal-length annotation.
 
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-100mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-100mm.png) — diffraction MTF (100mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-135mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-135mm.png) — diffraction MTF (135mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-200mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-200mm.png) — diffraction MTF (200mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-250mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-250mm.png) — diffraction MTF (250mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-300mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-300mm.png) — diffraction MTF (300mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-350mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-350mm.png) — diffraction MTF (350mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-380mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-380mm.png) — diffraction MTF (380mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-400mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-400mm.png) — diffraction MTF (400mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-100mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-100mm.png) — geometrical MTF (100mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-135mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-135mm.png) — geometrical MTF (135mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-200mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-200mm.png) — geometrical MTF (200mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-250mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-250mm.png) — geometrical MTF (250mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-300mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-300mm.png) — geometrical MTF (300mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-350mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-350mm.png) — geometrical MTF (350mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-380mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-380mm.png) — geometrical MTF (380mm)
-- [sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-400mm.png](sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-geometric-400mm.png) — geometrical MTF (400mm)
+MTF charts (16 total — 8 focal lengths x diffraction + geometrical):
+
+- mtf-1 through mtf-8: diffraction MTF at 100, 135, 200, 250, 300, 350, 380, 400mm
+- mtf-9 through mtf-16: geometrical MTF at the same focal lengths
 
 ## Chart legend
 
