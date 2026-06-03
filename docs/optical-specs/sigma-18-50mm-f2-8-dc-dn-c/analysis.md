@@ -3,10 +3,10 @@
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c021_18_50_28/)
 MTF charts:
 
-- [sigma-18-50mm-f2-8-dc-dn-c-mtf-1.png](sigma-18-50mm-f2-8-dc-dn-c-mtf-1.png) — diffraction MTF (wide)
-- [sigma-18-50mm-f2-8-dc-dn-c-mtf-2.png](sigma-18-50mm-f2-8-dc-dn-c-mtf-2.png) — diffraction MTF (tele)
-- [sigma-18-50mm-f2-8-dc-dn-c-mtf-3.png](sigma-18-50mm-f2-8-dc-dn-c-mtf-3.png) — geometrical MTF (wide)
-- [sigma-18-50mm-f2-8-dc-dn-c-mtf-4.png](sigma-18-50mm-f2-8-dc-dn-c-mtf-4.png) — geometrical MTF (tele)
+- [sigma-18-50mm-f2-8-dc-dn-c-mtf-diffraction-wide.png](sigma-18-50mm-f2-8-dc-dn-c-mtf-diffraction-wide.png) — diffraction MTF (wide)
+- [sigma-18-50mm-f2-8-dc-dn-c-mtf-diffraction-tele.png](sigma-18-50mm-f2-8-dc-dn-c-mtf-diffraction-tele.png) — diffraction MTF (tele)
+- [sigma-18-50mm-f2-8-dc-dn-c-mtf-geometric-wide.png](sigma-18-50mm-f2-8-dc-dn-c-mtf-geometric-wide.png) — geometrical MTF (wide)
+- [sigma-18-50mm-f2-8-dc-dn-c-mtf-geometric-tele.png](sigma-18-50mm-f2-8-dc-dn-c-mtf-geometric-tele.png) — geometrical MTF (tele)
 
 ## Chart legend
 

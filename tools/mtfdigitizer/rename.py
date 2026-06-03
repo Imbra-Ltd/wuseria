@@ -62,6 +62,13 @@ LABEL_SUFFIX: dict[str, str] = {
 }
 
 
+# Focal-length parenthetical → filename suffix segment. Zooms encode
+# the focal length in the label as "(wide)", "(tele)", or "(NNmm)"
+# (per ADR-033). The script transcribes this verbatim to the filename.
+_FOCAL_NAMED = {"wide", "tele"}
+_FOCAL_NUMERIC = re.compile(r"^(\d+)mm$")
+
+
 # Match a markdown link line in the MTF charts list:
 #   - [<text>](<href>) <dash> <label>
 # Captures (text, href, label). The separator is the U+2014 em-dash
@@ -136,18 +143,67 @@ def _parse_analysis_md(text: str, slug: str) -> dict[str, str]:
             continue
         href = match.group("href").strip()
         label = match.group("label").strip().lower()
-        # Strip any trailing parenthetical from the label, e.g.
-        # "diffraction MTF (10/30 lp/mm)" → "diffraction mtf".
-        label_head = re.split(r"\s*\(", label, maxsplit=1)[0].strip()
-        suffix = LABEL_SUFFIX.get(label_head)
-        if suffix is None:
+        label_head, focal = _split_label(label)
+        chart_suffix = LABEL_SUFFIX.get(label_head)
+        if chart_suffix is None:
             raise RenameError(
                 f"{slug}: unrecognised MTF chart label {label!r} for {href!r}; "
                 f"expected one of {sorted(LABEL_SUFFIX)}"
             )
+        if focal is None:
+            suffix = chart_suffix
+        else:
+            focal_segment = _focal_to_segment(focal, label, slug, href)
+            suffix = f"{chart_suffix}-{focal_segment}" if focal_segment else chart_suffix
         basename = Path(href).name
         mapping[basename] = suffix
     return mapping
+
+
+def _split_label(label: str) -> tuple[str, str | None]:
+    """Split `"diffraction mtf (wide)"` into `("diffraction mtf", "wide")`.
+
+    Returns `(head, None)` when there is no parenthetical. The parenthetical
+    is preserved as a focal qualifier and validated by `_focal_to_segment`;
+    parentheticals that turn out not to be focal qualifiers (e.g. the
+    legacy "(10/30 lp/mm)" frequency annotation on prime charts) are
+    handled by the focal validator, which falls back to dropping the
+    qualifier for known non-focal annotations.
+    """
+    head, sep, tail = label.partition("(")
+    if not sep:
+        return head.strip(), None
+    qualifier = tail.rsplit(")", maxsplit=1)[0].strip()
+    return head.strip(), qualifier or None
+
+
+def _focal_to_segment(focal: str, label: str, slug: str, href: str) -> str:
+    """Map a focal-length qualifier to its filename segment.
+
+    Accepts `wide`, `tele`, or `NNmm` (numeric, per ADR-033). Rejects
+    anything else loud so the maintainer fixes the label. Known
+    non-focal parentheticals (frequency annotations like `10/30 lp/mm`)
+    are silently treated as no-focal — they are not zoom qualifiers.
+    """
+    if focal in _FOCAL_NAMED:
+        return focal
+    numeric = _FOCAL_NUMERIC.match(focal)
+    if numeric is not None:
+        return f"{numeric.group(1)}mm"
+    if _is_non_focal_annotation(focal):
+        # The parser cannot distinguish "(10/30 lp/mm)" from a focal
+        # qualifier without context. Treat known frequency / spec
+        # annotations as no-focal so legacy prime labels keep parsing.
+        return ""
+    raise RenameError(
+        f"{slug}: unrecognised focal-length qualifier {focal!r} in label "
+        f"{label!r} for {href!r}; expected wide / tele / NNmm"
+    )
+
+
+def _is_non_focal_annotation(qualifier: str) -> bool:
+    """True for parentheticals that annotate frequency, not focal length."""
+    return "lp/mm" in qualifier or "/mm" in qualifier
 
 
 def _sidecars_for(png_path: Path) -> list[Path]:

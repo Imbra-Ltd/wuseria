@@ -9,11 +9,13 @@ import pytest
 from mtfdigitizer.rename import (
     LABEL_SUFFIX,
     RenameError,
+    _focal_to_segment,
     _is_numeric_stem,
     _parse_analysis_md,
     _plan_for_folder,
     _rewrite_analysis,
     _sidecars_for,
+    _split_label,
     _update_charts_py,
 )
 
@@ -67,6 +69,69 @@ def test_label_suffix_accepts_us_and_uk_spelling():
     # the shorter "geometric MTF". Both must map to the same suffix.
     assert LABEL_SUFFIX["geometrical mtf"] == "geometric"
     assert LABEL_SUFFIX["geometric mtf"] == "geometric"
+
+
+# --- zoom focal-length qualifier -----------------------------------------
+
+
+def test_parse_analysis_md_zoom_wide_tele():
+    text = (
+        "MTF charts:\n"
+        "\n"
+        "- [foo-mtf-1.png](foo-mtf-1.png) -- diffraction MTF (wide)\n"
+        "- [foo-mtf-2.png](foo-mtf-2.png) -- diffraction MTF (tele)\n"
+        "- [foo-mtf-3.png](foo-mtf-3.png) -- geometrical MTF (wide)\n"
+        "- [foo-mtf-4.png](foo-mtf-4.png) -- geometrical MTF (tele)\n"
+    )
+    assert _parse_analysis_md(text, "foo") == {
+        "foo-mtf-1.png": "diffraction-wide",
+        "foo-mtf-2.png": "diffraction-tele",
+        "foo-mtf-3.png": "geometric-wide",
+        "foo-mtf-4.png": "geometric-tele",
+    }
+
+
+def test_parse_analysis_md_zoom_explicit_focal_mm():
+    text = (
+        "MTF charts:\n"
+        "\n"
+        "- [foo-mtf-1.png](foo-mtf-1.png) -- diffraction MTF (100mm)\n"
+        "- [foo-mtf-2.png](foo-mtf-2.png) -- diffraction MTF (400mm)\n"
+    )
+    assert _parse_analysis_md(text, "foo") == {
+        "foo-mtf-1.png": "diffraction-100mm",
+        "foo-mtf-2.png": "diffraction-400mm",
+    }
+
+
+def test_parse_analysis_md_unknown_focal_qualifier_fails_loud():
+    text = (
+        "MTF charts:\n"
+        "\n"
+        "- [foo-mtf-1.png](foo-mtf-1.png) -- diffraction MTF (middle)\n"
+    )
+    with pytest.raises(RenameError, match="unrecognised focal-length qualifier"):
+        _parse_analysis_md(text, "foo")
+
+
+def test_split_label_with_and_without_parenthetical():
+    assert _split_label("diffraction mtf") == ("diffraction mtf", None)
+    assert _split_label("diffraction mtf (wide)") == ("diffraction mtf", "wide")
+    assert _split_label("diffraction mtf (10/30 lp/mm)") == (
+        "diffraction mtf",
+        "10/30 lp/mm",
+    )
+
+
+def test_focal_to_segment_named_numeric_and_frequency_annotation():
+    # Named qualifiers pass through.
+    assert _focal_to_segment("wide", "label", "foo", "foo-mtf-1.png") == "wide"
+    assert _focal_to_segment("tele", "label", "foo", "foo-mtf-1.png") == "tele"
+    # Numeric focal lengths normalise to NNmm.
+    assert _focal_to_segment("100mm", "label", "foo", "foo-mtf-1.png") == "100mm"
+    # Frequency annotations are NOT focal qualifiers — return empty so
+    # the legacy "(10/30 lp/mm)" form on prime labels keeps parsing.
+    assert _focal_to_segment("10/30 lp/mm", "label", "foo", "foo-mtf-1.png") == ""
 
 
 # --- sidecar discovery + numeric-stem filter -----------------------------
@@ -192,6 +257,32 @@ def test_plan_for_folder_duplicate_suffix_fails_loud(tmp_path):
     )
     with pytest.raises(RenameError, match="both map to suffix"):
         _plan_for_folder(folder)
+
+
+def test_plan_for_folder_zoom_wide_tele(tmp_path):
+    slug = "foo-zoom"
+    folder = tmp_path / slug
+    folder.mkdir()
+    for n in (1, 2, 3, 4):
+        (folder / f"{slug}-mtf-{n}.png").write_bytes(b"")
+    (folder / "analysis.md").write_text(
+        "MTF charts:\n"
+        "\n"
+        f"- [{slug}-mtf-1.png]({slug}-mtf-1.png) -- diffraction MTF (wide)\n"
+        f"- [{slug}-mtf-2.png]({slug}-mtf-2.png) -- diffraction MTF (tele)\n"
+        f"- [{slug}-mtf-3.png]({slug}-mtf-3.png) -- geometrical MTF (wide)\n"
+        f"- [{slug}-mtf-4.png]({slug}-mtf-4.png) -- geometrical MTF (tele)\n",
+        encoding="utf-8",
+    )
+    plan = _plan_for_folder(folder)
+    assert plan is not None
+    moves = {(r.old.name, r.new.name) for r in plan.renames}
+    assert moves == {
+        (f"{slug}-mtf-1.png", f"{slug}-mtf-diffraction-wide.png"),
+        (f"{slug}-mtf-2.png", f"{slug}-mtf-diffraction-tele.png"),
+        (f"{slug}-mtf-3.png", f"{slug}-mtf-geometric-wide.png"),
+        (f"{slug}-mtf-4.png", f"{slug}-mtf-geometric-tele.png"),
+    }
 
 
 def test_plan_for_folder_no_numeric_files_returns_none(tmp_path):

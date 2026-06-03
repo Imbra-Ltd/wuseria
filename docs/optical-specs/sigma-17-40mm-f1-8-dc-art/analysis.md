@@ -3,10 +3,10 @@
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/a025_17_40_18/)
 MTF charts:
 
-- [sigma-17-40mm-f1-8-dc-art-mtf-1.png](sigma-17-40mm-f1-8-dc-art-mtf-1.png) — diffraction MTF (wide)
-- [sigma-17-40mm-f1-8-dc-art-mtf-2.png](sigma-17-40mm-f1-8-dc-art-mtf-2.png) — diffraction MTF (tele)
-- [sigma-17-40mm-f1-8-dc-art-mtf-3.png](sigma-17-40mm-f1-8-dc-art-mtf-3.png) — geometrical MTF (wide)
-- [sigma-17-40mm-f1-8-dc-art-mtf-4.png](sigma-17-40mm-f1-8-dc-art-mtf-4.png) — geometrical MTF (tele)
+- [sigma-17-40mm-f1-8-dc-art-mtf-diffraction-wide.png](sigma-17-40mm-f1-8-dc-art-mtf-diffraction-wide.png) — diffraction MTF (wide)
+- [sigma-17-40mm-f1-8-dc-art-mtf-diffraction-tele.png](sigma-17-40mm-f1-8-dc-art-mtf-diffraction-tele.png) — diffraction MTF (tele)
+- [sigma-17-40mm-f1-8-dc-art-mtf-geometric-wide.png](sigma-17-40mm-f1-8-dc-art-mtf-geometric-wide.png) — geometrical MTF (wide)
+- [sigma-17-40mm-f1-8-dc-art-mtf-geometric-tele.png](sigma-17-40mm-f1-8-dc-art-mtf-geometric-tele.png) — geometrical MTF (tele)
 
 ## Chart legend
 
