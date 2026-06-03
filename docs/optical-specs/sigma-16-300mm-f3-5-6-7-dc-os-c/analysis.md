@@ -3,10 +3,10 @@
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c025_16_300_35_67/)
 MTF charts:
 
-- [sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-1.png](sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-1.png) — diffraction MTF (wide)
-- [sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-2.png](sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-2.png) — diffraction MTF (tele)
-- [sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-3.png](sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-3.png) — geometrical MTF (wide)
-- [sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-4.png](sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-4.png) — geometrical MTF (tele)
+- [sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-diffraction-wide.png](sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-diffraction-wide.png) — diffraction MTF (wide)
+- [sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-diffraction-tele.png](sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-diffraction-tele.png) — diffraction MTF (tele)
+- [sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-geometric-wide.png](sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-geometric-wide.png) — geometrical MTF (wide)
+- [sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-geometric-tele.png](sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-geometric-tele.png) — geometrical MTF (tele)
 
 ## Chart legend
 
