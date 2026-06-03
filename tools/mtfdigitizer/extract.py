@@ -51,7 +51,12 @@ from .pipeline.rendermatch import DEFAULT_DILATION_RADIUS_PX
 from .pipeline.types import ExtractedChart
 from .priors import check_all
 from .production_log import ProductionPanel, render_production_log
-from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
+from .referenceset.charts import (
+    REFERENCE_CHARTS,
+    ChartView,
+    PlotBoxCoords,
+    ReferenceChart,
+)
 from .review import write_review
 from .svg import render_svg
 from .triage import ChartVerdict, triage
@@ -97,28 +102,28 @@ def _chart_by_slug(slug: str) -> ReferenceChart | None:
 # --- Canonical chart path with legacy fallback ----------------------------
 
 
-def _resolve_chart_image(chart: ReferenceChart) -> Path:
-    """Return the absolute path to the chart raster.
+def _resolve_view_image(chart: ReferenceChart, view: ChartView) -> Path:
+    """Return the absolute path to a view's chart raster.
 
     Honors ADR-033's canonical `-mtf-diffraction.png` (or
     `-mtf-diffraction-<focal>.png` for zooms) if present; otherwise
-    falls back to the path the `ReferenceChart` declares. As of #1017
-    the Sigma DC DN C primes are renamed and their `chart_path` already
-    points at the canonical name, so both branches resolve to the same
-    file. The fallback remains for the multi-chart zooms still on the
-    numeric scheme (tokina-atx-m-11-18, sigma zooms) and drops in the
-    follow-up PR that renames them.
+    falls back to the path the view declares. The canonical-name probe
+    only fires on the primary view (the slug-bare name), so additional
+    zoom views — whose `chart_path` is already the focal-suffixed
+    canonical (`...-wide.png`, `...-tele.png`) — resolve via fallback.
 
     Resolution order:
 
-    1. `<slug>-mtf-diffraction.png` in the same folder as the declared path
-    2. `chart.chart_path` (legacy `-mtf-1.png` for the remaining zooms)
+    1. `<slug>-mtf-diffraction.png` in the same folder (primary view only)
+    2. `view.chart_path` (always exists for additional views)
     """
-    declared = REPO_ROOT / chart.chart_path
-    canonical_name = f"{chart.slug}-mtf-diffraction.png"
-    canonical = declared.parent / canonical_name
-    if canonical.exists():
-        return canonical
+    declared = REPO_ROOT / view.chart_path
+    is_primary = view.chart_path == chart.chart_path
+    if is_primary:
+        canonical_name = f"{chart.slug}-mtf-diffraction.png"
+        canonical = declared.parent / canonical_name
+        if canonical.exists():
+            return canonical
     return declared
 
 
@@ -136,23 +141,28 @@ def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
 
 @dataclass(frozen=True)
 class ExtractRun:
-    """The full output of one chart's extraction pass."""
+    """The full output of one chart view's extraction pass."""
 
     chart: ReferenceChart
+    view: ChartView
     image_path: Path
     plot_box: PlotBox
     extracted: ExtractedChart
     verdict: ChartVerdict
 
 
-def _run_one(chart: ReferenceChart) -> ExtractRun:
-    """extract → score → priors → triage. No I/O beyond reading the chart."""
-    assert chart.plot_box is not None, (
-        f"chart {chart.slug!r} has no plot_box — cannot run extractor"
+def _run_view(chart: ReferenceChart, view: ChartView) -> ExtractRun:
+    """Run one chart view through extract → score → priors → triage.
+
+    No I/O beyond reading the chart raster.
+    """
+    assert view.plot_box is not None, (
+        f"chart {chart.slug!r} view {view.chart_path!r} has no plot_box — "
+        "cannot run extractor"
     )
     profile = profile_for_chart(chart)
-    image_path = _resolve_chart_image(chart)
-    plot_box = _to_plotbox(chart.plot_box)
+    image_path = _resolve_view_image(chart, view)
+    plot_box = _to_plotbox(view.plot_box)
 
     extracted = extract_chart(
         image_path, profile, plot_box, image_height_mm=chart.image_height_mm
@@ -169,6 +179,7 @@ def _run_one(chart: ReferenceChart) -> ExtractRun:
     verdict = triage(score, violations)
     return ExtractRun(
         chart=chart,
+        view=view,
         image_path=image_path,
         plot_box=plot_box,
         extracted=extracted,
@@ -176,31 +187,38 @@ def _run_one(chart: ReferenceChart) -> ExtractRun:
     )
 
 
+def _run_all_views(chart: ReferenceChart) -> list[ExtractRun]:
+    """Run every view this lens publishes. Each view contributes one
+    panel to the lens's single digitization-log.md.
+    """
+    return [_run_view(chart, view) for view in chart.views]
+
+
 # --- Acceptance decision --------------------------------------------------
 
 
 def _should_write_log(
-    verdict: ChartVerdict, *, accept_override: bool
+    verdicts: list[ChartVerdict], *, accept_override: bool
 ) -> tuple[bool, str]:
-    """The gate-at-commit decision.
+    """The gate-at-commit decision over every view of a lens.
 
     Returns (write: bool, reason: str). When the maintainer passed
     `--accept`, the log is written regardless of verdict — the reason
     is recorded as 'accept-override' so the run output is honest about
     bypassing the gate.
 
-    With overlay-glance mandatory (the current default), a HIGH verdict
-    on its own is not enough — the operator must run with `--accept`
-    after eyeballing the overlay. This is intentional; the toggle to
-    let HIGH auto-write lives in `OVERLAY_GLANCE_REQUIRED` above.
+    A multi-view lens (zoom: wide + tele) holds if **any** view is
+    LOW; HIGH-pending-glance fires only when every view is HIGH. The
+    log writer emits one log per lens regardless, so partial accepts
+    are not a meaningful state.
     """
     if accept_override:
         return True, "accept-override"
-    if verdict.verdict == "HIGH" and not OVERLAY_GLANCE_REQUIRED:
+    if not all(v.verdict == "HIGH" for v in verdicts):
+        return False, "gate-low"
+    if not OVERLAY_GLANCE_REQUIRED:
         return True, "gate-high-auto"
-    if verdict.verdict == "HIGH":
-        return False, "gate-high-pending-glance"
-    return False, "gate-low"
+    return False, "gate-high-pending-glance"
 
 
 # --- Artifact writers -----------------------------------------------------
@@ -213,8 +231,11 @@ def _lens_dir_for(chart: ReferenceChart) -> Path:
 
 
 def _write_inspection_artifacts(run: ExtractRun) -> tuple[Path, Path, Path]:
-    """Write SVG + overlay PNG + review HTML. Always written; the
-    maintainer needs them whether the gate accepted or held.
+    """Write one view's SVG + overlay PNG + review HTML.
+
+    Always written, regardless of the gate decision — the maintainer
+    needs them to eye-glance a HOLD. Artifacts are named by the chart
+    image stem so multiple views in the same folder do not collide.
     """
     lens_dir = _lens_dir_for(run.chart)
     lens_dir.mkdir(parents=True, exist_ok=True)
@@ -233,23 +254,31 @@ def _write_inspection_artifacts(run: ExtractRun) -> tuple[Path, Path, Path]:
     return svg_path, outputs.overlay_path, outputs.html_path
 
 
-def _render_log_for(run: ExtractRun) -> str:
+def _panel_for(run: ExtractRun) -> ProductionPanel:
+    """Build the one log panel for a single view of a lens."""
     plot_box_tuple = (
         run.plot_box.x_left,
         run.plot_box.x_right,
         run.plot_box.y_top,
         run.plot_box.y_bottom,
     )
-    panel = ProductionPanel(
+    return ProductionPanel(
         chart_slug=run.chart.slug,
-        chart_path=run.chart.chart_path,
+        chart_path=run.view.chart_path,
         style_family=run.chart.style_family,
         plot_box=plot_box_tuple,
         image_height_mm=run.chart.image_height_mm,
         extracted=run.extracted,
         verdict=run.verdict,
     )
-    return render_production_log(run.chart.slug, [panel])
+
+
+def _render_log_for(runs: list[ExtractRun]) -> str:
+    """Render the lens's full digitization-log.md — one panel per view."""
+    assert runs, "cannot render a log with zero panels"
+    slug = runs[0].chart.slug
+    panels = [_panel_for(r) for r in runs]
+    return render_production_log(slug, panels)
 
 
 def _log_path_for(chart: ReferenceChart) -> Path:
@@ -260,7 +289,12 @@ def _log_path_for(chart: ReferenceChart) -> Path:
 
 
 def extract_lens(slug: str, *, accept_override: bool) -> int:
-    """Extract one lens. Returns 0 on success, non-zero on error."""
+    """Extract one lens. Returns 0 on success, non-zero on error.
+
+    A lens with N views produces N × (SVG + overlay + review.html) plus
+    one digitization-log.md with N panels. The gate aggregates verdicts
+    across views — a single LOW holds the entire lens.
+    """
     chart = _chart_by_slug(slug)
     if chart is None:
         print(f"ERROR: unknown lens slug {slug!r}", file=sys.stderr)
@@ -275,37 +309,41 @@ def extract_lens(slug: str, *, accept_override: bool) -> int:
         )
         return 1
 
-    print(f"Extracting {slug} ({chart.style_family})...")
-    run = _run_one(chart)
+    n_views = len(chart.views)
+    suffix = "" if n_views == 1 else f" — {n_views} views"
+    print(f"Extracting {slug} ({chart.style_family}){suffix}...")
+    runs = _run_all_views(chart)
 
-    svg_path, overlay_path, html_path = _write_inspection_artifacts(run)
     rel = lambda p: p.relative_to(REPO_ROOT)
-    print(f"  wrote {rel(svg_path)}")
-    print(f"  wrote {rel(overlay_path)}")
-    print(f"  wrote {rel(html_path)}")
+    for run in runs:
+        svg_path, overlay_path, html_path = _write_inspection_artifacts(run)
+        print(f"  wrote {rel(svg_path)}")
+        print(f"  wrote {rel(overlay_path)}")
+        print(f"  wrote {rel(html_path)}")
 
-    precision = run.verdict.render_match_precision
-    iou = run.verdict.render_match_iou
-    p_str = f"{precision:.3f}" if precision is not None else "—"
-    i_str = f"{iou:.3f}" if iou is not None else "—"
-    print(
-        f"  verdict: {run.verdict.verdict}  "
-        f"(precision={p_str}, IoU={i_str}, "
-        f"prior_violations={len(run.verdict.prior_violations)})"
-    )
+        precision = run.verdict.render_match_precision
+        iou = run.verdict.render_match_iou
+        p_str = f"{precision:.3f}" if precision is not None else "—"
+        i_str = f"{iou:.3f}" if iou is not None else "—"
+        view_label = run.image_path.stem
+        print(
+            f"  verdict ({view_label}): {run.verdict.verdict}  "
+            f"(precision={p_str}, IoU={i_str}, "
+            f"prior_violations={len(run.verdict.prior_violations)})"
+        )
 
     write, reason = _should_write_log(
-        run.verdict, accept_override=accept_override
+        [r.verdict for r in runs], accept_override=accept_override
     )
     if not write:
         print(
-            f"  HOLD ({reason}): overlay PNG written for maintainer glance; "
+            f"  HOLD ({reason}): overlay PNG(s) written for maintainer glance; "
             f"re-run with --accept to commit the production log."
         )
         return 0
 
     log_path = _log_path_for(chart)
-    log_path.write_text(_render_log_for(run), encoding="utf-8")
+    log_path.write_text(_render_log_for(runs), encoding="utf-8")
     print(f"  wrote {rel(log_path)}  ({reason})")
     return 0
 
@@ -353,8 +391,8 @@ def check_logs(charts: Iterable[ReferenceChart] | None = None) -> int:
 
     failures: list[str] = []
     for chart in target:
-        run = _run_one(chart)
-        expected = _render_log_for(run)
+        runs = _run_all_views(chart)
+        expected = _render_log_for(runs)
         path = _log_path_for(chart)
         rel = path.relative_to(REPO_ROOT)
         actual = path.read_text(encoding="utf-8")

@@ -66,8 +66,35 @@ GroundTruthCurves = dict[str, dict[str, tuple[float | None, ...]]]
 
 
 @dataclass(frozen=True)
+class ChartView:
+    """One MTF chart for a lens.
+
+    A prime publishes one chart, a zoom publishes wide + tele. Each view
+    owns its own pixel raster and its own plot box (the auto-detector
+    returns slightly different boxes per chart even within the same
+    lens). All other lens-level attributes — style family, apertures,
+    image-height extent — live on `ReferenceChart` and are shared
+    across views.
+    """
+
+    chart_path: str
+    plot_box: PlotBoxCoords | None = None
+
+
+@dataclass(frozen=True)
 class ReferenceChart:
-    """One eye-verified reference chart entry."""
+    """One eye-verified reference chart entry.
+
+    A lens has at least one primary chart (`chart_path` + `plot_box`)
+    and zero or more additional views (`additional_views` — used by
+    zooms to publish the tele-end chart alongside the canonical
+    wide-end chart per ADR-033). Calibration-tier callers (calibrate,
+    log, emit, scorer, plausibility, autotriage) read only the primary
+    chart — they were written before multi-view zooms existed and never
+    walk `additional_views`. Only the production extractor
+    (`extract.py`) fans out over every view to emit per-view artifacts
+    and a single multi-panel digitization-log.md per lens (#793).
+    """
 
     slug: str
     chart_path: str
@@ -81,6 +108,16 @@ class ReferenceChart:
     # plot-box hasn't been declared yet.
     plot_box: PlotBoxCoords | None = None
     ground_truth: GroundTruthCurves | None = None
+    # Additional chart views beyond the primary. Empty for primes; a
+    # zoom lists its tele-end chart here so the production extractor
+    # emits one log per lens with one panel per chart.
+    additional_views: tuple[ChartView, ...] = ()
+
+    @property
+    def views(self) -> tuple[ChartView, ...]:
+        """Every chart this lens publishes — primary first, then any extras."""
+        primary = ChartView(chart_path=self.chart_path, plot_box=self.plot_box)
+        return (primary, *self.additional_views)
 
 
 # Eye-read ground truth tables for the runnable subset. Each tuple holds
@@ -357,8 +394,14 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("f/2.8",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="Tier 2 (ADR-041) — #793. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Canonical chart is wide-end (10mm).",
+        notes="Tier 2 (ADR-041) — #793. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Wide + tele panels share one digitization-log.md.",
         plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+        additional_views=(
+            ChartView(
+                chart_path="docs/optical-specs/sigma-10-18mm-f2-8-dc-dn-c/sigma-10-18mm-f2-8-dc-dn-c-mtf-diffraction-tele.png",
+                plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+            ),
+        ),
     ),
     ReferenceChart(
         slug="sigma-16-300mm-f3-5-6-7-dc-os-c",
@@ -367,8 +410,14 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("f/3.5",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="Tier 2 (ADR-041) — #793. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Canonical chart is wide-end (16mm).",
+        notes="Tier 2 (ADR-041) — #793. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Wide + tele panels share one digitization-log.md.",
         plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+        additional_views=(
+            ChartView(
+                chart_path="docs/optical-specs/sigma-16-300mm-f3-5-6-7-dc-os-c/sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-diffraction-tele.png",
+                plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+            ),
+        ),
     ),
     ReferenceChart(
         slug="sigma-18-50mm-f2-8-dc-dn-c",
@@ -377,8 +426,14 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("f/2.8",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="Tier 2 (ADR-041) — #793. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Canonical chart is wide-end (18mm).",
+        notes="Tier 2 (ADR-041) — #793. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Wide + tele panels share one digitization-log.md.",
         plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+        additional_views=(
+            ChartView(
+                chart_path="docs/optical-specs/sigma-18-50mm-f2-8-dc-dn-c/sigma-18-50mm-f2-8-dc-dn-c-mtf-diffraction-tele.png",
+                plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+            ),
+        ),
     ),
     ReferenceChart(
         slug="sigma-100-400mm-f5-6-3-dg-dn-os-c",
@@ -387,8 +442,14 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("f/5",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="Tier 2 (ADR-041) — #793. Fujifilm X mount edition; source publishes parallel L/Sony FF and TC chart sets (deleted per #1032). Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Canonical chart is wide-end (100mm).",
+        notes="Tier 2 (ADR-041) — #793. Fujifilm X mount edition; source publishes parallel L/Sony FF and TC chart sets (deleted per #1032). Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Wide + tele panels share one digitization-log.md.",
         plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+        additional_views=(
+            ChartView(
+                chart_path="docs/optical-specs/sigma-100-400mm-f5-6-3-dg-dn-os-c/sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-tele.png",
+                plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+            ),
+        ),
     ),
     ReferenceChart(
         slug="sigma-17-40mm-f1-8-dc-art",
@@ -397,8 +458,14 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         apertures=("f/1.8",),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
-        notes="Tier 2 (ADR-041) — #793. Image 2988x1953 with the wide-end 30 lp/mm curves crossing the right axis frame; required the #1036 detector fix (total ink fraction instead of longest contiguous run). Plot box auto-detected via detect_sigma_plot_box().",
+        notes="Tier 2 (ADR-041) — #793. Image 2988x1953 with the wide-end 30 lp/mm curves crossing the right axis frame; required the #1036 detector fix (total ink fraction instead of longest contiguous run). Plot box auto-detected via detect_sigma_plot_box(). Wide + tele panels share one digitization-log.md.",
         plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=75, y_bottom=1693),
+        additional_views=(
+            ChartView(
+                chart_path="docs/optical-specs/sigma-17-40mm-f1-8-dc-art/sigma-17-40mm-f1-8-dc-art-mtf-diffraction-tele.png",
+                plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=77, y_bottom=1694),
+            ),
+        ),
     ),
     ReferenceChart(
         slug="samyang-85mm-f1-4-as-if-umc",
