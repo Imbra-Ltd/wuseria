@@ -341,6 +341,55 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         notes="Tier 2 (ADR-041) — #1018. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged.",
         plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
     ),
+    # Sigma zooms — #793. Same chart family as the DC DN C primes; the
+    # canonical chart per folder is the wide-end diffraction MTF per
+    # ADR-033, taken from the Fujifilm X mount edition where the source
+    # publishes a separate X-mount chart set (only the 100-400mm does).
+    # Plot box transferred from the 56mm template — verified by
+    # detect_sigma_plot_box() returning (309, 2980, 83, 1700) on every
+    # entry below. The 17-40mm Art is intentionally omitted: its image
+    # dimensions are 2988x1953 and detect_sigma_plot_box() finds only
+    # one axis-frame cluster instead of two — handle in a follow-up.
+    ReferenceChart(
+        slug="sigma-10-18mm-f2-8-dc-dn-c",
+        chart_path="docs/optical-specs/sigma-10-18mm-f2-8-dc-dn-c/sigma-10-18mm-f2-8-dc-dn-c-mtf-diffraction-wide.png",
+        style_family="mainstream-2color-solid-dashed",
+        apertures=("f/2.8",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="Tier 2 (ADR-041) — #793. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Canonical chart is wide-end (10mm).",
+        plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+    ),
+    ReferenceChart(
+        slug="sigma-16-300mm-f3-5-6-7-dc-os-c",
+        chart_path="docs/optical-specs/sigma-16-300mm-f3-5-6-7-dc-os-c/sigma-16-300mm-f3-5-6-7-dc-os-c-mtf-diffraction-wide.png",
+        style_family="mainstream-2color-solid-dashed",
+        apertures=("f/3.5",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="Tier 2 (ADR-041) — #793. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Canonical chart is wide-end (16mm).",
+        plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+    ),
+    ReferenceChart(
+        slug="sigma-18-50mm-f2-8-dc-dn-c",
+        chart_path="docs/optical-specs/sigma-18-50mm-f2-8-dc-dn-c/sigma-18-50mm-f2-8-dc-dn-c-mtf-diffraction-wide.png",
+        style_family="mainstream-2color-solid-dashed",
+        apertures=("f/2.8",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="Tier 2 (ADR-041) — #793. Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Canonical chart is wide-end (18mm).",
+        plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+    ),
+    ReferenceChart(
+        slug="sigma-100-400mm-f5-6-3-dg-dn-os-c",
+        chart_path="docs/optical-specs/sigma-100-400mm-f5-6-3-dg-dn-os-c/sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-wide.png",
+        style_family="mainstream-2color-solid-dashed",
+        apertures=("f/5",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes="Tier 2 (ADR-041) — #793. Fujifilm X mount edition; source publishes parallel L/Sony FF and TC chart sets (deleted per #1032). Image 2991x1964 matches 56mm template; 56mm plot box transferred unchanged. Canonical chart is wide-end (100mm).",
+        plot_box=PlotBoxCoords(x_left=309, x_right=2980, y_top=83, y_bottom=1700),
+    ),
     ReferenceChart(
         slug="samyang-85mm-f1-4-as-if-umc",
         chart_path="docs/optical-specs/samyang-85mm-f1-4-as-if-umc/samyang-85mm-f1-4-as-if-umc-mtf.png",
