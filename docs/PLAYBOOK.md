@@ -277,6 +277,27 @@ never hand-edit. Run `--check` before committing any change that affects
 pipeline output (algorithm tweaks, ground-truth corrections, plot-box edits)
 and refresh the logs if it reports stale. See ADR-040 for the file format.
 
+**Rename optical-specs MTF files to named suffixes (ADR-033):**
+
+```bash
+cd tools && py -m mtfdigitizer.rename <slug> --dry-run   # preview one folder
+cd tools && py -m mtfdigitizer.rename <slug> --apply     # execute one folder
+cd tools && py -m mtfdigitizer.rename --dry-run          # preview every folder
+```
+
+Reads each folder's `analysis.md` MTF charts list, maps numeric-suffix
+files (`-mtf-1.png`, `-mtf-2.png`) to canonical named suffixes
+(`-mtf-diffraction.png`, `-mtf-geometric.png`), and rewrites file
+moves, `analysis.md` link tables, and `referenceset/charts.py`
+`chart_path` literals atomically. Fails loud when a numeric file on
+disk is unlabeled in `analysis.md`, when a label is unrecognised, or
+when two files would collide on the same suffix (the zoom case
+deferred to a follow-up PR). After applying, regenerate logs with
+`py -m mtfdigitizer.log --all` (Tier 1) and
+`py -m mtfdigitizer.extract --accept <slug>` (Tier 2) so the chart
+path in each `digitization-log.md` matches the new file name. See
+#1017 and ADR-033 §"MTF chart naming".
+
 **Run the MTF digitizer render-match scorer:**
 
 ```bash

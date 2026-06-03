@@ -264,7 +264,7 @@ _SIGMA_30_GT: GroundTruthCurves = {
 REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ReferenceChart(
         slug="sigma-56mm-f1-4-dc-dn-c",
-        chart_path="docs/optical-specs/sigma-56mm-f1-4-dc-dn-c/sigma-56mm-f1-4-dc-dn-c-mtf-1.png",
+        chart_path="docs/optical-specs/sigma-56mm-f1-4-dc-dn-c/sigma-56mm-f1-4-dc-dn-c-mtf-diffraction.png",
         style_family="mainstream-2color-solid-dashed",
         apertures=("f/1.4",),
         frequencies_lpmm=(10, 30),
@@ -283,7 +283,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ),
     ReferenceChart(
         slug="sigma-30mm-f1-4-dc-dn-c",
-        chart_path="docs/optical-specs/sigma-30mm-f1-4-dc-dn-c/sigma-30mm-f1-4-dc-dn-c-mtf-1.png",
+        chart_path="docs/optical-specs/sigma-30mm-f1-4-dc-dn-c/sigma-30mm-f1-4-dc-dn-c-mtf-diffraction.png",
         style_family="mainstream-2color-solid-dashed",
         apertures=("f/1.4",),
         frequencies_lpmm=(10, 30),
@@ -296,14 +296,14 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ),
     # Sigma DC DN C primes — scaffolded for the brand campaign (#1018).
     # Same official template family as 30mm/56mm; canonical diffraction
-    # chart is `-mtf-1.png` per ADR-033. Plot box and ground truth are
-    # left None until a maintainer eye-reads the 11x4 GT values and
-    # confirms the plot-box pixel coordinates. 16mm and 23mm should
-    # transfer the 56mm box unchanged (both are 2991x1964); 12mm
+    # chart is `-mtf-diffraction.png` per ADR-033. Plot box and ground
+    # truth are left None until a maintainer eye-reads the 11x4 GT
+    # values and confirms the plot-box pixel coordinates. 16mm and 23mm
+    # should transfer the 56mm box unchanged (both are 2991x1964); 12mm
     # (2988x1954) and 15mm (2993x1953) need a fresh measurement.
     ReferenceChart(
         slug="sigma-12mm-f1-4-dc-dn-c",
-        chart_path="docs/optical-specs/sigma-12mm-f1-4-dc-dn-c/sigma-12mm-f1-4-dc-dn-c-mtf-1.png",
+        chart_path="docs/optical-specs/sigma-12mm-f1-4-dc-dn-c/sigma-12mm-f1-4-dc-dn-c-mtf-diffraction.png",
         style_family="mainstream-2color-solid-dashed",
         apertures=("f/1.4",),
         frequencies_lpmm=(10, 30),
@@ -313,7 +313,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ),
     ReferenceChart(
         slug="sigma-15mm-f1-4-dc-dn-c",
-        chart_path="docs/optical-specs/sigma-15mm-f1-4-dc-dn-c/sigma-15mm-f1-4-dc-dn-c-mtf-1.png",
+        chart_path="docs/optical-specs/sigma-15mm-f1-4-dc-dn-c/sigma-15mm-f1-4-dc-dn-c-mtf-diffraction.png",
         style_family="mainstream-2color-solid-dashed",
         apertures=("f/1.4",),
         frequencies_lpmm=(10, 30),
@@ -323,7 +323,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ),
     ReferenceChart(
         slug="sigma-16mm-f1-4-dc-dn-c",
-        chart_path="docs/optical-specs/sigma-16mm-f1-4-dc-dn-c/sigma-16mm-f1-4-dc-dn-c-mtf-1.png",
+        chart_path="docs/optical-specs/sigma-16mm-f1-4-dc-dn-c/sigma-16mm-f1-4-dc-dn-c-mtf-diffraction.png",
         style_family="mainstream-2color-solid-dashed",
         apertures=("f/1.4",),
         frequencies_lpmm=(10, 30),
@@ -333,7 +333,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ),
     ReferenceChart(
         slug="sigma-23mm-f1-4-dc-dn-c",
-        chart_path="docs/optical-specs/sigma-23mm-f1-4-dc-dn-c/sigma-23mm-f1-4-dc-dn-c-mtf-1.png",
+        chart_path="docs/optical-specs/sigma-23mm-f1-4-dc-dn-c/sigma-23mm-f1-4-dc-dn-c-mtf-diffraction.png",
         style_family="mainstream-2color-solid-dashed",
         apertures=("f/1.4",),
         frequencies_lpmm=(10, 30),

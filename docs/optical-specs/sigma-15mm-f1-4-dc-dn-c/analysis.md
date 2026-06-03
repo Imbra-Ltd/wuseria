@@ -3,8 +3,8 @@
 Source: [Official Sigma product page](https://www.sigma-global.com/en/lenses/c026_15_14/)
 MTF charts:
 
-- [sigma-15mm-f1-4-dc-dn-c-mtf-1.png](sigma-15mm-f1-4-dc-dn-c-mtf-1.png) — diffraction MTF
-- [sigma-15mm-f1-4-dc-dn-c-mtf-2.png](sigma-15mm-f1-4-dc-dn-c-mtf-2.png) — geometrical MTF
+- [sigma-15mm-f1-4-dc-dn-c-mtf-diffraction.png](sigma-15mm-f1-4-dc-dn-c-mtf-diffraction.png) — diffraction MTF
+- [sigma-15mm-f1-4-dc-dn-c-mtf-geometric.png](sigma-15mm-f1-4-dc-dn-c-mtf-geometric.png) — geometrical MTF
 
 ## Chart legend
 

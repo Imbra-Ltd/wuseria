@@ -16,7 +16,7 @@ from .types import HueRange, MtfProfile
 
 
 # Sigma 2-color: red 10 lp/mm, blue 30 lp/mm; solid = sagittal, dashed = meridional.
-# Measured peaks on sigma-56mm-f1-4-dc-dn-c-mtf-1.png: h≈6 (red), h≈109 (blue).
+# Measured peaks on sigma-56mm-f1-4-dc-dn-c-mtf-diffraction.png: h≈6 (red), h≈109 (blue).
 SIGMA_2COLOR_SOLID_DASHED: MtfProfile = MtfProfile(
     name="sigma-2color-solid-dashed",
     hues=(

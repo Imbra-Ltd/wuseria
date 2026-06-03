@@ -311,9 +311,9 @@ def test_extract_lens_sigma16_writes_four_artifacts(tmp_path, monkeypatch, capsy
     assert rc == 0
 
     lens_dir = tmp_path / "docs" / "optical-specs" / _SIGMA_16_SLUG
-    overlay = lens_dir / f"{_SIGMA_16_SLUG}-mtf-1-overlay.png"
-    svg = lens_dir / f"{_SIGMA_16_SLUG}-mtf-1.svg"
-    review = lens_dir / f"{_SIGMA_16_SLUG}-mtf-1-review.html"
+    overlay = lens_dir / f"{_SIGMA_16_SLUG}-mtf-diffraction-overlay.png"
+    svg = lens_dir / f"{_SIGMA_16_SLUG}-mtf-diffraction.svg"
+    review = lens_dir / f"{_SIGMA_16_SLUG}-mtf-diffraction-review.html"
     log = lens_dir / "digitization-log.md"
     assert overlay.exists() and overlay.stat().st_size > 1000, (
         "overlay PNG should be a real raster"
@@ -346,7 +346,7 @@ def test_extract_hold_does_not_write_log(tmp_path, monkeypatch, capsys):
     assert rc == 0
 
     lens_dir = tmp_path / "docs" / "optical-specs" / _SIGMA_16_SLUG
-    assert (lens_dir / f"{_SIGMA_16_SLUG}-mtf-1-overlay.png").exists()
+    assert (lens_dir / f"{_SIGMA_16_SLUG}-mtf-diffraction-overlay.png").exists()
     assert not (lens_dir / "digitization-log.md").exists(), (
         "HOLD path must not write the production log"
     )

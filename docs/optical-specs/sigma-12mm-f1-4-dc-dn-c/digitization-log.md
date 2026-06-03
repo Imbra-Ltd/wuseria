@@ -14,7 +14,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 ## Panel
 
-- **Chart:** `docs/optical-specs/sigma-12mm-f1-4-dc-dn-c/sigma-12mm-f1-4-dc-dn-c-mtf-1.png`
+- **Chart:** `docs/optical-specs/sigma-12mm-f1-4-dc-dn-c/sigma-12mm-f1-4-dc-dn-c-mtf-diffraction.png`
 - **Style family:** `mainstream-2color-solid-dashed`
 - **Dispatch profile:** `sigma-2color-solid-dashed`
 - **Plot box (pixels):** x=[309, 2980], y=[77, 1694]
