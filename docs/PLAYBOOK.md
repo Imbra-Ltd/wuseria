@@ -298,6 +298,17 @@ deferred to a follow-up PR). After applying, regenerate logs with
 path in each `digitization-log.md` matches the new file name. See
 #1017 and ADR-033 §"MTF chart naming".
 
+**Before authoring an `analysis.md` MTF charts list for a folder that
+does not yet have one:** check the source product page for parallel
+chart sets. Multi-mount lenses (DG DN releases with a later Fujifilm X
+mount addition, lenses with optional teleconverters) often publish
+the same wide/tele chart pair multiple times — once per mount / TC
+configuration. Match each numeric-suffix file on disk against the
+source page's chart-section DOM order before transcribing labels.
+Wuseria is X-mount only, so keep only the X-mount chart set; delete
+the L/Sony FF and TC-only variants. Trusting an unverified prose
+summary caused #1032 (the Sigma 100-400mm incident).
+
 **Run the MTF digitizer render-match scorer:**
 
 ```bash
