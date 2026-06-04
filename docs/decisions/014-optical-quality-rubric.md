@@ -247,6 +247,43 @@ chart cannot isolate which. Coma requires point-source testing
 Manufacturer MTF charts are computed from the optical design,
 not measured from production samples.
 
+### Zoom aggregation for MTF-derived scoring
+
+When MTF readings drive a field score (the fallbacks above, or
+direct astigmatism reading off the diffraction chart) and the lens
+has multiple MTF panels (one per published focal length per
+ADR-033), **aggregate by averaging across panels per position**.
+
+For a field whose score depends on the value at image height H:
+score the average of all panels' values at H. For S-vs-M
+divergence: compute the divergence per panel, then average the
+divergences.
+
+**Rationale.** Surveyed prior art: DXOMark publishes a documented
+arithmetic mean across tested focal lengths; LensTip publishes
+per-focal-length curves and lets the reader interpret; OpticalLimits
+keeps panels separate and weights editorially toward the use-case
+end. Wuseria needs a single 0–2 score per field, so editorial
+weighting is out. Min was considered and rejected: real zoom data
+(session 118 survey of 5 Sigma zooms) shows that wide-vs-tele edge
+sharpness differs in both directions — the Sigma 17-40mm f/1.8 is
+markedly sharper at tele than at wide, and min would unfairly
+penalize it for its wide-end edge. Mean is the only aggregation that
+handles both directions of the gap, and matches DXOMark's published
+formula.
+
+**Center vs edge.** Center sharpness is typically near-identical
+across panels (Sigma data: within 1-2 pp), so averaging is
+near-lossless for `centerStopped` and `centerWideOpen`. Edge fields
+(`cornerStopped`, `cornerWideOpen`) and `astigmatism` see the
+largest wide-vs-tele variance, which is exactly where averaging
+adds the most signal compared to wide-only.
+
+**Scope.** This rule covers MTF-derived scoring. When a field is
+scored from a trust-3 review that itself published per-focal-length
+data (LensTip), use that review's data directly — do not average
+manufacturer MTF panels as a substitute for a lab measurement.
+
 ## Reference scoring
 
 Per-lens scoring justifications are maintained in

@@ -56,7 +56,9 @@ const xTicks = chart.readings.map((r) => r.position);
   viewBox={`0 0 ${W} ${H}`}
   class="mtf-svg"
   role="img"
-  aria-label={`MTF chart at ${chart.aperture}`}
+  aria-label={chart.focalLength != null
+    ? `MTF chart at ${chart.aperture}, ${chart.focalLength}mm`
+    : `MTF chart at ${chart.aperture}`}
 >
   {/* Grid lines */}
   {

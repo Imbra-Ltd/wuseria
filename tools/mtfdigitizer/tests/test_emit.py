@@ -43,10 +43,11 @@ def test_format_value_renders_none_as_null() -> None:
     assert _format_value(None) == "null"
 
 
-def test_format_value_renders_one_as_one_decimal_two_digits() -> None:
-    # The lens-page table calls .toFixed(2) on the JS side; the emitted
-    # TS literal should be a valid number, not "1" or "1.0" specifically.
-    assert _format_value(1.0) == "1.00"
+def test_format_value_strips_trailing_zeros() -> None:
+    # unicorn/no-zero-fractions rejects `0.90` and `1.00` literals; emit
+    # must produce the canonical form prettier+eslint will accept.
+    assert _format_value(0.9) == "0.9"
+    assert _format_value(1.0) == "1"
 
 
 # --- _has_any_data -------------------------------------------------------
@@ -88,6 +89,23 @@ def test_format_reading_position_renders_float() -> None:
     assert "position: 1.4," in out
 
 
+# --- _format_chart focal length ------------------------------------------
+
+
+def test_format_chart_omits_focal_length_when_none() -> None:
+    from mtfdigitizer.emit import _format_chart
+
+    out = _format_chart("f/1.4", (_r(pos=0),), focal_length=None)
+    assert "focalLength" not in out
+
+
+def test_format_chart_renders_focal_length_when_set() -> None:
+    from mtfdigitizer.emit import _format_chart
+
+    out = _format_chart("f/2.8", (_r(pos=0),), focal_length=10)
+    assert "focalLength: 10," in out
+
+
 # --- _format_entry -------------------------------------------------------
 
 
@@ -97,8 +115,7 @@ def test_format_entry_wraps_a_lens_block() -> None:
         slug="test-lens",
         source="https://example.com/lens",
         mtf_type="measured",
-        aperture="f/2.8",
-        paired=rows,
+        panels=(("f/2.8", None, rows),),
     )
     assert '"test-lens":' in out
     assert 'source: "https://example.com/lens",' in out
@@ -113,8 +130,7 @@ def test_format_entry_emits_computed_mtf_type_when_requested() -> None:
         slug="sigma-lens",
         source="https://sigma-global.com/x",
         mtf_type="computed",
-        aperture="f/1.4",
-        paired=(_r(pos=0),),
+        panels=(("f/1.4", None, (_r(pos=0),)),),
     )
     assert 'mtfType: "computed",' in out
     assert 'mtfType: "measured",' not in out
@@ -125,7 +141,34 @@ def test_format_entry_empty_readings_block_is_valid_ts() -> None:
         slug="test-lens",
         source="https://x",
         mtf_type="measured",
-        aperture="f/2",
-        paired=(),
+        panels=(("f/2", None, ()),),
     )
     assert "readings: [\n\n        ]," in out
+
+
+def test_format_entry_emits_two_panels_for_zoom() -> None:
+    """ADR-033: a zoom emits one chart entry per published focal length."""
+    out = _format_entry(
+        slug="sigma-10-18mm-f2-8-dc-dn-c",
+        source="https://sigma-global.com/x",
+        mtf_type="computed",
+        panels=(
+            ("f/2.8", 10, (_r(pos=0), _r(pos=14.0))),
+            ("f/2.8", 18, (_r(pos=0), _r(pos=14.0))),
+        ),
+    )
+    # One charts: [...] array, two chart objects inside
+    assert out.count("aperture:") == 2
+    assert "focalLength: 10," in out
+    assert "focalLength: 18," in out
+
+
+def test_format_entry_prime_emits_no_focal_length_line() -> None:
+    """Primes have focal_length=None — emitted TS must not include the key."""
+    out = _format_entry(
+        slug="sigma-56mm-f1-4-dc-dn-c",
+        source="https://sigma-global.com/x",
+        mtf_type="computed",
+        panels=(("f/1.4", None, (_r(pos=0),)),),
+    )
+    assert "focalLength" not in out

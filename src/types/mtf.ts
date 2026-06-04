@@ -14,6 +14,7 @@ interface MtfReading {
 
 interface MtfChart {
   aperture: string; // e.g. "f/1.4", "f/8"
+  focalLength?: number; // mm; set on zoom panels (wide + tele), omitted on primes
   readings: MtfReading[];
 }
 
