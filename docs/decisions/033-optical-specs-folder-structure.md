@@ -80,9 +80,19 @@ numeric focal length when intermediate values are published.
 **diffraction** chart is canonical for digitization, scoring, and any
 data-extraction tool (`tools/mtfdigitizer/`). Geometrical charts are
 committed for provenance only — they are not digitized and MUST NOT
-drive OQ field scores. For zooms, the **wide-end diffraction chart** is
-canonical unless the lens is marketed by its tele behaviour
-(super-telephoto zooms — document the exception in `specs-log.md`).
+drive OQ field scores.
+
+**Zoom panels.** For zooms, **every published focal-length panel of
+the diffraction chart is canonical** — typically wide MAX + tele MAX,
+sometimes an intermediate focal length. Each panel is digitized into
+its own `MtfChart` entry in `src/data/mtf-readings.ts` with
+`focalLength` set (mm). Both panels are rendered on the lens detail
+page. Aggregation for OQ field scoring is defined in ADR-014 (averaged
+across panels per position). Superseded prior rule: wide-end-only was
+canonical until session 118 — rejected because real zoom data shows
+edge sharpness and astigmatism differ materially between wide and tele
+in both directions (e.g. Sigma 17-40mm f/1.8 is dramatically sharper at
+tele), and wide-only discarded that signal.
 
 **Rationale.** Diffraction MTF is what the optics deliver; geometrical
 MTF describes a hypothetical lens without diffraction and is consistently

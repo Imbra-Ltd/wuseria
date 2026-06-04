@@ -59,7 +59,13 @@ def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
 
 @dataclass(frozen=True)
 class EmitResult:
-    """What `emit_lens()` produced for one slug."""
+    """What `emit_lens()` produced for one slug.
+
+    For multi-panel zooms (one chart per published focal length per
+    ADR-033), `positions_emitted` and `null_counts` aggregate across
+    every panel — the totals an operator wants to see when deciding
+    whether the emission is healthy.
+    """
 
     slug: str
     ts_literal: str
@@ -80,10 +86,17 @@ def _has_any_data(r: SampledReading) -> bool:
 
 
 def _format_value(value: float | None) -> str:
-    """Render `0.92` not `0.92000000000001`, or `null` for None."""
+    """Render `0.92` not `0.92000000000001`, or `null` for None.
+
+    Drops trailing zeros after the decimal point so a rounded `0.9` is
+    emitted as `0.9`, not `0.90` — `unicorn/no-zero-fractions` lints
+    against the latter. A whole-number value renders as `1`.
+    """
     if value is None:
         return "null"
-    return f"{round(value, 2):.2f}"
+    rounded = round(value, 2)
+    text = f"{rounded:.2f}".rstrip("0").rstrip(".")
+    return text or "0"
 
 
 def _format_reading(r: SampledReading) -> str:
@@ -99,12 +112,20 @@ def _format_reading(r: SampledReading) -> str:
 
 
 def _format_chart(
-    aperture: str, paired: tuple[SampledReading, ...]
+    aperture: str,
+    paired: tuple[SampledReading, ...],
+    focal_length: int | None = None,
 ) -> str:
     readings_block = "\n".join(_format_reading(r) for r in paired)
+    focal_line = (
+        f"        focalLength: {focal_length},\n"
+        if focal_length is not None
+        else ""
+    )
     return (
         "      {\n"
         f"        aperture: \"{aperture}\",\n"
+        f"{focal_line}"
         "        readings: [\n"
         f"{readings_block}\n"
         "        ],\n"
@@ -112,20 +133,27 @@ def _format_chart(
     )
 
 
+# One emitted chart panel: aperture string, optional focal length in mm
+# (set on zoom panels, None on primes), and the position-keyed readings.
+ChartPanel = tuple[str, int | None, tuple[SampledReading, ...]]
+
+
 def _format_entry(
     slug: str,
     source: str,
     mtf_type: str,
-    aperture: str,
-    paired: tuple[SampledReading, ...],
+    panels: tuple[ChartPanel, ...],
 ) -> str:
-    chart_block = _format_chart(aperture, paired)
+    chart_blocks = "\n".join(
+        _format_chart(aperture, paired, focal_length=focal)
+        for aperture, focal, paired in panels
+    )
     return (
         f"  \"{slug}\": {{\n"
         f"    source: \"{source}\",\n"
         f"    mtfType: \"{mtf_type}\",\n"
         "    charts: [\n"
-        f"{chart_block}\n"
+        f"{chart_blocks}\n"
         "    ],\n"
         "  },"
     )
@@ -136,6 +164,7 @@ def emit_lens(
     source_url: str,
     mtf_type: str = "measured",
     aperture: str | None = None,
+    focal_lengths: tuple[int, ...] | None = None,
     repo_root: Path | None = None,
 ) -> EmitResult:
     """Extract one reference chart and serialize to a TS object literal.
@@ -148,6 +177,11 @@ def emit_lens(
     `aperture` overrides the chart's first declared aperture (useful when
     the reference chart declares multiple panels but only the first is
     extracted by the current pipeline).
+    `focal_lengths` supplies the mm value to stamp on each emitted chart
+    panel — required for zooms (ADR-033 mandates one panel per published
+    focal length), omitted for primes. When supplied, its length must
+    match `chart.views`; values are zipped in primary-then-additional
+    order.
     """
     if chart.plot_box is None:
         raise ValueError(
@@ -158,21 +192,46 @@ def emit_lens(
         raise ValueError(
             f"mtf_type must be 'computed' or 'measured', got {mtf_type!r}"
         )
+    views = chart.views
+    if focal_lengths is not None and len(focal_lengths) != len(views):
+        raise ValueError(
+            f"focal_lengths length {len(focal_lengths)} does not match "
+            f"view count {len(views)} for {chart.slug!r}"
+        )
+    if len(views) > 1 and focal_lengths is None:
+        raise ValueError(
+            f"reference chart {chart.slug!r} has {len(views)} views — "
+            f"focal_lengths is required to disambiguate panels per ADR-033"
+        )
     profile = profile_for_chart(chart)
 
     root = repo_root or Path(__file__).resolve().parents[2]
-    extracted: ExtractedChart = extract_chart(
-        root / chart.chart_path,
-        profile,
-        _to_plotbox(chart.plot_box),
-        image_height_mm=chart.image_height_mm,
-    )
+    aperture_string = aperture or chart.apertures[0]
 
-    rows = tuple(r for r in extracted.readings if _has_any_data(r))
-    null_counts = {
-        field: sum(1 for r in extracted.readings if getattr(r, field) is None)
-        for field in _FIELDS
-    }
+    panels: list[ChartPanel] = []
+    total_positions = 0
+    null_counts = {field: 0 for field in _FIELDS}
+
+    for index, view in enumerate(views):
+        if view.plot_box is None:
+            raise ValueError(
+                f"view {index} of {chart.slug!r} has no plot_box — "
+                f"emit requires a calibrated plot box on every view"
+            )
+        extracted: ExtractedChart = extract_chart(
+            root / view.chart_path,
+            profile,
+            _to_plotbox(view.plot_box),
+            image_height_mm=chart.image_height_mm,
+        )
+        rows = tuple(r for r in extracted.readings if _has_any_data(r))
+        focal = focal_lengths[index] if focal_lengths is not None else None
+        panels.append((aperture_string, focal, rows))
+        total_positions += len(rows)
+        for field in _FIELDS:
+            null_counts[field] += sum(
+                1 for r in extracted.readings if getattr(r, field) is None
+            )
 
     return EmitResult(
         slug=chart.slug,
@@ -180,10 +239,9 @@ def emit_lens(
             slug=chart.slug,
             source=source_url,
             mtf_type=mtf_type,
-            aperture=aperture or chart.apertures[0],
-            paired=rows,
+            panels=tuple(panels),
         ),
-        positions_emitted=len(rows),
+        positions_emitted=total_positions,
         null_counts=null_counts,
     )
 
@@ -231,6 +289,36 @@ _DEFAULT_SOURCES: dict[str, str] = {
     "7artisans-50mm-f1-2-mark-ii": (
         "https://7artisans.store/products/7artisans-50mm-f-1-2-mark-ii-prime-lens"
     ),
+    # Sigma zooms — #793. Two-panel diffraction MTF (wide + tele) per
+    # ADR-033; see _DEFAULT_FOCAL_LENGTHS below for the mm values.
+    "sigma-10-18mm-f2-8-dc-dn-c": (
+        "https://www.sigma-global.com/en/lenses/c023_10_28/"
+    ),
+    "sigma-16-300mm-f3-5-6-7-dc-os-c": (
+        "https://www.sigma-global.com/en/lenses/c025_16_300/"
+    ),
+    "sigma-17-40mm-f1-8-dc-art": (
+        "https://www.sigma-global.com/en/lenses/a025_17_40/"
+    ),
+    "sigma-18-50mm-f2-8-dc-dn-c": (
+        "https://www.sigma-global.com/en/lenses/c021_18_50/"
+    ),
+    "sigma-100-400mm-f5-6-3-dg-dn-os-c": (
+        "https://www.sigma-global.com/en/lenses/c020_100_400/"
+    ),
+}
+
+
+# Focal length (mm) per emitted panel, in primary-then-additional view
+# order. Required for any reference chart with more than one view
+# (ADR-033). Primes are not listed here — emit_lens passes
+# `focal_lengths=None` for them.
+_DEFAULT_FOCAL_LENGTHS: dict[str, tuple[int, ...]] = {
+    "sigma-10-18mm-f2-8-dc-dn-c": (10, 18),
+    "sigma-16-300mm-f3-5-6-7-dc-os-c": (16, 300),
+    "sigma-17-40mm-f1-8-dc-art": (17, 40),
+    "sigma-18-50mm-f2-8-dc-dn-c": (18, 50),
+    "sigma-100-400mm-f5-6-3-dg-dn-os-c": (100, 400),
 }
 
 
@@ -268,13 +356,30 @@ def main(argv: list[str] | None = None) -> int:
                 file=sys.stderr,
             )
             return 1
-        result = emit_lens(chart, source_url=source, mtf_type=args.mtf_type)
+        focal_lengths = _DEFAULT_FOCAL_LENGTHS.get(slug)
+        if len(chart.views) > 1 and focal_lengths is None:
+            print(
+                f"ERROR: {slug!r} has {len(chart.views)} views but no "
+                f"_DEFAULT_FOCAL_LENGTHS entry; add one (mm per panel, "
+                f"primary first)",
+                file=sys.stderr,
+            )
+            return 1
+        result = emit_lens(
+            chart,
+            source_url=source,
+            mtf_type=args.mtf_type,
+            focal_lengths=focal_lengths,
+        )
         print(result.ts_literal)
         nulls = ", ".join(
             f"{field}={count}" for field, count in result.null_counts.items()
         )
+        panel_count = len(chart.views)
+        per_panel = 11 * panel_count
         print(
-            f"\n# {slug}: emitted {result.positions_emitted}/11 positions; "
+            f"\n# {slug}: emitted {result.positions_emitted}/{per_panel} "
+            f"positions across {panel_count} panel(s); "
             f"nulls per field: {nulls}",
             file=sys.stderr,
         )

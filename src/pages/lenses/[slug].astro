@@ -386,7 +386,12 @@ const jsonLd = {
             <h3>MTF Charts</h3>
             {mtf.charts.map((chart) => (
               <div class="mtf-block">
-                <span class="mtf-aperture">{chart.aperture}</span>
+                <span class="mtf-aperture">
+                  {chart.aperture}
+                  {chart.focalLength != null && (
+                    <span class="mtf-focal"> @ {chart.focalLength}mm</span>
+                  )}
+                </span>
                 <MtfChart chart={chart} />
                 <table class="spec-table mtf-table">
                   <thead>
@@ -833,6 +838,10 @@ const jsonLd = {
     font-size: var(--font-size-sm);
     color: var(--color-accent);
     margin-bottom: var(--space-xs);
+  }
+
+  .mtf-focal {
+    color: var(--color-text-muted);
   }
 
   .mtf-table {

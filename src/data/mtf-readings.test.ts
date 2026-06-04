@@ -93,6 +93,38 @@ describe("mtf-readings data integrity", () => {
   // null is allowed: the digitizer (B2 contract) returns null when no curve
   // was found at a sample position. That's honest absence-of-data; only an
   // emitted 0 indicates a buggy "found curve at MTF=0" reading.
+  it("focalLength, when set, is a positive integer in mm", () => {
+    for (const [slug, data] of entries) {
+      for (const chart of data.charts) {
+        if (chart.focalLength == null) continue;
+        expect(
+          chart.focalLength,
+          `${slug} ${chart.aperture}: focalLength must be positive`,
+        ).toBeGreaterThan(0);
+        expect(
+          Number.isInteger(chart.focalLength),
+          `${slug} ${chart.aperture}: focalLength must be an integer mm`,
+        ).toBe(true);
+      }
+    }
+  });
+
+  it("focalLength is set on all-or-none charts within an entry", () => {
+    // Multi-chart entries can be either: (a) one prime with multiple
+    // apertures (MAX + F8 panels — same focal length, no focalLength
+    // needed); or (b) a zoom with one panel per published focal length.
+    // What MUST hold is consistency within an entry: either every chart
+    // sets focalLength (a zoom) or none does (a prime).
+    for (const [slug, data] of entries) {
+      const withFocal = data.charts.filter((c) => c.focalLength != null).length;
+      const withoutFocal = data.charts.length - withFocal;
+      expect(
+        withFocal === 0 || withoutFocal === 0,
+        `${slug}: charts must all set focalLength (zoom) or all omit it (prime); got ${withFocal} with, ${withoutFocal} without`,
+      ).toBe(true);
+    }
+  });
+
   it("centre (position 0) MTF is never zero", () => {
     type CentreField = {
       slug: string;
