@@ -21,7 +21,7 @@ import pytest
 from mtfdigitizer import extract
 from mtfdigitizer.extract import (
     _is_tier2,
-    _resolve_chart_image,
+    _resolve_view_image,
     _should_write_log,
     check_logs,
     extract_lens,
@@ -32,6 +32,7 @@ from mtfdigitizer.pipeline.sampling import SAMPLE_FRACTIONS
 from mtfdigitizer.priors import PriorViolation
 from mtfdigitizer.production_log import ProductionPanel, render_production_log
 from mtfdigitizer.referenceset.charts import (
+    ChartView,
     PlotBoxCoords,
     REFERENCE_CHARTS,
     ReferenceChart,
@@ -73,27 +74,27 @@ def _low_verdict(reason: LowReason = LowReason.PRECISION_BELOW_THRESHOLD) -> Cha
 
 
 def test_gate_low_verdict_holds_without_accept():
-    write, reason = _should_write_log(_low_verdict(), accept_override=False)
+    write, reason = _should_write_log([_low_verdict()], accept_override=False)
     assert not write
     assert reason == "gate-low"
 
 
 def test_gate_low_verdict_writes_with_accept():
-    write, reason = _should_write_log(_low_verdict(), accept_override=True)
+    write, reason = _should_write_log([_low_verdict()], accept_override=True)
     assert write
     assert reason == "accept-override"
 
 
 def test_gate_high_verdict_holds_when_overlay_glance_required(monkeypatch):
     monkeypatch.setattr(extract, "OVERLAY_GLANCE_REQUIRED", True)
-    write, reason = _should_write_log(_high_verdict(), accept_override=False)
+    write, reason = _should_write_log([_high_verdict()], accept_override=False)
     assert not write
     assert reason == "gate-high-pending-glance"
 
 
 def test_gate_high_verdict_auto_writes_when_glance_not_required(monkeypatch):
     monkeypatch.setattr(extract, "OVERLAY_GLANCE_REQUIRED", False)
-    write, reason = _should_write_log(_high_verdict(), accept_override=False)
+    write, reason = _should_write_log([_high_verdict()], accept_override=False)
     assert write
     assert reason == "gate-high-auto"
 
@@ -104,9 +105,38 @@ def test_gate_accept_always_writes_even_on_low(monkeypatch):
     dashed-M charts that classify LOW but extract cleanly."""
     monkeypatch.setattr(extract, "OVERLAY_GLANCE_REQUIRED", True)
     write, _ = _should_write_log(
-        _low_verdict(LowReason.PRIOR_FAILED_IN_RANGE), accept_override=True
+        [_low_verdict(LowReason.PRIOR_FAILED_IN_RANGE)], accept_override=True
     )
     assert write
+
+
+def test_gate_multi_view_one_low_holds_the_lens(monkeypatch):
+    """A zoom (wide + tele) holds if any view is LOW — the log writer
+    emits one log per lens, so a partial commit is meaningless."""
+    monkeypatch.setattr(extract, "OVERLAY_GLANCE_REQUIRED", True)
+    write, reason = _should_write_log(
+        [_high_verdict(), _low_verdict()], accept_override=False
+    )
+    assert not write
+    assert reason == "gate-low"
+
+
+def test_gate_multi_view_all_high_pending_glance(monkeypatch):
+    monkeypatch.setattr(extract, "OVERLAY_GLANCE_REQUIRED", True)
+    write, reason = _should_write_log(
+        [_high_verdict(), _high_verdict()], accept_override=False
+    )
+    assert not write
+    assert reason == "gate-high-pending-glance"
+
+
+def test_gate_multi_view_accept_override_writes_anyway():
+    """The escape hatch overrides the gate for multi-view lenses too."""
+    write, reason = _should_write_log(
+        [_low_verdict(), _low_verdict()], accept_override=True
+    )
+    assert write
+    assert reason == "accept-override"
 
 
 # --- Tier 2 filter --------------------------------------------------------
@@ -142,11 +172,13 @@ def test_is_tier2_requires_plot_box_and_no_ground_truth():
 # --- Canonical chart selection -------------------------------------------
 
 
-def test_resolve_chart_image_prefers_diffraction_when_present(tmp_path):
+def test_resolve_view_image_prefers_diffraction_when_present(tmp_path):
     """ADR-033 names the canonical chart `-mtf-diffraction.png`. When
     present, the extractor picks it up even if the registry still
     declares the legacy `-mtf-1.png` path (transitional behaviour
-    during #1017 rename)."""
+    during #1017 rename). The probe runs on the primary view only —
+    additional views (zoom tele) already use their canonical
+    focal-suffixed name."""
     legacy_dir = tmp_path / "docs" / "optical-specs" / "fake-slug"
     legacy_dir.mkdir(parents=True)
     legacy = legacy_dir / "fake-slug-mtf-1.png"
@@ -161,20 +193,21 @@ def test_resolve_chart_image_prefers_diffraction_when_present(tmp_path):
         image_height_mm=14.0, notes="",
         plot_box=PlotBoxCoords(x_left=0, x_right=10, y_top=0, y_bottom=10),
     )
+    primary_view = chart.views[0]
 
     import mtfdigitizer.extract as ext_mod
     monkey_root = tmp_path
     original = ext_mod.REPO_ROOT
     ext_mod.REPO_ROOT = monkey_root
     try:
-        resolved = _resolve_chart_image(chart)
+        resolved = _resolve_view_image(chart, primary_view)
     finally:
         ext_mod.REPO_ROOT = original
 
     assert resolved.name == "fake-slug-mtf-diffraction.png"
 
 
-def test_resolve_chart_image_falls_back_to_legacy(tmp_path):
+def test_resolve_view_image_falls_back_to_legacy(tmp_path):
     legacy_dir = tmp_path / "docs" / "optical-specs" / "fake-slug"
     legacy_dir.mkdir(parents=True)
     legacy = legacy_dir / "fake-slug-mtf-1.png"
@@ -187,16 +220,62 @@ def test_resolve_chart_image_falls_back_to_legacy(tmp_path):
         image_height_mm=14.0, notes="",
         plot_box=PlotBoxCoords(x_left=0, x_right=10, y_top=0, y_bottom=10),
     )
+    primary_view = chart.views[0]
 
     import mtfdigitizer.extract as ext_mod
     original = ext_mod.REPO_ROOT
     ext_mod.REPO_ROOT = tmp_path
     try:
-        resolved = _resolve_chart_image(chart)
+        resolved = _resolve_view_image(chart, primary_view)
     finally:
         ext_mod.REPO_ROOT = original
 
     assert resolved.name == "fake-slug-mtf-1.png"
+
+
+def test_resolve_view_image_additional_view_skips_canonical_probe(tmp_path):
+    """The canonical `-mtf-diffraction.png` probe only fires on the
+    primary view. Additional views (zoom tele) declare their full
+    focal-suffixed canonical path and must resolve via fallback —
+    otherwise both wide and tele would collapse to the same file."""
+    lens_dir = tmp_path / "docs" / "optical-specs" / "fake-slug"
+    lens_dir.mkdir(parents=True)
+    primary = lens_dir / "fake-slug-mtf-diffraction-wide.png"
+    primary.write_bytes(b"wide")
+    tele = lens_dir / "fake-slug-mtf-diffraction-tele.png"
+    tele.write_bytes(b"tele")
+    # The bare-canonical lure that would clobber the tele if the probe
+    # ran on additional views.
+    bare = lens_dir / "fake-slug-mtf-diffraction.png"
+    bare.write_bytes(b"bare-lure")
+
+    chart = ReferenceChart(
+        slug="fake-slug",
+        chart_path=str(primary.relative_to(tmp_path)).replace("\\", "/"),
+        style_family="x", apertures=("MAX",), frequencies_lpmm=(10, 30),
+        image_height_mm=14.0, notes="",
+        plot_box=PlotBoxCoords(x_left=0, x_right=10, y_top=0, y_bottom=10),
+        additional_views=(
+            ChartView(
+                chart_path=str(tele.relative_to(tmp_path)).replace("\\", "/"),
+                plot_box=PlotBoxCoords(x_left=0, x_right=10, y_top=0, y_bottom=10),
+            ),
+        ),
+    )
+
+    import mtfdigitizer.extract as ext_mod
+    original = ext_mod.REPO_ROOT
+    ext_mod.REPO_ROOT = tmp_path
+    try:
+        primary_resolved = _resolve_view_image(chart, chart.views[0])
+        tele_resolved = _resolve_view_image(chart, chart.views[1])
+    finally:
+        ext_mod.REPO_ROOT = original
+
+    # Primary's diffraction probe finds the bare lure.
+    assert primary_resolved.name == "fake-slug-mtf-diffraction.png"
+    # Tele's path is preserved untouched — no probe on additional views.
+    assert tele_resolved.name == "fake-slug-mtf-diffraction-tele.png"
 
 
 # --- production_log.render_production_log() ------------------------------
