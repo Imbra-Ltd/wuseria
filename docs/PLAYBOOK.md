@@ -261,6 +261,16 @@ posture — HIGH verdict alone does not auto-commit; maintainer glances at the
 overlay PNG and re-runs with `--accept`. See ADR-041 for the two-tier
 rationale and `tools/mtfdigitizer/extract.py` for the gate knob.
 
+**Multi-view lenses (zooms).** A lens with `additional_views` set on its
+`ReferenceChart` (today: the 5 Sigma zooms with wide + tele charts) emits
+one set of inspection artifacts per view, file-named by chart stem so
+nothing collides in the folder, plus a single `digitization-log.md` with
+one `## Panel` section per view. The gate aggregates across views: any
+LOW verdict holds the whole lens (partial commits aren't a meaningful
+state when one log covers every view). Per ADR-033 the wide-end
+diffraction chart is the canonical-for-scoring view; tele rides along
+as supplementary data on the same log. (#1037)
+
 **Refresh per-lens calibration-tier digitization logs (Tier 1 per ADR-041):**
 
 ```bash
