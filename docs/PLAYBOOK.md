@@ -423,9 +423,14 @@ review-lab charts from a tested sample (LensTip, Optical Limits). Default:
 `measured` (matches the campaign's majority case).
 
 The slug must be in `referenceset/charts.py` with a populated `plot_box`,
-and the source URL must be in `_DEFAULT_SOURCES` (in `emit.py`). Per
-ADR-041 production-tier charts can emit with `ground_truth=None`. Rows
-with all four fields null are dropped; `MtfReading` fields are
+and the source URL must be in `_DEFAULT_SOURCES` (in `emit.py`). For
+zooms (multi-view charts via `additional_views`), the slug must also be
+in `_DEFAULT_FOCAL_LENGTHS` with one mm value per view in primary-then-
+additional order — emit raises a clear error if missing. Per ADR-033 every
+published focal-length panel becomes its own `MtfChart` entry with
+`focalLength` set; the detail page labels each block "f/X.X @ Nmm".
+Per ADR-041 production-tier charts can emit with `ground_truth=None`.
+Rows with all four fields null are dropped; `MtfReading` fields are
 `number | null` (since the lens-page MTF rendering work) so the B2 None
 contract flows through.
 

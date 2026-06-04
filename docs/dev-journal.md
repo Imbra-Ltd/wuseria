@@ -4996,3 +4996,69 @@ Picked up #1017 second slice (multi-chart zoom rename) and #793 (Sigma zoom digi
 - **17-40 tele has `prior_violations=1`.** Worth a manual look at which of the 4 plausibility priors fired (`center_ge_edge`, `ten_ge_thirty`, `not_suspiciously_flat`, `in_range`) and whether the violation reflects a real shape concern or a marginal numerical edge.
 - **Render-match scoring is consistently LOW on Sigma DC primes.** All 4 DC primes + 4 of 5 zoom views verdict LOW despite clean visual overlays. The pattern is the sparse-dashed-M render-match blind spot documented in `referenceset/scoring.md` — the metric was calibrated against solid-line charts. Possibly worth a #793-adjacent issue to revisit the IoU threshold for the solid+dashed family specifically.
 - **`additional_views` could grow other lens types.** Today only zooms use it. Future candidates: Samyang 85mm f/1.4 (two panels for MAX and F8 — currently calibration-tier with MAX as the primary, F8 deferred). When the F8 panel becomes runnable, it becomes a 2-view lens.
+
+---
+
+### Session 118 — Emit Sigma zoom readings + multi-panel scoring rule
+
+Date: 2026-06-04 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Picked up the #793 pickup-action from Session 117: emit the 5 Sigma zoom production logs into `src/data/mtf-readings.ts`. The scope expanded by one ADR-worthy question — what does the existence of a _tele_ MTF panel mean for the OQ fallback rule? ADR-033 mandated wide-end-canonical, but the digitized data showed wide and tele edge sharpness/astigmatism differ in both directions (Sigma 17-40mm f/1.8 is markedly sharper at tele than wide). Surveyed prior art (DXOMark, LensTip, OpticalLimits) and changed both ADRs before writing any code. One PR, end-to-end.
+
+#### Branch / merge state
+
+- Started on `main`, clean.
+- Branched `feat/emit-sigma-zoom-readings`; PR #1040 → auto-merged (`fd13845`) → branch deleted.
+- Ended on `main`, clean.
+
+#### PRs
+
+- **PR #1040** merged (squash → `fd13845`). `feat(mtf): emit Sigma zoom wide+tele panels with focalLength (#793)`. 9 files, +1139 / -39. ADR-014 + ADR-033 amendments; `MtfChart.focalLength?` schema bump; `emit.py` walks `ReferenceChart.views` with required `focal_lengths` arg; 5 zoom entries (10 panels) inserted into `mtf-readings.ts`; detail-page renderer labels each block "f/X.X @ Nmm"; 4 new emit tests, 2 new data invariants. 239 pytest pass, 215 vitest pass, full validate gate green.
+
+#### Issues opened / closed / updated
+
+- **#793** auto-closed by PR #1040 ("Closes #793" in the commit body). Sigma zoom digitization end-to-end: PR #1038 (S117) added the production logs; PR #1040 (this session) emitted them into the site data with the multi-panel schema.
+- **#932** (unified MTF digitizer epic): unchanged — no items in the remaining checklist match this session's work.
+- **#1004** (specs-log backfill epic): unchanged — no specs-log work this session.
+
+#### Key changes
+
+- **ADR-033 — `docs/decisions/033-optical-specs-folder-structure.md`** — "Zoom panels" subsection added under "Canonical chart". Supersedes the prior wide-end-only rule: every published focal-length panel of the diffraction chart is canonical and emitted to `mtf-readings.ts` with `focalLength` set. Detail page renders one block per panel. Rationale cites the 17-40mm f/1.8 wide-vs-tele edge gap.
+- **ADR-014 — `docs/decisions/014-optical-quality-rubric.md`** — "Zoom aggregation for MTF-derived scoring" subsection added under "Fallback sources". When MTF readings drive a field score and the lens has multiple panels, average per position across panels. Reasoning: surveyed DXOMark (documented arithmetic mean across focal lengths), LensTip (per-FL curves with no aggregation), OpticalLimits (panels-separate + editorial). Min considered + rejected — the 17-40 sharp-at-tele case shows it punishes lenses weak at one end. Mean is the only aggregation that handles both directions of the gap.
+- **`src/types/mtf.ts`** — `MtfChart.focalLength?: number` added. mm; set on zoom panels, omitted on primes.
+- **`src/data/mtf-readings.ts`** — 5 Sigma zoom entries inserted (sigma-10-18, sigma-16-300, sigma-17-40, sigma-18-50, sigma-100-400). Each is two `MtfChart` panels at `f/X.X @ wide_mm` and `f/X.X @ tele_mm`. 22/22 positions per panel (with sparse nulls on resolution30 for the 10-18 tele).
+- **`src/data/mtf-readings.test.ts`** — two new invariants: `focalLength` when set must be a positive integer; and within an entry, all charts must set `focalLength` or all must omit it (no mixed zoom/prime panels).
+- **`src/pages/lenses/[slug].astro`** — chart block label appends ` @ Nmm` when `focalLength` is set. New `.mtf-focal` CSS class (muted-text variant of the aperture).
+- **`src/components/static/MtfChart.astro`** — `aria-label` includes focal length when set.
+- **`tools/mtfdigitizer/emit.py`** — `emit_lens()` walks `ReferenceChart.views` (S117 multi-view refactor), extracts each, builds N panels. New `focal_lengths: tuple[int, ...] | None` parameter — required when `views > 1`, raises with a clear message otherwise. `_format_chart()` takes optional focal length; `_format_entry()` takes a tuple of `(aperture, focal_length, readings)` panels. `_format_value()` drops trailing zeros (`0.9` not `0.90`, `1` not `1.00`) so emitted literals pass `unicorn/no-zero-fractions` without `--fix`. CLI prints per-panel position counts. `_DEFAULT_SOURCES` and new `_DEFAULT_FOCAL_LENGTHS` register the 5 zooms.
+- **`tools/mtfdigitizer/tests/test_emit.py`** — test count 13 → 17. New: `test_format_chart_omits_focal_length_when_none`, `test_format_chart_renders_focal_length_when_set`, `test_format_entry_emits_two_panels_for_zoom`, `test_format_entry_prime_emits_no_focal_length_line`. Updated trailing-zero contract (`1.0` → `"1"`, `0.9` → `"0.9"`).
+
+#### Key decisions
+
+- **Emit both panels, drop wide-canonical, and use mean for the MTF fallback.** Three coupled decisions decided together — storage (every focal-length panel canonical, rejecting wide-only as discarding signal); rubric (mean across panels for the MTF fallback, rejecting min because the 17-40 sharp-at-tele case shows it punishes lenses weak at one end); rendering (both panels visible on the detail page). Reasoning them together avoided shipping a half-fix.
+- **Survey prior art before inventing aggregation rules.** Dispatched two parallel research agents (LensTip methodology, web sources) before committing to a rule. LensTip publishes per-focal-length curves without aggregating; DXOMark explicitly publishes arithmetic mean across focal lengths; OpticalLimits keeps panels separate and weights editorially toward the use-case end. Min has zero prior art in respected sources — flagging this changed the recommendation from "min" (intuition) to "mean" (DXOMark-aligned).
+- **Verify intuition against actual data before locking in.** Pulled the 5 zooms' readings into a wide-vs-tele comparison table mid-discussion. The 17-40mm's 0.30 edge gap (resolution30S 0.52 wide vs 0.82 tele) was the deciding example — without that, the "wide is the worst case" intuition wouldn't have been falsified.
+- **Drop trailing zeros at the emit layer, not via `--fix`.** Two paths to clean output: (a) emit `0.90` then run `eslint --fix`, or (b) emit `0.9` in the first place. (b) is the structural fix — every future emit just works. Cost: one Python format edit + one test update. Did (b).
+- **MTF fallback scoring is a manual rule documented in ADR-014, not code.** Initial plan included "update OQ fallback computation to average panels". On grepping `src/` confirmed nothing reads `mtfReadings` for scoring — the data feeds the lens detail page only. The fallback is applied by humans reading the chart and writing scores into `scoring-log.md`. ADR amendment is sufficient; there is no code to update.
+
+#### Follow-ups for next session
+
+- **#1017 third slice — Tamron + Tokina zoom + Venus-Laowa.** 9 folders without labelled MTF charts lists in `analysis.md`. Apply the #1032 prevention: fetch the source page DOM first whenever a folder lacks a labelled list. Folders: `tamron-{11-20, 150-500, 17-70, 18-300}`, `tokina-atx-m-11-18mm-f2-8-x`, `venus-laowa-{12-24, 20mm, 65mm, 8-16}`.
+- **#790 brand campaign rest.** Voigtlander (3), Zeiss (3), Tamron (4), Viltrox (14), Samyang (20), Fujifilm (23) — remaining brands with unscored or unverified lenses.
+- **Render-match LOW on Sigma DC sparse-dashed-M overlays** (carried from S117). Possibly worth a #793-adjacent issue to revisit the IoU threshold for the solid-dashed family.
+- **Tier 1 `log.py --check` false-OK** (carried from S116). Worth pinning down before the next big rename pass.
+- **`additional_views` for Samyang 85mm F8 panel.** Currently calibration-tier with MAX as primary; when F8 becomes runnable, it joins the multi-panel set.
+
+#### Loose ends to investigate when convenient
+
+- **17-40 tele `prior_violations=1`** (carried from S117). Worth a manual look at which prior fired.
+- **Validate ADR-014 mean rule against the first real MTF-driven score.** Sanity-check the produced number when the rule first fires.
+
+#### State of the project
+
+- v0.8.0 still = MTF digitization. **All 5 Sigma zoom production logs now emitted into `mtf-readings.ts` as two-panel entries** with `focalLength` set. Detail pages render both panels. Sigma campaign closed end-to-end: primes + zooms both digitized and emitted.
+- Epic #932 (unified digitizer): open with one unchecked optional item (Real-ESRGAN fallback).
+- Epic #1004 (specs-log backfill): open, 1/8 brand sub-tasks done (Tokina).
+- `REFERENCE_CHARTS = 14` entries; 11 Tier 1; 9 Tier 2 production (5 primes + 5 zooms with `additional_views`); 2 deferred for refusal-only.
+- `_DEFAULT_SOURCES` in `emit.py` = 16 entries (was 11; +5 zooms). `_DEFAULT_FOCAL_LENGTHS` = 5 entries (new mapping).
+- 215 vitest pass, 239 pytest pass, 461-page build, full validate gate green.
