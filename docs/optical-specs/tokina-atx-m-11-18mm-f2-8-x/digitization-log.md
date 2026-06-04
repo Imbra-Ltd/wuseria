@@ -16,7 +16,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 
 ## Panel at 11mm
 
-- **Chart:** `docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-1.png`
+- **Chart:** `docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-11mm.png`
 - **Style family:** `2color-frequency-cc-rank`
 - **Dispatch profile:** `tokina-2color-frequency-geodesic-dp`
 - **Plot box (pixels):** x=[333, 1670], y=[219, 995]
@@ -126,7 +126,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 
 ## Panel at 18mm
 
-- **Chart:** `docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-2.png`
+- **Chart:** `docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-18mm.png`
 - **Style family:** `2color-frequency-cc-rank`
 - **Dispatch profile:** `tokina-2color-frequency-geodesic-dp`
 - **Plot box (pixels):** x=[331, 1673], y=[219, 995]

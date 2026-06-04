@@ -562,7 +562,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ),
     ReferenceChart(
         slug="tokina-atx-m-11-18mm-f2-8-x-at-11mm",
-        chart_path="docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-1.png",
+        chart_path="docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-11mm.png",
         style_family="2color-frequency-cc-rank",
         apertures=("F2.8",),
         frequencies_lpmm=(10, 30),
@@ -581,7 +581,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ),
     ReferenceChart(
         slug="tokina-atx-m-11-18mm-f2-8-x-at-18mm",
-        chart_path="docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-2.png",
+        chart_path="docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-18mm.png",
         style_family="2color-frequency-cc-rank",
         apertures=("F2.8",),
         frequencies_lpmm=(10, 30),

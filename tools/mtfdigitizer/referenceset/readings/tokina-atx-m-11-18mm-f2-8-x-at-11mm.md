@@ -1,7 +1,7 @@
 # tokina-atx-m-11-18mm-f2-8-x-at-11mm
 
 - **Style family:** `2color-frequency-cc-rank`
-- **Chart path:** `docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-1.png`
+- **Chart path:** `docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/tokina-atx-m-11-18mm-f2-8-x-mtf-11mm.png`
 - **Plot box:** x=[333, 1670], y=[219, 995]
 - **Image height:** 14.0 mm
 

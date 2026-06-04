@@ -33,8 +33,9 @@ applied as part of this backfill.
 
 - The official product page publishes **two** MTF panels — one at the 11mm
   wide end and one at the 18mm long end. Both are stored here as
-  `*-mtf-1.png` (11mm) and `*-mtf-2.png` (18mm). The digitizer treats each
-  as a separate reference chart (`tokina-atx-m-11-18mm-f2-8-x-at-11mm` and
+  `*-mtf-11mm.png` and `*-mtf-18mm.png` (renamed S119 per ADR-033). The
+  digitizer treats each as a separate reference chart
+  (`tokina-atx-m-11-18mm-f2-8-x-at-11mm` and
   `tokina-atx-m-11-18mm-f2-8-x-at-18mm` in `referenceset/charts.py`).
 - The plot box for each panel was set by hand and verified against the
   printed gridlines (extrapolated one 155-px step above the 80% gridline
