@@ -110,7 +110,7 @@ def test_parse_analysis_md_unknown_focal_qualifier_fails_loud():
         "\n"
         "- [foo-mtf-1.png](foo-mtf-1.png) -- diffraction MTF (middle)\n"
     )
-    with pytest.raises(RenameError, match="unrecognised focal-length qualifier"):
+    with pytest.raises(RenameError, match="unrecognised qualifier"):
         _parse_analysis_md(text, "foo")
 
 
@@ -318,6 +318,125 @@ def test_update_charts_py_dry_run_does_not_write(tmp_path, monkeypatch):
     assert n == 1
     # File unchanged — dry-run mode.
     assert "sigma-56mm-f1-4-dc-dn-c-mtf-1.png" in fake.read_text(encoding="utf-8")
+
+
+# --- ADR-033 amendment (S119): vendors with no diff/geo pair ------------
+
+
+def test_parse_analysis_md_zoom_explicit_focal_no_chart_type():
+    # Tamron / Tokina / Laowa publish a single MTF chart-type with
+    # no diffraction-vs-geometric distinction (verified S119); the
+    # filename suffix is the focal length only.
+    text = (
+        "MTF charts:\n"
+        "\n"
+        "- [foo-mtf-1.svg](foo-mtf-1.svg) -- MTF (11mm)\n"
+        "- [foo-mtf-2.svg](foo-mtf-2.svg) -- MTF (20mm)\n"
+    )
+    assert _parse_analysis_md(text, "foo") == {
+        "foo-mtf-1.svg": "11mm",
+        "foo-mtf-2.svg": "20mm",
+    }
+
+
+def test_parse_analysis_md_macro_compound_qualifier():
+    # Laowa 65mm 2x macro publishes three panels keyed by focus
+    # distance / magnification.
+    text = (
+        "MTF charts:\n"
+        "\n"
+        "- [foo-mtf-1.png](foo-mtf-1.png) -- MTF (65mm, inf)\n"
+        "- [foo-mtf-2.png](foo-mtf-2.png) -- MTF (65mm, 1x)\n"
+        "- [foo-mtf-3.png](foo-mtf-3.png) -- MTF (65mm, 2x)\n"
+    )
+    assert _parse_analysis_md(text, "foo") == {
+        "foo-mtf-1.png": "65mm-inf",
+        "foo-mtf-2.png": "65mm-1x",
+        "foo-mtf-3.png": "65mm-2x",
+    }
+
+
+def test_parse_analysis_md_shift_lens_unshifted_shifted():
+    # Laowa Zero-D Shift publishes two panels per lens — one for the
+    # unshifted image circle, one for the shifted (extended) circle.
+    text = (
+        "MTF charts:\n"
+        "\n"
+        "- [foo-mtf-1.png](foo-mtf-1.png) -- MTF (unshifted)\n"
+        "- [foo-mtf-2.png](foo-mtf-2.png) -- MTF (shifted)\n"
+    )
+    assert _parse_analysis_md(text, "foo") == {
+        "foo-mtf-1.png": "unshifted",
+        "foo-mtf-2.png": "shifted",
+    }
+
+
+def test_focal_to_segment_new_vocabulary():
+    for token in ("inf", "1x", "2x", "unshifted", "shifted"):
+        assert _focal_to_segment(token, "label", "foo", "foo-mtf-1.png") == token
+
+
+def test_label_suffix_accepts_bare_mtf():
+    # The ADR-033 amendment introduced bare `mtf` (no diffraction/geometric
+    # prefix) for vendors with one chart-type. Its suffix is empty so the
+    # qualifier stands alone in the filename.
+    assert LABEL_SUFFIX["mtf"] == ""
+
+
+def test_plan_for_folder_handles_bare_mtf_png_as_panel_1(tmp_path):
+    # Legacy convention: when a folder has both `<slug>-mtf.png` AND
+    # `<slug>-mtf-N.png`, the bare file is panel 1 of N (older folders
+    # saved the first panel without a `-1` suffix).
+    slug = "venus-zoom"
+    folder = tmp_path / slug
+    folder.mkdir()
+    (folder / f"{slug}-mtf.png").write_bytes(b"panel1")
+    (folder / f"{slug}-mtf-2.png").write_bytes(b"panel2")
+    (folder / "analysis.md").write_text(
+        "MTF charts:\n"
+        "\n"
+        f"- [{slug}-mtf.png]({slug}-mtf.png) -- MTF (8mm)\n"
+        f"- [{slug}-mtf-2.png]({slug}-mtf-2.png) -- MTF (16mm)\n",
+        encoding="utf-8",
+    )
+    plan = _plan_for_folder(folder)
+    assert plan is not None
+    moves = {(r.old.name, r.new.name) for r in plan.renames}
+    assert moves == {
+        (f"{slug}-mtf.png", f"{slug}-mtf-8mm.png"),
+        (f"{slug}-mtf-2.png", f"{slug}-mtf-16mm.png"),
+    }
+
+
+def test_plan_for_folder_rewrites_specs_log_md(tmp_path):
+    # specs-log.md prose mentions of `-mtf-1.png` / `-mtf-2.png` must
+    # be rewritten alongside analysis.md, otherwise documentation goes
+    # out of sync with the rename.
+    slug = "tokina-foo"
+    folder = tmp_path / slug
+    folder.mkdir()
+    (folder / f"{slug}-mtf-1.png").write_bytes(b"")
+    (folder / f"{slug}-mtf-2.png").write_bytes(b"")
+    (folder / "analysis.md").write_text(
+        "MTF charts:\n"
+        "\n"
+        f"- [{slug}-mtf-1.png]({slug}-mtf-1.png) -- MTF (11mm)\n"
+        f"- [{slug}-mtf-2.png]({slug}-mtf-2.png) -- MTF (18mm)\n",
+        encoding="utf-8",
+    )
+    (folder / "specs-log.md").write_text(
+        f"The two panels are stored as `{slug}-mtf-1.png` (11mm) "
+        f"and `{slug}-mtf-2.png` (18mm).\n",
+        encoding="utf-8",
+    )
+    plan = _plan_for_folder(folder)
+    assert plan is not None
+    assert len(plan.other_md_updates) == 1
+    md_path, _old, new_text = plan.other_md_updates[0]
+    assert md_path.name == "specs-log.md"
+    assert f"{slug}-mtf-1.png" not in new_text
+    assert f"{slug}-mtf-11mm.png" in new_text
+    assert f"{slug}-mtf-18mm.png" in new_text
 
 
 def test_update_charts_py_apply_rewrites_literal(tmp_path, monkeypatch):
