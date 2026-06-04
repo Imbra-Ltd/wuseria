@@ -268,18 +268,20 @@ def _join_suffix(chart_suffix: str, focal_segment: str) -> str:
     return f"{chart_suffix}-{focal_segment}"
 
 
-def _sidecars_for(png_path: Path) -> list[Path]:
-    """Return existing sidecar files that travel with `png_path`.
+def _sidecars_for(primary_path: Path) -> list[Path]:
+    """Return existing sidecar files that travel with `primary_path`.
 
-    A numeric MTF file may carry up to three siblings derived from its
-    stem: `.svg` (vector source), `-overlay.png` (eye-check artifact),
-    and `-review.html` (interactive review). All four share the same
-    base stem and rename in lockstep.
+    A numeric MTF primary file may carry siblings derived from its stem:
+    a vector or raster companion (`.svg` when primary is `.png`, or
+    `.png` when primary is `.svg`), `-overlay.png` (eye-check artifact),
+    and `-review.html` (interactive review). All siblings share the
+    same base stem and rename in lockstep.
     """
-    stem = png_path.stem  # e.g. "sigma-56mm-...-mtf-1"
-    parent = png_path.parent
+    stem = primary_path.stem  # e.g. "sigma-56mm-...-mtf-1"
+    parent = primary_path.parent
+    companion_ext = ".svg" if primary_path.suffix == ".png" else ".png"
     candidates = [
-        parent / f"{stem}.svg",
+        parent / f"{stem}{companion_ext}",
         parent / f"{stem}-overlay.png",
         parent / f"{stem}-review.html",
     ]
@@ -298,17 +300,28 @@ def _plan_for_folder(folder: Path) -> FolderPlan | None:
     if not analysis.exists():
         return None
 
-    numeric_files = sorted(
+    # Pick primary numeric files in `.png` first, falling back to `.svg`
+    # for vendors that publish vector-only (e.g. Tamron). The pair is
+    # mutually exclusive in practice — a folder with both .png and .svg
+    # for the same panel treats .png as primary and .svg as a sidecar.
+    numeric_pngs = sorted(
         p for p in folder.glob(f"{slug}-mtf-*.png") if _is_numeric_stem(p, slug)
     )
-    # Legacy convention: when a folder has both `<slug>-mtf.png` (bare)
-    # AND `<slug>-mtf-N.png`, the bare file is actually panel 1 of N —
-    # older folders saved the first panel without a `-1` suffix and
-    # numbered subsequent panels from `-2`. Treat the bare file as a
-    # numeric candidate so it gets renamed alongside its siblings.
-    bare_png = folder / f"{slug}-mtf.png"
-    if numeric_files and bare_png.exists():
-        numeric_files = sorted([bare_png, *numeric_files])
+    if numeric_pngs:
+        numeric_files = numeric_pngs
+        bare = folder / f"{slug}-mtf.png"
+    else:
+        numeric_files = sorted(
+            p for p in folder.glob(f"{slug}-mtf-*.svg") if _is_numeric_stem(p, slug)
+        )
+        bare = folder / f"{slug}-mtf.svg"
+    # Legacy convention: when a folder has both `<slug>-mtf.{png,svg}`
+    # (bare) AND `<slug>-mtf-N.{png,svg}`, the bare file is actually
+    # panel 1 of N — older folders saved the first panel without a `-1`
+    # suffix and numbered subsequent panels from `-2`. Treat the bare
+    # file as a numeric candidate so it gets renamed alongside siblings.
+    if numeric_files and bare.exists():
+        numeric_files = sorted([bare, *numeric_files])
     if not numeric_files:
         return None
 
@@ -324,8 +337,8 @@ def _plan_for_folder(folder: Path) -> FolderPlan | None:
     analysis_replacements: dict[str, str] = {}
     seen_suffixes: dict[str, Path] = {}
 
-    for old_png in numeric_files:
-        basename = old_png.name
+    for old_primary in numeric_files:
+        basename = old_primary.name
         suffix = label_map.get(basename)
         if suffix is None:
             raise RenameError(
@@ -339,14 +352,15 @@ def _plan_for_folder(folder: Path) -> FolderPlan | None:
                 f"{slug}: {basename} and {seen_suffixes[suffix].name} "
                 f"both map to suffix {suffix!r}"
             )
-        seen_suffixes[suffix] = old_png
+        seen_suffixes[suffix] = old_primary
 
-        new_png = old_png.with_name(f"{slug}-mtf-{suffix}.png")
-        renames.append(Rename(old=old_png, new=new_png))
-        analysis_replacements[basename] = new_png.name
+        ext = old_primary.suffix  # `.png` or `.svg`
+        new_primary = old_primary.with_name(f"{slug}-mtf-{suffix}{ext}")
+        renames.append(Rename(old=old_primary, new=new_primary))
+        analysis_replacements[basename] = new_primary.name
 
-        for sidecar in _sidecars_for(old_png):
-            new_sidecar = _renamed_sidecar(sidecar, old_png.stem, new_png.stem)
+        for sidecar in _sidecars_for(old_primary):
+            new_sidecar = _renamed_sidecar(sidecar, old_primary.stem, new_primary.stem)
             renames.append(Rename(old=sidecar, new=new_sidecar))
             analysis_replacements[sidecar.name] = new_sidecar.name
 
