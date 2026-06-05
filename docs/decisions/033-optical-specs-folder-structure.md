@@ -3,17 +3,9 @@
 **Status:** Accepted
 **Date:** 2026-05-20
 
-> **Pending amendment (2026-06-01, tracked in #1015).** ADR-040 introduced
-> the generated `digitization-log.md`, which now carries the MTF readings
-> tables, center/edge summary, and shape metrics — data the hand-written
-> `analysis.md` "Readings" section duplicated in older folders. Before the
-> `analysis.md` backfill (#1015) authors new files, this ADR will be amended
-> so that, where a `digitization-log.md` exists, `analysis.md` **references**
-> the digitized readings rather than re-tabulating them, and its remit
-> narrows to the interpretive layer (astigmatism/field-curvature assessment,
-> construction-based predictions, the bridge from numbers to OQ scoring
-> fields). Do not author new inline-readings `analysis.md` files for lenses
-> that already have a digitization-log until this is resolved.
+**Amended 2026-06-05 (session 120):** Narrowed `analysis.md`'s remit when
+a `digitization-log.md` exists in the same folder. See **File
+responsibilities** below.
 
 ## Context
 
@@ -152,9 +144,23 @@ sources. No other formats (JPG, WebP, GIF) are allowed.
 
 ### File responsibilities
 
-- **analysis.md** — deterministic: given the construction and MTF data,
-  what can we predict about optical quality? Contains MTF readings
-  tables, astigmatism assessments, and construction-based predictions.
+- **analysis.md** — deterministic interpretation: given the construction
+  and MTF data, what can we predict about optical quality? Required for
+  every folder. Two formats depending on whether a `digitization-log.md`
+  exists in the same folder:
+  - **With a digitization-log** (ADR-040): `analysis.md` MUST reference
+    the digitized readings (`see digitization-log.md` plus a one-line
+    pointer to the relevant section) rather than re-tabulating them.
+    Its remit is the interpretive layer the generated log deliberately
+    lacks: astigmatism / field-curvature assessment, construction-based
+    predictions, and the bridge from numbers to OQ scoring fields
+    (ADR-014).
+  - **Without a digitization-log**: `analysis.md` MAY include an inline
+    Readings section (legacy format) alongside the interpretive
+    sections. New folders SHOULD prefer to digitize first when the
+    chart is in scope for the digitizer (Sigma today; other vendors as
+    style families are added under ADR-038); the inline-readings
+    format remains valid until then.
 - **scoring-log.md** — justification: why was each optical field scored
   the way it was? Links sources, applies the rubric (ADR-014), records
   the trust level. Same field format as the monolithic scoring log
