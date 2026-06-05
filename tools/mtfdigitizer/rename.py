@@ -55,7 +55,14 @@ CHARTS_PY = REPO_ROOT / "tools" / "mtfdigitizer" / "referenceset" / "charts.py"
 # Label → canonical suffix. Only labels that map deterministically to
 # ADR-033 named suffixes are accepted. Anything else fails loud so the
 # maintainer fixes the label rather than the script guessing.
+#
+# `mtf` (no chart-type prefix) covers vendors that publish a single
+# MTF chart-type with no diffraction-vs-geometric distinction (Tamron,
+# Tokina, Laowa, Viltrox, Voigtlander, Zeiss Touit — verified S119) —
+# per ADR-033 amendment 2026-06-04. The empty suffix means the keying
+# axis sits directly after `-mtf-`.
 LABEL_SUFFIX: dict[str, str] = {
+    "mtf": "",
     "diffraction mtf": "diffraction",
     "geometrical mtf": "geometric",
     "geometric mtf": "geometric",
@@ -64,9 +71,13 @@ LABEL_SUFFIX: dict[str, str] = {
 
 # Focal-length parenthetical → filename suffix segment. Zooms encode
 # the focal length in the label as "(wide)", "(tele)", or "(NNmm)"
-# (per ADR-033). The script transcribes this verbatim to the filename.
+# (per ADR-033). Macros that publish per-focus-distance panels combine
+# the focal length with a magnification token: "(NNmm, 1x)", "(NNmm, inf)".
+# Shift lenses publish per-shift-state panels: "(unshifted)", "(shifted)".
 _FOCAL_NAMED = {"wide", "tele"}
 _FOCAL_NUMERIC = re.compile(r"^(\d+)mm$")
+_MAGNIFICATION = {"inf", "1x", "2x"}
+_SHIFT_STATE = {"unshifted", "shifted"}
 
 
 # Match a markdown link line in the MTF charts list:
@@ -92,13 +103,20 @@ class Rename:
 
 @dataclass(frozen=True)
 class FolderPlan:
-    """All renames for one lens folder, plus the analysis.md update."""
+    """All renames for one lens folder, plus the analysis.md update.
+
+    `other_md_updates` carries any sibling `.md` files in the folder
+    (specs-log.md, scoring-log.md) whose body mentions the old basenames
+    and therefore needs the same string-replacement pass — keeps prose
+    references in sync with the rename.
+    """
 
     slug: str
     folder: Path
     renames: tuple[Rename, ...]
     analysis_old: str
     analysis_new: str
+    other_md_updates: tuple[tuple[Path, str, str], ...] = ()
 
 
 class RenameError(Exception):
@@ -154,7 +172,7 @@ def _parse_analysis_md(text: str, slug: str) -> dict[str, str]:
             suffix = chart_suffix
         else:
             focal_segment = _focal_to_segment(focal, label, slug, href)
-            suffix = f"{chart_suffix}-{focal_segment}" if focal_segment else chart_suffix
+            suffix = _join_suffix(chart_suffix, focal_segment)
         basename = Path(href).name
         mapping[basename] = suffix
     return mapping
@@ -180,12 +198,19 @@ def _split_label(label: str) -> tuple[str, str | None]:
 def _focal_to_segment(focal: str, label: str, slug: str, href: str) -> str:
     """Map a focal-length qualifier to its filename segment.
 
-    Accepts `wide`, `tele`, or `NNmm` (numeric, per ADR-033). Rejects
-    anything else loud so the maintainer fixes the label. Known
+    Accepts:
+    - `wide`, `tele`, or `NNmm` for zoom panels
+    - `inf`, `1x`, `2x` for macro magnification panels
+    - `unshifted`, `shifted` for shift-lens panels
+    - `NNmm, <mag>` for macro panels that name the focal length explicitly
+
+    Rejects anything else loud so the maintainer fixes the label. Known
     non-focal parentheticals (frequency annotations like `10/30 lp/mm`)
     are silently treated as no-focal — they are not zoom qualifiers.
     """
-    if focal in _FOCAL_NAMED:
+    if "," in focal:
+        return _compound_qualifier_to_segment(focal, label, slug, href)
+    if focal in _FOCAL_NAMED or focal in _MAGNIFICATION or focal in _SHIFT_STATE:
         return focal
     numeric = _FOCAL_NUMERIC.match(focal)
     if numeric is not None:
@@ -196,9 +221,32 @@ def _focal_to_segment(focal: str, label: str, slug: str, href: str) -> str:
         # annotations as no-focal so legacy prime labels keep parsing.
         return ""
     raise RenameError(
-        f"{slug}: unrecognised focal-length qualifier {focal!r} in label "
-        f"{label!r} for {href!r}; expected wide / tele / NNmm"
+        f"{slug}: unrecognised qualifier {focal!r} in label "
+        f"{label!r} for {href!r}; expected wide / tele / NNmm / "
+        f"inf / 1x / 2x / unshifted / shifted (or 'NNmm, <mag>')"
     )
+
+
+def _compound_qualifier_to_segment(
+    qualifier: str, label: str, slug: str, href: str
+) -> str:
+    """Map a comma-separated qualifier like `65mm, 1x` to `65mm-1x`.
+
+    Each comma-separated part is resolved as if it were a standalone
+    qualifier (no nested commas). Empty results (frequency annotations)
+    are dropped from the join.
+    """
+    parts = [p.strip() for p in qualifier.split(",")]
+    segments = [
+        _focal_to_segment(p, label, slug, href) for p in parts if p
+    ]
+    segments = [s for s in segments if s]
+    if not segments:
+        raise RenameError(
+            f"{slug}: compound qualifier {qualifier!r} in label {label!r} "
+            f"for {href!r} resolved to no segments"
+        )
+    return "-".join(segments)
 
 
 def _is_non_focal_annotation(qualifier: str) -> bool:
@@ -206,18 +254,34 @@ def _is_non_focal_annotation(qualifier: str) -> bool:
     return "lp/mm" in qualifier or "/mm" in qualifier
 
 
-def _sidecars_for(png_path: Path) -> list[Path]:
-    """Return existing sidecar files that travel with `png_path`.
+def _join_suffix(chart_suffix: str, focal_segment: str) -> str:
+    """Combine chart-type and focal segments into one filename suffix.
 
-    A numeric MTF file may carry up to three siblings derived from its
-    stem: `.svg` (vector source), `-overlay.png` (eye-check artifact),
-    and `-review.html` (interactive review). All four share the same
-    base stem and rename in lockstep.
+    `chart_suffix` is empty when the vendor publishes a single MTF
+    chart-type (ADR-033 amendment); in that case the focal segment
+    stands alone. Otherwise the two join with a hyphen.
     """
-    stem = png_path.stem  # e.g. "sigma-56mm-...-mtf-1"
-    parent = png_path.parent
+    if not chart_suffix:
+        return focal_segment
+    if not focal_segment:
+        return chart_suffix
+    return f"{chart_suffix}-{focal_segment}"
+
+
+def _sidecars_for(primary_path: Path) -> list[Path]:
+    """Return existing sidecar files that travel with `primary_path`.
+
+    A numeric MTF primary file may carry siblings derived from its stem:
+    a vector or raster companion (`.svg` when primary is `.png`, or
+    `.png` when primary is `.svg`), `-overlay.png` (eye-check artifact),
+    and `-review.html` (interactive review). All siblings share the
+    same base stem and rename in lockstep.
+    """
+    stem = primary_path.stem  # e.g. "sigma-56mm-...-mtf-1"
+    parent = primary_path.parent
+    companion_ext = ".svg" if primary_path.suffix == ".png" else ".png"
     candidates = [
-        parent / f"{stem}.svg",
+        parent / f"{stem}{companion_ext}",
         parent / f"{stem}-overlay.png",
         parent / f"{stem}-review.html",
     ]
@@ -236,9 +300,28 @@ def _plan_for_folder(folder: Path) -> FolderPlan | None:
     if not analysis.exists():
         return None
 
-    numeric_files = sorted(
+    # Pick primary numeric files in `.png` first, falling back to `.svg`
+    # for vendors that publish vector-only (e.g. Tamron). The pair is
+    # mutually exclusive in practice — a folder with both .png and .svg
+    # for the same panel treats .png as primary and .svg as a sidecar.
+    numeric_pngs = sorted(
         p for p in folder.glob(f"{slug}-mtf-*.png") if _is_numeric_stem(p, slug)
     )
+    if numeric_pngs:
+        numeric_files = numeric_pngs
+        bare = folder / f"{slug}-mtf.png"
+    else:
+        numeric_files = sorted(
+            p for p in folder.glob(f"{slug}-mtf-*.svg") if _is_numeric_stem(p, slug)
+        )
+        bare = folder / f"{slug}-mtf.svg"
+    # Legacy convention: when a folder has both `<slug>-mtf.{png,svg}`
+    # (bare) AND `<slug>-mtf-N.{png,svg}`, the bare file is actually
+    # panel 1 of N — older folders saved the first panel without a `-1`
+    # suffix and numbered subsequent panels from `-2`. Treat the bare
+    # file as a numeric candidate so it gets renamed alongside siblings.
+    if numeric_files and bare.exists():
+        numeric_files = sorted([bare, *numeric_files])
     if not numeric_files:
         return None
 
@@ -254,8 +337,8 @@ def _plan_for_folder(folder: Path) -> FolderPlan | None:
     analysis_replacements: dict[str, str] = {}
     seen_suffixes: dict[str, Path] = {}
 
-    for old_png in numeric_files:
-        basename = old_png.name
+    for old_primary in numeric_files:
+        basename = old_primary.name
         suffix = label_map.get(basename)
         if suffix is None:
             raise RenameError(
@@ -269,25 +352,50 @@ def _plan_for_folder(folder: Path) -> FolderPlan | None:
                 f"{slug}: {basename} and {seen_suffixes[suffix].name} "
                 f"both map to suffix {suffix!r}"
             )
-        seen_suffixes[suffix] = old_png
+        seen_suffixes[suffix] = old_primary
 
-        new_png = old_png.with_name(f"{slug}-mtf-{suffix}.png")
-        renames.append(Rename(old=old_png, new=new_png))
-        analysis_replacements[basename] = new_png.name
+        ext = old_primary.suffix  # `.png` or `.svg`
+        new_primary = old_primary.with_name(f"{slug}-mtf-{suffix}{ext}")
+        renames.append(Rename(old=old_primary, new=new_primary))
+        analysis_replacements[basename] = new_primary.name
 
-        for sidecar in _sidecars_for(old_png):
-            new_sidecar = _renamed_sidecar(sidecar, old_png.stem, new_png.stem)
+        for sidecar in _sidecars_for(old_primary):
+            new_sidecar = _renamed_sidecar(sidecar, old_primary.stem, new_primary.stem)
             renames.append(Rename(old=sidecar, new=new_sidecar))
             analysis_replacements[sidecar.name] = new_sidecar.name
 
     analysis_new = _rewrite_analysis(text, analysis_replacements)
+    other_md_updates = _plan_other_md_updates(folder, analysis_replacements)
     return FolderPlan(
         slug=slug,
         folder=folder,
         renames=tuple(renames),
         analysis_old=text,
         analysis_new=analysis_new,
+        other_md_updates=other_md_updates,
     )
+
+
+def _plan_other_md_updates(
+    folder: Path, name_map: dict[str, str]
+) -> tuple[tuple[Path, str, str], ...]:
+    """Return (path, old_text, new_text) for every sibling .md file that
+    mentions any of the basenames being renamed.
+
+    Folders often carry specs-log.md and scoring-log.md in addition to
+    analysis.md; their prose may reference the old `-mtf-1.png` /
+    `-mtf-2.png` basenames. Apply the same string-replacement pass so
+    nothing falls out of date.
+    """
+    updates: list[tuple[Path, str, str]] = []
+    for md_path in sorted(folder.glob("*.md")):
+        if md_path.name == "analysis.md":
+            continue
+        text = md_path.read_text(encoding="utf-8")
+        new_text = _rewrite_analysis(text, name_map)
+        if new_text != text:
+            updates.append((md_path, text, new_text))
+    return tuple(updates)
 
 
 def _is_numeric_stem(path: Path, slug: str) -> bool:
@@ -347,7 +455,8 @@ def _update_charts_py(name_map: dict[str, str], apply: bool) -> int:
 
 
 def _apply_plan(plan: FolderPlan) -> None:
-    """Execute one folder's renames + write the updated analysis.md."""
+    """Execute one folder's renames + write the updated analysis.md and
+    any sibling .md files that reference renamed basenames."""
     for rename in plan.renames:
         if not rename.old.exists():
             raise RenameError(
@@ -360,6 +469,8 @@ def _apply_plan(plan: FolderPlan) -> None:
     for rename in plan.renames:
         rename.old.rename(rename.new)
     (plan.folder / "analysis.md").write_text(plan.analysis_new, encoding="utf-8")
+    for md_path, _old_text, new_text in plan.other_md_updates:
+        md_path.write_text(new_text, encoding="utf-8")
 
 
 def _print_plan(plan: FolderPlan) -> None:
@@ -370,7 +481,10 @@ def _print_plan(plan: FolderPlan) -> None:
         print(f"  {old_rel.as_posix()}")
         print(f"    -> {new_rel.as_posix()}")
     if plan.analysis_old != plan.analysis_new:
-        print(f"  analysis.md: updated")
+        print("  analysis.md: updated")
+    for md_path, _old, _new in plan.other_md_updates:
+        rel = md_path.relative_to(REPO_ROOT)
+        print(f"  {rel.as_posix()}: updated")
 
 
 def _collect_plans(slug: str | None) -> list[FolderPlan]:

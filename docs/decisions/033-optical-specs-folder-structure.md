@@ -99,6 +99,43 @@ MTF describes a hypothetical lens without diffraction and is consistently
 optimistic. Scoring against the geometrical chart would inflate every
 field for the ~20 lenses whose manufacturers publish both.
 
+**Naming when no diffraction/geometric pair is published.** Most vendors
+publish a single MTF chart per condition with no diffraction-vs-geometric
+distinction (Tamron, Tokina, Laowa, Viltrox, Voigtlander, Zeiss Touit, and
+others — verified via vendor product pages, session 119). For these
+lenses the `-diffraction-`/`-geometric-` axis MUST be dropped from the
+filename and the suffix encodes the keying axis the vendor uses:
+
+```
+<slug>-mtf.{png,svg}                       # single chart per lens
+<slug>-mtf-wide.{png,svg}                  # zoom, wide focal-length panel
+<slug>-mtf-tele.{png,svg}                  # zoom, tele focal-length panel
+<slug>-mtf-<focal>.{png,svg}               # zoom, explicit focal length (e.g. -11mm, -20mm)
+<slug>-mtf-<focal>-inf.{png,svg}           # macro, infinity-focus panel (e.g. -65mm-inf)
+<slug>-mtf-<focal>-1x.{png,svg}            # macro, 1:1 magnification panel
+<slug>-mtf-<focal>-2x.{png,svg}            # macro, 2:1 magnification panel (Laowa 65mm)
+<slug>-mtf-unshifted.{png,svg}             # shift lens, unshifted (native sensor coverage)
+<slug>-mtf-shifted.{png,svg}               # shift lens, fully shifted (extended image circle)
+```
+
+Rule: the `-diffraction-` / `-geometric-` segment appears only when the
+vendor publishes both variants (Sigma is the only vendor in scope that
+does so). Otherwise the keying axis sits directly after `-mtf-`. For
+macro lenses that publish per-focus-distance panels, the focal length
+appears explicitly even on primes (consistent with the zoom grammar) and
+is followed by the magnification suffix. For shift lenses that publish
+per-shift-state panels (Laowa Zero-D Shift), `-unshifted` and `-shifted`
+encode the image-circle state. A lens that publishes one chart with no
+sub-conditioning uses bare `<slug>-mtf.{png,svg}` with no further suffix.
+
+For the focal-length suffix on zooms, use `wide`/`tele` only when the
+vendor labels panels that way in the on-chart caption (Sigma uses
+`WIDE` / `TELE`); use the explicit focal length (`-11mm`, `-20mm`,
+`-150mm`, `-500mm`) when the vendor's panel caption or source filename
+carries it explicitly (Tamron uses `_mtf_11mm_en.svg`, Laowa captions
+`8mmF3.5` / `16mmF5.0`). This keeps the filename traceable back to the
+vendor's own labeling.
+
 **Existing folders.** Files committed under the old numeric scheme
 (`-mtf-1`, `-mtf-2`, ...) stay as-is until rename — tracked in #1017.
 Until that rename lands, `analysis.md` MUST label each numeric file with

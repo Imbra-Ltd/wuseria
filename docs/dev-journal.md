@@ -5062,3 +5062,70 @@ Picked up the #793 pickup-action from Session 117: emit the 5 Sigma zoom product
 - `REFERENCE_CHARTS = 14` entries; 11 Tier 1; 9 Tier 2 production (5 primes + 5 zooms with `additional_views`); 2 deferred for refusal-only.
 - `_DEFAULT_SOURCES` in `emit.py` = 16 entries (was 11; +5 zooms). `_DEFAULT_FOCAL_LENGTHS` = 5 entries (new mapping).
 - 215 vitest pass, 239 pytest pass, 461-page build, full validate gate green.
+
+---
+
+### Session 119 — #1017 rename, second slice (Tamron + Tokina + Laowa)
+
+Date: 2026-06-04 → 2026-06-05 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Picked up the #1017 rename target left from S118: 9 folders with `-mtf-N.{png,svg}` numeric suffixes (Tamron 4 zooms, Tokina atx-m 11-18, Laowa 4 lenses). Discovered immediately that ADR-033's filename grammar assumed Sigma's diffraction-and-geometric pair — none of the target vendors publish that. Surveyed vendor product pages (Tamron / Tokina / Laowa), found the convention is one MTF chart-type per panel with no diffraction-vs-geometric axis. Amended ADR-033 to drop the chart-type segment when no pair is published; extended the existing `tools/mtfdigitizer/rename.py` to handle the new vocabulary; authored a minimal `analysis.md` for each target folder; ran the rename; committed per-vendor.
+
+#### Branch / merge state
+
+- Started on `main`, clean.
+- Branched `chore/1017-mtf-rename`; PR #1042 opened, **awaiting user merge approval**.
+- Did not auto-merge ([[feedback_merge_workflow]], [[feedback_ask_before_automerge]]).
+
+#### PRs
+
+- **PR #1042** open, mergeable, all CI green (changes / analyze / gitleaks / links / gate / CodeQL all SUCCESS; build / lighthouse SKIPPED because no source-side changes). 7 atomic commits: ADR-033 amendment; rename.py vocab extension; rename.py SVG-primary handling; Tamron data (4 folders); Tokina data (charts.py + readings + log + specs-log + analysis.md + 8 file renames); Laowa data (4 folders); regenerator sweep (Sigma 30/56mm review titles + readings caught up from S117).
+
+#### Issues opened / closed / updated
+
+- **#1017** — completing on PR #1042 merge ("Closes #1017" in the PR body). 9 folders, 25 file renames, 2 `charts.py` literal updates, 1 ADR amendment.
+- **#1015** — referenced 9 times in new `analysis.md` files (interpretive content deferred). No state change on the issue itself.
+
+#### Key changes
+
+- **ADR-033 — `docs/decisions/033-optical-specs-folder-structure.md`** — "Naming when no diffraction/geometric pair is published" subsection added. Drops the `-diffraction-` / `-geometric-` segment when the vendor publishes one chart-type. New suffixes: `-mtf-NNmm` (zoom panel), `-mtf-NNmm-1x` / `-2x` / `-inf` (macro per-focus-distance), `-mtf-unshifted` / `-shifted` (shift lens image-circle state). Verified by vendor research: Tamron, Tokina, Laowa, Viltrox, Voigtlander, Zeiss Touit all publish one chart-type. Sigma remains the only vendor in scope publishing both.
+- **`tools/mtfdigitizer/rename.py`** — `LABEL_SUFFIX` gains `"mtf": ""` for the no-chart-type case. `_focal_to_segment` accepts the new tokens (`inf`, `1x`, `2x`, `unshifted`, `shifted`) plus compound qualifiers like `"65mm, 1x"` → `"65mm-1x"`. `_join_suffix` handles empty chart_suffix (focal segment stands alone). `_plan_for_folder` treats `<slug>-mtf.{png,svg}` (bare) as panel-1-of-N when other numeric files exist in the folder (legacy Venus/Laowa convention). SVG-primary folders supported by falling back to `*-mtf-*.svg` glob when no PNG numeric files found, with `_sidecars_for` selecting the companion extension by primary suffix. Sister `.md` files in the folder (specs-log.md, scoring-log.md) get rewritten alongside `analysis.md` so prose stays in sync.
+- **`tools/mtfdigitizer/tests/test_rename.py`** — test count 19 → 27. 7 new tests covering the new vocabulary, the bare-mtf-png-as-panel-1 quirk, and specs-log rewrite. Existing "unrecognised focal-length qualifier" error message wording updated to "unrecognised qualifier" since the function now handles non-focal qualifiers too.
+- **9 new `analysis.md` files** under `docs/optical-specs/{tamron-11-20, tamron-150-500, tamron-17-70, tamron-18-300, tokina-atx-m-11-18, venus-laowa-12-24, venus-laowa-20mm-shift, venus-laowa-65mm-macro, venus-laowa-8-16}/`. Minimal form: title + source URL + MTF charts list (canonical, post-rename) + chart legend. Interpretive sections deferred to #1015 with an explicit pointer in each file.
+- **25 MTF file renames** across 9 folders. Tamron: 8 SVGs → focal-length-suffixed. Tokina: 8 sister files (PNG + SVG + overlay PNG + review HTML × 2 panels) → 11mm/18mm. Laowa: 9 PNGs across the 4 lenses → zoom-focal / macro-mag / shift-state suffixes.
+- **`tools/mtfdigitizer/referenceset/charts.py`** — 2 Tokina `chart_path=` literals rewritten.
+- **`docs/optical-specs/tokina-atx-m-11-18mm-f2-8-x/specs-log.md`** — prose "stored here as `*-mtf-1.png` (11mm) and `*-mtf-2.png` (18mm)" → "stored here as `*-mtf-11mm.png` and `*-mtf-18mm.png` (renamed S119 per ADR-033)". Manual edit because the prior glob form (`*-mtf-1.png`) doesn't match the rename script's literal-basename string replacement.
+- **Regenerator sweep on unrelated lenses.** `mtfdigitizer.calibrate --write-readings` + `mtfdigitizer.review` re-ran the full reference set as part of post-rename verification. Side effects: (a) Sigma 30mm + 56mm `-mtf-diffraction-review.html` titles caught up from `mtf-1` to `mtf-diffraction` (stale state from S117's rename), (b) Sigma 56mm readings `paired` counts improved from 4/11 + 3/11 to 11/11 + 11/11 on contrast10M + resolution30M (extractor fix that hadn't been reflected on disk), (c) Sigma 30mm readings file created (didn't exist).
+
+#### Key decisions
+
+- **Survey the vendors before locking in a filename grammar.** When the rename script's existing LABEL_SUFFIX only had Sigma's vocabulary, the temptation was to extend by guess ("just add `-wide` / `-tele` without `-diffraction-`"). Instead dispatched one parallel research agent across Tamron / Tokina / Laowa product pages and confirmed they all publish one MTF chart-type, with vendor-specific keying axes (focal length for zooms, focus distance for macros). Result: a grammar that fits all vendors, not just the ones in front of me.
+- **Macros use `<focal>-<magnification>`, not just `<magnification>`.** User caught this when reviewing the first draft: keeping the focal length explicit on macro filenames (`-mtf-65mm-1x` not `-mtf-1x`) preserves grammar regularity with zooms. Worth recording — even on primes the focal length stays in the filename, consistent with zooms.
+- **Shift lenses get `-unshifted` / `-shifted`.** Laowa 20mm Zero-D Shift publishes two panels keyed by image-circle radius (21mm = GFX coverage; 32mm = full lens circle) — a third dimension neither focal nor magnification covers. Chose semantic labels over magic numbers (`-circle-21mm` rejected as exposing an implementation detail).
+- **Author minimal `analysis.md` rather than skip it.** The rename script requires a labelled MTF charts list in `analysis.md`; the 9 target folders had none. Could have side-channelled labels via a CLI flag. Chose to write the minimal files instead — gets them into the #1015 backfill queue with the canonical list already in place, no extra work needed later.
+- **Treat `<slug>-mtf.png` as legacy panel-1 when numeric siblings exist.** Three Venus/Laowa folders carried `-mtf.png` + `-mtf-2.png` (and 65mm carried `-mtf.png` + `-mtf-2.png` + `-mtf-3.png`). The bare form was the original panel 1, saved before the `-N` convention. Encoded as a script rule rather than a per-folder special case.
+- **Per-vendor commits, not per-folder.** The original #1017 plan called for per-folder atomic commits. Walked back to per-vendor: each vendor's rename is one logical decision (chose grammar X based on their conventions); splitting into per-folder commits inside that decision would have padded the history without aiding review. 7 commits total: 1 ADR + 2 script + 3 data (one per vendor) + 1 sweep.
+
+#### Follow-ups for next session
+
+- **Wait for PR #1042 review + merge.** No auto-merge per [[feedback_ask_before_automerge]].
+- **#1015 backfill** — the 9 new `analysis.md` files have minimal MTF charts list only. Each pinpoints the interpretive content as "deferred to #1015". When the backfill epic runs, those 9 folders are the cheapest first-pass candidates because the canonical chart list is already correct.
+- **#1004 specs-log backfill** — Tamron (4) and Laowa folders still need `specs-log.md`. Tokina-11-18 already had one; got a small prose update this session.
+- **#790 brand campaign rest** — Voigtlander (3), Zeiss (3), Tamron (4), Viltrox (14), Samyang (20), Fujifilm (23) remain unscored or unverified. None of these were touched this session.
+- **#1021 fallback dead code** — the `_resolve_view_image` fallback in `extract.py` probes `<slug>-mtf-diffraction.png` then falls back to the declared path. Tokina's new chart paths are `<slug>-mtf-11mm.png` / `-mtf-18mm.png`, so the fallback no longer fires for it. Safe to remove in a follow-up; left in this PR because removing it is out of scope and worth a focused PR with its own test review.
+
+#### Loose ends to investigate when convenient
+
+- **Render-match LOW on Sigma DC sparse-dashed-M overlays** (carried from S117-S118).
+- **Tier 1 `log.py --check` false-OK** (carried from S116-S118). Still relevant for any future rename pass.
+- **17-40 tele `prior_violations=1`** (carried from S117-S118).
+- **`additional_views` for Samyang 85mm F8 panel** (carried from S118).
+- **Validate ADR-014 mean rule against the first real MTF-driven score** (carried from S118).
+
+#### State of the project
+
+- v0.8.0 still = MTF digitization. Sigma campaign closed end-to-end (S118). **#1017 rename second slice closing on PR #1042 merge** — 9 folders + 25 files moved into the named-suffix scheme; ADR-033 grammar generalized beyond Sigma.
+- Epic #932 (unified digitizer): open with one unchecked optional item (Real-ESRGAN fallback).
+- Epic #1004 (specs-log backfill): open, 1/8 brand sub-tasks done (Tokina).
+- `REFERENCE_CHARTS = 14` entries; 11 Tier 1; 9 Tier 2 production; 2 deferred for refusal-only (unchanged).
+- 215 vitest pass, 239+27 = 266 pytest pass, 461-page build, full validate gate green.
