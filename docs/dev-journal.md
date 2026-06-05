@@ -5129,3 +5129,60 @@ Picked up the #1017 rename target left from S118: 9 folders with `-mtf-N.{png,sv
 - Epic #1004 (specs-log backfill): open, 1/8 brand sub-tasks done (Tokina).
 - `REFERENCE_CHARTS = 14` entries; 11 Tier 1; 9 Tier 2 production; 2 deferred for refusal-only (unchanged).
 - 215 vitest pass, 239+27 = 266 pytest pass, 461-page build, full validate gate green.
+
+---
+
+### Session 120 — ADR-033 amendment + two parked calibration spikes
+
+Date: 2026-06-05 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Opened the session on the `session_next_theme` breadcrumb pointing at #1015 backfill. User caught the scope error mid-session: #1015 is P3 / Backlog, not v0.8.0. Salvaged the ADR-033 amendment piece into a narrowed PR; reverted the Tokina `analysis.md` pilot. Then pivoted to a v0.8.0-shaped theme ("Tier 1 calibration cleanup"), picked the worst single anchor first, and ended up filing two spike issues after diagnosis showed both targets need algorithm-shape changes rather than parameter tuning.
+
+#### Branch / merge state
+
+- Started on `main`, clean.
+- Branch 1: `chore/1015-tokina-pilot-adr033-amend` → PR #1043 → squash-merged after revert. Branch deleted both sides.
+- Branch 2: `fix/tokina-56-res30m-calibration` → renamed to `fix/7artisans-50-dispatch-coverage` after the tokina-56 investigation parked → deleted unused (no commits) once the 7artisans-50 investigation also parked.
+- Did not auto-merge ([[feedback_ask_before_automerge]]).
+
+#### PRs
+
+- **PR #1043** merged (b7a8a38). Squash. Single commit on `main` after revert: amend ADR-033 to narrow `analysis.md`'s remit when a `digitization-log.md` exists. Includes Tokina pilot revert in the same branch history. CI all green (build / lighthouse skipped — no source-side changes).
+
+#### Issues opened / closed / updated
+
+- **#1015** — 4 prerequisite checkboxes ticked (3 ADR-033 amendment sub-items + the `Amend ADR-033` task entry). Cross-references PR #1043. Issue remains open (Backlog).
+- **#1044 opened** — `tokina-56 res30M corner cliff: DP cannot follow steep dive past flat-stay alternative`. Spike, P3, v0.8.0. Diagnosis: DP cost function blind to "real ink" vs "dilation echo" — both alternative paths have dilated-mask emission ink = 0 cost, smoothness prior wins for flat. Lowering `_ALPHA` 0.30 → 0.05 changes nothing. Fix needs raw-mask weighting; both EYE=0.18 and EX=0.35 land in ADR-014 score 0.0 band so OQ field is unaffected.
+- **#1045 opened** — `7artisans-50 (samecolor-dashed-sm): split_sm_by_cc_width assigns one CC of ~13 as the entire S curve`. Spike, P3, v0.8.0. Diagnosis: `split_sm_by_cc_width` picks longest single CC and lumps the other 12-34 fragments together. Resulting masks have nonsensical spatial coverage (left-confined "S"; full-width "M" with mixed fragments). Fix is either a y-band split or a port to GEODESIC_DP.
+
+#### Key changes
+
+- **ADR-033 — `docs/decisions/033-optical-specs-folder-structure.md`** — pending-amendment callout lifted into body. New rule under "File responsibilities": when a `digitization-log.md` exists, `analysis.md` MUST reference its readings instead of re-tabulating them; remit narrows to astigmatism / field-curvature assessment, construction-based predictions, and the bridge to OQ scoring fields. Folders without a digitization-log MAY keep the legacy inline-readings format.
+- **No code changes on `tools/`** — both calibration investigations were probe-only. One experimental refactor of `sample_skeleton_at_fraction` (per-column nearest-inked lookup instead of slab-median over the 7-column bracket) was tried and reverted: it left tokina-56 res30M unchanged AND regressed samyang-85 contrast10M from p95 0.089 → 0.186. The slab-median absorbs DP path jitter on real charts; the "dilution" hypothesis was wrong shape.
+
+#### Key decisions
+
+- **Memory breadcrumb is not authorization.** `session_next_theme` pointed at #1015 because S119 left 9 minimal `analysis.md` shells as cheap entry points. That made #1015 the obvious continuation, NOT the right priority for v0.8.0. The breadcrumb should explicitly tag the linked work's milestone + priority and the agent should re-check both against the current milestone before treating the pointer as actionable. Caught only because the user pushed back mid-session; relevant for upstream.
+- **Diagnose before tuning.** Two consecutive parameter-tuning hypotheses (sampler dilution; lower `_ALPHA`) burned ~1 hour before the actual algorithm-shape bugs surfaced. The Explore agent dispatched after the first hypothesis broke was the move that unblocked. Default to a diagnostic Explore turn (or a short probe script) before any parameter change touching a calibrated value. Relevant for upstream.
+- **Park rather than half-fix.** Both calibration anchors investigated need algorithm changes proportionate to a scoped session of their own. Filing the diagnoses cleanly as spike issues preserves the work without leaving half-finished code on a branch. The hour spent on diagnosis is the artifact — issues #1044 and #1045 unblock whoever picks them up next.
+- **Salvage the ADR amendment from the scope error.** When the user flagged #1015 as out of scope, the impulse was to close PR #1043 wholesale. Splitting it — keeping the ADR amendment (genuinely useful by itself, settles a question ADR-033 had flagged as pending) while reverting the Tokina pilot — left one useful artifact on main and zero half-finished work.
+
+#### Follow-ups for next session
+
+- **#1044 (tokina-56 corner cliff)** and **#1045 (7artisans-50 dispatch coverage)** — both P3 / v0.8.0; both want their own scoped session. Either can be picked next; #1045 is probably the cheaper of the two (port to GEODESIC_DP already proven on Sigma + Tokina-11-18) and would meaningfully nudge the aggregate within-±0.05.
+- **Tier 1 calibration cleanup** as a theme is still valid but should be re-framed as "fix the algorithm gaps" not "tune the parameters." The carry list from S119 (log.py --check false-OK, Samyang 85 F8 additional_views, 17-40 tele prior_violations, Sigma DC sparse-dashed-M render-match, ADR-014 mean rule validation) remains relevant and is in mixed cost order — `log.py --check` false-OK is probably the cheapest bug repro of the lot.
+- **v0.8.0 vendor onboarding for Tier 2** is the alternative if calibration polish stays parked — cheaper progress on the milestone's headline goal than algorithm work. See `session_next_theme` for the unfinished vendor list.
+
+#### Loose ends to investigate when convenient
+
+- All the S119 carries above, still valid.
+- The reverted `sample_skeleton_at_fraction` refactor is worth revisiting if the slab-median ever becomes the constraint on a future anchor — the per-column approach was conceptually cleaner but needed the snap-window logic to be reworked at the same time to absorb DP jitter. Out of scope for both #1044 and #1045 as they stand.
+
+#### State of the project
+
+- v0.8.0 still = MTF digitization. Calibration polish surfaced 2 spike issues (#1044, #1045) and shipped 0 fixes. PR #1043 (ADR-033 amendment) merged.
+- Epic #932 (unified digitizer): open with one unchecked optional item (Real-ESRGAN fallback).
+- Epic #1004 (specs-log backfill): open, 1/8 brand sub-tasks done (Tokina).
+- Epic #1015 (analysis.md backfill): open, prerequisite ADR-033 amendment landed; 0/13 brand sub-tasks done.
+- `REFERENCE_CHARTS = 14` entries; 11 Tier 1 (GT-populated, calibration); 9 Tier 2 production; 2 fail-loud probes (no GT by design). **Aggregate calibration: 89.9% within ±0.05** tolerance band — unchanged this session.
+- 215 vitest pass on main, ~266 pytest pass, 461-page build, full validate gate green.
