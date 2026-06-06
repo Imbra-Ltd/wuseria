@@ -43,6 +43,10 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from .family_profile import profile_for_chart
+from .per_frequency import (
+    PER_FREQUENCY_STYLE_FAMILIES,
+    extract_per_frequency_chart,
+)
 from .pipeline import PlotBox, extract_chart
 from .pipeline.dispatch import parse_field_name
 from .pipeline.rendermatch import fields_in
