@@ -24,11 +24,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        | 10/11    |  7/11       |
+| freq15S        | 11/11    |  8/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```
-  EX   freq15S        ██████▇·▇▇▇  (0.94 → 0.88)
+  EX   freq15S        ██████▇▇▇▇▇  (0.94 → 0.88)
   EX   freq15M        ██████▇▇▇▇▇  (0.94 → 0.90)
 ```
 
@@ -43,7 +43,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.4 | 0.93 |
 | 0.5 | 0.93 |
 | 0.6 | 0.92 |
-| 0.7 | — |
+| 0.7 | 0.92 |
 | 0.8 | 0.93 |
 | 0.9 | 0.92 |
 | 1.0 | 0.88 |
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.587 |      0.80 |   no |
-| IoU       | 0.439 |      0.20 |  yes |
+| precision | 0.596 |      0.80 |   no |
+| IoU       | 0.455 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -110,11 +110,11 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 10/11    |  2/11       |
+| freq45S        | 11/11    |  3/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```
-  EX   freq45S        ▇▇▇▇▆·▆▆▆▆▅  (0.84 → 0.54)
+  EX   freq45S        ▇▇▇▇▆▆▆▆▆▆▅  (0.84 → 0.54)
   EX   freq45M        ▇▇▇▆▆▆▆▆▅▅▅  (0.84 → 0.55)
 ```
 
@@ -127,7 +127,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.2 | 0.83 |
 | 0.3 | 0.80 |
 | 0.4 | 0.76 |
-| 0.5 | — |
+| 0.5 | 0.72 |
 | 0.6 | 0.71 |
 | 0.7 | 0.74 |
 | 0.8 | 0.76 |
@@ -170,8 +170,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.813 |      0.80 |  yes |
-| IoU       | 0.595 |      0.20 |  yes |
+| precision | 0.782 |      0.80 |   no |
+| IoU       | 0.587 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -179,9 +179,10 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Gate
 
-**Gate verdict:** `HIGH`
+**Gate verdict:** `LOW`
 
-No reasons — both confidence signals cleared.
+**Reasons:**
+- `precision_below_threshold`
 
 ## Panel
 
@@ -365,11 +366,11 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        | 10/11    |  7/11       |
+| freq15S        | 11/11    |  8/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```
-  EX   freq15S        ██████▇·▇▇▇  (0.94 → 0.88)
+  EX   freq15S        ██████▇▇▇▇▇  (0.94 → 0.88)
   EX   freq15M        ██████▇▇▇▇▇  (0.94 → 0.90)
 ```
 
@@ -384,7 +385,7 @@ No reasons — both confidence signals cleared.
 | 0.4 | 0.93 |
 | 0.5 | 0.93 |
 | 0.6 | 0.92 |
-| 0.7 | — |
+| 0.7 | 0.92 |
 | 0.8 | 0.93 |
 | 0.9 | 0.92 |
 | 1.0 | 0.88 |
@@ -425,8 +426,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.587 |      0.80 |   no |
-| IoU       | 0.443 |      0.20 |  yes |
+| precision | 0.594 |      0.80 |   no |
+| IoU       | 0.455 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -451,11 +452,11 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 10/11    |  2/11       |
+| freq45S        | 11/11    |  3/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```
-  EX   freq45S        ▇▇▇▇▆·▆▆▆▆▅  (0.84 → 0.54)
+  EX   freq45S        ▇▇▇▇▆▆▆▆▆▆▅  (0.84 → 0.54)
   EX   freq45M        ▇▇▇▆▆▆▆▆▅▅▅  (0.84 → 0.55)
 ```
 
@@ -468,7 +469,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.2 | 0.83 |
 | 0.3 | 0.80 |
 | 0.4 | 0.76 |
-| 0.5 | — |
+| 0.5 | 0.72 |
 | 0.6 | 0.71 |
 | 0.7 | 0.74 |
 | 0.8 | 0.76 |
@@ -511,8 +512,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.816 |      0.80 |  yes |
-| IoU       | 0.597 |      0.20 |  yes |
+| precision | 0.784 |      0.80 |   no |
+| IoU       | 0.589 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -520,6 +521,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Gate
 
-**Gate verdict:** `HIGH`
+**Gate verdict:** `LOW`
 
-No reasons — both confidence signals cleared.
+**Reasons:**
+- `precision_below_threshold`

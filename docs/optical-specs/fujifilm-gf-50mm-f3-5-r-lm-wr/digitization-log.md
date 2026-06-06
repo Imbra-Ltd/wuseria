@@ -25,11 +25,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq15S        | 11/11    |  0/11       |
-| freq15M        | 10/11    |  3/11       |
+| freq15M        | 11/11    |  4/11       |
 
 ```
   EX   freq15S        ████████▇▇▅  (0.97 → 0.63)
-  EX   freq15M        ███·█████▇▇  (0.97 → 0.89)
+  EX   freq15M        █████████▇▇  (0.97 → 0.89)
 ```
 
 **freq15S**
@@ -55,7 +55,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.0 | 0.97 |
 | 0.1 | 0.97 |
 | 0.2 | 0.97 |
-| 0.3 | — |
+| 0.3 | 0.96 |
 | 0.4 | 0.97 |
 | 0.5 | 0.97 |
 | 0.6 | 0.96 |
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.778 |      0.80 |   no |
-| IoU       | 0.677 |      0.20 |  yes |
+| precision | 0.747 |      0.80 |   no |
+| IoU       | 0.674 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -196,7 +196,7 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq45S        | 11/11    |  0/11       |
-| freq45M        | 11/11    |  0/11       |
+| freq45M        | 11/11    |  1/11       |
 
 ```
   EX   freq45S        ▇▇▇▇▆▆▆▆▅▅▃  (0.90 → 0.30)

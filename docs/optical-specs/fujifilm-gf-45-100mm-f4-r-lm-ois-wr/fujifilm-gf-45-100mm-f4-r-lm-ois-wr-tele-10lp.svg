@@ -25,7 +25,7 @@
 <text class="axis-label axis-x" x="304.0" y="186">26.9</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
 <polyline class="curve curve-10" style="stroke:#c89b3c" points="36.0,13.8 62.8,13.6 89.6,13.3 116.4,13.6 143.2,14.6 170.0,16.4 196.8,19.4 223.6,24.2 250.4,29.3 277.2,32.3 304.0,28.9"/>
-<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="36.0,13.8 62.8,13.6 89.6,14.6 116.4,15.1 143.2,16.5 170.0,19.5 196.8,22.9 223.6,27.6 250.4,24.6 277.2,24.3" stroke-dasharray="4 2"/>
+<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="36.0,13.8 62.8,13.6 89.6,14.6 116.4,15.1 143.2,16.5 170.0,19.5 196.8,22.9 223.6,27.6 250.4,24.6 277.2,24.3 304.0,28.9" stroke-dasharray="4 2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="36.0" cy="13.8" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="13.6" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="13.3" r="2"/>
@@ -47,6 +47,7 @@
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="223.6" cy="27.6" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="250.4" cy="24.6" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="277.2" cy="24.3" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="304.0" cy="28.9" r="2"/>
 <line x1="36" y1="209" x2="48" y2="209" stroke="#c89b3c" stroke-width="1.5"/>
 <text class="legend-text" x="51" y="212">10 lp/mm S</text>
 <line x1="92" y1="209" x2="104" y2="209" stroke="#c89b3c" stroke-width="1.5" stroke-dasharray="3 2"/>

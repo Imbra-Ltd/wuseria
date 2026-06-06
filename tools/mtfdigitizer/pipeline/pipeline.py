@@ -133,11 +133,26 @@ def _apply_sister_fallback(
 ) -> tuple[dict[str, tuple[float | None, ...]], dict[str, int]]:
     """Replace samples where ink is absent with the sister curve's value.
 
-    Returns ``(samples, fallback_count_by_field)``. The counter
-    records how many of a field's 11 samples were filled from the
-    sister curve (i.e. the field's own raw ink was absent and the
-    sister's was present); samples that stayed `None` because both
-    curves lacked ink do not count as fallbacks.
+    Two trigger conditions, in priority order:
+
+    1. The field's raw ink is absent in the wide presence window AND the
+       sister's ink is present — the historical trigger. Copies the
+       sister's value, counts as a fallback.
+    2. The field's own sample is `None` (sampler bracket found no
+       skeleton pixel) AND the sister has a non-None value — the
+       "sampler-None" trigger. Fires even when the raw-mask presence
+       check claimed ink nearby; the sampler's narrower window (±3 px)
+       can fail to find a skeleton pixel that the presence check's
+       wider window (±10 px) did see ink near (e.g. the first dash of
+       a curve starting just outside the sampler bracket). Without
+       this, panels with a curve-start gap leave a `—` cell in the
+       log where the sister could have filled it honestly. Counts as
+       a fallback.
+
+    Returns ``(samples, fallback_count_by_field)``. The counter records
+    how many of a field's 11 samples were filled from the sister curve
+    via either trigger; samples that stayed `None` because both curves
+    lacked data do not count as fallbacks.
     """
     out: dict[str, tuple[float | None, ...]] = {}
     fallback_count: dict[str, int] = {}
@@ -149,7 +164,20 @@ def _apply_sister_fallback(
         fixed: list[float | None] = []
         count = 0
         for i, v in enumerate(values):
-            if field_presence[i]:
+            if v is None and sister_values[i] is not None:
+                # Sampler-None trigger: our sampler bracket found no
+                # skeleton pixel (within ±3 px of the target column).
+                # If the sister has a real value, copy it — regardless
+                # of whether the raw-mask presence check claimed ink
+                # nearby. This catches the curve-start case (first
+                # dash falls just outside the sampler bracket) and the
+                # both-curves-overlap case (one hue's mask dominates
+                # the other in pixel-blended regions). Without it, the
+                # log shows `—` even when the sister could fill the
+                # cell honestly.
+                fixed.append(sister_values[i])
+                count += 1
+            elif field_presence[i]:
                 fixed.append(v)
             elif sister_presence[i]:
                 # Sister has real ink here; trust it over our drifted value.

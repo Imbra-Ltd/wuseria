@@ -110,11 +110,11 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 10/11    |  2/11       |
+| freq45S        | 11/11    |  3/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```
-  EX   freq45S        ▇·▇▇▆▆▆▆▆▆▆  (0.83 → 0.70)
+  EX   freq45S        ▇▇▇▇▆▆▆▆▆▆▆  (0.83 → 0.70)
   EX   freq45M        ▇▇▇▆▆▆▆▆▆▆▆  (0.83 → 0.73)
 ```
 
@@ -123,7 +123,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.83 |
-| 0.1 | — |
+| 0.1 | 0.82 |
 | 0.2 | 0.82 |
 | 0.3 | 0.80 |
 | 0.4 | 0.77 |
@@ -170,8 +170,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.796 |      0.80 |   no |
-| IoU       | 0.605 |      0.20 |  yes |
+| precision | 0.760 |      0.80 |   no |
+| IoU       | 0.597 |      0.20 |  yes |
 
 #### Plausibility priors
 

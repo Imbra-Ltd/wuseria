@@ -25,11 +25,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq15S        | 11/11    |  0/11       |
-| freq15M        | 10/11    |  1/11       |
+| freq15M        | 11/11    |  2/11       |
 
 ```
   EX   freq15S        ▇▇▇▇▇▇▇▆▆▅▅  (0.91 → 0.51)
-  EX   freq15M        ▇·▇▇▇▇▇▆▆▆▆  (0.91 → 0.71)
+  EX   freq15M        ▇▇▇▇▇▇▇▆▆▆▆  (0.91 → 0.71)
 ```
 
 **freq15S**
@@ -53,7 +53,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.91 |
-| 0.1 | — |
+| 0.1 | 0.91 |
 | 0.2 | 0.89 |
 | 0.3 | 0.87 |
 | 0.4 | 0.86 |
@@ -76,7 +76,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
 | freq15S        |       0.3 |       0.91 |                 — |
-| freq15M        |       0.0 |       0.91 |                 — |
+| freq15M        |       0.1 |       0.91 |                 — |
 
 ### Confidence signals
 
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.931 |      0.80 |  yes |
-| IoU       | 0.694 |      0.20 |  yes |
+| precision | 0.914 |      0.80 |  yes |
+| IoU       | 0.732 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -109,11 +109,11 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 10/11    |  0/11       |
+| freq45S        | 11/11    |  2/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```
-  EX   freq45S        ▆▆▇▇▆▆·▅▅▄▃  (0.77 → 0.32)
+  EX   freq45S        ▆▆▇▇▆▆▅▅▅▄▃  (0.77 → 0.32)
   EX   freq45M        ▆▆▆▆▅▅▅▅▅▄▄  (0.77 → 0.45)
 ```
 
@@ -127,7 +127,7 @@ No reasons — both confidence signals cleared.
 | 0.3 | 0.80 |
 | 0.4 | 0.78 |
 | 0.5 | 0.69 |
-| 0.6 | — |
+| 0.6 | 0.60 |
 | 0.7 | 0.57 |
 | 0.8 | 0.51 |
 | 0.9 | 0.42 |
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.911 |      0.80 |  yes |
-| IoU       | 0.598 |      0.20 |  yes |
+| precision | 0.898 |      0.80 |  yes |
+| IoU       | 0.641 |      0.20 |  yes |
 
 #### Plausibility priors
 

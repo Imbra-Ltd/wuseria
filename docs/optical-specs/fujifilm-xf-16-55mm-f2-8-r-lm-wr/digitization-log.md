@@ -24,11 +24,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        |  9/11    |  2/11       |
+| freq15S        | 11/11    |  4/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```
-  EX   freq15S        ▇▇·▇▇▇▇▇▇▇·  (0.92 →  — )
+  EX   freq15S        ▇▇▇▇▇▇▇▇▇▇▇  (0.92 → 0.84)
   EX   freq15M        ▇▇▇▇▇▇▇▇▇▇▇  (0.92 → 0.84)
 ```
 
@@ -38,7 +38,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | ---- | --- |
 | 0.0 | 0.92 |
 | 0.1 | 0.92 |
-| 0.2 | — |
+| 0.2 | 0.92 |
 | 0.3 | 0.92 |
 | 0.4 | 0.91 |
 | 0.5 | 0.91 |
@@ -46,7 +46,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.90 |
 | 0.8 | 0.90 |
 | 0.9 | 0.88 |
-| 1.0 | — |
+| 1.0 | 0.84 |
 
 **freq15M**
 
@@ -68,7 +68,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq15S        |         0.92 |       0.88 |            — |
+| freq15S        |         0.92 |       0.88 |         0.84 |
 | freq15M        |         0.92 |       0.84 |         0.84 |
 
 ### Shape metrics
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.851 |      0.80 |  yes |
-| IoU       | 0.643 |      0.20 |  yes |
+| precision | 0.818 |      0.80 |  yes |
+| IoU       | 0.677 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -194,12 +194,12 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        |  9/11    |  1/11       |
-| freq15M        | 10/11    |  0/11       |
+| freq15S        | 11/11    |  3/11       |
+| freq15M        | 11/11    |  1/11       |
 
 ```
-  EX   freq15S        ▇▇▇▇▇▇▇▇··▆  (0.91 → 0.76)
-  EX   freq15M        ▇·▇▇▇▇▇▇▆▆▆  (0.91 → 0.75)
+  EX   freq15S        ▇▇▇▇▇▇▇▇▆▆▆  (0.91 → 0.76)
+  EX   freq15M        ▇▇▇▇▇▇▇▇▆▆▆  (0.91 → 0.75)
 ```
 
 **freq15S**
@@ -214,8 +214,8 @@ No reasons — both confidence signals cleared.
 | 0.5 | 0.87 |
 | 0.6 | 0.85 |
 | 0.7 | 0.82 |
-| 0.8 | — |
-| 0.9 | — |
+| 0.8 | 0.78 |
+| 0.9 | 0.75 |
 | 1.0 | 0.76 |
 
 **freq15M**
@@ -223,7 +223,7 @@ No reasons — both confidence signals cleared.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.91 |
-| 0.1 | — |
+| 0.1 | 0.91 |
 | 0.2 | 0.89 |
 | 0.3 | 0.87 |
 | 0.4 | 0.84 |
@@ -238,7 +238,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq15S        |         0.91 |          — |         0.76 |
+| freq15S        |         0.91 |       0.75 |         0.76 |
 | freq15M        |         0.91 |       0.75 |         0.75 |
 
 ### Shape metrics
@@ -254,8 +254,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.865 |      0.80 |  yes |
-| IoU       | 0.616 |      0.20 |  yes |
+| precision | 0.778 |      0.80 |   no |
+| IoU       | 0.636 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -263,9 +263,10 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Gate
 
-**Gate verdict:** `HIGH`
+**Gate verdict:** `LOW`
 
-No reasons — both confidence signals cleared.
+**Reasons:**
+- `precision_below_threshold`
 
 ## Panel
 
@@ -279,11 +280,11 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 10/11    |  0/11       |
+| freq45S        | 11/11    |  2/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```
-  EX   freq45S        ▇▇▇▆▆▅▅▅·▄▄  (0.87 → 0.39)
+  EX   freq45S        ▇▇▇▆▆▅▅▅▄▄▄  (0.87 → 0.39)
   EX   freq45M        ▇▇▆▆▆▆▅▅▄▄▄  (0.87 → 0.37)
 ```
 
@@ -299,7 +300,7 @@ No reasons — both confidence signals cleared.
 | 0.5 | 0.63 |
 | 0.6 | 0.56 |
 | 0.7 | 0.51 |
-| 0.8 | — |
+| 0.8 | 0.46 |
 | 0.9 | 0.41 |
 | 1.0 | 0.39 |
 
@@ -339,8 +340,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.888 |      0.80 |  yes |
-| IoU       | 0.569 |      0.20 |  yes |
+| precision | 0.869 |      0.80 |  yes |
+| IoU       | 0.601 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -364,11 +365,11 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        |  9/11    |  2/11       |
+| freq15S        | 11/11    |  4/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```
-  EX   freq15S        ▇▇·▇▇▇▇▇▇▇·  (0.92 →  — )
+  EX   freq15S        ▇▇▇▇▇▇▇▇▇▇▇  (0.92 → 0.84)
   EX   freq15M        ▇▇▇▇▇▇▇▇▇▇▇  (0.92 → 0.84)
 ```
 
@@ -378,7 +379,7 @@ No reasons — both confidence signals cleared.
 | ---- | --- |
 | 0.0 | 0.92 |
 | 0.1 | 0.92 |
-| 0.2 | — |
+| 0.2 | 0.92 |
 | 0.3 | 0.92 |
 | 0.4 | 0.91 |
 | 0.5 | 0.91 |
@@ -386,7 +387,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.90 |
 | 0.8 | 0.90 |
 | 0.9 | 0.88 |
-| 1.0 | — |
+| 1.0 | 0.84 |
 
 **freq15M**
 
@@ -408,7 +409,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq15S        |         0.92 |       0.88 |            — |
+| freq15S        |         0.92 |       0.88 |         0.84 |
 | freq15M        |         0.92 |       0.84 |         0.84 |
 
 ### Shape metrics
@@ -424,8 +425,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.851 |      0.80 |  yes |
-| IoU       | 0.651 |      0.20 |  yes |
+| precision | 0.818 |      0.80 |  yes |
+| IoU       | 0.685 |      0.20 |  yes |
 
 #### Plausibility priors
 

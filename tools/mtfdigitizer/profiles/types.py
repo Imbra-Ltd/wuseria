@@ -164,6 +164,15 @@ class MtfProfile:
     # gridlines, so it can never be auto-suggested without poisoning the
     # disambiguation of every other profile).
     auto_suggestable: bool = True
+    # Per-profile override for the horizontal close-kernel width used by
+    # `close_and_skeletonize` when bridging dashed-line gaps. None falls
+    # back to the module-level default (7 px). Override when a profile's
+    # chart family has wider dash gaps than the default can bridge —
+    # raising this value bridges longer gaps but risks merging adjacent
+    # parallel curves of the same hue (so far always safe, since per-hue
+    # masks only contain one color and within-color curves don't run
+    # parallel for these chart styles).
+    close_kernel_width: int | None = None
 
     @property
     def hue_count(self) -> int:

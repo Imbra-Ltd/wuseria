@@ -25,11 +25,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq15S        | 11/11    |  0/11       |
-| freq15M        | 10/11    |  4/11       |
+| freq15M        | 11/11    |  5/11       |
 
 ```
   EX   freq15S        ██████▇▇▇▇▇  (0.94 → 0.90)
-  EX   freq15M        ███·▇▇▇▇▇▇▇  (0.94 → 0.90)
+  EX   freq15M        ████▇▇▇▇▇▇▇  (0.94 → 0.90)
 ```
 
 **freq15S**
@@ -55,7 +55,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.0 | 0.94 |
 | 0.1 | 0.94 |
 | 0.2 | 0.93 |
-| 0.3 | — |
+| 0.3 | 0.93 |
 | 0.4 | 0.92 |
 | 0.5 | 0.91 |
 | 0.6 | 0.91 |
@@ -84,7 +84,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.831 |      0.80 |  yes |
+| precision | 0.798 |      0.80 |   no |
 | IoU       | 0.745 |      0.20 |  yes |
 
 #### Plausibility priors
@@ -93,9 +93,10 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Gate
 
-**Gate verdict:** `HIGH`
+**Gate verdict:** `LOW`
 
-No reasons — both confidence signals cleared.
+**Reasons:**
+- `precision_below_threshold`
 
 ## Panel
 
@@ -110,11 +111,11 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq20S        | 11/11    |  0/11       |
-| freq20M        | 10/11    |  4/11       |
+| freq20M        | 11/11    |  5/11       |
 
 ```
   EX   freq20S        ██████▇▇▇▇▇  (0.94 → 0.90)
-  EX   freq20M        ███·▇▇▇▇▇▇▇  (0.94 → 0.90)
+  EX   freq20M        ████▇▇▇▇▇▇▇  (0.94 → 0.90)
 ```
 
 **freq20S**
@@ -140,7 +141,7 @@ No reasons — both confidence signals cleared.
 | 0.0 | 0.94 |
 | 0.1 | 0.94 |
 | 0.2 | 0.93 |
-| 0.3 | — |
+| 0.3 | 0.93 |
 | 0.4 | 0.92 |
 | 0.5 | 0.91 |
 | 0.6 | 0.91 |
@@ -169,7 +170,7 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.831 |      0.80 |  yes |
+| precision | 0.798 |      0.80 |   no |
 | IoU       | 0.745 |      0.20 |  yes |
 
 #### Plausibility priors
@@ -178,9 +179,10 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Gate
 
-**Gate verdict:** `HIGH`
+**Gate verdict:** `LOW`
 
-No reasons — both confidence signals cleared.
+**Reasons:**
+- `precision_below_threshold`
 
 ## Panel
 
@@ -195,11 +197,11 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq40S        | 11/11    |  0/11       |
-| freq40M        |  9/11    |  1/11       |
+| freq40M        | 11/11    |  3/11       |
 
 ```
   EX   freq40S        █▇▇▇▇▇▇▇▇▇▇  (0.93 → 0.80)
-  EX   freq40M        █·▇▇▇▇▇▇▇▇·  (0.93 →  — )
+  EX   freq40M        █▇▇▇▇▇▇▇▇▇▇  (0.93 → 0.80)
 ```
 
 **freq40S**
@@ -223,7 +225,7 @@ No reasons — both confidence signals cleared.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.93 |
-| 0.1 | — |
+| 0.1 | 0.93 |
 | 0.2 | 0.90 |
 | 0.3 | 0.87 |
 | 0.4 | 0.85 |
@@ -232,14 +234,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.79 |
 | 0.8 | 0.79 |
 | 0.9 | 0.80 |
-| 1.0 | — |
+| 1.0 | 0.80 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq40S        |         0.93 |       0.84 |         0.80 |
-| freq40M        |         0.93 |       0.80 |            — |
+| freq40M        |         0.93 |       0.80 |         0.80 |
 
 ### Shape metrics
 
@@ -254,8 +256,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.956 |      0.80 |  yes |
-| IoU       | 0.694 |      0.20 |  yes |
+| precision | 0.929 |      0.80 |  yes |
+| IoU       | 0.763 |      0.20 |  yes |
 
 #### Plausibility priors
 

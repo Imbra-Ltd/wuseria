@@ -24,11 +24,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        |  8/11    |  3/11       |
+| freq15S        | 11/11    |  6/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```
-  EX   freq15S        ▇▇·▇·▇·▇▇▆▆  (0.85 → 0.67)
+  EX   freq15S        ▇▇▇▇▇▇▇▇▇▆▆  (0.85 → 0.67)
   EX   freq15M        ▇▇▇▇▇▇▇▇▇▇▇  (0.85 → 0.84)
 ```
 
@@ -38,11 +38,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | ---- | --- |
 | 0.0 | 0.85 |
 | 0.1 | 0.85 |
-| 0.2 | — |
+| 0.2 | 0.84 |
 | 0.3 | 0.84 |
-| 0.4 | — |
+| 0.4 | 0.84 |
 | 0.5 | 0.84 |
-| 0.6 | — |
+| 0.6 | 0.83 |
 | 0.7 | 0.81 |
 | 0.8 | 0.79 |
 | 0.9 | 0.75 |
@@ -84,7 +84,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.829 |      0.80 |  yes |
+| precision | 0.726 |      0.80 |   no |
 | IoU       | 0.567 |      0.20 |  yes |
 
 #### Plausibility priors
@@ -93,9 +93,10 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Gate
 
-**Gate verdict:** `HIGH`
+**Gate verdict:** `LOW`
 
-No reasons — both confidence signals cleared.
+**Reasons:**
+- `precision_below_threshold`
 
 ## Panel
 
@@ -109,7 +110,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 11/11    |  0/11       |
+| freq45S        | 11/11    |  1/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```

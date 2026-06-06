@@ -24,11 +24,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        | 10/11    |  7/11       |
+| freq15S        | 11/11    |  8/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```
-  EX   freq15S        ██·█████▇▇▇  (0.95 → 0.89)
+  EX   freq15S        ████████▇▇▇  (0.95 → 0.89)
   EX   freq15M        █████████▇▇  (0.95 → 0.92)
 ```
 
@@ -38,7 +38,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | ---- | --- |
 | 0.0 | 0.95 |
 | 0.1 | 0.95 |
-| 0.2 | — |
+| 0.2 | 0.95 |
 | 0.3 | 0.95 |
 | 0.4 | 0.95 |
 | 0.5 | 0.95 |
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.624 |      0.80 |   no |
-| IoU       | 0.491 |      0.20 |  yes |
+| precision | 0.610 |      0.80 |   no |
+| IoU       | 0.481 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -176,7 +176,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        | 11/11    |  0/11       |
+| freq15S        | 11/11    |  1/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```

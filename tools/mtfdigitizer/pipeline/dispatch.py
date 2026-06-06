@@ -379,7 +379,9 @@ def field_skeletons(
             sm = parse_sagittal_meridional_name(hue_name)
             if not mask.any():
                 continue
-            out[curve_field(freq, sm)] = close_and_skeletonize(mask)
+            out[curve_field(freq, sm)] = close_and_skeletonize(
+                mask, close_kernel_width=profile.close_kernel_width
+            )
     elif (
         profile.style_axis == "HUE_IS_CURVE"
         and profile.hue_meaning == "PER_COLUMN_RIDGE"

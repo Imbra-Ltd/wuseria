@@ -24,12 +24,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq10S        | 10/11    |  0/11       |
-| freq10M        |  9/11    |  6/11       |
+| freq10S        | 10/11    |  1/11       |
+| freq10M        | 10/11    |  7/11       |
 
 ```
   EX   freq10S        █·█████▇▇▇▇  (0.97 → 0.82)
-  EX   freq10M        █·█·███▇▇▇▇  (0.97 → 0.82)
+  EX   freq10M        █·█████▇▇▇▇  (0.97 → 0.82)
 ```
 
 **freq10S**
@@ -55,7 +55,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.0 | 0.97 |
 | 0.1 | — |
 | 0.2 | 0.96 |
-| 0.3 | — |
+| 0.3 | 0.96 |
 | 0.4 | 0.96 |
 | 0.5 | 0.95 |
 | 0.6 | 0.94 |
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.493 |      0.80 |   no |
-| IoU       | 0.392 |      0.20 |  yes |
+| precision | 0.600 |      0.80 |   no |
+| IoU       | 0.470 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -110,11 +110,11 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq20S        | 10/11    |  1/11       |
+| freq20S        | 11/11    |  2/11       |
 | freq20M        | 11/11    |  0/11       |
 
 ```
-  EX   freq20S        █·██▇▇▇▇▆▆▅  (0.95 → 0.60)
+  EX   freq20S        ████▇▇▇▇▆▆▅  (0.95 → 0.60)
   EX   freq20M        ██▇▇███▇▇▇▇  (0.95 → 0.85)
 ```
 
@@ -123,7 +123,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.95 |
-| 0.1 | — |
+| 0.1 | 0.94 |
 | 0.2 | 0.94 |
 | 0.3 | 0.94 |
 | 0.4 | 0.92 |
@@ -170,8 +170,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.916 |      0.80 |  yes |
-| IoU       | 0.661 |      0.20 |  yes |
+| precision | 0.860 |      0.80 |  yes |
+| IoU       | 0.637 |      0.20 |  yes |
 
 #### Plausibility priors
 
