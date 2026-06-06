@@ -1,15 +1,27 @@
+// Sagittal/meridional pair at one spatial frequency. Either value MAY
+// be null when the source chart has no usable data for that
+// orientation at this position. Renderers break the polyline at nulls;
+// tables show a dash. Hand-curated entries from official manufacturer
+// charts typically have both populated; digitizer-emitted entries may
+// not (per the ADR-038 B2 contract — never fabricate).
+interface MtfSampleSM {
+  S: number | null; // sagittal
+  M: number | null; // meridional
+}
+
 interface MtfReading {
   position: number; // image height in mm (0 = center)
-  // Per-field values may be null when the chart extractor (or hand
-  // curator) has no usable data for that frequency / orientation at
-  // this position. Renderers break the polyline at nulls; tables show
-  // a dash. Hand-curated entries from official manufacturer charts
-  // typically have all four populated; digitizer-emitted entries may
-  // not (per the ADR-038 B2 contract — never fabricate).
-  contrast10S: number | null; // 10 lp/mm sagittal
-  contrast10M: number | null; // 10 lp/mm meridional
-  resolution30S: number | null; // 30 lp/mm sagittal
-  resolution30M: number | null; // 30 lp/mm meridional
+  // Per-frequency S/M samples. Key is the spatial frequency in lp/mm
+  // (10, 15, 20, 30, 40, 45, ...). Brands publish at different
+  // frequencies — Sigma/Samyang/7Artisans/Tokina/Viltrox at {10, 30};
+  // Fujifilm GF primes at {15, 20, 40}; Fujifilm GF zooms at
+  // {10, 20, 40}; Fujifilm XF at {15, 45}. A reading row MAY omit
+  // frequencies entirely — nothing forces a row to populate
+  // frequencies the lens does not publish.
+  //
+  // Every row in the same `MtfChart` MUST carry the same key set —
+  // validation tests enforce this. See ADR-042.
+  samples: Record<number, MtfSampleSM>;
 }
 
 interface MtfChart {
@@ -26,4 +38,4 @@ interface MtfData {
   charts: MtfChart[];
 }
 
-export type { MtfReading, MtfChart, MtfData, MtfType };
+export type { MtfReading, MtfSampleSM, MtfChart, MtfData, MtfType };

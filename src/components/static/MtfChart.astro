@@ -40,10 +40,41 @@ function toSegments(values: (number | null)[]): string[] {
   return segments;
 }
 
-const contrast10S = chart.readings.map((r) => r.contrast10S);
-const contrast10M = chart.readings.map((r) => r.contrast10M);
-const resolution30S = chart.readings.map((r) => r.resolution30S);
-const resolution30M = chart.readings.map((r) => r.resolution30M);
+// Frequency → stroke color. Defaults cover the published frequencies in
+// the dataset (Sigma/Samyang/7Artisans/Tokina/Viltrox at 10+30, Fuji GF
+// at 10/15/20/40, Fuji XF at 15/45). Unknown frequencies fall back to
+// the muted neutral so a new brand never silently renders invisible.
+//
+// Color rule: low frequencies (perceived contrast band) use the accent
+// hue; mid-band uses a teal-green; high frequencies (resolving-power
+// band) use a cool blue. The 10/30 colors match the previous renderer
+// for visual continuity on existing pages.
+const FREQUENCY_COLOR: Record<number, string> = {
+  10: "var(--color-accent)",
+  15: "#d4a14a",
+  20: "#5fa86f",
+  30: "#6b9bd2",
+  40: "#5d7bb5",
+  45: "#5d7bb5",
+};
+const NEUTRAL_COLOR = "var(--color-text-muted)";
+
+const colorFor = (freq: number): string =>
+  FREQUENCY_COLOR[freq] ?? NEUTRAL_COLOR;
+
+// Sort the frequency keys numerically so legend + draw order are
+// stable (low → high). Object.keys returns strings; coerce.
+const frequencies = Array.from(
+  new Set(chart.readings.flatMap((r) => Object.keys(r.samples).map(Number))),
+).sort((a, b) => a - b);
+
+// Per-frequency S and M series, ready for toSegments.
+const series = frequencies.map((freq) => ({
+  freq,
+  color: colorFor(freq),
+  S: chart.readings.map((r) => r.samples[freq]?.S ?? null),
+  M: chart.readings.map((r) => r.samples[freq]?.M ?? null),
+}));
 
 // Grid lines at 0.2 intervals
 const yTicks = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
@@ -96,84 +127,78 @@ const xTicks = chart.readings.map((r) => r.position);
     Image height (mm)
   </text>
 
-  {/* Data lines — 10 lp/mm (contrast) */}
+  {/* Data lines — one S (solid) + M (dashed) pair per frequency */}
   {
-    toSegments(contrast10S).map((seg) => (
-      <polyline points={seg} class="line line-10s" />
-    ))
-  }
-  {
-    toSegments(contrast10M).map((seg) => (
-      <polyline points={seg} class="line line-10m" />
-    ))
-  }
-
-  {/* Data lines — 30 lp/mm (resolution) */}
-  {
-    toSegments(resolution30S).map((seg) => (
-      <polyline points={seg} class="line line-30s" />
-    ))
-  }
-  {
-    toSegments(resolution30M).map((seg) => (
-      <polyline points={seg} class="line line-30m" />
-    ))
-  }
-
-  {/* Data points — skip null fields */}
-  {
-    chart.readings.map((r) => (
+    series.map((s) => (
       <>
-        {r.contrast10S != null && (
-          <circle
-            cx={xScale(r.position)}
-            cy={yScale(r.contrast10S)}
-            r="2"
-            class="dot dot-10"
+        {toSegments(s.S).map((seg) => (
+          <polyline
+            points={seg}
+            class="line line-s"
+            style={`stroke: ${s.color}`}
           />
-        )}
-        {r.contrast10M != null && (
-          <circle
-            cx={xScale(r.position)}
-            cy={yScale(r.contrast10M)}
-            r="2"
-            class="dot dot-10"
+        ))}
+        {toSegments(s.M).map((seg) => (
+          <polyline
+            points={seg}
+            class="line line-m"
+            style={`stroke: ${s.color}`}
           />
-        )}
-        {r.resolution30S != null && (
-          <circle
-            cx={xScale(r.position)}
-            cy={yScale(r.resolution30S)}
-            r="2"
-            class="dot dot-30"
-          />
-        )}
-        {r.resolution30M != null && (
-          <circle
-            cx={xScale(r.position)}
-            cy={yScale(r.resolution30M)}
-            r="2"
-            class="dot dot-30"
-          />
-        )}
+        ))}
       </>
     ))
+  }
+
+  {/* Data points — skip null fields. One dot per non-null sample. */}
+  {
+    chart.readings.map((r) =>
+      series.map((s) => (
+        <>
+          {r.samples[s.freq]?.S != null && (
+            <circle
+              cx={xScale(r.position)}
+              cy={yScale(r.samples[s.freq].S!)}
+              r="2"
+              class="dot"
+              style={`stroke: ${s.color}`}
+            />
+          )}
+          {r.samples[s.freq]?.M != null && (
+            <circle
+              cx={xScale(r.position)}
+              cy={yScale(r.samples[s.freq].M!)}
+              r="2"
+              class="dot"
+              style={`stroke: ${s.color}`}
+            />
+          )}
+        </>
+      )),
+    )
   }
 </svg>
 
 <div class="mtf-legend">
-  <span class="legend-item">
-    <span class="legend-swatch swatch-10s"></span> 10 lp/mm S
-  </span>
-  <span class="legend-item">
-    <span class="legend-swatch swatch-10m"></span> 10 lp/mm M
-  </span>
-  <span class="legend-item">
-    <span class="legend-swatch swatch-30s"></span> 30 lp/mm S
-  </span>
-  <span class="legend-item">
-    <span class="legend-swatch swatch-30m"></span> 30 lp/mm M
-  </span>
+  {
+    series.map((s) => (
+      <>
+        <span class="legend-item">
+          <span
+            class="legend-swatch swatch-s"
+            style={`background: ${s.color}`}
+          />{" "}
+          {s.freq} lp/mm S
+        </span>
+        <span class="legend-item">
+          <span
+            class="legend-swatch swatch-m"
+            style={`background-image: repeating-linear-gradient(90deg, ${s.color} 0 4px, transparent 4px 6px)`}
+          />{" "}
+          {s.freq} lp/mm M
+        </span>
+      </>
+    ))
+  }
 </div>
 
 <style>
@@ -214,35 +239,13 @@ const xTicks = chart.readings.map((r) => r.position);
     stroke-width: 1.5;
   }
 
-  .line-10s {
-    stroke: var(--color-accent);
-  }
-
-  .line-10m {
-    stroke: var(--color-accent);
-    stroke-dasharray: 4 2;
-  }
-
-  .line-30s {
-    stroke: #6b9bd2;
-  }
-
-  .line-30m {
-    stroke: #6b9bd2;
+  .line-m {
     stroke-dasharray: 4 2;
   }
 
   .dot {
     fill: var(--color-bg);
     stroke-width: 1;
-  }
-
-  .dot-10 {
-    stroke: var(--color-accent);
-  }
-
-  .dot-30 {
-    stroke: #6b9bd2;
   }
 
   .mtf-legend {
@@ -266,30 +269,7 @@ const xTicks = chart.readings.map((r) => r.position);
     height: 2px;
   }
 
-  .swatch-10s {
-    background: var(--color-accent);
-  }
-
-  .swatch-10m {
-    background: var(--color-accent);
-    background-image: repeating-linear-gradient(
-      90deg,
-      var(--color-accent) 0 4px,
-      transparent 4px 6px
-    );
-    background-color: transparent;
-  }
-
-  .swatch-30s {
-    background: #6b9bd2;
-  }
-
-  .swatch-30m {
-    background-image: repeating-linear-gradient(
-      90deg,
-      #6b9bd2 0 4px,
-      transparent 4px 6px
-    );
+  .swatch-m {
     background-color: transparent;
   }
 </style>
