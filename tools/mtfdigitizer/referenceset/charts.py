@@ -303,18 +303,24 @@ _SIGMA_30_GT: GroundTruthCurves = {
 # (`-15lp.png`, `-20lp.png`, `-40lp.png`) — blue solid = S,
 # red dashed = M, single max aperture (f/4).
 #
-# Image height: 25 mm (GF 44x33 mm medium-format sensor radius is
-# 27.5 mm; Fujifilm publishes the curve out to 25 mm and labels the
-# axis "0..25 mm" — confirmed from the source PNG x-axis ticks at
-# 0/5/10/15/20/25 mm).
+# Image height: 26.9 mm. Tick marks at y=185-186 sit at exactly
+# x = 58, 102, 145, 189, 232 for "5", "10", "15", "20", "25" mm
+# respectively (4 spacings of 43.5 px = 8.7 px/mm). The printed
+# gridline runs from x=15 (corresponds to 0 mm, the leftmost tick
+# position) to x=249 (which projects to (249-15)/8.7 = 26.9 mm —
+# almost the full GF 44x33 sensor half-diagonal of 27.5 mm).
+# Fujifilm draws the data area past the "25" tick label by ~17 px
+# without an explicit tick there; the curves extend to x=249, not
+# x=232.
 #
-# Sample fractions (SAMPLE_FRACTIONS × image_height_mm = 25.0):
-# 0.0, 2.5, 5.0, 7.5, 10.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0 mm.
+# Sample fractions (SAMPLE_FRACTIONS × image_height_mm = 26.9):
+# 0.00, 2.69, 5.38, 8.07, 10.76, 13.45, 16.14, 18.83, 21.52, 24.21,
+# 26.90 mm.
 #
-# Plot box measured against the printed gridlines and the leftmost
-# x-axis tick ("0"): x_left=15, x_right=249 (right edge of the bottom
-# gridline; the "25" tick label sits at x≈250-258 just past the box),
-# y_bottom=184 (bottommost printed gridline = MTF 0.0),
+# Plot box (measured against printed gridlines):
+# x_left=15 (gridline left edge, also "0 mm" tick position)
+# x_right=249 (gridline right edge, ~26.9 mm)
+# y_bottom=184 (bottommost printed gridline = MTF 0.0)
 # y_top=4 (extrapolated one gridline spacing above y=40, MTF=0.8;
 # the MTF=1.0 line is unprinted but spacing is 36 px/0.2).
 #
@@ -680,13 +686,16 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         style_family="fujifilm-permfreq",
         apertures=("f/4",),
         frequencies_lpmm=(15, 20, 40),
-        image_height_mm=25.0,
+        image_height_mm=26.9,
         notes=(
             "Tier 1 anchor for `fujifilm-permfreq` style family (ADR-043). "
             "GF prime, three per-frequency images (15/20/40 lp/mm); blue "
             "solid=S, red dashed=M; single max aperture f/4. 282x212 px per "
-            "image. Plot box (15, 249, 4, 184): x_left and x_right=printed "
-            "gridline bounds, y_bottom=184 (MTF 0.0), y_top=4 (extrapolated "
+            "image. Tick marks at x=58,102,145,189,232 correspond to "
+            "5/10/15/20/25 mm (8.7 px/mm); the plot box right edge at x=249 "
+            "projects to 26.9 mm — Fujifilm draws ~17 px of data area past "
+            "the '25' tick label without an explicit tick there. Plot box "
+            "(15, 249, 4, 184): y_bottom=184 (MTF 0.0), y_top=4 (extrapolated "
             "MTF 1.0; spacing 36 px/0.2)."
         ),
         plot_box=PlotBoxCoords(x_left=15, x_right=249, y_top=4, y_bottom=184),

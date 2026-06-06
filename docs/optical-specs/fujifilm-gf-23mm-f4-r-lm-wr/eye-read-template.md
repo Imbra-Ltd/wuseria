@@ -16,8 +16,14 @@ Three charts, one per spatial frequency:
 - `fujifilm-gf-23mm-f4-r-lm-wr-40lp.png`
 
 A helper rendering with the 11 sample-position lines overlaid is in
-`*-readhelper.png` (gridlines superimposed at the 11 image-height
-positions 0, 2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25 mm).
+`*-readhelper.png`. **Important:** the green vertical lines do NOT
+match the printed black tick labels (5/10/15/20/25). The chart's
+plot area spans 0..26.9 mm (the right gridline edge corresponds to
+~26.9 mm — past Fujifilm's "25 mm" tick label by ~17 px), and the
+digitizer samples at 11 evenly-spaced fractions: image-height
+positions 0.0, 2.7, 5.4, 8.1, 10.8, 13.4, 16.1, 18.8, 21.5, 24.2,
+26.9 mm. Each green vertical line in the helper PNG is labelled
+with its mm value.
 
 Read each value at the intersection of the green vertical sample line
 and the curve, against the printed horizontal gridlines:
@@ -36,22 +42,22 @@ anyway and the calibration runner will report the Δ.
 
 Aperture: f/4 (single max aperture, no F8 panel).
 
-Sample positions in mm: 0.0, 2.5, 5.0, 7.5, 10.0, 12.5, 15.0, 17.5,
-20.0, 22.5, 25.0.
+Sample positions in mm (image_height_mm = 26.9, fractions 0.0..1.0):
+0.0, 2.7, 5.4, 8.1, 10.8, 13.4, 16.1, 18.8, 21.5, 24.2, 26.9.
 
 | Position (mm) | 15S | 15M | 20S | 20M | 40S | 40M |
 | ------------- | --- | --- | --- | --- | --- | --- |
 | 0.0           |     |     |     |     |     |     |
-| 2.5           |     |     |     |     |     |     |
-| 5.0           |     |     |     |     |     |     |
-| 7.5           |     |     |     |     |     |     |
-| 10.0          |     |     |     |     |     |     |
-| 12.5          |     |     |     |     |     |     |
-| 15.0          |     |     |     |     |     |     |
-| 17.5          |     |     |     |     |     |     |
-| 20.0          |     |     |     |     |     |     |
-| 22.5          |     |     |     |     |     |     |
-| 25.0          |     |     |     |     |     |     |
+| 2.7           |     |     |     |     |     |     |
+| 5.4           |     |     |     |     |     |     |
+| 8.1           |     |     |     |     |     |     |
+| 10.8          |     |     |     |     |     |     |
+| 13.4          |     |     |     |     |     |     |
+| 16.1          |     |     |     |     |     |     |
+| 18.8          |     |     |     |     |     |     |
+| 21.5          |     |     |     |     |     |     |
+| 24.2          |     |     |     |     |     |     |
+| 26.9          |     |     |     |     |     |     |
 
 ## After filling in
 
