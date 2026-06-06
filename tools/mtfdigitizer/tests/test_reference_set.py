@@ -39,9 +39,14 @@ EXPECTED_FAMILIES = frozenset(
 def test_reference_set_size_is_within_target() -> None:
     """#933 acceptance was ~6-10 style-spanning charts; the set now also
     holds calibrated charts emitted to the site (one per lens slug as
-    each brand's #795-style digitization task ships). Upper bound is a
-    loose sanity check, not a design ceiling — bump as needed."""
-    assert 6 <= len(REFERENCE_CHARTS) <= 50
+    each brand's #795-style digitization task ships) PLUS Tier 2
+    auto-scaffolded entries (Fuji bulk via ADR-041). Upper bound is a
+    loose sanity check, not a design ceiling — bump as needed.
+
+    Bumped from 50 to 500 to accommodate the Fujifilm Tier 2 bulk
+    (60 lenses scaffolded by `scripts/scaffold_fuji_tier2`) and any
+    future per-brand bulk campaigns."""
+    assert 6 <= len(REFERENCE_CHARTS) <= 500
 
 
 def test_no_duplicate_slugs() -> None:

@@ -828,6 +828,16 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
 )
 
 
+# Tier 2 production entries (ADR-041) auto-scaffolded by
+# `scripts/scaffold_fuji_tier2.py`. Imported here so the extractor
+# sees one unified `REFERENCE_CHARTS` tuple. Re-run the scaffolder if
+# new Fujifilm lenses or chart files appear under
+# `docs/optical-specs/`.
+from ._fuji_tier2_charts import FUJI_TIER2_CHARTS  # noqa: E402
+
+REFERENCE_CHARTS = REFERENCE_CHARTS + FUJI_TIER2_CHARTS
+
+
 STYLE_FAMILIES: frozenset[str] = frozenset(
     chart.style_family for chart in REFERENCE_CHARTS
 )
