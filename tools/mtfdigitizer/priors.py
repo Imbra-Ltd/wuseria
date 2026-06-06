@@ -1,4 +1,5 @@
-"""Physical-plausibility priors (#966, ADR-038 §"Confidence signal").
+"""Physical-plausibility priors (#966, ADR-038 §"Confidence signal",
+generalized for ADR-042's arbitrary-frequency schema).
 
 Render-match (`rendermatch.py`, #963) is one of the two confidence signals
 ADR-038 requires. It catches calibration and merge errors but has two
@@ -13,14 +14,16 @@ This module is the other signal. Four pure-function priors run over the
 `SampledReading` tuple `extract_chart()` returns and report violations of
 hard optical facts no real lens can break:
 
-- `check_center_ge_edge`  — center MTF should not be lower than edge MTF
-- `check_10_ge_30`         — 10 lp/mm should be >= 30 lp/mm on the same side
+- `check_center_ge_edge`     — center MTF should not be lower than edge MTF
+- `check_low_freq_ge_high`   — at the same field point, lower spatial
+                                frequencies should have MTF >= higher
+                                frequencies on the same S/M axis
 - `check_not_suspiciously_flat` — no real lens holds ~1.0 across the field
-- `check_in_range`         — values stay in [0.0, 1.0]
+- `check_in_range`           — values stay in [0.0, 1.0]
 
 `check_all()` runs all four and returns a flat list of violations. An empty
 list means HIGH plausibility; any violation means LOW. The auto-commit gate
-(separate task) combines this verdict with the render-match score.
+(`triage.py`) combines this verdict with the render-match score.
 
 The flatness thresholds (`FLATNESS_MEAN_THRESHOLD`, `FLATNESS_STDEV_THRESHOLD`)
 are module constants tuned in `referenceset/plausibility.md`. The discipline
@@ -29,6 +32,7 @@ from session 101 applies: the thresholds move, not the extractor.
 
 from __future__ import annotations
 
+import re
 import statistics
 from dataclasses import dataclass
 
@@ -36,15 +40,24 @@ from .pipeline.types import SampledReading
 
 
 # --- Field naming ----------------------------------------------------
-# Mirrors `pipeline.rendermatch.CURVE_FIELDS` and the schema in
-# `src/types/mtf.ts`. Duplicated here intentionally — `priors.py` doesn't
-# import from `pipeline.rendermatch` so the two confidence signals stay
-# independently testable.
+# Field names follow the `freq{N}{S|M}` synthetic convention emitted by
+# `pipeline.dispatch.curve_field()` (ADR-042). The priors discover the
+# field set per-reading rather than hardcoding it — Sigma/Samyang/etc.
+# carry {freq10S, freq10M, freq30S, freq30M}, Fuji GF primes carry
+# {freq15S, freq15M, freq20S, freq20M, freq40S, freq40M}, etc.
 
-CONTRAST_10S = "contrast10S"
-CONTRAST_10M = "contrast10M"
-RESOLUTION_30S = "resolution30S"
-RESOLUTION_30M = "resolution30M"
+_FIELD_NAME = re.compile(r"^freq(?P<freq>\d+)(?P<sm>[SM])$")
+
+
+# Backwards-compat constants for callers and tests that referenced the
+# legacy `contrast10S/M`, `resolution30S/M` field names — they now point
+# to the synthetic `freq10S/M`, `freq30S/M` names emitted by the
+# pipeline after ADR-042. New callers should NOT reference these; the
+# priors discover the field set per-reading.
+CONTRAST_10S = "freq10S"
+CONTRAST_10M = "freq10M"
+RESOLUTION_30S = "freq30S"
+RESOLUTION_30M = "freq30M"
 
 FIELDS: tuple[str, ...] = (
     CONTRAST_10S,
@@ -53,13 +66,78 @@ FIELDS: tuple[str, ...] = (
     RESOLUTION_30M,
 )
 
-# Pairs of (low-frequency field, high-frequency field) on the same S/M side.
-# Physical law: at a given position, contrast at 10 lp/mm >= contrast at
-# 30 lp/mm. Inversion typically means the two bands were swapped.
-_FREQ_PAIRS: tuple[tuple[str, str], ...] = (
-    (CONTRAST_10S, RESOLUTION_30S),
-    (CONTRAST_10M, RESOLUTION_30M),
-)
+
+def _parse_field(field: str) -> tuple[int, str] | None:
+    """Parse `freq{N}{S|M}` into (frequency_lpmm, 'S' | 'M').
+
+    Returns `None` for names that don't follow the convention — callers
+    skip those fields rather than raising. The legacy
+    `contrast10S`/`resolution30S` names predate ADR-042 and never appear
+    in pipeline output any more, so a non-match indicates a bug in a
+    caller, not data the priors should validate.
+    """
+    m = _FIELD_NAME.match(field)
+    if m is None:
+        return None
+    return int(m.group("freq")), m.group("sm")
+
+
+def _fields_present(readings: tuple[SampledReading, ...]) -> tuple[str, ...]:
+    """Union of field names across all readings, in insertion order.
+
+    Reading rows are allowed to omit fields the chart did not publish at
+    that position, so the per-reading field sets can differ — though
+    ADR-042's within-chart invariant says they should not.
+    """
+    seen: list[str] = []
+    for r in readings:
+        for field in r.samples:
+            if field not in seen:
+                seen.append(field)
+    return tuple(seen)
+
+
+def _values_for_field(
+    readings: tuple[SampledReading, ...], field: str
+) -> tuple[float | None, ...]:
+    """Pull one column of values across the 11 readings."""
+    return tuple(r.samples.get(field) for r in readings)
+
+
+def _defined(values: tuple[float | None, ...]) -> tuple[float, ...]:
+    """Drop the Nones — what's left is the curve's actual sampled values."""
+    return tuple(v for v in values if v is not None)
+
+
+def _frequency_pairs_by_side(
+    readings: tuple[SampledReading, ...],
+) -> tuple[tuple[str, str], ...]:
+    """All (lower_freq_field, higher_freq_field) pairs on the same S|M side.
+
+    For a chart with frequencies {10, 30} this returns
+    `(("freq10S", "freq30S"), ("freq10M", "freq30M"))`. For a chart with
+    frequencies {15, 20, 40} this returns
+    `(("freq15S", "freq20S"), ("freq15S", "freq40S"), ("freq20S", "freq40S"),
+      ("freq15M", "freq20M"), ("freq15M", "freq40M"), ("freq20M", "freq40M"))`.
+
+    The pairwise enumeration scales as `O(N^2)` in frequency count,
+    which is fine for the published chart range (Fuji's max is 3
+    frequencies per chart → 3 pairs × 2 sides = 6 comparisons).
+    """
+    by_side: dict[str, list[tuple[int, str]]] = {"S": [], "M": []}
+    for field in _fields_present(readings):
+        parsed = _parse_field(field)
+        if parsed is None:
+            continue
+        freq, sm = parsed
+        by_side[sm].append((freq, field))
+    out: list[tuple[str, str]] = []
+    for sm in ("S", "M"):
+        freqs = sorted(by_side[sm], key=lambda fp: fp[0])
+        for i in range(len(freqs)):
+            for j in range(i + 1, len(freqs)):
+                out.append((freqs[i][1], freqs[j][1]))
+    return tuple(out)
 
 
 # --- Tuning knobs ----------------------------------------------------
@@ -110,21 +188,6 @@ class PriorViolation:
     detail: str
 
 
-# --- Helpers ---------------------------------------------------------
-
-
-def _values_for_field(
-    readings: tuple[SampledReading, ...], field: str
-) -> tuple[float | None, ...]:
-    """Pull one column of values across the 11 readings."""
-    return tuple(getattr(r, field) for r in readings)
-
-
-def _defined(values: tuple[float | None, ...]) -> tuple[float, ...]:
-    """Drop the Nones — what's left is the curve's actual sampled values."""
-    return tuple(v for v in values if v is not None)
-
-
 # --- Priors ----------------------------------------------------------
 
 
@@ -142,9 +205,9 @@ def check_center_ge_edge(
     if not readings:
         return violations
     center, edge = readings[0], readings[-1]
-    for field in FIELDS:
-        c = getattr(center, field)
-        e = getattr(edge, field)
+    for field in _fields_present(readings):
+        c = center.samples.get(field)
+        e = edge.samples.get(field)
         if c is None or e is None:
             continue
         if e - c > INEQUALITY_TOLERANCE:
@@ -162,28 +225,33 @@ def check_center_ge_edge(
     return violations
 
 
-def check_10_ge_30(
+def check_low_freq_ge_high(
     readings: tuple[SampledReading, ...],
 ) -> list[PriorViolation]:
-    """10 lp/mm contrast >= 30 lp/mm contrast at every position, same side.
+    """Lower-frequency MTF >= higher-frequency MTF at every position, same side.
 
     Higher spatial frequencies cannot have higher MTF than lower ones
     at the same field point — the optical transfer function is
     monotonically non-increasing in frequency for a physical lens.
     Inversion is the canonical "bands were swapped" signature
     (the example ADR-038 calls out: '10<30 at edge -- bands swapped?').
+
+    Generalizes the legacy 10≥30 check (`check_10_ge_30`) to any pair
+    of declared frequencies on the same S|M axis: for Fuji prime
+    {15, 20, 40} the rule fires when 20S > 15S, 40S > 15S, 40S > 20S,
+    or any of the analogous M comparisons.
     """
     violations: list[PriorViolation] = []
-    for low_field, high_field in _FREQ_PAIRS:
+    for low_field, high_field in _frequency_pairs_by_side(readings):
         for i, r in enumerate(readings):
-            lo = getattr(r, low_field)
-            hi = getattr(r, high_field)
+            lo = r.samples.get(low_field)
+            hi = r.samples.get(high_field)
             if lo is None or hi is None:
                 continue
             if hi - lo > INEQUALITY_TOLERANCE:
                 violations.append(
                     PriorViolation(
-                        prior_name="ten_ge_thirty",
+                        prior_name="low_freq_ge_high",
                         field=high_field,
                         position_index=i,
                         detail=(
@@ -213,7 +281,7 @@ def check_not_suspiciously_flat(
     'insufficient evidence', not a violation).
     """
     violations: list[PriorViolation] = []
-    for field in FIELDS:
+    for field in _fields_present(readings):
         defined = _defined(_values_for_field(readings, field))
         if len(defined) < 2:
             continue
@@ -246,7 +314,7 @@ def check_in_range(
     check that doubles as documentation of the schema contract.
     """
     violations: list[PriorViolation] = []
-    for field in FIELDS:
+    for field in _fields_present(readings):
         for i, v in enumerate(_values_for_field(readings, field)):
             if v is None:
                 continue
@@ -270,10 +338,14 @@ def check_in_range(
 
 _ALL_PRIORS = (
     check_center_ge_edge,
-    check_10_ge_30,
+    check_low_freq_ge_high,
     check_not_suspiciously_flat,
     check_in_range,
 )
+
+# Backwards-compat alias for the legacy function name. The new name
+# (`check_low_freq_ge_high`) generalizes the rule beyond 10 vs 30.
+check_10_ge_30 = check_low_freq_ge_high
 
 
 def check_all(

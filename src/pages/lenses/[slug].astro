@@ -393,30 +393,45 @@ const jsonLd = {
                   )}
                 </span>
                 <MtfChart chart={chart} />
-                <table class="spec-table mtf-table">
-                  <thead>
-                    <tr>
-                      <th>Position</th>
-                      <th>10S</th>
-                      <th>10M</th>
-                      <th>30S</th>
-                      <th>30M</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {chart.readings.map((r) => (
-                      <tr>
-                        <td>
-                          {r.position === 0 ? "Center" : `${r.position}mm`}
-                        </td>
-                        <td>{r.contrast10S?.toFixed(2) ?? DASH}</td>
-                        <td>{r.contrast10M?.toFixed(2) ?? DASH}</td>
-                        <td>{r.resolution30S?.toFixed(2) ?? DASH}</td>
-                        <td>{r.resolution30M?.toFixed(2) ?? DASH}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                {(() => {
+                  // Per-chart frequency set, sorted low → high. Built
+                  // from the actual rows so a brand that publishes at
+                  // {15, 20, 40} gets those columns, not the canonical
+                  // {10, 30}.
+                  const chartFrequencies = Array.from(
+                    new Set(
+                      chart.readings.flatMap((r) =>
+                        Object.keys(r.samples).map(Number),
+                      ),
+                    ),
+                  ).sort((a, b) => a - b);
+                  return (
+                    <table class="spec-table mtf-table">
+                      <thead>
+                        <tr>
+                          <th>Position</th>
+                          {chartFrequencies.flatMap((f) => [
+                            <th>{f}S</th>,
+                            <th>{f}M</th>,
+                          ])}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {chart.readings.map((r) => (
+                          <tr>
+                            <td>
+                              {r.position === 0 ? "Center" : `${r.position}mm`}
+                            </td>
+                            {chartFrequencies.flatMap((f) => [
+                              <td>{r.samples[f]?.S?.toFixed(2) ?? DASH}</td>,
+                              <td>{r.samples[f]?.M?.toFixed(2) ?? DASH}</td>,
+                            ])}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  );
+                })()}
               </div>
             ))}
             <p class="mtf-source">

@@ -54,7 +54,8 @@ describe("mtf-readings data integrity", () => {
     const samples: Sample[] = entries.flatMap(([slug, data]) =>
       data.charts.flatMap((c) =>
         c.readings.flatMap((r) =>
-          [r.contrast10S, r.contrast10M, r.resolution30S, r.resolution30M]
+          Object.values(r.samples)
+            .flatMap((sm) => [sm.S, sm.M])
             .filter((v): v is number => v != null)
             .map((value) => ({ slug, position: r.position, value })),
         ),
@@ -136,20 +137,26 @@ describe("mtf-readings data integrity", () => {
       data.charts.flatMap((chart) => {
         const centre = chart.readings.find((r) => r.position === 0);
         if (!centre) return [];
-        const raw = {
-          contrast10S: centre.contrast10S,
-          contrast10M: centre.contrast10M,
-          resolution30S: centre.resolution30S,
-          resolution30M: centre.resolution30M,
-        };
-        return Object.entries(raw)
-          .filter((entry): entry is [string, number] => entry[1] != null)
-          .map(([field, value]) => ({
-            slug,
-            aperture: chart.aperture,
-            field,
-            value,
-          }));
+        const out: CentreField[] = [];
+        for (const [freq, sm] of Object.entries(centre.samples)) {
+          if (sm.S != null) {
+            out.push({
+              slug,
+              aperture: chart.aperture,
+              field: `${freq}S`,
+              value: sm.S,
+            });
+          }
+          if (sm.M != null) {
+            out.push({
+              slug,
+              aperture: chart.aperture,
+              field: `${freq}M`,
+              value: sm.M,
+            });
+          }
+        }
+        return out;
       }),
     );
 
@@ -158,6 +165,32 @@ describe("mtf-readings data integrity", () => {
         c.value,
         `${c.slug} ${c.aperture}: centre ${c.field} is 0 (undetected curve?)`,
       ).toBeGreaterThan(0);
+    }
+  });
+
+  // ADR-042 invariant: within one MtfChart, every reading row carries
+  // the same set of frequency keys in `samples`. A divergence indicates
+  // either a malformed dataset or a curator error mid-chart. Cross-chart
+  // differences (prime + zoom on the same lens) are allowed — only
+  // within-chart consistency is enforced.
+  it("samples key set is consistent across rows within a chart", () => {
+    for (const [slug, data] of entries) {
+      for (const chart of data.charts) {
+        const expectedKeys = Object.keys(chart.readings[0].samples)
+          .map(Number)
+          .sort((a, b) => a - b)
+          .join(",");
+        for (const r of chart.readings) {
+          const rowKeys = Object.keys(r.samples)
+            .map(Number)
+            .sort((a, b) => a - b)
+            .join(",");
+          expect(
+            rowKeys,
+            `${slug} ${chart.aperture} pos ${r.position}: row frequencies ${rowKeys} differ from chart ${expectedKeys}`,
+          ).toBe(expectedKeys);
+        }
+      }
     }
   });
 });

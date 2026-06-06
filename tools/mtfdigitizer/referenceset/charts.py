@@ -131,13 +131,13 @@ class ReferenceChart:
 _SIGMA_56_GT: GroundTruthCurves = {
     "f/1.4": {
         # Red solid — 10S — flat at top until knee near 11mm
-        "contrast10S": (0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.94, 0.86, 0.68),
+        "freq10S": (0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.94, 0.86, 0.68),
         # Red dashed — 10M — sits slightly above 10S until edge
-        "contrast10M": (0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.96, 0.93, 0.87),
+        "freq10M": (0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.96, 0.93, 0.87),
         # Blue solid — 30S — starts ~0.86, slow sag, steep edge drop
-        "resolution30S": (0.86, 0.86, 0.86, 0.85, 0.84, 0.82, 0.81, 0.80, 0.74, 0.60, 0.33),
+        "freq30S": (0.86, 0.86, 0.86, 0.85, 0.84, 0.82, 0.81, 0.80, 0.74, 0.60, 0.33),
         # Blue dashed — 30M — sits above 30S, gentler edge drop
-        "resolution30M": (0.87, 0.87, 0.87, 0.88, 0.87, 0.86, 0.86, 0.85, 0.83, 0.68, 0.60),
+        "freq30M": (0.87, 0.87, 0.87, 0.88, 0.87, 0.86, 0.86, 0.85, 0.83, 0.68, 0.60),
     },
 }
 
@@ -145,13 +145,13 @@ _SIGMA_56_GT: GroundTruthCurves = {
 _SAMYANG_85_GT: GroundTruthCurves = {
     "MAX": {
         # Dark red — 10S — flat near top, sharp knee past 17mm
-        "contrast10S": (0.91, 0.92, 0.93, 0.94, 0.94, 0.94, 0.94, 0.93, 0.91, 0.86, 0.78),
+        "freq10S": (0.91, 0.92, 0.93, 0.94, 0.94, 0.94, 0.94, 0.93, 0.91, 0.86, 0.78),
         # Pink — 10M — similar to 10S but holds at edge
-        "contrast10M": (0.91, 0.92, 0.93, 0.93, 0.94, 0.94, 0.94, 0.94, 0.94, 0.93, 0.93),
+        "freq10M": (0.91, 0.92, 0.93, 0.93, 0.94, 0.94, 0.94, 0.94, 0.94, 0.93, 0.93),
         # Dark grey — 30S — gradual drop with a slight uptick at edge
-        "resolution30S": (0.70, 0.68, 0.66, 0.63, 0.62, 0.60, 0.58, 0.57, 0.57, 0.54, 0.52),
+        "freq30S": (0.70, 0.68, 0.66, 0.63, 0.62, 0.60, 0.58, 0.57, 0.57, 0.54, 0.52),
         # Light grey — 30M — near-linear drop
-        "resolution30M": (0.70, 0.67, 0.66, 0.64, 0.62, 0.61, 0.60, 0.59, 0.58, 0.57, 0.57),
+        "freq30M": (0.70, 0.67, 0.66, 0.64, 0.62, 0.61, 0.60, 0.59, 0.58, 0.57, 0.57),
     },
 }
 
@@ -162,10 +162,10 @@ _SAMYANG_85_GT: GroundTruthCurves = {
 # the prior catches. Ground truth here is "what the chart literally shows."
 _SAMYANG_300_GT: GroundTruthCurves = {
     "MAX": {
-        "contrast10S": (1.0,) * 11,
-        "contrast10M": (1.0,) * 11,
-        "resolution30S": (1.0,) * 11,
-        "resolution30M": (1.0,) * 11,
+        "freq10S": (1.0,) * 11,
+        "freq10M": (1.0,) * 11,
+        "freq30S": (1.0,) * 11,
+        "freq30M": (1.0,) * 11,
     },
 }
 
@@ -178,13 +178,13 @@ _SAMYANG_300_GT: GroundTruthCurves = {
 _SEVENARTISANS_50_GT: GroundTruthCurves = {
     "f/1.2": {
         # Blue solid — 10M — upper of the blue pair (T1 label)
-        "contrast10M": (0.92, 0.92, 0.92, 0.92, 0.92, 0.91, 0.90, 0.89, 0.88, 0.85, 0.78),
+        "freq10M": (0.92, 0.92, 0.92, 0.92, 0.92, 0.91, 0.90, 0.89, 0.88, 0.85, 0.78),
         # Blue dashed — 10S — lower of the blue pair (T2 label)
-        "contrast10S": (0.91, 0.91, 0.91, 0.90, 0.89, 0.88, 0.86, 0.82, 0.78, 0.74, 0.70),
+        "freq10S": (0.91, 0.91, 0.91, 0.90, 0.89, 0.88, 0.86, 0.82, 0.78, 0.74, 0.70),
         # Green solid — 30M — middle curve (S2 label); smooth fall
-        "resolution30M": (0.79, 0.78, 0.76, 0.72, 0.68, 0.64, 0.62, 0.60, 0.55, 0.50, 0.47),
+        "freq30M": (0.79, 0.78, 0.76, 0.72, 0.68, 0.64, 0.62, 0.60, 0.55, 0.50, 0.47),
         # Green dashed — 30S — the curve with the dip-and-recover (S1 label)
-        "resolution30S": (0.78, 0.76, 0.72, 0.66, 0.58, 0.52, 0.48, 0.46, 0.45, 0.46, 0.47),
+        "freq30S": (0.78, 0.76, 0.72, 0.66, 0.58, 0.52, 0.48, 0.46, 0.45, 0.46, 0.47),
     },
 }
 
@@ -196,13 +196,13 @@ _SEVENARTISANS_50_GT: GroundTruthCurves = {
 _TOKINA_23_GT: GroundTruthCurves = {
     "f/1.4": {
         # Red solid upper — 10S
-        "contrast10S": (0.95, 0.97, 0.95, 0.92, 0.93, 0.92, 0.92, 0.90, 0.92, 0.85, 0.82),
+        "freq10S": (0.95, 0.97, 0.95, 0.92, 0.93, 0.92, 0.92, 0.90, 0.92, 0.85, 0.82),
         # Blue dotted upper — 10M
-        "contrast10M": (0.94, 0.93, 0.91, 0.92, 0.90, 0.90, 0.87, 0.82, 0.74, 0.68, 0.62),
+        "freq10M": (0.94, 0.93, 0.91, 0.92, 0.90, 0.90, 0.87, 0.82, 0.74, 0.68, 0.62),
         # Red solid lower — 30S — has the local max near 5mm
-        "resolution30S": (0.67, 0.70, 0.73, 0.72, 0.62, 0.55, 0.58, 0.55, 0.65, 0.58, 0.55),
+        "freq30S": (0.67, 0.70, 0.73, 0.72, 0.62, 0.55, 0.58, 0.55, 0.65, 0.58, 0.55),
         # Blue dotted lower — 30M — steepest edge falloff
-        "resolution30M": (0.68, 0.65, 0.60, 0.57, 0.58, 0.58, 0.58, 0.55, 0.55, 0.48, 0.32),
+        "freq30M": (0.68, 0.65, 0.60, 0.57, 0.58, 0.58, 0.58, 0.55, 0.55, 0.48, 0.32),
     },
 }
 
@@ -212,13 +212,13 @@ _TOKINA_23_GT: GroundTruthCurves = {
 _TOKINA_33_GT: GroundTruthCurves = {
     "f/1.4": {
         # Red solid upper — 10S
-        "contrast10S": (0.95, 0.96, 0.93, 0.95, 0.91, 0.92, 0.91, 0.92, 0.87, 0.81, 0.76),
+        "freq10S": (0.95, 0.96, 0.93, 0.95, 0.91, 0.92, 0.91, 0.92, 0.87, 0.81, 0.76),
         # Blue dotted upper — 10M; gentler decline to edge
-        "contrast10M": (0.95, 0.94, 0.96, 0.95, 0.92, 0.90, 0.85, 0.80, 0.74, 0.67, 0.60),
+        "freq10M": (0.95, 0.94, 0.96, 0.95, 0.92, 0.90, 0.85, 0.80, 0.74, 0.67, 0.60),
         # Red solid lower — 30S; small peak ~5mm, dip then edge fall
-        "resolution30S": (0.72, 0.69, 0.71, 0.72, 0.71, 0.65, 0.55, 0.50, 0.57, 0.55, 0.30),
+        "freq30S": (0.72, 0.69, 0.71, 0.72, 0.71, 0.65, 0.55, 0.50, 0.57, 0.55, 0.30),
         # Blue dotted lower — 30M; steady decline, edge crash
-        "resolution30M": (0.72, 0.67, 0.62, 0.58, 0.55, 0.50, 0.45, 0.42, 0.45, 0.41, 0.30),
+        "freq30M": (0.72, 0.67, 0.62, 0.58, 0.55, 0.50, 0.45, 0.42, 0.45, 0.41, 0.30),
     },
 }
 
@@ -226,13 +226,13 @@ _TOKINA_33_GT: GroundTruthCurves = {
 _TOKINA_56_GT: GroundTruthCurves = {
     "f/1.4": {
         # Red solid upper — 10S; bumpy with small peak near 4mm
-        "contrast10S": (0.93, 0.90, 0.88, 0.93, 0.87, 0.86, 0.85, 0.78, 0.72, 0.70, 0.65),
+        "freq10S": (0.93, 0.90, 0.88, 0.93, 0.87, 0.86, 0.85, 0.78, 0.72, 0.70, 0.65),
         # Blue dotted upper — 10M; smoother, holds high then drops at edge
-        "contrast10M": (0.93, 0.90, 0.88, 0.90, 0.89, 0.87, 0.88, 0.85, 0.80, 0.75, 0.62),
+        "freq10M": (0.93, 0.90, 0.88, 0.90, 0.89, 0.87, 0.88, 0.85, 0.80, 0.75, 0.62),
         # Red solid lower — 30S; mid-field bumpy, falls to ~0.45 plateau
-        "resolution30S": (0.72, 0.65, 0.60, 0.65, 0.62, 0.65, 0.63, 0.55, 0.45, 0.43, 0.45),
+        "freq30S": (0.72, 0.65, 0.60, 0.65, 0.62, 0.65, 0.63, 0.55, 0.45, 0.43, 0.45),
         # Blue dotted lower — 30M; plateau then crash past 12mm
-        "resolution30M": (0.70, 0.65, 0.62, 0.58, 0.55, 0.55, 0.55, 0.55, 0.52, 0.45, 0.18),
+        "freq30M": (0.70, 0.65, 0.62, 0.58, 0.55, 0.55, 0.55, 0.55, 0.52, 0.45, 0.18),
     },
 }
 
@@ -247,10 +247,10 @@ _TOKINA_56_GT: GroundTruthCurves = {
 # the printed y-axis line / right plot border in the chart artwork.
 _TOKINA_11_18_AT_11_GT: GroundTruthCurves = {
     "F2.8": {
-        "contrast10S": (None, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.98, 0.92, None),
-        "contrast10M": (None, 1.00, 1.00, 1.00, 0.99, 0.98, 0.95, 0.92, 0.91, 0.88, None),
-        "resolution30S": (None, 0.98, 0.94, 0.88, 0.84, 0.83, 0.85, 0.84, 0.76, 0.60, None),
-        "resolution30M": (None, 0.96, 0.90, 0.89, 0.89, 0.79, 0.69, 0.59, 0.54, 0.48, None),
+        "freq10S": (None, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.98, 0.92, None),
+        "freq10M": (None, 1.00, 1.00, 1.00, 0.99, 0.98, 0.95, 0.92, 0.91, 0.88, None),
+        "freq30S": (None, 0.98, 0.94, 0.88, 0.84, 0.83, 0.85, 0.84, 0.76, 0.60, None),
+        "freq30M": (None, 0.96, 0.90, 0.89, 0.89, 0.79, 0.69, 0.59, 0.54, 0.48, None),
     },
 }
 
@@ -259,10 +259,10 @@ _TOKINA_11_18_AT_11_GT: GroundTruthCurves = {
 # the long end of a wide zoom).
 _TOKINA_11_18_AT_18_GT: GroundTruthCurves = {
     "F2.8": {
-        "contrast10S": (None, 1.00, 1.00, 1.00, 1.00, 0.99, 0.98, 0.95, 0.91, 0.83, 0.74),
-        "contrast10M": (None, 1.00, 1.00, 0.99, 0.99, 0.98, 0.96, 0.93, 0.90, 0.88, None),
-        "resolution30S": (None, 0.91, 0.88, 0.83, 0.79, 0.74, 0.66, 0.55, 0.49, 0.48, 0.43),
-        "resolution30M": (None, 0.89, 0.82, 0.79, 0.78, 0.71, 0.61, 0.51, 0.42, 0.35, None),
+        "freq10S": (None, 1.00, 1.00, 1.00, 1.00, 0.99, 0.98, 0.95, 0.91, 0.83, 0.74),
+        "freq10M": (None, 1.00, 1.00, 0.99, 0.99, 0.98, 0.96, 0.93, 0.90, 0.88, None),
+        "freq30S": (None, 0.91, 0.88, 0.83, 0.79, 0.74, 0.66, 0.55, 0.49, 0.48, 0.43),
+        "freq30M": (None, 0.89, 0.82, 0.79, 0.78, 0.71, 0.61, 0.51, 0.42, 0.35, None),
     },
 }
 
@@ -273,10 +273,10 @@ _TOKINA_11_18_AT_18_GT: GroundTruthCurves = {
 # light-blue curve, idealized-flat) is not declared.
 _VILTROX_75_GT: GroundTruthCurves = {
     "f/1.2": {
-        "contrast10S": (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.99, 0.99, 0.97, 0.95, 0.95),
-        "contrast10M": (0.99, 0.99, 0.98, 0.98, 0.97, 0.97, 0.95, 0.92, 0.88, 0.85, 0.82),
-        "resolution30S": (0.93, 0.93, 0.93, 0.93, 0.92, 0.92, 0.91, 0.90, 0.87, 0.82, 0.75),
-        "resolution30M": (0.92, 0.91, 0.90, 0.90, 0.89, 0.88, 0.86, 0.82, 0.78, 0.72, 0.65),
+        "freq10S": (1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.99, 0.99, 0.97, 0.95, 0.95),
+        "freq10M": (0.99, 0.99, 0.98, 0.98, 0.97, 0.97, 0.95, 0.92, 0.88, 0.85, 0.82),
+        "freq30S": (0.93, 0.93, 0.93, 0.93, 0.92, 0.92, 0.91, 0.90, 0.87, 0.82, 0.75),
+        "freq30M": (0.92, 0.91, 0.90, 0.90, 0.89, 0.88, 0.86, 0.82, 0.78, 0.72, 0.65),
     },
 }
 
@@ -290,10 +290,126 @@ _VILTROX_75_GT: GroundTruthCurves = {
 # 30M holds higher at the edge (~0.57).
 _SIGMA_30_GT: GroundTruthCurves = {
     "f/1.4": {
-        "contrast10S": (0.91, 0.91, 0.92, 0.92, 0.92, 0.92, 0.92, 0.92, 0.91, 0.86, 0.77),
-        "contrast10M": (0.91, 0.91, 0.91, 0.91, 0.91, 0.91, 0.91, 0.92, 0.92, 0.91, 0.90),
-        "resolution30S": (0.77, 0.76, 0.76, 0.75, 0.74, 0.73, 0.72, 0.71, 0.67, 0.59, 0.38),
-        "resolution30M": (0.77, 0.76, 0.73, 0.72, 0.70, 0.70, 0.70, 0.69, 0.63, 0.58, 0.57),
+        "freq10S": (0.91, 0.91, 0.92, 0.92, 0.92, 0.92, 0.92, 0.92, 0.91, 0.86, 0.77),
+        "freq10M": (0.91, 0.91, 0.91, 0.91, 0.91, 0.91, 0.91, 0.92, 0.92, 0.91, 0.90),
+        "freq30S": (0.77, 0.76, 0.76, 0.75, 0.74, 0.73, 0.72, 0.71, 0.67, 0.59, 0.38),
+        "freq30M": (0.77, 0.76, 0.73, 0.72, 0.70, 0.70, 0.70, 0.69, 0.63, 0.58, 0.57),
+    },
+}
+
+# Fujifilm GF 23mm f/4 R LM WR — Tier 1 anchor for the
+# `fujifilm-permfreq` style family (ADR-043). 282x212 px per chart;
+# three frequencies (15/20/40 lp/mm) sit in their own files
+# (`-15lp.png`, `-20lp.png`, `-40lp.png`) — blue solid = S,
+# red dashed = M, single max aperture (f/4).
+#
+# Image height: 26.9 mm. Tick marks at y=185-186 sit at exactly
+# x = 58, 102, 145, 189, 232 for "5", "10", "15", "20", "25" mm
+# respectively (4 spacings of 43.5 px = 8.7 px/mm). The printed
+# gridline runs from x=15 (corresponds to 0 mm, the leftmost tick
+# position) to x=249 (which projects to (249-15)/8.7 = 26.9 mm —
+# almost the full GF 44x33 sensor half-diagonal of 27.5 mm).
+# Fujifilm draws the data area past the "25" tick label by ~17 px
+# without an explicit tick there; the curves extend to x=249, not
+# x=232.
+#
+# Sample fractions (SAMPLE_FRACTIONS × image_height_mm = 26.9):
+# 0.00, 2.69, 5.38, 8.07, 10.76, 13.45, 16.14, 18.83, 21.52, 24.21,
+# 26.90 mm.
+#
+# Plot box (measured against printed gridlines):
+# x_left=15 (gridline left edge, also "0 mm" tick position)
+# x_right=249 (gridline right edge, ~26.9 mm)
+# y_bottom=184 (bottommost printed gridline = MTF 0.0)
+# y_top=4 (extrapolated one gridline spacing above y=40, MTF=0.8;
+# the MTF=1.0 line is unprinted but spacing is 36 px/0.2).
+#
+# DRAFT ground truth: TO BE FILLED IN BY THE MAINTAINER via eye-read
+# of the three source PNGs against the chart's printed gridlines
+# (5 horizontal lines at MTF 0.0/0.2/0.4/0.6/0.8 plus the implied
+# 1.0 boundary at the top of the curve area). Per
+# `feedback_agent_no_gt_eye_read`, the agent does NOT eye-read these
+# values — they exist as `None` placeholders below until the
+# maintainer enters them.
+#
+# Reading guidance (gridline ticks): 0.0 baseline, 0.2 line is 4
+# divisions below the top; eye precision is ~±0.02-0.03 (half a
+# gridline tick is 0.10). Order of fields below: freq{N}S then
+# freq{N}M for each of the three frequencies.
+_FUJI_GF_23_GT: GroundTruthCurves = {
+    "f/4": {
+        # 15 lp/mm — blue solid (S) holds ~0.99 to ~16 mm then knees
+        # down to 0.75 at the edge; red dashed (M) holds higher, only
+        # dipping to 0.92 at 26.9 mm.
+        "freq15S": (0.99, 0.99, 0.99, 0.99, 0.98, 0.98, 0.97, 0.94, 0.88, 0.82, 0.75),
+        "freq15M": (0.99, 0.99, 0.99, 0.99, 0.98, 0.98, 0.97, 0.96, 0.96, 0.94, 0.92),
+        # 20 lp/mm — S knees harder past 16 mm down to 0.58 at the
+        # edge; M holds in the 0.79–0.97 band with a small wobble.
+        "freq20S": (0.97, 0.97, 0.97, 0.95, 0.94, 0.92, 0.89, 0.81, 0.71, 0.63, 0.58),
+        "freq20M": (0.97, 0.97, 0.95, 0.95, 0.94, 0.91, 0.89, 0.89, 0.89, 0.86, 0.79),
+        # 40 lp/mm — most aggressive falloff. S drops to 0.46 at the
+        # edge; M oscillates from dashed-line print pattern.
+        "freq40S": (0.89, 0.90, 0.88, 0.84, 0.79, 0.74, 0.71, 0.67, 0.60, 0.53, 0.46),
+        "freq40M": (0.89, 0.90, 0.86, 0.84, 0.82, 0.72, 0.73, 0.71, 0.74, 0.70, 0.53),
+    },
+}
+
+# Fujifilm XF 23mm f/1.4 R LM WR — second Tier 1 anchor for the
+# `fujifilm-permfreq` style family (ADR-043). XF (APS-C) lenses
+# publish at 15 + 45 lp/mm and to the APS-C sensor half-diagonal
+# of 14.2 mm — different scale from the GF cohort. Adding the second
+# anchor cross-validates the dispatch against the XF body of charts
+# (per ADR-041, more than one anchor per (brand, style_family) is
+# allowed and useful).
+#
+# Image format: 376x282 px, RGBA with transparent background — the
+# loader composites over white before extraction.
+#
+# Image height: 14.2 mm (APS-C 23.5x15.6 mm half-diagonal ≈ 14.1 mm;
+# Fujifilm labels the rightmost tick as "14.2 mm" explicitly).
+#
+# Tick label centers at x = 16, 125, 231.5, 315 → 0, 5, 10, 14.2 mm.
+# Dark x-axis baseline at y=245 runs from x=19 to x=319 (300 px wide).
+# Calibration: (319 - 19) / 14.2 = 21.13 px/mm. Plot box uses the
+# crisp dark-axis bounds.
+#
+# Sample fractions (SAMPLE_FRACTIONS × image_height_mm = 14.2):
+# 0.00, 1.42, 2.84, 4.26, 5.68, 7.10, 8.52, 9.94, 11.36, 12.78,
+# 14.20 mm.
+#
+# Plot box:
+# x_left=19 (left edge of dark x-axis, = 0 mm)
+# x_right=319 (right edge of dark x-axis, = 14.2 mm)
+# y_bottom=245 (dark x-axis baseline = MTF 0.0)
+# y_top=40 (extrapolated one gridline spacing above y=81, MTF=0.8;
+# the MTF=1.0 line is unprinted; light gridline spacing is 41 px/0.2).
+#
+# DRAFT ground truth: TO BE FILLED IN BY THE MAINTAINER. Per
+# `feedback_agent_no_gt_eye_read` the agent does NOT eye-read these
+# values; placeholders below until the maintainer fills them in.
+# Only ONE aperture (f/1.4 max) and TWO frequencies (15 + 45) — total
+# 11 × 2 × 2 = 44 values to read.
+#
+# Reading guidance: four printed light gridlines at MTF 0.2/0.4/0.6/0.8,
+# dark axis at MTF 0.0. The MTF 1.0 line is unprinted but is the same
+# 41-px spacing above the topmost light gridline (y≈40).
+_FUJI_XF_23_GT: GroundTruthCurves = {
+    "f/1.4": {
+        # 15 lp/mm — blue solid (S) and red dashed (M). Both start
+        # at 0.96, S knees down to 0.81 at edge; M holds in the
+        # 0.94–0.96 band until a sharp drop to 0.86 at the corner.
+        # Position 1.4 mm filled at 0.96 by eyeball (extractor returned
+        # None — first off-center sample landed in a print gap, the
+        # curve is clearly at the same ~0.96 level as positions 0.0
+        # and 2.8 mm in the source PNG).
+        "freq15S": (0.96, 0.96, 0.95, 0.95, 0.93, 0.91, 0.88, 0.85, 0.83, 0.82, 0.81),
+        "freq15M": (0.96, 0.96, 0.95, 0.96, 0.96, 0.96, 0.95, 0.94, 0.94, 0.92, 0.86),
+        # 45 lp/mm — S has a dip-and-recover shape: 0.80 at center,
+        # drops to 0.51 at 9.9 mm, climbs back to 0.58 at edge.
+        # M holds in 0.72 band through ~7 mm, then drops to 0.48 at
+        # the corner.
+        "freq45S": (0.80, 0.79, 0.76, 0.73, 0.66, 0.58, 0.53, 0.51, 0.53, 0.56, 0.58),
+        "freq45M": (0.80, 0.75, 0.72, 0.72, 0.72, 0.72, 0.69, 0.68, 0.67, 0.60, 0.48),
     },
 }
 
@@ -621,6 +737,86 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         ground_truth=_VILTROX_75_GT,
     ),
     ReferenceChart(
+        slug="fujifilm-gf-23mm-f4-r-lm-wr",
+        chart_path=(
+            "docs/optical-specs/fujifilm-gf-23mm-f4-r-lm-wr/"
+            "fujifilm-gf-23mm-f4-r-lm-wr-15lp.png"
+        ),
+        style_family="fujifilm-permfreq",
+        apertures=("f/4",),
+        frequencies_lpmm=(15, 20, 40),
+        image_height_mm=26.9,
+        notes=(
+            "Tier 1 anchor for `fujifilm-permfreq` style family (ADR-043). "
+            "GF prime, three per-frequency images (15/20/40 lp/mm); blue "
+            "solid=S, red dashed=M; single max aperture f/4. 282x212 px per "
+            "image. Tick marks at x=58,102,145,189,232 correspond to "
+            "5/10/15/20/25 mm (8.7 px/mm); the plot box right edge at x=249 "
+            "projects to 26.9 mm — Fujifilm draws ~17 px of data area past "
+            "the '25' tick label without an explicit tick there. Plot box "
+            "(15, 249, 4, 184): y_bottom=184 (MTF 0.0), y_top=4 (extrapolated "
+            "MTF 1.0; spacing 36 px/0.2)."
+        ),
+        plot_box=PlotBoxCoords(x_left=15, x_right=249, y_top=4, y_bottom=184),
+        ground_truth=_FUJI_GF_23_GT,
+        additional_views=(
+            ChartView(
+                chart_path=(
+                    "docs/optical-specs/fujifilm-gf-23mm-f4-r-lm-wr/"
+                    "fujifilm-gf-23mm-f4-r-lm-wr-20lp.png"
+                ),
+                plot_box=PlotBoxCoords(
+                    x_left=15, x_right=249, y_top=4, y_bottom=184
+                ),
+            ),
+            ChartView(
+                chart_path=(
+                    "docs/optical-specs/fujifilm-gf-23mm-f4-r-lm-wr/"
+                    "fujifilm-gf-23mm-f4-r-lm-wr-40lp.png"
+                ),
+                plot_box=PlotBoxCoords(
+                    x_left=15, x_right=249, y_top=4, y_bottom=184
+                ),
+            ),
+        ),
+    ),
+    ReferenceChart(
+        slug="fujifilm-xf-23mm-f1-4-r-lm-wr",
+        chart_path=(
+            "docs/optical-specs/fujifilm-xf-23mm-f1-4-r-lm-wr/"
+            "fujifilm-xf-23mm-f1-4-r-lm-wr-15lp.png"
+        ),
+        style_family="fujifilm-permfreq",
+        apertures=("f/1.4",),
+        frequencies_lpmm=(15, 45),
+        image_height_mm=14.2,
+        notes=(
+            "Second Tier 1 anchor for `fujifilm-permfreq` (ADR-041 allows "
+            "multiple anchors per family). XF (APS-C) prime, two "
+            "per-frequency images (15/45 lp/mm); blue solid=S, red "
+            "dashed=M; single max aperture f/1.4. 376x282 px RGBA "
+            "(transparent background; loader composites over white). "
+            "Tick label centers at x=16,125,231.5,315 correspond to "
+            "0/5/10/14.2 mm; dark x-axis baseline at y=245 runs x=19..319 "
+            "(21.13 px/mm). Plot box (19, 319, 40, 245): y_bottom=245 "
+            "(dark axis = MTF 0.0), y_top=40 (extrapolated MTF 1.0; "
+            "light gridline spacing is 41 px/0.2)."
+        ),
+        plot_box=PlotBoxCoords(x_left=19, x_right=319, y_top=40, y_bottom=245),
+        ground_truth=_FUJI_XF_23_GT,
+        additional_views=(
+            ChartView(
+                chart_path=(
+                    "docs/optical-specs/fujifilm-xf-23mm-f1-4-r-lm-wr/"
+                    "fujifilm-xf-23mm-f1-4-r-lm-wr-45lp.png"
+                ),
+                plot_box=PlotBoxCoords(
+                    x_left=19, x_right=319, y_top=40, y_bottom=245
+                ),
+            ),
+        ),
+    ),
+    ReferenceChart(
         slug="zeiss-touit-32mm-f1-8",
         chart_path="docs/optical-specs/zeiss-touit-32mm-f1-8/zeiss-touit-32mm-f1-8-mtf.png",
         style_family="multifreq-press-kit",
@@ -630,6 +826,16 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         notes="German press kit; B&W solid=S, dashed=T; THREE frequencies — must reject as out-of-band for 2-freq profiles",
     ),
 )
+
+
+# Tier 2 production entries (ADR-041) auto-scaffolded by
+# `scripts/scaffold_fuji_tier2.py`. Imported here so the extractor
+# sees one unified `REFERENCE_CHARTS` tuple. Re-run the scaffolder if
+# new Fujifilm lenses or chart files appear under
+# `docs/optical-specs/`.
+from ._fuji_tier2_charts import FUJI_TIER2_CHARTS  # noqa: E402
+
+REFERENCE_CHARTS = REFERENCE_CHARTS + FUJI_TIER2_CHARTS
 
 
 STYLE_FAMILIES: frozenset[str] = frozenset(

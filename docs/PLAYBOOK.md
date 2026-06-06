@@ -308,6 +308,46 @@ deferred to a follow-up PR). After applying, regenerate logs with
 path in each `digitization-log.md` matches the new file name. See
 #1017 and ADR-033 §"MTF chart naming".
 
+**Fujifilm-specific tooling (ADR-043, per-frequency chart family):**
+
+```bash
+cd tools && py -m mtfdigitizer.fuji_plotbox <chart.png>           # auto-detect plot box for one Fuji chart
+cd tools && py -m mtfdigitizer.scripts.scaffold_fuji_tier2        # preview Tier 2 ReferenceChart entries
+cd tools && py -m mtfdigitizer.scripts.scaffold_fuji_tier2 --write  # materialize _fuji_tier2_charts.py
+cd tools && py -m mtfdigitizer.scripts.emit_fuji_tier2            # preview TS object literals
+cd tools && py -m mtfdigitizer.scripts.emit_fuji_tier2 --write    # patch src/data/mtf-readings.ts
+```
+
+Fujifilm publishes one chart image per spatial frequency
+(`-15lp.png`, `-20lp.png`, ...), so the standard single-image
+extractor needs orchestration to merge per-frequency views. The
+above tools handle that case end-to-end:
+
+- **`fuji_plotbox`** — composes RGBA over white, detects gridlines +
+  tick-label clusters, calibrates `image_height_mm` from the mount
+  default (GF=26.9 mm, XF=14.2 mm — the sensor half-diagonal Fuji
+  publishes MTF out to). 198/199 Fuji charts in the current corpus
+  detect cleanly.
+- **`scaffold_fuji_tier2`** — walks every `docs/optical-specs/fujifilm-*`
+  folder, runs the detector, groups charts by lens, and emits a
+  `_fuji_tier2_charts.py` module of Tier 2 `ReferenceChart` entries
+  (60 lenses, 193 chart views as of #1058). Imported by `charts.py`
+  via concat into `REFERENCE_CHARTS`.
+- **`emit_fuji_tier2`** — translates the production digitization-log
+  artifacts into TS `MtfData` literals and patches them into
+  `src/data/mtf-readings.ts`. Handles prime (1 panel, all frequencies
+  merged) and zoom (wide + tele × all frequencies) cases. Derives
+  aperture from slug, source URL from `fujifilm-x.com` convention,
+  focal length from zoom slug.
+
+Workflow when adding a new Fuji lens (or another brand using the
+per-frequency convention): (1) drop the chart PNGs under the lens
+folder; (2) re-run `scaffold_fuji_tier2 --write` to refresh the Tier 2
+entries; (3) run `extract <slug> --accept` to commit the production
+artifacts; (4) run `emit_fuji_tier2 --write` to update
+mtf-readings.ts. The shared per-frequency orchestrator lives in
+`tools/mtfdigitizer/per_frequency.py`.
+
 **Before authoring an `analysis.md` MTF charts list for a folder that
 does not yet have one:** check the source product page for parallel
 chart sets. Multi-mount lenses (DG DN releases with a later Fujifilm X

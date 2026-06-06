@@ -25,6 +25,8 @@ algorithm change to see exactly what moved.
 from __future__ import annotations
 
 import argparse
+import dataclasses
+import re
 import statistics
 from dataclasses import dataclass
 from pathlib import Path
@@ -36,6 +38,15 @@ from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+# Style families whose lenses publish one chart image per spatial
+# frequency. The calibration runner extracts every view and merges
+# the per-frequency readings into one tuple keyed by sample position.
+_PER_FREQUENCY_STYLE_FAMILIES: frozenset[str] = frozenset({"fujifilm-permfreq"})
+
+# Mirror of `extract._FUJI_FREQ_RE`: per-frequency filename suffix.
+_FUJI_FREQ_RE = re.compile(r"-(?P<freq>\d+)lp\.png$", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
@@ -74,7 +85,7 @@ def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
 
 
 def _extracted_value(reading: SampledReading, field: str) -> float | None:
-    return getattr(reading, field)
+    return reading.samples.get(field)
 
 
 def _compare_field(
@@ -108,24 +119,91 @@ def _compare_field(
     )
 
 
+def _parse_filename_frequency(image_path: Path) -> int:
+    """Parse spatial frequency from a per-frequency Fuji filename.
+
+    Mirrors `extract._parse_filename_frequency`. Raises if the filename
+    does not match the `-<N>lp.png` convention.
+    """
+    m = _FUJI_FREQ_RE.search(image_path.name)
+    if m is None:
+        raise ValueError(
+            f"per-frequency chart filename must end in `-<N>lp.png`; "
+            f"got {image_path.name!r}"
+        )
+    return int(m.group("freq"))
+
+
+def _extract_per_frequency_chart(chart: ReferenceChart):
+    """Walk every view of a per-frequency lens; merge per-position readings.
+
+    Each Fujifilm-style chart publishes one image per spatial frequency.
+    For each view, we substitute the parsed frequency into the declared
+    profile (which carries `frequencies_lpmm=(0,)` as a sentinel), run
+    `extract_chart`, then merge the per-view sample dicts at each
+    position so one `SampledReading` row carries all frequencies'
+    `freq{N}S` / `freq{N}M` keys.
+    """
+    assert chart.plot_box is not None
+    base_profile = profile_for_chart(chart)
+
+    merged_samples: dict[float, dict[str, float | None]] = {}
+    last_result = None
+    for view in chart.views:
+        assert view.plot_box is not None
+        image_path = REPO_ROOT / view.chart_path
+        freq = _parse_filename_frequency(image_path)
+        profile = dataclasses.replace(base_profile, frequencies_lpmm=(freq,))
+        plot_box = _to_plotbox(view.plot_box)
+        result = extract_chart(
+            image_path, profile, plot_box,
+            image_height_mm=chart.image_height_mm,
+        )
+        last_result = result
+        for reading in result.readings:
+            merged = merged_samples.setdefault(reading.position_mm, {})
+            merged.update(reading.samples)
+
+    # Rebuild a single readings tuple with the merged samples per position.
+    merged_readings = tuple(
+        SampledReading(position_mm=pos, samples=merged_samples[pos])
+        for pos in sorted(merged_samples.keys())
+    )
+    # Reuse the last result's ExtractedChart structure (the source_path
+    # and profile_name reflect the final view; the readings are the
+    # merged set).
+    assert last_result is not None
+    return dataclasses.replace(last_result, readings=merged_readings)
+
+
 def _calibrate_chart(chart: ReferenceChart):
     """Run extract_chart on one reference chart and return per-field stats.
 
     The chart must carry both `plot_box` and `ground_truth`; the caller
     filters runnable charts.
 
+    For per-frequency style families (Fujifilm; ADR-043) the runner
+    walks every chart view, substitutes the filename frequency into
+    the profile per call, and merges per-position readings into one
+    tuple before the GT comparison. Other style families run a single
+    `extract_chart` on the primary view.
+
     Returns ``(field_deltas, extracted)`` so callers can both summarize
     the Δ distribution and write the per-chart readings log.
     """
     assert chart.plot_box is not None
     assert chart.ground_truth is not None
-    profile = profile_for_chart(chart)
 
-    image_path = REPO_ROOT / chart.chart_path
-    plot_box = _to_plotbox(chart.plot_box)
-    result = extract_chart(
-        image_path, profile, plot_box, image_height_mm=chart.image_height_mm
-    )
+    if chart.style_family in _PER_FREQUENCY_STYLE_FAMILIES:
+        result = _extract_per_frequency_chart(chart)
+    else:
+        profile = profile_for_chart(chart)
+        image_path = REPO_ROOT / chart.chart_path
+        plot_box = _to_plotbox(chart.plot_box)
+        result = extract_chart(
+            image_path, profile, plot_box,
+            image_height_mm=chart.image_height_mm,
+        )
 
     out: list[FieldDelta] = []
     # The ground truth dict may carry multiple apertures; the extractor
@@ -162,7 +240,7 @@ def _write_readings_log(chart: ReferenceChart, result, field_deltas: list[FieldD
     """
     READINGS_DIR.mkdir(parents=True, exist_ok=True)
     path = READINGS_DIR / f"{chart.slug}.md"
-    fields = ("contrast10S", "contrast10M", "resolution30S", "resolution30M")
+    fields = ("freq10S", "freq10M", "freq30S", "freq30M")
     lines: list[str] = []
     lines.append(f"# {chart.slug}")
     lines.append("")

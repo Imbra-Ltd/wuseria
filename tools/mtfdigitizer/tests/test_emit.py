@@ -21,10 +21,12 @@ def _r(
 ) -> SampledReading:
     return SampledReading(
         position_mm=pos,
-        contrast10S=c10s,
-        contrast10M=c10m,
-        resolution30S=r30s,
-        resolution30M=r30m,
+        samples={
+            "freq10S": c10s,
+            "freq10M": c10m,
+            "freq30S": r30s,
+            "freq30M": r30m,
+        },
     )
 
 
@@ -68,14 +70,17 @@ def test_has_any_data_false_when_all_fields_none() -> None:
 
 def test_format_reading_includes_all_four_fields() -> None:
     out = _format_reading(_r(pos=5.0, c10s=0.95, c10m=0.94, r30s=0.85, r30m=0.84))
-    for field in _FIELDS:
-        assert field in out
+    # ADR-042: per-frequency record. Each frequency emits its own
+    # `S` / `M` pair under `samples`.
+    assert "samples: {" in out
+    assert "10: { S: 0.95, M: 0.94 }" in out
+    assert "30: { S: 0.85, M: 0.84 }" in out
 
 
 def test_format_reading_emits_null_for_none_fields() -> None:
     out = _format_reading(_r(c10m=None, r30m=None))
-    assert "contrast10M: null," in out
-    assert "resolution30M: null," in out
+    # ADR-042: nulls flow through into the samples-record shape.
+    assert "M: null" in out
     assert "null: null" not in out  # only field values become null
 
 

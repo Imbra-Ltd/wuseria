@@ -127,12 +127,12 @@ def test_sigma_pipeline_actually_splits_s_from_m() -> None:
     )
     # Mid-chart: the S curve has data (longest CC).
     mid = result.readings[5]  # position 7.0mm
-    assert mid.contrast10S is not None, "Sigma 10S must be detectable mid-chart"
-    assert mid.resolution30S is not None, "Sigma 30S must be detectable mid-chart"
+    assert mid.samples.get("freq10S") is not None, "Sigma 10S must be detectable mid-chart"
+    assert mid.samples.get("freq30S") is not None, "Sigma 30S must be detectable mid-chart"
     # The S extraction works without confusing M's dashed fragments —
     # value sits in the expected 0.8-1.0 band, not at 0 (the impossible-zero
     # PR #931 guarded against).
-    assert 0.80 <= mid.contrast10S <= 1.00
+    assert 0.80 <= mid.samples.get("freq10S") <= 1.00
 
 
 # --- Acceptance: B2 — missing data reads as None, never fabricated --------
@@ -165,7 +165,7 @@ def test_sigma_dashed_M_curves_fully_covered_by_dp_bridging() -> None:
         image_height_mm=14.0,
     )
     m_none = sum(
-        1 for r in result.readings if r.contrast10M is None or r.resolution30M is None
+        1 for r in result.readings if r.samples.get("freq10M") is None or r.samples.get("freq30M") is None
     )
     assert m_none == 0, (
         "DP bridging should leave no None in the dashed M curves of a "
@@ -186,21 +186,21 @@ def test_samyang_85_reproduces_reference_center_values() -> None:
         image_height_mm=21.6,
     )
     center = result.readings[0]  # position 0.0mm
-    assert center.contrast10S is not None
-    assert center.contrast10M is not None
-    assert center.resolution30S is not None
-    assert center.resolution30M is not None
-    assert 0.86 <= center.contrast10S <= 0.96, (
-        f"10S center: expected ~0.91, got {center.contrast10S:.3f}"
+    assert center.samples.get("freq10S") is not None
+    assert center.samples.get("freq10M") is not None
+    assert center.samples.get("freq30S") is not None
+    assert center.samples.get("freq30M") is not None
+    assert 0.86 <= center.samples.get("freq10S") <= 0.96, (
+        f"10S center: expected ~0.91, got {center.samples.get("freq10S"):.3f}"
     )
-    assert 0.86 <= center.contrast10M <= 0.96, (
-        f"10M center: expected ~0.91, got {center.contrast10M:.3f}"
+    assert 0.86 <= center.samples.get("freq10M") <= 0.96, (
+        f"10M center: expected ~0.91, got {center.samples.get("freq10M"):.3f}"
     )
-    assert 0.65 <= center.resolution30S <= 0.75, (
-        f"30S center: expected ~0.70, got {center.resolution30S:.3f}"
+    assert 0.65 <= center.samples.get("freq30S") <= 0.75, (
+        f"30S center: expected ~0.70, got {center.samples.get("freq30S"):.3f}"
     )
-    assert 0.65 <= center.resolution30M <= 0.75, (
-        f"30M center: expected ~0.70, got {center.resolution30M:.3f}"
+    assert 0.65 <= center.samples.get("freq30M") <= 0.75, (
+        f"30M center: expected ~0.70, got {center.samples.get("freq30M"):.3f}"
     )
 
 
@@ -213,12 +213,12 @@ def test_samyang_85_10S_knees_down_at_edge() -> None:
         image_height_mm=21.6,
     )
     edge = result.readings[-1]  # position 21.6mm
-    assert edge.contrast10S is not None
+    assert edge.samples.get("freq10S") is not None
     # Allow generous tolerance — anti-aliasing at the edge pushes values
     # a little lower than the eye-read shape. The key shape feature is
     # "drops sharply from ~0.91 center to ~0.78 edge", not exact value.
-    assert edge.contrast10S < 0.85, (
-        f"10S edge should drop below 0.85, got {edge.contrast10S:.3f}"
+    assert edge.samples.get("freq10S") < 0.85, (
+        f"10S edge should drop below 0.85, got {edge.samples.get("freq10S"):.3f}"
     )
 
 
@@ -233,9 +233,9 @@ def test_sigma_56_10S_holds_high_until_knee() -> None:
     )
     # Read at position 4 (~5.6mm) — well inside the flat region
     flat = result.readings[4]
-    assert flat.contrast10S is not None
-    assert 0.93 <= flat.contrast10S <= 1.00, (
-        f"Sigma 10S at 5.6mm: expected ~0.97, got {flat.contrast10S:.3f}"
+    assert flat.samples.get("freq10S") is not None
+    assert 0.93 <= flat.samples.get("freq10S") <= 1.00, (
+        f"Sigma 10S at 5.6mm: expected ~0.97, got {flat.samples.get("freq10S"):.3f}"
     )
 
 
@@ -253,16 +253,16 @@ def test_sigma_56_reads_at_both_chart_edges() -> None:
     )
     center = result.readings[0]   # fraction 0.0
     edge = result.readings[-1]    # fraction 1.0
-    assert center.contrast10S is not None, (
+    assert center.samples.get("freq10S") is not None, (
         "Sigma 10S at fraction 0.0 must read a value, not None (#954)"
     )
-    assert center.resolution30S is not None, (
+    assert center.samples.get("freq30S") is not None, (
         "Sigma 30S at fraction 0.0 must read a value, not None (#954)"
     )
-    assert edge.contrast10S is not None, (
+    assert edge.samples.get("freq10S") is not None, (
         "Sigma 10S at fraction 1.0 must read a value, not None (#954)"
     )
-    assert edge.resolution30S is not None, (
+    assert edge.samples.get("freq30S") is not None, (
         "Sigma 30S at fraction 1.0 must read a value, not None (#954)"
     )
 
@@ -382,10 +382,10 @@ def test_ridge_tracking_dispatch_end_to_end_with_viltrox_chart() -> None:
     )
 
     paired_counts = {
-        "contrast10S": sum(1 for r in result.readings if r.contrast10S is not None),
-        "contrast10M": sum(1 for r in result.readings if r.contrast10M is not None),
-        "resolution30S": sum(1 for r in result.readings if r.resolution30S is not None),
-        "resolution30M": sum(1 for r in result.readings if r.resolution30M is not None),
+        "contrast10S": sum(1 for r in result.readings if r.samples.get("freq10S") is not None),
+        "contrast10M": sum(1 for r in result.readings if r.samples.get("freq10M") is not None),
+        "resolution30S": sum(1 for r in result.readings if r.samples.get("freq30S") is not None),
+        "resolution30M": sum(1 for r in result.readings if r.samples.get("freq30M") is not None),
     }
     # Run-5 measured: 10S 11, 10M 5, 30S 7, 30M 3. Asserts hold one less
     # than measured to allow for incidental change without churning the
@@ -398,7 +398,7 @@ def test_ridge_tracking_dispatch_end_to_end_with_viltrox_chart() -> None:
     all_values = [
         v
         for r in result.readings
-        for v in (r.contrast10S, r.contrast10M, r.resolution30S, r.resolution30M)
+        for v in (r.samples.get("freq10S"), r.samples.get("freq10M"), r.samples.get("freq30S"), r.samples.get("freq30M"))
         if v is not None
     ]
     for v in all_values:

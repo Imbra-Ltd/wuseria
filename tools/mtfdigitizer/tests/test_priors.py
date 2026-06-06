@@ -67,10 +67,12 @@ def _readings(
     return tuple(
         SampledReading(
             position_mm=i * 1.0,
-            contrast10S=c10s[i],
-            contrast10M=c10m[i],
-            resolution30S=r30s[i],
-            resolution30M=r30m[i],
+            samples={
+                "freq10S": c10s[i],
+                "freq10M": c10m[i],
+                "freq30S": r30s[i],
+                "freq30M": r30m[i],
+            },
         )
         for i in range(11)
     )
@@ -135,13 +137,13 @@ def test_10_ge_30_fires_when_bands_swapped() -> None:
     """30 lp/mm above 10 lp/mm at every point — canonical swap signature."""
     high10 = (0.90,) * 11
     low30 = (0.50,) * 11
-    # Swap them: contrast10S = 0.50, resolution30S = 0.90.
+    # Swap them: freq10S = 0.50, freq30S = 0.90.
     swapped = _readings(c10s=low30, r30s=high10)
     violations = check_10_ge_30(swapped)
     # 11 positions all inverted on the S side.
     assert len(violations) == 11
     assert all(v.field == RESOLUTION_30S for v in violations)
-    assert all(v.prior_name == "ten_ge_thirty" for v in violations)
+    assert all(v.prior_name == "low_freq_ge_high" for v in violations)
     assert "bands swapped" in violations[0].detail
 
 
@@ -265,7 +267,7 @@ def test_check_all_aggregates_violations() -> None:
 
     Construct one chart that:
     - inverts center/edge on 10S (1 center_ge_edge violation)
-    - has 10S below 30S throughout (11 ten_ge_thirty violations)
+    - has 10S below 30S throughout (11 low_freq_ge_high violations)
     - holds 10M flat at 1.0 (1 not_suspiciously_flat violation)
     - has one out-of-range value on 30S (1 in_range violation)
     """
@@ -276,7 +278,7 @@ def test_check_all_aggregates_violations() -> None:
     violations = check_all(readings)
     by_prior = {v.prior_name for v in violations}
     assert "center_ge_edge" in by_prior
-    assert "ten_ge_thirty" in by_prior
+    assert "low_freq_ge_high" in by_prior
     assert "not_suspiciously_flat" in by_prior
     assert "in_range" in by_prior
 
@@ -374,14 +376,15 @@ def test_flatness_constants_are_sane() -> None:
 
 
 def test_fields_constant_matches_sampled_reading() -> None:
-    """`priors.FIELDS` must list exactly the four data fields on
-    SampledReading — otherwise a prior could silently miss a field."""
+    """The legacy `FIELDS` constant maps to canonical `freq{N}{S|M}`
+    field names (ADR-042 generalized the schema). Per-row priors now
+    discover the field set from `SampledReading.samples` keys; FIELDS
+    survives as a compat alias for the 10+30 canonical layout."""
     sample = SampledReading(
         position_mm=0.0,
-        contrast10S=0.5,
-        contrast10M=0.5,
-        resolution30S=0.5,
-        resolution30M=0.5,
+        samples={f: 0.5 for f in FIELDS},
     )
     for field in FIELDS:
-        assert hasattr(sample, field), f"FIELDS lists {field!r} but SampledReading lacks it"
+        assert field in sample.samples, (
+            f"FIELDS lists {field!r} but the sample's samples dict lacks it"
+        )

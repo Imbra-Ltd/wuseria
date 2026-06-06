@@ -60,10 +60,12 @@ def _all_nones() -> tuple[SampledReading, ...]:
     return tuple(
         SampledReading(
             position_mm=i * 2.0,
-            contrast10S=None,
-            contrast10M=None,
-            resolution30S=None,
-            resolution30M=None,
+            samples={
+                "freq10S": None,
+                "freq10M": None,
+                "freq30S": None,
+                "freq30M": None,
+            },
         )
         for i in range(11)
     )
@@ -74,10 +76,12 @@ def _flat_readings(value: float) -> tuple[SampledReading, ...]:
     return tuple(
         SampledReading(
             position_mm=i * 2.0,
-            contrast10S=value,
-            contrast10M=value,
-            resolution30S=value,
-            resolution30M=value,
+            samples={
+                "freq10S": value,
+                "freq10M": value,
+                "freq30S": value,
+                "freq30M": value,
+            },
         )
         for i in range(11)
     )
@@ -199,17 +203,19 @@ def test_rasterize_skips_none_gaps() -> None:
     readings = tuple(
         SampledReading(
             position_mm=i * 1.0,
-            contrast10S=v,
-            contrast10M=None,
-            resolution30S=None,
-            resolution30M=None,
+            samples={
+                "freq10S": v,
+                "freq10M": None,
+                "freq30S": None,
+                "freq30M": None,
+            },
         )
         for i, v in enumerate(values)
     )
     masks = rasterize_readings(
         readings, plot_box, image_shape=(150, 200), image_height_mm=image_height_mm
     )
-    m = masks["contrast10S"]
+    m = masks["freq10S"]
     # Two segments either side of the gap should have pixels at y=70...
     assert m[70, 30] == 1  # before the gap
     assert m[70, 80] == 1  # after the gap
@@ -251,7 +257,7 @@ def test_rasterize_clamps_out_of_range_mtf() -> None:
         readings, plot_box, image_shape=(150, 200), image_height_mm=10.0
     )
     # MTF clamped to 1.0 → drawn at y_top = 20.
-    m = masks["contrast10S"]
+    m = masks["freq10S"]
     assert m[20, 50] == 1
 
 

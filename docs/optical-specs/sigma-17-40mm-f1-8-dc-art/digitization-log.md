@@ -24,19 +24,19 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| contrast10S    | 11/11    |  0/11       |
-| contrast10M    | 11/11    |  1/11       |
-| resolution30S  | 11/11    |  0/11       |
-| resolution30M  | 11/11    |  2/11       |
+| freq10S        | 11/11    |  0/11       |
+| freq10M        | 11/11    |  1/11       |
+| freq30S        | 11/11    |  0/11       |
+| freq30M        | 11/11    |  2/11       |
 
 ```
-  EX   contrast10S    ████████▇▇▇  (0.99 → 0.80)
-  EX   contrast10M    █████████▇▇  (0.99 → 0.89)
-  EX   resolution30S  ██▇▇▇▇▇▇▆▅▅  (0.94 → 0.52)
-  EX   resolution30M  █▇▇▇▇▇▇▆▆▅▄  (0.94 → 0.50)
+  EX   freq10S        ████████▇▇▇  (0.99 → 0.80)
+  EX   freq10M        █████████▇▇  (0.99 → 0.89)
+  EX   freq30S        ██▇▇▇▇▇▇▆▅▅  (0.94 → 0.52)
+  EX   freq30M        █▇▇▇▇▇▇▆▆▅▄  (0.94 → 0.50)
 ```
 
-**contrast10S**
+**freq10S**
 
 | frac | EX |
 | ---- | --- |
@@ -52,7 +52,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.9 | 0.86 |
 | 1.0 | 0.80 |
 
-**contrast10M**
+**freq10M**
 
 | frac | EX |
 | ---- | --- |
@@ -68,7 +68,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.9 | 0.93 |
 | 1.0 | 0.89 |
 
-**resolution30S**
+**freq30S**
 
 | frac | EX |
 | ---- | --- |
@@ -84,7 +84,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.9 | 0.56 |
 | 1.0 | 0.52 |
 
-**resolution30M**
+**freq30M**
 
 | frac | EX |
 | ---- | --- |
@@ -104,19 +104,19 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| contrast10S    |         0.99 |       0.86 |         0.80 |
-| contrast10M    |         0.99 |       0.93 |         0.89 |
-| resolution30S  |         0.94 |       0.56 |         0.52 |
-| resolution30M  |         0.94 |       0.56 |         0.50 |
+| freq10S        |         0.99 |       0.86 |         0.80 |
+| freq10M        |         0.99 |       0.93 |         0.89 |
+| freq30S        |         0.94 |       0.56 |         0.52 |
+| freq30M        |         0.94 |       0.56 |         0.50 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| contrast10S    |       0.0 |       0.99 |                 — |
-| contrast10M    |       0.0 |       0.99 |                 — |
-| resolution30S  |       0.0 |       0.94 |                 — |
-| resolution30M  |       0.0 |       0.94 |                 — |
+| freq10S        |       0.0 |       0.99 |                 — |
+| freq10M        |       0.0 |       0.99 |                 — |
+| freq30S        |       0.0 |       0.94 |                 — |
+| freq30M        |       0.0 |       0.94 |                 — |
 
 ### Confidence signals
 
@@ -124,12 +124,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.636 |      0.80 |   no |
+| precision | 0.637 |      0.80 |   no |
 | IoU       | 0.482 |      0.20 |  yes |
 
 #### Plausibility priors
 
-All four priors held (`center_ge_edge`, `ten_ge_thirty`, `not_suspiciously_flat`, `in_range`).
+All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_flat`, `in_range`).
 
 ### Gate
 
@@ -150,19 +150,19 @@ All four priors held (`center_ge_edge`, `ten_ge_thirty`, `not_suspiciously_flat`
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| contrast10S    | 11/11    |  0/11       |
-| contrast10M    | 11/11    |  1/11       |
-| resolution30S  | 11/11    |  0/11       |
-| resolution30M  | 11/11    |  1/11       |
+| freq10S        | 11/11    |  0/11       |
+| freq10M        | 11/11    |  1/11       |
+| freq30S        | 11/11    |  0/11       |
+| freq30M        | 11/11    |  1/11       |
 
 ```
-  EX   contrast10S    ███████████  (0.98 → 0.96)
-  EX   contrast10M    ██████████▇  (0.98 → 0.92)
-  EX   resolution30S  ▇▇▇▇▇▇▇▇▇▇▇  (0.91 → 0.82)
-  EX   resolution30M  ▇▇▇▇▇▇▇▇▆▆▆  (0.91 → 0.65)
+  EX   freq10S        ███████████  (0.98 → 0.96)
+  EX   freq10M        ██████████▇  (0.98 → 0.92)
+  EX   freq30S        ▇▇▇▇▇▇▇▇▇▇▇  (0.91 → 0.82)
+  EX   freq30M        ▇▇▇▇▇▇▇▇▆▆▆  (0.91 → 0.65)
 ```
 
-**contrast10S**
+**freq10S**
 
 | frac | EX |
 | ---- | --- |
@@ -178,7 +178,7 @@ All four priors held (`center_ge_edge`, `ten_ge_thirty`, `not_suspiciously_flat`
 | 0.9 | 0.97 |
 | 1.0 | 0.96 |
 
-**contrast10M**
+**freq10M**
 
 | frac | EX |
 | ---- | --- |
@@ -194,7 +194,7 @@ All four priors held (`center_ge_edge`, `ten_ge_thirty`, `not_suspiciously_flat`
 | 0.9 | 0.94 |
 | 1.0 | 0.92 |
 
-**resolution30S**
+**freq30S**
 
 | frac | EX |
 | ---- | --- |
@@ -210,7 +210,7 @@ All four priors held (`center_ge_edge`, `ten_ge_thirty`, `not_suspiciously_flat`
 | 0.9 | 0.84 |
 | 1.0 | 0.82 |
 
-**resolution30M**
+**freq30M**
 
 | frac | EX |
 | ---- | --- |
@@ -230,19 +230,19 @@ All four priors held (`center_ge_edge`, `ten_ge_thirty`, `not_suspiciously_flat`
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| contrast10S    |         0.98 |       0.97 |         0.96 |
-| contrast10M    |         0.98 |       0.94 |         0.92 |
-| resolution30S  |         0.91 |       0.84 |         0.82 |
-| resolution30M  |         0.91 |       0.72 |         0.65 |
+| freq10S        |         0.98 |       0.97 |         0.96 |
+| freq10M        |         0.98 |       0.94 |         0.92 |
+| freq30S        |         0.91 |       0.84 |         0.82 |
+| freq30M        |         0.91 |       0.72 |         0.65 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| contrast10S    |       0.0 |       0.98 |                 — |
-| contrast10M    |       0.0 |       0.98 |                 — |
-| resolution30S  |       0.0 |       0.91 |                 — |
-| resolution30M  |       0.0 |       0.91 |                 — |
+| freq10S        |       0.0 |       0.98 |                 — |
+| freq10M        |       0.0 |       0.98 |                 — |
+| freq30S        |       0.0 |       0.91 |                 — |
+| freq30M        |       0.0 |       0.91 |                 — |
 
 ### Confidence signals
 
@@ -257,7 +257,7 @@ All four priors held (`center_ge_edge`, `ten_ge_thirty`, `not_suspiciously_flat`
 
 | prior | field | position | detail |
 | ----- | ----- | -------- | ------ |
-| `not_suspiciously_flat` | `contrast10S` | — | mean 0.974 >= 0.95 and stdev 0.005 <= 0.01 (11/11 defined) — idealized/placeholder? |
+| `not_suspiciously_flat` | `freq10S` | — | mean 0.974 >= 0.95 and stdev 0.005 <= 0.01 (11/11 defined) — idealized/placeholder? |
 
 ### Gate
 

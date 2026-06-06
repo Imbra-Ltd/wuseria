@@ -26,6 +26,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+from .pipeline.rendermatch import fields_in
 from .pipeline.sampling import SAMPLE_FRACTIONS
 from .pipeline.types import ExtractedChart
 from .triage import (
@@ -36,13 +37,6 @@ from .triage import (
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-
-_FIELDS: tuple[str, ...] = (
-    "contrast10S",
-    "contrast10M",
-    "resolution30S",
-    "resolution30M",
-)
 
 _SPARK_CHARS: tuple[str, ...] = ("▁", "▂", "▃", "▄", "▅", "▆", "▇", "█")
 
@@ -107,12 +101,13 @@ def _half_falloff_fraction(
 def _render_sample_grid(extracted: ExtractedChart) -> list[str]:
     """Per-field stats table, sparkline block, and per-field grids."""
     lines: list[str] = []
+    fields = fields_in(extracted.readings)
 
     # Stats: paired count, sister-fill — no Δ since no GT.
     lines.append("| Field          | non-null | sister-fill |")
     lines.append("| -------------- | -------- | ----------- |")
-    for f in _FIELDS:
-        ex_values = tuple(getattr(r, f) for r in extracted.readings)
+    for f in fields:
+        ex_values = tuple(r.samples.get(f) for r in extracted.readings)
         non_null = sum(1 for v in ex_values if v is not None)
         fallback = extracted.sister_fallback_count.get(f, 0)
         lines.append(
@@ -122,8 +117,8 @@ def _render_sample_grid(extracted: ExtractedChart) -> list[str]:
 
     # Sparklines.
     lines.append("```")
-    for f in _FIELDS:
-        ex_values = tuple(getattr(r, f) for r in extracted.readings)
+    for f in fields:
+        ex_values = tuple(r.samples.get(f) for r in extracted.readings)
         endpoints = (
             f"{ex_values[0]:.2f}" if ex_values[0] is not None else " — ",
             f"{ex_values[-1]:.2f}" if ex_values[-1] is not None else " — ",
@@ -136,13 +131,13 @@ def _render_sample_grid(extracted: ExtractedChart) -> list[str]:
     lines.append("")
 
     # Per-field tables: rows = sample fractions, columns = frac, EX.
-    for f in _FIELDS:
+    for f in fields:
         lines.append(f"**{f}**")
         lines.append("")
         lines.append("| frac | EX |")
         lines.append("| ---- | --- |")
         for i, frac in enumerate(SAMPLE_FRACTIONS):
-            ex = getattr(extracted.readings[i], f)
+            ex = extracted.readings[i].samples.get(f)
             lines.append(f"| {frac:.1f} | {_format_value(ex)} |")
         lines.append("")
     return lines
@@ -152,10 +147,10 @@ def _render_center_edge(extracted: ExtractedChart) -> list[str]:
     lines: list[str] = []
     lines.append("| Field          | center (0.0) | edge (0.9) | corner (1.0) |")
     lines.append("| -------------- | ------------ | ---------- | ------------ |")
-    for f in _FIELDS:
-        v0 = getattr(extracted.readings[0], f)
-        v9 = getattr(extracted.readings[9], f)
-        v10 = getattr(extracted.readings[10], f)
+    for f in fields_in(extracted.readings):
+        v0 = extracted.readings[0].samples.get(f)
+        v9 = extracted.readings[9].samples.get(f)
+        v10 = extracted.readings[10].samples.get(f)
         lines.append(
             f"| {f:<14} | {_format_value(v0):>12} | "
             f"{_format_value(v9):>10} | {_format_value(v10):>12} |"
@@ -168,8 +163,8 @@ def _render_shape_metrics(extracted: ExtractedChart) -> list[str]:
     lines: list[str] = []
     lines.append("| Field          | peak frac | peak value | half-falloff frac |")
     lines.append("| -------------- | --------- | ---------- | ----------------- |")
-    for f in _FIELDS:
-        ex_values = tuple(getattr(r, f) for r in extracted.readings)
+    for f in fields_in(extracted.readings):
+        ex_values = tuple(r.samples.get(f) for r in extracted.readings)
         peak = _peak_fraction(ex_values)
         half = _half_falloff_fraction(ex_values, peak[1] if peak else None)
         peak_frac = f"{peak[0]:.1f}" if peak else "—"
@@ -204,7 +199,7 @@ def _render_confidence_signals(verdict: ChartVerdict) -> list[str]:
     lines.append("#### Plausibility priors")
     lines.append("")
     if not verdict.prior_violations:
-        lines.append("All four priors held (`center_ge_edge`, `ten_ge_thirty`, "
+        lines.append("All four priors held (`center_ge_edge`, `low_freq_ge_high`, "
                      "`not_suspiciously_flat`, `in_range`).")
     else:
         lines.append("| prior | field | position | detail |")

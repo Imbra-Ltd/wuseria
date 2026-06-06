@@ -29,6 +29,15 @@ StyleAxis = Literal["SPLIT_BY_DASH", "HUE_IS_CURVE"]
 #                             dialect); frequency is then carried by
 #                             curve y-position, declared via
 #                             `MtfProfile.y_band_split`
+# - `SAGITTAL_MERIDIONAL_SINGLE_FREQ` — hue = S vs M (blue solid=S,
+#                             red dashed=M in the Fujifilm dialect);
+#                             the chart image carries one frequency
+#                             only. The frequency is read from the
+#                             filename (`-15lp.png` → 15) and passed
+#                             to the extractor via a per-call profile
+#                             copy with `frequencies_lpmm=(N,)`. No
+#                             y_band_split — each hue is the whole
+#                             curve. See ADR-043.
 # - `CURVE_IDENTITY`        — hue uniquely identifies one curve out of
 #                             {10S, 10M, 30S, 30M} (the Samyang 4-color
 #                             dialect)
@@ -87,6 +96,7 @@ StyleAxis = Literal["SPLIT_BY_DASH", "HUE_IS_CURVE"]
 HueMeaning = Literal[
     "FREQUENCY",
     "SAGITTAL_MERIDIONAL",
+    "SAGITTAL_MERIDIONAL_SINGLE_FREQ",
     "CURVE_IDENTITY",
     "Y_BAND_IS_FREQUENCY",
     "CC_RANK_BY_MEAN_Y",

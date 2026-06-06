@@ -591,12 +591,8 @@ def ridge_tracks_for_hue(
         upper_track = _densify_track(shared_upper)
         lower_track = _densify_track(shared_lower)
 
-    upper_field = curve_field(upper_freq, sm)
-    if upper_field is not None:
-        out[upper_field] = _rasterize(upper_track, mask.shape)
-    lower_field = curve_field(lower_freq, sm)
-    if lower_field is not None:
-        out[lower_field] = _rasterize(lower_track, mask.shape)
+    out[curve_field(upper_freq, sm)] = _rasterize(upper_track, mask.shape)
+    out[curve_field(lower_freq, sm)] = _rasterize(lower_track, mask.shape)
     return out
 
 
@@ -643,13 +639,9 @@ def ridge_tracks_to_fields(
             continue
         by_y = sorted(cluster, key=lambda t: t.mean_y)
         sagittal_track = by_y[0]
-        field = curve_field(freq, "S")
-        if field is not None:
-            out[field] = _rasterize(sagittal_track, mask.shape)
+        out[curve_field(freq, "S")] = _rasterize(sagittal_track, mask.shape)
         if len(by_y) > 1:
             meridional_track = by_y[1]
-            field = curve_field(freq, "M")
-            if field is not None:
-                out[field] = _rasterize(meridional_track, mask.shape)
+            out[curve_field(freq, "M")] = _rasterize(meridional_track, mask.shape)
 
     return out
