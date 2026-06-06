@@ -217,6 +217,56 @@ def iou(a: np.ndarray, b: np.ndarray) -> float | None:
 # --- orchestrator ---------------------------------------------------
 
 
+# Horizontal kernel width that bridges a dashed-line skeleton's gaps
+# before render-match scoring. Sized for the worst-case GF Fujifilm
+# dashes (~10 px on / ~10 px off at 282x212 px image scale); also
+# bridges Sigma-scale dashes (~20 px gaps on 2991x1964) when the
+# scoring runs at full image resolution. Vertical extent 1 keeps the
+# bridge horizontal-only so curves a few pixels apart in y don't merge.
+_DASH_BRIDGE_KERNEL_W: int = 121
+_DASH_BRIDGE_KERNEL: np.ndarray = cv2.getStructuringElement(
+    cv2.MORPH_RECT, (_DASH_BRIDGE_KERNEL_W, 1)
+)
+
+
+def _is_dashed_field(field: str) -> bool:
+    """Heuristic: M-side fields under Fuji/Sigma/7Artisans dispatches are
+    dashed. The synthetic field-name convention `freq{N}{S|M}` makes the
+    discrimination trivial. S fields are always solid; M fields are
+    dashed in every profile that uses dashed-line dispatches today.
+    """
+    return field.endswith("M") and field.startswith("freq")
+
+
+def _bridge_dashed_skeleton(skel: np.ndarray) -> np.ndarray:
+    """Morphologically close horizontal gaps in a dashed-line skeleton
+    so the render-match scorer sees a continuous mask of the same extent
+    as the rasterized polyline.
+
+    Without this bridge, dashed-line fields (M curves) get an
+    artificially low precision score because the polyline is dense
+    while the skeleton is sparse — the intersection area is bounded by
+    the skeleton's coverage, not the actual curve agreement. Bridging
+    the dashes restores the right denominator without changing the
+    extractor's underlying numerical reading.
+
+    A horizontal-only kernel keeps the bridge tight: two dashed curves
+    a few pixels apart in y stay separate.
+
+    Known limitation: when sister fallback fires (M curve has no ink at
+    a position and the pipeline copies S's value), the rasterized M
+    polyline draws at S's y-position while the bridged M skeleton sits
+    at M's actual y. On near-coincident curves the dilation closes the
+    gap, but on visibly-divergent curves the polyline and skeleton
+    don't overlap and precision tanks. The readings are still correct
+    in that case — the gate just over-flags the lens. Tracked for a
+    future fix that scores against the union of S and M masks when
+    sister fallback fired.
+    """
+    return cv2.morphologyEx(skel.astype(np.uint8), cv2.MORPH_CLOSE,
+                            _DASH_BRIDGE_KERNEL)
+
+
 def score_chart(
     image_path: str | Path,
     profile: MtfProfile,
@@ -254,6 +304,10 @@ def score_chart(
     for field in all_fields:
         raster_mask = dilate_for_iou(rasterized.get(field, empty), dilation_radius_px)
         skel_raw = skeletons.get(field, empty)
+        # Bridge dashed-line skeletons before scoring so the precision
+        # metric isn't depressed by dash-gap coverage holes.
+        if _is_dashed_field(field):
+            skel_raw = _bridge_dashed_skeleton(skel_raw)
         skel_mask = dilate_for_iou(skel_raw, dilation_radius_px)
         score = iou(raster_mask, skel_mask)
 
