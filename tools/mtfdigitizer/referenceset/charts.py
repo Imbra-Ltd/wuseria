@@ -354,6 +354,60 @@ _FUJI_GF_23_GT: GroundTruthCurves = {
     },
 }
 
+# Fujifilm XF 23mm f/1.4 R LM WR — second Tier 1 anchor for the
+# `fujifilm-permfreq` style family (ADR-043). XF (APS-C) lenses
+# publish at 15 + 45 lp/mm and to the APS-C sensor half-diagonal
+# of 14.2 mm — different scale from the GF cohort. Adding the second
+# anchor cross-validates the dispatch against the XF body of charts
+# (per ADR-041, more than one anchor per (brand, style_family) is
+# allowed and useful).
+#
+# Image format: 376x282 px, RGBA with transparent background — the
+# loader composites over white before extraction.
+#
+# Image height: 14.2 mm (APS-C 23.5x15.6 mm half-diagonal ≈ 14.1 mm;
+# Fujifilm labels the rightmost tick as "14.2 mm" explicitly).
+#
+# Tick label centers at x = 16, 125, 231.5, 315 → 0, 5, 10, 14.2 mm.
+# Dark x-axis baseline at y=245 runs from x=19 to x=319 (300 px wide).
+# Calibration: (319 - 19) / 14.2 = 21.13 px/mm. Plot box uses the
+# crisp dark-axis bounds.
+#
+# Sample fractions (SAMPLE_FRACTIONS × image_height_mm = 14.2):
+# 0.00, 1.42, 2.84, 4.26, 5.68, 7.10, 8.52, 9.94, 11.36, 12.78,
+# 14.20 mm.
+#
+# Plot box:
+# x_left=19 (left edge of dark x-axis, = 0 mm)
+# x_right=319 (right edge of dark x-axis, = 14.2 mm)
+# y_bottom=245 (dark x-axis baseline = MTF 0.0)
+# y_top=40 (extrapolated one gridline spacing above y=81, MTF=0.8;
+# the MTF=1.0 line is unprinted; light gridline spacing is 41 px/0.2).
+#
+# DRAFT ground truth: TO BE FILLED IN BY THE MAINTAINER. Per
+# `feedback_agent_no_gt_eye_read` the agent does NOT eye-read these
+# values; placeholders below until the maintainer fills them in.
+# Only ONE aperture (f/1.4 max) and TWO frequencies (15 + 45) — total
+# 11 × 2 × 2 = 44 values to read.
+#
+# Reading guidance: four printed light gridlines at MTF 0.2/0.4/0.6/0.8,
+# dark axis at MTF 0.0. The MTF 1.0 line is unprinted but is the same
+# 41-px spacing above the topmost light gridline (y≈40).
+_FUJI_XF_23_GT: GroundTruthCurves = {
+    "f/1.4": {
+        # 15 lp/mm — blue solid (S) and red dashed (M). Both start ~0.96,
+        # S knees down to ~0.81 at edge; M holds higher until a sharp
+        # drop right at 14.2 mm.
+        "freq15S": (None, None, None, None, None, None, None, None, None, None, None),
+        "freq15M": (None, None, None, None, None, None, None, None, None, None, None),
+        # 45 lp/mm — S has a dip-and-recover shape (down to ~0.5 at
+        # ~9-10 mm then climbs back to ~0.58 at edge); M cuts hard to
+        # ~0.48 at the corner.
+        "freq45S": (None, None, None, None, None, None, None, None, None, None, None),
+        "freq45M": (None, None, None, None, None, None, None, None, None, None, None),
+    },
+}
+
 
 REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ReferenceChart(
@@ -717,6 +771,42 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
                 ),
                 plot_box=PlotBoxCoords(
                     x_left=15, x_right=249, y_top=4, y_bottom=184
+                ),
+            ),
+        ),
+    ),
+    ReferenceChart(
+        slug="fujifilm-xf-23mm-f1-4-r-lm-wr",
+        chart_path=(
+            "docs/optical-specs/fujifilm-xf-23mm-f1-4-r-lm-wr/"
+            "fujifilm-xf-23mm-f1-4-r-lm-wr-15lp.png"
+        ),
+        style_family="fujifilm-permfreq",
+        apertures=("f/1.4",),
+        frequencies_lpmm=(15, 45),
+        image_height_mm=14.2,
+        notes=(
+            "Second Tier 1 anchor for `fujifilm-permfreq` (ADR-041 allows "
+            "multiple anchors per family). XF (APS-C) prime, two "
+            "per-frequency images (15/45 lp/mm); blue solid=S, red "
+            "dashed=M; single max aperture f/1.4. 376x282 px RGBA "
+            "(transparent background; loader composites over white). "
+            "Tick label centers at x=16,125,231.5,315 correspond to "
+            "0/5/10/14.2 mm; dark x-axis baseline at y=245 runs x=19..319 "
+            "(21.13 px/mm). Plot box (19, 319, 40, 245): y_bottom=245 "
+            "(dark axis = MTF 0.0), y_top=40 (extrapolated MTF 1.0; "
+            "light gridline spacing is 41 px/0.2)."
+        ),
+        plot_box=PlotBoxCoords(x_left=19, x_right=319, y_top=40, y_bottom=245),
+        ground_truth=_FUJI_XF_23_GT,
+        additional_views=(
+            ChartView(
+                chart_path=(
+                    "docs/optical-specs/fujifilm-xf-23mm-f1-4-r-lm-wr/"
+                    "fujifilm-xf-23mm-f1-4-r-lm-wr-45lp.png"
+                ),
+                plot_box=PlotBoxCoords(
+                    x_left=19, x_right=319, y_top=40, y_bottom=245
                 ),
             ),
         ),
