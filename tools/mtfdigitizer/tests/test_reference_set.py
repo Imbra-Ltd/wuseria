@@ -28,6 +28,7 @@ EXPECTED_FAMILIES = frozenset(
         "2color-frequency",
         "2color-frequency-cc-rank",
         "bw-dashed-promo",
+        "fujifilm-permfreq",
         "multifreq-press-kit",
         "idealized-flat",
         "soft-multicurve-promo",
@@ -137,16 +138,24 @@ def test_ground_truth_values_in_mtf_range() -> None:
 
 
 def test_ground_truth_field_names_are_canonical() -> None:
-    """Field names must match the SampledReading schema in pipeline/types.py."""
-    canonical = {"freq10S", "freq10M", "freq30S", "freq30M"}
+    """Field names must follow the ADR-042 synthetic convention
+    `freq{N}{S|M}` — N is any positive integer (the chart's spatial
+    frequency in lp/mm), S/M indicate the sagittal/meridional axis.
+
+    Pre-ADR-042 this test enforced a hardcoded {10, 30} frequency set.
+    Generalized for arbitrary brand frequencies (Fuji at 15/20/40, etc.).
+    """
+    import re
+
+    name_re = re.compile(r"^freq\d+[SM]$")
     for chart in REFERENCE_CHARTS:
         if chart.ground_truth is None:
             continue
         for aperture, fields in chart.ground_truth.items():
-            unknown = set(fields) - canonical
-            assert not unknown, (
-                f"{chart.slug} [{aperture}]: unknown fields {unknown}; "
-                f"must be a subset of {canonical}"
+            bad = {f for f in fields if not name_re.match(f)}
+            assert not bad, (
+                f"{chart.slug} [{aperture}]: field names {bad} do not "
+                f"follow the freq{{N}}{{S|M}} convention"
             )
 
 

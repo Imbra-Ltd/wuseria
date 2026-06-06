@@ -297,6 +297,57 @@ _SIGMA_30_GT: GroundTruthCurves = {
     },
 }
 
+# Fujifilm GF 23mm f/4 R LM WR — Tier 1 anchor for the
+# `fujifilm-permfreq` style family (ADR-043). 282x212 px per chart;
+# three frequencies (15/20/40 lp/mm) sit in their own files
+# (`-15lp.png`, `-20lp.png`, `-40lp.png`) — blue solid = S,
+# red dashed = M, single max aperture (f/4).
+#
+# Image height: 25 mm (GF 44x33 mm medium-format sensor radius is
+# 27.5 mm; Fujifilm publishes the curve out to 25 mm and labels the
+# axis "0..25 mm" — confirmed from the source PNG x-axis ticks at
+# 0/5/10/15/20/25 mm).
+#
+# Sample fractions (SAMPLE_FRACTIONS × image_height_mm = 25.0):
+# 0.0, 2.5, 5.0, 7.5, 10.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0 mm.
+#
+# Plot box measured against the printed gridlines and the leftmost
+# x-axis tick ("0"): x_left=15, x_right=249 (right edge of the bottom
+# gridline; the "25" tick label sits at x≈250-258 just past the box),
+# y_bottom=184 (bottommost printed gridline = MTF 0.0),
+# y_top=4 (extrapolated one gridline spacing above y=40, MTF=0.8;
+# the MTF=1.0 line is unprinted but spacing is 36 px/0.2).
+#
+# DRAFT ground truth: TO BE FILLED IN BY THE MAINTAINER via eye-read
+# of the three source PNGs against the chart's printed gridlines
+# (5 horizontal lines at MTF 0.0/0.2/0.4/0.6/0.8 plus the implied
+# 1.0 boundary at the top of the curve area). Per
+# `feedback_agent_no_gt_eye_read`, the agent does NOT eye-read these
+# values — they exist as `None` placeholders below until the
+# maintainer enters them.
+#
+# Reading guidance (gridline ticks): 0.0 baseline, 0.2 line is 4
+# divisions below the top; eye precision is ~±0.02-0.03 (half a
+# gridline tick is 0.10). Order of fields below: freq{N}S then
+# freq{N}M for each of the three frequencies.
+_FUJI_GF_23_GT: GroundTruthCurves = {
+    "f/4": {
+        # 15 lp/mm — blue solid (S) starts ~1.0, holds flat then has
+        # a knee near the right edge; red dashed (M) holds higher.
+        "freq15S": (None, None, None, None, None, None, None, None, None, None, None),
+        "freq15M": (None, None, None, None, None, None, None, None, None, None, None),
+        # 20 lp/mm — slightly more drop in both; S knees harder around
+        # 17-25 mm; M holds in the 0.85-0.95 band.
+        "freq20S": (None, None, None, None, None, None, None, None, None, None, None),
+        "freq20M": (None, None, None, None, None, None, None, None, None, None, None),
+        # 40 lp/mm — most aggressive curve. Both S and M dip into the
+        # 0.5-0.7 band at the edge with some wave in M from the
+        # dashed-line print pattern.
+        "freq40S": (None, None, None, None, None, None, None, None, None, None, None),
+        "freq40M": (None, None, None, None, None, None, None, None, None, None, None),
+    },
+}
+
 
 REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ReferenceChart(
@@ -619,6 +670,47 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         # fit the 4-field extractor.
         plot_box=PlotBoxCoords(x_left=287, x_right=653, y_top=153, y_bottom=393),
         ground_truth=_VILTROX_75_GT,
+    ),
+    ReferenceChart(
+        slug="fujifilm-gf-23mm-f4-r-lm-wr",
+        chart_path=(
+            "docs/optical-specs/fujifilm-gf-23mm-f4-r-lm-wr/"
+            "fujifilm-gf-23mm-f4-r-lm-wr-15lp.png"
+        ),
+        style_family="fujifilm-permfreq",
+        apertures=("f/4",),
+        frequencies_lpmm=(15, 20, 40),
+        image_height_mm=25.0,
+        notes=(
+            "Tier 1 anchor for `fujifilm-permfreq` style family (ADR-043). "
+            "GF prime, three per-frequency images (15/20/40 lp/mm); blue "
+            "solid=S, red dashed=M; single max aperture f/4. 282x212 px per "
+            "image. Plot box (15, 249, 4, 184): x_left and x_right=printed "
+            "gridline bounds, y_bottom=184 (MTF 0.0), y_top=4 (extrapolated "
+            "MTF 1.0; spacing 36 px/0.2)."
+        ),
+        plot_box=PlotBoxCoords(x_left=15, x_right=249, y_top=4, y_bottom=184),
+        ground_truth=_FUJI_GF_23_GT,
+        additional_views=(
+            ChartView(
+                chart_path=(
+                    "docs/optical-specs/fujifilm-gf-23mm-f4-r-lm-wr/"
+                    "fujifilm-gf-23mm-f4-r-lm-wr-20lp.png"
+                ),
+                plot_box=PlotBoxCoords(
+                    x_left=15, x_right=249, y_top=4, y_bottom=184
+                ),
+            ),
+            ChartView(
+                chart_path=(
+                    "docs/optical-specs/fujifilm-gf-23mm-f4-r-lm-wr/"
+                    "fujifilm-gf-23mm-f4-r-lm-wr-40lp.png"
+                ),
+                plot_box=PlotBoxCoords(
+                    x_left=15, x_right=249, y_top=4, y_bottom=184
+                ),
+            ),
+        ),
     ),
     ReferenceChart(
         slug="zeiss-touit-32mm-f1-8",
