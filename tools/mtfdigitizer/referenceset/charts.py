@@ -338,19 +338,19 @@ _SIGMA_30_GT: GroundTruthCurves = {
 # freq{N}M for each of the three frequencies.
 _FUJI_GF_23_GT: GroundTruthCurves = {
     "f/4": {
-        # 15 lp/mm — blue solid (S) starts ~1.0, holds flat then has
-        # a knee near the right edge; red dashed (M) holds higher.
-        "freq15S": (None, None, None, None, None, None, None, None, None, None, None),
-        "freq15M": (None, None, None, None, None, None, None, None, None, None, None),
-        # 20 lp/mm — slightly more drop in both; S knees harder around
-        # 17-25 mm; M holds in the 0.85-0.95 band.
-        "freq20S": (None, None, None, None, None, None, None, None, None, None, None),
-        "freq20M": (None, None, None, None, None, None, None, None, None, None, None),
-        # 40 lp/mm — most aggressive curve. Both S and M dip into the
-        # 0.5-0.7 band at the edge with some wave in M from the
-        # dashed-line print pattern.
-        "freq40S": (None, None, None, None, None, None, None, None, None, None, None),
-        "freq40M": (None, None, None, None, None, None, None, None, None, None, None),
+        # 15 lp/mm — blue solid (S) holds ~0.99 to ~16 mm then knees
+        # down to 0.75 at the edge; red dashed (M) holds higher, only
+        # dipping to 0.92 at 26.9 mm.
+        "freq15S": (0.99, 0.99, 0.99, 0.99, 0.98, 0.98, 0.97, 0.94, 0.88, 0.82, 0.75),
+        "freq15M": (0.99, 0.99, 0.99, 0.99, 0.98, 0.98, 0.97, 0.96, 0.96, 0.94, 0.92),
+        # 20 lp/mm — S knees harder past 16 mm down to 0.58 at the
+        # edge; M holds in the 0.79–0.97 band with a small wobble.
+        "freq20S": (0.97, 0.97, 0.97, 0.95, 0.94, 0.92, 0.89, 0.81, 0.71, 0.63, 0.58),
+        "freq20M": (0.97, 0.97, 0.95, 0.95, 0.94, 0.91, 0.89, 0.89, 0.89, 0.86, 0.79),
+        # 40 lp/mm — most aggressive falloff. S drops to 0.46 at the
+        # edge; M oscillates from dashed-line print pattern.
+        "freq40S": (0.89, 0.90, 0.88, 0.84, 0.79, 0.74, 0.71, 0.67, 0.60, 0.53, 0.46),
+        "freq40M": (0.89, 0.90, 0.86, 0.84, 0.82, 0.72, 0.73, 0.71, 0.74, 0.70, 0.53),
     },
 }
 
@@ -395,16 +395,21 @@ _FUJI_GF_23_GT: GroundTruthCurves = {
 # 41-px spacing above the topmost light gridline (y≈40).
 _FUJI_XF_23_GT: GroundTruthCurves = {
     "f/1.4": {
-        # 15 lp/mm — blue solid (S) and red dashed (M). Both start ~0.96,
-        # S knees down to ~0.81 at edge; M holds higher until a sharp
-        # drop right at 14.2 mm.
-        "freq15S": (None, None, None, None, None, None, None, None, None, None, None),
-        "freq15M": (None, None, None, None, None, None, None, None, None, None, None),
-        # 45 lp/mm — S has a dip-and-recover shape (down to ~0.5 at
-        # ~9-10 mm then climbs back to ~0.58 at edge); M cuts hard to
-        # ~0.48 at the corner.
-        "freq45S": (None, None, None, None, None, None, None, None, None, None, None),
-        "freq45M": (None, None, None, None, None, None, None, None, None, None, None),
+        # 15 lp/mm — blue solid (S) and red dashed (M). Both start
+        # at 0.96, S knees down to 0.81 at edge; M holds in the
+        # 0.94–0.96 band until a sharp drop to 0.86 at the corner.
+        # Position 1.4 mm filled at 0.96 by eyeball (extractor returned
+        # None — first off-center sample landed in a print gap, the
+        # curve is clearly at the same ~0.96 level as positions 0.0
+        # and 2.8 mm in the source PNG).
+        "freq15S": (0.96, 0.96, 0.95, 0.95, 0.93, 0.91, 0.88, 0.85, 0.83, 0.82, 0.81),
+        "freq15M": (0.96, 0.96, 0.95, 0.96, 0.96, 0.96, 0.95, 0.94, 0.94, 0.92, 0.86),
+        # 45 lp/mm — S has a dip-and-recover shape: 0.80 at center,
+        # drops to 0.51 at 9.9 mm, climbs back to 0.58 at edge.
+        # M holds in 0.72 band through ~7 mm, then drops to 0.48 at
+        # the corner.
+        "freq45S": (0.80, 0.79, 0.76, 0.73, 0.66, 0.58, 0.53, 0.51, 0.53, 0.56, 0.58),
+        "freq45M": (0.80, 0.75, 0.72, 0.72, 0.72, 0.72, 0.69, 0.68, 0.67, 0.60, 0.48),
     },
 }
 
