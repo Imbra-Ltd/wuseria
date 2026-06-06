@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 218" role="img" aria-label="MTF chart, generated from readings">
+<style>.grid-line { stroke: #d8d8d8; stroke-width: 0.5; }.axis-label { font-size: 7px; fill: #666666; font-family: ui-monospace, monospace; }.axis-y { text-anchor: end; }.axis-x { text-anchor: middle; }.axis-title { font-size: 7px; fill: #666666; text-anchor: middle; }.curve { fill: none; stroke-width: 1.5; }.curve-m { stroke-dasharray: 4 2; }.dot { fill: white; stroke-width: 1; }.legend-text { font-size: 7px; fill: #666666; font-family: ui-monospace, monospace; }</style>
+<line class="grid-line" x1="36" y1="172.0" x2="304" y2="172.0"/>
+<line class="grid-line" x1="36" y1="140.0" x2="304" y2="140.0"/>
+<line class="grid-line" x1="36" y1="108.0" x2="304" y2="108.0"/>
+<line class="grid-line" x1="36" y1="76.0" x2="304" y2="76.0"/>
+<line class="grid-line" x1="36" y1="44.0" x2="304" y2="44.0"/>
+<line class="grid-line" x1="36" y1="12.0" x2="304" y2="12.0"/>
+<text class="axis-label axis-y" x="32" y="175.0">0.0</text>
+<text class="axis-label axis-y" x="32" y="143.0">0.2</text>
+<text class="axis-label axis-y" x="32" y="111.0">0.4</text>
+<text class="axis-label axis-y" x="32" y="79.0">0.6</text>
+<text class="axis-label axis-y" x="32" y="47.0">0.8</text>
+<text class="axis-label axis-y" x="32" y="15.0">1.0</text>
+<text class="axis-label axis-x" x="36.0" y="186">C</text>
+<text class="axis-label axis-x" x="62.8" y="186">1.4</text>
+<text class="axis-label axis-x" x="89.6" y="186">2.8</text>
+<text class="axis-label axis-x" x="116.4" y="186">4.3</text>
+<text class="axis-label axis-x" x="143.2" y="186">5.7</text>
+<text class="axis-label axis-x" x="170.0" y="186">7.1</text>
+<text class="axis-label axis-x" x="196.8" y="186">8.5</text>
+<text class="axis-label axis-x" x="223.6" y="186">9.9</text>
+<text class="axis-label axis-x" x="250.4" y="186">11.4</text>
+<text class="axis-label axis-x" x="277.2" y="186">12.8</text>
+<text class="axis-label axis-x" x="304.0" y="186">14.2</text>
+<text class="axis-title" x="170.0" y="198">Image height (mm)</text>
+<polyline class="curve curve-15" style="stroke:#d4a14a" points="36.0,36.4 62.8,36.0 89.6,36.4 116.4,37.2 143.2,40.3 170.0,42.2 196.8,41.6 223.6,39.1 250.4,39.4 277.2,45.5 304.0,54.2"/>
+<polyline class="curve curve-15 curve-m" style="stroke:#d4a14a" points="36.0,36.4 62.8,37.4 89.6,41.7 116.4,45.3 143.2,45.2 170.0,40.6 196.8,35.5 223.6,31.3 250.4,29.3 277.2,30.0 304.0,31.1" stroke-dasharray="4 2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="36.0" cy="36.4" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="62.8" cy="36.0" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="89.6" cy="36.4" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="116.4" cy="37.2" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="143.2" cy="40.3" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="170.0" cy="42.2" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="196.8" cy="41.6" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="223.6" cy="39.1" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="250.4" cy="39.4" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="277.2" cy="45.5" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="304.0" cy="54.2" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="36.0" cy="36.4" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="62.8" cy="37.4" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="89.6" cy="41.7" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="116.4" cy="45.3" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="143.2" cy="45.2" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="170.0" cy="40.6" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="196.8" cy="35.5" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="223.6" cy="31.3" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="250.4" cy="29.3" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="277.2" cy="30.0" r="2"/>
+<circle class="dot dot-15" style="stroke:#d4a14a" cx="304.0" cy="31.1" r="2"/>
+<line x1="36" y1="209" x2="48" y2="209" stroke="#d4a14a" stroke-width="1.5"/>
+<text class="legend-text" x="51" y="212">15 lp/mm S</text>
+<line x1="92" y1="209" x2="104" y2="209" stroke="#d4a14a" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text class="legend-text" x="107" y="212">15 lp/mm M</text>
+</svg>
