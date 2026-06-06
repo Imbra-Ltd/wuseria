@@ -46,8 +46,9 @@ import numpy as np
 
 from .loader import load_chart_bgr
 from .pipeline import ExtractedChart, SampledReading, extract_chart
+from .pipeline.dispatch import parse_field_name
 from .pipeline.plotbox import image_height_mm_to_x_pixel
-from .pipeline.rendermatch import CURVE_FIELDS
+from .pipeline.rendermatch import fields_in
 from .pipeline.types import PlotBox
 from .family_profile import profile_for_chart
 from .referenceset import REFERENCE_CHARTS
@@ -63,19 +64,30 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 # same field as the same color in the right panel and the bottom panel.
 # Colors are BGR (OpenCV convention).
 
-_OVERLAY_COLOR_10 = (60, 155, 200)  # warm gold ≈ #c89b3c, BGR
-_OVERLAY_COLOR_30 = (210, 155, 107)  # cool blue ≈ #6b9bd2, BGR
+# BGR convention (OpenCV). Mirrors `svg.py:_FREQUENCY_COLOR` (RGB hex
+# → BGR tuple); kept here as concrete tuples so the overlay renders the
+# same color the SVG legend swatches do, on the same maintainer screen.
+_OVERLAY_FREQ_COLOR: dict[int, tuple[int, int, int]] = {
+    10: (60, 155, 200),   # #c89b3c warm gold
+    15: (74, 161, 212),   # #d4a14a
+    20: (111, 168, 95),   # #5fa86f teal-green
+    30: (210, 155, 107),  # #6b9bd2 cool blue
+    40: (181, 123, 93),   # #5d7bb5
+    45: (181, 123, 93),   # #5d7bb5
+}
+_OVERLAY_NEUTRAL = (136, 136, 136)  # neutral grey fallback
+# Backwards-compat: kept for tests that referenced the 10/30 colors
+# explicitly. The frequency-color map is the new source of truth.
+_OVERLAY_COLOR_10 = _OVERLAY_FREQ_COLOR[10]
+_OVERLAY_COLOR_30 = _OVERLAY_FREQ_COLOR[30]
 _OVERLAY_THICKNESS = 3
 _OVERLAY_DASH_LENGTH_PX = 6  # length of each dash segment for M fields
 _OVERLAY_GAP_LENGTH_PX = 4   # gap between dashes for M fields
 
 
 def _field_color(field: str) -> tuple[int, int, int]:
-    if field.startswith("contrast"):
-        return _OVERLAY_COLOR_10
-    if field.startswith("resolution"):
-        return _OVERLAY_COLOR_30
-    raise ValueError(f"unknown field: {field}")
+    freq, _sm = parse_field_name(field)
+    return _OVERLAY_FREQ_COLOR.get(freq, _OVERLAY_NEUTRAL)
 
 
 def _is_meridional(field: str) -> bool:
@@ -140,12 +152,12 @@ def render_overlay(
         int(round(image_height_mm_to_x_pixel(r.position_mm, plot_box, image_height_mm)))
         for r in readings
     )
-    for field in CURVE_FIELDS:
+    for field in fields_in(readings):
         color = _field_color(field)
         dashed = _is_meridional(field)
         for i in range(len(readings) - 1):
-            a = getattr(readings[i], field)
-            b = getattr(readings[i + 1], field)
+            a = readings[i].samples.get(field)
+            b = readings[i + 1].samples.get(field)
             if a is None or b is None:
                 continue
             x0, x1 = x_pixels[i], x_pixels[i + 1]

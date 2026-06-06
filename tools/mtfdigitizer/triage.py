@@ -69,7 +69,7 @@ class LowReason(str, Enum):
     IOU_BELOW_THRESHOLD = "iou_below_threshold"
     RENDER_MATCH_UNDEFINED = "render_match_undefined"
     PRIOR_FAILED_CENTER_GE_EDGE = "prior_failed_center_ge_edge"
-    PRIOR_FAILED_TEN_GE_THIRTY = "prior_failed_ten_ge_thirty"
+    PRIOR_FAILED_LOW_FREQ_GE_HIGH = "prior_failed_low_freq_ge_high"
     PRIOR_FAILED_NOT_SUSPICIOUSLY_FLAT = "prior_failed_not_suspiciously_flat"
     PRIOR_FAILED_IN_RANGE = "prior_failed_in_range"
 
@@ -77,10 +77,15 @@ class LowReason(str, Enum):
 # Map `PriorViolation.prior_name` → `LowReason`. One row per prior the
 # `check_all()` aggregator can emit. Keyed by the string the prior
 # itself stamps onto the violation — keeps the two modules in sync via
-# a single point of translation.
+# a single point of translation. Both prior names are accepted for the
+# low-vs-high check: the new name (`low_freq_ge_high`) is what
+# `check_low_freq_ge_high` emits today; the legacy alias
+# (`ten_ge_thirty`) maps to the same reason so older fixtures still
+# resolve.
 _PRIOR_NAME_TO_REASON: dict[str, LowReason] = {
     "center_ge_edge": LowReason.PRIOR_FAILED_CENTER_GE_EDGE,
-    "ten_ge_thirty": LowReason.PRIOR_FAILED_TEN_GE_THIRTY,
+    "low_freq_ge_high": LowReason.PRIOR_FAILED_LOW_FREQ_GE_HIGH,
+    "ten_ge_thirty": LowReason.PRIOR_FAILED_LOW_FREQ_GE_HIGH,
     "not_suspiciously_flat": LowReason.PRIOR_FAILED_NOT_SUSPICIOUSLY_FLAT,
     "in_range": LowReason.PRIOR_FAILED_IN_RANGE,
 }

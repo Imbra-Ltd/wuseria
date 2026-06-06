@@ -74,7 +74,7 @@ def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
 
 
 def _extracted_value(reading: SampledReading, field: str) -> float | None:
-    return getattr(reading, field)
+    return reading.samples.get(field)
 
 
 def _compare_field(
@@ -162,7 +162,7 @@ def _write_readings_log(chart: ReferenceChart, result, field_deltas: list[FieldD
     """
     READINGS_DIR.mkdir(parents=True, exist_ok=True)
     path = READINGS_DIR / f"{chart.slug}.md"
-    fields = ("contrast10S", "contrast10M", "resolution30S", "resolution30M")
+    fields = ("freq10S", "freq10M", "freq30S", "freq30M")
     lines: list[str] = []
     lines.append(f"# {chart.slug}")
     lines.append("")

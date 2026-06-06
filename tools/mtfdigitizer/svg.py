@@ -38,7 +38,8 @@ import argparse
 from pathlib import Path
 
 from .pipeline import ExtractedChart, SampledReading, extract_chart
-from .pipeline.rendermatch import CURVE_FIELDS
+from .pipeline.dispatch import parse_field_name
+from .pipeline.rendermatch import fields_in
 from .pipeline.types import PlotBox
 from .family_profile import profile_for_chart
 from .referenceset import REFERENCE_CHARTS
@@ -80,11 +81,25 @@ _Y_TICKS: tuple[float, ...] = (0.0, 0.2, 0.4, 0.6, 0.8, 1.0)
 # Palette. The Astro component uses `var(--color-accent)` (warm gold) +
 # `#6b9bd2` (cool blue). The provenance SVG is rendered against a light
 # review panel and needs to read on white paper too, so we pick concrete
-# colors with sufficient contrast on both.
-_COLOR_10 = "#c89b3c"  # 10 lp/mm — warm gold, matches site accent
-_COLOR_30 = "#6b9bd2"  # 30 lp/mm — cool blue
+# colors with sufficient contrast on both. The frequency-color map
+# mirrors `src/components/static/MtfChart.astro` (ADR-042); unknown
+# frequencies fall back to a muted neutral so a new brand never silently
+# renders invisible.
+_FREQUENCY_COLOR: dict[int, str] = {
+    10: "#c89b3c",  # warm gold, matches site accent
+    15: "#d4a14a",
+    20: "#5fa86f",
+    30: "#6b9bd2",  # cool blue
+    40: "#5d7bb5",
+    45: "#5d7bb5",
+}
+_COLOR_NEUTRAL = "#888888"
 _COLOR_GRID = "#d8d8d8"
 _COLOR_AXIS_TEXT = "#666666"
+
+
+def _color_for_freq(freq: int) -> str:
+    return _FREQUENCY_COLOR.get(freq, _COLOR_NEUTRAL)
 
 
 def _x_pixel(position_mm: float, max_mm: float) -> float:
@@ -113,7 +128,7 @@ def _polyline_segments(
     segments: list[list[str]] = []
     current: list[str] = []
     for reading in readings:
-        value = getattr(reading, field)
+        value = reading.samples.get(field)
         if value is None:
             if len(current) >= 2:
                 segments.append(current)
@@ -128,18 +143,16 @@ def _polyline_segments(
 
 
 def _field_style(field: str) -> tuple[str, str]:
-    """Return (stroke_color, dash_array_or_empty) for one committed field."""
-    match field:
-        case "contrast10S":
-            return _COLOR_10, ""
-        case "contrast10M":
-            return _COLOR_10, "4 2"
-        case "resolution30S":
-            return _COLOR_30, ""
-        case "resolution30M":
-            return _COLOR_30, "4 2"
-        case _:
-            raise ValueError(f"unknown field: {field}")
+    """Return (stroke_color, dash_array_or_empty) for one synthetic field.
+
+    Field name follows the `freq{N}{S|M}` convention (ADR-042). Solid
+    stroke = sagittal, `4 2` dash = meridional. Color comes from the
+    frequency table; unknown frequencies fall back to the neutral.
+    """
+    freq, sm = parse_field_name(field)
+    color = _color_for_freq(freq)
+    dash = "" if sm == "S" else "4 2"
+    return color, dash
 
 
 def _format_position_label(position_mm: float) -> str:
@@ -185,12 +198,17 @@ def render_svg(chart: ExtractedChart) -> str:
     body.append(_render_x_axis_title())
     body.extend(_render_curves(chart.readings, max_mm))
     body.extend(_render_dots(chart.readings, max_mm))
-    body.extend(_render_legend())
+    body.extend(_render_legend(chart.readings))
     body.append("</svg>")
     return "\n".join(body) + "\n"
 
 
 def _render_style_block() -> str:
+    # Per-frequency stroke colors are delivered via inline `style=`
+    # attributes on each polyline/circle (set in `_render_curves` and
+    # `_render_dots`) since the frequency set is per-chart after ADR-042
+    # and not knowable at style-block render time. The class-level rules
+    # below carry shared geometry (fill, dash, stroke-width) only.
     return (
         "<style>"
         f".grid-line {{ stroke: {_COLOR_GRID}; stroke-width: 0.5; }}"
@@ -201,12 +219,8 @@ def _render_style_block() -> str:
         f".axis-title {{ font-size: 7px; fill: {_COLOR_AXIS_TEXT}; "
         f"text-anchor: middle; }}"
         ".curve { fill: none; stroke-width: 1.5; }"
-        f".curve-10 {{ stroke: {_COLOR_10}; }}"
-        f".curve-30 {{ stroke: {_COLOR_30}; }}"
         ".curve-m { stroke-dasharray: 4 2; }"
         ".dot { fill: white; stroke-width: 1; }"
-        f".dot-10 {{ stroke: {_COLOR_10}; }}"
-        f".dot-30 {{ stroke: {_COLOR_30}; }}"
         ".legend-text { font-size: 7px; fill: " + _COLOR_AXIS_TEXT
         + "; font-family: ui-monospace, monospace; }"
         "</style>"
@@ -262,53 +276,67 @@ def _render_curves(
     readings: tuple[SampledReading, ...], max_mm: float
 ) -> list[str]:
     elements: list[str] = []
-    for field in CURVE_FIELDS:
-        _, dash = _field_style(field)
+    for field in fields_in(readings):
+        color, dash = _field_style(field)
         css_class = _curve_css_class(field)
         for points in _polyline_segments(readings, field, max_mm):
             extra = f' stroke-dasharray="{dash}"' if dash else ""
             elements.append(
-                f'<polyline class="{css_class}" points="{points}"{extra}/>'
+                f'<polyline class="{css_class}" style="stroke:{color}" '
+                f'points="{points}"{extra}/>'
             )
     return elements
 
 
 def _curve_css_class(field: str) -> str:
-    freq = "10" if field.startswith("contrast") else "30"
-    sm = "m" if field.endswith("M") else "s"
+    """`curve curve-{freq}` for S, `curve curve-{freq} curve-m` for M.
+
+    The frequency suffix is a stable identifier even when CSS does not
+    declare a per-frequency rule — color is delivered via inline style
+    after ADR-042 made the frequency set unbounded.
+    """
+    freq, sm = parse_field_name(field)
     base = f"curve curve-{freq}"
-    return f"{base} curve-m" if sm == "m" else base
+    return f"{base} curve-m" if sm == "M" else base
 
 
 def _render_dots(
     readings: tuple[SampledReading, ...], max_mm: float
 ) -> list[str]:
     elements: list[str] = []
-    for field in CURVE_FIELDS:
-        css_class = "dot dot-10" if field.startswith("contrast") else "dot dot-30"
+    for field in fields_in(readings):
+        freq, _sm = parse_field_name(field)
+        color = _color_for_freq(freq)
+        css_class = f"dot dot-{freq}"
         for reading in readings:
-            value = getattr(reading, field)
+            value = reading.samples.get(field)
             if value is None:
                 continue
             cx = _x_pixel(reading.position_mm, max_mm)
             cy = _y_pixel(value)
             elements.append(
-                f'<circle class="{css_class}" cx="{cx:.1f}" cy="{cy:.1f}" r="2"/>'
+                f'<circle class="{css_class}" style="stroke:{color}" '
+                f'cx="{cx:.1f}" cy="{cy:.1f}" r="2"/>'
             )
     return elements
 
 
-def _render_legend() -> list[str]:
+def _render_legend(readings: tuple[SampledReading, ...]) -> list[str]:
     # Legend lives in its own strip below the x-axis title (the Astro
     # component renders it as a sibling `<div>`; the provenance file is
     # standalone, so the legend has to live inside the viewBox without
-    # crowding the data area).
-    items = (
-        ("10 lp/mm S", _COLOR_10, False),
-        ("10 lp/mm M", _COLOR_10, True),
-        ("30 lp/mm S", _COLOR_30, False),
-        ("30 lp/mm M", _COLOR_30, True),
-    )
+    # crowding the data area). One pair per frequency the chart
+    # publishes (ADR-042), sorted low → high.
+    items: list[tuple[str, str, bool]] = []
+    seen_freqs: set[int] = set()
+    for field in fields_in(readings):
+        freq, _sm = parse_field_name(field)
+        seen_freqs.add(freq)
+    for freq in sorted(seen_freqs):
+        color = _color_for_freq(freq)
+        items.append((f"{freq} lp/mm S", color, False))
+        items.append((f"{freq} lp/mm M", color, True))
+
     elements: list[str] = []
     x = _PAD_LEFT
     y = _VIEWBOX_H - 6  # baseline near the bottom of the legend strip

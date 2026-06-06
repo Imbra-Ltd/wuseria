@@ -131,7 +131,7 @@ def test_dedup_keeps_both_when_outside_window() -> None:
 
 def test_ridge_tracks_to_fields_separates_two_curves_at_distinct_y() -> None:
     """Two horizontal curves at y=20 and y=40 inside a 100x100 plot box —
-    upper goes to contrast10S, lower to resolution30S (the SAGITTAL slot
+    upper goes to freq10S, lower to freq30S (the SAGITTAL slot
     of each frequency pair)."""
     mask = np.zeros((100, 100), dtype=np.uint8)
     # Curves cover 80% of plot width — below the 90% chrome threshold so
@@ -146,11 +146,11 @@ def test_ridge_tracks_to_fields_separates_two_curves_at_distinct_y() -> None:
         lower_freq=30,
         dashed_is_sagittal=False,
     )
-    assert "contrast10S" in out
-    assert "resolution30S" in out
+    assert "freq10S" in out
+    assert "freq30S" in out
     # The upper-band track ended up in 10S
-    upper_y = np.nonzero(out["contrast10S"])[0].mean()
-    lower_y = np.nonzero(out["resolution30S"])[0].mean()
+    upper_y = np.nonzero(out["freq10S"])[0].mean()
+    lower_y = np.nonzero(out["freq30S"])[0].mean()
     assert upper_y == 20
     assert lower_y == 40
 

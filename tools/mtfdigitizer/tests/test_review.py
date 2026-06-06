@@ -57,10 +57,12 @@ def _readings(values_per_field: dict[str, tuple[float | None, ...]]) -> tuple[Sa
     return tuple(
         SampledReading(
             position_mm=positions[i],
-            contrast10S=c10s[i],
-            contrast10M=c10m[i],
-            resolution30S=r30s[i],
-            resolution30M=r30m[i],
+            samples={
+                "freq10S": c10s[i],
+                "freq10M": c10m[i],
+                "freq30S": r30s[i],
+                "freq30M": r30m[i],
+            },
         )
         for i in range(11)
     )

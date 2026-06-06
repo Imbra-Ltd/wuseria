@@ -44,6 +44,8 @@ from pathlib import Path
 
 from .family_profile import profile_for_chart
 from .pipeline import PlotBox, extract_chart
+from .pipeline.dispatch import parse_field_name
+from .pipeline.rendermatch import fields_in
 from .pipeline.types import ExtractedChart, SampledReading
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
 
@@ -73,16 +75,14 @@ class EmitResult:
     null_counts: dict[str, int]
 
 
-_FIELDS: tuple[str, ...] = (
-    "contrast10S",
-    "contrast10M",
-    "resolution30S",
-    "resolution30M",
-)
+# Backwards-compat: the canonical-frequency field set, kept for tests
+# and callers that referenced the legacy 4-tuple. New code should derive
+# the field set from `SampledReading.samples` keys via `fields_in()`.
+_FIELDS: tuple[str, ...] = ("freq10S", "freq10M", "freq30S", "freq30M")
 
 
 def _has_any_data(r: SampledReading) -> bool:
-    return any(getattr(r, field) is not None for field in _FIELDS)
+    return any(v is not None for v in r.samples.values())
 
 
 def _format_value(value: float | None) -> str:
@@ -99,14 +99,48 @@ def _format_value(value: float | None) -> str:
     return text or "0"
 
 
+def _frequencies_in_reading(r: SampledReading) -> tuple[int, ...]:
+    """Sorted (low → high) frequencies referenced by this reading's keys."""
+    freqs: set[int] = set()
+    for field in r.samples:
+        try:
+            freq, _sm = parse_field_name(field)
+        except ValueError:
+            continue
+        freqs.add(freq)
+    return tuple(sorted(freqs))
+
+
 def _format_reading(r: SampledReading) -> str:
+    """Emit one `MtfReading` row in the ADR-042 samples-record shape.
+
+    Per ADR-042:
+    ```
+    {
+        position: <pos>,
+        samples: {
+            10: { S: <v>, M: <v> },
+            30: { S: <v>, M: <v> },
+        },
+    }
+    ```
+    Frequencies are sorted low → high so the output is stable across runs.
+    """
+    inner: list[str] = []
+    for freq in _frequencies_in_reading(r):
+        s_val = r.samples.get(f"freq{freq}S")
+        m_val = r.samples.get(f"freq{freq}M")
+        inner.append(
+            f"              {freq}: {{ S: {_format_value(s_val)}, "
+            f"M: {_format_value(m_val)} }},"
+        )
+    samples_block = "\n".join(inner)
     return (
         "          {\n"
         f"            position: {r.position_mm:g},\n"
-        f"            contrast10S: {_format_value(r.contrast10S)},\n"
-        f"            contrast10M: {_format_value(r.contrast10M)},\n"
-        f"            resolution30S: {_format_value(r.resolution30S)},\n"
-        f"            resolution30M: {_format_value(r.resolution30M)},\n"
+        "            samples: {\n"
+        f"{samples_block}\n"
+        "            },\n"
         "          },"
     )
 
@@ -210,7 +244,7 @@ def emit_lens(
 
     panels: list[ChartPanel] = []
     total_positions = 0
-    null_counts = {field: 0 for field in _FIELDS}
+    null_counts: dict[str, int] = {}
 
     for index, view in enumerate(views):
         if view.plot_box is None:
@@ -228,9 +262,10 @@ def emit_lens(
         focal = focal_lengths[index] if focal_lengths is not None else None
         panels.append((aperture_string, focal, rows))
         total_positions += len(rows)
-        for field in _FIELDS:
+        for field in fields_in(extracted.readings):
+            null_counts.setdefault(field, 0)
             null_counts[field] += sum(
-                1 for r in extracted.readings if getattr(r, field) is None
+                1 for r in extracted.readings if r.samples.get(field) is None
             )
 
     return EmitResult(

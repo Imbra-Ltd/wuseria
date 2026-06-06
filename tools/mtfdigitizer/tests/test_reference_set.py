@@ -138,7 +138,7 @@ def test_ground_truth_values_in_mtf_range() -> None:
 
 def test_ground_truth_field_names_are_canonical() -> None:
     """Field names must match the SampledReading schema in pipeline/types.py."""
-    canonical = {"contrast10S", "contrast10M", "resolution30S", "resolution30M"}
+    canonical = {"freq10S", "freq10M", "freq30S", "freq30M"}
     for chart in REFERENCE_CHARTS:
         if chart.ground_truth is None:
             continue

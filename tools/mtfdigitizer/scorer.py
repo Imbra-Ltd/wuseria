@@ -27,7 +27,6 @@ from pathlib import Path
 
 from .pipeline import PlotBox, extract_chart, score_chart
 from .pipeline.rendermatch import (
-    CURVE_FIELDS,
     DEFAULT_DILATION_RADIUS_PX,
     FieldIou,
     RenderMatchScore,

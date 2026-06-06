@@ -89,21 +89,39 @@ from .types import PlotBox
 _CURVE_IDENTITY_NAME = re.compile(r"^(?P<freq>\d{2})(?P<sm>[SM])(?:-.+)?$")
 
 
-# Map (frequency, S/M) → committed-data field name. None when the
-# combination is not part of the canonical (10S, 10M, 30S, 30M) set
-# (the schema in `src/types/mtf.ts`).
-_FIELD_BY_KEY: dict[tuple[int, str], str] = {
-    (10, "S"): "contrast10S",
-    (10, "M"): "contrast10M",
-    (30, "S"): "resolution30S",
-    (30, "M"): "resolution30M",
-}
+# Synthetic field-name convention (ADR-042). Every (frequency, S/M)
+# pair maps to a deterministic string: `freq{N}{S|M}`. The names are
+# dict keys carried through the pipeline (skeleton dicts, rendermatch
+# masks, sampler output, `SampledReading.samples`) and translated to
+# the TS schema's frequency-keyed shape at the `emit.py` boundary.
+def curve_field(freq_lpmm: int, sm: str) -> str:
+    """Synthetic field name for one (frequency, S|M) pair.
+
+    Always returns a name — there is no longer a "not part of the
+    canonical set" exclusion now that the schema accepts arbitrary
+    frequencies. Caller previously checked `is not None`; that check
+    is now a no-op but kept where it appears for readability.
+    """
+    if sm not in ("S", "M"):
+        raise ValueError(f"sm must be 'S' or 'M', got {sm!r}")
+    return f"freq{freq_lpmm}{sm}"
 
 
-def curve_field(freq_lpmm: int, sm: str) -> str | None:
-    """Map (frequency, S/M) → committed-data field name, or None when
-    the combination is not part of the canonical (10S, 10M, 30S, 30M) set."""
-    return _FIELD_BY_KEY.get((freq_lpmm, sm))
+def parse_field_name(field: str) -> tuple[int, str]:
+    """Inverse of `curve_field`: 'freq10S' → (10, 'S').
+
+    Raises `ValueError` on names that don't follow the convention —
+    a sanity check for callers that introspect field names emitted
+    by the pipeline.
+    """
+    import re as _re
+
+    m = _re.match(r"^freq(\d+)([SM])$", field)
+    if not m:
+        raise ValueError(
+            f"field name {field!r} does not follow freq{{N}}{{S|M}} convention"
+        )
+    return int(m.group(1)), m.group(2)
 
 
 def parse_curve_identity_name(name: str) -> tuple[int, str]:
@@ -280,9 +298,7 @@ def field_skeletons(
             split = split_sm_by_cc_width(skeleton)
             freq = freq_by_color[color_name]
             for sm, sk in ((solid_sm, split.sagittal), (dashed_sm, split.meridional)):
-                field = curve_field(freq, sm)
-                if field is not None:
-                    out[field] = sk
+                out[curve_field(freq, sm)] = sk
     elif (
         profile.style_axis == "SPLIT_BY_DASH"
         and profile.hue_meaning == "GEODESIC_DP"
@@ -304,14 +320,12 @@ def field_skeletons(
             skeleton = close_and_skeletonize(mask)
             split = split_sm_by_cc_width(skeleton)
             freq = freq_by_color[color_name]
-            solid_field = curve_field(freq, solid_sm)
-            if solid_field is not None:
-                out[solid_field] = split.sagittal
+            out[curve_field(freq, solid_sm)] = split.sagittal
             dashed_field = curve_field(freq, dashed_sm)
-            if dashed_field is not None and split.meridional.any():
+            if split.meridional.any():
                 curve = extract_one_curve_dp(split.meridional, plot_box)
                 out[dashed_field] = curve_to_field_skeleton(curve, mask)
-            elif dashed_field is not None:
+            else:
                 out[dashed_field] = split.meridional
     elif (
         profile.style_axis == "HUE_IS_CURVE"
@@ -320,9 +334,7 @@ def field_skeletons(
         for hue_name, mask in curve_masks.items():
             freq, sm = parse_curve_identity_name(hue_name)
             skeleton = close_and_skeletonize(mask)
-            field = curve_field(freq, sm)
-            if field is not None:
-                out[field] = skeleton
+            out[curve_field(freq, sm)] = skeleton
     elif (
         profile.style_axis == "HUE_IS_CURVE"
         and profile.hue_meaning == "SAGITTAL_MERIDIONAL"
@@ -344,9 +356,8 @@ def field_skeletons(
                 (upper_freq, upper_mask),
                 (lower_freq, lower_mask),
             ):
-                field = curve_field(freq, sm)
-                if field is not None and band_mask.any():
-                    out[field] = close_and_skeletonize(band_mask)
+                if band_mask.any():
+                    out[curve_field(freq, sm)] = close_and_skeletonize(band_mask)
     elif (
         profile.style_axis == "HUE_IS_CURVE"
         and profile.hue_meaning == "PER_COLUMN_RIDGE"
@@ -392,13 +403,12 @@ def field_skeletons(
                 (upper_freq, upper_curve),
                 (lower_freq, lower_curve),
             ):
-                field = curve_field(freq, sm)
-                if field is None or not curve.points:
+                if not curve.points:
                     continue
                 sk = np.zeros(mask.shape, dtype=np.uint8)
                 for x, y in curve.points:
                     sk[int(round(y)), x] = 1
-                out[field] = sk
+                out[curve_field(freq, sm)] = sk
     elif (
         profile.style_axis == "HUE_IS_CURVE"
         and profile.hue_meaning == "GEODESIC_DP"
@@ -421,10 +431,9 @@ def field_skeletons(
                 upper_curve, lower_curve, mask, plot_box
             )
             for freq, sk in ((upper_freq, upper_sk), (lower_freq, lower_sk)):
-                field = curve_field(freq, sm)
-                if field is None or sk is None or not sk.any():
+                if sk is None or not sk.any():
                     continue
-                out[field] = sk
+                out[curve_field(freq, sm)] = sk
     elif (
         profile.style_axis == "SPLIT_BY_DASH"
         and profile.hue_meaning == "Y_BAND_IS_FREQUENCY"
@@ -456,9 +465,7 @@ def field_skeletons(
             skeleton = close_and_skeletonize(band_mask)
             split = split_sm_by_cc_width(skeleton)
             for sm, sk in ((solid_sm, split.sagittal), (dashed_sm, split.meridional)):
-                field = curve_field(freq, sm)
-                if field is not None:
-                    out[field] = sk
+                out[curve_field(freq, sm)] = sk
     elif (
         profile.style_axis == "SPLIT_BY_DASH"
         and profile.hue_meaning == "RIDGE_TRACKING"
@@ -508,9 +515,8 @@ def field_skeletons(
         ):
             solid, dashed = _solid_dashed_from_components(cluster)
             for sm, sk in ((solid_sm, solid), (dashed_sm, dashed)):
-                field = curve_field(freq, sm)
-                if field is not None and sk is not None:
-                    out[field] = sk
+                if sk is not None:
+                    out[curve_field(freq, sm)] = sk
     else:
         raise NotImplementedError(
             f"profile dispatch not implemented: style_axis={profile.style_axis!r}, "

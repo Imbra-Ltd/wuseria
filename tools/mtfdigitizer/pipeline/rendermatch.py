@@ -58,14 +58,34 @@ from .types import PlotBox, SampledReading
 DEFAULT_DILATION_RADIUS_PX: int = 3
 
 
-# Field-name → which 11-point tuple to draw. Order matches the schema
-# in `src/types/mtf.ts` and `SampledReading`'s field order.
+# Canonical-frequency field set: the four fields a 10+30 lp/mm chart
+# emits under the synthetic naming convention (`pipeline.dispatch.curve_field`).
+# Kept for callers that need a default ordered iteration when the chart's
+# own field set is not yet known — most callers should derive fields
+# from `SampledReading.samples` keys per ADR-042 (use `fields_in()`).
 CURVE_FIELDS: tuple[str, ...] = (
-    "contrast10S",
-    "contrast10M",
-    "resolution30S",
-    "resolution30M",
+    "freq10S",
+    "freq10M",
+    "freq30S",
+    "freq30M",
 )
+
+
+def fields_in(readings: tuple[SampledReading, ...]) -> tuple[str, ...]:
+    """Union of field names across all readings, in insertion order.
+
+    Derives the field set from the actual reading rows so the scorer
+    and emitters honor whatever frequencies the chart published
+    (ADR-042). Sigma/Samyang/Tokina/Viltrox readings produce a tuple
+    equal to `CURVE_FIELDS`; Fuji GF primes produce
+    `("freq15S", "freq15M", "freq20S", "freq20M", "freq40S", "freq40M")`.
+    """
+    seen: list[str] = []
+    for r in readings:
+        for field in r.samples:
+            if field not in seen:
+                seen.append(field)
+    return tuple(seen)
 
 
 @dataclass(frozen=True)
@@ -123,8 +143,9 @@ def rasterize_readings(
             f"expected {len(SAMPLE_FRACTIONS)} readings, got {len(readings)}"
         )
     h, w = image_shape
+    fields = fields_in(readings)
     masks: dict[str, np.ndarray] = {
-        field: np.zeros((h, w), dtype=np.uint8) for field in CURVE_FIELDS
+        field: np.zeros((h, w), dtype=np.uint8) for field in fields
     }
 
     # Precompute the x pixel of each sample once — same x grid for every field.
@@ -133,10 +154,10 @@ def rasterize_readings(
         for r in readings
     )
 
-    for field in CURVE_FIELDS:
+    for field in fields:
         for i in range(len(readings) - 1):
-            a = getattr(readings[i], field)
-            b = getattr(readings[i + 1], field)
+            a = readings[i].samples.get(field)
+            b = readings[i + 1].samples.get(field)
             if a is None or b is None:
                 continue
             x0, x1 = x_pixels[i], x_pixels[i + 1]
@@ -217,11 +238,22 @@ def score_chart(
     )
     skeletons = field_skeletons(bgr, profile, plot_box)
 
+    # Union of fields present on either side. The raster side comes from
+    # the readings the caller passed; the skeleton side comes from what
+    # the extractor produced. A field present in one but not the other is
+    # a genuine disagreement and gets scored as such (one side empty →
+    # score 0.0; both empty → score None).
+    all_fields: list[str] = list(rasterized.keys())
+    for field in skeletons:
+        if field not in all_fields:
+            all_fields.append(field)
+
     field_scores: list[FieldIou] = []
     defined_scores: list[float] = []
-    for field in CURVE_FIELDS:
-        raster_mask = dilate_for_iou(rasterized[field], dilation_radius_px)
-        skel_raw = skeletons.get(field, np.zeros((h, w), dtype=np.uint8))
+    empty = np.zeros((h, w), dtype=np.uint8)
+    for field in all_fields:
+        raster_mask = dilate_for_iou(rasterized.get(field, empty), dilation_radius_px)
+        skel_raw = skeletons.get(field, empty)
         skel_mask = dilate_for_iou(skel_raw, dilation_radius_px)
         score = iou(raster_mask, skel_mask)
 

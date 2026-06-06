@@ -55,17 +55,19 @@ def _readings(values_per_field: dict[str, tuple[float | None, ...]]) -> tuple[Sa
     """
     positions = tuple(round(i * 1.4, 1) for i in range(11))
     blank: tuple[None, ...] = (None,) * 11
-    c10s = values_per_field.get("contrast10S", blank)
-    c10m = values_per_field.get("contrast10M", blank)
-    r30s = values_per_field.get("resolution30S", blank)
-    r30m = values_per_field.get("resolution30M", blank)
+    c10s = values_per_field.get("freq10S", blank)
+    c10m = values_per_field.get("freq10M", blank)
+    r30s = values_per_field.get("freq30S", blank)
+    r30m = values_per_field.get("freq30M", blank)
     return tuple(
         SampledReading(
             position_mm=positions[i],
-            contrast10S=c10s[i],
-            contrast10M=c10m[i],
-            resolution30S=r30s[i],
-            resolution30M=r30m[i],
+            samples={
+                "freq10S": c10s[i],
+                "freq10M": c10m[i],
+                "freq30S": r30s[i],
+                "freq30M": r30m[i],
+            },
         )
         for i in range(11)
     )
@@ -86,8 +88,8 @@ def _chart(readings: tuple[SampledReading, ...]) -> ExtractedChart:
 
 def test_polyline_continuous_run_is_one_segment() -> None:
     """All 11 values present → one segment with 11 vertices."""
-    readings = _readings({"contrast10S": tuple(0.9 - i * 0.05 for i in range(11))})
-    segments = _polyline_segments(readings, "contrast10S", max_mm=14.0)
+    readings = _readings({"freq10S": tuple(0.9 - i * 0.05 for i in range(11))})
+    segments = _polyline_segments(readings, "freq10S", max_mm=14.0)
     assert len(segments) == 1
     # 11 vertices → 11 "x,y" pairs separated by spaces.
     assert len(segments[0].split(" ")) == 11
@@ -98,8 +100,8 @@ def test_polyline_none_breaks_into_two_segments() -> None:
     values: tuple[float | None, ...] = (
         0.95, 0.95, 0.95, 0.95, None, 0.80, 0.78, 0.75, 0.72, 0.70, 0.65,
     )
-    readings = _readings({"contrast10S": values})
-    segments = _polyline_segments(readings, "contrast10S", max_mm=14.0)
+    readings = _readings({"freq10S": values})
+    segments = _polyline_segments(readings, "freq10S", max_mm=14.0)
     assert len(segments) == 2
     # 4 vertices before the gap, 6 after.
     assert len(segments[0].split(" ")) == 4
@@ -115,39 +117,39 @@ def test_polyline_drops_single_point_runs() -> None:
     values: tuple[float | None, ...] = (
         0.9, None, 0.8, None, None, None, None, None, None, None, None,
     )
-    readings = _readings({"contrast10S": values})
-    segments = _polyline_segments(readings, "contrast10S", max_mm=14.0)
+    readings = _readings({"freq10S": values})
+    segments = _polyline_segments(readings, "freq10S", max_mm=14.0)
     assert segments == []
 
 
 def test_polyline_all_none_produces_no_segments() -> None:
     """All-None field → no rendered polyline."""
     readings = _readings({})  # everything blank
-    segments = _polyline_segments(readings, "contrast10S", max_mm=14.0)
+    segments = _polyline_segments(readings, "freq10S", max_mm=14.0)
     assert segments == []
 
 
 def test_polyline_first_vertex_at_left_edge() -> None:
     """Reading at position_mm=0.0 → x coordinate at _PAD_LEFT."""
-    readings = _readings({"contrast10S": (0.9,) + (None,) * 10})
+    readings = _readings({"freq10S": (0.9,) + (None,) * 10})
     # Append another value at position 14 to satisfy the 2-vertex rule.
     rebuilt = (
         SampledReading(
-            position_mm=0.0, contrast10S=0.9,
-            contrast10M=None, resolution30S=None, resolution30M=None,
+            position_mm=0.0,
+            samples={"freq10S": 0.9, "freq10M": None, "freq30S": None, "freq30M": None},
         ),
         SampledReading(
-            position_mm=14.0, contrast10S=0.5,
-            contrast10M=None, resolution30S=None, resolution30M=None,
+            position_mm=14.0,
+            samples={"freq10S": 0.5, "freq10M": None, "freq30S": None, "freq30M": None},
         ),
     ) + tuple(
         SampledReading(
-            position_mm=float(i), contrast10S=None,
-            contrast10M=None, resolution30S=None, resolution30M=None,
+            position_mm=float(i),
+            samples={"freq10S": None, "freq10M": None, "freq30S": None, "freq30M": None},
         )
         for i in range(2, 11)
     )
-    segments = _polyline_segments(rebuilt[:2], "contrast10S", max_mm=14.0)
+    segments = _polyline_segments(rebuilt[:2], "freq10S", max_mm=14.0)
     first_xy = segments[0].split(" ")[0]
     x_str = first_xy.split(",")[0]
     assert float(x_str) == pytest.approx(_PAD_LEFT)
@@ -158,15 +160,15 @@ def test_polyline_last_vertex_at_right_edge() -> None:
     last_x_expected = _VIEWBOX_W - _PAD_RIGHT
     readings = (
         SampledReading(
-            position_mm=0.0, contrast10S=0.9,
-            contrast10M=None, resolution30S=None, resolution30M=None,
+            position_mm=0.0,
+            samples={"freq10S": 0.9, "freq10M": None, "freq30S": None, "freq30M": None},
         ),
         SampledReading(
-            position_mm=14.0, contrast10S=0.5,
-            contrast10M=None, resolution30S=None, resolution30M=None,
+            position_mm=14.0,
+            samples={"freq10S": 0.5, "freq10M": None, "freq30S": None, "freq30M": None},
         ),
     )
-    segments = _polyline_segments(readings, "contrast10S", max_mm=14.0)
+    segments = _polyline_segments(readings, "freq10S", max_mm=14.0)
     last_xy = segments[0].split(" ")[-1]
     x_str = last_xy.split(",")[0]
     assert float(x_str) == pytest.approx(last_x_expected)
@@ -178,7 +180,7 @@ def test_polyline_last_vertex_at_right_edge() -> None:
 def test_render_svg_is_parseable_xml() -> None:
     """A standalone SVG must parse cleanly as XML — no broken tags."""
     readings = _readings(
-        {"contrast10S": tuple(0.9 for _ in range(11))}
+        {"freq10S": tuple(0.9 for _ in range(11))}
     )
     svg = render_svg(_chart(readings))
     # ET.fromstring raises on malformed XML.
@@ -190,7 +192,7 @@ def test_render_svg_viewbox_matches_constants() -> None:
     """Standalone provenance SVG extends the Astro 320x200 canvas by a
     legend strip below the plot — the legend lives in-document, not in
     a sibling `<div>`."""
-    readings = _readings({"contrast10S": tuple(0.9 for _ in range(11))})
+    readings = _readings({"freq10S": tuple(0.9 for _ in range(11))})
     svg = render_svg(_chart(readings))
     root = ET.fromstring(svg)
     assert root.get("viewBox") == f"0 0 {_VIEWBOX_W} {_VIEWBOX_H}"
@@ -203,10 +205,10 @@ def test_render_svg_renders_all_four_fields_as_separate_polylines() -> None:
     """Each of the 4 committed fields produces its own polyline element."""
     values = tuple(0.9 - i * 0.05 for i in range(11))
     readings = _readings({
-        "contrast10S": values,
-        "contrast10M": values,
-        "resolution30S": values,
-        "resolution30M": values,
+        "freq10S": values,
+        "freq10M": values,
+        "freq30S": values,
+        "freq30M": values,
     })
     svg = render_svg(_chart(readings))
     root = ET.fromstring(svg)
@@ -216,11 +218,11 @@ def test_render_svg_renders_all_four_fields_as_separate_polylines() -> None:
 
 def test_render_svg_skipped_field_emits_no_polyline() -> None:
     """A field with all-None readings produces zero polylines for that field."""
-    readings = _readings({"contrast10S": tuple(0.9 for _ in range(11))})
+    readings = _readings({"freq10S": tuple(0.9 for _ in range(11))})
     svg = render_svg(_chart(readings))
     root = ET.fromstring(svg)
     polylines = root.findall("{http://www.w3.org/2000/svg}polyline")
-    # Only contrast10S is populated → exactly one polyline.
+    # Only freq10S is populated → exactly one polyline.
     assert len(polylines) == 1
 
 
@@ -228,10 +230,10 @@ def test_render_svg_solid_vs_dashed_styling() -> None:
     """S curves are solid (no stroke-dasharray); M curves are dashed."""
     values = tuple(0.9 - i * 0.05 for i in range(11))
     readings = _readings({
-        "contrast10S": values,
-        "contrast10M": values,
-        "resolution30S": values,
-        "resolution30M": values,
+        "freq10S": values,
+        "freq10M": values,
+        "freq30S": values,
+        "freq30M": values,
     })
     svg = render_svg(_chart(readings))
     root = ET.fromstring(svg)
@@ -249,7 +251,7 @@ def test_render_svg_none_in_middle_produces_two_polylines() -> None:
     values: tuple[float | None, ...] = (
         0.95, 0.95, 0.95, 0.95, None, 0.80, 0.78, 0.75, 0.72, 0.70, 0.65,
     )
-    readings = _readings({"contrast10S": values})
+    readings = _readings({"freq10S": values})
     svg = render_svg(_chart(readings))
     root = ET.fromstring(svg)
     polylines = root.findall("{http://www.w3.org/2000/svg}polyline")
@@ -261,7 +263,7 @@ def test_render_svg_dots_match_non_none_readings() -> None:
     values: tuple[float | None, ...] = (
         0.9, 0.9, None, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 0.9,
     )
-    readings = _readings({"contrast10S": values})
+    readings = _readings({"freq10S": values})
     svg = render_svg(_chart(readings))
     root = ET.fromstring(svg)
     circles = root.findall("{http://www.w3.org/2000/svg}circle")
@@ -271,14 +273,14 @@ def test_render_svg_dots_match_non_none_readings() -> None:
 
 def test_render_svg_axis_title_present() -> None:
     """The x-axis title 'Image height (mm)' appears once."""
-    readings = _readings({"contrast10S": tuple(0.9 for _ in range(11))})
+    readings = _readings({"freq10S": tuple(0.9 for _ in range(11))})
     svg = render_svg(_chart(readings))
     assert svg.count("Image height (mm)") == 1
 
 
 def test_render_svg_center_label_uses_C() -> None:
     """Position 0.0 prints as 'C' (matches MtfChart.astro)."""
-    readings = _readings({"contrast10S": tuple(0.9 for _ in range(11))})
+    readings = _readings({"freq10S": tuple(0.9 for _ in range(11))})
     svg = render_svg(_chart(readings))
     # The 'C' label appears as an axis-x text element.
     assert re.search(r'<text class="axis-label axis-x"[^>]*>C</text>', svg)
@@ -309,7 +311,7 @@ def test_render_svg_on_real_sigma_chart_has_content() -> None:
     svg = render_svg(extracted)
     root = ET.fromstring(svg)
     polylines = root.findall("{http://www.w3.org/2000/svg}polyline")
-    # The Sigma extractor produces dense contrast10S / resolution30S
+    # The Sigma extractor produces dense freq10S / freq30S
     # readings and sparse 10M / 30M (gaps from the B2 contract). The
     # honest floor is "at least one polyline" — adjusting upward would
     # smuggle in extractor-coverage assumptions that the SVG emitter

@@ -107,10 +107,10 @@ def _flatness_violation() -> PriorViolation:
 
 def _swap_violation() -> PriorViolation:
     return PriorViolation(
-        prior_name="ten_ge_thirty",
+        prior_name="low_freq_ge_high",
         field=RESOLUTION_30M,
         position_index=5,
-        detail="resolution30M=0.900 exceeds contrast10M=0.500 by 0.400 at position 5",
+        detail="freq30M=0.900 exceeds freq10M=0.500 by 0.400 at position 5",
     )
 
 
@@ -289,7 +289,7 @@ def test_triage_preserves_violation_order() -> None:
         _high_render_match(),
         [_swap_violation(), _flatness_violation()],
     )
-    swap_idx = verdict.reasons.index(LowReason.PRIOR_FAILED_TEN_GE_THIRTY)
+    swap_idx = verdict.reasons.index(LowReason.PRIOR_FAILED_LOW_FREQ_GE_HIGH)
     flat_idx = verdict.reasons.index(LowReason.PRIOR_FAILED_NOT_SUSPICIOUSLY_FLAT)
     assert swap_idx < flat_idx
 
@@ -311,7 +311,7 @@ def test_triage_all_four_priors_each_map_to_a_distinct_reason() -> None:
     a prior is added, this fails until _PRIOR_NAME_TO_REASON is extended."""
     expected = {
         "center_ge_edge": LowReason.PRIOR_FAILED_CENTER_GE_EDGE,
-        "ten_ge_thirty": LowReason.PRIOR_FAILED_TEN_GE_THIRTY,
+        "low_freq_ge_high": LowReason.PRIOR_FAILED_LOW_FREQ_GE_HIGH,
         "not_suspiciously_flat": LowReason.PRIOR_FAILED_NOT_SUSPICIOUSLY_FLAT,
         "in_range": LowReason.PRIOR_FAILED_IN_RANGE,
     }

@@ -70,14 +70,21 @@ _INK_PRESENCE_HALF_WIDTH: int = 10
 _DASH_PRESENCE_BRIDGE_W: int = 121
 
 
-# Sister-curve pairs by committed field name. Both directions so the
-# fallback works regardless of which member has the missing ink.
-_SISTER_OF: dict[str, str] = {
-    "contrast10S": "contrast10M",
-    "contrast10M": "contrast10S",
-    "resolution30S": "resolution30M",
-    "resolution30M": "resolution30S",
-}
+def _sister_of(field: str) -> str | None:
+    """Sister field of `field` — same frequency, opposite S/M axis.
+
+    `freq10S` ↔ `freq10M`, `freq30S` ↔ `freq30M`, etc. Returns `None`
+    when the field name does not follow the synthetic convention (a
+    defensive guard; the dispatch is the only producer of these names
+    and always emits them in form `freq{N}{S|M}`).
+    """
+    if not field.startswith("freq"):
+        return None
+    if field.endswith("S"):
+        return field[:-1] + "M"
+    if field.endswith("M"):
+        return field[:-1] + "S"
+    return None
 
 
 def _sample_curve(
@@ -135,7 +142,7 @@ def _apply_sister_fallback(
     out: dict[str, tuple[float | None, ...]] = {}
     fallback_count: dict[str, int] = {}
     for field, values in samples.items():
-        sister = _SISTER_OF.get(field)
+        sister = _sister_of(field)
         sister_values = samples.get(sister, (None,) * len(SAMPLE_FRACTIONS)) if sister else (None,) * len(SAMPLE_FRACTIONS)
         field_presence = presence.get(field, (False,) * len(SAMPLE_FRACTIONS))
         sister_presence = presence.get(sister, (False,) * len(SAMPLE_FRACTIONS)) if sister else (False,) * len(SAMPLE_FRACTIONS)
@@ -170,13 +177,15 @@ def _apply_center_symmetry(
     stripe), averaging would split the difference between the right
     value and the drifted value. The S curve is solid-line, less
     susceptible to drift, and almost always the cleaner anchor.
+
+    Pairs up every `freq{N}S`/`freq{N}M` present in `samples` —
+    per-frequency rule applies to every chart family (ADR-042).
     """
     out = {field: list(values) for field, values in samples.items()}
-    for s_field, m_field in (
-        ("contrast10S", "contrast10M"),
-        ("resolution30S", "resolution30M"),
-    ):
-        if s_field not in out or m_field not in out:
+    # Collect every S field present and look for the matching M.
+    for s_field in [f for f in samples if f.endswith("S") and f.startswith("freq")]:
+        m_field = s_field[:-1] + "M"
+        if m_field not in out:
             continue
         s_val = out[s_field][0]
         m_val = out[m_field][0]
@@ -196,19 +205,20 @@ def _readings_to_dict(
     plot_box: PlotBox,
     image_height_mm: float,
 ) -> tuple[SampledReading, ...]:
-    """Build the 11 SampledReading rows from per-field column samples."""
+    """Build the 11 SampledReading rows from per-field column samples.
+
+    Each row's `samples` dict carries the fields present in
+    `samples_per_field`. Missing fields are dropped — the schema
+    (ADR-042) allows reading rows to omit frequencies the chart did
+    not publish.
+    """
     positions = sample_positions_mm(plot_box, image_height_mm)
     rows: list[SampledReading] = []
     for i, pos in enumerate(positions):
-        rows.append(
-            SampledReading(
-                position_mm=pos,
-                contrast10S=samples_per_field.get("contrast10S", (None,) * 11)[i],
-                contrast10M=samples_per_field.get("contrast10M", (None,) * 11)[i],
-                resolution30S=samples_per_field.get("resolution30S", (None,) * 11)[i],
-                resolution30M=samples_per_field.get("resolution30M", (None,) * 11)[i],
-            )
-        )
+        row_samples: dict[str, float | None] = {
+            field: values[i] for field, values in samples_per_field.items()
+        }
+        rows.append(SampledReading(position_mm=pos, samples=row_samples))
     return tuple(rows)
 
 
@@ -263,17 +273,18 @@ def _hue_masks_for_presence(
                 (solid_sm, split.sagittal),
                 (dashed_sm, cv2.dilate(split.meridional.astype(np.uint8), bridge)),
             ):
-                field = curve_field(freq, sm)
-                if field is not None:
-                    out[field] = sub
+                out[curve_field(freq, sm)] = sub
     elif profile.style_axis == "HUE_IS_CURVE" and profile.hue_meaning in (
         "SAGITTAL_MERIDIONAL", "PER_COLUMN_RIDGE",
         "SKELETON_CONTINUOUS_PICK", "GEODESIC_DP",
     ):
+        # Each hue carries one S or M label (e.g. "S-red", "M-blue"); the
+        # same hue feeds every frequency this profile declares. Write the
+        # raw mask into the presence-mask dict under each (freq, sm) field.
         for hue_name, mask in curve_masks.items():
             sm = hue_name[0]  # "S" or "M"
-            out[f"contrast10{sm}"] = mask
-            out[f"resolution30{sm}"] = mask
+            for freq in profile.frequencies_lpmm:
+                out[curve_field(freq, sm)] = mask
     # Other dialects: presence check falls back to the skeleton itself
     # (legacy behaviour). The caller treats missing keys as "no
     # presence info — trust whatever value the sampler returned."

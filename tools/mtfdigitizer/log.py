@@ -122,7 +122,7 @@ def _peak_fraction(values: tuple[float | None, ...]) -> tuple[float, float] | No
 
 
 def _field_stats(extracted: ExtractedChart, field: str, ground_truth: tuple) -> dict:
-    ex_values = tuple(getattr(r, field) for r in extracted.readings)
+    ex_values = tuple(r.samples.get(field) for r in extracted.readings)
     deltas = [
         abs(ex - gt)
         for ex, gt in zip(ex_values, ground_truth)
@@ -144,7 +144,7 @@ def _field_stats(extracted: ExtractedChart, field: str, ground_truth: tuple) -> 
 def _render_readings_grid(extracted: ExtractedChart, ground_truth: dict) -> list[str]:
     """One markdown table per (aperture, field) summary + one wide grid table."""
     lines: list[str] = []
-    fields = ("contrast10S", "contrast10M", "resolution30S", "resolution30M")
+    fields = ("freq10S", "freq10M", "freq30S", "freq30M")
     for aperture, gt_by_field in ground_truth.items():
         if len(ground_truth) > 1:
             lines.append(f"#### Aperture {aperture}")
@@ -176,7 +176,7 @@ def _render_readings_grid(extracted: ExtractedChart, ground_truth: dict) -> list
         for f in fields:
             if f not in gt_by_field:
                 continue
-            ex_values = tuple(getattr(r, f) for r in extracted.readings)
+            ex_values = tuple(r.samples.get(f) for r in extracted.readings)
             gt_values = gt_by_field[f]
             ex_endpoints = (
                 f"{ex_values[0]:.2f}" if ex_values[0] is not None else " — ",
@@ -203,7 +203,7 @@ def _render_readings_grid(extracted: ExtractedChart, ground_truth: dict) -> list
             gt_vals = gt_by_field[f]
             for i, frac in enumerate(SAMPLE_FRACTIONS):
                 gt = gt_vals[i] if i < len(gt_vals) else None
-                ex = getattr(extracted.readings[i], f)
+                ex = extracted.readings[i].samples.get(f)
                 lines.append(
                     f"| {frac:.1f} | {_format_value(gt)} | {_format_value(ex)} | "
                     f"{_format_delta(ex, gt)} |"
@@ -217,7 +217,7 @@ def _render_center_edge_summary(
 ) -> list[str]:
     """One block per aperture showing center (frac 0.0) and edge (frac 0.9, 1.0) values."""
     lines: list[str] = []
-    fields = ("contrast10S", "contrast10M", "resolution30S", "resolution30M")
+    fields = ("freq10S", "freq10M", "freq30S", "freq30M")
     for aperture in ground_truth:
         if len(ground_truth) > 1:
             lines.append(f"#### Aperture {aperture}")
@@ -225,9 +225,9 @@ def _render_center_edge_summary(
         lines.append("| Field          | center (0.0) | edge (0.9) | corner (1.0) |")
         lines.append("| -------------- | ------------ | ---------- | ------------ |")
         for f in fields:
-            v0 = getattr(extracted.readings[0], f)
-            v9 = getattr(extracted.readings[9], f)
-            v10 = getattr(extracted.readings[10], f)
+            v0 = extracted.readings[0].samples.get(f)
+            v9 = extracted.readings[9].samples.get(f)
+            v10 = extracted.readings[10].samples.get(f)
             lines.append(
                 f"| {f:<14} | {_format_value(v0):>12} | {_format_value(v9):>10} | "
                 f"{_format_value(v10):>12} |"
@@ -241,7 +241,7 @@ def _render_shape_metrics(
 ) -> list[str]:
     """Per-field peak position and half-falloff position."""
     lines: list[str] = []
-    fields = ("contrast10S", "contrast10M", "resolution30S", "resolution30M")
+    fields = ("freq10S", "freq10M", "freq30S", "freq30M")
     for aperture in ground_truth:
         if len(ground_truth) > 1:
             lines.append(f"#### Aperture {aperture}")
@@ -249,7 +249,7 @@ def _render_shape_metrics(
         lines.append("| Field          | peak frac | peak value | half-falloff frac |")
         lines.append("| -------------- | --------- | ---------- | ----------------- |")
         for f in fields:
-            ex_values = tuple(getattr(r, f) for r in extracted.readings)
+            ex_values = tuple(r.samples.get(f) for r in extracted.readings)
             peak = _peak_fraction(ex_values)
             half = _half_falloff_fraction(ex_values, peak[1] if peak else None)
             peak_frac = f"{peak[0]:.1f}" if peak else "—"

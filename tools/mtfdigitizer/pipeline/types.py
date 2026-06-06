@@ -33,18 +33,29 @@ class PlotBox:
 
 @dataclass(frozen=True)
 class SampledReading:
-    """One sample point along the image-height axis.
+    """One sample point along the image-height axis (ADR-042).
 
-    Each MTF curve reading is `None` when no usable curve data exists
-    at that point (B2: never fabricate). The committed serializer
-    (a later task) decides whether to interpolate or hold the None.
+    `samples` is a dict of synthetic field-name strings to MTF values,
+    one entry per (frequency, S|M) pair the chart publishes. Field-name
+    convention is ``f"freq{freq_lpmm}{S|M}"`` — e.g. ``"freq10S"``,
+    ``"freq30M"``, ``"freq15S"``, ``"freq45M"``. Use `curve_field()`
+    in `dispatch.py` to construct the name from `(freq, sm)`.
+
+    A value is `None` when no usable curve data exists at that point
+    (B2: never fabricate). A field-name MAY be absent from the dict
+    entirely when the chart does not publish that (frequency, S|M)
+    pair — Fujifilm primes publish at 15/20/40 lp/mm, so a Fuji
+    reading carries `{"freq15S", "freq15M", "freq20S", "freq20M",
+    "freq40S", "freq40M"}` and never references `freq10*` or
+    `freq30*`.
     """
 
     position_mm: float
-    contrast10S: float | None
-    contrast10M: float | None
-    resolution30S: float | None
-    resolution30M: float | None
+    samples: dict[str, float | None]
+
+    def get(self, field: str) -> float | None:
+        """Return the value for `field`, or `None` if absent."""
+        return self.samples.get(field)
 
 
 @dataclass(frozen=True)

@@ -285,10 +285,12 @@ def _fake_panel(verdict: ChartVerdict) -> ProductionPanel:
     readings = tuple(
         SampledReading(
             position_mm=frac * 14.0,
-            contrast10S=0.9 - frac * 0.3,
-            contrast10M=0.9 - frac * 0.2,
-            resolution30S=0.8 - frac * 0.3,
-            resolution30M=0.8 - frac * 0.2,
+            samples={
+                "freq10S": 0.9 - frac * 0.3,
+                "freq10M": 0.9 - frac * 0.2,
+                "freq30S": 0.8 - frac * 0.3,
+                "freq30M": 0.8 - frac * 0.2,
+            },
         )
         for frac in SAMPLE_FRACTIONS
     )
