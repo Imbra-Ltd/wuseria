@@ -179,6 +179,42 @@ VILTROX_BW_DASHED_F12: MtfProfile = MtfProfile(
 )
 
 
+# Fujifilm per-frequency images (ADR-043). One frequency per chart image
+# (filename suffix `-NNlp.png`), blue solid = sagittal, red dashed =
+# meridional. The profile carries `frequencies_lpmm=(0,)` as a sentinel —
+# the multipath orchestrator (`extract.py:extract_lens_multipath`) reads
+# the frequency from the filename and constructs a per-image profile copy
+# with `frequencies_lpmm=(parsed_freq,)` before calling `extract_chart`.
+#
+# Measured peaks across GF (gf-23mm 15/20/40, xf-23mm 15) and XF
+# (xf-14mm 45) charts: blue centered at hue 100-110, red at 170-180.
+# Both saturated (S>=80) and bright (60<=V<250 to exclude white BG and
+# pure black grid).
+FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED: MtfProfile = MtfProfile(
+    name="fujifilm-permfreq-2color-solid-dashed",
+    hues=(
+        HueRange(name="S-blue", h_lo=95, h_hi=115, s_min=80, v_min=60, v_max=250),
+        HueRange(name="M-red", h_lo=168, h_hi=179, s_min=80, v_min=60, v_max=250),
+        HueRange(name="M-red", h_lo=0, h_hi=8, s_min=80, v_min=60, v_max=250),
+    ),
+    style_axis="HUE_IS_CURVE",
+    hue_meaning="SAGITTAL_MERIDIONAL_SINGLE_FREQ",
+    frequencies_lpmm=(0,),
+    # Not auto-suggestable: small images (282x212) and the same blue+red
+    # palette overlap with Sigma's; matching by hue alone would mis-route
+    # Sigma charts here. Explicit declaration via the
+    # `fujifilm-permfreq` style family is required.
+    auto_suggestable=False,
+    notes=(
+        "Fujifilm per-frequency MTF: one chart image per spatial frequency "
+        "(filename `-NNlp.png`); blue solid = S, red dashed = M. The "
+        "multipath orchestrator parses the frequency from the filename "
+        "and passes it via `frequencies_lpmm=(N,)` on a per-image profile "
+        "copy. See ADR-043."
+    ),
+)
+
+
 DECLARED_PROFILES: tuple[MtfProfile, ...] = (
     SIGMA_2COLOR_SOLID_DASHED,
     SAMYANG_4COLOR_ALL_SOLID,
@@ -186,4 +222,5 @@ DECLARED_PROFILES: tuple[MtfProfile, ...] = (
     TOKINA_2COLOR_FREQUENCY,
     TOKINA_2COLOR_FREQUENCY_CC_RANK,
     VILTROX_BW_DASHED_F12,
+    FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED,
 )

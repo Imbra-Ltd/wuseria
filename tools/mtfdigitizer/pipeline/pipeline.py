@@ -275,12 +275,15 @@ def _hue_masks_for_presence(
             ):
                 out[curve_field(freq, sm)] = sub
     elif profile.style_axis == "HUE_IS_CURVE" and profile.hue_meaning in (
-        "SAGITTAL_MERIDIONAL", "PER_COLUMN_RIDGE",
-        "SKELETON_CONTINUOUS_PICK", "GEODESIC_DP",
+        "SAGITTAL_MERIDIONAL", "SAGITTAL_MERIDIONAL_SINGLE_FREQ",
+        "PER_COLUMN_RIDGE", "SKELETON_CONTINUOUS_PICK", "GEODESIC_DP",
     ):
         # Each hue carries one S or M label (e.g. "S-red", "M-blue"); the
         # same hue feeds every frequency this profile declares. Write the
         # raw mask into the presence-mask dict under each (freq, sm) field.
+        # For SAGITTAL_MERIDIONAL_SINGLE_FREQ profiles the loop runs once
+        # (one frequency per image, set per-call by the multipath
+        # orchestrator).
         for hue_name, mask in curve_masks.items():
             sm = hue_name[0]  # "S" or "M"
             for freq in profile.frequencies_lpmm:

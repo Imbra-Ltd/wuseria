@@ -37,6 +37,7 @@ from .types import (
 )
 from .declared import (
     DECLARED_PROFILES,
+    FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED,
     SAMYANG_4COLOR_ALL_SOLID,
     SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
     SIGMA_2COLOR_SOLID_DASHED,
@@ -48,6 +49,7 @@ from .suggest import resolve, suggest_profile
 
 __all__ = [
     "DECLARED_PROFILES",
+    "FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED",
     "HueMeaning",
     "HueRange",
     "MtfProfile",

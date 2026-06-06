@@ -60,7 +60,8 @@ ZEISS_TOUIT_CHART = lambda: _ref_chart_path("zeiss-touit-32mm-f1-8")
 
 def test_declared_profiles_cover_in_band_families() -> None:
     """One profile per in-band reference set family (+ the Tokina wide-zoom
-    DP variant of the prime profile)."""
+    DP variant of the prime profile, + the Fujifilm per-frequency profile
+    added in ADR-043)."""
     names = {p.name for p in DECLARED_PROFILES}
     assert names == {
         "sigma-2color-solid-dashed",
@@ -69,6 +70,7 @@ def test_declared_profiles_cover_in_band_families() -> None:
         "tokina-2color-frequency",
         "tokina-2color-frequency-geodesic-dp",
         "viltrox-bw-dashed-f1.2",
+        "fujifilm-permfreq-2color-solid-dashed",
     }
 
 

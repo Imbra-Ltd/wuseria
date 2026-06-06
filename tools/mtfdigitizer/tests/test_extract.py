@@ -448,3 +448,62 @@ def test_extract_check_passes_after_fresh_write(tmp_path, monkeypatch):
 
     assert extract_lens(_SIGMA_16_SLUG, accept_override=True) == 0
     assert check_logs() == 0
+
+
+# --- Fujifilm per-frequency orchestrator helpers (ADR-043) ----------------
+
+
+def test_parse_filename_frequency_extracts_15lp():
+    from mtfdigitizer.extract import _parse_filename_frequency
+
+    p = Path("docs/optical-specs/fujifilm-gf-23mm-f4-r-lm-wr/"
+            "fujifilm-gf-23mm-f4-r-lm-wr-15lp.png")
+    assert _parse_filename_frequency(p) == 15
+
+
+def test_parse_filename_frequency_extracts_45lp():
+    from mtfdigitizer.extract import _parse_filename_frequency
+
+    p = Path("fujifilm-xf-14mm-f2-8-r-45lp.png")
+    assert _parse_filename_frequency(p) == 45
+
+
+def test_parse_filename_frequency_rejects_non_freq_suffix():
+    """Per ADR-043 the orchestrator refuses to guess — non-conforming
+    names raise rather than silently fall back."""
+    from mtfdigitizer.extract import _parse_filename_frequency
+
+    with pytest.raises(ValueError, match=r"per-frequency"):
+        _parse_filename_frequency(Path("not-a-fuji-chart.png"))
+
+
+def test_profile_for_view_substitutes_frequency_on_fuji_chart():
+    """The declared Fuji profile carries `frequencies_lpmm=(0,)` as a
+    sentinel; the per-view helper replaces it with the filename frequency."""
+    from mtfdigitizer.extract import _profile_for_view
+
+    fuji_chart = ReferenceChart(
+        slug="probe",
+        chart_path="docs/optical-specs/probe/probe-15lp.png",
+        style_family="fujifilm-permfreq",
+        apertures=("f/4",),
+        frequencies_lpmm=(15, 20, 40),
+        image_height_mm=25.0,
+        notes="probe",
+    )
+    profile = _profile_for_view(
+        fuji_chart, Path("docs/optical-specs/probe/probe-20lp.png")
+    )
+    assert profile.frequencies_lpmm == (20,)
+    # The substitution is on a copy; the declared base is untouched.
+    from mtfdigitizer.profiles import FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED
+    assert FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED.frequencies_lpmm == (0,)
+
+
+def test_profile_for_view_passes_through_non_fuji_charts():
+    """Non-Fuji style families get their declared profile verbatim."""
+    from mtfdigitizer.extract import _profile_for_view
+
+    sigma_chart = next(c for c in REFERENCE_CHARTS if c.slug == "sigma-56mm-f1-4-dc-dn-c")
+    profile = _profile_for_view(sigma_chart, Path(sigma_chart.chart_path))
+    assert profile.frequencies_lpmm == (10, 30)

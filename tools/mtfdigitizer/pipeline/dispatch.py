@@ -360,6 +360,28 @@ def field_skeletons(
                     out[curve_field(freq, sm)] = close_and_skeletonize(band_mask)
     elif (
         profile.style_axis == "HUE_IS_CURVE"
+        and profile.hue_meaning == "SAGITTAL_MERIDIONAL_SINGLE_FREQ"
+    ):
+        # Each hue carries one curve (S or M); the chart image carries one
+        # frequency only. Used by Fujifilm per-frequency images (ADR-043).
+        # The frequency is the single entry in `profile.frequencies_lpmm`,
+        # supplied by the caller per image (the declared base profile
+        # carries `frequencies_lpmm=(0,)` as a placeholder; the multipath
+        # orchestrator copies the profile with the parsed-from-filename
+        # frequency before calling `extract_chart`).
+        if len(profile.frequencies_lpmm) != 1:
+            raise ValueError(
+                "SAGITTAL_MERIDIONAL_SINGLE_FREQ requires exactly one entry "
+                f"in frequencies_lpmm; got {profile.frequencies_lpmm!r}"
+            )
+        freq = profile.frequencies_lpmm[0]
+        for hue_name, mask in curve_masks.items():
+            sm = parse_sagittal_meridional_name(hue_name)
+            if not mask.any():
+                continue
+            out[curve_field(freq, sm)] = close_and_skeletonize(mask)
+    elif (
+        profile.style_axis == "HUE_IS_CURVE"
         and profile.hue_meaning == "PER_COLUMN_RIDGE"
     ):
         # Each hue carries S or M (same naming as SAGITTAL_MERIDIONAL).

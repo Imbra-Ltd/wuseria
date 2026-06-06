@@ -20,6 +20,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .profiles import (
+    FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED,
     SAMYANG_4COLOR_ALL_SOLID,
     SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
     SIGMA_2COLOR_SOLID_DASHED,
@@ -33,7 +34,7 @@ if TYPE_CHECKING:
     from .referenceset.charts import ReferenceChart
 
 
-# Five declared profiles wired today. The two absent style families
+# Six declared profiles wired today. The two absent style families
 # (`soft-multicurve-promo`, `multifreq-press-kit`) are deliberately
 # out-of-band fail-loud cases (7Artisans 35mm promo, Zeiss Touit
 # press kit) and have no profile.
@@ -45,6 +46,11 @@ PROFILE_BY_STYLE: dict[str, MtfProfile] = {
     "2color-frequency": TOKINA_2COLOR_FREQUENCY,
     "2color-frequency-cc-rank": TOKINA_2COLOR_FREQUENCY_CC_RANK,
     "bw-dashed-promo": VILTROX_BW_DASHED_F12,
+    # Fujifilm: one chart image per spatial frequency (ADR-043). Frequency
+    # is read from the filename suffix at extraction time; the declared
+    # profile carries a sentinel `frequencies_lpmm=(0,)`. Routed via the
+    # multipath orchestrator (`extract.py:extract_lens_multipath`).
+    "fujifilm-permfreq": FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED,
 }
 
 

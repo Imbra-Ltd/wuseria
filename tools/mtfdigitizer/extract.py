@@ -40,6 +40,8 @@ Implements #1021 per the ADR-041 Tier 2 design.
 from __future__ import annotations
 
 import argparse
+import dataclasses
+import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -48,9 +50,10 @@ from typing import Iterable
 from .family_profile import profile_for_chart
 from .pipeline import PlotBox, extract_chart, score_chart
 from .pipeline.rendermatch import DEFAULT_DILATION_RADIUS_PX
-from .pipeline.types import ExtractedChart
+from .pipeline.types import ExtractedChart, SampledReading
 from .priors import check_all
 from .production_log import ProductionPanel, render_production_log
+from .profiles.types import MtfProfile
 from .referenceset.charts import (
     REFERENCE_CHARTS,
     ChartView,
@@ -60,6 +63,15 @@ from .referenceset.charts import (
 from .review import write_review
 from .svg import render_svg
 from .triage import ChartVerdict, triage
+
+
+# Per-frequency Fujifilm chart filenames carry the spatial frequency as a
+# trailing suffix: `<stem>-15lp.png`, `<stem>-45lp.png`. The orchestrator
+# parses the frequency from the filename and substitutes it onto a copy
+# of the declared profile (which carries a sentinel `frequencies_lpmm=(0,)`).
+# See ADR-043.
+_FUJI_FREQ_RE = re.compile(r"-(?P<freq>\d+)lp\.png$", re.IGNORECASE)
+_FUJI_STYLE_FAMILIES: frozenset[str] = frozenset({"fujifilm-permfreq"})
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -151,6 +163,40 @@ class ExtractRun:
     verdict: ChartVerdict
 
 
+def _parse_filename_frequency(image_path: Path) -> int:
+    """Extract the spatial frequency from a per-frequency chart filename.
+
+    Fujifilm convention: filename ends in `-<N>lp.png` (e.g.
+    `fujifilm-gf-23mm-f4-r-lm-wr-15lp.png`). Raises ValueError when the
+    suffix is missing — the multipath orchestrator's contract per ADR-043
+    is that per-frequency profiles refuse non-conforming filenames rather
+    than guess.
+    """
+    m = _FUJI_FREQ_RE.search(image_path.name)
+    if m is None:
+        raise ValueError(
+            f"per-frequency chart filename must end in `-<N>lp.png`; "
+            f"got {image_path.name!r}"
+        )
+    return int(m.group("freq"))
+
+
+def _profile_for_view(chart: ReferenceChart, image_path: Path) -> MtfProfile:
+    """Choose the runtime profile for one chart view.
+
+    For most style families this is just the chart's declared profile.
+    For Fujifilm per-frequency charts (ADR-043), the declared profile
+    carries a sentinel `frequencies_lpmm=(0,)`; this helper parses the
+    real frequency from the filename and returns a profile copy with
+    `frequencies_lpmm=(parsed_freq,)`.
+    """
+    base = profile_for_chart(chart)
+    if chart.style_family in _FUJI_STYLE_FAMILIES:
+        freq = _parse_filename_frequency(image_path)
+        return dataclasses.replace(base, frequencies_lpmm=(freq,))
+    return base
+
+
 def _run_view(chart: ReferenceChart, view: ChartView) -> ExtractRun:
     """Run one chart view through extract → score → priors → triage.
 
@@ -160,8 +206,8 @@ def _run_view(chart: ReferenceChart, view: ChartView) -> ExtractRun:
         f"chart {chart.slug!r} view {view.chart_path!r} has no plot_box — "
         "cannot run extractor"
     )
-    profile = profile_for_chart(chart)
     image_path = _resolve_view_image(chart, view)
+    profile = _profile_for_view(chart, image_path)
     plot_box = _to_plotbox(view.plot_box)
 
     extracted = extract_chart(
