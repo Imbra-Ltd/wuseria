@@ -24,11 +24,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        |  9/11    |  0/11       |
+| freq15S        | 11/11    |  3/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```
-  EX   freq15S        ▇··▇▇▇▇▇▆▅▄  (0.89 → 0.45)
+  EX   freq15S        ▇▇▇▇▇▇▇▇▆▅▄  (0.89 → 0.45)
   EX   freq15M        ▇▇▇▇▇▇▇▇▇▇▇  (0.89 → 0.84)
 ```
 
@@ -37,8 +37,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.89 |
-| 0.1 | — |
-| 0.2 | — |
+| 0.1 | 0.89 |
+| 0.2 | 0.89 |
 | 0.3 | 0.89 |
 | 0.4 | 0.88 |
 | 0.5 | 0.88 |
@@ -75,7 +75,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq15S        |       0.0 |       0.89 |                 — |
+| freq15S        |       0.2 |       0.89 |                 — |
 | freq15M        |       0.2 |       0.89 |                 — |
 
 ### Confidence signals
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.825 |      0.80 |  yes |
-| IoU       | 0.614 |      0.20 |  yes |
+| precision | 0.788 |      0.80 |   no |
+| IoU       | 0.622 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -93,9 +93,10 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Gate
 
-**Gate verdict:** `HIGH`
+**Gate verdict:** `LOW`
 
-No reasons — both confidence signals cleared.
+**Reasons:**
+- `precision_below_threshold`
 
 ## Panel
 
@@ -109,7 +110,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 11/11    |  0/11       |
+| freq45S        | 11/11    |  1/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```

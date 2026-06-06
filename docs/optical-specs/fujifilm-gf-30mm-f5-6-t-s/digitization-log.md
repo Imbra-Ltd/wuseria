@@ -24,12 +24,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq10S        |  9/11    |  1/11       |
-| freq10M        | 10/11    |  0/11       |
+| freq10S        | 11/11    |  3/11       |
+| freq10M        | 11/11    |  1/11       |
 
 ```
-  EX   freq10S        █████·███·█  (0.99 → 0.95)
-  EX   freq10M        ██████████·  (0.99 →  — )
+  EX   freq10S        ███████████  (0.99 → 0.95)
+  EX   freq10M        ███████████  (0.99 → 0.95)
 ```
 
 **freq10S**
@@ -41,11 +41,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.2 | 1.00 |
 | 0.3 | 0.99 |
 | 0.4 | 0.99 |
-| 0.5 | — |
+| 0.5 | 0.98 |
 | 0.6 | 0.98 |
 | 0.7 | 0.99 |
 | 0.8 | 0.99 |
-| 0.9 | — |
+| 0.9 | 0.97 |
 | 1.0 | 0.95 |
 
 **freq10M**
@@ -62,14 +62,14 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.99 |
 | 0.8 | 0.98 |
 | 0.9 | 0.97 |
-| 1.0 | — |
+| 1.0 | 0.95 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq10S        |         0.99 |          — |         0.95 |
-| freq10M        |         0.99 |       0.97 |            — |
+| freq10S        |         0.99 |       0.97 |         0.95 |
+| freq10M        |         0.99 |       0.97 |         0.95 |
 
 ### Shape metrics
 
@@ -84,14 +84,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.750 |      0.80 |   no |
-| IoU       | 0.512 |      0.20 |  yes |
+| precision | 0.732 |      0.80 |   no |
+| IoU       | 0.589 |      0.20 |  yes |
 
 #### Plausibility priors
 
-| prior | field | position | detail |
-| ----- | ----- | -------- | ------ |
-| `not_suspiciously_flat` | `freq10M` | — | mean 0.985 >= 0.95 and stdev 0.006 <= 0.01 (10/11 defined) — idealized/placeholder? |
+All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_flat`, `in_range`).
 
 ### Gate
 
@@ -99,7 +97,6 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 **Reasons:**
 - `precision_below_threshold`
-- `prior_failed_not_suspiciously_flat`
 
 ## Panel
 
@@ -113,12 +110,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq20S        | 10/11    |  0/11       |
-| freq20M        | 10/11    |  0/11       |
+| freq20S        | 11/11    |  2/11       |
+| freq20M        | 11/11    |  1/11       |
 
 ```
-  EX   freq20S        █████·███▇▇  (0.98 → 0.84)
-  EX   freq20M        ████████▇▇·  (0.98 →  — )
+  EX   freq20S        █████████▇▇  (0.98 → 0.84)
+  EX   freq20M        ████████▇▇▇  (0.98 → 0.84)
 ```
 
 **freq20S**
@@ -130,7 +127,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.2 | 0.98 |
 | 0.3 | 0.97 |
 | 0.4 | 0.95 |
-| 0.5 | — |
+| 0.5 | 0.93 |
 | 0.6 | 0.94 |
 | 0.7 | 0.95 |
 | 0.8 | 0.95 |
@@ -151,14 +148,14 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.95 |
 | 0.8 | 0.92 |
 | 0.9 | 0.90 |
-| 1.0 | — |
+| 1.0 | 0.84 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq20S        |         0.98 |       0.92 |         0.84 |
-| freq20M        |         0.98 |       0.90 |            — |
+| freq20M        |         0.98 |       0.90 |         0.84 |
 
 ### Shape metrics
 
@@ -173,8 +170,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.913 |      0.80 |  yes |
-| IoU       | 0.631 |      0.20 |  yes |
+| precision | 0.859 |      0.80 |  yes |
+| IoU       | 0.665 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -198,7 +195,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq40S        | 11/11    |  0/11       |
+| freq40S        | 11/11    |  1/11       |
 | freq40M        | 11/11    |  0/11       |
 
 ```

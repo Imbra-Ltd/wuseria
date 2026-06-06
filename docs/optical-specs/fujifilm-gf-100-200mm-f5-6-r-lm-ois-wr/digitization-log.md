@@ -25,11 +25,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq10S        | 11/11    |  0/11       |
-| freq10M        | 10/11    |  1/11       |
+| freq10M        | 11/11    |  2/11       |
 
 ```
   EX   freq10S        ██████▇▇▇▇▇  (0.98 → 0.89)
-  EX   freq10M        █·█▇▇▇▇▇▇▇▇  (0.98 → 0.84)
+  EX   freq10M        ███▇▇▇▇▇▇▇▇  (0.98 → 0.84)
 ```
 
 **freq10S**
@@ -53,7 +53,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.98 |
-| 0.1 | — |
+| 0.1 | 0.97 |
 | 0.2 | 0.94 |
 | 0.3 | 0.91 |
 | 0.4 | 0.88 |
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.949 |      0.80 |  yes |
-| IoU       | 0.721 |      0.20 |  yes |
+| precision | 0.921 |      0.80 |  yes |
+| IoU       | 0.751 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -110,7 +110,7 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq20S        | 11/11    |  0/11       |
-| freq20M        | 11/11    |  0/11       |
+| freq20M        | 11/11    |  1/11       |
 
 ```
   EX   freq20S        █▇▇▇▇▇▆▆▆▆▆  (0.93 → 0.76)
@@ -195,7 +195,7 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq40S        | 11/11    |  0/11       |
-| freq40M        | 11/11    |  0/11       |
+| freq40M        | 11/11    |  1/11       |
 
 ```
   EX   freq40S        ▇▇▆▆▅▅▅▄▄▅▅  (0.83 → 0.58)
@@ -365,11 +365,11 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq20S        |  8/11    |  1/11       |
+| freq20S        | 11/11    |  4/11       |
 | freq20M        | 11/11    |  0/11       |
 
 ```
-  EX   freq20S        ▇··▇▇·▇▇▇▆▅  (0.92 → 0.57)
+  EX   freq20S        ▇▇▇▇▇▇▇▇▇▆▅  (0.92 → 0.57)
   EX   freq20M        ▇▇▇▇▇▇▇▇▇▇▅  (0.92 → 0.63)
 ```
 
@@ -378,11 +378,11 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.92 |
-| 0.1 | — |
-| 0.2 | — |
+| 0.1 | 0.91 |
+| 0.2 | 0.91 |
 | 0.3 | 0.91 |
 | 0.4 | 0.91 |
-| 0.5 | — |
+| 0.5 | 0.91 |
 | 0.6 | 0.91 |
 | 0.7 | 0.91 |
 | 0.8 | 0.88 |
@@ -425,8 +425,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.908 |      0.80 |  yes |
-| IoU       | 0.509 |      0.20 |  yes |
+| precision | 0.804 |      0.80 |  yes |
+| IoU       | 0.513 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -451,11 +451,11 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq40S        | 11/11    |  0/11       |
-| freq40M        | 10/11    |  1/11       |
+| freq40M        | 11/11    |  2/11       |
 
 ```
   EX   freq40S        ▆▆▆▆▆▆▆▇▆▅▂  (0.78 → 0.21)
-  EX   freq40M        ▆▆▆·▆▆▆▆▆▅▃  (0.78 → 0.33)
+  EX   freq40M        ▆▆▆▆▆▆▆▆▆▅▃  (0.78 → 0.33)
 ```
 
 **freq40S**
@@ -481,7 +481,7 @@ No reasons — both confidence signals cleared.
 | 0.0 | 0.78 |
 | 0.1 | 0.75 |
 | 0.2 | 0.74 |
-| 0.3 | — |
+| 0.3 | 0.75 |
 | 0.4 | 0.76 |
 | 0.5 | 0.76 |
 | 0.6 | 0.74 |
@@ -510,8 +510,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.891 |      0.80 |  yes |
-| IoU       | 0.531 |      0.20 |  yes |
+| precision | 0.900 |      0.80 |  yes |
+| IoU       | 0.558 |      0.20 |  yes |
 
 #### Plausibility priors
 

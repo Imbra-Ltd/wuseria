@@ -113,7 +113,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq45S        | 11/11    |  0/11       |
-| freq45M        | 11/11    |  0/11       |
+| freq45M        | 11/11    |  1/11       |
 
 ```
   EX   freq45S        ▆▆▆▆▆▆▆▆▅▄▄  (0.70 → 0.39)

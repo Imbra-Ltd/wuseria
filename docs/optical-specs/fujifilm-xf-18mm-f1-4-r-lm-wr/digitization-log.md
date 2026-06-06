@@ -110,11 +110,11 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq45S        | 11/11    |  0/11       |
-| freq45M        | 10/11    |  1/11       |
+| freq45M        | 11/11    |  2/11       |
 
 ```
   EX   freq45S        ▆▆▆▆▆▆▅▅▅▅▅  (0.75 → 0.53)
-  EX   freq45M        ▆▆▆▆▆·▆▆▆▅▅  (0.75 → 0.57)
+  EX   freq45M        ▆▆▆▆▆▆▆▆▆▅▅  (0.75 → 0.57)
 ```
 
 **freq45S**
@@ -142,7 +142,7 @@ No reasons — both confidence signals cleared.
 | 0.2 | 0.70 |
 | 0.3 | 0.67 |
 | 0.4 | 0.66 |
-| 0.5 | — |
+| 0.5 | 0.66 |
 | 0.6 | 0.65 |
 | 0.7 | 0.65 |
 | 0.8 | 0.68 |
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.930 |      0.80 |  yes |
-| IoU       | 0.672 |      0.20 |  yes |
+| precision | 0.932 |      0.80 |  yes |
+| IoU       | 0.724 |      0.20 |  yes |
 
 #### Plausibility priors
 

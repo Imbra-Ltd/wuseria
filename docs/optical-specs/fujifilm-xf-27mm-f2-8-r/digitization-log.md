@@ -110,7 +110,7 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq45S        | 11/11    |  0/11       |
-| freq45M        | 11/11    |  0/11       |
+| freq45M        | 11/11    |  1/11       |
 
 ```
   EX   freq45S        ▆▆▅▅▅▄▄▅▅▅▄  (0.72 → 0.39)

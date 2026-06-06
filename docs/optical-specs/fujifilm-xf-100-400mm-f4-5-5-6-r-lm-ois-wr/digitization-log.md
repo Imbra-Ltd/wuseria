@@ -110,11 +110,11 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq45S        | 11/11    |  1/11       |
-| freq45M        | 10/11    |  0/11       |
+| freq45M        | 11/11    |  1/11       |
 
 ```
   EX   freq45S        ▇▇▇▆▆▅▅▅▅▆▆  (0.84 → 0.70)
-  EX   freq45M        ▇▇▆▅▅▅▅▅▅▅·  (0.84 →  — )
+  EX   freq45M        ▇▇▆▅▅▅▅▅▅▅▆  (0.84 → 0.70)
 ```
 
 **freq45S**
@@ -147,14 +147,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.56 |
 | 0.8 | 0.59 |
 | 0.9 | 0.61 |
-| 1.0 | — |
+| 1.0 | 0.70 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq45S        |         0.84 |       0.66 |         0.70 |
-| freq45M        |         0.84 |       0.61 |            — |
+| freq45M        |         0.84 |       0.61 |         0.70 |
 
 ### Shape metrics
 
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.940 |      0.80 |  yes |
-| IoU       | 0.614 |      0.20 |  yes |
+| precision | 0.894 |      0.80 |  yes |
+| IoU       | 0.610 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -279,11 +279,11 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 10/11    |  1/11       |
+| freq45S        | 11/11    |  2/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```
-  EX   freq45S        ▇·▇▇▇▇▆▆▆▆▆  (0.90 → 0.68)
+  EX   freq45S        ▇▇▇▇▇▇▆▆▆▆▆  (0.90 → 0.68)
   EX   freq45M        ▇▇▇▇▆▆▆▆▅▅▅  (0.90 → 0.50)
 ```
 
@@ -292,7 +292,7 @@ No reasons — both confidence signals cleared.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.90 |
-| 0.1 | — |
+| 0.1 | 0.90 |
 | 0.2 | 0.90 |
 | 0.3 | 0.88 |
 | 0.4 | 0.84 |
@@ -339,8 +339,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.921 |      0.80 |  yes |
-| IoU       | 0.669 |      0.20 |  yes |
+| precision | 0.855 |      0.80 |  yes |
+| IoU       | 0.636 |      0.20 |  yes |
 
 #### Plausibility priors
 

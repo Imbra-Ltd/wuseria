@@ -25,11 +25,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq10S        | 11/11    |  0/11       |
-| freq10M        | 10/11    |  2/11       |
+| freq10M        | 11/11    |  3/11       |
 
 ```
   EX   freq10S        ███████▇▇▇▇  (0.99 → 0.89)
-  EX   freq10M        ███████▇▇▇·  (0.99 →  — )
+  EX   freq10M        ███████▇▇▇▇  (0.99 → 0.89)
 ```
 
 **freq10S**
@@ -62,14 +62,14 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.90 |
 | 0.8 | 0.92 |
 | 0.9 | 0.92 |
-| 1.0 | — |
+| 1.0 | 0.89 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.99 |       0.87 |         0.89 |
-| freq10M        |         0.99 |       0.92 |            — |
+| freq10M        |         0.99 |       0.92 |         0.89 |
 
 ### Shape metrics
 
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.855 |      0.80 |  yes |
-| IoU       | 0.702 |      0.20 |  yes |
+| precision | 0.859 |      0.80 |  yes |
+| IoU       | 0.732 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -280,11 +280,11 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq10S        | 11/11    |  0/11       |
-| freq10M        | 10/11    |  2/11       |
+| freq10M        | 11/11    |  3/11       |
 
 ```
   EX   freq10S        ███████████  (1.00 → 0.97)
-  EX   freq10M        ████████▇▇·  (1.00 →  — )
+  EX   freq10M        ████████▇▇█  (1.00 → 0.97)
 ```
 
 **freq10S**
@@ -317,14 +317,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.93 |
 | 0.8 | 0.90 |
 | 0.9 | 0.88 |
-| 1.0 | — |
+| 1.0 | 0.97 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         1.00 |       0.99 |         0.97 |
-| freq10M        |         1.00 |       0.88 |            — |
+| freq10M        |         1.00 |       0.88 |         0.97 |
 
 ### Shape metrics
 
@@ -339,8 +339,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.881 |      0.80 |  yes |
-| IoU       | 0.813 |      0.20 |  yes |
+| precision | 0.839 |      0.80 |  yes |
+| IoU       | 0.783 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -453,7 +453,7 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq40S        | 11/11    |  0/11       |
-| freq40M        | 11/11    |  0/11       |
+| freq40M        | 11/11    |  1/11       |
 
 ```
   EX   freq40S        ██▇▇▇▇▇▇▇▇▆  (0.95 → 0.77)

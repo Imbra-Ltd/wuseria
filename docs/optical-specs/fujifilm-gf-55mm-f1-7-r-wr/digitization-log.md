@@ -24,7 +24,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq10S        | 11/11    |  0/11       |
+| freq10S        | 11/11    |  1/11       |
 | freq10M        | 11/11    |  0/11       |
 
 ```
@@ -109,7 +109,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq20S        | 11/11    |  0/11       |
+| freq20S        | 11/11    |  1/11       |
 | freq20M        | 11/11    |  0/11       |
 
 ```

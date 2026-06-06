@@ -24,14 +24,14 @@
 <text class="axis-label axis-x" x="277.2" y="186">24.2</text>
 <text class="axis-label axis-x" x="304.0" y="186">26.9</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
-<polyline class="curve curve-20" style="stroke:#5fa86f" points="36.0,15.0 62.8,15.1 89.6,15.8 116.4,17.3 143.2,20.0"/>
-<polyline class="curve curve-20" style="stroke:#5fa86f" points="196.8,22.2 223.6,19.5 250.4,19.7 277.2,25.3 304.0,37.8"/>
-<polyline class="curve curve-20 curve-m" style="stroke:#5fa86f" points="36.0,15.0 62.8,16.3 89.6,18.9 116.4,20.0 143.2,21.7 170.0,22.5 196.8,19.8 223.6,20.2 250.4,24.4 277.2,27.7" stroke-dasharray="4 2"/>
+<polyline class="curve curve-20" style="stroke:#5fa86f" points="36.0,15.0 62.8,15.1 89.6,15.8 116.4,17.3 143.2,20.0 170.0,22.5 196.8,22.2 223.6,19.5 250.4,19.7 277.2,25.3 304.0,37.8"/>
+<polyline class="curve curve-20 curve-m" style="stroke:#5fa86f" points="36.0,15.0 62.8,16.3 89.6,18.9 116.4,20.0 143.2,21.7 170.0,22.5 196.8,19.8 223.6,20.2 250.4,24.4 277.2,27.7 304.0,37.8" stroke-dasharray="4 2"/>
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="36.0" cy="15.0" r="2"/>
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="62.8" cy="15.1" r="2"/>
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="89.6" cy="15.8" r="2"/>
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="116.4" cy="17.3" r="2"/>
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="143.2" cy="20.0" r="2"/>
+<circle class="dot dot-20" style="stroke:#5fa86f" cx="170.0" cy="22.5" r="2"/>
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="196.8" cy="22.2" r="2"/>
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="223.6" cy="19.5" r="2"/>
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="250.4" cy="19.7" r="2"/>
@@ -47,6 +47,7 @@
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="223.6" cy="20.2" r="2"/>
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="250.4" cy="24.4" r="2"/>
 <circle class="dot dot-20" style="stroke:#5fa86f" cx="277.2" cy="27.7" r="2"/>
+<circle class="dot dot-20" style="stroke:#5fa86f" cx="304.0" cy="37.8" r="2"/>
 <line x1="36" y1="209" x2="48" y2="209" stroke="#5fa86f" stroke-width="1.5"/>
 <text class="legend-text" x="51" y="212">20 lp/mm S</text>
 <line x1="92" y1="209" x2="104" y2="209" stroke="#5fa86f" stroke-width="1.5" stroke-dasharray="3 2"/>

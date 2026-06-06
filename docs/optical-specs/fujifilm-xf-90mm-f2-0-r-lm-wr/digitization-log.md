@@ -24,11 +24,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        |  9/11    |  6/11       |
+| freq15S        | 11/11    |  8/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```
-  EX   freq15S        ▇▇▇·▇▇▇▇·▇▇  (0.89 → 0.80)
+  EX   freq15S        ▇▇▇▇▇▇▇▇▇▇▇  (0.89 → 0.80)
   EX   freq15M        ▇▇▇▇▇▇▇▇▇▇▇  (0.89 → 0.84)
 ```
 
@@ -39,12 +39,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.0 | 0.89 |
 | 0.1 | 0.89 |
 | 0.2 | 0.88 |
-| 0.3 | — |
+| 0.3 | 0.88 |
 | 0.4 | 0.88 |
 | 0.5 | 0.88 |
 | 0.6 | 0.88 |
 | 0.7 | 0.87 |
-| 0.8 | — |
+| 0.8 | 0.86 |
 | 0.9 | 0.83 |
 | 1.0 | 0.80 |
 
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.574 |      0.80 |   no |
-| IoU       | 0.420 |      0.20 |  yes |
+| precision | 0.602 |      0.80 |   no |
+| IoU       | 0.463 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -110,11 +110,11 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        |  9/11    |  7/11       |
+| freq45S        | 11/11    |  9/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```
-  EX   freq45S        ▆▆·▆▆▆▆▆·▅▄  (0.69 → 0.46)
+  EX   freq45S        ▆▆▆▆▆▆▆▆▅▅▄  (0.69 → 0.46)
   EX   freq45M        ▆▆▆▆▆▆▆▅▅▅▄  (0.69 → 0.46)
 ```
 
@@ -124,13 +124,13 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | ---- | --- |
 | 0.0 | 0.69 |
 | 0.1 | 0.69 |
-| 0.2 | — |
+| 0.2 | 0.68 |
 | 0.3 | 0.69 |
 | 0.4 | 0.68 |
 | 0.5 | 0.67 |
 | 0.6 | 0.67 |
 | 0.7 | 0.65 |
-| 0.8 | — |
+| 0.8 | 0.58 |
 | 0.9 | 0.52 |
 | 1.0 | 0.46 |
 
@@ -170,8 +170,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.545 |      0.80 |   no |
-| IoU       | 0.367 |      0.20 |  yes |
+| precision | 0.569 |      0.80 |   no |
+| IoU       | 0.400 |      0.20 |  yes |
 
 #### Plausibility priors
 

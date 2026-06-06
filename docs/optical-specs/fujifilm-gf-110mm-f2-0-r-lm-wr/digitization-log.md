@@ -25,11 +25,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq15S        | 11/11    |  0/11       |
-| freq15M        | 10/11    |  6/11       |
+| freq15M        | 11/11    |  7/11       |
 
 ```
   EX   freq15S        ██████▇▇▇▇▆  (0.93 → 0.66)
-  EX   freq15M        ██████·▇▇▇▇  (0.93 → 0.90)
+  EX   freq15M        ██████▇▇▇▇▇  (0.93 → 0.90)
 ```
 
 **freq15S**
@@ -58,7 +58,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.3 | 0.93 |
 | 0.4 | 0.93 |
 | 0.5 | 0.93 |
-| 0.6 | — |
+| 0.6 | 0.92 |
 | 0.7 | 0.92 |
 | 0.8 | 0.92 |
 | 0.9 | 0.91 |
@@ -84,7 +84,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.649 |      0.80 |   no |
+| precision | 0.637 |      0.80 |   no |
 | IoU       | 0.574 |      0.20 |  yes |
 
 #### Plausibility priors

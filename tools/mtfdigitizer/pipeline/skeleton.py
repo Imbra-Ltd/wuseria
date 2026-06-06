@@ -22,14 +22,25 @@ _CLOSE_KERNEL_WIDTH = 7
 _CLOSE_KERNEL_HEIGHT = 1
 
 
-def close_and_skeletonize(mask: np.ndarray) -> np.ndarray:
+def close_and_skeletonize(
+    mask: np.ndarray, close_kernel_width: int | None = None
+) -> np.ndarray:
     """Bridge dashes with a horizontal morphological close, then skeletonize.
 
     Input: binary mask (any truthy dtype).
     Output: uint8 mask, 1 where the skeleton sits, 0 elsewhere.
+
+    `close_kernel_width` overrides the default kernel width for profiles
+    whose chart family has wider dash gaps (e.g. Fujifilm permfreq).
+    None uses the module default.
     """
+    width = (
+        close_kernel_width
+        if close_kernel_width is not None
+        else _CLOSE_KERNEL_WIDTH
+    )
     kernel = cv2.getStructuringElement(
-        cv2.MORPH_RECT, (_CLOSE_KERNEL_WIDTH, _CLOSE_KERNEL_HEIGHT)
+        cv2.MORPH_RECT, (width, _CLOSE_KERNEL_HEIGHT)
     )
     closed = cv2.morphologyEx(mask.astype(np.uint8), cv2.MORPH_CLOSE, kernel)
     skeleton = skeletonize(closed.astype(bool))
