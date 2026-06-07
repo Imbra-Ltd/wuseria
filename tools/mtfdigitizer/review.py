@@ -299,6 +299,7 @@ def write_review(
     image_height_mm: float,
     svg_path: Path,
     out_dir: Path | None = None,
+    stem_override: str | None = None,
 ) -> ReviewOutputs:
     """Write the HTML composite and the overlay PNG for one chart.
 
@@ -307,10 +308,18 @@ def write_review(
     Output paths default to the same folder; the HTML references the
     three artifacts by their basenames, so the directory must contain
     all four files for the HTML to render correctly off-disk.
+
+    ``stem_override`` lets multi-aperture orchestrator passes (ADR-044)
+    derive distinct file stems per aperture so the second pass's
+    overlay PNG and HTML do not overwrite the first pass's. When
+    ``None`` (the default), the file stems track ``image_path.stem`` —
+    every single-aperture brand and every per-frequency Fuji chart
+    keep their existing filenames.
     """
     target_dir = out_dir if out_dir is not None else image_path.parent
-    overlay_path = target_dir / f"{image_path.stem}-overlay.png"
-    html_path = target_dir / f"{image_path.stem}-review.html"
+    stem = stem_override if stem_override is not None else image_path.stem
+    overlay_path = target_dir / f"{stem}-overlay.png"
+    html_path = target_dir / f"{stem}-review.html"
 
     original_bgr = load_chart_bgr(image_path)
     overlay = render_overlay(
@@ -324,7 +333,7 @@ def write_review(
         overlay_filename=overlay_path.name,
     )
     html_content = render_review_html(
-        title=image_path.stem, paths=paths
+        title=stem, paths=paths
     )
     html_path.write_text(html_content, encoding="utf-8")
     return ReviewOutputs(html_path=html_path, overlay_path=overlay_path)

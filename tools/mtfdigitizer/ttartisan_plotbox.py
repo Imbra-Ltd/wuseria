@@ -49,10 +49,17 @@ class TTartisanBoxResult:
 # survey; the hand-verified constants below ship with the scaffolder
 # so the production extractor sees identical bounds across the cohort.
 #
+# Bounds are the **data edges**, one pixel inside the printed axis
+# lines (left axis at x=85-86, top axis at y=115, bottom axis at y=462
+# on the anchor chart). The axis pixels themselves are pure black and
+# would be admitted by the max-aperture profile's black hue range,
+# triggering ~78 false-curve pixels per gridline band (#1074 §1). The
+# inset bounds exclude the axes from every per-hue mask uniformly.
+#
 # Anchor measurement: ttartisan-50mm-f1-2-mtf.png (S125 / this PR).
 # Cross-checked against ttartisan-100mm-f2-8-macro-2x-gfx-mtf.png.
-_APS_C_PLOT_BOX: tuple[int, int, int, int] = (85, 608, 115, 462)
-_GFX_PLOT_BOX: tuple[int, int, int, int] = (91, 610, 116, 460)
+_APS_C_PLOT_BOX: tuple[int, int, int, int] = (87, 607, 116, 461)
+_GFX_PLOT_BOX: tuple[int, int, int, int] = (93, 609, 117, 459)
 _APS_C_IMAGE_HEIGHT_MM = 14.0
 _GFX_IMAGE_HEIGHT_MM = 20.5
 

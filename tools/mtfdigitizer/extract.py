@@ -334,17 +334,40 @@ def _lens_dir_for(chart: ReferenceChart) -> Path:
     return (REPO_ROOT / chart.chart_path).parent
 
 
+def _artifact_stem(run: ExtractRun) -> str:
+    """Stem for one ExtractRun's inspection artifacts.
+
+    Single-aperture charts use the source raster's stem unchanged —
+    every Sigma / Samyang / 7Artisans / Tokina / Viltrox / Fujifilm
+    lens keeps its existing filenames. Multi-aperture charts (ADR-044
+    — TTartisan today) suffix the stem with the aperture label so
+    pass 1 and pass 2 do not overwrite each other's overlay PNG /
+    SVG / HTML files.
+
+    The aperture label is the orchestrator's identifier (``"max"`` /
+    ``"stopped"``), not the f-number — keeps the filename short and
+    cohort-stable across lenses with different stopped f-numbers.
+    """
+    profile = profile_for_chart(run.chart)
+    if profile.apertures_per_chart is None:
+        return run.image_path.stem
+    return f"{run.image_path.stem}-{run.aperture}"
+
+
 def _write_inspection_artifacts(run: ExtractRun) -> tuple[Path, Path, Path]:
     """Write one view's SVG + overlay PNG + review HTML.
 
     Always written, regardless of the gate decision — the maintainer
-    needs them to eye-glance a HOLD. Artifacts are named by the chart
-    image stem so multiple views in the same folder do not collide.
+    needs them to eye-glance a HOLD. Artifact filenames are derived
+    from `_artifact_stem(run)` so multi-aperture passes get distinct
+    files (ADR-044) and multi-view zooms still don't collide in the
+    same folder.
     """
     lens_dir = _lens_dir_for(run.chart)
     lens_dir.mkdir(parents=True, exist_ok=True)
 
-    svg_path = lens_dir / f"{run.image_path.stem}.svg"
+    stem = _artifact_stem(run)
+    svg_path = lens_dir / f"{stem}.svg"
     svg_path.write_text(render_svg(run.extracted), encoding="utf-8")
 
     outputs = write_review(
@@ -354,6 +377,7 @@ def _write_inspection_artifacts(run: ExtractRun) -> tuple[Path, Path, Path]:
         image_height_mm=run.chart.image_height_mm,
         svg_path=svg_path,
         out_dir=lens_dir,
+        stem_override=stem if stem != run.image_path.stem else None,
     )
     return svg_path, outputs.overlay_path, outputs.html_path
 
