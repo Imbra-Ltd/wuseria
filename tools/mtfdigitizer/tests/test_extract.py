@@ -507,3 +507,158 @@ def test_profile_for_view_passes_through_non_fuji_charts():
     sigma_chart = next(c for c in REFERENCE_CHARTS if c.slug == "sigma-56mm-f1-4-dc-dn-c")
     profile = _profile_for_view(sigma_chart, Path(sigma_chart.chart_path))
     assert profile.frequencies_lpmm == (10, 30)
+
+
+# --- Multi-aperture orchestrator (ADR-044) ---------------------------------
+
+
+def test_hue_filtered_profile_keeps_only_matching_prefix():
+    """`_hue_filtered_profile` selects hues whose name starts with the
+    aperture token plus a `-`. Used by the multi-aperture orchestrator
+    to derive a per-aperture profile copy from one declared profile."""
+    from mtfdigitizer.extract import _hue_filtered_profile
+    from mtfdigitizer.profiles.types import HueRange, MtfProfile
+
+    profile = MtfProfile(
+        name="probe",
+        hues=(
+            HueRange(name="max-10S-black", h_lo=0, h_hi=179, s_min=0, v_max=80),
+            HueRange(name="max-30S-grey", h_lo=0, h_hi=179, s_min=0, v_min=90, v_max=160),
+            HueRange(name="stopped-10S-red", h_lo=0, h_hi=10, s_min=80, v_min=60),
+            HueRange(name="stopped-30S-orange", h_lo=11, h_hi=25, s_min=80, v_min=60),
+        ),
+        style_axis="SPLIT_BY_DASH",
+        hue_meaning="FREQUENCY",
+        frequencies_lpmm=(10, 30),
+        apertures_per_chart=("max", "stopped"),
+    )
+
+    max_only = _hue_filtered_profile(profile, "max")
+    assert tuple(h.name for h in max_only.hues) == (
+        "max-10S-black",
+        "max-30S-grey",
+    )
+
+    stopped_only = _hue_filtered_profile(profile, "stopped")
+    assert tuple(h.name for h in stopped_only.hues) == (
+        "stopped-10S-red",
+        "stopped-30S-orange",
+    )
+
+
+def test_aperture_passes_for_view_default_single_pass():
+    """Standard single-aperture charts still produce one pass after the
+    multi-aperture refactor — no regression for Sigma, Samyang, etc."""
+    from mtfdigitizer.extract import _aperture_passes_for_view
+
+    sigma_chart = next(c for c in REFERENCE_CHARTS if c.slug == "sigma-56mm-f1-4-dc-dn-c")
+    passes = _aperture_passes_for_view(sigma_chart, Path(sigma_chart.chart_path))
+    assert len(passes) == 1
+    aperture, profile = passes[0]
+    assert aperture == sigma_chart.apertures[0]
+    assert profile.frequencies_lpmm == (10, 30)
+
+
+def test_aperture_passes_for_view_fuji_single_pass():
+    """Fuji per-frequency charts still produce one pass per filename,
+    not one-per-aperture. The Fuji frequency substitution and the
+    multi-aperture fan-out are independent dispatches."""
+    from mtfdigitizer.extract import _aperture_passes_for_view
+
+    fuji_chart = ReferenceChart(
+        slug="probe-fuji",
+        chart_path="docs/optical-specs/probe-fuji/probe-fuji-15lp.png",
+        style_family="fujifilm-permfreq",
+        apertures=("f/4",),
+        frequencies_lpmm=(15, 20, 40),
+        image_height_mm=25.0,
+        notes="probe",
+    )
+    passes = _aperture_passes_for_view(
+        fuji_chart, Path("docs/optical-specs/probe-fuji/probe-fuji-20lp.png")
+    )
+    assert len(passes) == 1
+    aperture, profile = passes[0]
+    assert aperture == "f/4"
+    assert profile.frequencies_lpmm == (20,)
+
+
+def test_aperture_passes_for_view_multi_aperture_fan_out(monkeypatch):
+    """A profile with `apertures_per_chart=(...)` produces N passes, one
+    per aperture, each carrying a hue-filtered profile copy."""
+    from mtfdigitizer import extract as extract_mod
+    from mtfdigitizer.extract import _aperture_passes_for_view
+    from mtfdigitizer.profiles.types import HueRange, MtfProfile
+
+    probe_profile = MtfProfile(
+        name="probe-dual-aperture",
+        hues=(
+            HueRange(name="max-10S", h_lo=0, h_hi=179, s_min=0, v_max=80),
+            HueRange(name="max-30S", h_lo=0, h_hi=179, s_min=0, v_min=90, v_max=160),
+            HueRange(name="stopped-10S", h_lo=0, h_hi=10, s_min=80, v_min=60),
+            HueRange(name="stopped-30S", h_lo=11, h_hi=25, s_min=80, v_min=60),
+        ),
+        style_axis="SPLIT_BY_DASH",
+        hue_meaning="FREQUENCY",
+        frequencies_lpmm=(10, 30),
+        apertures_per_chart=("max", "stopped"),
+    )
+
+    def fake_profile_for_chart(chart):
+        return probe_profile
+
+    monkeypatch.setattr(extract_mod, "profile_for_chart", fake_profile_for_chart)
+
+    probe_chart = ReferenceChart(
+        slug="probe-dual",
+        chart_path="docs/optical-specs/probe-dual/probe-dual-mtf.png",
+        style_family="probe-dual-aperture",  # not in _FUJI_STYLE_FAMILIES
+        apertures=("max", "stopped"),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.2,
+        notes="probe",
+    )
+    passes = _aperture_passes_for_view(
+        probe_chart, Path(probe_chart.chart_path)
+    )
+    assert len(passes) == 2
+    assert passes[0][0] == "max"
+    assert tuple(h.name for h in passes[0][1].hues) == ("max-10S", "max-30S")
+    assert passes[1][0] == "stopped"
+    assert tuple(h.name for h in passes[1][1].hues) == ("stopped-10S", "stopped-30S")
+
+
+def test_profile_for_view_shim_returns_first_pass():
+    """Back-compat: `_profile_for_view` still returns one profile (the
+    first pass's), matching its pre-ADR-044 signature."""
+    from mtfdigitizer.extract import _profile_for_view
+
+    sigma_chart = next(c for c in REFERENCE_CHARTS if c.slug == "sigma-56mm-f1-4-dc-dn-c")
+    profile = _profile_for_view(sigma_chart, Path(sigma_chart.chart_path))
+    assert profile.frequencies_lpmm == (10, 30)
+
+
+def test_extract_run_default_aperture_empty_string():
+    """Existing ExtractRun constructors that omit `aperture` keep the
+    default empty string — no surprises for code that doesn't yet
+    populate the field."""
+    from mtfdigitizer.extract import ExtractRun
+    from mtfdigitizer.pipeline.types import ExtractedChart, PlotBox
+
+    chart = next(c for c in REFERENCE_CHARTS if c.slug == "sigma-56mm-f1-4-dc-dn-c")
+    plot_box = PlotBox(x_left=0, x_right=10, y_top=0, y_bottom=10)
+    run = ExtractRun(
+        chart=chart,
+        view=chart.views[0],
+        image_path=Path(chart.chart_path),
+        plot_box=plot_box,
+        extracted=ExtractedChart(
+            source_path=chart.chart_path,
+            profile_name="probe",
+            plot_box=plot_box,
+            image_height_mm=14.2,
+            readings=(),
+        ),
+        verdict=None,  # type: ignore[arg-type]
+    )
+    assert run.aperture == ""

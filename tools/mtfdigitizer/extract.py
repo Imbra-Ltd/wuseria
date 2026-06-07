@@ -153,7 +153,15 @@ def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
 
 @dataclass(frozen=True)
 class ExtractRun:
-    """The full output of one chart view's extraction pass."""
+    """The full output of one chart view's extraction pass.
+
+    `aperture` labels which f-stop the extracted readings represent.
+    For single-aperture charts (every style family before ADR-044) this
+    is just `chart.apertures[0]`. For multi-aperture charts (TTartisan-
+    style: one image, N apertures encoded by color) the orchestrator
+    runs one pass per aperture and tags each ExtractRun with its own
+    aperture label.
+    """
 
     chart: ReferenceChart
     view: ChartView
@@ -161,6 +169,7 @@ class ExtractRun:
     plot_box: PlotBox
     extracted: ExtractedChart
     verdict: ChartVerdict
+    aperture: str = ""
 
 
 def _parse_filename_frequency(image_path: Path) -> int:
@@ -181,63 +190,112 @@ def _parse_filename_frequency(image_path: Path) -> int:
     return int(m.group("freq"))
 
 
-def _profile_for_view(chart: ReferenceChart, image_path: Path) -> MtfProfile:
-    """Choose the runtime profile for one chart view.
+def _hue_filtered_profile(profile: MtfProfile, aperture: str) -> MtfProfile:
+    """Return a profile copy with `hues` filtered to one aperture.
 
-    For most style families this is just the chart's declared profile.
-    For Fujifilm per-frequency charts (ADR-043), the declared profile
-    carries a sentinel `frequencies_lpmm=(0,)`; this helper parses the
-    real frequency from the filename and returns a profile copy with
-    `frequencies_lpmm=(parsed_freq,)`.
+    Used by multi-aperture dispatch (ADR-044): when a chart packs N
+    apertures per image by color encoding (TTartisan-style), each
+    `HueRange.name` is prefixed `f"{aperture}-..."`. This helper keeps
+    only the hues for the requested aperture so the extractor sees a
+    standard single-aperture profile.
+    """
+    filtered = tuple(h for h in profile.hues if h.name.startswith(f"{aperture}-"))
+    return dataclasses.replace(profile, hues=filtered)
+
+
+def _aperture_passes_for_view(
+    chart: ReferenceChart, image_path: Path
+) -> list[tuple[str, MtfProfile]]:
+    """Resolve a view to one or more (aperture, profile) extraction passes.
+
+    Most style families produce one pass — the chart's declared profile,
+    paired with the chart's primary aperture label. Two style families
+    fan out to multiple passes:
+
+    - Fujifilm per-frequency (ADR-043): one pass, but the profile is
+      copied with `frequencies_lpmm` substituted from the filename.
+      Still single-aperture.
+    - Multi-aperture-per-chart (ADR-044): one chart image packs N
+      apertures by color encoding. The orchestrator returns N passes,
+      each with the profile's hues filtered to one aperture's bucket.
+
+    The default fan-out for back-compat is `[(chart.apertures[0], profile)]`.
     """
     base = profile_for_chart(chart)
     if chart.style_family in _FUJI_STYLE_FAMILIES:
         freq = _parse_filename_frequency(image_path)
-        return dataclasses.replace(base, frequencies_lpmm=(freq,))
-    return base
+        substituted = dataclasses.replace(base, frequencies_lpmm=(freq,))
+        return [(chart.apertures[0], substituted)]
+    if base.apertures_per_chart is not None:
+        return [
+            (ap, _hue_filtered_profile(base, ap)) for ap in base.apertures_per_chart
+        ]
+    return [(chart.apertures[0] if chart.apertures else "", base)]
 
 
-def _run_view(chart: ReferenceChart, view: ChartView) -> ExtractRun:
-    """Run one chart view through extract → score → priors → triage.
+def _profile_for_view(chart: ReferenceChart, image_path: Path) -> MtfProfile:
+    """Back-compat shim: return the first pass's profile.
 
-    No I/O beyond reading the chart raster.
+    Reserved for callers (e.g. tests) that predate the multi-aperture
+    fan-out and only need to inspect the single declared profile. Do
+    not use in new code — call `_aperture_passes_for_view` instead so
+    multi-aperture profiles dispatch correctly.
+    """
+    return _aperture_passes_for_view(chart, image_path)[0][1]
+
+
+def _run_view_passes(
+    chart: ReferenceChart, view: ChartView
+) -> list[ExtractRun]:
+    """Run one chart view through one or more extract → score → priors → triage
+    passes (one per aperture). Returns one ExtractRun per pass.
+
+    No I/O beyond reading the chart raster — even for multi-aperture
+    profiles, the raster is read once and reused across passes.
     """
     assert view.plot_box is not None, (
         f"chart {chart.slug!r} view {view.chart_path!r} has no plot_box — "
         "cannot run extractor"
     )
     image_path = _resolve_view_image(chart, view)
-    profile = _profile_for_view(chart, image_path)
     plot_box = _to_plotbox(view.plot_box)
+    passes = _aperture_passes_for_view(chart, image_path)
 
-    extracted = extract_chart(
-        image_path, profile, plot_box, image_height_mm=chart.image_height_mm
-    )
-    score = score_chart(
-        image_path,
-        profile,
-        plot_box,
-        image_height_mm=chart.image_height_mm,
-        readings=extracted.readings,
-        dilation_radius_px=DEFAULT_DILATION_RADIUS_PX,
-    )
-    violations = check_all(extracted.readings)
-    verdict = triage(score, violations)
-    return ExtractRun(
-        chart=chart,
-        view=view,
-        image_path=image_path,
-        plot_box=plot_box,
-        extracted=extracted,
-        verdict=verdict,
-    )
+    runs: list[ExtractRun] = []
+    for aperture, profile in passes:
+        extracted = extract_chart(
+            image_path, profile, plot_box, image_height_mm=chart.image_height_mm
+        )
+        score = score_chart(
+            image_path,
+            profile,
+            plot_box,
+            image_height_mm=chart.image_height_mm,
+            readings=extracted.readings,
+            dilation_radius_px=DEFAULT_DILATION_RADIUS_PX,
+        )
+        violations = check_all(extracted.readings)
+        verdict = triage(score, violations)
+        runs.append(
+            ExtractRun(
+                chart=chart,
+                view=view,
+                image_path=image_path,
+                plot_box=plot_box,
+                extracted=extracted,
+                verdict=verdict,
+                aperture=aperture,
+            )
+        )
+    return runs
 
 
 def _run_all_views(chart: ReferenceChart) -> list[ExtractRun]:
-    """Run every view this lens publishes. Each view contributes one
-    panel to the lens's single digitization-log.md.
+    """Run every view this lens publishes. Each view contributes one or
+    more panels to the lens's single digitization-log.md — one panel per
+    aperture pass per view (single-aperture charts: one panel per view).
     """
-    return [_run_view(chart, view) for view in chart.views]
+    return [run for view in chart.views for run in _run_view_passes(chart, view)]
 
 
 # --- Acceptance decision --------------------------------------------------

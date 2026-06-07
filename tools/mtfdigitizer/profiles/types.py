@@ -173,6 +173,14 @@ class MtfProfile:
     # masks only contain one color and within-color curves don't run
     # parallel for these chart styles).
     close_kernel_width: int | None = None
+    # When set, the chart image packs multiple apertures per panel via
+    # color encoding (TTartisan-style: black+grey curves at max aperture,
+    # red+orange at the stopped aperture). The orchestrator runs the
+    # extractor once per aperture in this tuple, each time with `hues`
+    # filtered to those whose `HueRange.name` starts with `f"{aperture}-"`.
+    # None for single-aperture charts (every profile shipped before this
+    # extension). See ADR-044 (multi-aperture orchestrator).
+    apertures_per_chart: tuple[str, ...] | None = None
 
     @property
     def hue_count(self) -> int:
