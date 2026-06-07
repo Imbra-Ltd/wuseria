@@ -61,7 +61,8 @@ ZEISS_TOUIT_CHART = lambda: _ref_chart_path("zeiss-touit-32mm-f1-8")
 def test_declared_profiles_cover_in_band_families() -> None:
     """One profile per in-band reference set family (+ the Tokina wide-zoom
     DP variant of the prime profile, + the Fujifilm per-frequency profile
-    added in ADR-043)."""
+    added in ADR-043, + the TTartisan dual-aperture profile added in
+    ADR-044)."""
     names = {p.name for p in DECLARED_PROFILES}
     assert names == {
         "sigma-2color-solid-dashed",
@@ -71,6 +72,7 @@ def test_declared_profiles_cover_in_band_families() -> None:
         "tokina-2color-frequency-geodesic-dp",
         "viltrox-bw-dashed-f1.2",
         "fujifilm-permfreq-2color-solid-dashed",
+        "ttartisan-4color-dual-aperture",
     }
 
 
@@ -95,6 +97,27 @@ def test_hue_range_is_frozen() -> None:
     hue = HueRange(name="x", h_lo=0, h_hi=10)
     with pytest.raises((AttributeError, Exception)):
         hue.h_lo = 99  # type: ignore[misc]
+
+
+def test_multi_aperture_profile_hue_names_carry_prefix() -> None:
+    """ADR-044 contract: every HueRange in a multi-aperture profile must
+    be name-prefixed with one of the declared apertures plus a hyphen.
+    The orchestrator's `_hue_filtered_profile` splits on `f"{aperture}-"`;
+    a hue without the prefix is silently dropped on every pass, which
+    would leave the extractor with zero hues and fail loud — but only
+    at extraction time. Catch the mis-naming at declaration time instead.
+    """
+    for profile in DECLARED_PROFILES:
+        if profile.apertures_per_chart is None:
+            continue
+        valid_prefixes = tuple(f"{ap}-" for ap in profile.apertures_per_chart)
+        for hue in profile.hues:
+            assert hue.name.startswith(valid_prefixes), (
+                f"profile {profile.name!r} hue {hue.name!r} does not start "
+                f"with any of {valid_prefixes!r}; ADR-044 requires every "
+                f"hue in a multi-aperture profile to declare its aperture "
+                f"via a name prefix"
+            )
 
 
 # --- Auto-suggest: declared style is matched -------------------------------
