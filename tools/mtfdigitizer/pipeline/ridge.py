@@ -596,6 +596,62 @@ def ridge_tracks_for_hue(
     return out
 
 
+def ridge_tracks_for_hue_freq_split(
+    mask: np.ndarray,
+    plot_box: PlotBox,
+    freq: int,
+    dashed_is_sagittal: bool,
+) -> dict[str, np.ndarray]:
+    """Per-hue, 2-curve variant for SPLIT_BY_DASH families: each hue
+    carries one frequency with both S (solid) and T (dashed) curves.
+
+    Used by TTartisan max-aperture (#1085): the raw black mask fuses
+    solid S10 and dashed T10 antialiased halos into one connected
+    component when the curves run within ~5 px of each other. The
+    skeleton + CC-width split then assigns most of the fused blob to S
+    and leaves only the small non-fused dashed fragments as M, missing
+    most of the T curve. Per-column ridge centroids preserve two
+    distinct tracks at coincidence; the top-2 by coverage are S+T.
+
+    Higher-coverage track is solid (S by default; M when
+    `dashed_is_sagittal=True`, the 7Artisans/TTartisan-T convention).
+    When only one track qualifies, both fields share its value (whole-
+    curve coincidence — same physics as `ridge_tracks_for_hue`).
+
+    Distinct from:
+      - `ridge_tracks_for_hue`: HUE_IS_CURVE; hue carries S or M, the
+        two tracks within the hue are two frequencies (ranked by mean_y).
+      - `ridge_tracks_to_fields`: single neutral mask carrying all four
+        curves; tracks ranked by mean_y for frequency, then by coverage
+        within each frequency pair for S/M.
+    """
+    from .dispatch import curve_field  # imported here to avoid module cycle
+
+    cleaned = _strip_chrome(mask, plot_box)
+    points = _extract_ridge_points(cleaned, plot_box)
+    tracks = _cluster_into_tracks(points)
+    kept = _select_top_n_tracks(tracks, n=2, plot_width=plot_box.width + 1)
+
+    solid_sm, dashed_sm = ("M", "S") if dashed_is_sagittal else ("S", "M")
+    out: dict[str, np.ndarray] = {}
+    if not kept:
+        return out
+    by_coverage = sorted(kept, key=lambda t: t.coverage, reverse=True)
+    if len(by_coverage) == 1:
+        # Whole-hue coincidence: both curves visually merged across the
+        # entire field. Same value to both — same B4 physics generalization
+        # as `ridge_tracks_for_hue`.
+        shared = _densify_track(by_coverage[0])
+        out[curve_field(freq, solid_sm)] = _rasterize(shared, mask.shape)
+        out[curve_field(freq, dashed_sm)] = _rasterize(shared, mask.shape)
+        return out
+    solid_track = _densify_track(by_coverage[0])
+    dashed_track = _densify_track(by_coverage[1])
+    out[curve_field(freq, solid_sm)] = _rasterize(solid_track, mask.shape)
+    out[curve_field(freq, dashed_sm)] = _rasterize(dashed_track, mask.shape)
+    return out
+
+
 def ridge_tracks_to_fields(
     mask: np.ndarray,
     plot_box: PlotBox,

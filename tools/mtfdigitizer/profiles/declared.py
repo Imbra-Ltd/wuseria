@@ -259,7 +259,13 @@ TTARTISAN_4COLOR_DUAL_APERTURE: MtfProfile = MtfProfile(
         HueRange(name="stopped-30-orange", h_lo=12, h_hi=22, s_min=80, v_min=80, v_max=220),
     ),
     style_axis="SPLIT_BY_DASH",
-    hue_meaning="FREQUENCY",
+    # The S (solid) and T (dashed) curves of one frequency run within
+    # ~5 px of each other on the TTartisan template, fusing their
+    # antialiased halos into one CC and defeating CC-width split. Per-
+    # column ridge tracking preserves both curves at coincidence. See
+    # `ridge.ridge_tracks_for_hue_freq_split` and the FREQUENCY_PER_HUE_
+    # RIDGE branch in `dispatch.field_skeletons`.
+    hue_meaning="FREQUENCY_PER_HUE_RIDGE",
     frequencies_lpmm=(10, 30),
     apertures_per_chart=("max", "stopped"),
     # TTartisan legend: S = solid, T = dashed — same as Sigma's

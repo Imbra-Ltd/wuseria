@@ -16,6 +16,11 @@ Out-of-band combinations raise `NotImplementedError` — generalizing PR
 - `(SPLIT_BY_DASH, FREQUENCY)` — Sigma + 7Artisans dialects: each hue is
   a frequency, CC-width split gives S/M per hue. (7Artisans inverts the
   S/M labels: dashed = S, solid = M; opt in via `profile.dashed_is_sagittal`.)
+- `(SPLIT_BY_DASH, FREQUENCY_PER_HUE_RIDGE)` — TTartisan max-aperture
+  dialect: same hue→frequency convention, but the S and T curves run
+  within ~5 px of each other so their antialiased halos fuse into one
+  CC. Per-column ridge centroids preserve both curves; the
+  higher-coverage track is solid (S unless `dashed_is_sagittal`).
 - `(HUE_IS_CURVE, CURVE_IDENTITY)` — Samyang dialect: each hue uniquely
   identifies one curve; the name encodes both frequency and S/M.
 - `(HUE_IS_CURVE, SAGITTAL_MERIDIONAL)` — Tokina prime dialect: hue carries
@@ -76,7 +81,11 @@ from .dp_extract import (
     extract_two_curves_dp,
 )
 from .masks import masks_by_curve_name
-from .ridge import ridge_tracks_for_hue, ridge_tracks_to_fields
+from .ridge import (
+    ridge_tracks_for_hue,
+    ridge_tracks_for_hue_freq_split,
+    ridge_tracks_to_fields,
+)
 from .skeleton import close_and_skeletonize
 from .split import split_sm_by_cc_width
 from .types import PlotBox
@@ -327,6 +336,33 @@ def field_skeletons(
                 out[dashed_field] = curve_to_field_skeleton(curve, mask)
             else:
                 out[dashed_field] = split.meridional
+    elif (
+        profile.style_axis == "SPLIT_BY_DASH"
+        and profile.hue_meaning == "FREQUENCY_PER_HUE_RIDGE"
+    ):
+        # Each hue carries one frequency with both S (solid) and T
+        # (dashed) curves. The raw mask fuses both curves into one CC
+        # at coincidence regions (TTartisan max-aperture: S10 and T10
+        # halos touch where they run within ~5 px), so the CC-width
+        # split used by FREQUENCY can't separate them. Per-column ridge
+        # centroids preserve two distinct tracks even at coincidence;
+        # higher-coverage track is solid (S by default; M when
+        # `dashed_is_sagittal`). See `ridge.ridge_tracks_for_hue_freq_split`.
+        if plot_box is None:
+            raise ValueError(
+                "FREQUENCY_PER_HUE_RIDGE profile requires plot_box for "
+                "per-column ridge extraction"
+            )
+        freq_by_color = dict(
+            zip(unique_named_hues(profile), profile.frequencies_lpmm)
+        )
+        for color_name, mask in curve_masks.items():
+            freq = freq_by_color[color_name]
+            hue_fields = ridge_tracks_for_hue_freq_split(
+                mask, plot_box, freq=freq,
+                dashed_is_sagittal=profile.dashed_is_sagittal,
+            )
+            out.update(hue_fields)
     elif (
         profile.style_axis == "HUE_IS_CURVE"
         and profile.hue_meaning == "CURVE_IDENTITY"
