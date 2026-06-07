@@ -1010,6 +1010,8 @@ Review Dependabot PRs:
 gh pr list --author app/dependabot
 ```
 
+**Co-dependent bumps.** `package.json` uses `^` ranges, so the lockfile pins the actual version. When Dependabot splits interlocked packages (e.g. `react` and `react-dom`) into separate PRs, each PR's CI runs in isolation against current `main` — but merging one alone shifts the lockfile and breaks main with `Incompatible versions` on the next merge. Rebase co-dependent PRs against current main before merging the second one (`gh pr comment <N> --body "@dependabot rebase"`), or group them in `.github/dependabot.yml` so Dependabot ships a single multi-bump PR.
+
 ### 3.12 Analytics verification (Umami)
 
 Umami Cloud tracks page views with zero cookies and no consent banner.
