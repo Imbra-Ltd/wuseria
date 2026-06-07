@@ -1,9 +1,10 @@
 """Declared MTF chart profiles (#934, ADR-038 §1).
 
-Five profiles. The first two (Sigma, Samyang) shipped with #934. The
-three families added here cover the rest of the in-band reference set
-(epic #932): same-color dashed-S/M (7Artisans), color-carries-frequency
-with sagittal/meridional-by-color (Tokina), and pure B&W dashed (Viltrox).
+Six profile families. The first two (Sigma, Samyang) shipped with #934.
+The three families added next (7Artisans, Tokina prime + wide-zoom,
+Viltrox) covered the rest of the in-band reference set (epic #932).
+Fujifilm per-frequency followed (ADR-043). TTartisan dual-aperture
+follows the multi-aperture orchestrator (ADR-044) added in #1071.
 
 The HSV bands were measured from the reference set's actual chart pixels
 — never invented. See `probe_three_profiles.py` history (deleted post-merge)
@@ -215,6 +216,69 @@ FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED: MtfProfile = MtfProfile(
 )
 
 
+# TTartisan 4-color dual-aperture (ADR-044). One chart image packs TWO
+# apertures by color encoding:
+#   max aperture     — black (10 lp/mm) + grey (30 lp/mm)
+#   stopped aperture — red   (10 lp/mm) + orange (30 lp/mm)
+# Within each color the solid line is the sagittal (S) curve and the
+# dashed line is the tangential (T) curve — same convention as Sigma
+# (`dashed_is_sagittal=False`). The legend names every curve with its
+# aperture explicitly (`S10_F1.2`, `T10_F5.6`, ...); the stopped
+# f-number varies per lens and is read from the chart legend at
+# scaffold time, not from the slug.
+#
+# Hue names MUST start with `max-` or `stopped-` per ADR-044 — the
+# orchestrator's `_hue_filtered_profile` splits on the prefix to fan
+# out one extractor pass per aperture, each pass seeing only its own
+# color bucket.
+#
+# Measured peaks on `ttartisan-50mm-f1-2/ttartisan-50mm-f1-2-mtf.png`
+# (Tier 1 anchor; 800x600; plot region x=85..608, y=115..462). Pixel
+# counts inside the plot region:
+#   max-10S-black:    2865 px (V<80, S<60)
+#   max-30S-grey:     2223 px (V∈[90,160], S<35)
+#   stopped-10S-red:  1669 px (h≈0 or h≈179, S≥80, V∈[80,220])
+#   stopped-30S-orange: 1417 px (h≈17, S≥80, V∈[80,220])
+TTARTISAN_4COLOR_DUAL_APERTURE: MtfProfile = MtfProfile(
+    name="ttartisan-4color-dual-aperture",
+    hues=(
+        # Black — 10 lp/mm at max aperture. Low V, low S; the S<60 cap
+        # admits anti-aliased curve edges, V<80 rejects mid-grey gridlines.
+        HueRange(name="max-10-black", h_lo=0, h_hi=179, s_min=0, s_max=60, v_min=0, v_max=80),
+        # Grey — 30 lp/mm at max aperture. Mid V band, very low S; the
+        # tight V∈[90,160] window separates from the light-grey
+        # background gridlines (V>200) and the dark black curves (V<80).
+        HueRange(name="max-30-grey", h_lo=0, h_hi=179, s_min=0, s_max=35, v_min=90, v_max=160),
+        # Red — 10 lp/mm at the stopped aperture. Hue wraps around the
+        # 0/179 boundary; both ends listed flat per the existing
+        # wrap-around convention (Sigma, Samyang).
+        HueRange(name="stopped-10-red", h_lo=0, h_hi=5, s_min=80, v_min=80, v_max=220),
+        HueRange(name="stopped-10-red", h_lo=175, h_hi=179, s_min=80, v_min=80, v_max=220),
+        # Orange — 30 lp/mm at the stopped aperture. Centered on hue 17;
+        # high S to reject the brown/tan legend text background.
+        HueRange(name="stopped-30-orange", h_lo=12, h_hi=22, s_min=80, v_min=80, v_max=220),
+    ),
+    style_axis="SPLIT_BY_DASH",
+    hue_meaning="FREQUENCY",
+    frequencies_lpmm=(10, 30),
+    apertures_per_chart=("max", "stopped"),
+    # TTartisan legend: S = solid, T = dashed — same as Sigma's
+    # `S=solid` convention. `dashed_is_sagittal=False` (default).
+    # Not auto-suggestable: the black + grey palette would false-match
+    # any chart with prominent text or gridlines (same hazard as the
+    # Viltrox neutral-greys profile). Must be declared explicitly via
+    # the `ttartisan-4color-dual-aperture` style family.
+    auto_suggestable=False,
+    notes=(
+        "TTartisan convention (ADR-044): one chart image, two apertures "
+        "packed by color. black=max-10, grey=max-30, red=stopped-10, "
+        "orange=stopped-30. Solid=S, dashed=T (Sigma convention). "
+        "Stopped aperture f-number varies per lens and is read from the "
+        "chart legend at scaffold time."
+    ),
+)
+
+
 DECLARED_PROFILES: tuple[MtfProfile, ...] = (
     SIGMA_2COLOR_SOLID_DASHED,
     SAMYANG_4COLOR_ALL_SOLID,
@@ -223,4 +287,5 @@ DECLARED_PROFILES: tuple[MtfProfile, ...] = (
     TOKINA_2COLOR_FREQUENCY_CC_RANK,
     VILTROX_BW_DASHED_F12,
     FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED,
+    TTARTISAN_4COLOR_DUAL_APERTURE,
 )

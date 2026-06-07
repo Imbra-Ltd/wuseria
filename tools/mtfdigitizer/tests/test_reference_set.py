@@ -17,9 +17,10 @@ from mtfdigitizer.referenceset.charts import STYLE_FAMILIES
 REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
-# The eight families the digitizer must handle — single source of truth
-# for "what styles exist in docs/optical-specs/". If a new family appears,
-# it goes in this list AND a reference chart for it goes in REFERENCE_CHARTS.
+# Every chart-style family the digitizer must handle — single source of
+# truth for "what styles exist in docs/optical-specs/". If a new family
+# appears, it goes in this list AND a reference chart for it goes in
+# REFERENCE_CHARTS.
 EXPECTED_FAMILIES = frozenset(
     [
         "mainstream-2color-solid-dashed",
@@ -29,6 +30,7 @@ EXPECTED_FAMILIES = frozenset(
         "2color-frequency-cc-rank",
         "bw-dashed-promo",
         "fujifilm-permfreq",
+        "ttartisan-4color-dual-aperture",
         "multifreq-press-kit",
         "idealized-flat",
         "soft-multicurve-promo",

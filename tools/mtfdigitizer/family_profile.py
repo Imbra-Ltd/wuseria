@@ -26,6 +26,7 @@ from .profiles import (
     SIGMA_2COLOR_SOLID_DASHED,
     TOKINA_2COLOR_FREQUENCY,
     TOKINA_2COLOR_FREQUENCY_CC_RANK,
+    TTARTISAN_4COLOR_DUAL_APERTURE,
     VILTROX_BW_DASHED_F12,
 )
 from .profiles.types import MtfProfile
@@ -51,6 +52,11 @@ PROFILE_BY_STYLE: dict[str, MtfProfile] = {
     # profile carries a sentinel `frequencies_lpmm=(0,)`. Routed via the
     # multipath orchestrator (`extract.py:extract_lens_multipath`).
     "fujifilm-permfreq": FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED,
+    # TTartisan: one chart image, two apertures packed by color (ADR-044).
+    # The orchestrator fans out one extractor pass per aperture; the
+    # profile's hues are filtered by name prefix (`max-` vs `stopped-`)
+    # on each pass.
+    "ttartisan-4color-dual-aperture": TTARTISAN_4COLOR_DUAL_APERTURE,
 }
 
 
