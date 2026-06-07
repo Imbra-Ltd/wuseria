@@ -72,8 +72,8 @@ FUJI_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         ),
     ),
     ReferenceChart(
-        slug="fujifilm-gf-110mm-f5-6-t-s-macro",
-        chart_path="docs/optical-specs/fujifilm-gf-110mm-f5-6-t-s-macro/fujifilm-gf-110mm-f5-6-t-s-macro-10lp.png",
+        slug="fujifilm-gf-110mm-f5-6-ts-macro",
+        chart_path="docs/optical-specs/fujifilm-gf-110mm-f5-6-ts-macro/fujifilm-gf-110mm-f5-6-ts-macro-10lp.png",
         style_family="fujifilm-permfreq",
         apertures=("max",),
         frequencies_lpmm=(10, 20, 40),
@@ -85,11 +85,11 @@ FUJI_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         ground_truth=None,
         additional_views=(
             ChartView(
-                chart_path="docs/optical-specs/fujifilm-gf-110mm-f5-6-t-s-macro/fujifilm-gf-110mm-f5-6-t-s-macro-20lp.png",
+                chart_path="docs/optical-specs/fujifilm-gf-110mm-f5-6-ts-macro/fujifilm-gf-110mm-f5-6-ts-macro-20lp.png",
                 plot_box=PlotBoxCoords(x_left=25, x_right=410, y_top=17, y_bottom=284),
             ),
             ChartView(
-                chart_path="docs/optical-specs/fujifilm-gf-110mm-f5-6-t-s-macro/fujifilm-gf-110mm-f5-6-t-s-macro-40lp.png",
+                chart_path="docs/optical-specs/fujifilm-gf-110mm-f5-6-ts-macro/fujifilm-gf-110mm-f5-6-ts-macro-40lp.png",
                 plot_box=PlotBoxCoords(x_left=25, x_right=410, y_top=17, y_bottom=283),
             ),
         ),
@@ -199,8 +199,8 @@ FUJI_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         ),
     ),
     ReferenceChart(
-        slug="fujifilm-gf-30mm-f5-6-t-s",
-        chart_path="docs/optical-specs/fujifilm-gf-30mm-f5-6-t-s/fujifilm-gf-30mm-f5-6-t-s-10lp.png",
+        slug="fujifilm-gf-30mm-f5-6-ts",
+        chart_path="docs/optical-specs/fujifilm-gf-30mm-f5-6-ts/fujifilm-gf-30mm-f5-6-ts-10lp.png",
         style_family="fujifilm-permfreq",
         apertures=("max",),
         frequencies_lpmm=(10, 20, 40),
@@ -212,11 +212,11 @@ FUJI_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         ground_truth=None,
         additional_views=(
             ChartView(
-                chart_path="docs/optical-specs/fujifilm-gf-30mm-f5-6-t-s/fujifilm-gf-30mm-f5-6-t-s-20lp.png",
+                chart_path="docs/optical-specs/fujifilm-gf-30mm-f5-6-ts/fujifilm-gf-30mm-f5-6-ts-20lp.png",
                 plot_box=PlotBoxCoords(x_left=25, x_right=410, y_top=16, y_bottom=283),
             ),
             ChartView(
-                chart_path="docs/optical-specs/fujifilm-gf-30mm-f5-6-t-s/fujifilm-gf-30mm-f5-6-t-s-40lp.png",
+                chart_path="docs/optical-specs/fujifilm-gf-30mm-f5-6-ts/fujifilm-gf-30mm-f5-6-ts-40lp.png",
                 plot_box=PlotBoxCoords(x_left=25, x_right=410, y_top=16, y_bottom=282),
             ),
         ),
