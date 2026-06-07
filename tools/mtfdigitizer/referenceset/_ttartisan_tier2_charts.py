@@ -27,7 +27,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'gfx-or-ff' (image height 20.5 mm). Max aperture f/2.8, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=91, x_right=610, y_top=116, y_bottom=460),
+        plot_box=PlotBoxCoords(x_left=93, x_right=609, y_top=117, y_bottom=459),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -40,7 +40,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'gfx-or-ff' (image height 20.5 mm). Max aperture f/2.8, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=91, x_right=610, y_top=116, y_bottom=460),
+        plot_box=PlotBoxCoords(x_left=93, x_right=609, y_top=117, y_bottom=459),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -53,7 +53,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'gfx-or-ff' (image height 20.5 mm). Max aperture f/2.8, stopped aperture f/5.6 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=91, x_right=610, y_top=116, y_bottom=460),
+        plot_box=PlotBoxCoords(x_left=93, x_right=609, y_top=117, y_bottom=459),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -66,7 +66,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'gfx-or-ff' (image height 20.5 mm). Max aperture f/1.4, stopped aperture f/5.6 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=91, x_right=610, y_top=116, y_bottom=460),
+        plot_box=PlotBoxCoords(x_left=93, x_right=609, y_top=117, y_bottom=459),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -79,7 +79,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/2, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=85, x_right=608, y_top=115, y_bottom=462),
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -92,7 +92,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/1.4, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=85, x_right=608, y_top=115, y_bottom=462),
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -105,7 +105,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/2.8, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=85, x_right=608, y_top=115, y_bottom=462),
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -118,7 +118,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'gfx-or-ff' (image height 20.5 mm). Max aperture f/6.3, stopped aperture f/11 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=91, x_right=610, y_top=116, y_bottom=460),
+        plot_box=PlotBoxCoords(x_left=93, x_right=609, y_top=117, y_bottom=459),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -131,7 +131,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'gfx-or-ff' (image height 20.5 mm). Max aperture f/6.3, stopped aperture f/11 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=91, x_right=610, y_top=116, y_bottom=460),
+        plot_box=PlotBoxCoords(x_left=93, x_right=609, y_top=117, y_bottom=459),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -144,7 +144,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/1.2, stopped aperture f/5.6 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=85, x_right=608, y_top=115, y_bottom=462),
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -157,7 +157,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'gfx-or-ff' (image height 20.5 mm). Max aperture f/2, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=91, x_right=610, y_top=116, y_bottom=460),
+        plot_box=PlotBoxCoords(x_left=93, x_right=609, y_top=117, y_bottom=459),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -170,7 +170,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/2, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=85, x_right=608, y_top=115, y_bottom=462),
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -183,7 +183,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'gfx-or-ff' (image height 20.5 mm). Max aperture f/1.25, stopped aperture f/5.6 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=91, x_right=610, y_top=116, y_bottom=460),
+        plot_box=PlotBoxCoords(x_left=93, x_right=609, y_top=117, y_bottom=459),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -196,7 +196,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/2.8, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=85, x_right=608, y_top=115, y_bottom=462),
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -209,7 +209,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/1.8, stopped aperture f/5.6 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=85, x_right=608, y_top=115, y_bottom=462),
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -222,7 +222,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/1.8, stopped aperture f/5.6 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=85, x_right=608, y_top=115, y_bottom=462),
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -235,7 +235,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'gfx-or-ff' (image height 20.5 mm). Max aperture f/2, stopped aperture f/5.6 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=91, x_right=610, y_top=116, y_bottom=460),
+        plot_box=PlotBoxCoords(x_left=93, x_right=609, y_top=117, y_bottom=459),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -248,7 +248,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/1.4, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=85, x_right=608, y_top=115, y_bottom=462),
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=None,
     ),
     ReferenceChart(
@@ -261,7 +261,7 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'gfx-or-ff' (image height 20.5 mm). Max aperture f/1.4, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
-        plot_box=PlotBoxCoords(x_left=91, x_right=610, y_top=116, y_bottom=460),
+        plot_box=PlotBoxCoords(x_left=93, x_right=609, y_top=117, y_bottom=459),
         ground_truth=None,
     ),
 )

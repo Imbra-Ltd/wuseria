@@ -662,3 +662,50 @@ def test_extract_run_default_aperture_empty_string():
         verdict=None,  # type: ignore[arg-type]
     )
     assert run.aperture == ""
+
+
+def _make_run(chart, image_stem: str, aperture: str):
+    """Factory: ExtractRun with minimum fields for stem-derivation tests."""
+    from mtfdigitizer.extract import ExtractRun
+    from mtfdigitizer.pipeline.types import ExtractedChart, PlotBox
+
+    plot_box = PlotBox(x_left=0, x_right=10, y_top=0, y_bottom=10)
+    return ExtractRun(
+        chart=chart,
+        view=chart.views[0],
+        image_path=Path(f"/probe/{image_stem}.png"),
+        plot_box=plot_box,
+        extracted=ExtractedChart(
+            source_path=chart.chart_path,
+            profile_name="probe",
+            plot_box=plot_box,
+            image_height_mm=14.2,
+            readings=(),
+        ),
+        verdict=None,  # type: ignore[arg-type]
+        aperture=aperture,
+    )
+
+
+def test_artifact_stem_single_aperture_unchanged():
+    """Single-aperture brands keep the bare image stem — every
+    Sigma/Samyang/7Artisans/Tokina/Viltrox/Fujifilm artifact filename
+    survives the multi-aperture refactor unchanged."""
+    from mtfdigitizer.extract import _artifact_stem
+
+    sigma = next(c for c in REFERENCE_CHARTS if c.slug == "sigma-56mm-f1-4-dc-dn-c")
+    run = _make_run(sigma, "sigma-56mm-f1-4-dc-dn-c-mtf-diffraction", "f/1.4")
+    assert _artifact_stem(run) == "sigma-56mm-f1-4-dc-dn-c-mtf-diffraction"
+
+
+def test_artifact_stem_multi_aperture_carries_suffix():
+    """Multi-aperture passes each get a distinct stem (ADR-044) so
+    pass 1's overlay/svg/review files survive pass 2."""
+    from mtfdigitizer.extract import _artifact_stem
+
+    ttart = next(c for c in REFERENCE_CHARTS if c.slug == "ttartisan-50mm-f1-2")
+    max_run = _make_run(ttart, "ttartisan-50mm-f1-2-mtf", "max")
+    stopped_run = _make_run(ttart, "ttartisan-50mm-f1-2-mtf", "stopped")
+    assert _artifact_stem(max_run) == "ttartisan-50mm-f1-2-mtf-max"
+    assert _artifact_stem(stopped_run) == "ttartisan-50mm-f1-2-mtf-stopped"
+    assert _artifact_stem(max_run) != _artifact_stem(stopped_run)
