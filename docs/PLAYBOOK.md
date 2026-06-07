@@ -336,9 +336,11 @@ above tools handle that case end-to-end:
 - **`emit_fuji_tier2`** — translates the production digitization-log
   artifacts into TS `MtfData` literals and patches them into
   `src/data/mtf-readings.ts`. Handles prime (1 panel, all frequencies
-  merged) and zoom (wide + tele × all frequencies) cases. Derives
-  aperture from slug, source URL from `fujifilm-x.com` convention,
-  focal length from zoom slug.
+  merged) and zoom (wide + tele × all frequencies) cases. Walks both
+  Tier 1 anchors and Tier 2 bulk (every `fujifilm-permfreq` chart).
+  Derives aperture and focal length from the slug; source URL is read
+  from `lenses.ts:officialUrl` (fail-loud `KeyError` if missing) — see
+  #1062.
 
 Workflow when adding a new Fuji lens (or another brand using the
 per-frequency convention): (1) drop the chart PNGs under the lens

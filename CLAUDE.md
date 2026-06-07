@@ -219,6 +219,7 @@ npm run validate     # lint + format + check + test + build — full CI suite
 #### Required fields
 
 - Official product URLs on each Lens/Camera/Accessory via `officialUrl` field
+- Downstream artifacts (MTF readings, emit scripts) MUST read `officialUrl` from `lenses.ts`, never re-derive a brand URL from the slug — see #1062
 - Review source links use `rel="nofollow sponsored"` and `target="_blank"`
 - All computed `genreMarks` MUST be stored on the lens — no omissions, even low scores (e.g. macro=1). Transparency over curation.
 - `maxMagnification` MUST come from spec sheets or review measurements — never estimate from focal length and minimum focus distance (thin lens formula has ~39% median error)

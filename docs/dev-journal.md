@@ -5299,3 +5299,77 @@ Largest session of v0.8.0 so far. Theme set early: finish the Fujifilm digitizat
 - Reference set: 84 charts (was 14 at session start). 13 Tier 1 (GT-populated, calibration); 69 Tier 2 production; 2 fail-loud probes.
 - Aggregate calibration: **91.9% within ±0.05** tolerance band (was 89.9%). Fuji added 105 paired comparisons, all clean.
 - 263 pytest pass; 216 vitest pass; 461-page build; full validate gate green.
+
+---
+
+### Session 122 — Fuji bulk-emit follow-ups (3 Expedite bugs)
+
+Date: 2026-06-07 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Spot-check theme on the Fuji cohort shipped in PR #1058 (session 121). Turned up three real defects in the bulk emission, all surfaced by clean shell pipelines comparing `mtfReadings` keys vs built lens-page slugs, plus a sampled HEAD-check of emitted source URLs. Filed all three, then user reclassified Expedite mid-session and asked to fix them in the same session.
+
+#### Branch / merge state
+
+- Started on `main`, clean.
+- Branch: `fix/fuji-mtf-bulk-followups` → PR #1064 → squash-merged after CI green. Local branch deleted.
+- User said "merge auto"; PR was already mergeable so the merge landed without the auto-merge wait.
+
+#### PRs
+
+- **PR #1064** merged (6be3b98). 2 files (`src/data/mtf-readings.ts` +306, `tools/mtfdigitizer/scripts/emit_fuji_tier2.py` +92). All 8 CI checks green.
+
+#### Issues opened
+
+- **#1060** (bug, P1, Expedite) — T/S slug mismatch in `mtf-readings.ts` orphans 2 readings.
+- **#1061** (bug, P1, Expedite) — 2 Fuji lens pages render with no MTF block.
+- **#1062** (bug, P1, Expedite) — 60 emitted Fuji source URLs return 404.
+- **#1063** (bug, P2, Expedite) — Tier 2 ReferenceChart source slugs use `t-s` for T/S models — diverges from `toSlug`. Filed mid-fix when the emit-script re-run crashed on the bad source slugs; out of scope for #1064 because the fix needs coordinated rename of slug + on-disk optical-specs folder + PNG basenames.
+
+#### Issues closed
+
+- **#1060, #1061, #1062** auto-closed by PR #1064.
+
+#### Key changes
+
+**Bug 1 — T/S slug mismatch** (`src/data/mtf-readings.ts`):
+
+- Renamed `fujifilm-gf-110mm-f5-6-t-s-macro` → `…-ts-macro` and `fujifilm-gf-30mm-f5-6-t-s` → `…-ts` so keys match what `toSlug` produces. `toSlug` strips `/` (slug.ts:8) before collapsing non-alphanumerics, so `T/S` → `ts`, not `t-s`.
+
+**Bug 2 — Missing Tier 1 anchor entries** (emit script + `mtf-readings.ts`):
+
+- `_fuji_tier2_lenses()` filter was `style_family == "fujifilm-permfreq" and ground_truth is None` — Tier 1 anchors have GT, so they were excluded from emission despite having extracted readings on disk.
+- Renamed to `_fuji_lenses()`, dropped the `ground_truth is None` clause. Both `gf-23mm-f4-r-lm-wr` (3 panels × 11 positions) and `xf-23mm-f1-4-r-lm-wr` (2 panels × 11 positions) now emit.
+- Could not run the full bulk re-emit because #1063 source slugs crash `_source_url`. Worked around with a one-shot Python script that imported `_emit_one_lens` + `_splice_entries` and only emitted the 2 anchor slugs. Fuji entries went 60 → 62.
+
+**Bug 3 — Source URLs from `officialUrl`** (emit script + `mtf-readings.ts`):
+
+- `_source_url(slug)` derived `fujifilm-x.com/global/products/lenses/<compact-no-hyphen-slug>/`. All 60 URLs 404'd: wrong region segment (`/global/` should sometimes be `/en-us/`) AND wrong compaction (real pattern hyphenates spec tokens, e.g. `gf110mmf2-r-lm-wr` not `gf110mmf20rlmwr`).
+- Added `_load_official_urls()` + a Python port of `toSlug` (`_to_slug`) that mirrors `src/utils/slug.ts` byte-for-byte. `_source_url(slug, official_urls)` looks up the verified URL; raises `KeyError` if missing (fail loud, not fail silent).
+- Patched all 60 existing Fuji entries in `mtf-readings.ts` in place via a focused script that walked each `^  "fujifilm-...": {` block and replaced only the `source:` line. Readings untouched. All 60 URLs verified resolving (sampled).
+
+**`_to_slug` Python port** is now a reusable primitive for the emit pipeline. Same algorithm as TS: lowercase → strip `/` → `[^a-z0-9]+` → `-` → trim leading/trailing `-`.
+
+#### Key decisions
+
+- **Hand-write the 2 anchors via importable helpers** rather than running the full `emit --write`. Reasoning: the source-slug bug (#1063) would re-introduce orphan keys and crash on the first T/S lens, AND a full re-run risks readings-level diff churn on the 60 existing entries even though the extractor should be deterministic. Surgical = predictable.
+- **Don't try to fix #1063 in this PR.** The right fix touches slug constants + on-disk dirs + PNG basenames + digitization-log.md references — proper rename, not a one-line patch. Filing as a separate scoped issue keeps the fix-PR diff focused (2 files, ~330 lines, all in the bug-fix-style category).
+- **Fail loud on missing `officialUrl`**. Earlier behaviour silently emitted a probably-wrong URL. New behaviour throws — the maintainer either adds the URL to `lenses.ts` or pulls the lens from the Fuji emission cohort. Same posture as `parse_filename_frequency` in session 121.
+- **Reverted "wrap up" mid-session when user reclassified to Expedite.** The wrap-up checklist had printed and step 1 was complete; switched cleanly to a fix-task list, ran the fixes, then resumed wrap-up. Worked because the wrap-up state was just a printed checklist with no in-flight artifacts.
+
+#### Follow-ups for next session
+
+- **#1063** still open — Tier 2 source-slug rename. Needs slug constants in `_fuji_tier2_charts.py`, optical-specs folder renames for 2 lenses, PNG basename renames, digitization-log.md path updates. Coordinated change, ~30–60 min.
+- **Other un-anchored brands** still parked from session 121: Venus Laowa, TTartisan, Handevision, AstrHori, Mitakon, Meike, Lensbaby, Kipon, Pergear, Irix. Schema migration unblocks each; ~3 hours per brand.
+- **Spikes #1044, #1045** (from session 120) still open.
+
+#### Loose ends to investigate when convenient
+
+- **Coverage assertion missing.** No test ties "Fuji lens in `lenses.ts` with chart artifacts on disk" → "entry in `mtfReadings` with matching slug". Would have caught all of bug 1 + bug 2 at the test layer instead of via post-merge spot-check. Out of scope but worth a future spike.
+- **PR #1064 deploy was still `in_progress` at wrap-up time.** Subsequent re-check expected to be green based on CI status before merge; if it failed, the rendered Fuji pages on prod would still show the pre-fix state until next deploy.
+
+#### State of the project
+
+- v0.8.0 still = MTF digitization. **Fujifilm cohort: 62 lenses (was 60) with corrected source URLs, both Tier 1 anchors now visible on the site.**
+- Epic #790 Fuji line bumped from "60 lenses; PR #1058" to "62 lenses; PRs #1058, #1064".
+- 461-page build still green; 216 vitest, 17 emit-script pytest pass.
+- Aggregate calibration unchanged (the 2 anchors were already counted in the 84-chart reference set's 91.9% band).
