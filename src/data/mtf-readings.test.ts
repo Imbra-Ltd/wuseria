@@ -1,5 +1,9 @@
+import { existsSync, readdirSync, statSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { describe, it, expect } from "vitest";
+import { lenses } from "./lenses";
 import { mtfReadings } from "./mtf-readings";
+import { toSlug } from "../utils/slug";
 
 describe("mtf-readings data integrity", () => {
   const entries = Object.entries(mtfReadings);
@@ -192,5 +196,70 @@ describe("mtf-readings data integrity", () => {
         }
       }
     }
+  });
+});
+
+// Coverage assertions (#1068). Catch key drift between `lenses.ts`,
+// `mtf-readings.ts`, and the on-disk `docs/optical-specs/` charts at
+// commit time — three bugs that landed in S122 (#1060 t-s vs ts slug,
+// #1061 anchor lenses with disk data but no readings entry, #1062 60
+// auto-derived 404 source URLs) would have been caught here.
+describe("mtf-readings ↔ lenses.ts coverage", () => {
+  const lensSlugs = new Set(lenses.map((l) => toSlug(`${l.brand} ${l.model}`)));
+  const readingSlugs = Object.keys(mtfReadings);
+
+  it("every mtfReadings key matches a lens via toSlug(brand model)", () => {
+    const orphans = readingSlugs.filter((slug) => !lensSlugs.has(slug));
+    expect(
+      orphans,
+      `mtfReadings keys with no matching lens (slug drift?): ${orphans.join(", ")}`,
+    ).toEqual([]);
+  });
+
+  it("every mtfReadings entry's source URL parses", () => {
+    for (const [slug, data] of Object.entries(mtfReadings)) {
+      expect(
+        () => new URL(data.source),
+        `${slug}: source URL does not parse: ${data.source}`,
+      ).not.toThrow();
+    }
+  });
+});
+
+describe("docs/optical-specs ↔ mtf-readings coverage", () => {
+  // Walk from the repo root — tests run with cwd = repo root.
+  const opticalSpecsDir = resolve(process.cwd(), "docs/optical-specs");
+
+  // A lens directory has "production data on disk" when it contains a
+  // `digitization-log.md` — the production extractor writes that file
+  // only on `--accept`. Charts that exist as raw PNGs but never went
+  // through `--accept` are work-in-progress and do not require an
+  // mtfReadings entry yet.
+  const dirsWithLog: string[] = readdirSync(opticalSpecsDir).filter((entry) => {
+    const fullPath = join(opticalSpecsDir, entry);
+    if (!statSync(fullPath).isDirectory()) return false;
+    return existsSync(join(fullPath, "digitization-log.md"));
+  });
+
+  // Lenses where the chart was accepted (`--accept` written the log)
+  // but the readings have not yet been emitted to `mtfReadings`.
+  // Pre-existing as of #1068 landing — three early-anchor lenses
+  // surveyed before the bulk-emit pipeline was wired. Remove an entry
+  // when its readings are emitted; the test will then enforce
+  // continued presence.
+  const KNOWN_PENDING_EMIT = new Set<string>([
+    "7artisans-50mm-f1-2-mark-ii",
+    "sigma-30mm-f1-4-dc-dn-c",
+    "tokina-atx-m-23mm-f1-4-x",
+  ]);
+
+  it("every accepted-extraction directory has a mtfReadings entry", () => {
+    const missing = dirsWithLog
+      .filter((slug) => !(slug in mtfReadings))
+      .filter((slug) => !KNOWN_PENDING_EMIT.has(slug));
+    expect(
+      missing,
+      `directories with digitization-log.md but no mtfReadings entry: ${missing.join(", ")}`,
+    ).toEqual([]);
   });
 });
