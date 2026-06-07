@@ -5491,3 +5491,93 @@ None to code. Session was triage + dependency hygiene.
 - Epic #790: 2/24 brands done (Fujifilm + Thingyfy-wontfix); 22 pending.
 - Dependencies: 6 minor bumps applied; 4 awaiting rebase.
 - 263 pytest pass; 216 vitest pass; 461-page build green.
+
+---
+
+### Session 125 — Multi-aperture orchestrator (ADR-044)
+
+Date: 2026-06-07 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: start TTartisan onboarding (#798), the v0.8.0 next-brand pick from session 124. The brand survey produced a real architectural finding — TTartisan packs two apertures per chart image via color encoding — which prompted a scope split: PR #1 (this session) ships the orchestrator plumbing without declaring the TTartisan profile; PR #2 (next session) declares the profile + Tier 1 anchor + Tier 2 bulk and closes #798.
+
+#### Branch / merge state
+
+- Started on `main`, clean.
+- Branch: `feat/multi-aperture-orchestrator` → PR #1071 (open at wrap-up, all 8 CI checks green; not auto-merged pending explicit approval).
+
+#### PRs
+
+- **PR #1071** open (a7049db). 4 files (`tools/mtfdigitizer/extract.py` +154 / -38, `tools/mtfdigitizer/profiles/types.py` +9, `tools/mtfdigitizer/tests/test_extract.py` +152, `docs/decisions/044-multi-aperture-per-chart-orchestrator.md` +new). 8/8 CI checks green.
+
+#### Issues opened
+
+- None.
+
+#### Issues closed
+
+- None. #798 (TTartisan) stays open — closes when PR #2 lands.
+
+#### Key changes
+
+**Brand survey (8 of 19 charts examined):**
+
+All TTartisan charts confirmed to share the same template. Single panel per lens, multi-aperture by color encoding:
+
+- Black curves: 10 lp/mm at max aperture
+- Grey curves: 30 lp/mm at max aperture
+- Red curves (HSV peak h≈1): 10 lp/mm at the stopped aperture (f/5.6, f/8, or f/11 per lens)
+- Orange curves (HSV peak h≈17): 30 lp/mm at the stopped aperture
+
+Per color: solid = S, dashed = T. Legend always names the aperture (`S10_F1.2`, `T10_F5.6`, etc.). 19 charts on disk, one per lens dir.
+
+**Orchestrator extension (PR #1071):**
+
+- `MtfProfile` gains optional `apertures_per_chart: tuple[str, ...] | None`. `None` (default) preserves the single-aperture path for all 7 existing profiles.
+- New helper `_aperture_passes_for_view(chart, image_path) -> list[tuple[str, MtfProfile]]` dispatches on three branches: default single-pass, Fuji per-frequency, multi-aperture fan-out with hue-filtered profile copies.
+- `_run_view` → `_run_view_passes` returns `list[ExtractRun]`. `_run_all_views` flattens.
+- `ExtractRun` gains `aperture: str = ""` for tagging.
+- `_profile_for_view` kept as back-compat shim (returns first pass's profile).
+- 6 new unit tests; 24 pre-existing extract tests still pass.
+
+**ADR-044 written** documenting the decision, the rejected alternatives (skip stopped aperture / synthesize virtual ChartViews / extend ChartView with aperture field / composite the image upfront / declare two profiles per lens / defer TTartisan), and the rule that `HueRange.name` becomes load-bearing for multi-aperture profiles (must prefix with the aperture token).
+
+#### Key decisions
+
+- **Option B (dual-pass) over Option A (per-curve aperture field on MtfProfile).** Option A would have required threading aperture through the curve-identity layer (`hue_meaning`, sample mapping). Option B reuses the existing single-aperture dispatch primitives — each pass looks like a standard Sigma-shape extraction with hues filtered to one aperture's bucket. Smaller blast radius.
+- **Split into two PRs.** PR #1 ships orchestrator plumbing with synthetic-profile tests (no real TTartisan data, no maintainer eye-read). PR #2 ships the TTartisan profile + Tier 1 GT (88 numbers) + Tier 2 bulk for 18 lenses. Each PR is reviewable in isolation. The split prevents the architectural change from blocking on the Tier 1 GT capture, and prevents the Tier 1 GT capture from blocking on architectural review.
+- **`apertures_per_chart` on the profile, not the chart.** The dual-aperture packing is a property of the chart STYLE (every TTartisan chart packs two apertures), not the individual lens. Declaring it on the profile means TTartisan declares it once and every TTartisan ReferenceChart inherits.
+- **`_profile_for_view` kept as back-compat shim.** Two existing tests call it directly. Removing the function would have forced their migration in this PR; keeping it as a one-line shim (`return _aperture_passes_for_view(chart, image_path)[0][1]`) preserves them and documents the migration path.
+- **Pre-existing Sigma 10-18mm staleness flagged in PR body, not fixed.** Discovered during verification — `py -m mtfdigitizer.extract --check` reports Sigma 10-18mm digitization-log as stale on both main and my branch (byte-identical output). Not introduced by the refactor; not in this PR's scope. Flagged so reviewers don't attribute it to the orchestrator change.
+
+#### Follow-ups for next session
+
+- **PR #2: TTartisan profile + Tier 1 anchor + Tier 2 bulk.** Closes #798.
+  - Declare `TTARTISAN_4COLOR_DUAL_APERTURE` profile with 4 HueRange entries using the measured HSV peaks (probe script ran in `/tmp/probe_ttartisan_palette.py`; results in S125 dev-journal): H≈1 red, H≈17 orange, V<80 black, V∈[90,160] grey.
+  - Register `ttartisan-4color-dual-aperture` style family in `family_profile.py`.
+  - Tier 1 anchor: `ttartisan-50mm-f1-2` (clean exemplar, well-reviewed). Maintainer eye-reads 88 GT values (11 sample fractions × 2 apertures × 2 frequencies × {S, T}).
+  - Scaffold + emit Tier 2 bulk for the other 18 lenses, mirroring the Fuji scaffold/emit scripts.
+- **Sigma 10-18mm digitization-log staleness.** Discovered during S125 verification; pre-existing on main. Worth filing as a low-priority bug or just running `py -m mtfdigitizer.extract sigma-10-18mm-f2-8-dc-dn-c --accept` and committing the refresh.
+- **Coverage assertion spike #1068.** Still open — would prove valuable when PR #2 lands (would catch any TTartisan slug-vs-lens-data drift at test time).
+- **Dir-name invariant spike #1069.** Still open. TTartisan dirs already exist on disk; should pass the invariant cleanly once the test is written.
+- **Rebased Dependabot PRs from S124** still open (#1050, #1053, #1055, #1056). Dependabot should have re-run CI by now.
+- **Carried follow-ups still relevant:**
+  - Sister-fallback precision penalty fix (S121).
+  - Spikes #1044 (tokina-56), #1045 (7artisans-50).
+  - Tier 1 `log.py --check` false-OK (S116-S118).
+  - 17-40 tele `prior_violations=1` (S117-S118).
+  - Validate ADR-014 mean rule against the first real MTF-driven score (S118).
+
+#### Loose ends to investigate when convenient
+
+- **Multi-aperture + per-frequency combo.** ADR-044 notes that a future style family could combine both Fuji-style filename-derived frequency AND TTartisan-style per-aperture color encoding. The dispatch in `_aperture_passes_for_view` handles them as separate branches; combining them would be a third branch, not a rewrite. Worth keeping in mind if Voigtländer APO-LANTHAR or some other brand has multi-image multi-aperture publication.
+- **`_profile_for_view` shim removal.** The shim survives one test file's worth of callers. Once those tests get rewritten to use `_aperture_passes_for_view` directly, the shim can be deleted in a cleanup PR. Low priority — not blocking anything.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Fujifilm cohort: 62 lenses on `mtf-readings.ts` (unchanged).
+- Epic #790 (digitize all brands): 2/24 done (Fujifilm + Thingyfy-wontfix). TTartisan in progress — orchestrator plumbing landed; profile + Tier 1 + Tier 2 pending PR #2.
+- Epic #932 (unified digitizer): open with one unchecked optional item (Real-ESRGAN fallback).
+- `REFERENCE_CHARTS` = 84 entries; 13 Tier 1; 69 Tier 2 production; 2 fail-loud probes.
+- Aggregate calibration: **91.9% within ±0.05** tolerance band (unchanged this session).
+- **269 pytest pass** (was 263); 216 vitest pass; 461-page build; full validate gate green.
+- 1 ADR added (ADR-044). 44 ADRs total.
