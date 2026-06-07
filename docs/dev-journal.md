@@ -5434,3 +5434,60 @@ Single-issue session. PR #1064 left behind a slug mismatch in the upstream optic
 - v0.8.0 still = MTF digitization. Fujifilm cohort unchanged at 62 lenses; this session corrected the upstream artifact paths so future re-emits won't crash.
 - 263 pytest pass; full validate gate green (lint + format + check + test + build; 461 pages, all internal links checked).
 - Reference set: 84 charts (unchanged), 91.9% within ±0.05 calibration band (unchanged).
+
+---
+
+### Session 124 — Spike filings + Dependabot batch
+
+Date: 2026-06-07 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Short follow-up session. After S123's #1063 fix merged, ran the planned next-session checklist: file the two carried-over spikes, batch-merge the Dependabot queue, and scope the next brand. No code shipped this session — all work was issue triage + dependency hygiene.
+
+#### Branch / merge state
+
+- Started on `main`, clean.
+- All Dependabot merges landed via squash — no feature branches created this session.
+
+#### PRs
+
+- **6 Dependabot bumps merged:** #1048 (typescript-eslint), #1049 (astro 6.4.2→6.4.4), #1051 (@vitest/coverage-v8 4.1.7→4.1.8), #1052 (@astrojs/react 5.0.6→5.0.7), #1054 (@types/node), #1057 (lint-staged).
+- **4 Dependabot PRs awaiting rebase:** #1050 (react-dom 19.2.7), #1053 (react + @types/react), #1055 (@vitest/ui), #1056 (vitest). #1055/#1056 conflicted on `package-lock.json` after sibling merges; rebase requests sent. #1050/#1053 must ship together (`Incompatible React versions` if one lands alone); rebased so Dependabot re-runs CI against current main.
+
+#### Issues opened
+
+- **#1068** (spike, P2, v0.8.0) — Coverage assertion: `lenses.ts` → `mtfReadings` key match via `toSlug`. Would have caught #1060/#1061/#1063 at test time. Carried over from S122 loose-ends.
+- **#1069** (spike, P3, v0.8.0) — Directory-name invariant: `toSlug(brand+model) === basename(opticalSpecsDir)`. Prevents future `-t-s-` recurrence. Surfaced by S123's #1063 root cause.
+
+#### Issues closed
+
+- None.
+
+#### Key changes
+
+None to code. Session was triage + dependency hygiene.
+
+#### Key decisions
+
+- **TTartisan over Voigtlander for next brand.** Investigated both: Voigtlander dirs have 0 MTF chart files (their MTF policy publishes only for APO-LANTHAR; Noktons have no MTF anywhere — see existing `[[reference_voigtlander_mtf_policy]]` memory). TTartisan has 19 MTF charts on disk, one per lens dir, named `<slug>-mtf.png`. TTartisan is real work, Voigtlander would be a no-op. **Implication:** epic #790 can either close Voigtlander as wontfix-until-APO-LANTHAR-data, or leave it open as a placeholder.
+- **Defer TTartisan scoping to next session.** A new brand is ~3 hours of work (HSV palette + Tier 1 anchor + Tier 2 bulk) and deserves a dedicated session, not the tail end of this one. TTartisan also has zero existing references in `tools/mtfdigitizer/` — fully greenfield onboarding.
+- **Two spikes share infrastructure.** #1068 and #1069 both walk `docs/optical-specs/`. Whoever picks up #1068 should design the walker helper so #1069 can reuse it. Noted in #1069's body.
+- **Rebase rather than force one of the react pair.** Merging #1050 (react-dom) alone would have broken main with `react@19.2.6 + react-dom@19.2.7` mismatch — Dependabot's `^` ranges in `package.json` defer the actual version pinning to the lockfile. Cleanest is to let Dependabot regroup or re-run both PRs.
+
+#### Follow-ups for next session
+
+- **Start TTartisan brand work.** 19 charts, single chart per lens. Open one (probably `ttartisan-50mm-f1-2`) and decide whether the unified dispatch profile recognizes the style; if not, classify the chart family. Then Tier 1 anchor + Tier 2 bulk for the other 18.
+- **Check rebased Dependabot PRs.** #1050, #1053, #1055, #1056 should have green CI after Dependabot re-runs. Merge in order: vitest pair first (#1055, #1056), then react pair together (#1050 + #1053 — the latter may now bundle both).
+- **Voigtlander triage.** Decide whether to wontfix #800 or leave open with a "blocked on APO-LANTHAR MTF charts" comment.
+- Carried-over from S121–S123 still open: spikes #1044, #1045; sister-fallback precision fix; coverage backstop is now tracked as #1068 + #1069.
+
+#### Loose ends to investigate when convenient
+
+- **`^N.M.K` caret ranges in `package.json` interact non-obviously with split Dependabot PRs.** When two interlocked packages (react + react-dom) get bumped in separate PRs, one PR's CI can pass while the pair would fail on merge because the lockfile resolution shifts. Worth a one-liner in PLAYBOOK about always rebasing co-dependent Dependabot PRs before merge — or configuring Dependabot to group them.
+
+#### State of the project
+
+- v0.8.0 unchanged: 62 Fuji lenses with MTF data; reference set 84 charts; 91.9% within ±0.05 calibration band.
+- 26 v0.8.0 open issues (+2 from spike filings); 22 brand-digitization tasks still untouched.
+- Epic #790: 2/24 brands done (Fujifilm + Thingyfy-wontfix); 22 pending.
+- Dependencies: 6 minor bumps applied; 4 awaiting rebase.
+- 263 pytest pass; 216 vitest pass; 461-page build green.
