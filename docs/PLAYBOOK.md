@@ -1055,7 +1055,31 @@ Review Dependabot PRs:
 gh pr list --author app/dependabot
 ```
 
-**Co-dependent bumps.** `package.json` uses `^` ranges, so the lockfile pins the actual version. When Dependabot splits interlocked packages (e.g. `react` and `react-dom`) into separate PRs, each PR's CI runs in isolation against current `main` — but merging one alone shifts the lockfile and breaks main with `Incompatible versions` on the next merge. Rebase co-dependent PRs against current main before merging the second one (`gh pr comment <N> --body "@dependabot rebase"`), or group them in `.github/dependabot.yml` so Dependabot ships a single multi-bump PR.
+**Co-dependent bumps.** `package.json` uses `^` ranges, so the lockfile pins the actual version. When Dependabot splits interlocked packages (e.g. `react` and `react-dom`) into separate PRs, each PR's CI runs in isolation against current `main` — but merging one alone shifts the lockfile and breaks main with `Incompatible versions` on the next merge.
+
+Three resolution paths, in order of preference:
+
+1. **Group them in `.github/dependabot.yml`** so Dependabot ships a single multi-bump PR going forward. Add a `groups:` block under the npm ecosystem (current config groups the react ecosystem this way; copy that pattern for any new interlocked set):
+   ```yaml
+   groups:
+     react:
+       patterns:
+         - react
+         - react-dom
+         - "@types/react"
+         - "@types/react-dom"
+   ```
+2. **Rebase a single Dependabot PR** with `gh pr comment <N> --body "@dependabot rebase"` ONLY if the PR already covers all interlocked packages but is just behind main. Rebase will NOT add a missing package to a single-package PR — Dependabot's file scope is fixed by its grouping config at PR creation time.
+3. **Manual combined bump** when (1) wasn't in place at creation time and (2) doesn't apply. Branch off main, `npm install <pkgA>@<v> <pkgB>@<v> <types>@<v>` together, run `npm run validate`, open one PR closing the split Dependabot PRs as superseded:
+   ```bash
+   git checkout -b chore/<pkg>-<version>
+   npm install <pkgA>@<v> <pkgB>@<v>
+   npm run validate
+   # commit, push, PR
+   gh pr close <split-PR-A> --comment "Superseded by #<new>" --delete-branch
+   gh pr close <split-PR-B> --comment "Superseded by #<new>" --delete-branch
+   ```
+   Then add the `groups:` entry per (1) so it doesn't recur.
 
 ### 3.12 Analytics verification (Umami)
 

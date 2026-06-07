@@ -5664,3 +5664,69 @@ Theme: complete the TTartisan brand onboarding kicked off in session 125. The or
 - **555 pytest pass** across `tools/` (was 540 pre-PR-#1073 with the bigger `tools/` cohort included; +15 from S126: 1 ADR-044 invariant, 2 artifact-stem, 3 calibrate multi-aperture, 10 emit shape). 216 vitest pass; 461-page build; full validate gate green.
 - 0 ADRs added (3 PRs all extend ADR-044). 44 ADRs total.
 - 8 declared MTF profiles (Sigma, Samyang, 7Artisans, Tokina prime + wide-zoom, Viltrox, Fujifilm, TTartisan).
+
+---
+
+### Session 127 — Dependabot triage + React 19.2.7
+
+Date: 2026-06-07 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: clear the two-week-old Dependabot React pair (#1050, #1053) carried from S125–S126, then harden the config so the same split never reaches the queue again.
+
+#### Branch / merge state
+
+- Started on `docs/session-126-wrap` (clean, awaiting merge). Two open Dependabot PRs (#1050 react-dom, #1053 react pair) and the wrap PR (#1077) in flight.
+- Branches: merged #1077 → branched `chore/react-19-2-7` → merged → branched `chore/dependabot-react-group` → merged. All squash-merged, both remote branches auto-deleted, local clean on `main`.
+
+#### PRs
+
+- **PR #1077** merged (`70f9b73`). Session 126 wrap docs.
+- **PR #1078** merged (`7482690`). 2 files, +16 / -16. Combined react + react-dom + @types/react bump to 19.2.7.
+- **PR #1079** merged (`303e61c`). 1 file, +7 / -0. Adds `react` group to `.github/dependabot.yml`.
+
+#### Issues opened
+
+- None.
+
+#### Issues closed
+
+- **#1050** — closed as superseded by #1078 (manual `gh pr close` with comment).
+- **#1053** — closed as superseded by #1078 (manual `gh pr close` with comment).
+
+#### Key changes
+
+**PR #1078 — combined React 19.2.7 bump:**
+
+- Dependabot #1050 (react-dom alone) and #1053 (react + @types/react) couldn't merge independently: split bumps tripped React's runtime check `Incompatible React versions: The "react" and "react-dom" packages must have the exact same version`. Build log on #1053 confirmed (5/13 vitest suites failed at module init).
+- Local combined bump: `npm install react@19.2.7 react-dom@19.2.7 @types/react@19.2.17`, full `npm run validate` passes (lint + format + check + tests + build + link check). 19.2.7 fixes a FormData regression in Server Actions (facebook/react#36566); not exercised on this static site but keeps us current.
+- Pre-merge CI green on PR; post-merge GitHub Pages deploy success on `303e61c` (11s deploy after `npm ci` + `npm run validate` re-ran inside the deploy job).
+
+**PR #1079 — dependabot react group:**
+
+- Existing `.github/dependabot.yml` had no `groups:` block for the npm ecosystem (only one for `dev-dependencies` was discussed in `feedback_upstream_evaluation` but never landed).
+- Added `react` group with patterns `react`, `react-dom`, `@types/react`, `@types/react-dom`. Next weekly Dependabot run will emit one PR for the four packages together rather than splitting them.
+
+#### Key decisions
+
+- **Combine locally instead of rebasing Dependabot PRs.** Rebasing #1053 onto current main would still have shipped react alone — the PR's file set is fixed by Dependabot's grouping config, not by branch state. Adding a react-dom commit to a Dependabot branch and force-pushing was also off the table (`feedback_no_force_push`). Manual combined PR was the only clean path.
+- **Group only react ecosystem, not all prod-deps.** Considered grouping all production dependencies but `astro` and `zod` bumps don't co-require — bundling them would just delay individual reviews. The constraint is specifically that react and react-dom must move together.
+- **No ADR for the group config.** Two-line config change with the rationale in the commit message and this journal entry. ADR-placement decision tree: configuration-level, no architectural delta — code/PLAYBOOK level.
+
+#### Follow-ups for next session
+
+- **Carried over from S126:**
+  - Maintainer overlay glance + Tier 2 data emission for TTartisan 19-lens cohort.
+  - Tier 1 promotion of `ttartisan-50mm-f1-2` (88 GT values, maintainer-only).
+  - Dispatch-routing fix for TTartisan max-aperture pass (IoU 0.299, plot-box inset not enough).
+  - Sigma 10-18mm digitization-log staleness (trivial).
+  - Vitest pair Dependabot PRs (#1055, #1056) still open from S124.
+  - Carried-over spikes: #1068 coverage assertion, #1069 dir-name invariant, #1044 tokina-56, #1045 7artisans-50 dispatch coverage, ADR-014 mean rule validation.
+- **New from this session:** none.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (unchanged scope, no data changes this session).
+- React runtime: 19.2.7 (was 19.2.6); `@types/react` 19.2.17 (was 19.2.15).
+- Dependabot weekly grouping now covers react ecosystem.
+- 555 pytest pass / 216 vitest pass (unchanged); 461-page build; full validate gate green; deploy green.
+- 0 ADRs added. 44 ADRs total.
