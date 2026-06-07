@@ -11,6 +11,7 @@ from mtfdigitizer.pipeline.ridge import (
     _extract_ridge_points,
     _merge_near_duplicate_tracks,
     _strip_chrome,
+    ridge_tracks_for_hue_freq_split,
     ridge_tracks_to_fields,
 )
 from mtfdigitizer.pipeline.types import PlotBox
@@ -161,6 +162,79 @@ def test_ridge_tracks_to_fields_returns_empty_when_mask_blank() -> None:
         _box(),
         upper_freq=10,
         lower_freq=30,
+        dashed_is_sagittal=False,
+    )
+    assert out == {}
+
+
+# --- ridge_tracks_for_hue_freq_split (TTartisan dispatch) ----------------
+
+
+def test_ridge_tracks_for_hue_freq_split_labels_higher_coverage_as_S() -> None:
+    """One hue carries one frequency with both S (solid, full coverage)
+    and T (dashed, partial coverage). The solid track should land in
+    freq10S; the dashed in freq10M, by the default Sigma convention
+    (`dashed_is_sagittal=False`)."""
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    # Solid line: every column in [5, 85)
+    mask[20, 5:85] = 1
+    # Dashed line: alternating 6-px-on / 6-px-off pattern at y=40
+    for x in range(5, 85, 12):
+        mask[40, x : x + 6] = 1
+    out = ridge_tracks_for_hue_freq_split(
+        mask, _box(), freq=10, dashed_is_sagittal=False,
+    )
+    assert "freq10S" in out
+    assert "freq10M" in out
+    # The dense (solid) track has higher coverage and goes to S.
+    assert int(out["freq10S"].sum()) > int(out["freq10M"].sum())
+    # Y positions: solid at 20, dashed at 40.
+    s_y = np.nonzero(out["freq10S"])[0].mean()
+    t_y = np.nonzero(out["freq10M"])[0].mean()
+    assert s_y == 20
+    assert t_y == 40
+
+
+def test_ridge_tracks_for_hue_freq_split_honors_dashed_is_sagittal() -> None:
+    """7Artisans-style convention: dashed = S, solid = T. The
+    higher-coverage track should land in freq10M instead of freq10S."""
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    mask[20, 5:85] = 1
+    for x in range(5, 85, 12):
+        mask[40, x : x + 6] = 1
+    out = ridge_tracks_for_hue_freq_split(
+        mask, _box(), freq=10, dashed_is_sagittal=True,
+    )
+    # Solid track (higher coverage) now labels as M; dashed labels as S.
+    assert int(out["freq10M"].sum()) > int(out["freq10S"].sum())
+    m_y = np.nonzero(out["freq10M"])[0].mean()
+    s_y = np.nonzero(out["freq10S"])[0].mean()
+    assert m_y == 20  # solid (high-coverage) at y=20
+    assert s_y == 40  # dashed at y=40
+
+
+def test_ridge_tracks_for_hue_freq_split_shares_value_at_whole_curve_coincidence() -> None:
+    """When only one track survives (the two curves visually coincide
+    across the entire field), both fields share its value — same B4
+    physics generalization as `ridge_tracks_for_hue`."""
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    # Single curve at y=30; second curve is absent entirely.
+    mask[30, 5:85] = 1
+    out = ridge_tracks_for_hue_freq_split(
+        mask, _box(), freq=10, dashed_is_sagittal=False,
+    )
+    assert "freq10S" in out
+    assert "freq10M" in out
+    # Both fields rasterize the same track.
+    assert int(out["freq10S"].sum()) == int(out["freq10M"].sum())
+    assert (out["freq10S"] == out["freq10M"]).all()
+
+
+def test_ridge_tracks_for_hue_freq_split_returns_empty_when_mask_blank() -> None:
+    out = ridge_tracks_for_hue_freq_split(
+        np.zeros((100, 100), dtype=np.uint8),
+        _box(),
+        freq=10,
         dashed_is_sagittal=False,
     )
     assert out == {}

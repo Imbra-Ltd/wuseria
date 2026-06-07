@@ -25,6 +25,19 @@ StyleAxis = Literal["SPLIT_BY_DASH", "HUE_IS_CURVE"]
 #
 # - `FREQUENCY`             — hue = spatial frequency (red=10 lp/mm,
 #                             blue=30 lp/mm in the Sigma dialect)
+# - `FREQUENCY_PER_HUE_RIDGE` — same as FREQUENCY but per-hue dispatch
+#                             runs ridge tracking instead of skeleton
+#                             + CC-width split. Used by SPLIT_BY_DASH
+#                             charts where the solid and dashed curves
+#                             of one hue run within a few px of each
+#                             other (TTartisan max-aperture pass): the
+#                             raw mask fuses both curves' antialiased
+#                             halos into one connected component, so
+#                             `split_sm_by_cc_width` can't separate
+#                             them. Per-column ridge centroids preserve
+#                             two distinct tracks even at coincidence.
+#                             Higher-coverage track = solid (S by
+#                             default; M when dashed_is_sagittal).
 # - `SAGITTAL_MERIDIONAL`   — hue = S vs M (red=S, blue=M in the Tokina
 #                             dialect); frequency is then carried by
 #                             curve y-position, declared via
@@ -95,6 +108,7 @@ StyleAxis = Literal["SPLIT_BY_DASH", "HUE_IS_CURVE"]
 #                             `pipeline/dp_extract.py`.
 HueMeaning = Literal[
     "FREQUENCY",
+    "FREQUENCY_PER_HUE_RIDGE",
     "SAGITTAL_MERIDIONAL",
     "SAGITTAL_MERIDIONAL_SINGLE_FREQ",
     "CURVE_IDENTITY",
