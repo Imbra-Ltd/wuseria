@@ -49,6 +49,17 @@ _PER_FREQUENCY_STYLE_FAMILIES: frozenset[str] = frozenset({"fujifilm-permfreq"})
 _FUJI_FREQ_RE = re.compile(r"-(?P<freq>\d+)lp\.png$", re.IGNORECASE)
 
 
+# Per-aperture result type for multi-aperture charts (ADR-044). When a
+# chart's profile declares `apertures_per_chart=(...)`, the calibrator
+# runs the extractor once per aperture and returns a dict keyed by the
+# orchestrator's aperture label (`"max"` / `"stopped"` for TTartisan).
+# Ground-truth lookups are then keyed by the SAME label — the chart's
+# `ground_truth` dict for a multi-aperture chart MUST use the
+# orchestrator's aperture labels, not f-numbers. Single-aperture charts
+# continue to return a single `ExtractedChart` and ground-truth uses
+# the lens's f-number label as it always has.
+
+
 @dataclass(frozen=True)
 class FieldDelta:
     """One field's Δ stats across the 11 sample positions of one chart."""
@@ -176,28 +187,98 @@ def _extract_per_frequency_chart(chart: ReferenceChart):
     return dataclasses.replace(last_result, readings=merged_readings)
 
 
+def _extract_multi_aperture_chart(chart: ReferenceChart) -> dict[str, "object"]:
+    """Run the extractor once per declared aperture and return a per-
+    aperture result dict (ADR-044).
+
+    The profile's `apertures_per_chart` lists the orchestrator-side
+    aperture labels (`"max"` / `"stopped"` for TTartisan). For each
+    label, the profile's hues are filtered to only those whose name
+    starts with `f"{label}-"`, then the extractor runs against the
+    full chart raster using that filtered profile. The result is
+    aperture-tagged so downstream code can compare against
+    `chart.ground_truth[label]`.
+
+    Returns ``{aperture_label: ExtractedChart}``. Single-aperture
+    charts use the existing single-result path in `_calibrate_chart`
+    and never call this.
+    """
+    from .extract import _hue_filtered_profile  # noqa: PLC0415 — avoid cycle at import
+
+    assert chart.plot_box is not None
+    base_profile = profile_for_chart(chart)
+    assert base_profile.apertures_per_chart is not None, (
+        f"{chart.slug}: _extract_multi_aperture_chart called on a profile "
+        f"without apertures_per_chart declared"
+    )
+    image_path = REPO_ROOT / chart.chart_path
+    plot_box = _to_plotbox(chart.plot_box)
+
+    results: dict[str, object] = {}
+    for aperture in base_profile.apertures_per_chart:
+        filtered = _hue_filtered_profile(base_profile, aperture)
+        results[aperture] = extract_chart(
+            image_path,
+            filtered,
+            plot_box,
+            image_height_mm=chart.image_height_mm,
+        )
+    return results
+
+
 def _calibrate_chart(chart: ReferenceChart):
     """Run extract_chart on one reference chart and return per-field stats.
 
     The chart must carry both `plot_box` and `ground_truth`; the caller
     filters runnable charts.
 
-    For per-frequency style families (Fujifilm; ADR-043) the runner
-    walks every chart view, substitutes the filename frequency into
-    the profile per call, and merges per-position readings into one
-    tuple before the GT comparison. Other style families run a single
-    `extract_chart` on the primary view.
+    Three dispatch shapes:
 
-    Returns ``(field_deltas, extracted)`` so callers can both summarize
-    the Δ distribution and write the per-chart readings log.
+    - **Per-frequency** (Fujifilm; ADR-043): walk every chart view,
+      substitute the filename frequency into the profile per call, and
+      merge per-position readings into one tuple before the GT
+      comparison. Result is a single `ExtractedChart`.
+    - **Multi-aperture** (TTartisan; ADR-044): run the extractor once
+      per declared aperture with the profile's hues filtered to that
+      aperture's bucket. Result is a `dict[aperture_label, ExtractedChart]`
+      so GT comparison can index per aperture without colliding
+      `freq{N}S/M` field names across passes.
+    - **Standard** (everything else): single `extract_chart` call on
+      the primary view.
+
+    Returns ``(field_deltas, result)`` where ``result`` is the shape
+    appropriate to the chart — single `ExtractedChart` for standard +
+    per-frequency dispatches, dict for multi-aperture.
     """
     assert chart.plot_box is not None
     assert chart.ground_truth is not None
 
+    base_profile = profile_for_chart(chart)
+    if base_profile.apertures_per_chart is not None:
+        results_by_aperture = _extract_multi_aperture_chart(chart)
+        out: list[FieldDelta] = []
+        for aperture, gt_by_field in chart.ground_truth.items():
+            if aperture not in results_by_aperture:
+                # GT carries an aperture key the profile didn't declare.
+                # Fail-loud: a typo here masks a missing extractor pass.
+                raise KeyError(
+                    f"{chart.slug}: ground_truth aperture {aperture!r} not "
+                    f"in profile.apertures_per_chart "
+                    f"{base_profile.apertures_per_chart!r}"
+                )
+            result = results_by_aperture[aperture]
+            for field, gt_values in gt_by_field.items():
+                out.append(
+                    _compare_field(
+                        chart, aperture, field, result.readings, gt_values
+                    )
+                )
+        return out, results_by_aperture
+
     if chart.style_family in _PER_FREQUENCY_STYLE_FAMILIES:
         result = _extract_per_frequency_chart(chart)
     else:
-        profile = profile_for_chart(chart)
+        profile = base_profile
         image_path = REPO_ROOT / chart.chart_path
         plot_box = _to_plotbox(chart.plot_box)
         result = extract_chart(
@@ -205,7 +286,7 @@ def _calibrate_chart(chart: ReferenceChart):
             image_height_mm=chart.image_height_mm,
         )
 
-    out: list[FieldDelta] = []
+    out = []
     # The ground truth dict may carry multiple apertures; the extractor
     # was given a single plot box (MAX panel today), so only compare the
     # apertures that match. In practice a single key today.
@@ -230,6 +311,20 @@ def _format_field_row(delta: FieldDelta) -> str:
 READINGS_DIR = REPO_ROOT / "tools" / "mtfdigitizer" / "referenceset" / "readings"
 
 
+def _readings_for_aperture(result, aperture: str):
+    """Resolve the readings tuple to use when comparing one aperture.
+
+    For multi-aperture charts (ADR-044) the result is a
+    ``dict[aperture_label, ExtractedChart]`` and we pick the matching
+    entry. For single-aperture charts the result is a single
+    ``ExtractedChart`` and we use its readings regardless of aperture
+    — the chart's `ground_truth` carries one aperture key.
+    """
+    if isinstance(result, dict):
+        return result[aperture].readings
+    return result.readings
+
+
 def _write_readings_log(chart: ReferenceChart, result, field_deltas: list[FieldDelta]) -> Path:
     """Write a markdown grid of GT vs extracted vs Δ for one chart.
 
@@ -237,6 +332,10 @@ def _write_readings_log(chart: ReferenceChart, result, field_deltas: list[FieldD
     to be diffed across algorithm changes — every row is a single
     sample fraction, every column is a curve/field, and the Δ column
     shows the per-position error against the eye-read ground truth.
+
+    For multi-aperture charts the result is a per-aperture dict; this
+    function picks the matching aperture's readings when filling each
+    section's grid (per ADR-044).
     """
     READINGS_DIR.mkdir(parents=True, exist_ok=True)
     path = READINGS_DIR / f"{chart.slug}.md"
@@ -253,9 +352,11 @@ def _write_readings_log(chart: ReferenceChart, result, field_deltas: list[FieldD
     lines.append(f"- **Image height:** {chart.image_height_mm} mm")
     lines.append("")
 
-    # Per-aperture grids. In practice charts carry one aperture today,
-    # but the format generalises.
+    # Per-aperture grids. Single-aperture charts hit this loop once;
+    # multi-aperture charts (ADR-044) hit it once per declared aperture
+    # and index `result` per aperture to pull the right pass's readings.
     for aperture, gt_by_field in chart.ground_truth.items():
+        readings = _readings_for_aperture(result, aperture)
         lines.append(f"## Aperture {aperture}")
         lines.append("")
         # Per-field stats table
@@ -290,7 +391,7 @@ def _write_readings_log(chart: ReferenceChart, result, field_deltas: list[FieldD
             for f in fields:
                 gt_vals = gt_by_field.get(f, (None,) * 11)
                 gt = gt_vals[i] if i < len(gt_vals) else None
-                ex = _extracted_value(result.readings[i], f)
+                ex = _extracted_value(readings[i], f)
                 if gt is not None and ex is not None:
                     delta = f"{abs(ex - gt):.3f}"
                 else:
