@@ -350,6 +350,51 @@ artifacts; (4) run `emit_fuji_tier2 --write` to update
 mtf-readings.ts. The shared per-frequency orchestrator lives in
 `tools/mtfdigitizer/per_frequency.py`.
 
+**TTartisan-specific tooling (ADR-044, multi-aperture chart family):**
+
+```bash
+cd tools && py -m mtfdigitizer.scripts.scaffold_ttartisan_tier2          # preview Tier 2 ReferenceChart entries
+cd tools && py -m mtfdigitizer.scripts.scaffold_ttartisan_tier2 --write  # materialize _ttartisan_tier2_charts.py
+cd tools && py -m mtfdigitizer.scripts.emit_ttartisan_tier2              # preview TS object literals
+cd tools && py -m mtfdigitizer.scripts.emit_ttartisan_tier2 --write      # patch src/data/mtf-readings.ts
+```
+
+TTartisan publishes one chart image per lens packing TWO apertures by
+color encoding (black + grey at max aperture, red + orange at the
+stopped aperture). The orchestrator (`extract.py:_run_view_passes`,
+ADR-044) fans out one extractor pass per aperture, each with the
+profile's hues filtered to one aperture's bucket. Inspection
+artifacts (SVG / overlay PNG / review HTML) get an aperture suffix
+so the two passes don't overwrite each other's files.
+
+- **`ttartisan_plotbox`** — classifies each chart by counting two-digit
+  x-axis tick labels (APS-C: 0/3/7/10/13 → image_height 14 mm; GFX or
+  full-frame: 0/5/10/15/20 → image_height 20.5 mm) and returns a
+  hand-verified template-constant plot box per scheme. Pixel auto-
+  detection drifts ±2 px across the 19-chart cohort; the constants
+  ship as the single source of truth.
+- **`scaffold_ttartisan_tier2`** — walks `docs/optical-specs/
+ttartisan-*`, runs the classifier, and writes a
+  `_ttartisan_tier2_charts.py` module of 19 `ReferenceChart` entries.
+  Per-lens (max, stopped) aperture pair eye-read from each chart's
+  legend and shipped in the script's `_APERTURES_BY_SLUG` table —
+  pixel-OCR of the legend text was too unreliable (8/19 correct on
+  the 800x600 template).
+- **`emit_ttartisan_tier2`** — emits TWO `MtfChart` panels per literal
+  (one per aperture pass), with the actual f-numbers from
+  `chart.apertures[i]` aligned positionally with the profile's
+  `apertures_per_chart` labels. `source` URL from `lenses.ts:
+officialUrl` (fail-loud `KeyError` if missing — see #1062).
+
+Workflow when adding a new TTartisan lens (or another brand using
+the multi-aperture-by-color convention): (1) drop the chart PNG under
+the lens folder; (2) add the lens's (max, stopped) aperture pair to
+`_APERTURES_BY_SLUG` (eye-read from the chart legend); (3) re-run
+`scaffold_ttartisan_tier2 --write` to refresh the entries; (4) run
+`extract <slug> --accept` per lens once the two-aperture overlays
+look correct; (5) run `emit_ttartisan_tier2 --write` to patch
+mtf-readings.ts with the cohort.
+
 **Before authoring an `analysis.md` MTF charts list for a folder that
 does not yet have one:** check the source product page for parallel
 chart sets. Multi-mount lenses (DG DN releases with a later Fujifilm X

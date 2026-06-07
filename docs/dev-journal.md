@@ -5581,3 +5581,86 @@ Per color: solid = S, dashed = T. Legend always names the aperture (`S10_F1.2`, 
 - Aggregate calibration: **91.9% within ±0.05** tolerance band (unchanged this session).
 - **269 pytest pass** (was 263); 216 vitest pass; 461-page build; full validate gate green.
 - 1 ADR added (ADR-044). 44 ADRs total.
+
+---
+
+### Session 126 — TTartisan brand end-to-end (closes #798, #1074)
+
+Date: 2026-06-07 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: complete the TTartisan brand onboarding kicked off in session 125. The orchestrator plumbing from PR #1071 was already on `main`; this session built the profile, scaffolded all 19 lenses, fixed two follow-up gaps that surfaced under real extraction load, and shipped the emit + calibration paths. Three PRs end-to-end.
+
+#### Branch / merge state
+
+- Started on `main`, clean. Two open Dependabot PRs (#1050 react-dom, #1053 react pair) carried from session 125 — not touched this session.
+- Branches: `feat/ttartisan-profile-and-bulk` → `feat/ttartisan-profile-tuning-and-artifact-naming` → `feat/ttartisan-emit-and-calibrate`. Each squash-merged before the next branched.
+
+#### PRs
+
+- **PR #1073** merged (`3d80309`). 9 files, +847 / -11. Profile + Tier 2 bulk + scaffolder. Tests 540 → 540 pre-merge (one test had to be updated for the new family).
+- **PR #1075** merged (`9fcf291`). 5 files, +114 / -27. Plot-box inset + per-aperture artifact filenames. Tests 540 → 542.
+- **PR #1076** merged (`f17a560`). 4 files, +798 / -13. Emit script + calibrate per-aperture fan-out. Tests 542 → 555.
+
+#### Issues opened
+
+- **#1074** — TTartisan profile tuning + artifact naming + emit + calibrate.py multi-aperture. Opened from PR #1073's deferred-work section, closed by #1076.
+
+#### Issues closed
+
+- **#798** — closed by maintainer pre-session (was the v0.8.0 next-brand pick from S125).
+- **#1074** — auto-closed by PR #1076.
+- Epic #790 brand checklist: TTartisan (#798) checked off. 3/24 brands done now.
+
+#### Key changes
+
+**PR #1073 — `TTARTISAN_4COLOR_DUAL_APERTURE` profile + Tier 2 bulk:**
+
+- New profile in `profiles/declared.py` with 4 HSV hue ranges (red wraps the hue circle → 5 HueRange entries). Every name carries `max-` or `stopped-` prefix per the ADR-044 dispatch contract. `auto_suggestable=False` — broad black+grey palette would false-match any chart with neutral text. `style_axis=SPLIT_BY_DASH`, `hue_meaning=FREQUENCY`, `dashed_is_sagittal=False` (Sigma convention).
+- New `ttartisan_plotbox.py` chart-scheme classifier (APS-C 0/3/7/10/13 vs GFX/full-frame 0/5/10/15/20, counted via two-digit label widths). Template constants for the 800x600 chart family.
+- New `scripts/scaffold_ttartisan_tier2.py` writes `_ttartisan_tier2_charts.py` with 19 ReferenceCharts. Pixel-OCR of the legend's stopped-aperture text was attempted and abandoned (text-width overlap across F8/F11/F5.6 too unreliable); ships an explicit eye-read per-lens `_APERTURES_BY_SLUG` table instead.
+- 1 new invariant test enforces the ADR-044 hue-name-prefix contract at declaration time.
+
+**PR #1075 — plot-box inset + artifact filenames:**
+
+- Anchor smoke-run after #1073 flagged 13 prior_violations on the max-aperture pass. Probed the black mask and found the bottom/left/top axis lines were being admitted as curve pixels (78 false pixels per gridline band).
+- Fix: nudge the template constants 1 px inward on the three printed-axis edges. Right edge (legend boundary, not an axis) unchanged. Re-smoke: max-aperture prior_violations 13 → **1**; IoU still LOW but inside-striking-distance.
+- Orchestrator artifact-filename collision (second aperture pass overwriting the first's `.svg` / `-overlay.png` / `-review.html`) fixed by adding `_artifact_stem(run)` — multi-aperture profiles get `<stem>-<aperture>` filenames; single-aperture brands keep bare-stem naming (regression-tested).
+
+**PR #1076 — emit + calibrate per-aperture:**
+
+- New `emit_ttartisan_tier2.py` mirrors `emit_fuji_tier2` for the multi-aperture brand. Each lens emits two `MtfChart` panels (one per aperture pass) with the actual f-numbers from `chart.apertures[i]`, positionally aligned with `profile.apertures_per_chart[i]`. `source` URL from `lenses.ts` `officialUrl` (per #1062 — TTartisan URLs not slug-recoverable).
+- New `_extract_multi_aperture_chart` in `calibrate.py` mirrors `_extract_per_frequency_chart` shape: dispatches one extract_chart pass per declared aperture with hue-filtered profile copies, returns `dict[aperture_label, ExtractedChart]`. `_calibrate_chart` detects the multi-aperture case via `profile.apertures_per_chart is not None` and routes through. Unknown GT aperture key → KeyError naming the profile (fail-loud).
+- 13 new tests across calibrate (3) and emit (10).
+
+#### Key decisions
+
+- **Tier 1 anchor deferred (option A from PR #1073 spec).** Promoting `ttartisan-50mm-f1-2` to Tier 1 needed 88 maintainer eye-read GT values AND calibrate.py multi-aperture support. Shipped the lens as Tier 2 (`ground_truth=None`); calibrate.py multi-aperture path now landed in #1076; GT eye-read is the only remaining piece. The agent does NOT eye-read MTF values per `[[feedback_agent_no_gt_eye_read]]` (Tier 1 only).
+- **Scaffolder ships an explicit `_APERTURES_BY_SLUG` table, not pixel-OCR.** Pixel-OCR of the legend's `F<digits>` text yielded 8/19 correct classifications; the text widths for `F8`/`F11`/`F5.6` overlap too much for a robust threshold. Explicit table is maintainer-verifiable and fails loud on a missing slug — same shape as `feedback_specslog_first` (explicit > implicit).
+- **PR #1076 ships the emit script but does NOT patch `mtf-readings.ts`.** The extractor's max-aperture pass still has verdict LOW (separate dispatch concern beyond profile tuning); shipping unverified data into production would skip the maintainer review the Tier 2 policy mandates. The maintainer runs `emit_ttartisan_tier2 --write` once happy with overlays per lens.
+- **Plot-box inset uses template constants, not auto-detection.** Auto-detect drifted ±2 px across the 19 charts; the constants are hand-verified on the anchor and one GFX cross-check. Fail-loud check at scaffold time catches any future chart that doesn't match either scheme.
+
+#### Follow-ups for next session
+
+- **Maintainer overlay glance + Tier 2 data emission.** Run `py -m mtfdigitizer.extract <slug>` per lens, inspect the two-aperture overlay artifacts (now with distinct filenames), `--accept` once satisfied. Then `py -m mtfdigitizer.scripts.emit_ttartisan_tier2 --write` to patch `mtf-readings.ts` with the cohort.
+- **Tier 1 promotion of `ttartisan-50mm-f1-2`.** Eye-read 88 GT values (11 × 2 apertures × 2 frequencies × {S, T}), add as `ground_truth={"max": {...}, "stopped": {...}}` on the ReferenceChart (NOT f-numbers — orchestrator labels). Then `py -m mtfdigitizer.calibrate` validates the extractor's offset distribution.
+- **Dispatch-routing fix for max-aperture pass.** Even with the plot-box inset and 1 prior violation, max-aperture IoU stays at 0.299 — the SPLIT_BY_DASH dispatch occasionally mis-routes the dashed T10_F1.2 curve between the black and grey hues at the right edge. Separate from plot-box tuning.
+- **Sigma 10-18mm digitization-log staleness** still carried from S125. Trivial — `py -m mtfdigitizer.extract sigma-10-18mm-f2-8-dc-dn-c --accept` and commit.
+- **Dependabot pairs from S124-S125** still open (#1050 react-dom, #1053 react pair; #1055 + #1056 vitest pair). Merge order: vitest first, then react pair together (per S125 memory).
+- **Carried-over spikes:** #1068 coverage assertion, #1069 dir-name invariant, #1044 tokina-56, #1045 7artisans-50 dispatch coverage, ADR-014 mean rule validation.
+
+#### Loose ends to investigate when convenient
+
+- **Calibrate.py per-frequency + multi-aperture combo.** ADR-044 noted this hypothetical (Voigtländer APO-LANTHAR-style brand with multi-image multi-aperture publication). The calibrate.py path now handles each axis independently; combining them would be a third branch, not a rewrite. Worth keeping in mind.
+- **`_profile_for_view` shim** still in place from S125. Same removal path as before — low priority.
+- **TTartisan officialUrl coverage** confirmed 19/19 in `lenses.ts` (one for each chart). Emit script fails loud if any slug is missing.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Fujifilm cohort: 62 lenses on `mtf-readings.ts` (unchanged). TTartisan cohort: 0 lenses on `mtf-readings.ts` (emit script ready, maintainer-gated).
+- Epic #790 (digitize all brands): **3/24 done** (Fujifilm, Thingyfy-wontfix, TTartisan-plumbing). TTartisan data emission gated behind maintainer overlay review.
+- Epic #932 (unified digitizer): open with one unchecked optional item (Real-ESRGAN fallback).
+- `REFERENCE_CHARTS` = **103 entries** (was 84, +19 TTartisan); 13 Tier 1; 88 Tier 2 production; 2 fail-loud probes.
+- Aggregate calibration: 91.9% within ±0.05 tolerance band (unchanged; TTartisan not yet in the calibration cohort).
+- **555 pytest pass** across `tools/` (was 540 pre-PR-#1073 with the bigger `tools/` cohort included; +15 from S126: 1 ADR-044 invariant, 2 artifact-stem, 3 calibrate multi-aperture, 10 emit shape). 216 vitest pass; 461-page build; full validate gate green.
+- 0 ADRs added (3 PRs all extend ADR-044). 44 ADRs total.
+- 8 declared MTF profiles (Sigma, Samyang, 7Artisans, Tokina prime + wide-zoom, Viltrox, Fujifilm, TTartisan).
