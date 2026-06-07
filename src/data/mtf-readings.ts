@@ -4002,7 +4002,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-110mm-f2-0-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf110mmf20rlmwr/",
+    source:
+      "https://fujifilm-x.com/en-us/products/lenses/gf100-200mmf56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4100,8 +4101,8 @@ const mtfReadings: Record<string, MtfData> = {
       },
     ],
   },
-  "fujifilm-gf-110mm-f5-6-t-s-macro": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf110mmf56tsmacro/",
+  "fujifilm-gf-110mm-f5-6-ts-macro": {
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf110mmf56-ts-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -4300,7 +4301,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-20-35mm-f4-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf2035mmf4rwr/",
+    source:
+      "https://fujifilm-x.com/en-us/products/lenses/gf120mmf4-r-lm-ois-wr-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -4494,7 +4496,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-250mm-f4-r-lm-ois-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf250mmf4rlmoiswr/",
+    source:
+      "https://fujifilm-x.com/en-us/products/lenses/gf250mmf4-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4593,7 +4596,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-30mm-f3-5-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf30mmf35rwr/",
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf30mmf35-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4680,8 +4683,8 @@ const mtfReadings: Record<string, MtfData> = {
       },
     ],
   },
-  "fujifilm-gf-30mm-f5-6-t-s": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf30mmf56ts/",
+  "fujifilm-gf-30mm-f5-6-ts": {
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf30mmf56-ts/",
     mtfType: "computed",
     charts: [
       {
@@ -4780,7 +4783,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-32-64mm-f4-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf3264mmf4rlmwr/",
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf32-64mmf4-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4974,7 +4977,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-35-70mm-f4-5-5-6-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf3570mmf4556wr/",
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf35-70mmf45-56-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5363,7 +5366,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-45mm-f2-8-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf45mmf28rwr/",
+    source:
+      "https://fujifilm-x.com/en-us/products/lenses/gf45-100mmf4-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5462,7 +5466,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-500mm-f5-6-r-lm-ois-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf500mmf56rlmoiswr/",
+    source:
+      "https://fujifilm-x.com/en-us/products/lenses/gf500mmf56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5561,7 +5566,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-50mm-f3-5-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf50mmf35rlmwr/",
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf50mmf35-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5660,7 +5665,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-55mm-f1-7-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf55mmf17rwr/",
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf55mmf17-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5759,7 +5764,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-63mm-f2-8-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf63mmf28rwr/",
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf63mmf28-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5858,7 +5863,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-80mm-f1-7-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/gf80mmf17rwr/",
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf80mmf17-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5957,7 +5962,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xc-13-33mm-f3-5-6-3-ois": {
-    source: "https://fujifilm-x.com/global/products/lenses/xc1333mmf3563ois/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xc13-33mmf35-63-ois/",
     mtfType: "computed",
     charts: [
       {
@@ -6129,7 +6135,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xc-35mm-f2-0": {
-    source: "https://fujifilm-x.com/global/products/lenses/xc35mmf20/",
+    source: "https://fujifilm-x.com/global/products/lenses/xc35mmf2/",
     mtfType: "computed",
     charts: [
       {
@@ -6390,7 +6396,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-10-24mm-f4-r-ois": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf1024mmf4rois/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xc50-230mmf45-67-ois-ii/",
     mtfType: "computed",
     charts: [
       {
@@ -6562,7 +6569,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-10-24mm-f4-r-ois-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf1024mmf4roiswr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf10-24mmf4-r-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -6907,7 +6915,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-14mm-f2-8-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf14mmf28r/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf100-400mmf45-56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7168,7 +7177,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf1650mmf2848rlmwr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf150-600mmf56-8-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7340,7 +7350,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16-55mm-f2-8-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf1655mmf28rlmwr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf16-55mmf28-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7512,7 +7523,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16-55mm-f2-8-r-lm-wr-ii": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf1655mmf28rlmwrii/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf16-55mmf28-r-lm-wr-ii/",
     mtfType: "computed",
     charts: [
       {
@@ -7684,7 +7696,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16-80mm-f4-r-ois-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf1680mmf4roiswr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf16-80mmf4-r-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7849,7 +7862,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16mm-f1-4-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf16mmf14rwr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf16mmf14-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7937,7 +7950,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16mm-f2-8-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf16mmf28rwr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf16mmf28-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8025,7 +8038,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-18-120mm-f4-lm-pz-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf18120mmf4lmpzwr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf18-120mmf4-lm-pz-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8543,7 +8557,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-18mm-f1-4-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf18mmf14rlmwr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf18-135mmf35-56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8631,7 +8646,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-18mm-f2-0-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf18mmf20r/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf18mmf2-r/",
     mtfType: "computed",
     charts: [
       {
@@ -8719,7 +8734,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-200mm-f2-0-r-lm-ois-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf200mmf20rlmoiswr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf200mmf2-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8807,7 +8823,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-23mm-f1-4-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf14r/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf14-r/",
     mtfType: "computed",
     charts: [
       {
@@ -8895,7 +8911,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-23mm-f2-0-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf20rwr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf2-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8983,7 +8999,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-23mm-f2-8-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf28rwr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf28-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9048,7 +9064,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-27mm-f2-8-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf27mmf28r/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf27mmf28/",
     mtfType: "computed",
     charts: [
       {
@@ -9136,7 +9152,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-27mm-f2-8-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf27mmf28rwr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf27mmf28-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9313,7 +9329,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-33mm-f1-4-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf33mmf14rlmwr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf30mmf28-r-lm-wr-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -9401,7 +9418,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-35mm-f1-4-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf35mmf14r/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf35mmf14-r/",
     mtfType: "computed",
     charts: [
       {
@@ -9489,7 +9506,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-35mm-f2-0-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf35mmf20rwr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf35mmf2-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9750,7 +9767,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-500mm-f5-6-r-lm-ois-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf500mmf56rlmoiswr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf50-140mmf28-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9838,7 +9856,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-50mm-f1-0-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf50mmf10rwr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf50mmf1-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9926,7 +9944,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-50mm-f2-0-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf50mmf20rwr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf50mmf2-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -10187,7 +10205,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-56mm-f1-2-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf56mmf12r/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf55-200mmf35-48-r-lm-ois/",
     mtfType: "computed",
     charts: [
       {
@@ -10275,7 +10294,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-56mm-f1-2-r-apd": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf56mmf12rapd/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r-apd/",
     mtfType: "computed",
     charts: [
       {
@@ -10363,7 +10382,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-56mm-f1-2-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf56mmf12rwr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -10451,7 +10470,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-60mm-f2-4-r-macro": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf60mmf24rmacro/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf60mmf24-r-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -10712,7 +10731,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-8-16mm-f2-8-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf816mmf28rlmwr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf70-300mmf4-56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -10973,7 +10993,8 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-8mm-f3-5-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf8mmf35rwr/",
+    source:
+      "https://fujifilm-x.com/global/products/lenses/xf80mmf28-r-lm-ois-wr-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -11008,7 +11029,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-90mm-f2-0-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf90mmf20rlmwr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf90mmf2-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -11089,6 +11110,193 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               15: { S: 0.8, M: 0.84 },
               45: { S: 0.46, M: 0.46 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "fujifilm-gf-23mm-f4-r-lm-wr": {
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf23mmf4-r-lm-wr/",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/4",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              15: { S: 0.99, M: 0.99 },
+              20: { S: 0.97, M: 0.97 },
+              40: { S: 0.89, M: 0.89 },
+            },
+          },
+          {
+            position: 2.69,
+            samples: {
+              15: { S: 0.99, M: 0.99 },
+              20: { S: 0.97, M: 0.97 },
+              40: { S: 0.9, M: 0.9 },
+            },
+          },
+          {
+            position: 5.38,
+            samples: {
+              15: { S: 0.99, M: 0.99 },
+              20: { S: 0.97, M: 0.95 },
+              40: { S: 0.88, M: 0.86 },
+            },
+          },
+          {
+            position: 8.07,
+            samples: {
+              15: { S: 0.99, M: 0.99 },
+              20: { S: 0.95, M: 0.95 },
+              40: { S: 0.84, M: 0.84 },
+            },
+          },
+          {
+            position: 10.76,
+            samples: {
+              15: { S: 0.98, M: 0.98 },
+              20: { S: 0.94, M: 0.94 },
+              40: { S: 0.79, M: 0.82 },
+            },
+          },
+          {
+            position: 13.45,
+            samples: {
+              15: { S: 0.98, M: 0.98 },
+              20: { S: 0.92, M: 0.91 },
+              40: { S: 0.74, M: 0.72 },
+            },
+          },
+          {
+            position: 16.14,
+            samples: {
+              15: { S: 0.97, M: 0.97 },
+              20: { S: 0.89, M: 0.89 },
+              40: { S: 0.71, M: 0.73 },
+            },
+          },
+          {
+            position: 18.83,
+            samples: {
+              15: { S: 0.94, M: 0.96 },
+              20: { S: 0.81, M: 0.89 },
+              40: { S: 0.67, M: 0.71 },
+            },
+          },
+          {
+            position: 21.52,
+            samples: {
+              15: { S: 0.88, M: 0.96 },
+              20: { S: 0.71, M: 0.89 },
+              40: { S: 0.6, M: 0.74 },
+            },
+          },
+          {
+            position: 24.21,
+            samples: {
+              15: { S: 0.82, M: 0.94 },
+              20: { S: 0.63, M: 0.86 },
+              40: { S: 0.53, M: 0.7 },
+            },
+          },
+          {
+            position: 26.9,
+            samples: {
+              15: { S: 0.76, M: 0.92 },
+              20: { S: 0.58, M: 0.79 },
+              40: { S: 0.48, M: 0.56 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "fujifilm-xf-23mm-f1-4-r-lm-wr": {
+    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf14-r-lm-wr/",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/1.4",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              15: { S: 0.96, M: 0.96 },
+              45: { S: 0.8, M: 0.8 },
+            },
+          },
+          {
+            position: 1.42,
+            samples: {
+              15: { S: null, M: null },
+              45: { S: 0.79, M: 0.75 },
+            },
+          },
+          {
+            position: 2.84,
+            samples: {
+              15: { S: 0.95, M: 0.95 },
+              45: { S: 0.76, M: 0.72 },
+            },
+          },
+          {
+            position: 4.26,
+            samples: {
+              15: { S: 0.95, M: 0.96 },
+              45: { S: 0.73, M: 0.72 },
+            },
+          },
+          {
+            position: 5.68,
+            samples: {
+              15: { S: 0.93, M: 0.96 },
+              45: { S: 0.66, M: 0.72 },
+            },
+          },
+          {
+            position: 7.1,
+            samples: {
+              15: { S: 0.91, M: 0.96 },
+              45: { S: 0.58, M: 0.72 },
+            },
+          },
+          {
+            position: 8.52,
+            samples: {
+              15: { S: 0.88, M: 0.95 },
+              45: { S: 0.53, M: 0.69 },
+            },
+          },
+          {
+            position: 9.94,
+            samples: {
+              15: { S: 0.85, M: 0.94 },
+              45: { S: 0.51, M: 0.68 },
+            },
+          },
+          {
+            position: 11.36,
+            samples: {
+              15: { S: 0.83, M: 0.94 },
+              45: { S: 0.53, M: 0.67 },
+            },
+          },
+          {
+            position: 12.78,
+            samples: {
+              15: { S: 0.82, M: 0.92 },
+              45: { S: 0.56, M: 0.6 },
+            },
+          },
+          {
+            position: 14.2,
+            samples: {
+              15: { S: 0.81, M: 0.86 },
+              45: { S: 0.58, M: 0.48 },
             },
           },
         ],

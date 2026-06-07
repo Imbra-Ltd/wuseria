@@ -49,9 +49,19 @@ from mtfdigitizer.referenceset.charts import (
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 MTF_READINGS_PATH = REPO_ROOT / "src" / "data" / "mtf-readings.ts"
+LENSES_PATH = REPO_ROOT / "src" / "data" / "lenses.ts"
 
 
 _VIEW_INFIX_RE = re.compile(r"-(?P<view>wide|tele)-\d+lp\.png$", re.IGNORECASE)
+
+# Match a single top-level lens entry: from `^  {` to the matching `^  },`.
+_LENS_BLOCK_RE = re.compile(r"^  \{$.*?^  \},?$", re.DOTALL | re.MULTILINE)
+_BRAND_RE = re.compile(r'^\s*brand:\s*"([^"]+)"', re.MULTILINE)
+_MODEL_RE = re.compile(r'^\s*model:\s*"([^"]+)"', re.MULTILINE)
+# `officialUrl:` may have the value on the same line or wrapped to the next.
+_OFFICIAL_URL_RE = re.compile(
+    r'^\s*officialUrl:\s*(?:\n\s*)?"([^"]+)"', re.MULTILINE
+)
 
 
 def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
@@ -233,21 +243,57 @@ def _format_chart_block(
     )
 
 
-def _source_url(slug: str) -> str:
-    """Derive a Fujifilm official product URL from the lens slug.
+_NON_ALNUM_RE = re.compile(r"[^a-z0-9]+")
 
-    Best-effort: maps `fujifilm-gf-23mm-f4-r-lm-wr` to
-    `https://fujifilm-x.com/global/products/lenses/gf23mmf4rlmwr/`.
-    The maintainer may want to tweak per-lens; the production URL
-    pattern is consistent enough that auto-derivation gives a sensible
-    default.
+
+def _to_slug(brand_model: str) -> str:
+    """Port of src/utils/slug.ts:toSlug — must stay byte-equivalent.
+
+    "Fujifilm GF 23mm f/4 R LM WR" → "fujifilm-gf-23mm-f4-r-lm-wr"
     """
-    stripped = re.sub(r"^fujifilm-", "", slug)
-    compact = stripped.replace("-", "")
-    return f"https://fujifilm-x.com/global/products/lenses/{compact}/"
+    lowered = brand_model.lower().replace("/", "")
+    return _NON_ALNUM_RE.sub("-", lowered).strip("-")
 
 
-def _emit_one_lens(chart: ReferenceChart) -> tuple[str, int, int]:
+def _load_official_urls() -> dict[str, str]:
+    """Parse `src/data/lenses.ts` into a slug → officialUrl mapping.
+
+    Lenses without an officialUrl field are omitted; the caller decides
+    what to do (we fail loud in `_source_url` rather than emit a 404).
+    """
+    text = LENSES_PATH.read_text(encoding="utf-8")
+    mapping: dict[str, str] = {}
+    for block_match in _LENS_BLOCK_RE.finditer(text):
+        block = block_match.group(0)
+        brand_match = _BRAND_RE.search(block)
+        model_match = _MODEL_RE.search(block)
+        url_match = _OFFICIAL_URL_RE.search(block)
+        if not (brand_match and model_match and url_match):
+            continue
+        slug = _to_slug(f"{brand_match.group(1)} {model_match.group(1)}")
+        mapping[slug] = url_match.group(1)
+    return mapping
+
+
+def _source_url(slug: str, official_urls: dict[str, str]) -> str:
+    """Return the verified Fujifilm product URL for `slug`.
+
+    Reads from `lenses.ts`'s `officialUrl` field rather than deriving
+    from the slug — Fujifilm's URL pattern uses a region segment
+    (`/en-us/`) and hyphenated suffixes that simple slug-mangling
+    cannot reconstruct. See issue #1062.
+    """
+    if slug not in official_urls:
+        raise KeyError(
+            f"No officialUrl found in lenses.ts for {slug!r}. Add the "
+            f"field to the lens entry before re-running this script."
+        )
+    return official_urls[slug]
+
+
+def _emit_one_lens(
+    chart: ReferenceChart, official_urls: dict[str, str]
+) -> tuple[str, int, int]:
     """Build the TS object literal for one Fuji lens.
 
     Returns (literal, panel_count, total_positions). Lenses with zoom
@@ -304,7 +350,7 @@ def _emit_one_lens(chart: ReferenceChart) -> tuple[str, int, int]:
     chart_blocks = "\n".join(blocks)
     literal = (
         f'  "{chart.slug}": {{\n'
-        f'    source: "{_source_url(chart.slug)}",\n'
+        f'    source: "{_source_url(chart.slug, official_urls)}",\n'
         '    mtfType: "computed",\n'
         "    charts: [\n"
         f"{chart_blocks}\n"
@@ -314,13 +360,16 @@ def _emit_one_lens(chart: ReferenceChart) -> tuple[str, int, int]:
     return literal, len(blocks), total_positions
 
 
-def _fuji_tier2_lenses() -> list[ReferenceChart]:
-    """Every Fujifilm-permfreq chart with no GT — the Tier 2 cohort."""
-    return [
-        c
-        for c in REFERENCE_CHARTS
-        if c.style_family == "fujifilm-permfreq" and c.ground_truth is None
-    ]
+def _fuji_lenses() -> list[ReferenceChart]:
+    """Every Fujifilm-permfreq chart — both Tier 1 anchors and Tier 2 bulk.
+
+    The script originally only walked the Tier 2 cohort (`ground_truth is
+    None`) but the rendered lens-detail page needs MTF data for every
+    Fuji lens, anchors included. The anchors run through the same
+    extractor — their published GT is for calibration scoring, not for
+    emission. See issue #1061.
+    """
+    return [c for c in REFERENCE_CHARTS if c.style_family == "fujifilm-permfreq"]
 
 
 # --- mtf-readings.ts patching ---------------------------------------------
@@ -405,18 +454,19 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
-    lenses = _fuji_tier2_lenses()
+    lenses = _fuji_lenses()
     if args.limit is not None:
         lenses = lenses[: args.limit]
     if not lenses:
         print("No Fujifilm Tier 2 lenses found.", file=sys.stderr)
         return 1
 
+    official_urls = _load_official_urls()
     entries: dict[str, str] = {}
     total_positions = 0
     total_panels = 0
     for chart in lenses:
-        literal, panels, positions = _emit_one_lens(chart)
+        literal, panels, positions = _emit_one_lens(chart, official_urls)
         entries[chart.slug] = literal
         total_panels += panels
         total_positions += positions
