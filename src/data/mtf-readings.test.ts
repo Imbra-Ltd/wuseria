@@ -226,20 +226,26 @@ describe("mtf-readings ↔ lenses.ts coverage", () => {
   });
 });
 
-describe("docs/optical-specs ↔ mtf-readings coverage", () => {
-  // Walk from the repo root — tests run with cwd = repo root.
-  const opticalSpecsDir = resolve(process.cwd(), "docs/optical-specs");
+// Shared walker — tests run with cwd = repo root.
+const opticalSpecsDir = resolve(process.cwd(), "docs/optical-specs");
 
+// Directories with a leading underscore are staging areas for
+// pre-collected materials (e.g. `_pending-mitakon-cine/`) and are
+// intentionally not lens slugs — exclude them from slug-shape checks.
+const lensSpecDirs: string[] = readdirSync(opticalSpecsDir).filter((entry) => {
+  if (entry.startsWith("_")) return false;
+  return statSync(join(opticalSpecsDir, entry)).isDirectory();
+});
+
+describe("docs/optical-specs ↔ mtf-readings coverage", () => {
   // A lens directory has "production data on disk" when it contains a
   // `digitization-log.md` — the production extractor writes that file
   // only on `--accept`. Charts that exist as raw PNGs but never went
   // through `--accept` are work-in-progress and do not require an
   // mtfReadings entry yet.
-  const dirsWithLog: string[] = readdirSync(opticalSpecsDir).filter((entry) => {
-    const fullPath = join(opticalSpecsDir, entry);
-    if (!statSync(fullPath).isDirectory()) return false;
-    return existsSync(join(fullPath, "digitization-log.md"));
-  });
+  const dirsWithLog: string[] = lensSpecDirs.filter((entry) =>
+    existsSync(join(opticalSpecsDir, entry, "digitization-log.md")),
+  );
 
   // Lenses where the chart was accepted (`--accept` written the log)
   // but the readings have not yet been emitted to `mtfReadings`.
@@ -260,6 +266,36 @@ describe("docs/optical-specs ↔ mtf-readings coverage", () => {
     expect(
       missing,
       `directories with digitization-log.md but no mtfReadings entry: ${missing.join(", ")}`,
+    ).toEqual([]);
+  });
+});
+
+// Directory-name invariant (#1069). Every `docs/optical-specs/<dir>`
+// must match `toSlug(lens.brand + " " + lens.model)` for some lens in
+// `lenses.ts`. Catches the S123 (#1063, #1066) class of bug where a
+// scaffolder wrote `-t-s-` directories because the brand tooling did
+// not match `toSlug`'s `/` → `` → `-` collapse for `T/S` → `ts`.
+describe("docs/optical-specs directory-name invariant", () => {
+  const lensSlugs = new Set(lenses.map((l) => toSlug(`${l.brand} ${l.model}`)));
+
+  // Directories whose lens entry has not been added to `lenses.ts`
+  // yet. Pre-existing as of #1069 landing; remove an entry when the
+  // matching lens is added (or remove the directory if the lens was
+  // surveyed and rejected). Tracked via #1085.
+  const KNOWN_PENDING_LENS_ENTRY = new Set<string>([
+    "thingyfy-pinhole-pro-x",
+    "zeiss-touit-12mm-f2-8",
+    "zeiss-touit-32mm-f1-8",
+    "zeiss-touit-50mm-f2-8-macro",
+  ]);
+
+  it("every optical-specs directory matches a lens via toSlug", () => {
+    const orphans = lensSpecDirs
+      .filter((dir) => !lensSlugs.has(dir))
+      .filter((dir) => !KNOWN_PENDING_LENS_ENTRY.has(dir));
+    expect(
+      orphans,
+      `optical-specs directories with no matching lens (slug drift?): ${orphans.join(", ")}`,
     ).toEqual([]);
   });
 });
