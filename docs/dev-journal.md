@@ -5844,3 +5844,76 @@ Theme: clear the v0.8.0 spike backlog and ship the TTartisan dispatch-routing fi
 - **45 ADRs total** (+1 = ADR-045 per-hue ridge dispatch).
 - **9 declared MTF profiles** (TTartisan, 7Artisans now both on FREQUENCY_PER_HUE_RIDGE; same dispatch shared).
 - **0 open spikes from the carried v0.8.0 backlog.** All resolved or accepted.
+
+---
+
+### Session 129 — TTartisan Tier 2 emit + freq30S zero-leak fix
+
+Date: 2026-06-08 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: emit the TTartisan Tier 2 cohort to `mtf-readings.ts`. Hit a data-quality issue mid-emit, debugged it as an extractor bug, fixed at root cause, finished the emit.
+
+#### Branch / merge state
+
+- Started on `main`, clean. Memory pointer carried "TTartisan maintainer Tier 2 emit + Tier 1 GT eye-read + #1085 triage" as next items.
+- Maintainer extended the eye-read policy at session start: agent may now eye-read MTF chart PNGs for Tier 2 review/emit (Tier 1 GT promotion stays maintainer-only). Updated `[[feedback_agent_no_gt_eye_read]]` accordingly.
+- Branches: `feat/ttartisan-tier2-emit` → `fix/mtf-freq30s-zero-leak-1090` (stacked). Both open as PRs, neither merged at session end.
+
+#### PRs opened (awaiting merge)
+
+- **PR #1091 — TTartisan Tier 2 cohort emit (17/19).** 137 files, +13,269 / -5. Emits 17 of 19 lenses to `mtf-readings.ts` (34 panels, 374 positions). 2 lenses (100mm-macro twins, shared chart) skip-listed due to extractor zero-leak. All 19 production logs + 38 overlays + 38 SVGs + 38 review HTMLs committed for the audit trail.
+- **PR #1092 — freq30S zero-leak fix (closes #1090).** 14 files, +578 / -105. Strips plot-box border rows unconditionally in `_strip_chrome` + new `check_no_consecutive_zeros` prior. Re-extracts the 2 affected lenses, unblocks the skip-list. Stacked on #1091 (base = `feat/ttartisan-tier2-emit`); merge order matters.
+
+#### Issues opened
+
+- **#1090 — Extractor freq30S emits 0.00 instead of None on TTartisan 100mm-macro charts.** P1, bug, v0.8.0. Filed mid-session when overlay review surfaced literal `S: 0` readings on positions where the real curve sits at 0.76-0.80. Closed by #1092.
+
+#### Issues closed
+
+- **#1090** — closed by #1092 (pending merge).
+
+#### Key changes
+
+**PR #1091 — TTartisan Tier 2 cohort emit:**
+
+- First task of the session was a maintainer-style overlay review: extract all 19 lenses via `py -m mtfdigitizer.extract --all --accept`, eye-read the 38 overlay PNGs, decide accept/reject.
+- Eye-read of overlays was **misleading** on several lenses — confusing cyan-vs-multicolor overlap. The trustworthy surface is the digitization-log numeric tables; verified `ttartisan-50mm-f/1.2` against the official chart (all four S10/T10/S30/T30 curves match for both F1.2 and F5.6 passes).
+- Spot-check of `emit --limit 1` revealed `S: 0` on 100mm-macro twins — literal zero where the real curve sits at 0.76-0.80. Stopped the auto-emit, filed #1090, narrowed the script via `_EMIT_BLOCKED_BY_ISSUE_1090` skip-list + `KNOWN_PENDING_EMIT` allowlist in `mtf-readings.test.ts`.
+- Ran `emit --write`: 17 entries, 34 panels, 374 positions patched into `mtf-readings.ts`.
+
+**PR #1092 — freq30S zero-leak fix (#1090):**
+
+- Probe-driven debug: wrote a throwaway `probe_zero_leak.py` (deleted before commit) to inspect the freq30S skeleton's pixel positions. Found ink at exactly `y=plot_box.y_bottom` (= MTF=0) on positions 0.1-0.7. The freq30M skeleton at the same hue/frequency correctly tracked the real curve at y≈193 (MTF=0.78).
+- Root cause: TTartisan 100mm-macro chart's X-axis bottom border at y=459 has **87% horizontal coverage** in the grey-hue raw mask. `_strip_chrome`'s `_CHROME_MIN_WIDTH_FRACTION = 0.90` requires ≥90%, so the border slipped through. The ridge tracker then selected it as the highest-coverage solid track, hijacking freq30S from the real grey S30_F2.8 curve.
+- Fix: in `_strip_chrome`, unconditionally zero `plot_box.y_top` and `plot_box.y_bottom` rows before the high-coverage threshold pass. Borders are chrome by construction — a curve cannot legitimately sit exactly at MTF=0.0 or MTF=1.0.
+- Defensive prior: new `check_no_consecutive_zeros` fires on 3+ consecutive literal `0.00` readings on any `freq*S/M` field. Catches future recurrences of this class of bug regardless of root cause (border, dispatch, sampling clamp).
+- Re-extracted both 100mm-macro twins with `--accept`; freq30S now reads 0.74-0.80 matching the chart. `py -m mtfdigitizer.extract --check` confirmed surgical: only the 2 affected logs needed refresh, the other 17 untouched.
+- Removed `_EMIT_BLOCKED_BY_ISSUE_1090` from emit script, removed the 2 entries from `KNOWN_PENDING_EMIT`, reverted the emit-walker test from 17 back to 19. Re-ran emit `--write`: TTartisan cohort now **19/19** on `mtf-readings.ts` (38 panels, 418 positions).
+
+#### Key decisions
+
+- **Eye-read policy extended to Tier 2 review + emit gating.** Maintainer relaxed the constraint mid-session: "your readings are good enough. I will just provide veto and corrections." Updated `[[feedback_agent_no_gt_eye_read]]`. Tier 1 GT promotion stays maintainer-only — those entries become calibration anchors and agent reads would be self-confirming.
+- **Trust numerics over overlay PNGs.** Overlay rendering with cyan polylines on multi-color charts is hard to eye-read accurately when curves overlap. The digitization-log's numeric tables, cross-checked against the official chart's curves at known sample positions, are the authoritative surface. Lesson for future Tier 2 reviews.
+- **Surgical fix over threshold tweak.** Considered lowering `_CHROME_MIN_WIDTH_FRACTION` to 0.80 to catch the 87% bottom border. Rejected — that would risk false positives on legitimate dense traces. Instead, strip the border rows unconditionally (universal property of any plot box) and leave the threshold for inset borders + gridlines.
+- **Prior over alarm.** The defensive check (`check_no_consecutive_zeros`) lives in the priors pipeline where it produces a `prior_violations` count, NOT as an extractor-raise. Aligns with existing prior model: cheap defensive checks that surface in `digitization-log.md` and feed the gate verdict; the gate decides hard-fail.
+- **Stacked PR over wait-and-rebase.** #1092 stacks on #1091 because the fix removes the skip-list that #1091 added; rebase after #1091 merges. Single linear merge order: #1091 → #1092.
+
+#### Follow-ups for next session
+
+- **Merge #1091 then #1092 in order, with maintainer permission.** After merge, both PRs auto-delete their branches; rebase any stacked work onto fresh `main`.
+- **Tier 1 GT promotion of `ttartisan-50mm-f1-2`** (88 GT values, maintainer-only) — still pending from S128.
+- **#1085 — Triage 4 orphan dirs** (Thingyfy + 3 Zeiss Touit) — pure agent task, P3.
+- **Sparse-dash dropouts in `ridge_tracks_for_hue_freq_split`** — known loose end from S128.
+- **Carried since S122:** `_profile_for_view` shim removal (low priority).
+- **Carried since S118:** Validate ADR-014 mean rule against the first real MTF-driven score; Tier 1 `log.py --check` false-OK; 17-40 tele `prior_violations=1`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. **Fujifilm cohort: 62 lenses on `mtf-readings.ts`** (unchanged). **TTartisan cohort: 19 lenses on `mtf-readings.ts`** (was 0; full cohort emitted via PR #1091 + #1092).
+- Epic #790 (digitize all brands): **4/24 done** (Fujifilm, Thingyfy-wontfix, TTartisan-emit, +1 from cohort completion).
+- `REFERENCE_CHARTS` = **103 entries** (unchanged); 13 Tier 1; 88 Tier 2 production; 2 fail-loud probes.
+- **Aggregate calibration: 492/528 (93.2%)** within ±0.05 band (unchanged; TTartisan cohort doesn't contribute to anchor calibration).
+- **298 pytest pass** (was 289; +9 from #1090: 2 ridge border-row, 6 prior chain detection, 1 emit-walker count revert).
+- 461-page build; full validate gate green locally; CI green on #1091, #1092 pending.
+- **45 ADRs total** (unchanged).
+- **9 declared MTF profiles** (unchanged).
