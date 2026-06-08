@@ -30,6 +30,43 @@ Performance: the Viterbi loop is the hot path. For each column we sweep
 ``2*max_jump + 1`` candidate predecessors. At plot size 1338x777 with
 ``max_jump=30`` this is ~10^7 ops total — a few hundred ms in NumPy,
 dominated by the inner sweep.
+
+Known limitation — cliff-corner blind spot (#1044)
+--------------------------------------------------
+
+When a curve takes a steep dive at the right edge of the plot AND
+a parallel curve at a higher y is still visible nearby, the DP will
+prefer to flat-line at the higher y. Concrete case: tokina-56 30M
+flat-lines at MTF 0.355 for the rightmost ~20 columns even though
+the raw mask clearly shows the curve at MTF 0.26-0.27.
+
+The root cause is that the 51-px horizontal dilation joins both the
+flat-stay alternative (where only the dilation echo of upstream ink
+keeps the mask = 1) and the cliff-dive alternative (where the raw
+ink is) into one fat blob. Emission cost is 0 along both paths; the
+Viterbi correctly picks the smoother (flat) one.
+
+Two dead-end hypotheses already burned in S120 — please do not
+re-derive them:
+
+1. Sampler dilution. The ±3-column slab-median in
+   ``sample_skeleton_at_fraction`` is NOT the culprit. Refactoring to
+   per-column nearest-inked-column lookup left the tokina-56 30M p95
+   unchanged AND regressed samyang-85 10M from 0.089 to 0.186. The
+   slab-median is load-bearing for the rest of the anchor set.
+2. Smoothness prior too strong. Lowering ``_ALPHA`` from 0.30 → 0.05
+   gave identical results. ``alpha`` is not the constraint.
+
+The fix would require an additional signal that weights "this y has
+real ink, not dilation echo" higher than "this y has dilation echo"
+in the emission term — e.g. a soft penalty proportional to distance
+from the raw (undilated) mask. Decision: NOT IMPLEMENTED. Reason:
+on the only anchor that exhibits this failure, both EYE=0.18 and
+EX=0.355 land in ADR-014's score-0.0 band for ``cornerStopped``
+(``resolution % of sensor max < 50%``), so the OQ field score is
+unaffected. If a future calibration anchor lands a cliff corner that
+DOES cross a rubric threshold, revisit with the raw-mask-weighted
+emission idea.
 """
 
 from __future__ import annotations
