@@ -79,7 +79,16 @@ SEVENARTISANS_2COLOR_SAMECOLOR_DASHED: MtfProfile = MtfProfile(
         HueRange(name="green", h_lo=35, h_hi=60, s_min=60, v_min=70),
     ),
     style_axis="SPLIT_BY_DASH",
-    hue_meaning="FREQUENCY",
+    # FREQUENCY_PER_HUE_RIDGE (not FREQUENCY) — same shape as TTartisan
+    # max-aperture (ADR-045). The 7Artisans chart's morphological close
+    # (7 px horizontal) cannot bridge the wider dash gaps in this brand's
+    # dashed-line rendering, so split_sm_by_cc_width returns one
+    # spatially-confined left-half CC as S and ~30 right-half fragments
+    # lumped as M — neither curve covers the field end-to-end. Per-column
+    # ridge tracking handles fragmented dashed lines naturally: 7artisans-
+    # 50mm-f1-2-mark-ii anchor goes from 5/11 paired (freq10M) to 10/11,
+    # p95|Δ| on freq30S from 0.184 to 0.053 (closes #1045).
+    hue_meaning="FREQUENCY_PER_HUE_RIDGE",
     frequencies_lpmm=(10, 30),
     dashed_is_sagittal=True,
     notes="7Artisans/Chinese convention: blue=10, green=30; T1/T2 (blue) = M pair, S1/S2 (green) = S pair; dashed=S within hue",
