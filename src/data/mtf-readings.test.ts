@@ -257,11 +257,6 @@ describe("docs/optical-specs ↔ mtf-readings coverage", () => {
     "7artisans-50mm-f1-2-mark-ii",
     "sigma-30mm-f1-4-dc-dn-c",
     "tokina-atx-m-23mm-f1-4-x",
-    // Both share the 100mm-macro chart; emit blocked by extractor
-    // freq30S zero-leak bug #1090. Remove after the extractor fix
-    // lands and the 2 entries are emitted.
-    "ttartisan-100mm-f2-8-macro-2x-gfx",
-    "ttartisan-100mm-f2-8-macro-2x-tilt-shift",
   ]);
 
   it("every accepted-extraction directory has a mtfReadings entry", () => {

@@ -161,12 +161,23 @@ _CHROME_MIN_WIDTH_FRACTION: float = 0.90
 
 
 def _strip_chrome(mask: np.ndarray, plot_box: PlotBox) -> np.ndarray:
-    """Zero out rows with >=90% horizontal coverage inside the plot box.
+    """Zero out plot-box border rows + rows with >=90% horizontal coverage.
 
-    Printed OTF gridlines and plot-frame borders span the full plot
-    width as nearly-continuous horizontal lines. The ridge tracker would
-    otherwise pick OTF=0.0 (chart bottom) as 30M and OTF=1.0 (top) as
-    10S — both are chart chrome, not curves.
+    Two chrome categories are stripped:
+
+    1. **Plot-box border rows** (`y_top` and `y_bottom`) — the X-axis
+       lines that bound the plot. They are chrome by construction;
+       any curve ink at those exact y values would mean MTF=1.0 or
+       MTF=0.0, which is degenerate and almost always border ink, not
+       a real reading. Stripping these unconditionally fixes #1090
+       (TTartisan 100mm-macro grey mask: bottom border at 87% coverage
+       slipped below the 90% threshold and was selected as the highest-
+       coverage solid track, stealing the freq30S slot from the real
+       curve at MTF~0.78).
+
+    2. **High-coverage rows** (>=90% of plot width) — printed OTF
+       gridlines and any inset border lines. Without this the ridge
+       tracker would pick OTF=0.0 / OTF=1.0 (chart frame) as curves.
 
     CC-based stripping doesn't work here: the Viltrox neutral mask has
     a single 2789-px CC that fuses gridlines with curves via the
@@ -184,6 +195,11 @@ def _strip_chrome(mask: np.ndarray, plot_box: PlotBox) -> np.ndarray:
     cleaned = mask.copy().astype(np.uint8)
     width = plot_box.x_right - plot_box.x_left + 1
     min_count = int(_CHROME_MIN_WIDTH_FRACTION * width)
+    # Always strip the plot-box border rows (X-axis lines) — fixes
+    # #1090 where the bottom border at 87% coverage slipped below the
+    # high-coverage threshold and was misread as a curve at MTF=0.
+    cleaned[plot_box.y_top, plot_box.x_left : plot_box.x_right + 1] = 0
+    cleaned[plot_box.y_bottom, plot_box.x_left : plot_box.x_right + 1] = 0
     for y in range(plot_box.y_top, plot_box.y_bottom + 1):
         row = cleaned[y, plot_box.x_left : plot_box.x_right + 1]
         if int(row.sum()) >= min_count:

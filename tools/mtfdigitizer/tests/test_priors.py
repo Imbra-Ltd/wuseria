@@ -29,6 +29,7 @@ from mtfdigitizer.priors import (
     check_all,
     check_center_ge_edge,
     check_in_range,
+    check_no_consecutive_zeros,
     check_not_suspiciously_flat,
 )
 from mtfdigitizer.profiles import (
@@ -373,6 +374,81 @@ def test_flatness_constants_are_sane() -> None:
     # Eye-reading precision is ~±0.02; the prior's stdev threshold must
     # be at most that, or it loses meaning.
     assert INEQUALITY_TOLERANCE <= 0.05
+
+
+# --- check_no_consecutive_zeros (#1090) -----------------------------
+
+
+def test_no_consecutive_zeros_passes_on_well_behaved_lens() -> None:
+    readings = _readings(
+        c10s=_well_behaved_curve(),
+        r30s=tuple(round(0.75 - 0.04 * i, 2) for i in range(11)),
+    )
+    assert check_no_consecutive_zeros(readings) == []
+
+
+def test_no_consecutive_zeros_passes_on_single_zero() -> None:
+    """A single 0.00 value (rare but possible at the deepest corner) is
+    allowed — the prior only flags 3+ consecutive."""
+    curve = list(_well_behaved_curve())
+    curve[5] = 0.0  # one isolated zero in the middle
+    readings = _readings(r30s=tuple(curve))
+    assert check_no_consecutive_zeros(readings) == []
+
+
+def test_no_consecutive_zeros_passes_on_two_consecutive_zeros() -> None:
+    """Two consecutive 0.00s are also allowed — the threshold is 3."""
+    curve = list(_well_behaved_curve())
+    curve[5] = curve[6] = 0.0
+    readings = _readings(r30s=tuple(curve))
+    assert check_no_consecutive_zeros(readings) == []
+
+
+def test_no_consecutive_zeros_fires_on_three_consecutive_zeros() -> None:
+    """Regression for #1090 (TTartisan 100mm-macro freq30S = 0.00 leak)."""
+    curve = list(_well_behaved_curve())
+    curve[3] = curve[4] = curve[5] = 0.0
+    readings = _readings(r30s=tuple(curve))
+    violations = check_no_consecutive_zeros(readings)
+    assert len(violations) == 1
+    v = violations[0]
+    assert v.prior_name == "no_consecutive_zeros"
+    assert v.field == "freq30S"
+    assert v.position_index == 3
+    assert "3 consecutive 0.00" in v.detail
+
+
+def test_no_consecutive_zeros_emits_one_violation_per_chain() -> None:
+    """A 7-long zero chain (the exact #1090 shape) should emit ONE
+    violation describing the full run, not 5."""
+    curve = list(_well_behaved_curve())
+    for i in range(1, 8):  # positions 1..7 all zero (7-long chain)
+        curve[i] = 0.0
+    readings = _readings(r30s=tuple(curve))
+    violations = check_no_consecutive_zeros(readings)
+    assert len(violations) == 1
+    assert "7 consecutive" in violations[0].detail
+
+
+def test_no_consecutive_zeros_treats_none_as_break() -> None:
+    """None values break a zero chain — a real missing reading is not
+    the same shape as a literal 0.00 leak."""
+    curve = list(_well_behaved_curve())
+    curve[3] = 0.0
+    curve[4] = None  # break
+    curve[5] = 0.0
+    curve[6] = 0.0
+    readings = _readings(r30s=tuple(curve))
+    assert check_no_consecutive_zeros(readings) == []
+
+
+def test_check_all_includes_no_consecutive_zeros() -> None:
+    """The aggregator must include the new prior."""
+    curve = list(_well_behaved_curve())
+    curve[3] = curve[4] = curve[5] = 0.0
+    readings = _readings(r30s=tuple(curve))
+    violations = check_all(readings)
+    assert any(v.prior_name == "no_consecutive_zeros" for v in violations)
 
 
 def test_fields_constant_matches_sampled_reading() -> None:
