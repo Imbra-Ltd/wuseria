@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ttartisan-tilt-35mm-f1-4-mtf-max - MTF review</title>
+    <style>
+      body {
+        font-family: ui-monospace, "Cascadia Code", monospace;
+        background: #1a1a2e;
+        color: #e0e0e0;
+        margin: 0;
+        padding: 1.5rem;
+      }
+      h1 {
+        font-size: 1.1rem;
+        margin: 0 0 1rem 0;
+        color: #d4a853;
+        font-weight: normal;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto auto;
+        gap: 1rem;
+        max-width: 1400px;
+      }
+      .panel {
+        background: #fff;
+        border: 1px solid #333;
+        padding: 0.75rem;
+        border-radius: 4px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .panel.bottom { grid-column: 1 / span 2; }
+      .panel h2 {
+        font-size: 0.75rem;
+        margin: 0;
+        color: #666;
+        font-weight: normal;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .panel img,
+      .panel object {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 60vh;
+        object-fit: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>ttartisan-tilt-35mm-f1-4-mtf-max</h1>
+    <div class="grid">
+      <div class="panel">
+        <h2>Original</h2>
+        <img src="ttartisan-tilt-35mm-f1-4-mtf.png" alt="Original MTF chart" />
+      </div>
+      <div class="panel">
+        <h2>Regenerated SVG</h2>
+        <img src="ttartisan-tilt-35mm-f1-4-mtf-max.svg" alt="Regenerated MTF SVG from extracted readings" />
+      </div>
+      <div class="panel bottom">
+        <h2>Overlay (extractor curves over original)</h2>
+        <img src="ttartisan-tilt-35mm-f1-4-mtf-max-overlay.png" alt="Extractor polylines overlaid on the original chart" />
+      </div>
+    </div>
+  </body>
+</html>

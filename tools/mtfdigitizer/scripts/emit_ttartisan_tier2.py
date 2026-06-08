@@ -199,11 +199,26 @@ def _emit_one_lens(
     return literal, len(blocks), total_positions
 
 
+# Blocked until extractor zero-leak fix (#1090). The freq30S detection on
+# these 100mm-macro charts emits literal `0.00` for positions where the
+# grey S30_F2.8 curve sits at 0.76-0.80 — would render flat-zero on site.
+# Both variants share the same chart, so they fail the same way.
+_EMIT_BLOCKED_BY_ISSUE_1090: frozenset[str] = frozenset({
+    "ttartisan-100mm-f2-8-macro-2x-gfx",
+    "ttartisan-100mm-f2-8-macro-2x-tilt-shift",
+})
+
+
 def _ttartisan_lenses() -> list[ReferenceChart]:
-    """Every TTartisan multi-aperture chart in the reference set."""
+    """Every TTartisan multi-aperture chart in the reference set.
+
+    Excludes lenses blocked by upstream extractor bugs — see the
+    `_EMIT_BLOCKED_BY_ISSUE_*` allowlists for each.
+    """
     return [
         c for c in REFERENCE_CHARTS
         if c.style_family == "ttartisan-4color-dual-aperture"
+        and c.slug not in _EMIT_BLOCKED_BY_ISSUE_1090
     ]
 
 

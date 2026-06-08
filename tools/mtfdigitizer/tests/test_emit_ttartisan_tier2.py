@@ -121,11 +121,16 @@ def test_source_url_fails_loud_on_missing_official_url():
         _source_url("ttartisan-nonexistent-1mm-f0", {})
 
 
-def test_ttartisan_lenses_returns_19_entries():
-    """The Tier 2 scaffolder added 19 TTartisan ReferenceCharts; the
-    emit walker must find all of them."""
+def test_ttartisan_lenses_excludes_blocked_emits():
+    """The Tier 2 scaffolder added 19 TTartisan ReferenceCharts. Two
+    100mm-macro variants share a chart that triggers the extractor
+    freq30S zero-leak bug (#1090) and are blocked from emit until the
+    fix lands — the walker MUST return 17 emit-ready lenses."""
     lenses = _ttartisan_lenses()
-    assert len(lenses) == 19
+    assert len(lenses) == 17
+    slugs = {lens.slug for lens in lenses}
+    assert "ttartisan-100mm-f2-8-macro-2x-gfx" not in slugs
+    assert "ttartisan-100mm-f2-8-macro-2x-tilt-shift" not in slugs
     for lens in lenses:
         assert lens.style_family == "ttartisan-4color-dual-aperture"
         assert len(lens.apertures) == 2  # max + stopped
