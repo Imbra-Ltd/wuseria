@@ -5730,3 +5730,117 @@ Theme: clear the two-week-old Dependabot React pair (#1050, #1053) carried from 
 - Dependabot weekly grouping now covers react ecosystem.
 - 555 pytest pass / 216 vitest pass (unchanged); 461-page build; full validate gate green; deploy green.
 - 0 ADRs added. 44 ADRs total.
+
+---
+
+### Session 128 — MTF dispatch fix + data-integrity assertions
+
+Date: 2026-06-07 → 2026-06-08 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: clear the v0.8.0 spike backlog and ship the TTartisan dispatch-routing fix carried since S125. Six PRs end-to-end; closed 5 issues, opened 1.
+
+#### Branch / merge state
+
+- Started on `main`, clean. Memory pointer carried "TTartisan max-aperture IoU 0.299" as the headline next item along with the open spike backlog (#1068, #1069, #1044, #1045).
+- Branches: `fix/mtf-ttartisan-dispatch-max-aperture` → `chore/sigma-10-18-log-refresh` → `feat/mtf-coverage-assertion-1068` → `feat/mtf-dir-name-invariant-1069` → `fix/7artisans-per-hue-ridge-1045` → `docs/tokina-56-cliff-known-limitation-1044`. All squash-merged, remote branches auto-deleted, local clean on `main`.
+
+#### PRs
+
+- **PR #1082** merged (`1e9bac2`). 6 files, +378 / -2. New `(SPLIT_BY_DASH, FREQUENCY_PER_HUE_RIDGE)` dispatch + ADR-045. TTartisan max-aperture anchor IoU 0.299 LOW → 0.608 HIGH; cohort mean IoU ~0.71 across 19 lenses / 38 panels. 285 → 289 pytest pass.
+- **PR #1083** merged (`8f71baf`). 3 files, +15 / -13. Refresh `sigma-10-18mm` digitization-log (tele view freq30 now reports center-frac reading); carry-over since S125.
+- **PR #1084** merged (`6ac5bf5`). 1 file, +69 / -0. Three new vitest data-integrity assertions: orphan-key check, source URL parses, every `digitization-log.md` has a `mtfReadings` entry. Closes #1068. 3 known-pending-emit anchors allowlisted.
+- **PR #1086** merged (`d644a45`). 16 files, +44 / -8. Directory-name invariant assertion + renamed 5 divergent dirs (1 Kamlan missing `-ii`, 3 Laowa T/S missed by #1066, 1 Viltrox marketing-code drop). Closes #1069. 4 lens-pending dirs allowlisted (tracked via new #1085).
+- **PR #1087** merged (`9137fa2`). 1 file, +10 / -1. Switch 7Artisans profile to `FREQUENCY_PER_HUE_RIDGE`. Closes #1045. 7artisans-50 anchor freq10M paired 5/11 → 10/11; freq30S p95|Δ| 0.184 → 0.053 (3.5× improvement). Aggregate calibration 92.0% → 93.2% within ±0.05 band.
+- **PR #1088** merged (`e02bad4`). 1 file, +37 / -0. Document tokina-56 cliff-corner blind spot in `dp_extract.py` module docstring. Closes #1044 as accept-the-limitation (both EYE 0.18 and EX 0.355 land in same ADR-014 score bucket → fix is YAGNI).
+
+#### Issues opened
+
+- **#1085** — Triage orphan optical-specs dirs (Thingyfy Pinhole Pro X + 3 Zeiss Touit). Pre-existing as of #1069 landing; allowlisted in `KNOWN_PENDING_LENS_ENTRY`. P3, v0.8.0.
+
+#### Issues closed
+
+- **#798** — TTartisan epic was closed pre-session; dispatch fix in #1082 unblocks Tier 2 maintainer review.
+- **#1068** — Coverage assertion (closed by #1084).
+- **#1069** — Dir-name invariant (closed by #1086).
+- **#1044** — Tokina-56 cliff-corner blind spot (closed by #1088, accepted as known limitation).
+- **#1045** — 7artisans dispatch coverage (closed by #1087, port to `FREQUENCY_PER_HUE_RIDGE`).
+
+#### Key changes
+
+**PR #1082 — TTartisan per-hue ridge dispatch (ADR-045):**
+
+- S125 hypothesis (hue mis-routing between black/grey at right edge) was a symptom, not the cause. Real failure: at fields 0-10 the solid S10 and dashed T10 black-curves run within ~5 px of each other; their antialiased halos fuse into one ~1172-px CC. `split_sm_by_cc_width` assigns the fused blob to S (770 px) and only ~110 small fragments at fields 11-13 to M — missing ~85% of T10.
+- Ruled out HSV widening (ink already in band), existing `(SPLIT_BY_DASH, GEODESIC_DP)` (inherits bad CC-split), and `extract_two_curves_dp` direct on raw mask (DP path 2 with `erase_half=18` gets pushed onto wrong-color curves).
+- Fix: new `(SPLIT_BY_DASH, FREQUENCY_PER_HUE_RIDGE)` dispatch that ridge-tracks each hue independently. Per-column ridge centroids preserve two distinct tracks even at coincidence. Higher-coverage track = solid (S by default; M when `dashed_is_sagittal`).
+- New `pipeline/ridge.py::ridge_tracks_for_hue_freq_split` (reuses every internal helper from `ridge_tracks_for_hue`).
+- Cohort validation: 19 TTartisan lenses / 38 panels — 28 HIGH, 10 LOW (all due to prior_violations not IoU). Min cohort IoU 0.531 (was 0.299).
+
+**PR #1083 — Sigma 10-18mm log refresh:**
+
+- `py -m mtfdigitizer.extract sigma-10-18mm-f2-8-dc-dn-c --accept`. Pipeline tweaks since the prior log allowed tele view freq30 to extract one more sample point (center-frac 0.0 now reports 0.90 instead of —). Verdicts unchanged.
+
+**PR #1084 — coverage assertion (#1068):**
+
+- Three vitest assertions added to `src/data/mtf-readings.test.ts`:
+  1. Every `mtfReadings` key matches a lens via `toSlug(brand + " " + model)` — catches #1060 (`t-s` vs `ts` orphan keys).
+  2. Every entry's `source` URL parses with `new URL()` — catches #1062 (60 auto-derived 404 URLs).
+  3. Every `docs/optical-specs/<slug>/` with `digitization-log.md` has a matching `mtfReadings[slug]` entry — catches #1061 (anchor lens with disk data but no entry).
+- Allowlist `KNOWN_PENDING_EMIT` for 3 pre-existing pending-emit anchor lenses (`7artisans-50mm-f1-2-mark-ii`, `sigma-30mm-f1-4-dc-dn-c`, `tokina-atx-m-23mm-f1-4-x`).
+- Deliberate-fail verified: mutating slug `sigma-12mm-f1-4` → `f14` trips two assertions; mutating a source to `"not a valid url"` trips the URL parse check.
+
+**PR #1086 — dir-name invariant (#1069):**
+
+- New assertion: every `docs/optical-specs/<dir>` matches `toSlug(lens.brand + " " + lens.model)` for some lens in `lenses.ts`.
+- The assertion immediately caught **9 real divergences**. Fixed 5 in-PR by renaming to canonical:
+  - `kamlan-50mm-f1-1` → `kamlan-50mm-f1-1-ii` (missing `-ii` suffix on the dir; inner files were already correct)
+  - `venus-laowa-{55,100}mm-f2-8-t-s-macro-gfx` → `...-ts-macro-gfx` (T/S → ts; the #1066 rename missed Laowa)
+  - `venus-laowa-35mm-f2-8-zero-d-t-s-0-5x-macro-gfx` → `...-zero-d-ts-...` (same family)
+  - `viltrox-af-85mm-f1-8-ii-pfu-rbmh` → `viltrox-af-85mm-f1-8-ii` (merged into pre-existing canonical dir; marketing code dropped)
+- Inner filenames with `-t-s-` also renamed to `-ts-` to match.
+- Remaining 4 (Thingyfy + 3 Zeiss Touit) allowlisted in `KNOWN_PENDING_LENS_ENTRY`, tracked via #1085 — lens entries not yet in `lenses.ts`.
+- Shared the `lensSpecDirs` walker between the #1068 disk-coverage check and the new dir-name check; `_pending-*` dirs excluded by leading-underscore convention.
+
+**PR #1087 — 7Artisans dispatch port (#1045):**
+
+- Same coincident-curve pattern as TTartisan: dashed and solid in same hue, CC-width split fragments into dozens of pieces (12 blue, 34 green per #1045 probe). One-character literal swap: `hue_meaning="FREQUENCY"` → `"FREQUENCY_PER_HUE_RIDGE"`. The dispatch from #1082 handles this exact shape.
+- 7artisans-50mm-f1-2-mark-ii Tier 1 anchor calibration: freq10M paired 5/11 → **10/11**; freq30S p95|Δ| 0.184 → **0.053** (3.5×). Two curves (10S, 30S) regress by 1 paired sample but p95|Δ| drops on 3 of 4 curves.
+- Aggregate anchor-set calibration: **481/523 (92.0%) → 492/528 (93.2%)** within ±0.05 tolerance band, +11 captured paired comparisons.
+
+**PR #1088 — cliff-corner doc note (#1044):**
+
+- Added "Known limitation — cliff-corner blind spot" section to `pipeline/dp_extract.py` module docstring. Captures: the mechanism (51-px dilation fuses flat-stay and cliff-dive into one fat blob; Viterbi correctly picks the smoother path), the two dead-end hypotheses from S120 (sampler dilution and alpha tuning, with the symptoms that disqualify each), and the explicit accept-the-limitation decision.
+- Decision rationale: both EYE=0.18 and EX=0.355 land in ADR-014's score-0.0 band for `cornerStopped` (`resolution % of sensor max < 50%`). The OQ score on this lens is identical either way. Fix would be a non-trivial DP cost-function change; YAGNI. Revisit only if a future anchor cliff-corner crosses a rubric threshold.
+
+#### Key decisions
+
+- **Per-hue ridge over geodesic-DP for SPLIT_BY_DASH coincidence (ADR-045).** Both `(HUE_IS_CURVE, GEODESIC_DP)` and `(SPLIT_BY_DASH, GEODESIC_DP)` exist for related problems but neither handles the case where solid + dashed sit within one CC of the SAME hue. Ridge tracking is geometric (per-column centroids) and preserves two distinct tracks at coincidence; DP cannot, because both alternatives have emission cost 0 inside the fused blob. The new `FREQUENCY_PER_HUE_RIDGE` is the per-hue 2-curve cousin of `RIDGE_TRACKING` (per-mask 4-curve, Viltrox) and `ridge_tracks_for_hue` (`HUE_IS_CURVE` 2-curve, Tokina wide-zoom).
+- **Allowlist over fix for the 3 pending-emit anchors (#1068).** Three early-anchor lenses (`7artisans-50mm-f1-2-mark-ii`, `sigma-30mm-f1-4-dc-dn-c`, `tokina-atx-m-23mm-f1-4-x`) have accepted logs but no `mtfReadings` entry. Emitting needs maintainer review per the Tier 2 policy (`[[feedback_agent_no_gt_eye_read]]`). Allowlist with a comment "remove when emitted" lets the assertion gate against NEW drift without blocking on a backlog.
+- **Reject the marketing code in dir names.** Renamed `viltrox-af-85mm-f1-8-ii-pfu-rbmh` → `viltrox-af-85mm-f1-8-ii` because the canonical convention is `toSlug(brand + " " + model)` and Viltrox's `model: "AF 85mm f/1.8 II"` does not include the PFU RBMH marketing code. If a future lens needs the marketing code as a disambiguator (two variants under same `model`), revisit — but for now the assertion enforces one canonical name per lens.
+- **Accept the cliff-corner blind spot (#1044), don't try to fix it.** The OQ score is unaffected; the fix would be a substantial algorithm change to weight raw-mask ink over dilation-echo in the DP emission. YAGNI applies cleanly.
+- **Renamed branch mid-session for #1087.** Started on `spike/1045-test-per-hue-ridge-on-7artisans` (investigation framing). Once the experiment confirmed the dispatch fixed it, renamed to `fix/7artisans-per-hue-ridge-1045` per the git.md close-and-resubmit rule (when framing changes from spike → fix, branch name should change too).
+
+#### Follow-ups for next session
+
+- **Maintainer overlay glance + Tier 2 data emission for TTartisan 19-lens cohort.** Per-lens overlay review, then `py -m mtfdigitizer.scripts.emit_ttartisan_tier2 --write` patches `mtf-readings.ts`. The dispatch fix from #1082 unblocks this.
+- **Tier 1 promotion of `ttartisan-50mm-f1-2`** (88 GT values, maintainer-only).
+- **#1085 — Triage 4 orphan dirs** (Thingyfy + 3 Zeiss Touit). Either add lens entries or remove the dirs; then clear the allowlist in the test.
+- **Carried since S122:** `_profile_for_view` shim removal (low priority).
+- **Carried since S118:** Validate ADR-014 mean rule against the first real MTF-driven score; Tier 1 `log.py --check` false-OK; 17-40 tele `prior_violations=1`.
+- **Open Dependabot:** none right now (vitest pair from S124 was closed by Dependabot — already on 4.1.8 via supersedence).
+- **New from this session:** none. All v0.8.0 spikes from the carried list resolved.
+
+#### Loose ends to investigate when convenient
+
+- **Sparse-dash dropouts in `ridge_tracks_for_hue_freq_split`.** On charts where the dashed line's dashes exceed `_RIDGE_TRACK_MAX_DY=5` per step, the ridge tracker drops a few pixels. Aggregate IoU is high enough that the gate flips HIGH; per-lens tail cleanup would need a per-profile `_RIDGE_TRACK_MAX_DY` knob. Not blocking.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. **Fujifilm cohort: 62 lenses on `mtf-readings.ts`** (unchanged). **TTartisan cohort: 0 lenses on `mtf-readings.ts`** (maintainer-gated; emit script ready, dispatch fix landed).
+- Epic #790 (digitize all brands): **3/24 done** (Fujifilm, Thingyfy-wontfix, TTartisan-plumbing).
+- `REFERENCE_CHARTS` = **103 entries**; 13 Tier 1; 88 Tier 2 production; 2 fail-loud probes (unchanged).
+- **Aggregate calibration: 481/523 (92.0%) → 492/528 (93.2%) within ±0.05 band** (+1.2 pp from 7Artisans dispatch port).
+- **289 pytest pass** (was 285; +4 from #1068 coverage assertions). **220 vitest pass** (was 216; +3 from #1068, +1 from #1069).
+- 461-page build; full validate gate green; deploy green on `e02bad4`.
+- **45 ADRs total** (+1 = ADR-045 per-hue ridge dispatch).
+- **9 declared MTF profiles** (TTartisan, 7Artisans now both on FREQUENCY_PER_HUE_RIDGE; same dispatch shared).
+- **0 open spikes from the carried v0.8.0 backlog.** All resolved or accepted.
