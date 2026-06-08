@@ -11303,6 +11303,2763 @@ const mtfReadings: Record<string, MtfData> = {
       },
     ],
   },
+  "ttartisan-11mm-f2-8-fisheye-gfx": {
+    source: "https://www.ttartisan.com/?full-frame-lenses/62.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/2.8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.82, M: 0.82 },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: 0.96, M: null },
+              30: { S: 0.8, M: 0.82 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.97, M: 0.96 },
+              30: { S: 0.75, M: 0.82 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.97, M: 0.95 },
+              30: { S: 0.7, M: 0.82 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.97, M: 0.94 },
+              30: { S: 0.65, M: 0.83 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.97, M: 0.94 },
+              30: { S: 0.65, M: 0.84 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.96, M: null },
+              30: { S: 0.66, M: 0.82 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.64, M: 0.73 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.61, M: null },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/5.6",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.81, M: 0.81 },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.79, M: 0.81 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.74, M: 0.81 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.92, M: null },
+              30: { S: 0.67, M: 0.8 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.91, M: 0.94 },
+              30: { S: 0.61, M: 0.79 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.9, M: 0.93 },
+              30: { S: 0.58, M: 0.77 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.9, M: 0.93 },
+              30: { S: 0.58, M: 0.76 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.9, M: 0.93 },
+              30: { S: 0.59, M: 0.77 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.9, M: 0.93 },
+              30: { S: 0.59, M: 0.78 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.9, M: 0.94 },
+              30: { S: 0.58, M: 0.8 },
+            },
+          },
+          {
+            position: 20.5,
+            samples: {
+              10: { S: 0.89, M: 0.94 },
+              30: { S: 0.55, M: 0.79 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-23mm-f1-4": {
+    source: "https://www.ttartisan.com/?aps-c-lenses/76.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/1.4",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.57, M: 0.92 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.55, M: 0.92 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.55, M: 0.93 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.57, M: 0.93 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.93, M: 0.92 },
+              30: { S: 0.57, M: 0.93 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.92, M: 0.9 },
+              30: { S: 0.53, M: 0.92 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.9, M: 0.86 },
+              30: { S: 0.51, M: 0.9 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.88, M: 0.8 },
+              30: { S: 0.5, M: 0.88 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.85, M: 0.71 },
+              30: { S: 0.5, M: 0.84 },
+            },
+          },
+          {
+            position: 20.5,
+            samples: {
+              10: { S: null, M: 0.58 },
+              30: { S: 0.35, M: 0.78 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/5.6",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.81, M: 0.81 },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.82, M: 0.82 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.85, M: 0.83 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.87, M: 0.83 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.87, M: 0.81 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.84, M: 0.78 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.8, M: 0.75 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.76, M: 0.74 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.77, M: null },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.82, M: null },
+            },
+          },
+          {
+            position: 20.5,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.86, M: null },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-25mm-f2-0": {
+    source: "https://www.ttartisan.com/?aps-c-lenses/78.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/2",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.95, M: null },
+              30: { S: null, M: 0.76 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.96, M: null },
+              30: { S: null, M: 0.75 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.95, M: null },
+              30: { S: null, M: 0.71 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: 0.66 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: null, M: 0.91 },
+              30: { S: 0.6, M: 0.62 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: null, M: 0.9 },
+              30: { S: 0.54, M: 0.61 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: null, M: 0.9 },
+              30: { S: 0.56, M: null },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: null, M: 0.88 },
+              30: { S: 0.49, M: null },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.31, M: null },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.79, M: 0.79 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.79, M: 0.81 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.79, M: 0.81 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.79, M: 0.81 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.77, M: null },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.92, M: null },
+              30: { S: 0.75, M: null },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.92, M: null },
+              30: { S: 0.74, M: null },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.92, M: 0.91 },
+              30: { S: 0.78, M: null },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.92, M: 0.88 },
+              30: { S: 0.79, M: null },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-35mm-f1-4": {
+    source: "https://www.ttartisan.com/?aps-c-lenses/71.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/1.4",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.58, M: null },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.9, M: 0.91 },
+              30: { S: 0.57, M: 0.56 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.88, M: 0.9 },
+              30: { S: 0.56, M: 0.53 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.88, M: 0.89 },
+              30: { S: 0.55, M: 0.49 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.88, M: 0.87 },
+              30: { S: 0.54, M: 0.45 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.88, M: 0.85 },
+              30: { S: 0.52, M: 0.41 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.87, M: 0.83 },
+              30: { S: 0.49, M: 0.4 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.83, M: 0.79 },
+              30: { S: 0.41, M: 0.39 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.75, M: 0.73 },
+              30: { S: 0.4, M: 0.34 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: 0.28 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: 0.8 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.8, M: 0.81 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.8, M: 0.81 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.8, M: 0.81 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.8, M: 0.8 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.77, M: 0.8 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.76, M: 0.79 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.76, M: 0.76 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.94, M: 0.91 },
+              30: { S: 0.66, M: 0.78 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: 0.94, M: 0.86 },
+              30: { S: 0.47, M: 0.8 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-40mm-f2-8-macro": {
+    source: "https://www.ttartisan.com/?aps-c-lenses/75.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/2.8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.77, M: 0.77 },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: null, M: 0.96 },
+              30: { S: 0.76, M: 0.77 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: null, M: 0.96 },
+              30: { S: 0.73, M: 0.77 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.93, M: 0.96 },
+              30: { S: 0.7, M: 0.77 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.91, M: 0.96 },
+              30: { S: 0.67, M: 0.77 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.89, M: 0.95 },
+              30: { S: 0.64, M: 0.76 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.87, M: 0.96 },
+              30: { S: 0.61, M: 0.75 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.84, M: 0.96 },
+              30: { S: 0.58, M: 0.75 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.82, M: 0.95 },
+              30: { S: 0.57, M: 0.72 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.81, M: null },
+              30: { S: 0.55, M: 0.64 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: 0.8, M: null },
+              30: { S: 0.53, M: null },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.81, M: 0.81 },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.81, M: 0.82 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.81, M: 0.82 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.8, M: 0.82 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.8, M: 0.82 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.79, M: 0.81 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.78, M: 0.79 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.77, M: null },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.76, M: null },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.76, M: null },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.78, M: null },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-500mm-f6-3": {
+    source: "https://www.ttartisan.com/?full-frame-lenses/500-F6-3.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/6.3",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: null, M: 0.86 },
+              30: { S: 0.5, M: null },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: null, M: 0.86 },
+              30: { S: 0.51, M: null },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.86, M: 0.87 },
+              30: { S: 0.51, M: null },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.86, M: 0.87 },
+              30: { S: 0.51, M: null },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.86, M: 0.87 },
+              30: { S: 0.51, M: 0.45 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.85, M: null },
+              30: { S: 0.51, M: 0.43 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.85, M: null },
+              30: { S: 0.5, M: 0.4 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.83, M: null },
+              30: { S: null, M: 0.36 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.82, M: null },
+              30: { S: null, M: 0.32 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/11",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: 0.88, M: null },
+              30: { S: null, M: 0.68 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.89, M: null },
+              30: { S: 0.67, M: 0.68 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.89, M: null },
+              30: { S: 0.67, M: 0.68 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.88, M: null },
+              30: { S: 0.66, M: 0.68 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.88, M: null },
+              30: { S: 0.65, M: 0.68 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.88, M: 0.88 },
+              30: { S: 0.63, M: 0.68 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.88, M: 0.87 },
+              30: { S: 0.6, M: 0.68 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.88, M: 0.87 },
+              30: { S: 0.57, M: 0.67 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.88, M: 0.86 },
+              30: { S: 0.53, M: 0.65 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-500mm-f6-3-gfx": {
+    source: "https://www.ttartisan.com/?full-frame-lenses/500-F6-3.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/6.3",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: null, M: 0.86 },
+              30: { S: 0.5, M: null },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: null, M: 0.86 },
+              30: { S: 0.51, M: null },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.86, M: 0.87 },
+              30: { S: 0.51, M: null },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.86, M: 0.87 },
+              30: { S: 0.51, M: null },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.86, M: 0.87 },
+              30: { S: 0.51, M: 0.45 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.85, M: null },
+              30: { S: 0.51, M: 0.43 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.85, M: null },
+              30: { S: 0.5, M: 0.4 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.83, M: null },
+              30: { S: null, M: 0.36 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.82, M: null },
+              30: { S: null, M: 0.32 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/11",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: 0.88, M: null },
+              30: { S: null, M: 0.68 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.89, M: null },
+              30: { S: 0.67, M: 0.68 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.89, M: null },
+              30: { S: 0.67, M: 0.68 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.88, M: null },
+              30: { S: 0.66, M: 0.68 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.88, M: null },
+              30: { S: 0.65, M: 0.68 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.88, M: 0.88 },
+              30: { S: 0.63, M: 0.68 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.88, M: 0.87 },
+              30: { S: 0.6, M: 0.68 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.88, M: 0.87 },
+              30: { S: 0.57, M: 0.67 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.88, M: 0.86 },
+              30: { S: 0.53, M: 0.65 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-50mm-f1-2": {
+    source: "https://www.ttartisan.com/?aps-c-lenses/73.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/1.2",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.88, M: 0.88 },
+              30: { S: 0.41, M: 0.41 },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: null, M: 0.9 },
+              30: { S: 0.43, M: 0.44 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: null, M: 0.9 },
+              30: { S: 0.46, M: 0.49 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.9, M: 0.91 },
+              30: { S: 0.5, M: 0.53 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.89, M: 0.91 },
+              30: { S: 0.5, M: 0.53 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.87, M: 0.89 },
+              30: { S: 0.46, M: 0.47 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.85, M: null },
+              30: { S: 0.41, M: 0.41 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.84, M: null },
+              30: { S: 0.39, M: null },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.86, M: null },
+              30: { S: 0.46, M: null },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.88, M: null },
+              30: { S: 0.48, M: null },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.4, M: null },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/5.6",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.78, M: 0.78 },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.79, M: null },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.81, M: null },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.84, M: 0.83 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.85, M: 0.83 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.83, M: 0.79 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.78, M: 0.75 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.73, M: 0.7 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.72, M: 0.72 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.77, M: 0.76 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.84, M: 0.69 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-50mm-f2-0": {
+    source: "https://www.ttartisan.com/?full-frame-lenses/TTArtisan-50-F2.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/2",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.75, M: 0.75 },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.75, M: 0.76 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.74, M: 0.77 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: null, M: 0.94 },
+              30: { S: 0.73, M: 0.78 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: null, M: 0.93 },
+              30: { S: 0.7, M: 0.76 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: null, M: 0.9 },
+              30: { S: 0.64, M: 0.7 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: null, M: 0.87 },
+              30: { S: 0.61, M: 0.63 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.92, M: 0.81 },
+              30: { S: 0.58, M: null },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.89, M: null },
+              30: { S: 0.54, M: null },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.85, M: null },
+              30: { S: 0.48, M: null },
+            },
+          },
+          {
+            position: 20.5,
+            samples: {
+              10: { S: 0.79, M: null },
+              30: { S: 0.41, M: null },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.8, M: 0.8 },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: null, M: 0.95 },
+              30: { S: 0.8, M: 0.8 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.8, M: 0.81 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.94, M: 0.96 },
+              30: { S: 0.79, M: 0.81 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.94, M: 0.96 },
+              30: { S: 0.78, M: 0.82 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.94, M: 0.95 },
+              30: { S: 0.75, M: 0.82 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.94, M: 0.95 },
+              30: { S: 0.72, M: 0.81 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.93, M: 0.95 },
+              30: { S: 0.68, M: 0.79 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.92, M: 0.94 },
+              30: { S: 0.64, M: 0.77 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.92, M: 0.94 },
+              30: { S: 0.61, M: 0.77 },
+            },
+          },
+          {
+            position: 20.5,
+            samples: {
+              10: { S: 0.9, M: 0.94 },
+              30: { S: 0.56, M: 0.77 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-7-5mm-f2-0-fisheye": {
+    source: "https://www.ttartisan.com/?aps-c-lenses/72.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/2",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.71, M: 0.71 },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.95, M: null },
+              30: { S: null, M: 0.72 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.95, M: null },
+              30: { S: 0.73, M: 0.75 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.95, M: null },
+              30: { S: 0.69, M: 0.75 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.95, M: null },
+              30: { S: 0.61, M: 0.72 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.94, M: 0.91 },
+              30: { S: 0.54, M: 0.67 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.94, M: 0.9 },
+              30: { S: 0.53, M: 0.66 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: null, M: 0.9 },
+              30: { S: 0.49, M: 0.7 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: null, M: 0.9 },
+              30: { S: 0.46, M: 0.69 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: null, M: 0.91 },
+              30: { S: 0.53, M: 0.58 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: null, M: 0.92 },
+              30: { S: null, M: 0.57 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.77, M: 0.77 },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.77, M: 0.78 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.77, M: 0.79 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.76, M: 0.8 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.93, M: 0.92 },
+              30: { S: 0.73, M: 0.8 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.94, M: 0.92 },
+              30: { S: 0.7, M: 0.79 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.93, M: 0.92 },
+              30: { S: 0.69, M: 0.77 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.93, M: 0.92 },
+              30: { S: 0.7, M: 0.77 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.93, M: 0.91 },
+              30: { S: 0.69, M: 0.78 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.93, M: 0.91 },
+              30: { S: 0.65, M: 0.79 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: 0.93, M: 0.9 },
+              30: { S: 0.58, M: 0.79 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-90mm-f1-25-gfx": {
+    source: "https://www.ttartisan.com/?full-frame-lenses/56.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/1.25",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.57, M: 0.92 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.55, M: 0.92 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.55, M: 0.93 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.57, M: 0.93 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.93, M: 0.92 },
+              30: { S: 0.57, M: 0.93 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.92, M: 0.9 },
+              30: { S: 0.53, M: 0.92 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.9, M: 0.86 },
+              30: { S: 0.51, M: 0.9 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.88, M: 0.8 },
+              30: { S: 0.5, M: 0.88 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.85, M: 0.71 },
+              30: { S: 0.5, M: 0.84 },
+            },
+          },
+          {
+            position: 20.5,
+            samples: {
+              10: { S: null, M: 0.58 },
+              30: { S: 0.35, M: 0.78 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/5.6",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.81, M: 0.81 },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.82, M: 0.82 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.85, M: 0.83 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.87, M: 0.83 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.87, M: 0.81 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.84, M: 0.78 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.8, M: 0.75 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.76, M: 0.74 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.77, M: null },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.82, M: null },
+            },
+          },
+          {
+            position: 20.5,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.86, M: null },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-af-27mm-f2-8": {
+    source: "https://www.ttartisan.com/?af-lens/38.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/2.8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.77, M: 0.77 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.77, M: 0.8 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.95, M: null },
+              30: { S: 0.78, M: 0.81 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.95, M: null },
+              30: { S: 0.75, M: 0.8 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.71, M: 0.8 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.7, M: 0.79 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.75, M: 0.8 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.95, M: 0.93 },
+              30: { S: 0.8, M: 0.83 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.94, M: 0.92 },
+              30: { S: 0.77, M: 0.82 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.74, M: 0.74 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.76, M: 0.76 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.79, M: 0.79 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.81, M: 0.81 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.81, M: 0.81 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.8, M: 0.8 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.78, M: 0.78 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.79, M: 0.79 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.8, M: 0.8 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-af-35mm-f1-8": {
+    source: "https://www.ttartisan.com/?af-lens/AF-35-II.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/1.8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.77, M: 0.79 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.74, M: 0.8 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: null, M: 0.94 },
+              30: { S: 0.72, M: 0.77 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: null, M: 0.93 },
+              30: { S: 0.67, M: 0.71 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.91, M: 0.92 },
+              30: { S: 0.56, M: 0.67 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.91, M: 0.92 },
+              30: { S: 0.54, M: 0.64 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.91, M: 0.92 },
+              30: { S: 0.63, M: 0.68 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.9, M: null },
+              30: { S: 0.63, M: 0.67 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.89, M: null },
+              30: { S: 0.58, M: null },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/5.6",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.84, M: 0.84 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.86, M: 0.83 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.95, M: null },
+              30: { S: 0.86, M: 0.82 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.85, M: 0.8 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.81, M: 0.79 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.79, M: 0.77 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.78, M: 0.76 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.95, M: 0.93 },
+              30: { S: 0.85, M: 0.73 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.95, M: 0.91 },
+              30: { S: 0.82, M: 0.67 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-af-56mm-f1-8": {
+    source: "https://www.ttartisan.com/?af-lens/AF-56.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/1.8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.88, M: null },
+              30: { S: null, M: 0.6 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.89, M: null },
+              30: { S: 0.55, M: 0.6 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.91, M: 0.9 },
+              30: { S: 0.55, M: 0.6 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.91, M: 0.9 },
+              30: { S: 0.55, M: 0.62 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.91, M: 0.9 },
+              30: { S: 0.54, M: 0.63 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.91, M: 0.89 },
+              30: { S: 0.52, M: 0.62 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.91, M: 0.87 },
+              30: { S: 0.49, M: null },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.88, M: 0.87 },
+              30: { S: 0.45, M: null },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: 0.4, M: null },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/5.6",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.82, M: 0.82 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.83, M: 0.81 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.94, M: null },
+              30: { S: 0.84, M: 0.8 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.94, M: 0.93 },
+              30: { S: 0.84, M: 0.78 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.94, M: 0.93 },
+              30: { S: 0.84, M: 0.74 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.94, M: 0.92 },
+              30: { S: 0.83, M: 0.7 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.94, M: 0.91 },
+              30: { S: 0.82, M: 0.65 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.94, M: 0.89 },
+              30: { S: 0.82, M: 0.56 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.94, M: 0.87 },
+              30: { S: 0.83, M: null },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-af-75mm-f2-0": {
+    source: "https://www.ttartisan.com/?af-lens/FF-AF75.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/2",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.83, M: 0.83 },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: 0.95, M: 0.97 },
+              30: { S: 0.79, M: 0.82 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.76, M: 0.77 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.73, M: 0.74 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.92, M: 0.93 },
+              30: { S: 0.69, M: 0.72 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.89, M: 0.93 },
+              30: { S: 0.62, M: 0.71 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.86, M: 0.91 },
+              30: { S: 0.58, M: 0.69 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.82, M: 0.9 },
+              30: { S: 0.55, M: 0.68 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.8, M: 0.89 },
+              30: { S: 0.56, M: 0.66 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.75, M: 0.87 },
+              30: { S: 0.55, M: 0.6 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/5.6",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.88, M: 0.88 },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.88, M: null },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.87, M: null },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.87, M: 0.86 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.87, M: 0.83 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.86, M: 0.78 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.83, M: 0.72 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.8, M: 0.68 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.73, M: 0.69 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.78, M: 0.63 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-tilt-35mm-f1-4": {
+    source: "https://www.ttartisan.com/?aps-c-lenses/Tilt-C-35.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/1.4",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: null, M: 0.91 },
+              30: { S: 0.58, M: null },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.9, M: 0.9 },
+              30: { S: 0.57, M: 0.56 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.88, M: 0.89 },
+              30: { S: 0.56, M: 0.53 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.87, M: 0.88 },
+              30: { S: 0.54, M: 0.49 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.87, M: 0.86 },
+              30: { S: 0.53, M: 0.45 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.87, M: 0.84 },
+              30: { S: 0.51, M: 0.41 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.86, M: 0.82 },
+              30: { S: 0.49, M: 0.4 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.82, M: 0.78 },
+              30: { S: 0.4, M: 0.39 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: null, M: 0.72 },
+              30: { S: null, M: 0.33 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: 0.27 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: null, M: null },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.79, M: null },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.8, M: 0.79 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.8, M: 0.79 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.93, M: null },
+              30: { S: 0.8, M: 0.79 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.92, M: null },
+              30: { S: 0.79, M: 0.79 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.92, M: null },
+              30: { S: 0.79, M: 0.76 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.92, M: null },
+              30: { S: 0.78, M: 0.75 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.92, M: null },
+              30: { S: 0.75, M: 0.74 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.93, M: 0.9 },
+              30: { S: 0.78, M: 0.64 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "ttartisan-tilt-50mm-f1-4": {
+    source: "https://www.ttartisan.com/?full-frame-lenses/60.html",
+    mtfType: "computed",
+    charts: [
+      {
+        aperture: "f/1.4",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.75, M: 0.75 },
+              30: { S: null, M: null },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: 0.75, M: 0.77 },
+              30: { S: 0.27, M: null },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.75, M: 0.8 },
+              30: { S: 0.28, M: null },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.76, M: 0.77 },
+              30: { S: 0.26, M: null },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.7, M: 0.74 },
+              30: { S: 0.21, M: 0.28 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.64, M: 0.71 },
+              30: { S: 0.16, M: 0.27 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.61, M: 0.67 },
+              30: { S: 0.12, M: 0.25 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.54, M: 0.63 },
+              30: { S: 0.09, M: 0.23 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.45, M: null },
+              30: { S: 0.09, M: 0.16 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.33, M: null },
+              30: { S: 0.08, M: 0.09 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/8",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.74, M: 0.74 },
+            },
+          },
+          {
+            position: 2.05,
+            samples: {
+              10: { S: null, M: 0.93 },
+              30: { S: 0.73, M: 0.75 },
+            },
+          },
+          {
+            position: 4.1,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.71, M: 0.75 },
+            },
+          },
+          {
+            position: 6.15,
+            samples: {
+              10: { S: 0.92, M: 0.93 },
+              30: { S: 0.67, M: 0.76 },
+            },
+          },
+          {
+            position: 8.2,
+            samples: {
+              10: { S: 0.9, M: 0.93 },
+              30: { S: 0.61, M: 0.76 },
+            },
+          },
+          {
+            position: 10.25,
+            samples: {
+              10: { S: 0.9, M: 0.93 },
+              30: { S: 0.57, M: 0.75 },
+            },
+          },
+          {
+            position: 12.3,
+            samples: {
+              10: { S: 0.9, M: 0.93 },
+              30: { S: 0.55, M: 0.73 },
+            },
+          },
+          {
+            position: 14.35,
+            samples: {
+              10: { S: 0.9, M: 0.92 },
+              30: { S: 0.56, M: 0.71 },
+            },
+          },
+          {
+            position: 16.4,
+            samples: {
+              10: { S: 0.9, M: 0.92 },
+              30: { S: 0.61, M: 0.73 },
+            },
+          },
+          {
+            position: 18.45,
+            samples: {
+              10: { S: 0.89, M: 0.93 },
+              30: { S: 0.54, M: 0.75 },
+            },
+          },
+        ],
+      },
+    ],
+  },
 };
 
 export { mtfReadings };
