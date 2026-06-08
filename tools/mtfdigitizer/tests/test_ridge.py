@@ -74,6 +74,39 @@ def test_strip_chrome_ignores_pixels_outside_plot_box() -> None:
     assert cleaned[50, :].sum() == 100
 
 
+def test_strip_chrome_zeros_plot_box_border_rows_unconditionally() -> None:
+    """Regression for #1090. The X-axis border lines at y_top / y_bottom
+    must always be stripped — the TTartisan 100mm-macro chart's bottom
+    border had only 87% coverage (under the 90% threshold) and was
+    selected as a high-coverage 'curve' at MTF=0, hijacking the
+    freq30S slot from the real grey S30_F2.8 curve at MTF~0.78.
+
+    Border rows are chrome by construction: a curve cannot legitimately
+    sit exactly at MTF=0 or MTF=1 — those y coordinates are the plot
+    frame, not data.
+    """
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    # Sub-threshold ink on both border rows (87% coverage like #1090).
+    mask[20, 0:87] = 1  # y_top border, 87% width — would slip 90% gate
+    mask[80, 0:87] = 1  # y_bottom border, same
+    cleaned = _strip_chrome(mask, _box(y_top=20, y_bottom=80))
+    assert cleaned[20, :].sum() == 0, "y_top border row not stripped"
+    assert cleaned[80, :].sum() == 0, "y_bottom border row not stripped"
+
+
+def test_strip_chrome_keeps_curve_ink_just_inside_borders() -> None:
+    """A curve sample one pixel inside the y_top / y_bottom borders is
+    real data and MUST survive the border-strip. Distinguishes border
+    chrome from a curve that happens to peak/trough near the frame.
+    """
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    mask[21, 10:30] = 1  # one pixel inside y_top — real curve ink
+    mask[79, 10:30] = 1  # one pixel inside y_bottom — real curve ink
+    cleaned = _strip_chrome(mask, _box(y_top=20, y_bottom=80))
+    assert cleaned[21, 10:30].sum() == 20
+    assert cleaned[79, 10:30].sum() == 20
+
+
 # --- _cluster_into_tracks ------------------------------------------------
 
 

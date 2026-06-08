@@ -333,6 +333,55 @@ def check_in_range(
     return violations
 
 
+def check_no_consecutive_zeros(
+    readings: tuple[SampledReading, ...],
+) -> list[PriorViolation]:
+    """Flag 3+ consecutive 0.00 readings on a single field.
+
+    Regression guard for #1090. The TTartisan 100mm-macro extraction
+    leaked freq30S = 0.00 across 7 consecutive positions because the
+    plot-box bottom border (MTF=0) was being mis-tracked as the
+    grey S30 curve. A real lens curve cannot legitimately bottom out
+    at exactly 0.00 for 3+ consecutive positions — even the worst
+    corner of the worst lens has small but non-zero contrast.
+
+    A real "missing reading" returns `None`, not `0.00`. A literal
+    0.00 chain almost always indicates: (a) the extractor latched
+    onto the plot-frame X-axis, (b) the dispatch mis-assigned a
+    chrome track to a curve slot, or (c) the y_pixel_to_mtf clamp
+    fired repeatedly. All three are extractor bugs, not data.
+    """
+    violations: list[PriorViolation] = []
+    for field in _fields_present(readings):
+        values = _values_for_field(readings, field)
+        i = 0
+        n = len(values)
+        while i < n:
+            if values[i] != 0.0:
+                i += 1
+                continue
+            # Found start of a 0.00 run; consume the whole chain.
+            run_start = i
+            while i < n and values[i] == 0.0:
+                i += 1
+            run_length = i - run_start
+            if run_length >= 3:
+                violations.append(
+                    PriorViolation(
+                        prior_name="no_consecutive_zeros",
+                        field=field,
+                        position_index=run_start,
+                        detail=(
+                            f"{run_length} consecutive 0.00 readings on "
+                            f"{field} starting at position {run_start}; "
+                            f"suggests extractor latched onto chart "
+                            f"chrome rather than the curve"
+                        ),
+                    )
+                )
+    return violations
+
+
 # --- Aggregator ------------------------------------------------------
 
 
@@ -341,6 +390,7 @@ _ALL_PRIORS = (
     check_low_freq_ge_high,
     check_not_suspiciously_flat,
     check_in_range,
+    check_no_consecutive_zeros,
 )
 
 # Backwards-compat alias for the legacy function name. The new name
