@@ -1,6 +1,6 @@
 """Scaffold maintainer eye-read helpers for a Tier 1 anchor.
 
-For a given anchor slug, generates three artifacts in the lens's
+For a given anchor slug, generates two artifacts in the lens's
 `docs/optical-specs/<slug>/` folder:
 
 1. **`<view-stem>-readhelper.png`** — 3x upscale of the view's base
@@ -9,21 +9,27 @@ For a given anchor slug, generates three artifacts in the lens's
    view (per frequency for `fujifilm-permfreq`, per aperture for
    `ttartisan-4color-dual-aperture`).
 
-2. **`eye-read-template.md`** — fill-in table the maintainer
-   completes by eye-reading the source PNG against the printed
-   gridlines. One table per view, columns per (frequency, S|M)
-   pair.
+2. **`eye-read.md`** — single document (per ADR-048) holding both
+   the legend / reading procedure AND the per-cell values. Cells are
+   pre-populated with the extractor's predictions. The maintainer
+   reviews each cell against the source PNG and:
 
-3. **`extractor-prediction.md`** — extractor's reading of each
-   sample position. NOT ground truth — a starting point for
-   maintainer validation. The maintainer scans against the source
-   PNG, accepts cells that look right, overwrites cells that look
-   wrong, then copies the validated values into the `_<LENS>_GT`
-   tuple in `referenceset/charts.py`.
+   - leaves cells they judge correct as-is (silent verification);
+   - overwrites wrong cells and appends `!` (e.g. `0.45!`);
+   - appends `?` to cells they couldn't read (becomes `None` in GT).
 
-The agent does NOT eye-read these values — that is the maintainer's
-job (`feedback_agent_no_gt_eye_read`). This script only scaffolds
-the artifacts the maintainer reads.
+   Then the agent transcribes the file into the `_<LENS>_GT` tuple
+   via ``py -m mtfdigitizer.eyeread <slug> --apply``.
+
+On re-run (after an extractor change, for example), the scaffolder
+PRESERVES `!` and `?` marks and refreshes unmarked cells from the
+new extractor predictions. The header text and legend are always
+regenerated.
+
+The agent does NOT propose cell values of its own — that is the
+maintainer's job (`feedback_agent_no_gt_eye_read`). The scaffolder
+publishes the extractor's predictions as a starting point for the
+maintainer to verify or correct.
 
 Supported style families:
 
@@ -546,25 +552,59 @@ def _ttartisan_dual_aperture_extras(chart: ReferenceChart) -> StyleFamilyExtras:
 # --- Markdown renderers --------------------------------------------------
 
 
-def _render_eye_read_template(
-    chart: ReferenceChart, views: list[HelperView]
+def _render_eye_read(
+    chart: ReferenceChart,
+    views: list[HelperView],
+    existing_marks: dict[tuple[str, str, int], "Cell"] | None = None,
 ) -> str:
-    """Markdown body for `eye-read-template.md` — one table per view."""
+    """Markdown body for `eye-read.md` — legend + one table per view.
+
+    Tables are pre-populated with the extractor's predictions. If
+    `existing_marks` is provided (from parsing the prior eye-read.md),
+    each `!` or `?`-marked cell keeps its previous value and mark,
+    overriding the fresh extractor prediction. The mapping key is
+    ``(view_heading, column_header, row_index)`` — stable identifiers
+    that survive header rewording when the lens display name changes.
+    """
+    from mtfdigitizer.eyeread import Cell as ParsedCell, format_cell  # noqa: PLC0415
     fractions_mm = tuple(round(f * chart.image_height_mm, 1) for f in SAMPLE_FRACTIONS)
     fractions_csv = ", ".join(f"{m:.1f}" for m in fractions_mm)
     extras = _extras_for(chart)
 
     lines: list[str] = []
-    lines.append(f"# Eye-read template — {_lens_display_name(chart)}")
+    lines.append(f"# Eye-read — {_lens_display_name(chart)}")
     lines.append("")
     lines.append(
         f"Tier 1 anchor for the `{chart.style_family}` style family. "
-        f"Maintainer fills in the MTF values below by reading the source "
-        f"PNG(s) against the printed gridlines, then copies the tuples "
-        f"into `_<LENS>_GT` in `tools/mtfdigitizer/referenceset/charts.py`."
+        f"Cells below are pre-populated with the extractor's predictions. "
+        f"The maintainer reads each cell against the source PNG; per "
+        f"ADR-048 each cell has one of three states:"
     )
     lines.append("")
-    lines.append("Per [[feedback_agent_no_gt_eye_read]] the agent does NOT fill these in.")
+    lines.append(
+        "- bare number (`0.43`) — extractor's prediction, maintainer "
+        "judged it fine (silent verification)"
+    )
+    lines.append(
+        "- number with `!` (`0.45!`) — maintainer-corrected; overrides "
+        "the extractor's value"
+    )
+    lines.append(
+        "- number with `?` (`0.43?`) or bare `?` — maintainer hasn't "
+        "read this cell; becomes `None` in the GT tuple"
+    )
+    lines.append("")
+    lines.append(
+        "When the extractor is re-run and predictions change, this file "
+        "preserves `!` and `?` marks and refreshes unmarked cells. The "
+        "header text and legend are regenerated from the scaffolder."
+    )
+    lines.append("")
+    lines.append(
+        "Per [[feedback_agent_no_gt_eye_read]] the agent does NOT propose "
+        "cell values of its own — the extractor predictions you see are "
+        "mechanical readings, not eye-reads."
+    )
     lines.append("")
     lines.append("## Reading procedure")
     lines.append("")
@@ -592,116 +632,66 @@ def _render_eye_read_template(
         "Read each cell at the intersection of the green vertical "
         "sample line and the curve, against the printed horizontal "
         "gridlines. Eye precision is ±0.02 (half a gridline tick). "
-        "Read to two decimals. Use `None` only when the curve "
-        "genuinely does not extend to that x position."
+        "Read to two decimals. Use `?` only when the curve genuinely "
+        "does not extend to that x position."
     )
     if extras.mtf_axis_legend:
         lines.append("")
         for bullet in extras.mtf_axis_legend:
             lines.append(f"- {bullet}")
     lines.append("")
-    lines.append("## Fill-in tables")
-    lines.append("")
-
-    for view in views:
-        lines.append(f"### {view.title}")
-        lines.append("")
-        header = "| Position (mm) | " + " | ".join(view.column_headers) + " |"
-        sep = "| ------------- | " + " | ".join(
-            ["---"] * len(view.column_headers)
-        ) + " |"
-        lines.append(header)
-        lines.append(sep)
-        for mm in fractions_mm:
-            row = f"| {mm:<13.1f} | " + " | ".join(
-                ["   "] * len(view.column_headers)
-            ) + " |"
-            lines.append(row)
-        lines.append("")
-
-    lines.append("## After filling in")
-    lines.append("")
-    lines.append(
-        "Copy each column into the matching tuple in "
-        "`tools/mtfdigitizer/referenceset/charts.py`:"
-    )
-    lines.append("")
-    if extras.gt_snippet:
-        lines.append(extras.gt_snippet)
-        lines.append("")
-    lines.append("Then run from `tools/`:")
-    lines.append("")
-    lines.append("```")
-    lines.append("py -m mtfdigitizer.calibrate")
-    lines.append("```")
-    lines.append("")
-    lines.append(
-        "The runner reports per-field median |Δ| and p95 |Δ| against "
-        "the extractor's output. Median |Δ| under ~0.04 means the "
-        "dispatch is calibrated; higher means an adjustment is needed."
-    )
-    lines.append("")
-    return "\n".join(lines)
-
-
-def _render_extractor_prediction(
-    chart: ReferenceChart, views: list[HelperView]
-) -> str:
-    """Markdown body for `extractor-prediction.md` — extractor's reading
-    of each cell, as a starting point for maintainer validation.
-    """
-    fractions_mm = tuple(round(f * chart.image_height_mm, 1) for f in SAMPLE_FRACTIONS)
-    fractions_csv = ", ".join(f"{m:.1f}" for m in fractions_mm)
-
-    lines: list[str] = []
-    lines.append(f"# Extractor prediction — {_lens_display_name(chart)}")
-    lines.append("")
-    lines.append(
-        "**NOT GROUND TRUTH.** This file holds the digitizer's reading "
-        "of each sample position. It exists to save eye-read time for "
-        "the maintainer: scan each cell against the source PNG, accept "
-        "what looks right (no edit), overwrite what looks wrong."
-    )
-    lines.append("")
-    lines.append(
-        "Per [[feedback_agent_no_gt_eye_read]] only maintainer-validated "
-        "values may land in `_<LENS>_GT` in `referenceset/charts.py`. "
-        "After scanning this table, transcribe the validated values "
-        "(adjusting any that disagree with the source) into the GT tuple."
-    )
-    lines.append("")
-    lines.append(
-        f"Sample positions (mm, image_height_mm = {chart.image_height_mm}): "
-        f"{fractions_csv}."
-    )
-    lines.append("")
 
     for view in views:
         lines.append(f"## {view.title}")
         lines.append("")
-        header = "| Position (mm) | " + " | ".join(view.column_headers) + " |"
+        header = "| Position (mm) | " + " | ".join(
+            h.ljust(5) for h in view.column_headers
+        ) + " |"
         sep = "| ------------- | " + " | ".join(
-            ["----"] * len(view.column_headers)
+            ["-----"] * len(view.column_headers)
         ) + " |"
         lines.append(header)
         lines.append(sep)
         readings = _extractor_readings_for_view(chart, view)
         for i, mm in enumerate(fractions_mm):
-            cells = []
-            for field in view.field_columns:
-                val = readings[i].get(field)
-                cells.append(f"{val:.2f}" if val is not None else "—   ")
-            lines.append(f"| {mm:<13.1f} | " + " | ".join(cells) + " |")
+            rendered_cells: list[str] = []
+            for col_idx, (field, header_text) in enumerate(
+                zip(view.field_columns, view.column_headers)
+            ):
+                key = (view.title, header_text, i)
+                cell = (existing_marks or {}).get(key)
+                if cell is not None and cell.mark in ("!", "?"):
+                    # Preserve marked cell.
+                    pass
+                else:
+                    extractor_val = readings[i].get(field)
+                    cell = ParsedCell(value=extractor_val, mark="")
+                rendered_cells.append(format_cell(cell, width=5))
+            lines.append(f"| {mm:<13.1f} | " + " | ".join(rendered_cells) + " |")
         lines.append("")
 
-    extras = _extras_for(chart)
+    lines.append("## Transcribing to GT")
+    lines.append("")
+    lines.append(
+        "After updating the cells above, ask the agent to transcribe — "
+        "or run from `tools/`:"
+    )
+    lines.append("")
+    lines.append("```")
+    lines.append(f"py -m mtfdigitizer.eyeread {chart.slug} --apply")
+    lines.append("py -m mtfdigitizer.calibrate")
+    lines.append("```")
+    lines.append("")
+    lines.append(
+        "The first command rewrites `_<LENS>_GT` in "
+        "`tools/mtfdigitizer/referenceset/charts.py`. The second reports "
+        "per-field median |Δ| and p95 |Δ| against the extractor's output. "
+        "Median |Δ| under ~0.04 means the dispatch is calibrated; higher "
+        "means an adjustment is needed."
+    )
+    lines.append("")
     if extras.gt_snippet:
-        lines.append("## After validation")
-        lines.append("")
-        lines.append(
-            "Copy each column into the matching tuple in "
-            "`tools/mtfdigitizer/referenceset/charts.py`:"
-        )
+        lines.append("The resulting GT tuple shape:")
         lines.append("")
         lines.append(extras.gt_snippet)
         lines.append("")
@@ -789,6 +779,31 @@ def _to_slug(text: str) -> str:
 # --- Main ----------------------------------------------------------------
 
 
+def _load_existing_marks(path: Path):
+    """Read the prior eye-read.md (if any) and return a map of
+    (view_heading, column_header, row_index) → Cell for cells that
+    carry a `!` or `?` mark.
+
+    Returns ``None`` if the file doesn't exist (first scaffold) or
+    can't be parsed; the renderer falls back to fresh extractor
+    predictions everywhere.
+    """
+    if not path.exists():
+        return None
+    from mtfdigitizer.eyeread import parse_eye_read  # noqa: PLC0415
+    try:
+        views = parse_eye_read(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+    marks = {}
+    for view in views:
+        for i, (_position, fields) in enumerate(view.cells):
+            for header, cell in fields.items():
+                if cell.mark in ("!", "?"):
+                    marks[(view.heading, header, i)] = cell
+    return marks
+
+
 def _find_anchor(slug: str) -> ReferenceChart:
     for chart in REFERENCE_CHARTS:
         if chart.slug == slug:
@@ -854,15 +869,30 @@ def main(argv: list[str] | None = None) -> int:
         if _write_or_check(out_path, buf.getvalue(), write=args.write, check=args.check):
             any_changed = True
 
-    # Markdown templates.
-    eye_read = _render_eye_read_template(chart, views).encode("utf-8")
-    pred = _render_extractor_prediction(chart, views).encode("utf-8")
-    eye_read_path = lens_dir / "eye-read-template.md"
-    pred_path = lens_dir / "extractor-prediction.md"
+    # Eye-read.md — preserve `!` and `?` marks from the prior version.
+    eye_read_path = lens_dir / "eye-read.md"
+    existing_marks = _load_existing_marks(eye_read_path)
+    eye_read = _render_eye_read(chart, views, existing_marks).encode("utf-8")
     if _write_or_check(eye_read_path, eye_read, write=args.write, check=args.check):
         any_changed = True
-    if _write_or_check(pred_path, pred, write=args.write, check=args.check):
-        any_changed = True
+
+    # Clean up the pre-ADR-048 split files (extractor-prediction.md +
+    # eye-read-template.md). Removing them is part of the unification.
+    for legacy in ("extractor-prediction.md", "eye-read-template.md"):
+        legacy_path = lens_dir / legacy
+        if legacy_path.exists():
+            if args.check:
+                print(
+                    f"  legacy file present: {legacy_path.relative_to(REPO_ROOT)}",
+                    file=sys.stderr,
+                )
+                any_changed = True
+            elif args.write:
+                legacy_path.unlink()
+                print(
+                    f"  deleted: {legacy_path.relative_to(REPO_ROOT)}",
+                    file=sys.stderr,
+                )
 
     if args.check:
         if any_changed:

@@ -404,15 +404,16 @@ cd tools && py -m mtfdigitizer.scripts.scaffold_anchor_helpers <slug> --check  #
 ```
 
 For a Tier 1 anchor `<slug>` (i.e. a `ReferenceChart` whose
-`ground_truth` is set in `charts.py`), generates three maintainer
-eye-read artifacts in the lens's `docs/optical-specs/<slug>/`
-folder: per-view readhelper PNGs (3x upscale with green sample-
-position lines + mm labels at top, plus orange dashed gridlines
-filling in every 0.05 OTF the source chart does not print
-natively — ±0.02 eye-precision against a uniform 0.05 grid),
-`eye-read-template.md` (fill-in tables, one per view), and
-`extractor-prediction.md` (extractor's reading as a starting point
-for maintainer validation).
+`ground_truth` is set in `charts.py`), generates two maintainer
+artifacts in the lens's `docs/optical-specs/<slug>/` folder:
+per-view readhelper PNGs (3x upscale with green sample-position
+lines + mm labels at top, plus orange dashed gridlines filling in
+every 0.05 OTF the source chart does not print natively — ±0.02
+eye-precision against a uniform 0.05 grid), and `eye-read.md`
+(legend + tables pre-populated with the extractor's predictions —
+ADR-048's cell-level marking convention: bare = silent verification,
+`!` = corrected, `?` = unknown / will become None). On re-run the
+scaffolder PRESERVES `!`/`?` marks and refreshes unmarked cells.
 
 Style-family dispatch:
 
@@ -441,11 +442,14 @@ None placeholders + the preamble comment template; (2) add the slug
 to the brand scaffolder's `_TIER1_SKIP_SLUGS` so re-runs don't
 re-introduce the duplicate; (3) re-run the brand scaffolder
 (`--write`) so `_<brand>_tier2_charts.py` drops the entry; (4) run
-`scaffold_anchor_helpers <slug> --write` to emit the 3 maintainer
-artifacts; (5) maintainer eye-reads the helpers and fills the
-`_<LENS>_GT` tuple; (6) `py -m mtfdigitizer.calibrate` reports
-per-field median |Δ| against the new anchor. To add a new style
-family, extend `_resolve_helper_views` and `_extras_for` in
+`scaffold_anchor_helpers <slug> --write` to emit the readhelper
+PNGs + `eye-read.md`; (5) maintainer reviews `eye-read.md`,
+overwrites wrong cells with `!`, marks unreadable cells with `?`;
+(6) `py -m mtfdigitizer.eyeread <slug> --apply` transcribes the
+file into `_<LENS>_GT` in `charts.py`; (7)
+`py -m mtfdigitizer.calibrate` reports per-field median |Δ| against
+the new anchor. To add a new style family, extend
+`_resolve_helper_views` and `_extras_for` in
 `scaffold_anchor_helpers.py`.
 
 **Before authoring an `analysis.md` MTF charts list for a folder that
