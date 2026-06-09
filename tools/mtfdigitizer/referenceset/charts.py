@@ -248,23 +248,23 @@ _SEVENARTISANS_50_GT: GroundTruthCurves = {
 _TTARTISAN_50_GT: GroundTruthCurves = {
     "max": {  # f/1.2 — black/grey curves
         # Black solid — 10S — f/1.2 sagittal at 10 lp/mm
-        "freq10S": (None,) * 11,
+        "freq10S": (0.88, 0.89, 0.90, 0.92, 0.91, 0.88, 0.85, 0.83, 0.86, 0.88, 0.77),
         # Black dashed — 10M (chart label T10_F1.2) — f/1.2 tangential
-        "freq10M": (None,) * 11,
+        "freq10M": (0.88, 0.90, 0.90, 0.90, 0.90, 0.87, 0.85, 0.83, 0.79, 0.73, 0.60),
         # Grey solid — 30S — f/1.2 sagittal at 30 lp/mm
-        "freq30S": (None,) * 11,
+        "freq30S": (0.41, 0.43, 0.49, 0.53, 0.52, 0.46, 0.41, 0.40, 0.45, 0.48, 0.29),
         # Grey dashed — 30M (chart label T30_F1.2) — f/1.2 tangential
-        "freq30M": (None,) * 11,
+        "freq30M": (0.41, 0.42, 0.46, 0.50, 0.50, 0.45, 0.36, 0.30, 0.30, 0.36, 0.40),
     },
     "stopped": {  # f/5.6 — red/orange curves
         # Red solid — 10S — f/5.6 sagittal at 10 lp/mm
-        "freq10S": (None,) * 11,
+        "freq10S": (0.95, 0.95, 0.95, 0.95, 0.96, 0.95, 0.94, 0.93, 0.93, 0.95, 0.95),
         # Red dashed — 10M (chart label T10_F5.6) — f/5.6 tangential
-        "freq10M": (None,) * 11,
+        "freq10M": (0.95, 0.95, 0.95, 0.95, 0.95, 0.95, 0.94, 0.93, 0.93, 0.94, 0.93),
         # Orange solid — 30S — f/5.6 sagittal at 30 lp/mm
-        "freq30S": (None,) * 11,
+        "freq30S": (0.77, 0.79, 0.81, 0.84, 0.85, 0.83, 0.78, 0.73, 0.72, 0.77, 0.84),
         # Orange dashed — 30M (chart label T30_F5.6) — f/5.6 tangential
-        "freq30M": (None,) * 11,
+        "freq30M": (0.77, 0.79, 0.81, 0.83, 0.82, 0.79, 0.74, 0.70, 0.72, 0.76, 0.69),
     },
 }
 

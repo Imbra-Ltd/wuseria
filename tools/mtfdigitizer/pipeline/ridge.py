@@ -520,6 +520,130 @@ def _fill_coincident_column_gaps(
     )
 
 
+# Y-diversity tie-breaker bounds for `_pick_two_tracks_y_diverse` (#1095):
+# how much coverage must the 3rd-ranked track retain, and how much more
+# separated from the 1st must it be in mean_y, to win the 2nd slot over
+# the natural 2nd-ranked candidate.
+_DIVERSITY_3RD_COVERAGE_MIN_RATIO: float = 0.4
+_DIVERSITY_3RD_MEAN_Y_RATIO: float = 2.0
+
+
+def _pick_two_tracks_y_diverse(by_coverage: list[Track]) -> list[Track]:
+    """Pick two tracks from a coverage-sorted list, preferring y-diversity
+    when a closely-paired second candidate looks like a parallel halo.
+
+    Without diversity, ``by_coverage[:2]`` picks the two highest-coverage
+    tracks — which on TTartisan max-aperture grey (#1095) means the
+    solid grey line's top-edge and bottom-edge halos (10 px apart),
+    not the solid + dashed curves the field is supposed to encode.
+    The dashed T30 with its deep dip lands as the 3rd-ranked track and
+    gets dropped.
+
+    Rule: if the 3rd-ranked track has substantial coverage relative to
+    the 2nd (≥ ``_DIVERSITY_3RD_COVERAGE_MIN_RATIO``) AND it sits much
+    further from the 1st in mean_y than the 2nd does (≥
+    ``_DIVERSITY_3RD_MEAN_Y_RATIO`` × the 1st→2nd distance), the 3rd
+    track replaces the 2nd. The 2nd is then almost certainly a parallel
+    halo of the 1st rather than the field's second physical curve, and
+    the 3rd is the real second curve.
+
+    Black 10 lp/mm at f/1.2 verifies the negative case: tracks [0]+[1]
+    are 12 px apart (the genuine S10+T10 pair); the 3rd track has only
+    24% of the 2nd's coverage and sits 1.8× further → ratio test fails
+    → top-2 stays unchanged.
+    """
+    if len(by_coverage) < 3:
+        return by_coverage[:2]
+    first, second, third = by_coverage[0], by_coverage[1], by_coverage[2]
+    coverage_ratio = third.coverage / second.coverage if second.coverage else 0.0
+    first_to_second = abs(first.mean_y - second.mean_y)
+    first_to_third = abs(first.mean_y - third.mean_y)
+    if first_to_second == 0:
+        return [first, third]
+    mean_y_ratio = first_to_third / first_to_second
+    if (
+        coverage_ratio >= _DIVERSITY_3RD_COVERAGE_MIN_RATIO
+        and mean_y_ratio >= _DIVERSITY_3RD_MEAN_Y_RATIO
+    ):
+        return [first, third]
+    return [first, second]
+
+
+def _fill_coincident_column_gaps_extending(
+    track_a: Track,
+    track_b: Track,
+    column_runs: dict[int, int],
+) -> tuple[Track, Track]:
+    """Variant of `_fill_coincident_column_gaps` that also fills *outside*
+    a track's known x range, anchored on endpoint continuity.
+
+    The plain `_fill_coincident_column_gaps` fills only where both
+    tracks have *some* nearby known y to compare against. That works
+    for the Tokina case, where both curves span the full field and
+    coincidence is column-by-column. It does NOT work when one
+    physical curve runs through a long single-ridge coincidence region
+    at one end of the field and the other curve only appears in the
+    divergent region (TTartisan max-aperture #1095): the absent track
+    has no known y at the coincidence columns, so the original
+    function leaves it absent.
+
+    Generalisation: a single-run column attributes its value to BOTH
+    physical curves by B4 physics. Outside the absent track's known
+    x range, instead of comparing to its interpolated y (None), check
+    that the present track's value at this column lies within
+    `_COINCIDENCE_FILL_MAX_DY` of the absent track's *nearest endpoint*
+    y. If it does, the present track's y is continuous with the absent
+    track's curve at the boundary — extend the absent track by sharing
+    this column's value. If it doesn't, the curves are clearly
+    separated here and the column belongs only to the present track.
+    """
+    a_by_x: dict[int, float] = {x: y for x, y in track_a.points}
+    b_by_x: dict[int, float] = {x: y for x, y in track_b.points}
+
+    a_filled = dict(a_by_x)
+    b_filled = dict(b_by_x)
+
+    def _endpoint_y_nearest(track_by_x: dict[int, float], x: int) -> float | None:
+        if not track_by_x:
+            return None
+        xs = sorted(track_by_x)
+        if x < xs[0]:
+            return track_by_x[xs[0]]
+        if x > xs[-1]:
+            return track_by_x[xs[-1]]
+        return None  # inside range — caller already handled this case
+
+    for x, run_count in column_runs.items():
+        if run_count != 1:
+            continue
+        in_a = x in a_by_x
+        in_b = x in b_by_x
+        if in_a == in_b:
+            continue  # both have it or neither does
+        present, absent_by_x, present_filled, absent_filled = (
+            (a_by_x[x], b_by_x, a_filled, b_filled)
+            if in_a else
+            (b_by_x[x], a_by_x, b_filled, a_filled)
+        )
+        # First try the in-range nearest-y test (same as the plain
+        # function — required for the Tokina case to keep working).
+        other_y = _nearest_known_y(absent_by_x, x)
+        if other_y is None:
+            # Out-of-range case: anchor on the absent track's nearest
+            # endpoint instead. This handles the TTartisan case where
+            # one curve has no points yet in the coincidence region.
+            other_y = _endpoint_y_nearest(absent_by_x, x)
+        if other_y is None:
+            continue  # absent track is empty — nothing to anchor on
+        if abs(other_y - present) <= _COINCIDENCE_FILL_MAX_DY:
+            absent_filled[x] = present
+
+    return (
+        Track(points=tuple(sorted(a_filled.items()))),
+        Track(points=tuple(sorted(b_filled.items()))),
+    )
+
+
 def _densify_track(track: Track) -> Track:
     """Linearly interpolate between adjacent known points of a track.
 
@@ -634,6 +758,20 @@ def ridge_tracks_for_hue_freq_split(
     When only one track qualifies, both fields share its value (whole-
     curve coincidence — same physics as `ridge_tracks_for_hue`).
 
+    Partial-field coincidence (#1095): when the two physical curves
+    coincide over part of the field (e.g. left half) and diverge over
+    the rest (e.g. right half), the greedy clusterer assigns the
+    coincidence-region ridges to ONE track. The other track only
+    receives points from the divergent region. Without remediation,
+    the absent track's rasterization is empty across the coincidence
+    region — the sampler then reads neighbouring ink from the present
+    track for both fields, mixing the two curves. The fix:
+    `_fill_coincident_column_gaps_extending` shares single-ridge
+    column values into the absent track when the present value is
+    continuous with the absent track's nearest endpoint, attributing
+    the coincidence-region values to both curves as the B4 physics
+    requires.
+
     Distinct from:
       - `ridge_tracks_for_hue`: HUE_IS_CURVE; hue carries S or M, the
         two tracks within the hue are two frequencies (ranked by mean_y).
@@ -646,7 +784,13 @@ def ridge_tracks_for_hue_freq_split(
     cleaned = _strip_chrome(mask, plot_box)
     points = _extract_ridge_points(cleaned, plot_box)
     tracks = _cluster_into_tracks(points)
-    kept = _select_top_n_tracks(tracks, n=2, plot_width=plot_box.width + 1)
+    # Top-3 (not top-2): the y-diversity picker below needs visibility
+    # into the 3rd-ranked track to detect parallel-halo pairs and
+    # promote the real second curve out of 3rd place.
+    candidates = _select_top_n_tracks(tracks, n=3, plot_width=plot_box.width + 1)
+    kept = _pick_two_tracks_y_diverse(
+        sorted(candidates, key=lambda t: t.coverage, reverse=True)
+    )
 
     solid_sm, dashed_sm = ("M", "S") if dashed_is_sagittal else ("S", "M")
     out: dict[str, np.ndarray] = {}
@@ -661,8 +805,12 @@ def ridge_tracks_for_hue_freq_split(
         out[curve_field(freq, solid_sm)] = _rasterize(shared, mask.shape)
         out[curve_field(freq, dashed_sm)] = _rasterize(shared, mask.shape)
         return out
-    solid_track = _densify_track(by_coverage[0])
-    dashed_track = _densify_track(by_coverage[1])
+    column_runs = _column_run_count(cleaned, plot_box)
+    shared_solid, shared_dashed = _fill_coincident_column_gaps_extending(
+        by_coverage[0], by_coverage[1], column_runs
+    )
+    solid_track = _densify_track(shared_solid)
+    dashed_track = _densify_track(shared_dashed)
     out[curve_field(freq, solid_sm)] = _rasterize(solid_track, mask.shape)
     out[curve_field(freq, dashed_sm)] = _rasterize(dashed_track, mask.shape)
     return out

@@ -26,8 +26,8 @@
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
 <polyline class="curve curve-10" style="stroke:#c89b3c" points="36.0,20.6 62.8,20.8 89.6,20.6 116.4,21.0 143.2,21.0 170.0,21.3 196.8,21.7 223.6,22.2 250.4,22.2 277.2,22.7 304.0,21.3"/>
 <polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="36.0,20.6 62.8,20.8 89.6,20.6 116.4,21.0 143.2,21.0 170.0,21.3 196.8,21.7 223.6,22.2 250.4,22.2 277.2,22.7 304.0,21.3" stroke-dasharray="4 2"/>
-<polyline class="curve curve-30" style="stroke:#6b9bd2" points="36.0,41.7 62.8,42.4 89.6,42.6 116.4,43.5 143.2,44.7 170.0,46.3 196.8,47.7 223.6,49.1 250.4,50.5 277.2,51.0 304.0,47.5"/>
-<polyline class="curve curve-30 curve-m" style="stroke:#6b9bd2" points="36.0,41.7 62.8,41.4 89.6,40.8 116.4,40.5 143.2,41.2 170.0,43.1 196.8,45.9" stroke-dasharray="4 2"/>
+<polyline class="curve curve-30" style="stroke:#6b9bd2" points="36.0,41.7 62.8,42.1 89.6,42.6 116.4,43.5 143.2,44.7 170.0,46.3 196.8,47.7 223.6,49.1 250.4,50.5 277.2,51.0 304.0,47.5"/>
+<polyline class="curve curve-30 curve-m" style="stroke:#6b9bd2" points="36.0,41.7 62.8,42.1 89.6,41.7 116.4,40.8 143.2,41.7 170.0,43.5 196.8,47.0 223.6,49.1 250.4,50.0" stroke-dasharray="4 2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="36.0" cy="20.6" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="20.8" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="20.6" r="2"/>
@@ -51,7 +51,7 @@
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="277.2" cy="22.7" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="304.0" cy="21.3" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="36.0" cy="41.7" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="62.8" cy="42.4" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="62.8" cy="42.1" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="89.6" cy="42.6" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="116.4" cy="43.5" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="143.2" cy="44.7" r="2"/>
@@ -62,12 +62,14 @@
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="277.2" cy="51.0" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="304.0" cy="47.5" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="36.0" cy="41.7" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="62.8" cy="41.4" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="89.6" cy="40.8" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="116.4" cy="40.5" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="143.2" cy="41.2" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="170.0" cy="43.1" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="196.8" cy="45.9" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="62.8" cy="42.1" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="89.6" cy="41.7" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="116.4" cy="40.8" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="143.2" cy="41.7" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="170.0" cy="43.5" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="196.8" cy="47.0" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="223.6" cy="49.1" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="250.4" cy="50.0" r="2"/>
 <line x1="36" y1="209" x2="48" y2="209" stroke="#c89b3c" stroke-width="1.5"/>
 <text class="legend-text" x="51" y="212">10 lp/mm S</text>
 <line x1="92" y1="209" x2="104" y2="209" stroke="#c89b3c" stroke-width="1.5" stroke-dasharray="3 2"/>

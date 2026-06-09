@@ -151,9 +151,17 @@ def _fuji_permfreq_views(chart: ReferenceChart) -> list[HelperView]:
 
 
 def _ttartisan_dual_aperture_views(chart: ReferenceChart) -> list[HelperView]:
-    """TTartisan dual-aperture: one PNG per aperture; the base image
-    is the existing per-aperture overlay PNG when it exists, so the
-    target aperture's traced curves are visible.
+    """TTartisan dual-aperture: one PNG per aperture, sample-position
+    lines drawn over the **clean source chart** (never the extractor
+    overlay).
+
+    The readhelper's purpose is unbiased maintainer eye-reading. Layering
+    the extractor's traced curves underneath nudges the eye toward the
+    extractor's answer — exactly the bias the eye-read is meant to
+    catch. The clean chart stays the source of truth here; the overlay
+    PNG is used elsewhere (`*-overlay.png` + the review HTML) when the
+    maintainer specifically wants to compare extractor output against
+    the chart.
     """
     assert chart.plot_box is not None
     profile = profile_for_chart(chart)
@@ -163,19 +171,14 @@ def _ttartisan_dual_aperture_views(chart: ReferenceChart) -> list[HelperView]:
     )
     source_path = REPO_ROOT / chart.chart_path
     source_stem = source_path.stem
-    lens_dir = source_path.parent
     freqs = chart.frequencies_lpmm
 
     views: list[HelperView] = []
     for ap_label, f_number in zip(profile.apertures_per_chart, chart.apertures):
-        # Per-aperture overlay PNG from extract.py:_write_inspection_artifacts.
-        # Filename convention: `<source_stem>-<ap_label>-overlay.png`.
-        overlay_path = lens_dir / f"{source_stem}-{ap_label}-overlay.png"
-        base = overlay_path if overlay_path.exists() else source_path
         views.append(
             HelperView(
                 title=f"{f_number} ({ap_label})",
-                base_image_path=base,
+                base_image_path=source_path,
                 readhelper_filename=f"{source_stem}-{ap_label}-readhelper.png",
                 field_columns=tuple(
                     f"freq{f}{sm}" for f in freqs for sm in ("S", "M")
@@ -235,10 +238,11 @@ def _render_readhelper(
       11 sample fractions; **mm labels sit at the TOP** of each line
       (just above y_top) so they don't collide with the chart's own
       printed x-tick labels at the bottom of the plot.
-    - **Orange dashed half-step horizontal gridlines** (Fuji only —
-      controlled by `extras.readhelper_half_step_otf`) fill in the
-      0.1-step ticks Fuji's source chart doesn't print, letting the
-      maintainer eye-read at ~0.05 precision instead of ~0.10.
+    - **Orange dashed horizontal gridlines** (controlled by
+      `extras.readhelper_extra_otf`) fill in 0.05-step ticks the
+      source chart doesn't print natively, letting the maintainer
+      eye-read at ±0.02 precision (half a 0.05 tick) regardless of
+      the chart's native gridline density.
     """
     base = Image.open(view.base_image_path).convert("RGB")
     up = base.resize(
@@ -262,9 +266,10 @@ def _render_readhelper(
     target_label_h = max(8, min(plot_width_up // 60, 40))
     font = _load_label_font(target_label_h)
 
-    # Half-step horizontal gridlines (Fuji-only today). Drawn FIRST so
-    # the green sample lines render on top of them.
-    for otf in extras.readhelper_half_step_otf:
+    # Extra horizontal gridlines (filling the 0.05 grid the source
+    # chart doesn't print natively). Drawn FIRST so the green sample
+    # lines render on top of them.
+    for otf in extras.readhelper_extra_otf:
         y = int(plot_bottom_up - otf * plot_height_up)
         _draw_dashed_hline(
             draw,
@@ -275,8 +280,9 @@ def _render_readhelper(
             width=HALF_STEP_LINE_WIDTH_PX,
             dash_len=HALF_STEP_DASH_LEN_PX * UPSCALE_FACTOR,
         )
-        # Label the OTF value just right of the plot.
-        label = f"{otf:.1f}"
+        # Label the OTF value just right of the plot. Use 2 decimals so
+        # 0.05 / 0.15 / 0.25 / ... show their hundredths digit cleanly.
+        label = f"{otf:.2f}"
         bbox = draw.textbbox((0, 0), label, font=font)
         draw.text(
             (plot_right_up + 4 * UPSCALE_FACTOR, y - (bbox[3] - bbox[1]) // 2),
@@ -371,13 +377,15 @@ class StyleFamilyExtras:
     # exact `_<LENS>_GT` variable name and field names this family
     # uses. Maintainer pastes filled values into this shape.
     gt_snippet: str
-    # Half-step OTF fractions (0..1) at which to draw an orange dashed
-    # horizontal gridline on the readhelper PNG. Use for families
-    # whose source chart only prints every 0.2 OTF (Fuji) so the
-    # maintainer can eye-read at 0.1 precision. Empty tuple = no
-    # extra gridlines (families like TTartisan that already print
-    # every 0.1 OTF).
-    readhelper_half_step_otf: tuple[float, ...] = ()
+    # OTF fractions (0..1) at which to draw an orange dashed horizontal
+    # gridline on the readhelper PNG, on top of the chart's own printed
+    # gridlines. The eye-read target is a uniform 0.05 grid: every
+    # family supplies the fractions its source chart does NOT already
+    # print at 0.05 spacing. Fuji (prints every 0.2) supplies
+    # 0.05, 0.10, 0.15, ..., 0.95; TTartisan (prints every 0.1) supplies
+    # 0.05, 0.15, ..., 0.95. Empty tuple = no extra gridlines (no
+    # current family qualifies, but the option stays open).
+    readhelper_extra_otf: tuple[float, ...] = ()
 
 
 def _extras_for(chart: ReferenceChart) -> StyleFamilyExtras:
@@ -422,6 +430,7 @@ def _fuji_permfreq_extras(chart: ReferenceChart) -> StyleFamilyExtras:
         "Top of plot area → MTF 1.0",
         "Each printed gridline below it → 0.8, 0.6, 0.4, 0.2",
         "Bottom gridline → MTF 0.0",
+        "Orange dashed lines fill in every 0.05 between the printed gridlines",
     )
 
     # GT-snippet variable name: chart-slug-derived would be wrong; the
@@ -447,9 +456,14 @@ def _fuji_permfreq_extras(chart: ReferenceChart) -> StyleFamilyExtras:
         sample_line_warning=sample_line_warning,
         mtf_axis_legend=mtf_axis_legend,
         gt_snippet=gt_snippet,
-        # Fuji prints every 0.2 OTF; add half-step lines at 0.1/0.3/0.5/0.7/0.9
-        # so the readhelper supports 0.1-precision eye-reads.
-        readhelper_half_step_otf=(0.1, 0.3, 0.5, 0.7, 0.9),
+        # Fuji prints every 0.2 OTF; add lines at every 0.05 in
+        # between so the readhelper supports a uniform 0.05 grid
+        # (and ±0.02 eye-precision per ADR-046's eye-read scope).
+        readhelper_extra_otf=tuple(
+            round(0.05 * i, 2)
+            for i in range(1, 20)
+            if round(0.05 * i, 2) not in (0.2, 0.4, 0.6, 0.8)
+        ),
     )
 
 
@@ -471,20 +485,22 @@ def _ttartisan_dual_aperture_extras(chart: ReferenceChart) -> StyleFamilyExtras:
     gridlines every 0.1 OTF, two apertures pack into one PNG by color
     encoding, and the GT keys are profile labels not f-numbers.
     """
+    f_max, f_stopped = chart.apertures[0], chart.apertures[1]
     sample_line_warning = (
-        "**Important:** both apertures are packed into one chart by color "
-        "encoding — black/grey curves are the max-aperture pass (f/1.2), "
-        "red/orange curves are the stopped-aperture pass (f/5.6). One "
-        "helper PNG per aperture has the target aperture's traced curves "
-        "marked by the extractor; read against those, not the other "
-        "aperture's curves. The green sample lines span the full plot "
-        "regardless of aperture."
+        f"**Important:** both apertures are packed into one chart by color "
+        f"encoding — black/grey curves are the max-aperture pass ({f_max}), "
+        f"red/orange curves are the stopped-aperture pass ({f_stopped}). "
+        f"Per ADR-046 the helper PNG shows the **clean source chart** "
+        f"(no extractor overlay) so the eye-read is unbiased; read each "
+        f"aperture's curves directly off the chart's own printed lines. "
+        f"The green sample lines span the full plot regardless of aperture."
     )
 
     mtf_axis_legend = (
         "Top of plot area → MTF 1.0",
         "Each printed gridline → 0.1 OTF spacing (every line carries a y-axis label)",
         "Bottom gridline → MTF 0.0",
+        "Orange dashed lines fill in every 0.05 between the printed gridlines",
     )
 
     # GT-snippet for TTartisan: aperture KEYS are profile labels
@@ -519,6 +535,11 @@ def _ttartisan_dual_aperture_extras(chart: ReferenceChart) -> StyleFamilyExtras:
         sample_line_warning=sample_line_warning,
         mtf_axis_legend=mtf_axis_legend,
         gt_snippet=gt_snippet,
+        # TTartisan prints every 0.1 OTF natively; add the missing
+        # 0.05-step lines so the maintainer can eye-read at ±0.02
+        # precision against a uniform 0.05 grid.
+        readhelper_extra_otf=(0.05, 0.15, 0.25, 0.35, 0.45,
+                              0.55, 0.65, 0.75, 0.85, 0.95),
     )
 
 

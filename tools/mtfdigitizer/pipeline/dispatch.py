@@ -263,6 +263,66 @@ def _solid_dashed_from_components(
     return solid, dashed
 
 
+# Vertical dilation kernel half-width for cross-hue halo exclusion. A
+# line drawn in pure ink (V≈0) surrounded by ±N rows of anti-aliased
+# gradient pixels (V rising to 255 over N rows) emits halo pixels in
+# the grey hue range out to ~N rows from the line center. Sized for the
+# TTartisan press-kit raster where the black line's AA gradient extends
+# ~5 px on each side of the 2-px-wide line center.
+_HALO_DILATE_DY: int = 5
+
+
+def _aperture_prefix(hue_name: str) -> str | None:
+    """Split a TTartisan-style hue name into its aperture prefix.
+
+    The ADR-044 convention is `<aperture>-<freq>-<color>` (e.g.
+    `max-10-black`, `stopped-30-orange`). The aperture prefix is
+    everything before the first `-NN-` segment, where `NN` is a
+    decimal-digit frequency. Returns `None` when the hue name does
+    not match the convention — non-TTartisan profiles using
+    `FREQUENCY_PER_HUE_RIDGE` would have to declare their own
+    convention if/when they're added.
+    """
+    parts = hue_name.split("-")
+    for i, segment in enumerate(parts):
+        if segment.isdigit():
+            return "-".join(parts[:i]) if i > 0 else None
+    return None
+
+
+def _build_halo_exclusion_map(
+    curve_masks: dict[str, np.ndarray],
+    freq_by_color: dict[str, int],
+    lower_freq: int,
+) -> dict[str, tuple[np.ndarray, ...]]:
+    """Build a mapping `{hue_name: (dilated halo masks to subtract, ...)}`.
+
+    For every lower-frequency hue (e.g. `max-10-black`), compute the
+    vertically-dilated mask and queue it for subtraction from every
+    higher-frequency hue (`max-30-grey`) that shares its aperture
+    prefix. Hues with no aperture prefix (non-TTartisan convention)
+    contribute no exclusions.
+    """
+    kernel = np.ones((2 * _HALO_DILATE_DY + 1, 1), np.uint8)
+    halo_by_prefix: dict[str, np.ndarray] = {}
+    for color_name, mask in curve_masks.items():
+        if freq_by_color.get(color_name) != lower_freq:
+            continue
+        prefix = _aperture_prefix(color_name)
+        if prefix is None:
+            continue
+        halo_by_prefix[prefix] = cv2.dilate(mask.astype(np.uint8), kernel)
+    out: dict[str, tuple[np.ndarray, ...]] = {}
+    for color_name in curve_masks:
+        if freq_by_color.get(color_name) == lower_freq:
+            continue  # the lower-freq hue is not contaminated by itself
+        prefix = _aperture_prefix(color_name)
+        if prefix is None or prefix not in halo_by_prefix:
+            continue
+        out[color_name] = (halo_by_prefix[prefix],)
+    return out
+
+
 def field_skeletons(
     bgr: np.ndarray,
     profile: MtfProfile,
@@ -356,10 +416,29 @@ def field_skeletons(
         freq_by_color = dict(
             zip(unique_named_hues(profile), profile.frequencies_lpmm)
         )
+        # Cross-hue halo exclusion (#1095): the higher-frequency hue's
+        # mask is contaminated by the lower-frequency hue's anti-aliased
+        # halo. Concretely on TTartisan max-aperture the grey mask
+        # (V∈[90,160]) catches mid-grey pixels along the black line's
+        # AA gradient (V=131 lies inside that gradient). Those halo
+        # pixels form full-width tracks that out-rank the real T30 dashed
+        # curve in top-2-by-coverage selection. For every hue that maps
+        # to the lower frequency of the pair (e.g. 10 lp/mm), dilate the
+        # mask by `_HALO_DILATE_DY` vertically and subtract it from the
+        # higher-frequency hues that share its aperture prefix. The
+        # aperture prefix is the part of the hue name before the first
+        # `-<freq>-` segment (e.g. `max-10-black` → `max`, per ADR-044).
+        lower_freq = min(profile.frequencies_lpmm)
+        halo_pairs = _build_halo_exclusion_map(
+            curve_masks, freq_by_color, lower_freq
+        )
         for color_name, mask in curve_masks.items():
+            cleaned_mask = mask
+            for halo_mask in halo_pairs.get(color_name, ()):
+                cleaned_mask = cleaned_mask & ~halo_mask
             freq = freq_by_color[color_name]
             hue_fields = ridge_tracks_for_hue_freq_split(
-                mask, plot_box, freq=freq,
+                cleaned_mask, plot_box, freq=freq,
                 dashed_is_sagittal=profile.dashed_is_sagittal,
             )
             out.update(hue_fields)

@@ -407,28 +407,33 @@ For a Tier 1 anchor `<slug>` (i.e. a `ReferenceChart` whose
 `ground_truth` is set in `charts.py`), generates three maintainer
 eye-read artifacts in the lens's `docs/optical-specs/<slug>/`
 folder: per-view readhelper PNGs (3x upscale with green sample-
-position lines + mm labels at top, plus orange dashed half-step
-gridlines on Fuji), `eye-read-template.md` (fill-in tables, one
-per view), and `extractor-prediction.md` (extractor's reading as a
-starting point for maintainer validation).
+position lines + mm labels at top, plus orange dashed gridlines
+filling in every 0.05 OTF the source chart does not print
+natively — ±0.02 eye-precision against a uniform 0.05 grid),
+`eye-read-template.md` (fill-in tables, one per view), and
+`extractor-prediction.md` (extractor's reading as a starting point
+for maintainer validation).
 
 Style-family dispatch:
 
 - `fujifilm-permfreq` — one readhelper per spatial frequency
   (`-15lp-readhelper.png`, etc.). Helper base = the per-freq source
-  PNG. Half-step orange gridlines added at MTF 0.1/0.3/0.5/0.7/0.9
-  (Fuji prints only 0.2-step). GT-snippet skeleton uses
+  PNG. Orange dashed gridlines added at every 0.05 OTF except the
+  chart's own printed 0.2-step lines (Fuji prints 0.0/0.2/0.4/0.6/
+  0.8/1.0 natively). GT-snippet skeleton uses
   `_FUJI_<COHORT>_<FL>_GT` (e.g. `_FUJI_GF_23_GT`).
 - `ttartisan-4color-dual-aperture` — one readhelper per aperture
   (`<stem>-max-readhelper.png`, `<stem>-stopped-readhelper.png`).
-  Helper base = the existing `<stem>-<aperture>-overlay.png` from
-  `extract.py:_write_inspection_artifacts` so the target aperture's
-  traced curves are pre-marked. No half-step lines (TTartisan
-  prints 0.1 natively). GT-snippet skeleton uses
-  `_TTARTISAN_<FL>_GT` with `"max"` / `"stopped"` aperture buckets
-  (NOT f-numbers — the orchestrator keys `results_by_aperture` on
-  the profile's `apertures_per_chart` tuple; mismatched keys
-  fail-loud in calibrate.py).
+  Helper base = the **clean source chart PNG** (never the extractor
+  overlay), so the maintainer's eye-read is not biased by the
+  extractor's traced curves. Use the `<stem>-<aperture>-overlay.png`
+  - the review HTML separately when comparing extractor output to
+    the chart. Orange dashed gridlines added at 0.05, 0.15, ..., 0.95
+    (TTartisan prints 0.1-step natively). GT-snippet skeleton uses
+    `_TTARTISAN_<FL>_GT` with `"max"` / `"stopped"` aperture buckets
+    (NOT f-numbers — the orchestrator keys `results_by_aperture` on
+    the profile's `apertures_per_chart` tuple; mismatched keys
+    fail-loud in calibrate.py).
 
 Workflow for promoting a lens to Tier 1: (1) add a `ReferenceChart`
 entry to `REFERENCE_CHARTS` in `charts.py` with `_<LENS>_GT` of
