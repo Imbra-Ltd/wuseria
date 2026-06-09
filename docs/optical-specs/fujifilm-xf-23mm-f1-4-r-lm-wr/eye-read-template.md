@@ -22,6 +22,7 @@ Read each cell at the intersection of the green vertical sample line and the cur
 - Top of plot area → MTF 1.0
 - Each printed gridline below it → 0.8, 0.6, 0.4, 0.2
 - Bottom gridline → MTF 0.0
+- Orange dashed lines fill in every 0.05 between the printed gridlines
 
 ## Fill-in tables
 

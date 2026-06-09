@@ -13,7 +13,7 @@ A helper rendering for each view with the 11 sample-position lines overlaid:
 
 The green vertical lines are spaced by image-height fraction, not by the chart's printed x-tick labels. Each line is labelled with its image-height mm value (image_height_mm = 14.0).
 
-**Important:** both apertures are packed into one chart by color encoding — black/grey curves are the max-aperture pass (f/1.2), red/orange curves are the stopped-aperture pass (f/5.6). One helper PNG per aperture has the target aperture's traced curves marked by the extractor; read against those, not the other aperture's curves. The green sample lines span the full plot regardless of aperture.
+**Important:** both apertures are packed into one chart by color encoding — black/grey curves are the max-aperture pass (f/1.2), red/orange curves are the stopped-aperture pass (f/5.6). Per ADR-046 the helper PNG shows the **clean source chart** (no extractor overlay) so the eye-read is unbiased; read each aperture's curves directly off the chart's own printed lines. The green sample lines span the full plot regardless of aperture.
 
 Sample positions (mm, image_height_mm = 14.0): 0.0, 1.4, 2.8, 4.2, 5.6, 7.0, 8.4, 9.8, 11.2, 12.6, 14.0.
 
@@ -22,40 +22,41 @@ Read each cell at the intersection of the green vertical sample line and the cur
 - Top of plot area → MTF 1.0
 - Each printed gridline → 0.1 OTF spacing (every line carries a y-axis label)
 - Bottom gridline → MTF 0.0
+- Orange dashed lines fill in every 0.05 between the printed gridlines
 
 ## Fill-in tables
 
-### f/1.2 (max)
+## f/1.2 (max)
 
-| Position (mm) | 10S | 10M | 30S | 30M |
-| ------------- | --- | --- | --- | --- |
-| 0.0           |     |     |     |     |
-| 1.4           |     |     |     |     |
-| 2.8           |     |     |     |     |
-| 4.2           |     |     |     |     |
-| 5.6           |     |     |     |     |
-| 7.0           |     |     |     |     |
-| 8.4           |     |     |     |     |
-| 9.8           |     |     |     |     |
-| 11.2          |     |     |     |     |
-| 12.6          |     |     |     |     |
-| 14.0          |     |     |     |     |
+| Position (mm) | 10S  | 10M  | 30S  | 30M  |
+| ------------- | ---- | ---- | ---- | ---- |
+| 0.0           | 0.88 | 0.88 | 0.41 | 0.41 |
+| 1.4           | 0.89 | 0.90 | 0.43 | 0.42 |
+| 2.8           | 0.90 | 0.90 | 0.49 | 0.46 |
+| 4.2           | 0.92 | 0.90 | 0.53 | 0.50 |
+| 5.6           | 0.91 | 0.9  | 0.52 | 0.50 |
+| 7.0           | 0.88 | 0.87 | 0.46 | 0.45 |
+| 8.4           | 0.85 | 0.85 | 0.41 | 0.36 |
+| 9.8           | 0.83 | 0.83 | 0.40 | 0.30 |
+| 11.2          | 0.86 | 0.79 | 0.45 | 0.30 |
+| 12.6          | 0.88 | 0.73 | 0.48 | 0.36 |
+| 14.0          | 0.77 | 0.6  | 0.29 | 0.40 |
 
-### f/5.6 (stopped)
+## f/5.6 (stopped)
 
-| Position (mm) | 10S | 10M | 30S | 30M |
-| ------------- | --- | --- | --- | --- |
-| 0.0           |     |     |     |     |
-| 1.4           |     |     |     |     |
-| 2.8           |     |     |     |     |
-| 4.2           |     |     |     |     |
-| 5.6           |     |     |     |     |
-| 7.0           |     |     |     |     |
-| 8.4           |     |     |     |     |
-| 9.8           |     |     |     |     |
-| 11.2          |     |     |     |     |
-| 12.6          |     |     |     |     |
-| 14.0          |     |     |     |     |
+| Position (mm) | 10S  | 10M  | 30S  | 30M  |
+| ------------- | ---- | ---- | ---- | ---- | --- |
+| 0.0           | 0.95 | 0.95 | 0.77 | 0.77 |
+| 1.4           | 0.95 | 0.95 | 0.79 | 0.79 |
+| 2.8           | 0.95 | 0.95 | 0.81 | 0.81 |
+| 4.2           | 0.95 | 0.95 | 0.84 | 0.83 |
+| 5.6           | 0.96 | 0.95 | 0.85 | 0.82 |
+| 7.0           | 0.95 | 0.95 | 0.83 | 0.79 |
+| 8.4           | 0.94 | 0.94 | 0.78 | 0.74 |
+| 9.8           | 0.93 | 0.93 | 0.73 | 0.70 |
+| 11.2          | 0.93 | 0.93 | 0.72 | 0.72 |
+| 12.6          | 0.95 | 0.94 | 0.77 | 0.76 |
+| 14.0          | 0.95 | 0.93 | 0.84 | 0.69 |     |
 
 ## After filling in
 
