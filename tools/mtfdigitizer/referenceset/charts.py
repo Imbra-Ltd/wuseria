@@ -188,6 +188,86 @@ _SEVENARTISANS_50_GT: GroundTruthCurves = {
     },
 }
 
+# TTartisan 50mm f/1.2 — Tier 1 anchor for the
+# `ttartisan-4color-dual-aperture` style family (ADR-044). One chart
+# packs both apertures via color encoding: black = 10 lp/mm at f/1.2,
+# red = 10 lp/mm at f/5.6, grey = 30 lp/mm at f/1.2, orange = 30 lp/mm
+# at f/5.6; solid = S (sagittal), dashed = T (tangential) per the
+# chart legend (`S10_F1.2`, `T10_F1.2`, ...). The multi-aperture
+# orchestrator (ADR-044, #1074) fans out one extractor pass per
+# aperture; calibrate.py iterates `ground_truth.items()` per aperture
+# label and compares to the matching pass's readings.
+#
+# Image format: 800x600 px RGB (the standard TTartisan template).
+#
+# Image height: 14.0 mm (APS-C — Fuji X mount).
+#
+# X tick labels at 0, 3, 7, 10, 13 mm fall at x = 87, 198, 347, 458,
+# 570 (37.143 px/mm = 520 px / 14 mm). Plot-box x edges are at the
+# data edge per #954 convention: x_left=87 sits one pixel inside the
+# printed left axis at x=86; x_right=607 sits one pixel inside the
+# printed right axis at x=608.
+#
+# Y gridlines at MTF 1.0, 0.9, ..., 0.0 fall at y = 115, 150, 184,
+# 219, 254, 288, 323, 357, 392, 426, 461 (34.5 px per 0.1 OTF =
+# 345 px / 1.0 OTF). y_top=116 and y_bottom=461 enclose the data
+# area; y=115 (MTF 1.0) is the printed top axis line. Eye precision
+# at the 0.1 gridline spacing is ~±0.02 (half a gridline tick is
+# 0.05).
+#
+# Sample fractions (SAMPLE_FRACTIONS × image_height_mm = 14.0):
+# 0.00, 1.40, 2.80, 4.20, 5.60, 7.00, 8.40, 9.80, 11.20, 12.60,
+# 14.00 mm.
+#
+# Plot box (data-edge convention):
+# x_left=87  (data edge inside the printed left axis at x=86)
+# x_right=607 (data edge inside the printed right axis at x=608)
+# y_top=116  (data edge below the printed MTF=1.0 axis at y=115)
+# y_bottom=461 (data edge above the printed MTF=0.0 axis at y=462)
+#
+# DRAFT ground truth: TO BE FILLED IN BY THE MAINTAINER via eye-read
+# of the chart against its printed gridlines (11 horizontal lines at
+# MTF 0.0/0.1/.../1.0 plus the printed labels "0", "0.1", ..., "1"
+# in the y gutter). Per `feedback_agent_no_gt_eye_read`, the agent
+# does NOT eye-read these values — they exist as `None` placeholders
+# below until the maintainer enters them.
+#
+# Two apertures × two frequencies × {S, M} × 11 sample fractions =
+# 88 values to read. Field order below mirrors the legend's
+# top-to-bottom order on the chart: f/1.2 first (max aperture pass),
+# then f/5.6 (stopped aperture pass); within each aperture freq10
+# then freq30; within each frequency S (solid) then M (dashed —
+# the chart labels this 'T' for tangential, but the runtime field
+# name stays freq{N}M for consistency with all other entries).
+#
+# Aperture keys are the profile's orchestrator labels (`"max"` /
+# `"stopped"`), NOT the chart's f-numbers — calibrate.py keys
+# `results_by_aperture` on the profile's `apertures_per_chart`
+# tuple. The chart's f-number labels live on `ReferenceChart.apertures`
+# in the same positional order.
+_TTARTISAN_50_GT: GroundTruthCurves = {
+    "max": {  # f/1.2 — black/grey curves
+        # Black solid — 10S — f/1.2 sagittal at 10 lp/mm
+        "freq10S": (None,) * 11,
+        # Black dashed — 10M (chart label T10_F1.2) — f/1.2 tangential
+        "freq10M": (None,) * 11,
+        # Grey solid — 30S — f/1.2 sagittal at 30 lp/mm
+        "freq30S": (None,) * 11,
+        # Grey dashed — 30M (chart label T30_F1.2) — f/1.2 tangential
+        "freq30M": (None,) * 11,
+    },
+    "stopped": {  # f/5.6 — red/orange curves
+        # Red solid — 10S — f/5.6 sagittal at 10 lp/mm
+        "freq10S": (None,) * 11,
+        # Red dashed — 10M (chart label T10_F5.6) — f/5.6 tangential
+        "freq10M": (None,) * 11,
+        # Orange solid — 30S — f/5.6 sagittal at 30 lp/mm
+        "freq30S": (None,) * 11,
+        # Orange dashed — 30M (chart label T30_F5.6) — f/5.6 tangential
+        "freq30M": (None,) * 11,
+    },
+}
+
 # Tokina atx-m 23mm — x positions: 0, 1.4, 2.8, ..., 14.0
 # Beige bg, red = S (solid), blue = M (dotted), upper pair = 10 lp/mm,
 # lower pair = 30 lp/mm. The 30S red has a curious local maximum near
@@ -622,6 +702,34 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         # 0 baseline at y=335). See `probe_three_profiles.py` history.
         plot_box=PlotBoxCoords(x_left=78, x_right=653, y_top=75, y_bottom=335),
         ground_truth=_SEVENARTISANS_50_GT,
+    ),
+    ReferenceChart(
+        slug="ttartisan-50mm-f1-2",
+        chart_path="docs/optical-specs/ttartisan-50mm-f1-2/ttartisan-50mm-f1-2-mtf.png",
+        style_family="ttartisan-4color-dual-aperture",
+        # Aperture order MUST match the profile's
+        # `apertures_per_chart=("max", "stopped")` — orchestrator uses
+        # the labels positionally (ADR-044, #1074).
+        apertures=("f/1.2", "f/5.6"),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes=(
+            "Tier 1 anchor for `ttartisan-4color-dual-aperture` style "
+            "family (ADR-044). 800x600 dual-aperture template; max "
+            "aperture f/1.2 (black/grey curves), stopped aperture f/5.6 "
+            "(red/orange curves) — eye-read from the chart legend. "
+            "Promoted from Tier 2 for maintainer-anchored calibration; "
+            "scaffolder `_TIER1_SKIP_SLUGS` excludes this slug from "
+            "regeneration. DRAFT GT pending maintainer eye-read (88 "
+            "values: 2 apertures x 2 frequencies x {S,M} x 11 "
+            "fractions)."
+        ),
+        # Plot box (data-edge convention, #954). Detector-detected
+        # values from `ttartisan_plotbox.detect_ttartisan_plotbox` for
+        # the APS-C scheme; matches the same coordinates the Tier 2
+        # scaffolder would write.
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
+        ground_truth=_TTARTISAN_50_GT,
     ),
     ReferenceChart(
         slug="7artisans-35mm-f1-2-mark-ii",

@@ -86,6 +86,14 @@ class _ChartFile:
     detected: TTartisanBoxResult
 
 
+# Tier 1 anchors live in `charts.py` proper with maintainer-read
+# ground truth; the scaffolder never emits a duplicate entry for them
+# (the `test_no_duplicate_slugs` assertion would fail).
+_TIER1_SKIP_SLUGS: frozenset[str] = frozenset({
+    "ttartisan-50mm-f1-2",
+})
+
+
 def _gather_charts() -> list[_ChartFile]:
     """Find every TTartisan MTF chart image and run the detector."""
     charts: list[_ChartFile] = []
@@ -93,6 +101,8 @@ def _gather_charts() -> list[_ChartFile]:
         if not lens_dir.is_dir():
             continue
         if not lens_dir.name.startswith("ttartisan-"):
+            continue
+        if lens_dir.name in _TIER1_SKIP_SLUGS:
             continue
         slug = lens_dir.name
         chart_path = lens_dir / f"{slug}-mtf.png"
