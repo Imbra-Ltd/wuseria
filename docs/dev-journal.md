@@ -5917,3 +5917,81 @@ Theme: emit the TTartisan Tier 2 cohort to `mtf-readings.ts`. Hit a data-quality
 - 461-page build; full validate gate green locally; CI green on #1091, #1092 pending.
 - **45 ADRs total** (unchanged).
 - **9 declared MTF profiles** (unchanged).
+
+---
+
+### Session 130 — TTartisan Tier 1 scaffold + codified anchor helpers
+
+Date: 2026-06-09 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: promote `ttartisan-50mm-f1-2` to Tier 1 (scaffold-only — maintainer fills 88 GT values in a follow-up commit), then codify the anchor-helper generation that was ad-hoc in #1058 so all Tier 1 anchors share one tool.
+
+#### Branch / merge state
+
+- Started on `main`, clean. Memory pointer carried "Tier 1 GT promotion of `ttartisan-50mm-f1-2` + #1085 orphan triage" as next items. #1091 + #1092 from S129 already merged.
+- Branch: `feat/ttartisan-50mm-tier1-scaffold` (open as PR #1094, three commits, awaiting maintainer review/merge).
+- Maintainer reaffirmed eye-read policy mid-session: Tier 2 review/emit OK, Tier 1 GT promotion to `_<LENS>_GT` tuples in `charts.py` stays maintainer-only.
+
+#### PRs opened (awaiting merge)
+
+- **PR #1094 — TTartisan 50mm Tier 1 scaffold + scaffold_anchor_helpers (#1093).** Three commits, 23 files, +871 / -239:
+  - **66fb3c6** scaffolds `_TTARTISAN_50_GT` with 88 None placeholders in `charts.py`; adds `_TIER1_SKIP_SLUGS` to the TTartisan scaffolder so re-runs don't re-introduce the duplicate; regenerated `_ttartisan_tier2_charts.py` drops to 18 lenses.
+  - **bc0115c** introduces `tools/mtfdigitizer/scripts/scaffold_anchor_helpers.py` — generic Tier 1 anchor helper generator with style-family dispatch. Generates TTartisan helpers (2 readhelper PNGs, eye-read-template.md, extractor-prediction.md).
+  - **f4cc6f4** ports the curated wording from #1058 into per-style-family `StyleFamilyExtras` (tick-warning, MTF axis legend, half-step orange gridlines for Fuji, `_<LENS>_GT` snippet skeletons); fixes readhelper label placement (mm labels move from bottom to TOP of plot so they don't collide with the chart's own printed x-tick labels); regenerates Fuji GF/XF + TTartisan helpers so all three Tier 1 anchors produce byte-identical-structure artifacts.
+
+#### Issues opened
+
+- **#1093 — TTartisan 50mm f/1.2: Tier 1 GT scaffold (88 placeholders for maintainer eye-read).** P2, task, v0.8.0. Tracks the scaffold-only PR; maintainer eye-read of the 88 values is a follow-up commit on the same branch (or new branch off main after merge).
+
+#### Issues closed
+
+- None this session.
+
+#### Key changes
+
+**Commit 66fb3c6 — Tier 1 entry promotion:**
+
+- New `_TTARTISAN_50_GT: GroundTruthCurves` in `charts.py` with the same Fuji-anchor preamble template (plot-box derivation, sample positions, reading guidance). 88 None placeholders across `"max"` and `"stopped"` aperture buckets.
+- Aperture keys MUST be the profile's orchestrator labels (`"max"` / `"stopped"`), NOT f-numbers — first attempt used f-numbers and `calibrate.py` failed loud on `KeyError: "ttartisan-50mm-f1-2: ground_truth aperture 'f/1.2' not in profile.apertures_per_chart ('max', 'stopped')"`. Fixed before commit.
+- TTartisan scaffolder gained `_TIER1_SKIP_SLUGS = frozenset({"ttartisan-50mm-f1-2"})` mirroring the Fuji scaffolder's `skip_slugs` pattern; re-running the scaffolder drops the entry from `_ttartisan_tier2_charts.py` (19 → 18 lenses).
+
+**Commit bc0115c — scaffold_anchor_helpers script:**
+
+- One script, three artifacts: per-view readhelper PNG (3x upscale of source/overlay PNG with green sample-position lines), eye-read-template.md (fill-in tables), extractor-prediction.md (extractor's reading as a starting point).
+- Style-family dispatch: `fujifilm-permfreq` → one helper per spatial frequency; `ttartisan-4color-dual-aperture` → one helper per aperture (base image = existing `<stem>-<aperture>-overlay.png` from `extract.py` so the target aperture's traced curves are pre-marked).
+- `--check` mode for idempotency (suitable for CI wiring); `--write` to materialize.
+
+**Commit f4cc6f4 — port + Fuji backfill:**
+
+- `StyleFamilyExtras` dataclass holds per-family wording: `sample_line_warning`, `mtf_axis_legend`, `gt_snippet`, `readhelper_half_step_otf`. Fuji extras carry the tick-label warning + MTF-axis legend + per-cohort `_FUJI_<COHORT>_<FL>_GT` snippet + half-step gridlines at 0.1/0.3/0.5/0.7/0.9 OTF (Fuji's source charts only print every 0.2). TTartisan extras carry the two-apertures-pack warning + `_TTARTISAN_<FL>_GT` snippet + no half-step lines (TTartisan prints 0.1 natively).
+- Per-frequency extractor dispatch: Fuji views substitute the parsed frequency onto a profile copy (mirrors `per_frequency.extract_per_frequency_chart`) so extractor-prediction tables show real values instead of all-Nones from a `freq0S/M` placeholder profile.
+- Multi-aperture extractor dispatch: hue-filter profile by aperture label before extracting.
+- Readhelper PNG rendering moves mm labels to TOP of plot (originally placed at bottom — was colliding with the chart's own printed x-tick labels at `0/5/10/15/20/25 mm`); adds orange dashed half-step gridlines under green sample lines; font size scales to plot-box width.
+
+#### Key decisions
+
+- **Maintainer-only Tier 1 GT promotion still holds.** Per `[[feedback_agent_no_gt_eye_read]]`, the agent scaffolds the `_TTARTISAN_50_GT` dict structure but does NOT fill the 88 values. Anchor calibration values become the calibration ruler for every downstream extractor of the family; agent reads would be self-confirming.
+- **Codified script over hand-curation.** When user asked "I want the anchors to have the same read helpers, the overlay should have the same style as fuji" — chose option (a) "codified script" over hand-generating TTartisan-only one-offs. Reusable for every future Tier 1 anchor promotion across any brand.
+- **Option C over option B for Fuji backfill.** Initial option B (regenerate Fuji from a generic script) would have silently lost curated wording (tick-warning, MTF axis legend, GT-snippet skeleton, orange half-step gridlines). Option C ported all of those into `StyleFamilyExtras` first, THEN backfilled — preserves the maintainer's intent as code rather than losing it.
+- **Per-aperture helpers for TTartisan, per-frequency for Fuji.** Mirrors the source chart structure: Fuji publishes one PNG per frequency, TTartisan packs both apertures into one PNG by color encoding. Two tables per template (one per view) maps 1:1 to the GT dict structure.
+- **Half-step orange gridlines on Fuji only.** Fuji's source charts print every 0.2 OTF (eye precision ~0.10); the orange dashed half-steps at 0.1/0.3/0.5/0.7/0.9 take precision to ~0.05. TTartisan prints 0.1 natively — no extra gridlines needed.
+
+#### Follow-ups for next session
+
+- **Maintainer fills 88 GT values** for `_TTARTISAN_50_GT` from the new readhelpers + eye-read-template — same branch (or new branch off main after merge).
+- **#1085 — Triage 4 orphan dirs** (Thingyfy + 3 Zeiss Touit) — pure agent task, P3, still carried.
+- **Sparse-dash dropouts in `ridge_tracks_for_hue_freq_split`** — known loose end from S128.
+- **Carried since S122:** `_profile_for_view` shim removal.
+- **Carried since S118:** Validate ADR-014 mean rule against first real MTF-driven score; Tier 1 `log.py --check` false-OK; 17-40 tele `prior_violations=1`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. **Fujifilm cohort: 62 lenses on `mtf-readings.ts`** (unchanged). **TTartisan cohort: 19 lenses on `mtf-readings.ts`** (unchanged; emit was S129).
+- Epic #790 (digitize all brands): **4/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **103 entries** (unchanged — one entry promoted Tier 2 → Tier 1; `REFERENCE_CHARTS` total identical).
+- **Aggregate calibration: 492/528 (93.2%)** within ±0.05 band (unchanged; new TTartisan anchor reports 0/88 paired comparisons until GT filled).
+- **3 Tier 1 anchors with codified helpers** (was 2 with hand-curated helpers): GF 23mm, XF 23mm, TTartisan 50mm.
+- **298 pytest pass** (unchanged).
+- 461-page build; full validate gate green locally; CI green on PR #1094.
+- **45 ADRs total** (unchanged — no architectural decisions this session; the script codifies the existing #1058 design, doesn't change it).
+- **9 declared MTF profiles** (unchanged).

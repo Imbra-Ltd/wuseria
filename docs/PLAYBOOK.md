@@ -395,6 +395,54 @@ the lens folder; (2) add the lens's (max, stopped) aperture pair to
 look correct; (5) run `emit_ttartisan_tier2 --write` to patch
 mtf-readings.ts with the cohort.
 
+**Tier 1 anchor helper generation (cross-brand):**
+
+```bash
+cd tools && py -m mtfdigitizer.scripts.scaffold_anchor_helpers <slug>          # preview
+cd tools && py -m mtfdigitizer.scripts.scaffold_anchor_helpers <slug> --write  # materialize
+cd tools && py -m mtfdigitizer.scripts.scaffold_anchor_helpers <slug> --check  # exit 1 if stale
+```
+
+For a Tier 1 anchor `<slug>` (i.e. a `ReferenceChart` whose
+`ground_truth` is set in `charts.py`), generates three maintainer
+eye-read artifacts in the lens's `docs/optical-specs/<slug>/`
+folder: per-view readhelper PNGs (3x upscale with green sample-
+position lines + mm labels at top, plus orange dashed half-step
+gridlines on Fuji), `eye-read-template.md` (fill-in tables, one
+per view), and `extractor-prediction.md` (extractor's reading as a
+starting point for maintainer validation).
+
+Style-family dispatch:
+
+- `fujifilm-permfreq` — one readhelper per spatial frequency
+  (`-15lp-readhelper.png`, etc.). Helper base = the per-freq source
+  PNG. Half-step orange gridlines added at MTF 0.1/0.3/0.5/0.7/0.9
+  (Fuji prints only 0.2-step). GT-snippet skeleton uses
+  `_FUJI_<COHORT>_<FL>_GT` (e.g. `_FUJI_GF_23_GT`).
+- `ttartisan-4color-dual-aperture` — one readhelper per aperture
+  (`<stem>-max-readhelper.png`, `<stem>-stopped-readhelper.png`).
+  Helper base = the existing `<stem>-<aperture>-overlay.png` from
+  `extract.py:_write_inspection_artifacts` so the target aperture's
+  traced curves are pre-marked. No half-step lines (TTartisan
+  prints 0.1 natively). GT-snippet skeleton uses
+  `_TTARTISAN_<FL>_GT` with `"max"` / `"stopped"` aperture buckets
+  (NOT f-numbers — the orchestrator keys `results_by_aperture` on
+  the profile's `apertures_per_chart` tuple; mismatched keys
+  fail-loud in calibrate.py).
+
+Workflow for promoting a lens to Tier 1: (1) add a `ReferenceChart`
+entry to `REFERENCE_CHARTS` in `charts.py` with `_<LENS>_GT` of
+None placeholders + the preamble comment template; (2) add the slug
+to the brand scaffolder's `_TIER1_SKIP_SLUGS` so re-runs don't
+re-introduce the duplicate; (3) re-run the brand scaffolder
+(`--write`) so `_<brand>_tier2_charts.py` drops the entry; (4) run
+`scaffold_anchor_helpers <slug> --write` to emit the 3 maintainer
+artifacts; (5) maintainer eye-reads the helpers and fills the
+`_<LENS>_GT` tuple; (6) `py -m mtfdigitizer.calibrate` reports
+per-field median |Δ| against the new anchor. To add a new style
+family, extend `_resolve_helper_views` and `_extras_for` in
+`scaffold_anchor_helpers.py`.
+
 **Before authoring an `analysis.md` MTF charts list for a folder that
 does not yet have one:** check the source product page for parallel
 chart sets. Multi-mount lenses (DG DN releases with a later Fujifilm X
