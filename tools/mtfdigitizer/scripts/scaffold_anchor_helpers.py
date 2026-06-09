@@ -70,6 +70,12 @@ UPSCALE_FACTOR = 3
 GREEN_LINE_RGB = (0, 180, 0)
 GREEN_LINE_WIDTH_PX = 2
 LABEL_FILL_RGB = (0, 120, 0)
+# Orange dashed half-step gridlines (Fuji style — fills the 0.1 gap
+# between Fuji's printed 0.2-step MTF lines so eye-read precision
+# improves from 0.2 to 0.1 ticks).
+HALF_STEP_LINE_RGB = (240, 130, 0)
+HALF_STEP_LINE_WIDTH_PX = 1
+HALF_STEP_DASH_LEN_PX = 6
 
 
 @dataclass(frozen=True)
@@ -95,6 +101,11 @@ class HelperView:
     column_headers: tuple[str, ...]
     # Plot box for this view (drives where the green sample lines land).
     plot_box: PlotBox
+    # Path to the chart image the EXTRACTOR runs on for this view.
+    # For Fuji permfreq, this is the per-frequency PNG (different per
+    # view). For TTartisan, this is the primary chart shared across
+    # views (both apertures live on one PNG).
+    extractor_chart_path: Path
     # Aperture label to filter the extractor pass on; None for
     # single-aperture views.
     aperture_label: str | None
@@ -132,6 +143,7 @@ def _fuji_permfreq_views(chart: ReferenceChart) -> list[HelperView]:
                 field_columns=(f"freq{freq_lpmm}S", f"freq{freq_lpmm}M"),
                 column_headers=(f"{freq_lpmm}S", f"{freq_lpmm}M"),
                 plot_box=_to_plotbox(plot_box),
+                extractor_chart_path=source_path,
                 aperture_label=None,
             )
         )
@@ -172,6 +184,9 @@ def _ttartisan_dual_aperture_views(chart: ReferenceChart) -> list[HelperView]:
                     f"{f}{sm}" for f in freqs for sm in ("S", "M")
                 ),
                 plot_box=_to_plotbox(chart.plot_box),
+                # Both apertures live on one PNG — extractor runs on
+                # the primary chart for every view, filtered by aperture.
+                extractor_chart_path=source_path,
                 aperture_label=ap_label,
             )
         )
@@ -207,9 +222,23 @@ def _to_plotbox(coords) -> PlotBox:
 # --- Readhelper PNG renderer ---------------------------------------------
 
 
-def _render_readhelper(view: HelperView, image_height_mm: float) -> Image.Image:
-    """3x upscale of the base image with green vertical sample-position
-    lines and per-line mm labels.
+def _render_readhelper(
+    view: HelperView,
+    image_height_mm: float,
+    extras: StyleFamilyExtras,
+) -> Image.Image:
+    """3x upscale of the base image with sample-position lines + labels.
+
+    Per the design carried over from #1058:
+
+    - **Green vertical sample lines** span the plot area at each of the
+      11 sample fractions; **mm labels sit at the TOP** of each line
+      (just above y_top) so they don't collide with the chart's own
+      printed x-tick labels at the bottom of the plot.
+    - **Orange dashed half-step horizontal gridlines** (Fuji only —
+      controlled by `extras.readhelper_half_step_otf`) fill in the
+      0.1-step ticks Fuji's source chart doesn't print, letting the
+      maintainer eye-read at ~0.05 precision instead of ~0.10.
     """
     base = Image.open(view.base_image_path).convert("RGB")
     up = base.resize(
@@ -218,31 +247,64 @@ def _render_readhelper(view: HelperView, image_height_mm: float) -> Image.Image:
     )
     draw = ImageDraw.Draw(up)
 
-    # Scale plot-box x coordinates to the upscaled image.
+    # Scale plot-box coordinates to the upscaled image.
     plot_left_up = view.plot_box.x_left * UPSCALE_FACTOR
     plot_right_up = view.plot_box.x_right * UPSCALE_FACTOR
     plot_top_up = view.plot_box.y_top * UPSCALE_FACTOR
     plot_bottom_up = view.plot_box.y_bottom * UPSCALE_FACTOR
     plot_width_up = plot_right_up - plot_left_up
+    plot_height_up = plot_bottom_up - plot_top_up
 
-    font = _load_label_font()
+    # Scale font to the upscaled plot WIDTH so labels stay legible on
+    # small charts (Fuji 282x212) and don't overwhelm big charts
+    # (TTartisan 800x600). Cap to avoid runaway sizes on giant Sigma
+    # 2991x1964 charts.
+    target_label_h = max(8, min(plot_width_up // 60, 40))
+    font = _load_label_font(target_label_h)
 
+    # Half-step horizontal gridlines (Fuji-only today). Drawn FIRST so
+    # the green sample lines render on top of them.
+    for otf in extras.readhelper_half_step_otf:
+        y = int(plot_bottom_up - otf * plot_height_up)
+        _draw_dashed_hline(
+            draw,
+            x_left=plot_left_up,
+            x_right=plot_right_up,
+            y=y,
+            color=HALF_STEP_LINE_RGB,
+            width=HALF_STEP_LINE_WIDTH_PX,
+            dash_len=HALF_STEP_DASH_LEN_PX * UPSCALE_FACTOR,
+        )
+        # Label the OTF value just right of the plot.
+        label = f"{otf:.1f}"
+        bbox = draw.textbbox((0, 0), label, font=font)
+        draw.text(
+            (plot_right_up + 4 * UPSCALE_FACTOR, y - (bbox[3] - bbox[1]) // 2),
+            label,
+            fill=HALF_STEP_LINE_RGB,
+            font=font,
+        )
+
+    # Green vertical sample lines + mm labels at the TOP of each line.
     for frac in SAMPLE_FRACTIONS:
         x_up = int(plot_left_up + frac * plot_width_up)
-        # Vertical line spanning the plot area.
         draw.line(
             [(x_up, plot_top_up), (x_up, plot_bottom_up)],
             fill=GREEN_LINE_RGB,
             width=GREEN_LINE_WIDTH_PX,
         )
-        # Label just below the plot in mm.
         mm = frac * image_height_mm
         label = f"{mm:.1f}"
-        # Anchor label slightly below the plot bottom; offset so the
-        # text is centered on the line.
-        label_y = plot_bottom_up + 6 * UPSCALE_FACTOR
         bbox = draw.textbbox((0, 0), label, font=font)
         label_w = bbox[2] - bbox[0]
+        label_h = bbox[3] - bbox[1]
+        # Anchor label ABOVE the plot's top edge so it doesn't collide
+        # with the chart's own printed x-tick labels at the bottom.
+        label_y = plot_top_up - label_h - 2 * UPSCALE_FACTOR
+        # If the label would clip the top of the canvas, drop it just
+        # below the plot's top edge (rare: most charts have margin above).
+        if label_y < 0:
+            label_y = plot_top_up + 2 * UPSCALE_FACTOR
         draw.text(
             (x_up - label_w // 2, label_y),
             label,
@@ -252,19 +314,212 @@ def _render_readhelper(view: HelperView, image_height_mm: float) -> Image.Image:
     return up
 
 
-def _load_label_font() -> ImageFont.ImageFont:
-    """Best-effort load of a legible truetype font; fall back to PIL's
-    default if no system font is reachable.
+def _draw_dashed_hline(
+    draw: ImageDraw.ImageDraw,
+    *,
+    x_left: int,
+    x_right: int,
+    y: int,
+    color: tuple[int, int, int],
+    width: int,
+    dash_len: int,
+) -> None:
+    """Draw a horizontal dashed line: `dash_len` on, `dash_len` off."""
+    x = x_left
+    while x < x_right:
+        x_end = min(x + dash_len, x_right)
+        draw.line([(x, y), (x_end, y)], fill=color, width=width)
+        x = x_end + dash_len
+
+
+def _load_label_font(target_pixel_height: int) -> ImageFont.ImageFont:
+    """Best-effort load of a legible truetype font at the target size;
+    fall back to PIL's default if no system font is reachable.
     """
-    # Pillow ships with a default bitmap font; on most systems a
-    # truetype is also reachable. Try a couple of common names then
-    # fall back.
     for name in ("DejaVuSans.ttf", "arial.ttf", "Arial.ttf"):
         try:
-            return ImageFont.truetype(name, size=14 * UPSCALE_FACTOR)
+            return ImageFont.truetype(name, size=target_pixel_height)
         except OSError:
             continue
     return ImageFont.load_default()
+
+
+# --- Style-family extras --------------------------------------------------
+#
+# Per-style-family wording that the agent does not invent: warnings,
+# axis legends, and the literal Python snippet showing the GT tuple
+# the maintainer copies into. Originally curated by hand in
+# eye-read-template.md for each Fuji anchor (#1058); folded into this
+# script when the helpers were codified so all anchors emit the same
+# structure but each style family keeps its specific guidance.
+
+
+@dataclass(frozen=True)
+class StyleFamilyExtras:
+    """Per-style-family wording blocks for the eye-read template."""
+
+    # Inline paragraph warning the maintainer about anything specific
+    # to this chart family that the green sample lines or the printed
+    # ticks might mislead them about. Rendered after the generic
+    # "sample positions are spaced by image-height fraction" paragraph.
+    sample_line_warning: str | None
+    # Bulleted list of MTF axis landmarks (e.g. "Top of plot area →
+    # MTF 1.0"). Rendered as a sub-list under the generic
+    # "read each cell against the printed gridlines" paragraph.
+    mtf_axis_legend: tuple[str, ...]
+    # Literal Python snippet showing the GT-tuple skeleton with the
+    # exact `_<LENS>_GT` variable name and field names this family
+    # uses. Maintainer pastes filled values into this shape.
+    gt_snippet: str
+    # Half-step OTF fractions (0..1) at which to draw an orange dashed
+    # horizontal gridline on the readhelper PNG. Use for families
+    # whose source chart only prints every 0.2 OTF (Fuji) so the
+    # maintainer can eye-read at 0.1 precision. Empty tuple = no
+    # extra gridlines (families like TTartisan that already print
+    # every 0.1 OTF).
+    readhelper_half_step_otf: tuple[float, ...] = ()
+
+
+def _extras_for(chart: ReferenceChart) -> StyleFamilyExtras:
+    if chart.style_family == "fujifilm-permfreq":
+        return _fuji_permfreq_extras(chart)
+    if chart.style_family == "ttartisan-4color-dual-aperture":
+        return _ttartisan_dual_aperture_extras(chart)
+    return StyleFamilyExtras(
+        sample_line_warning=None, mtf_axis_legend=(), gt_snippet="",
+    )
+
+
+def _fuji_permfreq_extras(chart: ReferenceChart) -> StyleFamilyExtras:
+    """Curated wording carried over from the original hand-authored
+    Fuji eye-read templates (#1058). Tick-label warning + plot-area
+    MTF axis legend + per-cohort GT snippet skeleton.
+    """
+    # Tick labels printed on the source PNG, derived from the GF (5/10/15/20/25)
+    # vs XF (0/5/10/14.2) chart conventions. The right-edge note is
+    # cohort-specific (GF goes past "25 mm" by ~17 px; XF lines up at "14.2").
+    if "gf-" in chart.slug:
+        tick_labels = "5/10/15/20/25"
+        right_edge_note = (
+            f"the right gridline edge corresponds to ~{chart.image_height_mm} mm "
+            f"— past Fujifilm's '25 mm' tick label by ~17 px"
+        )
+    else:
+        tick_labels = "0, 5, 10, 14.2"
+        right_edge_note = (
+            f"the right gridline edge corresponds to {chart.image_height_mm} mm, "
+            f"matching the APS-C 23.5x15.6 mm sensor half-diagonal"
+        )
+
+    sample_line_warning = (
+        f"**Important:** the green vertical lines do NOT match the printed "
+        f"black tick labels ({tick_labels}). The chart's plot area spans "
+        f"0..{chart.image_height_mm} mm ({right_edge_note}); each green "
+        f"vertical line in the helper PNG is labelled with its mm value."
+    )
+
+    mtf_axis_legend = (
+        "Top of plot area → MTF 1.0",
+        "Each printed gridline below it → 0.8, 0.6, 0.4, 0.2",
+        "Bottom gridline → MTF 0.0",
+    )
+
+    # GT-snippet variable name: chart-slug-derived would be wrong; the
+    # GT variable in charts.py uses the lens shorthand (e.g.
+    # `_FUJI_GF_23_GT`). Derive it from the slug by uppercasing the
+    # brand + key cohort tokens.
+    gt_var, aperture_label = _fuji_gt_var(chart)
+    field_lines = "\n        ".join(
+        f'"freq{f}{sm}": (...11 values from the {f}{sm} column...),'
+        for f in chart.frequencies_lpmm for sm in ("S", "M")
+    )
+    gt_snippet = (
+        f"```python\n"
+        f"{gt_var}: GroundTruthCurves = {{\n"
+        f'    "{aperture_label}": {{\n'
+        f"        {field_lines}\n"
+        f"    }},\n"
+        f"}}\n"
+        f"```"
+    )
+
+    return StyleFamilyExtras(
+        sample_line_warning=sample_line_warning,
+        mtf_axis_legend=mtf_axis_legend,
+        gt_snippet=gt_snippet,
+        # Fuji prints every 0.2 OTF; add half-step lines at 0.1/0.3/0.5/0.7/0.9
+        # so the readhelper supports 0.1-precision eye-reads.
+        readhelper_half_step_otf=(0.1, 0.3, 0.5, 0.7, 0.9),
+    )
+
+
+def _fuji_gt_var(chart: ReferenceChart) -> tuple[str, str]:
+    """Return the `_FUJI_<COHORT>_<FL>_GT` variable name and the single
+    aperture label (e.g. `"f/4"`, `"f/1.4"`) for a Fuji anchor.
+    """
+    # slug shape: fujifilm-(gf|xf)-<focal>-<aperture-tag>-...
+    parts = chart.slug.split("-")
+    cohort = parts[1].upper()  # GF / XF
+    focal = parts[2].replace("mm", "")  # 23
+    gt_var = f"_FUJI_{cohort}_{focal}_GT"
+    aperture_label = chart.apertures[0]
+    return gt_var, aperture_label
+
+
+def _ttartisan_dual_aperture_extras(chart: ReferenceChart) -> StyleFamilyExtras:
+    """Curated wording for the TTartisan dual-aperture template:
+    gridlines every 0.1 OTF, two apertures pack into one PNG by color
+    encoding, and the GT keys are profile labels not f-numbers.
+    """
+    sample_line_warning = (
+        "**Important:** both apertures are packed into one chart by color "
+        "encoding — black/grey curves are the max-aperture pass (f/1.2), "
+        "red/orange curves are the stopped-aperture pass (f/5.6). One "
+        "helper PNG per aperture has the target aperture's traced curves "
+        "marked by the extractor; read against those, not the other "
+        "aperture's curves. The green sample lines span the full plot "
+        "regardless of aperture."
+    )
+
+    mtf_axis_legend = (
+        "Top of plot area → MTF 1.0",
+        "Each printed gridline → 0.1 OTF spacing (every line carries a y-axis label)",
+        "Bottom gridline → MTF 0.0",
+    )
+
+    # GT-snippet for TTartisan: aperture KEYS are profile labels
+    # ("max"/"stopped"), NOT f-numbers — orchestrator keys
+    # results_by_aperture on the profile's apertures_per_chart tuple.
+    field_lines_per_aperture = "\n        ".join(
+        f'"freq{f}{sm}": (...11 values from the {f}{sm} column...),'
+        for f in chart.frequencies_lpmm for sm in ("S", "M")
+    )
+    profile = profile_for_chart(chart)
+    assert profile.apertures_per_chart is not None
+    ap_blocks = []
+    for ap_label, f_number in zip(profile.apertures_per_chart, chart.apertures):
+        ap_blocks.append(
+            f'    "{ap_label}": {{  # {f_number}\n'
+            f"        {field_lines_per_aperture}\n"
+            f"    }},"
+        )
+    # GT variable name: e.g. _TTARTISAN_50_GT.
+    parts = chart.slug.split("-")
+    focal = parts[1].replace("mm", "")  # 50
+    gt_var = f"_TTARTISAN_{focal}_GT"
+    gt_snippet = (
+        f"```python\n"
+        f"{gt_var}: GroundTruthCurves = {{\n"
+        + "\n".join(ap_blocks) + "\n"
+        f"}}\n"
+        f"```"
+    )
+
+    return StyleFamilyExtras(
+        sample_line_warning=sample_line_warning,
+        mtf_axis_legend=mtf_axis_legend,
+        gt_snippet=gt_snippet,
+    )
 
 
 # --- Markdown renderers --------------------------------------------------
@@ -276,6 +531,7 @@ def _render_eye_read_template(
     """Markdown body for `eye-read-template.md` — one table per view."""
     fractions_mm = tuple(round(f * chart.image_height_mm, 1) for f in SAMPLE_FRACTIONS)
     fractions_csv = ", ".join(f"{m:.1f}" for m in fractions_mm)
+    extras = _extras_for(chart)
 
     lines: list[str] = []
     lines.append(f"# Eye-read template — {_lens_display_name(chart)}")
@@ -303,6 +559,9 @@ def _render_eye_read_template(
         f"{chart.image_height_mm})."
     )
     lines.append("")
+    if extras.sample_line_warning:
+        lines.append(extras.sample_line_warning)
+        lines.append("")
     lines.append(
         f"Sample positions (mm, image_height_mm = {chart.image_height_mm}): "
         f"{fractions_csv}."
@@ -315,6 +574,10 @@ def _render_eye_read_template(
         "Read to two decimals. Use `None` only when the curve "
         "genuinely does not extend to that x position."
     )
+    if extras.mtf_axis_legend:
+        lines.append("")
+        for bullet in extras.mtf_axis_legend:
+            lines.append(f"- {bullet}")
     lines.append("")
     lines.append("## Fill-in tables")
     lines.append("")
@@ -339,9 +602,13 @@ def _render_eye_read_template(
     lines.append("")
     lines.append(
         "Copy each column into the matching tuple in "
-        "`tools/mtfdigitizer/referenceset/charts.py` "
-        f"(`_<LENS>_GT`). Then run from `tools/`:"
+        "`tools/mtfdigitizer/referenceset/charts.py`:"
     )
+    lines.append("")
+    if extras.gt_snippet:
+        lines.append(extras.gt_snippet)
+        lines.append("")
+    lines.append("Then run from `tools/`:")
     lines.append("")
     lines.append("```")
     lines.append("py -m mtfdigitizer.calibrate")
@@ -405,26 +672,52 @@ def _render_extractor_prediction(
                 cells.append(f"{val:.2f}" if val is not None else "—   ")
             lines.append(f"| {mm:<13.1f} | " + " | ".join(cells) + " |")
         lines.append("")
+
+    extras = _extras_for(chart)
+    if extras.gt_snippet:
+        lines.append("## After validation")
+        lines.append("")
+        lines.append(
+            "Copy each column into the matching tuple in "
+            "`tools/mtfdigitizer/referenceset/charts.py`:"
+        )
+        lines.append("")
+        lines.append(extras.gt_snippet)
+        lines.append("")
     return "\n".join(lines)
 
 
 def _extractor_readings_for_view(chart: ReferenceChart, view: HelperView):
     """Run the extractor for one helper view and return its 11 readings.
 
-    For multi-aperture profiles, hue-filter the profile to the target
-    aperture before running so the readings reflect that aperture's
-    curves only. For single-aperture profiles, run the base profile.
+    Three dispatch paths mirror calibrate.py:
+
+    - **Per-frequency** (`fujifilm-permfreq`): substitute the parsed
+      frequency onto a copy of the base profile so the extractor
+      labels its readings as `freq{N}S/M` rather than the placeholder
+      `freq0S/M`. One view per PNG.
+    - **Multi-aperture** (TTartisan): hue-filter the base profile to
+      the target aperture before extracting. Both views share the
+      primary chart raster.
+    - **Standard** (no special-casing today, included for completeness).
     """
+    import dataclasses  # noqa: PLC0415
     base_profile = profile_for_chart(chart)
-    image_path = REPO_ROOT / chart.chart_path
     if view.aperture_label is not None:
         from mtfdigitizer.extract import _hue_filtered_profile  # noqa: PLC0415
 
         profile = _hue_filtered_profile(base_profile, view.aperture_label)
+    elif chart.style_family == "fujifilm-permfreq":
+        from mtfdigitizer.per_frequency import (  # noqa: PLC0415
+            parse_filename_frequency,
+        )
+
+        freq = parse_filename_frequency(view.extractor_chart_path)
+        profile = dataclasses.replace(base_profile, frequencies_lpmm=(freq,))
     else:
         profile = base_profile
     result = extract_chart(
-        image_path,
+        view.extractor_chart_path,
         profile,
         view.plot_box,
         image_height_mm=chart.image_height_mm,
@@ -528,9 +821,11 @@ def main(argv: list[str] | None = None) -> int:
     any_changed = False
     print(f"{args.slug}: {len(views)} view(s)", file=sys.stderr)
 
+    extras = _extras_for(chart)
+
     # Readhelper PNGs.
     for view in views:
-        helper = _render_readhelper(view, chart.image_height_mm)
+        helper = _render_readhelper(view, chart.image_height_mm, extras)
         import io
         buf = io.BytesIO()
         helper.save(buf, format="PNG")

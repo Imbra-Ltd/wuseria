@@ -37,3 +37,24 @@ Sample positions (mm, image_height_mm = 14.0): 0.0, 1.4, 2.8, 4.2, 5.6, 7.0, 8.4
 | 11.2          | 0.94 | 0.94 | 0.72 | 0.72 |
 | 12.6          | 0.94 | 0.94 | 0.77 | 0.76 |
 | 14.0          | 0.95 | 0.95 | 0.84 | 0.69 |
+
+## After validation
+
+Copy each column into the matching tuple in `tools/mtfdigitizer/referenceset/charts.py`:
+
+```python
+_TTARTISAN_50_GT: GroundTruthCurves = {
+    "max": {  # f/1.2
+        "freq10S": (...11 values from the 10S column...),
+        "freq10M": (...11 values from the 10M column...),
+        "freq30S": (...11 values from the 30S column...),
+        "freq30M": (...11 values from the 30M column...),
+    },
+    "stopped": {  # f/5.6
+        "freq10S": (...11 values from the 10S column...),
+        "freq10M": (...11 values from the 10M column...),
+        "freq30S": (...11 values from the 30S column...),
+        "freq30M": (...11 values from the 30M column...),
+    },
+}
+```
