@@ -5995,3 +5995,82 @@ Theme: promote `ttartisan-50mm-f1-2` to Tier 1 (scaffold-only — maintainer fil
 - 461-page build; full validate gate green locally; CI green on PR #1094.
 - **45 ADRs total** (unchanged — no architectural decisions this session; the script codifies the existing #1058 design, doesn't change it).
 - **9 declared MTF profiles** (unchanged).
+
+---
+
+### Session 131 — TTartisan max-aperture ridge fixes + readhelper conventions
+
+Date: 2026-06-09 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: maintainer-reported anchor extraction defects on `ttartisan-50mm-f1-2` (black dashed T10 and grey dashed T30 not being tracked). Diagnose, fix, regenerate the cohort, codify a readhelper convention while we're in the area, fill the 88 GT values from the maintainer eye-read.
+
+#### Branch / merge state
+
+- Started on `main`, clean. Session 130's PR #1094 already merged. Memory pointer carried "Maintainer fills 88 GT values for `_TTARTISAN_50_GT`, then #1085 orphan triage" as next items.
+- Branch: `fix/ttartisan-anchor-ridge-bugs` (PR #1096, one commit, squash-merged as `fbe892c`).
+
+#### PRs merged
+
+- **PR #1096 — `fix(mtf): TTartisan max-aperture ridge tracking + readhelper conventions`** (closes #1095). One commit, 110 files, +1412 / -934. Squash-merged as `fbe892c`. CI green (gate, CodeQL, analyze, gitleaks, links pass; build + lighthouse skipped per path-filter — no front-end source touched).
+
+#### Issues opened
+
+- **#1095 — Ridge extractor mistracks TTartisan f/1.2 max-aperture panel (10S/T and 30T).** `bug` + `P2` + `v0.8.0`. Auto-closed by PR #1096.
+- **#1097 — Ridge clusterer fragments curves at crossings (TTartisan 50mm f/1.2 max T10/S30 corners).** `task` + `P3` + `v0.8.0`. Documents the residual T10-dive + S30-corner |Δ| outliers and three candidate fixes (DP swap, cross-x-range fragment fusion, endpoint-anchored fragment promotion). Carried to next session.
+
+#### Issues closed
+
+- **#1095** — closed by `closes #1095` in the merge commit.
+
+#### Key changes
+
+**Extractor — `pipeline/dispatch.py`, `pipeline/ridge.py`:**
+
+- **Cross-hue halo exclusion** in the `FREQUENCY_PER_HUE_RIDGE` dispatch branch. The grey hue's `V∈[90,160]` window catches mid-grey pixels along the black line's anti-aliased gradient (V=131 lies inside it). `_build_halo_exclusion_map` dilates the lower-frequency hue mask ±5 px vertically and subtracts from every higher-frequency hue sharing its aperture prefix (per ADR-044 naming). Kills the full-width halo tracks that out-ranked the real T30 in top-2 selection.
+- **`_fill_coincident_column_gaps_extending`** (new): when one curve runs through a long single-ridge coincidence region at one end of the field and the other curve only appears in the divergent region, the original `_fill_coincident_column_gaps` leaves the absent track absent because `_nearest_known_y` returns None outside the track's known x range. The new variant falls back to the absent track's nearest endpoint y as the continuity anchor — attributes the single-ridge value to both physical curves as B4 physics requires.
+- **`_pick_two_tracks_y_diverse`** (new): top-2-by-coverage picks parallel halos of a single thick line when the real second curve has lower coverage. Fetch top-3 instead; swap rank-2 → rank-3 when (a) rank-3 has ≥40% of rank-2's coverage AND (b) sits ≥2× further from rank-1 in mean_y than rank-2 does. Recovers the grey T30 dive that the solid S30's edge ridges were crowding out. Black 10-lp/mm tracks (genuine S+T pair 12 px apart) are unaffected because rank-3 there has only 24% of rank-2's coverage — the threshold gates correctly.
+
+**Readhelpers — `scripts/scaffold_anchor_helpers.py` + ADR-046:**
+
+- TTartisan `_ttartisan_dual_aperture_views` previously used `<stem>-<aperture>-overlay.png` (the extractor's traced polylines over the chart) as the readhelper base image. Now uses the clean source chart unconditionally — layering extractor output nudges the eye-read toward the extractor's answer, which defeats the purpose of an independent calibration signal.
+- Uniform 0.05 OTF grid: every style family supplies the OTF positions its chart does not print natively. Fuji (prints 0.2-step) gets dashed lines at every 0.05 in between; TTartisan (prints 0.1-step) gets 0.05/0.15/.../0.95. Labels render at 2 decimals so 0.05/0.15/0.25/... show their hundredths digit. ±0.02 eye-precision regardless of native chart density.
+- Field renamed `readhelper_half_step_otf` → `readhelper_extra_otf` to reflect the broader semantic.
+- Refreshed TTartisan `sample_line_warning` text (was still referencing the extractor-overlay base image); added the half-step line to both families' `mtf_axis_legend`.
+
+**GT — `referenceset/charts.py`:**
+
+- `_TTARTISAN_50_GT` filled with the 88 maintainer eye-read values from `extractor-prediction.md`. Calibration deltas printed in PR body; aggregate (14 anchors) holds at median |Δ|=0.011, p95=0.064, 93% within ±0.05.
+
+**Regenerated artifacts:** 18 TTartisan Tier 2 lenses (SVG + overlay + log), 1 TTartisan Tier 1 anchor (anchor PNG set + readhelpers + templates), 2 Fuji Tier 1 anchors (readhelpers + templates — picked up the new 0.05 grid).
+
+#### Cohort impact
+
+- **2 verdict promotions** LOW → HIGH on max-aperture: `ttartisan-23mm-f1-4`, `ttartisan-90mm-f1-25-gfx` (both went from 4 prior violations → 0).
+- **0 regressions** across the 18-lens TTartisan Tier 2 cohort.
+
+#### Key decisions
+
+- **ADR-046 — Anchor readhelpers use the clean source chart.** Codifies two principles in one ADR: (1) helper base image must never depict extractor output; (2) all helpers render a uniform 0.05 OTF grid via dashed orange gridlines filling the gaps to the chart's native lines. Both flow from the same purpose — unbiased eye-read at ±0.02 precision.
+- **Option 1 (cross-hue exclusion + coincidence-fill + diversity picker) over option 2 (per-chart V calibration) or option 3 (DP-based dispatch swap).** Smaller blast radius, surgical changes, no per-chart tuning. Documented residual fragmentation issue as #1097 follow-up rather than trying to solve it all in one PR.
+- **Regenerate the full TTartisan cohort, not just the anchor.** The extractor changes are correctness fixes that should affect every TTartisan output. Leaving 17 lenses STALE post-fix creates confusion ("did this lens fail to regenerate or is it just old?"). Bulk-regenerated as part of the same PR; before/after verdict comparison showed only improvements.
+- **GT calibration confirms the fix works where it can.** Stopped-aperture med |Δ| ≤ 0.004 across all four fields (max |Δ| = 0.031). Max-aperture med |Δ| ≤ 0.013 with one or two p95-outlier points per field — those are the residual curve-crossing fragmentation that #1097 will target.
+
+#### Follow-ups for next session
+
+- **#1097 — Ridge clusterer fragments curves at crossings.** Three candidate fixes documented; pick one via spike or skip-to-implementation.
+- **#1085 — Triage 4 orphan dirs** (Thingyfy + 3 Zeiss Touit) — pure agent task, P3, carried.
+- **Carried since S128:** Sparse-dash dropouts in `ridge_tracks_for_hue_freq_split` — partially addressed (now applies to a subset of the dropout cases via the y-diversity tie-breaker), but the general case remains open.
+- **Carried since S122:** `_profile_for_view` shim removal.
+- **Carried since S118:** Validate ADR-014 mean rule against first real MTF-driven score; Tier 1 `log.py --check` false-OK; 17-40 tele `prior_violations=1`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. **Fujifilm cohort: 62 lenses on `mtf-readings.ts`** (unchanged). **TTartisan cohort: 19 lenses on `mtf-readings.ts`** (unchanged at the surface; underlying 18 Tier 2 + 1 Tier 1 logs all regenerated this session).
+- Epic #790 (digitize all brands): **4/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **103 entries** (unchanged).
+- **Aggregate calibration: 566/609 (92.9%)** within ±0.05 band (`ttartisan-50mm-f1-2` now contributes 76/88 paired comparisons; was 0/88 last session).
+- **3 Tier 1 anchors with codified helpers, all on the 0.05 grid + clean-chart base** (was 3 anchors, 2 with the 0.05 grid).
+- **298 pytest pass** (unchanged total; ridge tests +0 since no new unit tests for #1095 — relied on calibration deltas + regenerated overlay glance as acceptance signal).
+- 461-page build (unchanged).
+- **46 ADRs total** (was 45; added ADR-046 anchor readhelpers).
+- **9 declared MTF profiles** (unchanged).
