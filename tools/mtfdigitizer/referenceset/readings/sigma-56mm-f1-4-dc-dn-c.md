@@ -9,12 +9,12 @@
 
 | Field          | paired | med \|Δ\| | p95 \|Δ\| |
 | -------------- | ------ | --------- | --------- |
-| contrast10S    | 11/11  |     0.006 |     0.039 |
-| contrast10M    | 11/11  |     0.006 |     0.076 |
-| resolution30S  | 11/11  |     0.007 |     0.043 |
-| resolution30M  | 11/11  |     0.011 |     0.024 |
+| freq10S        | 11/11  |     0.006 |     0.039 |
+| freq10M        | 11/11  |     0.006 |     0.076 |
+| freq30S        | 11/11  |     0.007 |     0.043 |
+| freq30M        | 11/11  |     0.011 |     0.024 |
 
-| frac | contrast10S GT | contrast10S EX | contrast10S Δ | contrast10M GT | contrast10M EX | contrast10M Δ | resolution30S GT | resolution30S EX | resolution30S Δ | resolution30M GT | resolution30M EX | resolution30M Δ |
+| frac | freq10S GT | freq10S EX | freq10S Δ | freq10M GT | freq10M EX | freq10M Δ | freq30S GT | freq30S EX | freq30S Δ | freq30M GT | freq30M EX | freq30M Δ |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 0.0 | 0.97 | 0.98 | 0.007 | 0.97 | 0.98 | 0.007 | 0.86 | 0.86 | 0.003 | 0.87 | 0.86 | 0.007 |
 | 0.1 | 0.97 | 0.98 | 0.008 | 0.97 | 0.98 | 0.008 | 0.86 | 0.87 | 0.005 | 0.87 | 0.87 | 0.001 |

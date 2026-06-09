@@ -24,16 +24,16 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq10S        |  7/11    |  0/11       |
+| freq10S        |  9/11    |  0/11       |
 | freq10M        |  6/11    |  0/11       |
 | freq30S        |  9/11    |  0/11       |
-| freq30M        |  8/11    |  0/11       |
+| freq30M        |  9/11    |  0/11       |
 
 ```
-  EX   freq10S        ···██▇▇▇▇▇·  ( —  →  — )
+  EX   freq10S        ·████▇▇▇▇▇·  ( —  →  — )
   EX   freq10M        ···██▇▇▇▇··  ( —  →  — )
   EX   freq30S        ·▆▆▆▆▅▅▅▅▅·  ( —  →  — )
-  EX   freq30M        ·▇▇▆▆▆▅▆▆··  ( —  →  — )
+  EX   freq30M        ·▇▇▆▆▆▅▆▆▆·  ( —  →  — )
 ```
 
 **freq10S**
@@ -41,8 +41,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | frac | EX |
 | ---- | --- |
 | 0.0 | — |
-| 0.1 | — |
-| 0.2 | — |
+| 0.1 | 0.94 |
+| 0.2 | 0.94 |
 | 0.3 | 0.94 |
 | 0.4 | 0.93 |
 | 0.5 | 0.91 |
@@ -97,7 +97,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.6 | 0.64 |
 | 0.7 | 0.68 |
 | 0.8 | 0.67 |
-| 0.9 | — |
+| 0.9 | 0.65 |
 | 1.0 | — |
 
 ### Center / edge summary
@@ -107,7 +107,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq10S        |            — |       0.89 |            — |
 | freq10M        |            — |          — |            — |
 | freq30S        |            — |       0.58 |            — |
-| freq30M        |            — |          — |            — |
+| freq30M        |            — |       0.65 |            — |
 
 ### Shape metrics
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.893 |      0.80 |  yes |
-| IoU       | 0.533 |      0.20 |  yes |
+| precision | 0.896 |      0.80 |  yes |
+| IoU       | 0.537 |      0.20 |  yes |
 
 #### Plausibility priors
 

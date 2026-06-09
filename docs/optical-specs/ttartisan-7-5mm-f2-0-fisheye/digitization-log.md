@@ -24,14 +24,14 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq10S        | 10/11    |  0/11       |
-| freq10M        |  7/11    |  0/11       |
+| freq10S        |  8/11    |  0/11       |
+| freq10M        |  4/11    |  0/11       |
 | freq30S        | 10/11    |  0/11       |
 | freq30M        | 11/11    |  0/11       |
 
 ```
-  EX   freq10S        █████████▇·  (0.94 →  — )
-  EX   freq10M        █····▇▇▇▇▇▇  (0.94 → 0.92)
+  EX   freq10S        ████████···  (0.94 →  — )
+  EX   freq10M        █······▇▇▇·  (0.94 →  — )
   EX   freq30S        ▆▆▆▆▅▅▅▄▄▅·  (0.71 →  — )
   EX   freq30M        ▆▆▆▆▆▆▆▆▆▅▅  (0.71 → 0.57)
 ```
@@ -47,9 +47,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.4 | 0.95 |
 | 0.5 | 0.94 |
 | 0.6 | 0.94 |
-| 0.7 | 0.94 |
-| 0.8 | 0.93 |
-| 0.9 | 0.92 |
+| 0.7 | 0.93 |
+| 0.8 | — |
+| 0.9 | — |
 | 1.0 | — |
 
 **freq10M**
@@ -61,12 +61,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.2 | — |
 | 0.3 | — |
 | 0.4 | — |
-| 0.5 | 0.91 |
-| 0.6 | 0.90 |
+| 0.5 | — |
+| 0.6 | — |
 | 0.7 | 0.90 |
-| 0.8 | 0.90 |
-| 0.9 | 0.91 |
-| 1.0 | 0.92 |
+| 0.8 | 0.89 |
+| 0.9 | 0.81 |
+| 1.0 | — |
 
 **freq30S**
 
@@ -104,8 +104,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq10S        |         0.94 |       0.92 |            — |
-| freq10M        |         0.94 |       0.91 |         0.92 |
+| freq10S        |         0.94 |          — |            — |
+| freq10M        |         0.94 |       0.81 |            — |
 | freq30S        |         0.71 |       0.53 |            — |
 | freq30M        |         0.71 |       0.58 |         0.57 |
 
@@ -125,7 +125,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
 | precision | 0.923 |      0.80 |  yes |
-| IoU       | 0.681 |      0.20 |  yes |
+| IoU       | 0.622 |      0.20 |  yes |
 
 #### Plausibility priors
 

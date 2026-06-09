@@ -10,6 +10,7 @@ from mtfdigitizer.pipeline.ridge import (
     _column_runs,
     _extract_ridge_points,
     _merge_near_duplicate_tracks,
+    _select_top_n_tracks,
     _strip_chrome,
     ridge_tracks_for_hue_freq_split,
     ridge_tracks_to_fields,
@@ -158,6 +159,70 @@ def test_dedup_keeps_both_when_outside_window() -> None:
     track_b = Track(points=tuple((x, 50.0) for x in range(100)))  # well outside
     kept = _merge_near_duplicate_tracks([track_a, track_b])
     assert len(kept) == 2
+
+
+# --- _select_top_n_tracks (fusion-before-floor, #1097) -------------------
+
+
+def test_select_top_n_tracks_fuses_subfloor_fragments_before_applying_floor() -> None:
+    """Regression for #1097. A real curve can split into multiple
+    sub-floor fragments where its ridge intersects another curve's.
+    Fragment fusion MUST run before the coverage floor — otherwise the
+    fragments are dropped and the real curve never enters track
+    selection.
+
+    Mirrors the TTartisan T10 dive shape: three disjoint, contiguous
+    fragments individually below the 10% floor (on plot_width=600 the
+    floor is 60), endpoint y's matching within _FRAGMENT_MERGE_MAX_DY=6.
+    """
+    plot_width = 600
+    floor = int(0.10 * plot_width)  # 60
+    background = Track(points=tuple((x, 150.0) for x in range(100, 400)))
+    # Three sub-floor fragments of a diving curve with matching endpoint y's.
+    dive_left = Track(points=tuple((x, 200.0 + (x - 445) * 0.2) for x in range(445, 480)))
+    dive_mid = Track(points=tuple((x, 207.0 + (x - 480) * 0.3) for x in range(480, 510)))
+    dive_right = Track(points=tuple((x, 216.0 + (x - 510) * 0.4) for x in range(510, 560)))
+    assert dive_left.coverage < floor
+    assert dive_mid.coverage < floor
+    assert dive_right.coverage < floor
+    selected = _select_top_n_tracks(
+        [background, dive_left, dive_mid, dive_right],
+        n=2,
+        plot_width=plot_width,
+    )
+    assert len(selected) == 2, (
+        "fusion should stitch the dive fragments into one >floor track"
+    )
+    # The fused dive track must include points from all three fragments
+    dive = [t for t in selected if t is not background][0]
+    dive_xs = {x for x, _ in dive.points}
+    assert dive_xs & set(range(445, 480)), "missing left dive fragment"
+    assert dive_xs & set(range(480, 510)), "missing middle dive fragment"
+    assert dive_xs & set(range(510, 560)), "missing right dive fragment"
+
+
+def test_select_top_n_tracks_does_not_admit_sub_floor_noise() -> None:
+    """The floor still rejects isolated sub-floor noise tracks that
+    DON'T fuse into anything. Guards against the regression where the
+    fusion-first reorder turns the algorithm into "always pass" by
+    dropping the noise filter.
+    """
+    plot_width = 600
+    floor = int(0.10 * plot_width)  # 60
+    # Two real curves clearly above floor
+    upper = Track(points=tuple((x, 100.0) for x in range(0, 200)))
+    lower = Track(points=tuple((x, 300.0) for x in range(0, 200)))
+    # A noise track far from both, sub-floor coverage, no continuity link
+    noise = Track(points=tuple((x, 500.0) for x in range(0, 30)))
+    assert noise.coverage < floor
+    selected = _select_top_n_tracks(
+        [upper, lower, noise],
+        n=3,
+        plot_width=plot_width,
+    )
+    selected_ys = sorted(t.mean_y for t in selected)
+    assert 500.0 not in selected_ys, "sub-floor noise should still be filtered"
+    assert len(selected) == 2
 
 
 # --- ridge_tracks_to_fields end-to-end -----------------------------------
