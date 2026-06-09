@@ -13,15 +13,16 @@ so its independence from the extractor is load-bearing — an eye-read
 that drifts toward the extractor's answer turns the calibration into a
 self-confirming loop.
 
-`scaffold_anchor_helpers.py` produces three artifacts per anchor:
+`scaffold_anchor_helpers.py` produces two artifacts per anchor (was
+three; merged in ADR-048):
 
 1. `<stem>-<view>-readhelper.png` — the chart upscaled 3× with green
    vertical sample-position lines and labels, used as the maintainer's
    eye-read aid.
-2. `eye-read-template.md` — fill-in tables for the GT values.
-3. `extractor-prediction.md` — the extractor's current reading,
-   shown separately as a comparison point only after the eye-read is
-   done.
+2. `eye-read.md` — legend + per-cell tables pre-populated with the
+   extractor's predictions. Maintainer marks corrected cells with `!`
+   and unknown cells with `?`; bare cells count as silent
+   verification (see ADR-048 for the cell-state contract).
 
 The TTartisan dual-aperture dispatch (introduced in the same change
 that promoted the 50mm f/1.2 anchor, #1093/#1094) chose
