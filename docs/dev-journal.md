@@ -6074,3 +6074,88 @@ Theme: maintainer-reported anchor extraction defects on `ttartisan-50mm-f1-2` (b
 - 461-page build (unchanged).
 - **46 ADRs total** (was 45; added ADR-046 anchor readhelpers).
 - **9 declared MTF profiles** (unchanged).
+
+---
+
+### Session 132 — TTartisan T10 dive fix via fragment fusion order
+
+Date: 2026-06-09 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up the residual #1097 outliers from S131. Spike: probe the ridge clusterer's intermediate state on the TTartisan max-aperture chart, localize the failure mode, ship the smallest fix that closes #1097's acceptance criteria, and document the deeper deferred problem separately.
+
+#### Branch / merge state
+
+- Started on `main`, clean except an uncommitted dev-journal entry from S131. Memory pointer carried "#1097 spike → pick (a) DP swap / (b) cross-x-range fragment fusion / (c) endpoint-anchored fragment promotion; then #1085 orphan triage" as next items.
+- Branch 1: `docs/s131-journal` (PR #1098, one commit, squash-merged as `92f4a3d`).
+- Branch 2: `fix/ttartisan-ridge-crossing-fragmentation` (PR #1099, one commit, squash-merged as `5e0b6ff`).
+
+#### PRs merged
+
+- **PR #1098 — `docs: session 131 wrap`**. Journal-only entry that the previous session left uncommitted (CRLF/prettier hook reformatted an unrelated extractor-prediction.md table in the same staging round; reverted that side-effect before opening the PR). One file, +79 / -0.
+- **PR #1099 — `fix(mtf): fuse ridge fragments before applying coverage floor`** (closes #1097). One commit, 73 files, +1085 / -698. Squash-merged as `5e0b6ff`. CI green (gate, build, lighthouse, CodeQL, analyze, gitleaks, links — all SUCCESS).
+
+#### Issues opened
+
+- **#1100 — TTartisan freq30 S/M label inversion at curve crossings.** `task` + `P3` + `v0.8.0`. Documents the deferred problem from #1097 (the freq30 corner stays |Δ|=0.11/0.10 because the greedy clusterer mixes both S30 and T30 into a frankenstein track at the crossing, then the S/M labels get assigned to the frankenstein and its sibling). Three candidate fixes spelled out: (1) smarter clusterer tie-break by slope projection, (2) DP-based extraction with cliff-corner mitigation, (3) dashed-density on raw mask (tried; regressed 7artisans, needs per-profile guard).
+
+#### Issues closed
+
+- **#1097** — closed by `closes #1097` in PR #1099's merge commit.
+
+#### Key changes
+
+**Extractor — `pipeline/ridge.py`:**
+
+- **`_select_top_n_tracks` reordered**: fusion now runs BEFORE the coverage floor. Sub-floor T10 dive fragments (67 + 9 + 48 columns, below the 52-column floor individually) now stitch into one >floor track and re-enter selection. One-line change inside a 9-line function. Documented as ADR-047.
+- **Probe-confirmed root cause**: the ridge clusterer correctly extracts the T10 dive's ridge points into three contiguous segments (covers x=445-606), but the prior order (`floor → dedup → fuse`) dropped each segment below floor before fusion saw them. Top-3 picker kept the two upper-curve tracks; sampler attributed S10 (upper) value to both freq10S and freq10M corners.
+
+**Tests — `tests/test_ridge.py`:**
+
+- `test_select_top_n_tracks_fuses_subfloor_fragments_before_applying_floor` — three contiguous sub-floor fragments with matching endpoint y's must fuse into one >floor track.
+- `test_select_top_n_tracks_does_not_admit_sub_floor_noise` — isolated sub-floor noise (no continuity link to anything else) still gets filtered. Guards against "fusion-first becomes always-pass" regression.
+
+**Bulk regen (in-PR per the S131 precedent):**
+
+- Calibrate `--write-readings` for all reference-set charts (14 readings docs, 3 new files).
+- `mtfdigitizer.extract <slug> --accept` for all 16 stale TTartisan Tier 2 logs (overlay PNG + review HTML + SVG + digitization-log.md each).
+- `mtfdigitizer.scripts.emit_ttartisan_tier2 --write` patches `src/data/mtf-readings.ts` (38 panels, 418 positions).
+
+#### Calibration impact
+
+- **ttartisan-50mm-f1-2 max freq10M p95: 0.185 → 0.013** (T10 dive corner |Δ| 0.28 → 0.01; corner reads 0.61 vs GT 0.60). The headline win.
+- **ttartisan-50mm-f1-2 max freq10S p95: 0.028 → 0.027** (stable; honestly returns None at the corner where the S10 ridge isn't actually in any extracted track).
+- ttartisan-50mm-f1-2 max freq30S/30M: **unchanged** (0.140 / 0.128). That's the deferred S/M-label-inversion problem (#1100), not the fragmentation one.
+- 7artisans freq30M p95: 0.060 → 0.052 (improvement); freq30S p95: 0.053 → 0.095 (apparent regression — the fix surfaces a previously-missing sample at frac 0.4 with |Δ|=0.078, dragging p95 up). All other charts unchanged.
+- Aggregate: **562/604 (93.0%)** within ±0.05 band (was 566/609 / 92.9% — net paired comparisons down 5, in-band down 4, % up).
+
+#### Cohort impact
+
+- 16 TTartisan Tier 2 lenses re-extracted; `src/data/mtf-readings.ts` patched with 38 panels / 418 positions.
+- 14 lenses HIGH (unchanged); 2 lenses orchestrator-level LOW (`ttartisan-23mm-f1-4`, `ttartisan-90mm-f1-25-gfx`) — both unchanged from S131 (max panel HIGH, stopped panel LOW from pre-existing `not_suspiciously_flat` trigger), NOT regressions. S131's "LOW → HIGH" promotion was max-panel-only; orchestrator-level rolled up to LOW already.
+- Anchor (`ttartisan-50mm-f1-2`) max-panel verdict still HIGH; readings doc updated with the new corner values.
+
+#### Key decisions
+
+- **ADR-047 — Ridge fragment fusion runs before the coverage floor.** Documents the one-line reorder, why bigger fixes were ruled out (DP swap has cliff-corner blind spot #1044 on this exact pattern; slope-extrapolated fusion regressed 7artisans 30S and ttartisan 10S; continuity-based S/M regressed 7artisans 10M because of `dashed_is_sagittal=True` interaction), and what the deferred follow-up #1100 is for.
+- **Ship the narrow fix, defer the deeper one.** The spike revealed two distinct problems on the same chart: T10 corner fragmentation (the #1097-stated issue, fixable with one line) and freq30 S/M label inversion (a frankenstein-track problem that needs a structural fix). User-confirmed scoping; #1097 closes, #1100 opens.
+- **Bulk regen lives in the fixing PR.** Same principle codified in S131 (carried forward to this PR's body and as an upstream-flagging candidate). The diff shows user-visible impact and the verdict matrix can be inspected pre-merge.
+
+#### Follow-ups for next session
+
+- **#1100 — TTartisan freq30 S/M label inversion at curve crossings.** Pick from three candidate fixes (slope-projecting clusterer tie-break / DP+mitigation / per-profile dashed-density). The first looks lowest-risk.
+- **#1085 — Triage 4 orphan dirs** (Thingyfy + 3 Zeiss Touit) — pure agent task, P3, still carried.
+- **Carried since S128:** Sparse-dash dropouts in `ridge_tracks_for_hue_freq_split` (partially addressed by the diversity picker in #1095; general case still open).
+- **Carried since S122:** `_profile_for_view` shim removal.
+- **Carried since S118:** Validate ADR-014 mean rule against first real MTF-driven score; Tier 1 `log.py --check` false-OK; 17-40 tele `prior_violations=1`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. **Fujifilm cohort: 62 lenses on `mtf-readings.ts`** (unchanged). **TTartisan cohort: 19 lenses on `mtf-readings.ts`** (unchanged at the surface; 16 underlying Tier 2 logs regenerated this session, anchor readings doc refreshed).
+- Epic #790 (digitize all brands): **4/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **103 entries** (unchanged).
+- **Aggregate calibration: 562/604 (93.0%)** within ±0.05 band (was 566/609 / 92.9%). `ttartisan-50mm-f1-2` contributes 84/88 paired (was 76/88; +8 new pairings as the dive corner now reads).
+- **3 Tier 1 anchors with codified helpers, all on the 0.05 grid + clean-chart base** (unchanged).
+- **300 pytest pass** (was 298; added 2 new `_select_top_n_tracks` tests).
+- 461-page build (unchanged).
+- **47 ADRs total** (was 46; added ADR-047 fragment-fusion order).
+- **9 declared MTF profiles** (unchanged).
