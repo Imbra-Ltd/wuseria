@@ -319,6 +319,11 @@ _FRAGMENT_MERGE_MAX_DY: float = 6.0
 _FRAGMENT_MERGE_OVERLAP_TOLERANCE: int = 12
 
 
+def _track_x_range(t: Track) -> tuple[int, int]:
+    xs = [x for x, _ in t.points]
+    return min(xs), max(xs)
+
+
 def _merge_near_duplicate_tracks(tracks: list[Track]) -> list[Track]:
     """Drop short tracks whose mean_y is within `_NEAR_DUPLICATE_DY` of a
     longer one.
@@ -335,11 +340,6 @@ def _merge_near_duplicate_tracks(tracks: list[Track]) -> list[Track]:
             continue
         kept.append(t)
     return kept
-
-
-def _track_x_range(t: Track) -> tuple[int, int]:
-    xs = [x for x, _ in t.points]
-    return min(xs), max(xs)
 
 
 def _track_endpoint_y(t: Track, side: str) -> float:
@@ -410,13 +410,20 @@ def _select_top_n_tracks(
     tracks: list[Track], n: int, plot_width: int
 ) -> list[Track]:
     """Drop near-duplicate ridges, fuse same-curve fragments, then keep
-    the `n` longest above the coverage floor."""
-    floor = int(_MIN_TRACK_COVERAGE * plot_width)
-    qualified = [t for t in tracks if t.coverage >= floor]
-    deduped = _merge_near_duplicate_tracks(qualified)
+    the `n` longest above the coverage floor.
+
+    Order matters (#1097): fusion runs BEFORE the coverage floor. A
+    curve that fragments into several sub-floor pieces (TTartisan T10
+    dive: 67 + 48 + 9 = 124 columns split over three fragments, none
+    above the 52-column floor individually) only re-enters track
+    selection if it gets stitched back together first.
+    """
+    deduped = _merge_near_duplicate_tracks(tracks)
     fused = _merge_fragmented_tracks(deduped)
-    fused.sort(key=lambda t: t.coverage, reverse=True)
-    return fused[:n]
+    floor = int(_MIN_TRACK_COVERAGE * plot_width)
+    qualified = [t for t in fused if t.coverage >= floor]
+    qualified.sort(key=lambda t: t.coverage, reverse=True)
+    return qualified[:n]
 
 
 def _rasterize(track: Track, shape: tuple[int, int]) -> np.ndarray:

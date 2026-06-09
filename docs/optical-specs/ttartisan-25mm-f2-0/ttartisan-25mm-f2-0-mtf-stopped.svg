@@ -25,7 +25,7 @@
 <text class="axis-label axis-x" x="304.0" y="186">14</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
 <polyline class="curve curve-10" style="stroke:#c89b3c" points="62.8,23.6 89.6,23.1 116.4,23.4 143.2,22.9 170.0,23.1 196.8,24.5 223.6,25.0 250.4,25.0 277.2,24.3"/>
-<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="62.8,23.6 89.6,23.1 116.4,23.4 143.2,22.9 170.0,23.1 196.8,24.5 223.6,25.0 250.4,25.4 277.2,31.2" stroke-dasharray="4 2"/>
+<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="62.8,23.6 89.6,23.6 116.4,23.6 143.2,23.4 170.0,23.1 196.8,24.5 223.6,25.0 250.4,25.4 277.2,31.2" stroke-dasharray="4 2"/>
 <polyline class="curve curve-30" style="stroke:#6b9bd2" points="62.8,46.3 89.6,46.3 116.4,46.3 143.2,46.3 170.0,48.6 196.8,51.4 223.6,54.9 250.4,47.7 277.2,44.9"/>
 <polyline class="curve curve-30 curve-m" style="stroke:#6b9bd2" points="170.0,48.6 196.8,51.9 223.6,55.1 250.4,62.6" stroke-dasharray="4 2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="23.6" r="2"/>
@@ -38,9 +38,9 @@
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="250.4" cy="25.0" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="277.2" cy="24.3" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="23.6" r="2"/>
-<circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="23.1" r="2"/>
-<circle class="dot dot-10" style="stroke:#c89b3c" cx="116.4" cy="23.4" r="2"/>
-<circle class="dot dot-10" style="stroke:#c89b3c" cx="143.2" cy="22.9" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="23.6" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="116.4" cy="23.6" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="143.2" cy="23.4" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="170.0" cy="23.1" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="196.8" cy="24.5" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="223.6" cy="25.0" r="2"/>
