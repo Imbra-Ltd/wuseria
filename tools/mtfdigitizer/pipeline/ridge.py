@@ -743,6 +743,301 @@ def ridge_tracks_for_hue(
     return out
 
 
+# --- Per-column ridge DP (#1100) -----------------------------------------
+#
+# Greedy clustering (`_cluster_into_tracks`) is column-walk-with-nearest-y:
+# decisive locally but blind to curve identity across crossings. When two
+# physical curves cross within a few pixels of each other (TTartisan grey
+# freq30 at x≈585), the upper-history track picks up the now-upper ridge —
+# even though that ridge is actually the OTHER physical curve diving up
+# while the first curve continues into a different y band.
+#
+# Mask-based DP (`extract_two_curves_dp`) is the natural fix but documented
+# blind spot #1044 fires on the exact TTartisan pattern: when one curve
+# dives steeply while a parallel curve stays at higher MTF, the Viterbi
+# prefers the smoother (flat) path through the dilation echo and loses the
+# dive. The dilation that bridges dash gaps also bridges the dive-vs-flat
+# distinction.
+#
+# Per-column ridge DP avoids both. Input is the per-column ridge centroids
+# already computed by `_extract_ridge_points` — sparse, no dilation, no
+# mask-vs-echo ambiguity. DP picks one ridge per column for each of two
+# paths; the smoothness prior penalises identity-swaps; when only one
+# ridge exists at a column the paths share it (curve coincidence — same
+# B4 generalisation `_fill_coincident_column_gaps_extending` handles).
+#
+# Tuning: alpha (smoothness weight) reused from `dp_extract.py` — same
+# trade-off shape, same reference-set calibration applies.
+
+
+# Smoothness weight: per-column cost is `_RIDGE_DP_ALPHA * |dy|`. Carried
+# over from `dp_extract._ALPHA` (Tokina reference-set calibration).
+_RIDGE_DP_ALPHA: float = 0.30
+
+# Penalty cost when a path's y at a column doesn't sit on any ridge
+# centroid AND is more than `_RIDGE_DP_SNAP_TOLERANCE` away from the
+# nearest one. Picked large enough to discourage paths that drift
+# through empty columns but small enough to allow brief excursions
+# across dash gaps.
+_RIDGE_DP_OFF_RIDGE_PENALTY: float = 50.0
+
+# A path may carry forward its previous y across columns with no ridges
+# (dash gaps). When ridges DO exist, snap the path to the nearest ridge
+# if within this many pixels; otherwise charge the off-ridge penalty.
+_RIDGE_DP_SNAP_TOLERANCE: float = 3.0
+
+# After pass 1 finds the best path, pass 2 erases ridges within this
+# vertical half-window of pass 1's path at each column (so pass 2 finds
+# a different curve). Sized to admit the case where two curves run ~5px
+# apart for part of the field (the second curve's ridge falls outside
+# the erase window even at near-coincidence).
+_RIDGE_DP_ERASE_HALF: int = 2
+
+
+def _ridges_by_column(
+    points: list[tuple[int, float]], plot_box: PlotBox
+) -> list[list[float]]:
+    """Group ridge points by column index relative to ``plot_box.x_left``.
+
+    Returns one list per column in ``[plot_box.x_left, plot_box.x_right]``;
+    each entry is the sorted list of ridge y-values at that column (may
+    be empty when no ridges were detected there).
+    """
+    width = plot_box.x_right - plot_box.x_left + 1
+    by_x: list[list[float]] = [[] for _ in range(width)]
+    for x, y in points:
+        col = x - plot_box.x_left
+        if 0 <= col < width:
+            by_x[col].append(y)
+    for col_ys in by_x:
+        col_ys.sort()
+    return by_x
+
+
+def _ridge_dp_one_pass(
+    ridges_by_col: list[list[float]],
+    *,
+    alpha: float = _RIDGE_DP_ALPHA,
+    erase_window: dict[int, float] | None = None,
+) -> tuple[list[float | None], list[bool]]:
+    """Single Viterbi pass: pick one y per column to minimise data + smoothness.
+
+    Each column's candidate y-set = its ridge centroids minus any ridges
+    in the optional `erase_window` (column-index → forbidden y, ±
+    ``_RIDGE_DP_ERASE_HALF`` px). The DP also considers carry-forward
+    from the previous column (whatever y the path was last at) so it
+    can bridge empty columns.
+
+    Returns ``(path, on_ridge)`` — two lists of length
+    ``len(ridges_by_col)``. ``path[col]`` is the path's y at that column
+    or ``None`` if no path here. ``on_ridge[col]`` is True iff the path
+    landed on a real ridge centroid (i.e. the column had candidates AND
+    the path picked one of them); False when the path carried forward
+    through an empty column.
+
+    Cost model:
+      Data cost at column x placing path at y:
+        0       if y == one of column's ridges
+        alpha_off * (|y - nearest_ridge| - snap_tolerance)
+                if column has ridges but path is off-ridge
+        0       if column has NO ridges (carry-forward is free)
+    Smoothness cost transitioning from y' to y across one column:
+        alpha * |y - y'|
+    """
+    n_cols = len(ridges_by_col)
+    if n_cols == 0:
+        return [], []
+
+    # Build the candidate y-set per column. The carry-forward is handled
+    # at backtrack time, not as a candidate; a column with no ridges has
+    # an empty candidate set and the path coasts.
+    candidates_per_col: list[list[float]] = []
+    for col, ys in enumerate(ridges_by_col):
+        kept = []
+        if erase_window and col in erase_window:
+            forbidden_y = erase_window[col]
+            for y in ys:
+                if abs(y - forbidden_y) > _RIDGE_DP_ERASE_HALF:
+                    kept.append(y)
+        else:
+            kept = list(ys)
+        candidates_per_col.append(kept)
+
+    # DP forward pass. State at each column: best total cost ending at
+    # each candidate y, plus the back-pointer (previous y, or None for
+    # "start").
+    # Represent best-cost as a dict {y: (cost, prev_y_or_None)}.
+    best: list[dict[float, tuple[float, float | None]]] = [{} for _ in range(n_cols)]
+
+    # Find the first column with at least one candidate — DP starts there.
+    first_col = next((c for c, ys in enumerate(candidates_per_col) if ys), None)
+    if first_col is None:
+        return [None] * n_cols, [False] * n_cols
+    for y in candidates_per_col[first_col]:
+        best[first_col][y] = (0.0, None)
+
+    # Forward over each subsequent column.
+    for col in range(first_col + 1, n_cols):
+        prev = best[col - 1]
+        cands = candidates_per_col[col]
+        if cands:
+            for y in cands:
+                # Min over prev candidate y's of (prev_cost + alpha * |y - y'|).
+                best_cost = float("inf")
+                best_prev_y = None
+                for y_prev, (cost_prev, _) in prev.items():
+                    cand_cost = cost_prev + alpha * abs(y - y_prev)
+                    if cand_cost < best_cost:
+                        best_cost = cand_cost
+                        best_prev_y = y_prev
+                best[col][y] = (best_cost, best_prev_y)
+        else:
+            # Empty column: carry every state forward at zero cost.
+            for y_prev, (cost_prev, _) in prev.items():
+                best[col][y_prev] = (cost_prev, y_prev)
+
+    # Backtrack from the last column with state to recover the path.
+    last_col = next(
+        (c for c in range(n_cols - 1, -1, -1) if best[c]),
+        None,
+    )
+    if last_col is None:
+        return [None] * n_cols, [False] * n_cols
+
+    path: list[float | None] = [None] * n_cols
+    on_ridge: list[bool] = [False] * n_cols
+    # Find best terminal y at last_col.
+    end_y, _ = min(best[last_col].items(), key=lambda kv: kv[1][0])
+    cur_y = end_y
+    for col in range(last_col, first_col - 1, -1):
+        path[col] = cur_y
+        # The path landed on a real ridge iff this column had candidates
+        # AND cur_y is one of them (not a carried-forward state).
+        on_ridge[col] = cur_y in candidates_per_col[col]
+        if col == first_col:
+            break
+        prev_y = best[col][cur_y][1]
+        if prev_y is None:
+            break
+        cur_y = prev_y
+    return path, on_ridge
+
+
+def _ridge_dp_two_paths(
+    ridges_by_col: list[list[float]],
+) -> tuple[
+    tuple[list[float | None], list[bool]],
+    tuple[list[float | None], list[bool]],
+]:
+    """Two complementary passes: pass 1 finds the best path; pass 2 finds
+    the next-best with pass 1's ridges erased per column (so it picks the
+    OTHER curve where two ridges exist).
+
+    When a column has only one ridge (curve coincidence), pass 1 takes
+    it; pass 2 then has no ridge at that column and coasts via
+    carry-forward — the downstream
+    `_fill_coincident_column_gaps_extending` step attributes the
+    single-ridge value to both fields per B4 physics.
+
+    Each pass returns ``(path, on_ridge)`` so the caller can distinguish
+    columns where DP landed on a real ridge from columns where it
+    coasted via carry-forward.
+    """
+    pass1 = _ridge_dp_one_pass(ridges_by_col)
+    pass1_path, _pass1_on_ridge = pass1
+    erase: dict[int, float] = {
+        col: y for col, y in enumerate(pass1_path) if y is not None
+    }
+    pass2 = _ridge_dp_one_pass(ridges_by_col, erase_window=erase)
+    return pass1, pass2
+
+
+# Half-window for measuring mask continuity around a path. Sized to
+# capture the anti-aliased halo of a 1-2 px stroke (2-3 px) plus a
+# small slop, without admitting the neighbouring curve which sits
+# 30+ px away on freq-split charts.
+_PATH_CONTINUITY_BAND_HALF_Y: int = 3
+
+
+def _path_mask_continuity(
+    track: Track, mask: np.ndarray
+) -> float:
+    """Fraction of columns within a path's x range that have mask ink
+    inside the y-band around the path's local y.
+
+    Coherent DP paths (#1100) are SINGLE physical curves end-to-end,
+    so this density is a clean discriminator: solid lines have ink at
+    nearly every column under them (continuity ~1.0); dashed lines have
+    periodic gaps (continuity ~0.5-0.7).
+
+    Distinct from the failed attempt in the PR #1099 spike: that
+    measured continuity on greedy-clustered tracks (frankensteins),
+    which mixed solid and dashed segments and gave noisy results. With
+    coherent paths, the measurement is the right signal.
+    """
+    if not track.points:
+        return 0.0
+    h, w = mask.shape
+    xs = sorted(x for x, _ in track.points)
+    x_lo, x_hi = xs[0], xs[-1]
+    if x_hi <= x_lo:
+        return 0.0
+    by_x = {x: y for x, y in track.points}
+    keys = sorted(by_x)
+    import bisect
+
+    hits = 0
+    total = 0
+    for x in range(x_lo, x_hi + 1):
+        if x < 0 or x >= w:
+            continue
+        if x in by_x:
+            y = by_x[x]
+        else:
+            idx = bisect.bisect_left(keys, x)
+            x_l = keys[idx - 1]
+            x_r = keys[idx]
+            y_l = by_x[x_l]
+            y_r = by_x[x_r]
+            y = y_l + (y_r - y_l) * (x - x_l) / (x_r - x_l)
+        y0 = max(0, int(y) - _PATH_CONTINUITY_BAND_HALF_Y)
+        y1 = min(h, int(y) + _PATH_CONTINUITY_BAND_HALF_Y + 1)
+        if mask[y0:y1, x].any():
+            hits += 1
+        total += 1
+    return hits / total if total else 0.0
+
+
+def _path_to_track(
+    path: list[float | None],
+    on_ridge: list[bool],
+    plot_box: PlotBox,
+) -> Track | None:
+    """Convert a DP pass result to a `Track`, keeping only ridge-anchored columns.
+
+    A column is included iff DP picked a real ridge centroid there
+    (``on_ridge[col]`` is True). Carry-forward columns (where the path
+    coasted across empty columns OR where the only candidates were
+    erased by pass 2's pass-1 forbid-set) are dropped — they would
+    bleed the OTHER pass's y values into this track and recreate the
+    same frankenstein the DP was meant to avoid.
+
+    The downstream `_densify_track` and
+    `_fill_coincident_column_gaps_extending` steps handle the gaps via
+    coincidence-fill + linear interpolation, so dropping carry-forward
+    columns here is the right place to draw the line.
+    """
+    pts: list[tuple[int, float]] = []
+    for col, y in enumerate(path):
+        if y is None or not on_ridge[col]:
+            continue
+        x = col + plot_box.x_left
+        pts.append((x, float(y)))
+    if not pts:
+        return None
+    return Track(points=tuple(pts))
+
+
 def ridge_tracks_for_hue_freq_split(
     mask: np.ndarray,
     plot_box: PlotBox,
@@ -790,31 +1085,41 @@ def ridge_tracks_for_hue_freq_split(
 
     cleaned = _strip_chrome(mask, plot_box)
     points = _extract_ridge_points(cleaned, plot_box)
-    tracks = _cluster_into_tracks(points)
-    # Top-3 (not top-2): the y-diversity picker below needs visibility
-    # into the 3rd-ranked track to detect parallel-halo pairs and
-    # promote the real second curve out of 3rd place.
-    candidates = _select_top_n_tracks(tracks, n=3, plot_width=plot_box.width + 1)
-    kept = _pick_two_tracks_y_diverse(
-        sorted(candidates, key=lambda t: t.coverage, reverse=True)
-    )
+
+    # Per-column ridge DP (#1100): two coherent paths through the ridge
+    # set, preserving curve identity through crossings. Replaces the
+    # greedy clusterer + top-N + diversity-picker chain that the
+    # frankenstein corner-crossing failure mode came from.
+    ridges_by_col = _ridges_by_column(points, plot_box)
+    (p1_path, p1_on_ridge), (p2_path, p2_on_ridge) = _ridge_dp_two_paths(ridges_by_col)
+    track1 = _path_to_track(p1_path, p1_on_ridge, plot_box)
+    track2 = _path_to_track(p2_path, p2_on_ridge, plot_box)
 
     solid_sm, dashed_sm = ("M", "S") if dashed_is_sagittal else ("S", "M")
     out: dict[str, np.ndarray] = {}
-    if not kept:
+    if track1 is None:
         return out
-    by_coverage = sorted(kept, key=lambda t: t.coverage, reverse=True)
-    if len(by_coverage) == 1:
-        # Whole-hue coincidence: both curves visually merged across the
-        # entire field. Same value to both — same B4 physics generalization
-        # as `ridge_tracks_for_hue`.
-        shared = _densify_track(by_coverage[0])
+    if track2 is None or track2.coverage < 10:
+        # Whole-hue coincidence: only one path found. Same value to
+        # both fields — same B4 physics as `ridge_tracks_for_hue`.
+        shared = _densify_track(track1)
         out[curve_field(freq, solid_sm)] = _rasterize(shared, mask.shape)
         out[curve_field(freq, dashed_sm)] = _rasterize(shared, mask.shape)
         return out
+
+    # S/M labeling on coherent paths: solid lines have continuous mask
+    # ink under them; dashed lines have periodic gaps. Measure each
+    # path's mask continuity inside its y-band — higher = solid.
+    cont1 = _path_mask_continuity(track1, cleaned)
+    cont2 = _path_mask_continuity(track2, cleaned)
+    if cont1 >= cont2:
+        solid_track_raw, dashed_track_raw = track1, track2
+    else:
+        solid_track_raw, dashed_track_raw = track2, track1
+
     column_runs = _column_run_count(cleaned, plot_box)
     shared_solid, shared_dashed = _fill_coincident_column_gaps_extending(
-        by_coverage[0], by_coverage[1], column_runs
+        solid_track_raw, dashed_track_raw, column_runs
     )
     solid_track = _densify_track(shared_solid)
     dashed_track = _densify_track(shared_dashed)
