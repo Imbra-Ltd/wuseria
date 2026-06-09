@@ -6159,3 +6159,87 @@ Theme: pick up the residual #1097 outliers from S131. Spike: probe the ridge clu
 - 461-page build (unchanged).
 - **47 ADRs total** (was 46; added ADR-047 fragment-fusion order).
 - **9 declared MTF profiles** (unchanged).
+
+---
+
+### Session 133 — Unify maintainer eye-read files (ADR-048)
+
+Date: 2026-06-09 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: collapse the two maintainer-facing files (`extractor-prediction.md` + `eye-read-template.md`) per Tier 1 anchor into one `eye-read.md` with a cell-level mark convention. Goal stated by the user: reduce manual effort — "if I don't mark it, it means I judged it is good enough."
+
+#### Branch / merge state
+
+- Started on `main`, clean.
+- Branch: `feat/eye-read-unified` (PR #1102, one commit, squash-merged as `94eebfd`).
+
+#### PRs merged
+
+- **PR #1102 — `feat(mtf): unify extractor-prediction.md + eye-read-template.md into one eye-read.md (ADR-048)`**. One commit, 15 files, +1239 / -588. Squash-merged as `94eebfd`. CI green (gate, CodeQL, gitleaks, links, changes; build + lighthouse skipped per path-filter).
+
+#### Issues opened / closed
+
+- None this segment. #1100 stays open as the next-priority follow-up.
+
+#### Key changes
+
+**New `mtfdigitizer/eyeread.py` module (437 LOC):**
+
+- `Cell` dataclass + `parse_cell` / `format_cell` for the bare / `!` / `?` / `—` cell states.
+- `parse_eye_read` extracts views (one per `##` heading) from the markdown.
+- `views_to_gt` builds the `GroundTruthCurves` dict from parsed views; `?` and unmarked-empty cells become `None`, bare and `!`-marked become their value.
+- `replace_gt_in_charts` surgically rewrites the `_<LENS>_GT` literal in `referenceset/charts.py` (brace-walk, preserves surrounding code; sheds the inline per-field comments — flagged in ADR-048 as accepted loss).
+- CLI: `py -m mtfdigitizer.eyeread <slug> [--apply]`. Preview prints the new GT literal; `--apply` writes to `charts.py`.
+
+**`scripts/scaffold_anchor_helpers.py` rewrite:**
+
+- One renderer (`_render_eye_read`) replacing the two (`_render_eye_read_template` + `_render_extractor_prediction`).
+- Pre-populates cells with the extractor's predictions; the maintainer edits in place.
+- Re-run preserves `!` and `?` marks (mapped by `(view_heading, column_header, row_index)` so header rewording survives) and refreshes unmarked cells.
+- Deletes the legacy `extractor-prediction.md` + `eye-read-template.md` on first regen.
+- `--check` mode detects the legacy files as drift; `--write` removes them.
+
+**Migrated 3 Tier 1 anchors:**
+
+- TTartisan 50mm f/1.2: 88 cells (44 `!` corrected + 44 silently verified).
+- Fuji GF 23mm f/4: 66 cells (3 `!` + 63 silent).
+- Fuji XF 23mm f/1.4: 44 cells (2 `!` + 42 silent).
+- All 3 round-trip through the parser byte-for-byte against the existing `_<LENS>_GT` data (proves the migration didn't lose values).
+
+**Docs:**
+
+- ADR-048 documents the cell-state contract, transcription workflow, refresh-on-rerun policy, alternatives weighed. ASCII mockup of the file layout in the Decision section.
+- ADR-046 cross-references ADR-048.
+- PLAYBOOK §"Scaffold anchor helpers" updated with the new 7-step Tier 1 promotion workflow (added `py -m mtfdigitizer.eyeread <slug> --apply` step between the readhelper write and calibrate run).
+
+**Tests:**
+
+- 27 new pytest in `test_eyeread.py` covering Cell parsing, formatting, view extraction, marks captured, heading→GT-key mapping, column→field mapping, full `views_to_gt` end-to-end, parametrized round-trips. All pass.
+- Total: 327 mtfdigitizer pytest pass (was 300).
+
+#### Key decisions
+
+- **Unmarked = silent verification.** User-confirmed core principle. Treats the maintainer's attention as the scarce resource, not their typing. Inverted from the prior "every cell must be filled" framing.
+- **`?` escape hatch for unread cells.** Cell that becomes `None` in GT. Avoids the "silent agreement to something I didn't read" failure mode.
+- **Preserve marks on re-run.** When the extractor changes its predictions, unmarked cells refresh to the new values; `!` and `?` cells keep their value and mark. ADR-048 spells out three alternatives considered (never overwrite, regenerate from scratch) and the chosen middle-ground.
+- **One PR for everything.** Scaffolder + parser + ADR + migration + tests. The migration only made sense after the parser worked, so splitting would leave PR-1 unconsumed. Confirmed with user before starting.
+- **Accept the inline-field-comment loss.** The per-field annotations inside `_<LENS>_GT` literals get dropped when the parser rewrites the dict. Those comments tend to drift after extractor changes anyway; the block comment above each `_GT` const is preserved. Documented in ADR-048's Consequences.
+- **Spike-by-probe applied.** Wrote a throwaway `_migrate_eyeread.py` to seed the 3 existing anchors' cells with `!` marks from `_<LENS>_GT`, then deleted it (probe-script convention). The migration would have been hand-coded otherwise.
+
+#### Follow-ups for next session
+
+- **#1100 — TTartisan freq30 S/M label inversion** (next priority — unchanged from S132 hand-off).
+- **#1085 — Triage 4 orphan optical-specs dirs** — still carried.
+- Eye-read.md flow ready for use: edit any of the 3 anchor files, mark with `!` or `?`, ask agent to "transcribe <slug>".
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. **Fujifilm cohort: 62 lenses** (unchanged). **TTartisan cohort: 19 lenses** (unchanged).
+- Epic #790 (digitize all brands): **4/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **103 entries** (unchanged).
+- **3 Tier 1 anchors with codified helpers** (unchanged) — now on the unified `eye-read.md` format.
+- **Aggregate calibration: 562/604 (93.0%)** within ±0.05 band (unchanged from S132 — this session was tooling-only, no extractor changes).
+- **327 pytest pass** (was 300; +27 eyeread tests).
+- 461-page build (unchanged).
+- **48 ADRs total** (was 47; added ADR-048).
+- **9 declared MTF profiles** (unchanged).
