@@ -11321,13 +11321,13 @@ const mtfReadings: Record<string, MtfData> = {
             position: 2.05,
             samples: {
               10: { S: 0.96, M: 0.96 },
-              30: { S: 0.81, M: 0.82 },
+              30: { S: 0.82, M: 0.81 },
             },
           },
           {
             position: 4.1,
             samples: {
-              10: { S: 0.97, M: 0.96 },
+              10: { S: 0.96, M: 0.97 },
               30: { S: 0.75, M: 0.82 },
             },
           },
@@ -11335,56 +11335,56 @@ const mtfReadings: Record<string, MtfData> = {
             position: 6.15,
             samples: {
               10: { S: 0.97, M: 0.95 },
-              30: { S: 0.7, M: 0.82 },
+              30: { S: 0.7, M: 0.89 },
             },
           },
           {
             position: 8.2,
             samples: {
-              10: { S: 0.97, M: 0.94 },
-              30: { S: 0.65, M: 0.83 },
+              10: { S: 0.97, M: 0.96 },
+              30: { S: 0.65, M: 0.87 },
             },
           },
           {
             position: 10.25,
             samples: {
               10: { S: 0.97, M: 0.94 },
-              30: { S: 0.65, M: 0.84 },
+              30: { S: 0.65, M: 0.89 },
             },
           },
           {
             position: 12.3,
             samples: {
-              10: { S: 0.96, M: 0.96 },
-              30: { S: 0.66, M: 0.82 },
+              10: { S: 0.96, M: 0.94 },
+              30: { S: 0.66, M: 0.83 },
             },
           },
           {
             position: 14.35,
             samples: {
-              10: { S: 0.94, M: 0.94 },
+              10: { S: 0.94, M: 0.93 },
               30: { S: 0.64, M: 0.73 },
             },
           },
           {
             position: 16.4,
             samples: {
-              10: { S: null, M: null },
-              30: { S: 0.61, M: 0.61 },
+              10: { S: 0.9, M: 0.9 },
+              30: { S: 0.61, M: 0.55 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: null, M: null },
-              30: { S: null, M: 0.63 },
+              10: { S: 0.8, M: 0.9 },
+              30: { S: 0.56, M: 0.4 },
             },
           },
           {
             position: 20.5,
             samples: {
-              10: { S: null, M: null },
-              30: { S: null, M: 0.64 },
+              10: { S: 0.7, M: 0.79 },
+              30: { S: 0.44, M: 0.32 },
             },
           },
         ],
@@ -11395,35 +11395,35 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 0,
             samples: {
-              10: { S: null, M: null },
+              10: { S: 0.94, M: 0.94 },
               30: { S: 0.81, M: 0.81 },
             },
           },
           {
             position: 2.05,
             samples: {
-              10: { S: null, M: null },
+              10: { S: 0.94, M: 0.94 },
               30: { S: 0.79, M: 0.81 },
             },
           },
           {
             position: 4.1,
             samples: {
-              10: { S: 0.93, M: 0.93 },
+              10: { S: 0.93, M: 0.94 },
               30: { S: 0.74, M: 0.81 },
             },
           },
           {
             position: 6.15,
             samples: {
-              10: { S: 0.92, M: 0.92 },
+              10: { S: 0.92, M: 0.94 },
               30: { S: 0.67, M: 0.8 },
             },
           },
           {
             position: 8.2,
             samples: {
-              10: { S: 0.91, M: 0.94 },
+              10: { S: 0.94, M: 0.91 },
               30: { S: 0.61, M: 0.79 },
             },
           },
@@ -11484,77 +11484,77 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: null, M: null },
+              30: { S: 0.58, M: 0.58 },
             },
           },
           {
             position: 2.05,
             samples: {
-              10: { S: 0.93, M: 0.93 },
-              30: { S: 0.57, M: null },
+              10: { S: 0.92, M: 0.93 },
+              30: { S: 0.57, M: 0.58 },
             },
           },
           {
             position: 4.1,
             samples: {
-              10: { S: 0.93, M: 0.93 },
-              30: { S: 0.55, M: null },
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.55, M: 0.6 },
             },
           },
           {
             position: 6.15,
             samples: {
-              10: { S: 0.93, M: 0.93 },
-              30: { S: 0.55, M: null },
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.55, M: 0.6 },
             },
           },
           {
             position: 8.2,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.57, M: null },
+              30: { S: 0.57, M: 0.58 },
             },
           },
           {
             position: 10.25,
             samples: {
               10: { S: 0.93, M: 0.92 },
-              30: { S: 0.57, M: null },
+              30: { S: 0.57, M: 0.54 },
             },
           },
           {
             position: 12.3,
             samples: {
               10: { S: 0.92, M: 0.9 },
-              30: { S: 0.53, M: null },
+              30: { S: 0.53, M: 0.48 },
             },
           },
           {
             position: 14.35,
             samples: {
               10: { S: 0.9, M: 0.86 },
-              30: { S: 0.51, M: null },
+              30: { S: 0.51, M: 0.46 },
             },
           },
           {
             position: 16.4,
             samples: {
               10: { S: 0.88, M: 0.8 },
-              30: { S: 0.5, M: 0.42 },
+              30: { S: 0.48, M: 0.51 },
             },
           },
           {
             position: 18.45,
             samples: {
               10: { S: 0.85, M: 0.71 },
-              30: { S: 0.5, M: 0.37 },
+              30: { S: 0.37, M: 0.5 },
             },
           },
           {
             position: 20.5,
             samples: {
-              10: { S: 0.78, M: 0.58 },
-              30: { S: 0.35, M: 0.17 },
+              10: { S: 0.79, M: 0.46 },
+              30: { S: 0.18, M: 0.35 },
             },
           },
         ],
@@ -11580,42 +11580,42 @@ const mtfReadings: Record<string, MtfData> = {
             position: 4.1,
             samples: {
               10: { S: 0.96, M: 0.96 },
-              30: { S: 0.85, M: 0.83 },
+              30: { S: 0.83, M: 0.85 },
             },
           },
           {
             position: 6.15,
             samples: {
               10: { S: 0.96, M: 0.96 },
-              30: { S: 0.87, M: 0.83 },
+              30: { S: 0.83, M: 0.87 },
             },
           },
           {
             position: 8.2,
             samples: {
               10: { S: 0.96, M: 0.96 },
-              30: { S: 0.87, M: 0.81 },
+              30: { S: 0.81, M: 0.87 },
             },
           },
           {
             position: 10.25,
             samples: {
               10: { S: 0.96, M: 0.96 },
-              30: { S: 0.84, M: 0.78 },
+              30: { S: 0.78, M: 0.84 },
             },
           },
           {
             position: 12.3,
             samples: {
               10: { S: 0.95, M: 0.95 },
-              30: { S: 0.8, M: 0.75 },
+              30: { S: 0.75, M: 0.8 },
             },
           },
           {
             position: 14.35,
             samples: {
               10: { S: 0.95, M: 0.95 },
-              30: { S: 0.75, M: 0.74 },
+              30: { S: 0.74, M: 0.75 },
             },
           },
           {
@@ -11629,14 +11629,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 18.45,
             samples: {
               10: { S: 0.95, M: 0.95 },
-              30: { S: 0.82, M: null },
+              30: { S: 0.77, M: 0.82 },
             },
           },
           {
             position: 20.5,
             samples: {
-              10: { S: 0.96, M: 0.96 },
-              30: { S: 0.86, M: null },
+              10: { S: 0.94, M: 0.96 },
+              30: { S: 0.67, M: 0.86 },
             },
           },
         ],
@@ -11660,64 +11660,71 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.4,
             samples: {
-              10: { S: 0.95, M: null },
-              30: { S: null, M: 0.76 },
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.78, M: 0.76 },
             },
           },
           {
             position: 2.8,
             samples: {
-              10: { S: 0.96, M: null },
-              30: { S: null, M: 0.75 },
+              10: { S: 0.96, M: 0.94 },
+              30: { S: 0.81, M: 0.75 },
             },
           },
           {
             position: 4.2,
             samples: {
-              10: { S: 0.95, M: null },
-              30: { S: null, M: 0.71 },
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.8, M: 0.71 },
             },
           },
           {
             position: 5.6,
             samples: {
-              10: { S: null, M: null },
-              30: { S: null, M: 0.66 },
+              10: { S: 0.94, M: 0.94 },
+              30: { S: 0.7, M: 0.84 },
             },
           },
           {
             position: 7,
             samples: {
-              10: { S: null, M: 0.91 },
-              30: { S: 0.6, M: 0.61 },
+              10: { S: 0.92, M: 0.94 },
+              30: { S: 0.6, M: 0.67 },
             },
           },
           {
             position: 8.4,
             samples: {
-              10: { S: null, M: 0.9 },
-              30: { S: 0.54, M: 0.61 },
+              10: { S: 0.9, M: 0.9 },
+              30: { S: 0.54, M: 0.64 },
             },
           },
           {
             position: 9.8,
             samples: {
-              10: { S: null, M: 0.9 },
-              30: { S: 0.56, M: null },
+              10: { S: 0.9, M: 0.86 },
+              30: { S: 0.56, M: 0.58 },
             },
           },
           {
             position: 11.2,
             samples: {
-              10: { S: null, M: 0.88 },
-              30: { S: 0.49, M: null },
+              10: { S: 0.88, M: 0.7 },
+              30: { S: 0.46, M: 0.49 },
             },
           },
           {
             position: 12.6,
             samples: {
-              10: { S: null, M: null },
-              30: { S: 0.31, M: null },
+              10: { S: 0.76, M: 0.56 },
+              30: { S: 0.12, M: 0.31 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: 0.41, M: 0.1 },
+              30: { S: 0.09, M: 0.06 },
             },
           },
         ],
@@ -11736,34 +11743,34 @@ const mtfReadings: Record<string, MtfData> = {
             position: 1.4,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.79, M: null },
+              30: { S: 0.79, M: 0.79 },
             },
           },
           {
             position: 2.8,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.79, M: null },
+              30: { S: 0.79, M: 0.81 },
             },
           },
           {
             position: 4.2,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.79, M: null },
+              30: { S: 0.79, M: 0.81 },
             },
           },
           {
             position: 5.6,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.79, M: null },
+              30: { S: 0.79, M: 0.81 },
             },
           },
           {
             position: 7,
             samples: {
-              10: { S: 0.93, M: 0.93 },
+              10: { S: 0.93, M: 0.92 },
               30: { S: 0.77, M: 0.77 },
             },
           },
@@ -11785,14 +11792,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 11.2,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              30: { S: 0.78, M: 0.68 },
+              30: { S: 0.77, M: 0.69 },
             },
           },
           {
             position: 12.6,
             samples: {
-              10: { S: 0.92, M: 0.88 },
-              30: { S: 0.79, M: null },
+              10: { S: 0.88, M: 0.92 },
+              30: { S: 0.48, M: 0.79 },
             },
           },
         ],
@@ -11816,8 +11823,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.4,
             samples: {
-              10: { S: 0.92, M: 0.92 },
-              30: { S: 0.58, M: 0.58 },
+              10: { S: 0.92, M: 0.77 },
+              30: { S: 0.58, M: 0.54 },
             },
           },
           {
@@ -11838,21 +11845,21 @@ const mtfReadings: Record<string, MtfData> = {
             position: 5.6,
             samples: {
               10: { S: 0.88, M: 0.89 },
-              30: { S: 0.55, M: 0.49 },
+              30: { S: 0.55, M: 0.45 },
             },
           },
           {
             position: 7,
             samples: {
               10: { S: 0.88, M: 0.87 },
-              30: { S: 0.54, M: 0.45 },
+              30: { S: 0.54, M: 0.49 },
             },
           },
           {
             position: 8.4,
             samples: {
-              10: { S: 0.88, M: 0.85 },
-              30: { S: 0.52, M: 0.41 },
+              10: { S: 0.88, M: 0.87 },
+              30: { S: 0.52, M: 0.49 },
             },
           },
           {
@@ -11866,21 +11873,21 @@ const mtfReadings: Record<string, MtfData> = {
             position: 11.2,
             samples: {
               10: { S: 0.83, M: 0.79 },
-              30: { S: 0.41, M: 0.4 },
+              30: { S: 0.41, M: 0.46 },
             },
           },
           {
             position: 12.6,
             samples: {
               10: { S: 0.75, M: 0.73 },
-              30: { S: 0.4, M: 0.34 },
+              30: { S: 0.21, M: 0.41 },
             },
           },
           {
             position: 14,
             samples: {
-              10: { S: null, M: null },
-              30: { S: null, M: 0.28 },
+              10: { S: 0.59, M: 0.61 },
+              30: { S: 0.05, M: 0.59 },
             },
           },
         ],
@@ -11898,28 +11905,28 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.4,
             samples: {
-              10: { S: null, M: null },
+              10: { S: 0.94, M: 0.94 },
               30: { S: 0.8, M: 0.8 },
             },
           },
           {
             position: 2.8,
             samples: {
-              10: { S: null, M: null },
+              10: { S: 0.94, M: 0.94 },
               30: { S: 0.8, M: 0.8 },
             },
           },
           {
             position: 4.2,
             samples: {
-              10: { S: null, M: null },
+              10: { S: 0.94, M: 0.94 },
               30: { S: 0.8, M: 0.81 },
             },
           },
           {
             position: 5.6,
             samples: {
-              10: { S: 0.93, M: 0.93 },
+              10: { S: 0.93, M: 0.94 },
               30: { S: 0.8, M: 0.81 },
             },
           },
@@ -11934,14 +11941,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 8.4,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.77, M: 0.8 },
+              30: { S: 0.8, M: 0.77 },
             },
           },
           {
             position: 9.8,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.76, M: 0.79 },
+              30: { S: 0.79, M: 0.76 },
             },
           },
           {
@@ -11954,14 +11961,14 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 12.6,
             samples: {
-              10: { S: 0.94, M: 0.91 },
+              10: { S: 0.91, M: 0.94 },
               30: { S: 0.66, M: 0.78 },
             },
           },
           {
             position: 14,
             samples: {
-              10: { S: 0.94, M: 0.86 },
+              10: { S: 0.86, M: 0.94 },
               30: { S: 0.47, M: 0.8 },
             },
           },
@@ -11993,22 +12000,22 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 2.8,
             samples: {
-              10: { S: 0.94, M: 0.96 },
-              30: { S: 0.73, M: 0.77 },
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.73, M: 0.84 },
             },
           },
           {
             position: 4.2,
             samples: {
-              10: { S: 0.93, M: 0.96 },
-              30: { S: 0.7, M: 0.77 },
+              10: { S: 0.93, M: 0.95 },
+              30: { S: 0.7, M: 0.85 },
             },
           },
           {
             position: 5.6,
             samples: {
               10: { S: 0.91, M: 0.96 },
-              30: { S: 0.67, M: 0.77 },
+              30: { S: 0.67, M: 0.82 },
             },
           },
           {
@@ -12029,28 +12036,28 @@ const mtfReadings: Record<string, MtfData> = {
             position: 9.8,
             samples: {
               10: { S: 0.84, M: 0.96 },
-              30: { S: 0.58, M: 0.75 },
+              30: { S: 0.58, M: 0.48 },
             },
           },
           {
             position: 11.2,
             samples: {
               10: { S: 0.82, M: 0.95 },
-              30: { S: 0.57, M: 0.72 },
+              30: { S: 0.57, M: 0.84 },
             },
           },
           {
             position: 12.6,
             samples: {
-              10: { S: 0.81, M: null },
+              10: { S: 0.81, M: 0.92 },
               30: { S: 0.55, M: 0.64 },
             },
           },
           {
             position: 14,
             samples: {
-              10: { S: 0.8, M: null },
-              30: { S: 0.52, M: 0.53 },
+              10: { S: 0.8, M: 0.85 },
+              30: { S: 0.53, M: 0.38 },
             },
           },
         ],
@@ -12125,14 +12132,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 12.6,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.76, M: null },
+              30: { S: 0.76, M: 0.76 },
             },
           },
           {
             position: 14,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              30: { S: 0.78, M: null },
+              30: { S: 0.75, M: 0.78 },
             },
           },
         ],
@@ -12156,64 +12163,64 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 2.05,
             samples: {
-              10: { S: 0.86, M: 0.86 },
-              30: { S: 0.5, M: 0.44 },
+              10: { S: 0.86, M: 0.83 },
+              30: { S: 0.5, M: 0.5 },
             },
           },
           {
             position: 4.1,
             samples: {
               10: { S: 0.86, M: 0.86 },
-              30: { S: 0.51, M: 0.44 },
+              30: { S: 0.5, M: 0.5 },
             },
           },
           {
             position: 6.15,
             samples: {
               10: { S: 0.86, M: 0.87 },
-              30: { S: 0.51, M: 0.45 },
+              30: { S: 0.49, M: 0.5 },
             },
           },
           {
             position: 8.2,
             samples: {
               10: { S: 0.86, M: 0.86 },
-              30: { S: 0.51, M: 0.45 },
+              30: { S: 0.48, M: 0.51 },
             },
           },
           {
             position: 10.25,
             samples: {
               10: { S: 0.86, M: 0.87 },
-              30: { S: 0.51, M: 0.45 },
+              30: { S: 0.46, M: 0.51 },
             },
           },
           {
             position: 12.3,
             samples: {
               10: { S: 0.85, M: 0.85 },
-              30: { S: 0.51, M: 0.43 },
+              30: { S: 0.43, M: 0.5 },
             },
           },
           {
             position: 14.35,
             samples: {
-              10: { S: 0.85, M: null },
-              30: { S: 0.5, M: 0.4 },
+              10: { S: 0.85, M: 0.86 },
+              30: { S: 0.4, M: 0.5 },
             },
           },
           {
             position: 16.4,
             samples: {
-              10: { S: 0.83, M: null },
-              30: { S: null, M: 0.36 },
+              10: { S: 0.83, M: 0.87 },
+              30: { S: 0.36, M: 0.48 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: 0.82, M: null },
-              30: { S: null, M: 0.32 },
+              10: { S: 0.82, M: 0.87 },
+              30: { S: 0.32, M: 0.46 },
             },
           },
         ],
@@ -12239,7 +12246,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 4.1,
             samples: {
               10: { S: 0.89, M: 0.89 },
-              30: { S: 0.67, M: 0.68 },
+              30: { S: 0.68, M: 0.67 },
             },
           },
           {
@@ -12273,21 +12280,21 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 14.35,
             samples: {
-              10: { S: 0.88, M: 0.87 },
+              10: { S: 0.87, M: 0.88 },
               30: { S: 0.6, M: 0.68 },
             },
           },
           {
             position: 16.4,
             samples: {
-              10: { S: 0.88, M: 0.87 },
-              30: { S: 0.57, M: 0.67 },
+              10: { S: 0.87, M: 0.88 },
+              30: { S: 0.62, M: 0.57 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: 0.87, M: 0.86 },
+              10: { S: 0.86, M: 0.87 },
               30: { S: 0.53, M: 0.65 },
             },
           },
@@ -12312,64 +12319,64 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 2.05,
             samples: {
-              10: { S: 0.86, M: 0.86 },
-              30: { S: 0.5, M: 0.44 },
+              10: { S: 0.86, M: 0.83 },
+              30: { S: 0.5, M: 0.5 },
             },
           },
           {
             position: 4.1,
             samples: {
               10: { S: 0.86, M: 0.86 },
-              30: { S: 0.51, M: 0.44 },
+              30: { S: 0.5, M: 0.5 },
             },
           },
           {
             position: 6.15,
             samples: {
               10: { S: 0.86, M: 0.87 },
-              30: { S: 0.51, M: 0.45 },
+              30: { S: 0.49, M: 0.5 },
             },
           },
           {
             position: 8.2,
             samples: {
               10: { S: 0.86, M: 0.86 },
-              30: { S: 0.51, M: 0.45 },
+              30: { S: 0.48, M: 0.51 },
             },
           },
           {
             position: 10.25,
             samples: {
               10: { S: 0.86, M: 0.87 },
-              30: { S: 0.51, M: 0.45 },
+              30: { S: 0.46, M: 0.51 },
             },
           },
           {
             position: 12.3,
             samples: {
               10: { S: 0.85, M: 0.85 },
-              30: { S: 0.51, M: 0.43 },
+              30: { S: 0.43, M: 0.5 },
             },
           },
           {
             position: 14.35,
             samples: {
-              10: { S: 0.85, M: null },
-              30: { S: 0.5, M: 0.4 },
+              10: { S: 0.85, M: 0.86 },
+              30: { S: 0.4, M: 0.5 },
             },
           },
           {
             position: 16.4,
             samples: {
-              10: { S: 0.83, M: null },
-              30: { S: null, M: 0.36 },
+              10: { S: 0.83, M: 0.87 },
+              30: { S: 0.36, M: 0.48 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: 0.82, M: null },
-              30: { S: null, M: 0.32 },
+              10: { S: 0.82, M: 0.87 },
+              30: { S: 0.32, M: 0.46 },
             },
           },
         ],
@@ -12395,7 +12402,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 4.1,
             samples: {
               10: { S: 0.89, M: 0.89 },
-              30: { S: 0.67, M: 0.68 },
+              30: { S: 0.68, M: 0.67 },
             },
           },
           {
@@ -12429,21 +12436,21 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 14.35,
             samples: {
-              10: { S: 0.88, M: 0.87 },
+              10: { S: 0.87, M: 0.88 },
               30: { S: 0.6, M: 0.68 },
             },
           },
           {
             position: 16.4,
             samples: {
-              10: { S: 0.88, M: 0.87 },
-              30: { S: 0.57, M: 0.67 },
+              10: { S: 0.87, M: 0.88 },
+              30: { S: 0.62, M: 0.57 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: 0.87, M: 0.86 },
+              10: { S: 0.86, M: 0.87 },
               30: { S: 0.53, M: 0.65 },
             },
           },
@@ -12461,50 +12468,50 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 0,
             samples: {
-              10: { S: null, M: null },
-              30: { S: null, M: null },
+              10: { S: 0.88, M: 0.88 },
+              30: { S: 0.41, M: 0.41 },
             },
           },
           {
             position: 1.4,
             samples: {
-              10: { S: null, M: null },
-              30: { S: 0.43, M: null },
+              10: { S: 0.89, M: 0.9 },
+              30: { S: 0.44, M: 0.43 },
             },
           },
           {
             position: 2.8,
             samples: {
-              10: { S: null, M: null },
-              30: { S: 0.46, M: null },
+              10: { S: 0.9, M: 0.9 },
+              30: { S: 0.49, M: 0.46 },
             },
           },
           {
             position: 4.2,
             samples: {
-              10: { S: 0.9, M: null },
-              30: { S: 0.5, M: null },
+              10: { S: 0.91, M: 0.91 },
+              30: { S: 0.53, M: 0.5 },
             },
           },
           {
             position: 5.6,
             samples: {
-              10: { S: 0.89, M: null },
-              30: { S: 0.5, M: null },
+              10: { S: 0.91, M: 0.89 },
+              30: { S: 0.53, M: 0.5 },
             },
           },
           {
             position: 7,
             samples: {
-              10: { S: 0.87, M: null },
-              30: { S: 0.46, M: 0.4 },
+              10: { S: 0.89, M: 0.87 },
+              30: { S: 0.47, M: 0.46 },
             },
           },
           {
             position: 8.4,
             samples: {
               10: { S: 0.85, M: 0.85 },
-              30: { S: 0.41, M: 0.37 },
+              30: { S: 0.41, M: 0.43 },
             },
           },
           {
@@ -12531,8 +12538,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 14,
             samples: {
-              10: { S: null, M: 0.61 },
-              30: { S: 0.4, M: 0.3 },
+              10: { S: 0.78, M: 0.61 },
+              30: { S: 0.3, M: 0.4 },
             },
           },
         ],
@@ -12572,28 +12579,28 @@ const mtfReadings: Record<string, MtfData> = {
             position: 5.6,
             samples: {
               10: { S: 0.95, M: 0.95 },
-              30: { S: 0.85, M: 0.83 },
+              30: { S: 0.83, M: 0.85 },
             },
           },
           {
             position: 7,
             samples: {
               10: { S: 0.95, M: 0.95 },
-              30: { S: 0.83, M: 0.79 },
+              30: { S: 0.79, M: 0.83 },
             },
           },
           {
             position: 8.4,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              30: { S: 0.78, M: 0.75 },
+              30: { S: 0.75, M: 0.78 },
             },
           },
           {
             position: 9.8,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              30: { S: 0.73, M: 0.7 },
+              30: { S: 0.7, M: 0.73 },
             },
           },
           {
@@ -12613,8 +12620,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 14,
             samples: {
-              10: { S: 0.95, M: 0.95 },
-              30: { S: 0.84, M: 0.69 },
+              10: { S: 0.93, M: 0.95 },
+              30: { S: 0.69, M: 0.84 },
             },
           },
         ],
@@ -12632,77 +12639,77 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               10: { S: 0.91, M: 0.91 },
-              30: { S: 0.75, M: 0.75 },
+              30: { S: 0.73, M: 0.73 },
             },
           },
           {
             position: 2.05,
             samples: {
-              10: { S: 0.91, M: null },
-              30: { S: 0.75, M: 0.76 },
+              10: { S: 0.94, M: 0.83 },
+              30: { S: 0.76, M: 0.75 },
             },
           },
           {
             position: 4.1,
             samples: {
-              10: { S: 0.91, M: null },
-              30: { S: 0.74, M: 0.77 },
+              10: { S: 0.96, M: 0.85 },
+              30: { S: 0.77, M: 0.82 },
             },
           },
           {
             position: 6.15,
             samples: {
-              10: { S: 0.92, M: null },
-              30: { S: 0.73, M: 0.78 },
+              10: { S: 0.95, M: 0.87 },
+              30: { S: 0.78, M: 0.76 },
             },
           },
           {
             position: 8.2,
             samples: {
-              10: { S: 0.92, M: null },
-              30: { S: 0.7, M: 0.76 },
+              10: { S: 0.93, M: 0.89 },
+              30: { S: 0.76, M: 0.7 },
             },
           },
           {
             position: 10.25,
             samples: {
-              10: { S: 0.92, M: null },
-              30: { S: 0.64, M: 0.7 },
+              10: { S: 0.9, M: 0.9 },
+              30: { S: 0.7, M: 0.64 },
             },
           },
           {
             position: 12.3,
             samples: {
-              10: { S: 0.92, M: null },
-              30: { S: 0.62, M: 0.63 },
+              10: { S: 0.87, M: 0.9 },
+              30: { S: 0.63, M: 0.62 },
             },
           },
           {
             position: 14.35,
             samples: {
-              10: { S: 0.92, M: null },
-              30: { S: 0.58, M: null },
+              10: { S: 0.92, M: 0.81 },
+              30: { S: 0.56, M: 0.7 },
             },
           },
           {
             position: 16.4,
             samples: {
               10: { S: 0.89, M: 0.74 },
-              30: { S: 0.54, M: null },
+              30: { S: 0.49, M: 0.54 },
             },
           },
           {
             position: 18.45,
             samples: {
               10: { S: 0.85, M: 0.66 },
-              30: { S: 0.48, M: null },
+              30: { S: 0.42, M: 0.48 },
             },
           },
           {
             position: 20.5,
             samples: {
               10: { S: 0.79, M: 0.58 },
-              30: { S: 0.41, M: null },
+              30: { S: 0.33, M: 0.41 },
             },
           },
         ],
@@ -12756,7 +12763,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 12.3,
             samples: {
               10: { S: 0.94, M: 0.95 },
-              30: { S: 0.72, M: 0.81 },
+              30: { S: 0.76, M: 0.76 },
             },
           },
           {
@@ -12801,78 +12808,78 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 0,
             samples: {
-              10: { S: 0.94, M: 0.94 },
+              10: { S: 0.95, M: 0.95 },
               30: { S: 0.71, M: 0.71 },
             },
           },
           {
             position: 1.4,
             samples: {
-              10: { S: 0.95, M: null },
-              30: { S: 0.72, M: 0.72 },
+              10: { S: 0.95, M: 0.89 },
+              30: { S: 0.72, M: 0.81 },
             },
           },
           {
             position: 2.8,
             samples: {
-              10: { S: 0.95, M: null },
+              10: { S: 0.95, M: 0.94 },
               30: { S: 0.73, M: 0.74 },
             },
           },
           {
             position: 4.2,
             samples: {
-              10: { S: 0.95, M: null },
+              10: { S: 0.95, M: 0.95 },
               30: { S: 0.69, M: 0.75 },
             },
           },
           {
             position: 5.6,
             samples: {
-              10: { S: 0.95, M: null },
-              30: { S: 0.61, M: 0.72 },
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.61, M: 0.76 },
             },
           },
           {
             position: 7,
             samples: {
-              10: { S: 0.94, M: null },
+              10: { S: 0.91, M: 0.94 },
               30: { S: 0.54, M: 0.67 },
             },
           },
           {
             position: 8.4,
             samples: {
-              10: { S: 0.94, M: null },
+              10: { S: 0.92, M: 0.92 },
               30: { S: 0.53, M: 0.66 },
             },
           },
           {
             position: 9.8,
             samples: {
-              10: { S: 0.93, M: 0.9 },
+              10: { S: 0.9, M: 0.9 },
               30: { S: 0.49, M: 0.7 },
             },
           },
           {
             position: 11.2,
             samples: {
-              10: { S: null, M: 0.89 },
+              10: { S: 0.9, M: 0.9 },
               30: { S: 0.46, M: 0.69 },
             },
           },
           {
             position: 12.6,
             samples: {
-              10: { S: null, M: 0.81 },
+              10: { S: 0.81, M: 0.83 },
               30: { S: 0.53, M: 0.58 },
             },
           },
           {
             position: 14,
             samples: {
-              10: { S: null, M: null },
-              30: { S: null, M: 0.57 },
+              10: { S: 0.92, M: null },
+              30: { S: 0.53, M: 0.75 },
             },
           },
         ],
@@ -12891,7 +12898,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 1.4,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.77, M: 0.78 },
+              30: { S: 0.78, M: 0.77 },
             },
           },
           {
@@ -12905,55 +12912,55 @@ const mtfReadings: Record<string, MtfData> = {
             position: 4.2,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.76, M: 0.8 },
+              30: { S: 0.78, M: 0.8 },
             },
           },
           {
             position: 5.6,
             samples: {
-              10: { S: 0.93, M: 0.92 },
+              10: { S: 0.92, M: 0.93 },
               30: { S: 0.73, M: 0.8 },
             },
           },
           {
             position: 7,
             samples: {
-              10: { S: 0.93, M: 0.92 },
+              10: { S: 0.92, M: 0.93 },
               30: { S: 0.7, M: 0.79 },
             },
           },
           {
             position: 8.4,
             samples: {
-              10: { S: 0.93, M: 0.92 },
+              10: { S: 0.92, M: 0.93 },
               30: { S: 0.69, M: 0.77 },
             },
           },
           {
             position: 9.8,
             samples: {
-              10: { S: 0.93, M: 0.92 },
-              30: { S: 0.7, M: 0.77 },
+              10: { S: 0.92, M: 0.93 },
+              30: { S: 0.72, M: 0.74 },
             },
           },
           {
             position: 11.2,
             samples: {
-              10: { S: 0.92, M: 0.91 },
-              30: { S: 0.69, M: 0.78 },
+              10: { S: 0.91, M: 0.92 },
+              30: { S: 0.73, M: 0.72 },
             },
           },
           {
             position: 12.6,
             samples: {
-              10: { S: 0.93, M: 0.91 },
+              10: { S: 0.91, M: 0.93 },
               30: { S: 0.65, M: 0.79 },
             },
           },
           {
             position: 14,
             samples: {
-              10: { S: 0.93, M: 0.9 },
+              10: { S: 0.9, M: 0.93 },
               30: { S: 0.58, M: 0.79 },
             },
           },
@@ -12972,77 +12979,77 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: null, M: null },
+              30: { S: 0.58, M: 0.58 },
             },
           },
           {
             position: 2.05,
             samples: {
-              10: { S: 0.93, M: 0.93 },
-              30: { S: 0.57, M: null },
+              10: { S: 0.92, M: 0.93 },
+              30: { S: 0.57, M: 0.58 },
             },
           },
           {
             position: 4.1,
             samples: {
-              10: { S: 0.93, M: 0.93 },
-              30: { S: 0.55, M: null },
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.55, M: 0.6 },
             },
           },
           {
             position: 6.15,
             samples: {
-              10: { S: 0.93, M: 0.93 },
-              30: { S: 0.55, M: null },
+              10: { S: 0.92, M: 0.92 },
+              30: { S: 0.55, M: 0.6 },
             },
           },
           {
             position: 8.2,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.57, M: null },
+              30: { S: 0.57, M: 0.58 },
             },
           },
           {
             position: 10.25,
             samples: {
               10: { S: 0.93, M: 0.92 },
-              30: { S: 0.57, M: null },
+              30: { S: 0.57, M: 0.54 },
             },
           },
           {
             position: 12.3,
             samples: {
               10: { S: 0.92, M: 0.9 },
-              30: { S: 0.53, M: null },
+              30: { S: 0.53, M: 0.48 },
             },
           },
           {
             position: 14.35,
             samples: {
               10: { S: 0.9, M: 0.86 },
-              30: { S: 0.51, M: null },
+              30: { S: 0.51, M: 0.46 },
             },
           },
           {
             position: 16.4,
             samples: {
               10: { S: 0.88, M: 0.8 },
-              30: { S: 0.5, M: 0.42 },
+              30: { S: 0.48, M: 0.51 },
             },
           },
           {
             position: 18.45,
             samples: {
               10: { S: 0.85, M: 0.71 },
-              30: { S: 0.5, M: 0.37 },
+              30: { S: 0.37, M: 0.5 },
             },
           },
           {
             position: 20.5,
             samples: {
-              10: { S: 0.78, M: 0.58 },
-              30: { S: 0.35, M: 0.17 },
+              10: { S: 0.79, M: 0.46 },
+              30: { S: 0.18, M: 0.35 },
             },
           },
         ],
@@ -13068,42 +13075,42 @@ const mtfReadings: Record<string, MtfData> = {
             position: 4.1,
             samples: {
               10: { S: 0.96, M: 0.96 },
-              30: { S: 0.85, M: 0.83 },
+              30: { S: 0.83, M: 0.85 },
             },
           },
           {
             position: 6.15,
             samples: {
               10: { S: 0.96, M: 0.96 },
-              30: { S: 0.87, M: 0.83 },
+              30: { S: 0.83, M: 0.87 },
             },
           },
           {
             position: 8.2,
             samples: {
               10: { S: 0.96, M: 0.96 },
-              30: { S: 0.87, M: 0.81 },
+              30: { S: 0.81, M: 0.87 },
             },
           },
           {
             position: 10.25,
             samples: {
               10: { S: 0.96, M: 0.96 },
-              30: { S: 0.84, M: 0.78 },
+              30: { S: 0.78, M: 0.84 },
             },
           },
           {
             position: 12.3,
             samples: {
               10: { S: 0.95, M: 0.95 },
-              30: { S: 0.8, M: 0.75 },
+              30: { S: 0.75, M: 0.8 },
             },
           },
           {
             position: 14.35,
             samples: {
               10: { S: 0.95, M: 0.95 },
-              30: { S: 0.75, M: 0.74 },
+              30: { S: 0.74, M: 0.75 },
             },
           },
           {
@@ -13117,14 +13124,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 18.45,
             samples: {
               10: { S: 0.95, M: 0.95 },
-              30: { S: 0.82, M: null },
+              30: { S: 0.77, M: 0.82 },
             },
           },
           {
             position: 20.5,
             samples: {
-              10: { S: 0.96, M: 0.96 },
-              30: { S: 0.86, M: null },
+              10: { S: 0.94, M: 0.96 },
+              30: { S: 0.67, M: 0.86 },
             },
           },
         ],
@@ -13148,28 +13155,28 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.4,
             samples: {
-              10: { S: 0.94, M: 0.92 },
+              10: { S: 0.94, M: 0.94 },
               30: { S: 0.76, M: 0.77 },
             },
           },
           {
             position: 2.8,
             samples: {
-              10: { S: 0.94, M: 0.93 },
+              10: { S: 0.94, M: 0.94 },
               30: { S: 0.77, M: 0.8 },
             },
           },
           {
             position: 4.2,
             samples: {
-              10: { S: 0.95, M: 0.94 },
+              10: { S: 0.94, M: 0.94 },
               30: { S: 0.78, M: 0.81 },
             },
           },
           {
             position: 5.6,
             samples: {
-              10: { S: 0.95, M: 0.95 },
+              10: { S: 0.94, M: 0.93 },
               30: { S: 0.75, M: 0.8 },
             },
           },
@@ -13184,7 +13191,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 8.4,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.7, M: 0.79 },
+              30: { S: 0.7, M: 0.82 },
             },
           },
           {
@@ -13198,14 +13205,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 11.2,
             samples: {
               10: { S: 0.95, M: 0.93 },
-              30: { S: 0.8, M: 0.83 },
+              30: { S: 0.83, M: 0.8 },
             },
           },
           {
             position: 12.6,
             samples: {
               10: { S: 0.94, M: 0.92 },
-              30: { S: 0.77, M: 0.82 },
+              30: { S: 0.82, M: 0.77 },
             },
           },
         ],
@@ -13224,7 +13231,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 1.4,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              30: { S: 0.74, M: 0.74 },
+              30: { S: 0.74, M: null },
             },
           },
           {
@@ -13238,28 +13245,28 @@ const mtfReadings: Record<string, MtfData> = {
             position: 4.2,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              30: { S: 0.79, M: 0.79 },
+              30: { S: 0.79, M: 0.78 },
             },
           },
           {
             position: 5.6,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              30: { S: 0.81, M: 0.81 },
+              30: { S: 0.8, M: 0.8 },
             },
           },
           {
             position: 7,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              30: { S: 0.81, M: 0.81 },
+              30: { S: 0.81, M: 0.8 },
             },
           },
           {
             position: 8.4,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              30: { S: 0.8, M: 0.8 },
+              30: { S: 0.8, M: 0.79 },
             },
           },
           {
@@ -13273,14 +13280,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 11.2,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              30: { S: 0.79, M: 0.79 },
+              30: { S: 0.79, M: 0.77 },
             },
           },
           {
             position: 12.6,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              30: { S: 0.8, M: 0.8 },
+              30: { S: 0.8, M: 0.76 },
             },
           },
         ],
@@ -13304,29 +13311,29 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.4,
             samples: {
-              10: { S: 0.94, M: null },
-              30: { S: 0.78, M: 0.79 },
+              10: { S: 0.95, M: 0.82 },
+              30: { S: 0.79, M: 0.78 },
             },
           },
           {
             position: 2.8,
             samples: {
-              10: { S: 0.94, M: null },
-              30: { S: 0.74, M: 0.8 },
+              10: { S: 0.96, M: 0.86 },
+              30: { S: 0.8, M: 0.74 },
             },
           },
           {
             position: 4.2,
             samples: {
-              10: { S: 0.94, M: 0.94 },
-              30: { S: 0.72, M: 0.77 },
+              10: { S: 0.94, M: 0.9 },
+              30: { S: 0.77, M: 0.96 },
             },
           },
           {
             position: 5.6,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.67, M: 0.71 },
+              30: { S: 0.67, M: 0.77 },
             },
           },
           {
@@ -13347,21 +13354,21 @@ const mtfReadings: Record<string, MtfData> = {
             position: 9.8,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              30: { S: 0.63, M: 0.68 },
+              30: { S: 0.68, M: 0.83 },
             },
           },
           {
             position: 11.2,
             samples: {
-              10: { S: 0.9, M: 0.9 },
-              30: { S: 0.63, M: 0.67 },
+              10: { S: 0.89, M: 0.9 },
+              30: { S: 0.67, M: 0.63 },
             },
           },
           {
             position: 12.6,
             samples: {
-              10: { S: 0.89, M: null },
-              30: { S: 0.58, M: 0.65 },
+              10: { S: 0.71, M: 0.89 },
+              30: { S: 0.31, M: 0.66 },
             },
           },
         ],
@@ -13393,7 +13400,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 4.2,
             samples: {
-              10: { S: 0.95, M: 0.95 },
+              10: { S: 0.95, M: 0.94 },
               30: { S: 0.86, M: 0.82 },
             },
           },
@@ -13460,64 +13467,64 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.4,
             samples: {
-              10: { S: 0.88, M: 0.88 },
-              30: { S: null, M: 0.6 },
+              10: { S: 0.88, M: 0.94 },
+              30: { S: 0.54, M: 0.53 },
             },
           },
           {
             position: 2.8,
             samples: {
-              10: { S: 0.89, M: 0.89 },
-              30: { S: 0.55, M: 0.6 },
+              10: { S: 0.89, M: 0.9 },
+              30: { S: 0.56, M: 0.56 },
             },
           },
           {
             position: 4.2,
             samples: {
               10: { S: 0.91, M: 0.9 },
-              30: { S: 0.55, M: 0.6 },
+              30: { S: 0.6, M: 0.55 },
             },
           },
           {
             position: 5.6,
             samples: {
               10: { S: 0.91, M: 0.91 },
-              30: { S: 0.55, M: 0.62 },
+              30: { S: 0.62, M: 0.55 },
             },
           },
           {
             position: 7,
             samples: {
               10: { S: 0.91, M: 0.9 },
-              30: { S: 0.54, M: 0.63 },
+              30: { S: 0.63, M: 0.52 },
             },
           },
           {
             position: 8.4,
             samples: {
               10: { S: 0.9, M: 0.89 },
-              30: { S: 0.52, M: 0.62 },
+              30: { S: 0.62, M: 0.51 },
             },
           },
           {
             position: 9.8,
             samples: {
-              10: { S: 0.91, M: 0.87 },
-              30: { S: 0.49, M: null },
+              10: { S: 0.91, M: 0.91 },
+              30: { S: 0.59, M: 0.49 },
             },
           },
           {
             position: 11.2,
             samples: {
               10: { S: 0.87, M: 0.87 },
-              30: { S: 0.45, M: null },
+              30: { S: 0.52, M: 0.45 },
             },
           },
           {
             position: 12.6,
             samples: {
-              10: { S: null, M: 0.86 },
-              30: { S: 0.4, M: null },
+              10: { S: 0.79, M: 0.86 },
+              30: { S: 0.43, M: 0.4 },
             },
           },
         ],
@@ -13578,7 +13585,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 9.8,
             samples: {
               10: { S: 0.94, M: 0.91 },
-              30: { S: 0.82, M: 0.65 },
+              30: { S: 0.73, M: 0.73 },
             },
           },
           {
@@ -13609,22 +13616,22 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 0,
             samples: {
-              10: { S: 0.96, M: 0.96 },
-              30: { S: 0.83, M: 0.83 },
+              10: { S: 0.73, M: 0.73 },
+              30: { S: 0.67, M: 0.67 },
             },
           },
           {
             position: 2.05,
             samples: {
-              10: { S: 0.96, M: 0.97 },
-              30: { S: 0.79, M: 0.82 },
+              10: { S: 0.97, M: 0.96 },
+              30: { S: 0.82, M: 0.79 },
             },
           },
           {
             position: 4.1,
             samples: {
               10: { S: 0.95, M: 0.95 },
-              30: { S: 0.76, M: 0.77 },
+              30: { S: 0.77, M: 0.76 },
             },
           },
           {
@@ -13658,7 +13665,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 14.35,
             samples: {
-              10: { S: 0.82, M: 0.9 },
+              10: { S: 0.83, M: 0.87 },
               30: { S: 0.55, M: 0.68 },
             },
           },
@@ -13672,7 +13679,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 18.45,
             samples: {
-              10: { S: 0.75, M: 0.87 },
+              10: { S: 0.75, M: 0.85 },
               30: { S: 0.55, M: 0.6 },
             },
           },
@@ -13698,56 +13705,56 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 4.1,
             samples: {
-              10: { S: 0.93, M: 0.93 },
+              10: { S: 0.93, M: 0.94 },
               30: { S: 0.87, M: 0.87 },
             },
           },
           {
             position: 6.15,
             samples: {
-              10: { S: 0.94, M: 0.94 },
+              10: { S: 0.94, M: 0.95 },
               30: { S: 0.86, M: 0.86 },
             },
           },
           {
             position: 8.2,
             samples: {
-              10: { S: 0.94, M: 0.94 },
-              30: { S: 0.87, M: 0.83 },
+              10: { S: 0.94, M: 0.96 },
+              30: { S: 0.83, M: 0.87 },
             },
           },
           {
             position: 10.25,
             samples: {
-              10: { S: 0.93, M: 0.93 },
-              30: { S: 0.86, M: 0.78 },
+              10: { S: 0.93, M: 0.95 },
+              30: { S: 0.78, M: 0.86 },
             },
           },
           {
             position: 12.3,
             samples: {
-              10: { S: 0.93, M: 0.93 },
-              30: { S: 0.83, M: 0.72 },
+              10: { S: 0.93, M: 0.94 },
+              30: { S: 0.72, M: 0.83 },
             },
           },
           {
             position: 14.35,
             samples: {
-              10: { S: 0.93, M: 0.93 },
-              30: { S: 0.8, M: 0.68 },
+              10: { S: 0.93, M: 0.94 },
+              30: { S: 0.68, M: 0.8 },
             },
           },
           {
             position: 16.4,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.73, M: 0.69 },
+              30: { S: 0.69, M: 0.73 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: 0.94, M: 0.94 },
+              10: { S: 0.94, M: 0.9 },
               30: { S: 0.78, M: 0.63 },
             },
           },
@@ -13772,8 +13779,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.4,
             samples: {
-              10: { S: 0.91, M: 0.91 },
-              30: { S: 0.58, M: 0.58 },
+              10: { S: 0.91, M: 0.99 },
+              30: { S: 0.58, M: 0.76 },
             },
           },
           {
@@ -13828,15 +13835,15 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 12.6,
             samples: {
-              10: { S: null, M: 0.72 },
-              30: { S: null, M: 0.33 },
+              10: { S: 0.73, M: 0.72 },
+              30: { S: 0.2, M: 0.33 },
             },
           },
           {
             position: 14,
             samples: {
-              10: { S: null, M: null },
-              30: { S: null, M: 0.27 },
+              10: { S: 0.57, M: null },
+              30: { S: 0.04, M: 0.27 },
             },
           },
         ],
@@ -13869,14 +13876,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 4.2,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.8, M: 0.79 },
+              30: { S: 0.79, M: 0.8 },
             },
           },
           {
             position: 5.6,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.8, M: 0.79 },
+              30: { S: 0.79, M: 0.8 },
             },
           },
           {
@@ -13904,14 +13911,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 11.2,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              30: { S: 0.75, M: 0.74 },
+              30: { S: 0.74, M: 0.75 },
             },
           },
           {
             position: 12.6,
             samples: {
-              10: { S: 0.93, M: 0.9 },
-              30: { S: 0.78, M: 0.64 },
+              10: { S: 0.9, M: 0.93 },
+              30: { S: 0.64, M: 0.78 },
             },
           },
         ],
@@ -13935,28 +13942,28 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 2.05,
             samples: {
-              10: { S: 0.76, M: 0.77 },
+              10: { S: 0.77, M: 0.93 },
               30: { S: 0.27, M: 0.29 },
             },
           },
           {
             position: 4.1,
             samples: {
-              10: { S: 0.75, M: 0.8 },
+              10: { S: 0.8, M: 0.92 },
               30: { S: 0.28, M: 0.29 },
             },
           },
           {
             position: 6.15,
             samples: {
-              10: { S: 0.76, M: 0.77 },
+              10: { S: 0.77, M: 0.76 },
               30: { S: 0.26, M: 0.3 },
             },
           },
           {
             position: 8.2,
             samples: {
-              10: { S: 0.7, M: 0.74 },
+              10: { S: 0.7, M: 0.87 },
               30: { S: 0.21, M: 0.3 },
             },
           },
@@ -13964,35 +13971,35 @@ const mtfReadings: Record<string, MtfData> = {
             position: 10.25,
             samples: {
               10: { S: 0.64, M: 0.71 },
-              30: { S: 0.16, M: 0.28 },
+              30: { S: 0.16, M: 0.27 },
             },
           },
           {
             position: 12.3,
             samples: {
               10: { S: 0.61, M: 0.67 },
-              30: { S: 0.12, M: null },
+              30: { S: 0.12, M: 0.25 },
             },
           },
           {
             position: 14.35,
             samples: {
-              10: { S: 0.54, M: 0.63 },
-              30: { S: 0.09, M: null },
+              10: { S: 0.63, M: 0.55 },
+              30: { S: 0.09, M: 0.23 },
             },
           },
           {
             position: 16.4,
             samples: {
-              10: { S: 0.45, M: null },
-              30: { S: 0.09, M: null },
+              10: { S: 0.45, M: 0.99 },
+              30: { S: 0.09, M: 0.37 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: 0.33, M: null },
-              30: { S: 0.08, M: null },
+              10: { S: 0.33, M: 0.61 },
+              30: { S: 0.08, M: 0.21 },
             },
           },
         ],
@@ -14053,7 +14060,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14.35,
             samples: {
               10: { S: 0.9, M: 0.92 },
-              30: { S: 0.56, M: 0.71 },
+              30: { S: 0.71, M: 0.57 },
             },
           },
           {
@@ -14085,70 +14092,77 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              30: { S: null, M: null },
+              30: { S: 0.75, M: 0.75 },
             },
           },
           {
             position: 2.05,
             samples: {
-              10: { S: 0.95, M: 0.9 },
-              30: { S: null, M: null },
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.75, M: 0.9 },
             },
           },
           {
             position: 4.1,
             samples: {
-              10: { S: 0.96, M: 0.9 },
-              30: { S: null, M: null },
+              10: { S: 0.95, M: 0.96 },
+              30: { S: 0.77, M: 0.2 },
             },
           },
           {
             position: 6.15,
             samples: {
-              10: { S: 0.96, M: 0.9 },
-              30: { S: 0.77, M: 0.77 },
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.77, M: 0.78 },
             },
           },
           {
             position: 8.2,
             samples: {
-              10: { S: 0.95, M: 0.9 },
-              30: { S: 0.77, M: 0.77 },
+              10: { S: 0.95, M: 0.96 },
+              30: { S: 0.77, M: 0.85 },
             },
           },
           {
             position: 10.25,
             samples: {
-              10: { S: 0.95, M: 0.91 },
-              30: { S: 0.78, M: 0.72 },
+              10: { S: 0.96, M: 0.95 },
+              30: { S: 0.72, M: 0.7 },
             },
           },
           {
             position: 12.3,
             samples: {
-              10: { S: 0.95, M: 0.91 },
+              10: { S: 0.96, M: 0.95 },
               30: { S: 0.8, M: 0.69 },
             },
           },
           {
             position: 14.35,
             samples: {
-              10: { S: 0.95, M: 0.91 },
+              10: { S: 0.96, M: 0.95 },
               30: { S: 0.77, M: 0.72 },
             },
           },
           {
             position: 16.4,
             samples: {
-              10: { S: 0.94, M: 0.91 },
-              30: { S: null, M: 0.72 },
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.58, M: 0.82 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: null, M: 0.83 },
-              30: { S: null, M: null },
+              10: { S: 0.83, M: 0.83 },
+              30: { S: 0.32, M: 0.52 },
+            },
+          },
+          {
+            position: 20.5,
+            samples: {
+              10: { S: 0.65, M: 0.66 },
+              30: { S: 0.18, M: 0.21 },
             },
           },
         ],
@@ -14181,14 +14195,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 6.15,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              30: { S: 0.79, M: 0.81 },
+              30: { S: 0.8, M: 0.8 },
             },
           },
           {
             position: 8.2,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              30: { S: 0.78, M: 0.81 },
+              30: { S: 0.8, M: 0.8 },
             },
           },
           {
@@ -14202,35 +14216,35 @@ const mtfReadings: Record<string, MtfData> = {
             position: 12.3,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.73, M: null },
+              30: { S: 0.73, M: 0.73 },
             },
           },
           {
             position: 14.35,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.7, M: null },
+              30: { S: 0.7, M: 0.7 },
             },
           },
           {
             position: 16.4,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.69, M: null },
+              30: { S: 0.68, M: 0.69 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: 0.93, M: 0.91 },
-              30: { S: 0.75, M: null },
+              10: { S: 0.91, M: 0.93 },
+              30: { S: 0.62, M: 0.75 },
             },
           },
           {
             position: 20.5,
             samples: {
-              10: { S: 0.94, M: 0.87 },
-              30: { S: 0.78, M: null },
+              10: { S: 0.87, M: 0.94 },
+              30: { S: 0.43, M: 0.78 },
             },
           },
         ],
@@ -14248,70 +14262,77 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              30: { S: null, M: null },
+              30: { S: 0.75, M: 0.75 },
             },
           },
           {
             position: 2.05,
             samples: {
-              10: { S: 0.95, M: 0.9 },
-              30: { S: null, M: null },
+              10: { S: 0.95, M: 0.95 },
+              30: { S: 0.75, M: 0.9 },
             },
           },
           {
             position: 4.1,
             samples: {
-              10: { S: 0.96, M: 0.9 },
-              30: { S: null, M: null },
+              10: { S: 0.95, M: 0.96 },
+              30: { S: 0.77, M: 0.2 },
             },
           },
           {
             position: 6.15,
             samples: {
-              10: { S: 0.96, M: 0.9 },
-              30: { S: 0.77, M: 0.77 },
+              10: { S: 0.96, M: 0.96 },
+              30: { S: 0.77, M: 0.78 },
             },
           },
           {
             position: 8.2,
             samples: {
-              10: { S: 0.95, M: 0.9 },
-              30: { S: 0.77, M: 0.77 },
+              10: { S: 0.95, M: 0.96 },
+              30: { S: 0.77, M: 0.85 },
             },
           },
           {
             position: 10.25,
             samples: {
-              10: { S: 0.95, M: 0.91 },
-              30: { S: 0.78, M: 0.72 },
+              10: { S: 0.96, M: 0.95 },
+              30: { S: 0.72, M: 0.7 },
             },
           },
           {
             position: 12.3,
             samples: {
-              10: { S: 0.95, M: 0.91 },
+              10: { S: 0.96, M: 0.95 },
               30: { S: 0.8, M: 0.69 },
             },
           },
           {
             position: 14.35,
             samples: {
-              10: { S: 0.95, M: 0.91 },
+              10: { S: 0.96, M: 0.95 },
               30: { S: 0.77, M: 0.72 },
             },
           },
           {
             position: 16.4,
             samples: {
-              10: { S: 0.94, M: 0.91 },
-              30: { S: null, M: 0.72 },
+              10: { S: 0.93, M: 0.93 },
+              30: { S: 0.58, M: 0.82 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: null, M: 0.83 },
-              30: { S: null, M: null },
+              10: { S: 0.83, M: 0.83 },
+              30: { S: 0.32, M: 0.52 },
+            },
+          },
+          {
+            position: 20.5,
+            samples: {
+              10: { S: 0.65, M: 0.66 },
+              30: { S: 0.18, M: 0.21 },
             },
           },
         ],
@@ -14344,14 +14365,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 6.15,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              30: { S: 0.79, M: 0.81 },
+              30: { S: 0.8, M: 0.8 },
             },
           },
           {
             position: 8.2,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              30: { S: 0.78, M: 0.81 },
+              30: { S: 0.8, M: 0.8 },
             },
           },
           {
@@ -14365,35 +14386,35 @@ const mtfReadings: Record<string, MtfData> = {
             position: 12.3,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.73, M: null },
+              30: { S: 0.73, M: 0.73 },
             },
           },
           {
             position: 14.35,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.7, M: null },
+              30: { S: 0.7, M: 0.7 },
             },
           },
           {
             position: 16.4,
             samples: {
               10: { S: 0.93, M: 0.93 },
-              30: { S: 0.69, M: null },
+              30: { S: 0.68, M: 0.69 },
             },
           },
           {
             position: 18.45,
             samples: {
-              10: { S: 0.93, M: 0.91 },
-              30: { S: 0.75, M: null },
+              10: { S: 0.91, M: 0.93 },
+              30: { S: 0.62, M: 0.75 },
             },
           },
           {
             position: 20.5,
             samples: {
-              10: { S: 0.94, M: 0.87 },
-              30: { S: 0.78, M: null },
+              10: { S: 0.87, M: 0.94 },
+              30: { S: 0.43, M: 0.78 },
             },
           },
         ],

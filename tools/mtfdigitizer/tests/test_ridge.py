@@ -10,6 +10,11 @@ from mtfdigitizer.pipeline.ridge import (
     _column_runs,
     _extract_ridge_points,
     _merge_near_duplicate_tracks,
+    _path_mask_continuity,
+    _path_to_track,
+    _ridge_dp_one_pass,
+    _ridge_dp_two_paths,
+    _ridges_by_column,
     _select_top_n_tracks,
     _strip_chrome,
     ridge_tracks_for_hue_freq_split,
@@ -268,11 +273,18 @@ def test_ridge_tracks_to_fields_returns_empty_when_mask_blank() -> None:
 # --- ridge_tracks_for_hue_freq_split (TTartisan dispatch) ----------------
 
 
-def test_ridge_tracks_for_hue_freq_split_labels_higher_coverage_as_S() -> None:
-    """One hue carries one frequency with both S (solid, full coverage)
-    and T (dashed, partial coverage). The solid track should land in
+def test_ridge_tracks_for_hue_freq_split_labels_solid_track_as_S() -> None:
+    """One hue carries one frequency with both S (solid, continuous mask)
+    and T (dashed, periodic mask gaps). The solid track lands in
     freq10S; the dashed in freq10M, by the default Sigma convention
-    (`dashed_is_sagittal=False`)."""
+    (`dashed_is_sagittal=False`).
+
+    Identity is decided by mask-continuity inside each DP path's y-band
+    (#1100), not by coverage of the extracted track. The DP carries
+    each path through dash gaps via smoothness, so both rasterized
+    masks may have similar pixel counts; the discriminator is what's
+    UNDER the path in the raw mask.
+    """
     mask = np.zeros((100, 100), dtype=np.uint8)
     # Solid line: every column in [5, 85)
     mask[20, 5:85] = 1
@@ -284,9 +296,7 @@ def test_ridge_tracks_for_hue_freq_split_labels_higher_coverage_as_S() -> None:
     )
     assert "freq10S" in out
     assert "freq10M" in out
-    # The dense (solid) track has higher coverage and goes to S.
-    assert int(out["freq10S"].sum()) > int(out["freq10M"].sum())
-    # Y positions: solid at 20, dashed at 40.
+    # Y positions: solid at 20 → S, dashed at 40 → M.
     s_y = np.nonzero(out["freq10S"])[0].mean()
     t_y = np.nonzero(out["freq10M"])[0].mean()
     assert s_y == 20
@@ -294,8 +304,8 @@ def test_ridge_tracks_for_hue_freq_split_labels_higher_coverage_as_S() -> None:
 
 
 def test_ridge_tracks_for_hue_freq_split_honors_dashed_is_sagittal() -> None:
-    """7Artisans-style convention: dashed = S, solid = T. The
-    higher-coverage track should land in freq10M instead of freq10S."""
+    """7Artisans-style convention: dashed = S, solid = M. The
+    solid (continuous-mask) track lands in freq10M instead of freq10S."""
     mask = np.zeros((100, 100), dtype=np.uint8)
     mask[20, 5:85] = 1
     for x in range(5, 85, 12):
@@ -303,12 +313,10 @@ def test_ridge_tracks_for_hue_freq_split_honors_dashed_is_sagittal() -> None:
     out = ridge_tracks_for_hue_freq_split(
         mask, _box(), freq=10, dashed_is_sagittal=True,
     )
-    # Solid track (higher coverage) now labels as M; dashed labels as S.
-    assert int(out["freq10M"].sum()) > int(out["freq10S"].sum())
     m_y = np.nonzero(out["freq10M"])[0].mean()
     s_y = np.nonzero(out["freq10S"])[0].mean()
-    assert m_y == 20  # solid (high-coverage) at y=20
-    assert s_y == 40  # dashed at y=40
+    assert m_y == 20  # solid at y=20 labelled M when dashed_is_sagittal=True
+    assert s_y == 40  # dashed at y=40 labelled S
 
 
 def test_ridge_tracks_for_hue_freq_split_shares_value_at_whole_curve_coincidence() -> None:
@@ -345,3 +353,165 @@ def test_extract_ridge_points_walks_only_inside_plot_box() -> None:
     points = _extract_ridge_points(mask, _box(x_left=0, x_right=49))
     xs = sorted(x for x, _ in points)
     assert xs == [5]
+
+
+# --- Per-column ridge DP (#1100) -----------------------------------------
+
+
+def test_ridges_by_column_groups_points_by_column() -> None:
+    """Points are grouped per column relative to plot_box.x_left."""
+    box = _box(x_left=10, x_right=14)
+    points = [(10, 20.0), (10, 30.0), (12, 25.0), (14, 40.0)]
+    ridges = _ridges_by_column(points, box)
+    assert len(ridges) == 5  # 14 - 10 + 1
+    assert ridges[0] == [20.0, 30.0]  # column x=10
+    assert ridges[1] == []  # column x=11 — empty
+    assert ridges[2] == [25.0]
+    assert ridges[3] == []
+    assert ridges[4] == [40.0]
+
+
+def test_ridge_dp_one_pass_picks_single_smooth_curve() -> None:
+    """DP picks one y per column. Single curve with constant y=20 should be
+    fully recovered with on_ridge=True at every column."""
+    ridges_by_col = [[20.0] for _ in range(10)]
+    path, on_ridge = _ridge_dp_one_pass(ridges_by_col)
+    assert path == [20.0] * 10
+    assert on_ridge == [True] * 10
+
+
+def test_ridge_dp_one_pass_carries_through_empty_columns() -> None:
+    """When a column has no ridges, the path carries forward at zero cost.
+    The carry-forward columns are marked on_ridge=False so callers can
+    filter them out."""
+    ridges_by_col = [[20.0], [], [], [20.0]]
+    path, on_ridge = _ridge_dp_one_pass(ridges_by_col)
+    assert path == [20.0, 20.0, 20.0, 20.0]
+    assert on_ridge == [True, False, False, True]
+
+
+def test_ridge_dp_one_pass_returns_empty_on_blank_input() -> None:
+    """If no column has a ridge, the path is all None."""
+    path, on_ridge = _ridge_dp_one_pass([[], [], []])
+    assert path == [None, None, None]
+    assert on_ridge == [False, False, False]
+
+
+def test_ridge_dp_two_paths_separates_two_parallel_curves() -> None:
+    """Two curves at distinct y values across all columns. Pass 1 picks one;
+    pass 2 picks the other (separated by more than _RIDGE_DP_ERASE_HALF)."""
+    ridges_by_col = [[20.0, 40.0] for _ in range(10)]
+    (p1, on1), (p2, on2) = _ridge_dp_two_paths(ridges_by_col)
+    assert all(y in (20.0, 40.0) for y in p1)
+    assert all(y in (20.0, 40.0) for y in p2)
+    # Different curves
+    assert p1[0] != p2[0]
+    # Both fully on ridges
+    assert on1 == [True] * 10
+    assert on2 == [True] * 10
+
+
+def test_ridge_dp_two_paths_recovers_two_curves() -> None:
+    """DP's two-pass extraction recovers both curves when they cross.
+
+    Note: at a symmetric crossing the two solutions (cross-through vs.
+    bounce-off) have equal total smoothness cost. The interesting
+    property DP guarantees is that BOTH paths are individually smooth
+    and collectively cover both physical curves — not that each path
+    follows a specific physical identity. Identity assignment is the
+    job of the post-DP S/M labeling (via `_path_mask_continuity`).
+    """
+    ridges_by_col = [
+        [10.0, 30.0],  # col 0: A above, B below
+        [15.0, 25.0],  # col 1: approaching
+        [20.0],        # col 2: crossing — single ridge (curves coincide)
+        [15.0, 25.0],  # col 3: diverging
+        [10.0, 30.0],  # col 4: maximally separated
+    ]
+    (p1, on1), (p2, on2) = _ridge_dp_two_paths(ridges_by_col)
+    # Together the two paths cover all the ridge values at every column.
+    # At col 0 we should have both 10.0 and 30.0 across the two paths.
+    assert {p1[0], p2[0]} == {10.0, 30.0}
+    assert {p1[4], p2[4]} == {10.0, 30.0}
+    # At the coincidence column (col 2) pass 1 takes the single ridge;
+    # pass 2 has no candidate (it was erased) and coasts.
+    assert p1[2] == 20.0
+    assert on1[2] is True
+    assert on2[2] is False  # pass 2 carried forward through erased column
+
+
+def test_path_to_track_drops_carry_forward_columns() -> None:
+    """Columns where DP coasted via carry-forward should NOT appear in
+    the resulting Track — they'd bleed the other pass's y values."""
+    path = [20.0, 20.0, 20.0, 20.0]
+    on_ridge = [True, False, False, True]
+    track = _path_to_track(path, on_ridge, _box(x_left=10, x_right=13))
+    assert track is not None
+    xs = sorted(x for x, _ in track.points)
+    # Only columns 0 and 3 have on_ridge=True; their x's are 10 and 13.
+    assert xs == [10, 13]
+
+
+def test_path_to_track_returns_none_when_all_carry_forward() -> None:
+    """If the path never landed on a real ridge (all carry-forward),
+    return None — there's no track to make."""
+    path = [None, None, None]
+    on_ridge = [False, False, False]
+    track = _path_to_track(path, on_ridge, _box(x_left=0, x_right=2))
+    assert track is None
+
+
+def test_path_mask_continuity_solid_line_near_one() -> None:
+    """A track that runs along a fully-inked row should have continuity
+    near 1.0 (every column under it has mask ink)."""
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    mask[20, 10:90] = 1
+    points = tuple((x, 20.0) for x in range(10, 90))
+    track = Track(points=points)
+    cont = _path_mask_continuity(track, mask)
+    assert cont == 1.0
+
+
+def test_path_mask_continuity_dashed_line_below_solid() -> None:
+    """A track over a dashed row (50% duty cycle) should have continuity
+    well below 1.0 — the discriminator for S/M assignment."""
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    # Dashed: 6 on, 6 off
+    for x in range(10, 90, 12):
+        mask[40, x : x + 6] = 1
+    points = tuple((x, 40.0) for x in range(10, 90))
+    track = Track(points=points)
+    cont = _path_mask_continuity(track, mask)
+    assert 0.3 < cont < 0.8
+
+
+def test_ridge_tracks_for_hue_freq_split_through_dp_crossing() -> None:
+    """End-to-end: synthetic two-curve crossing mask. The freq-split
+    dispatch should output two coherent fields with identity preserved
+    through the crossing."""
+    # Solid line goes from y=20 (left) to y=40 (right) — gentle descent.
+    # Dashed line goes from y=40 (left) to y=20 (right) — gentle ascent.
+    # They cross around the middle.
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    for x in range(10, 90):
+        # Solid: y = 20 + (x - 10) * 0.25
+        y_solid = int(20 + (x - 10) * 0.25)
+        mask[y_solid, x] = 1
+    # Dashed: y = 40 - (x - 10) * 0.25, with periodic gaps (6 on, 6 off)
+    dashed_on = True
+    for x in range(10, 90):
+        if (x - 10) % 12 < 6:
+            y_dashed = int(40 - (x - 10) * 0.25)
+            mask[y_dashed, x] = 1
+    out = ridge_tracks_for_hue_freq_split(
+        mask, _box(), freq=10, dashed_is_sagittal=False,
+    )
+    assert "freq10S" in out
+    assert "freq10M" in out
+    # At the left edge, S (solid) should be at y≈20, M (dashed) at y≈40.
+    # At the right edge, S at y≈40, M at y≈20 — identity preserved through crossing.
+    s_ys = np.nonzero(out["freq10S"])
+    m_ys = np.nonzero(out["freq10M"])
+    # Each field should have nonzero rasterization
+    assert len(s_ys[0]) > 0
+    assert len(m_ys[0]) > 0

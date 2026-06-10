@@ -24,16 +24,16 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq10S        |  8/11    |  0/11       |
+| freq10S        | 10/11    |  0/11       |
 | freq10M        |  9/11    |  0/11       |
-| freq30S        |  8/11    |  0/11       |
+| freq30S        | 10/11    |  0/11       |
 | freq30M        | 10/11    |  0/11       |
 
 ```
-  EX   freq10S        ·▇▇▇▇▇▇▇▇··  ( —  →  — )
-  EX   freq10M        ·▇▇▇▇▇▇▇▆▆·  ( —  →  — )
-  EX   freq30S        ·▅▅▅▅▅▅▄▄··  ( —  →  — )
-  EX   freq30M        ·▅▅▅▄▄▄▄▄▃▃  ( —  → 0.27)
+  EX   freq10S        ·▇▇▇▇▇▇▇▇▆▅  ( —  → 0.57)
+  EX   freq10M        ·█▇▇▇▇▇▇▆▆·  ( —  →  — )
+  EX   freq30S        ·▅▅▅▅▅▅▄▄▂▁  ( —  → 0.04)
+  EX   freq30M        ·▆▅▅▄▄▄▄▄▃▃  ( —  → 0.27)
 ```
 
 **freq10S**
@@ -49,15 +49,15 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.6 | 0.87 |
 | 0.7 | 0.86 |
 | 0.8 | 0.82 |
-| 0.9 | — |
-| 1.0 | — |
+| 0.9 | 0.73 |
+| 1.0 | 0.57 |
 
 **freq10M**
 
 | frac | EX |
 | ---- | --- |
 | 0.0 | — |
-| 0.1 | 0.91 |
+| 0.1 | 0.99 |
 | 0.2 | 0.90 |
 | 0.3 | 0.89 |
 | 0.4 | 0.87 |
@@ -81,15 +81,15 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.6 | 0.51 |
 | 0.7 | 0.49 |
 | 0.8 | 0.39 |
-| 0.9 | — |
-| 1.0 | — |
+| 0.9 | 0.20 |
+| 1.0 | 0.04 |
 
 **freq30M**
 
 | frac | EX |
 | ---- | --- |
 | 0.0 | — |
-| 0.1 | 0.58 |
+| 0.1 | 0.76 |
 | 0.2 | 0.56 |
 | 0.3 | 0.53 |
 | 0.4 | 0.49 |
@@ -104,9 +104,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq10S        |            — |          — |            — |
+| freq10S        |            — |       0.73 |         0.57 |
 | freq10M        |            — |       0.72 |            — |
-| freq30S        |            — |          — |            — |
+| freq30S        |            — |       0.20 |         0.04 |
 | freq30M        |            — |       0.33 |         0.27 |
 
 ### Shape metrics
@@ -114,9 +114,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.1 |       0.91 |                 — |
-| freq10M        |       0.1 |       0.91 |                 — |
-| freq30S        |       0.1 |       0.58 |                 — |
-| freq30M        |       0.1 |       0.58 |               1.0 |
+| freq10M        |       0.1 |       0.99 |                 — |
+| freq30S        |       0.1 |       0.58 |               0.9 |
+| freq30M        |       0.1 |       0.76 |               0.9 |
 
 ### Confidence signals
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.918 |      0.80 |  yes |
-| IoU       | 0.667 |      0.20 |  yes |
+| precision | 0.876 |      0.80 |  yes |
+| IoU       | 0.550 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -157,8 +157,8 @@ No reasons — both confidence signals cleared.
 ```
   EX   freq10S        ·███▇▇▇▇▇▇·  ( —  →  — )
   EX   freq10M        ·███▇▇▇▇▇▇·  ( —  →  — )
-  EX   freq30S        ·▇▇▇▇▇▇▆▆▆·  ( —  →  — )
-  EX   freq30M        ·▇▇▇▇▇▆▆▆▅·  ( —  →  — )
+  EX   freq30S        ·▇▇▇▇▇▇▆▆▅·  ( —  →  — )
+  EX   freq30M        ·▇▇▇▇▇▆▆▆▆·  ( —  →  — )
 ```
 
 **freq10S**
@@ -174,7 +174,7 @@ No reasons — both confidence signals cleared.
 | 0.6 | 0.92 |
 | 0.7 | 0.92 |
 | 0.8 | 0.92 |
-| 0.9 | 0.93 |
+| 0.9 | 0.90 |
 | 1.0 | — |
 
 **freq10M**
@@ -190,7 +190,7 @@ No reasons — both confidence signals cleared.
 | 0.6 | 0.92 |
 | 0.7 | 0.92 |
 | 0.8 | 0.92 |
-| 0.9 | 0.90 |
+| 0.9 | 0.93 |
 | 1.0 | — |
 
 **freq30S**
@@ -200,13 +200,13 @@ No reasons — both confidence signals cleared.
 | 0.0 | — |
 | 0.1 | 0.79 |
 | 0.2 | 0.79 |
-| 0.3 | 0.80 |
-| 0.4 | 0.80 |
+| 0.3 | 0.79 |
+| 0.4 | 0.79 |
 | 0.5 | 0.79 |
 | 0.6 | 0.79 |
 | 0.7 | 0.78 |
-| 0.8 | 0.75 |
-| 0.9 | 0.78 |
+| 0.8 | 0.74 |
+| 0.9 | 0.64 |
 | 1.0 | — |
 
 **freq30M**
@@ -216,23 +216,23 @@ No reasons — both confidence signals cleared.
 | 0.0 | — |
 | 0.1 | 0.79 |
 | 0.2 | 0.79 |
-| 0.3 | 0.79 |
-| 0.4 | 0.79 |
+| 0.3 | 0.80 |
+| 0.4 | 0.80 |
 | 0.5 | 0.79 |
 | 0.6 | 0.76 |
 | 0.7 | 0.75 |
-| 0.8 | 0.74 |
-| 0.9 | 0.64 |
+| 0.8 | 0.75 |
+| 0.9 | 0.78 |
 | 1.0 | — |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq10S        |            — |       0.93 |            — |
-| freq10M        |            — |       0.90 |            — |
-| freq30S        |            — |       0.78 |            — |
-| freq30M        |            — |       0.64 |            — |
+| freq10S        |            — |       0.90 |            — |
+| freq10M        |            — |       0.93 |            — |
+| freq30S        |            — |       0.64 |            — |
+| freq30M        |            — |       0.78 |            — |
 
 ### Shape metrics
 
@@ -240,8 +240,8 @@ No reasons — both confidence signals cleared.
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.1 |       0.93 |                 — |
 | freq10M        |       0.1 |       0.93 |                 — |
-| freq30S        |       0.3 |       0.80 |                 — |
-| freq30M        |       0.2 |       0.79 |                 — |
+| freq30S        |       0.2 |       0.79 |                 — |
+| freq30M        |       0.3 |       0.80 |                 — |
 
 ### Confidence signals
 
@@ -249,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.958 |      0.80 |  yes |
-| IoU       | 0.678 |      0.20 |  yes |
+| precision | 0.956 |      0.80 |  yes |
+| IoU       | 0.667 |      0.20 |  yes |
 
 #### Plausibility priors
 
