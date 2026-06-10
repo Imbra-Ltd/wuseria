@@ -6243,3 +6243,112 @@ Theme: collapse the two maintainer-facing files (`extractor-prediction.md` + `ey
 - 461-page build (unchanged).
 - **48 ADRs total** (was 47; added ADR-048).
 - **9 declared MTF profiles** (unchanged).
+
+---
+
+### Session 134 — Per-column ridge DP fixes TTartisan freq30 corner inversion
+
+Date: 2026-06-09 → 2026-06-10 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: maintainer flagged the TTartisan SVG still wrong on freq30S/30M corner (S30 reading 0.40 vs GT 0.29; T30 reading 0.30 vs GT 0.40). This is the #1100 deferred work from S132. Probe the actual failure mode, evaluate the three candidate fixes documented in #1100, ship the right one.
+
+#### Branch / merge state
+
+- Started on `main`, clean. Memory pointer pointed to #1100 with three candidate fixes from the S132 spike.
+- Branch: `fix/ttartisan-freq30-clusterer-tiebreak` (PR #1105, one commit, squash-merged as `379ea14`).
+
+#### PRs merged
+
+- **PR #1105 — `fix(mtf): per-column ridge DP for freq-split dispatch`** (closes #1100). One commit, 96 files, +2794 / -1949. Squash-merged as `379ea14`. CI green (gate, build, lighthouse, CodeQL, analyze, gitleaks, links — all SUCCESS).
+
+#### Issues opened / closed
+
+- **#1100** closed by `closes #1100` in PR #1105's merge commit.
+- **#1104 opened** — 7artisans corner crossing identity-swap. Same root cause as #1100 at a different magnitude. `task` + `P3` + `v0.8.0`. Three candidate fixes documented (per-column dash-vs-solid detection; path-history slope smoothness; multi-pass refinement).
+
+#### Spike journey (with discarded approaches)
+
+1. **Probed greedy clusterer state at the freq30 crossing.** Revealed the failure mode: at x≈585 the curves cross, and the upper-history track (which was S30 for most of the field) picks up T30's corner ridge because greedy nearest-y is locally correct but globally wrong. Result: track A reads T30's 0.40 while having been S30's path. Coverage-based labeling then puts that frankenstein into freq30S.
+
+2. **Approach 2 probe: tighter close kernel for GEODESIC_DP.** Kernel sweep (1/3/5/7) showed the TTartisan grey freq30 raw mask is **already fused into one connected component** (~1080 px) at the pixel level — S30 and T30 anti-aliased halos touch. CC-based dispatch loses ~90% of T30 at any kernel width. Why FREQUENCY_PER_HUE_RIDGE exists in the first place (ADR-045). **Approach 2 ruled out.**
+
+3. **Considered mask-based DP (`extract_two_curves_dp`).** Documented blind spot #1044 fires on the TTartisan pattern: S30 dives while T30 stays high; Viterbi prefers the smoother (flat) path through dilation echo and loses the dive. **Ruled out.**
+
+4. **Per-column ridge DP (approach c, user's suggestion).** Input: per-column ridge centroids (already extracted, sparse, no mask, no dilation echo). Output: two coherent paths via two complementary Viterbi passes. Plus mask-continuity-based S/M assignment on the now-coherent paths (the post-extraction version of the option-3 idea from S132's spike — which had regressed because it ran on frankensteins; on coherent DP paths it's clean). **Shipped.**
+
+#### Key changes
+
+**Extractor — `pipeline/ridge.py` (+337 LOC):**
+
+- `_ridges_by_column` — group `_extract_ridge_points` output by column index relative to `plot_box.x_left`. One list of y-values per column (0, 1, or 2+).
+- `_ridge_dp_one_pass(ridges_by_col, *, erase_window=None)` — Viterbi: pick one y per column to minimize smoothness cost `alpha * |dy|`. Carries forward across empty columns at zero cost. Returns `(path, on_ridge)` — `on_ridge[col]` is True iff DP landed on a real ridge centroid (vs carry-forward).
+- `_ridge_dp_two_paths` — complementary passes: pass 1 finds best path; pass 2 runs with pass 1's ridges erased within ±`_RIDGE_DP_ERASE_HALF`=2 px per column. Returns two `(path, on_ridge)` tuples.
+- `_path_to_track` — converts a pass result to a `Track`, keeping ONLY columns where DP landed on a real ridge (drops carry-forward columns to prevent inter-curve contamination — pass 2's carry-forward would otherwise inherit pass 1's y values).
+- `_path_mask_continuity` — fraction of columns within a path's x range that have ink in the y-band around the path (±3 px). Solid path ≈ 1.0; dashed path ≈ 0.5-0.7. Discriminator for S/M assignment.
+- `ridge_tracks_for_hue_freq_split` body rewritten: greedy clusterer → ridge-DP → continuity-based S/M.
+
+**Tuning:**
+
+- `_RIDGE_DP_ALPHA = 0.30` (reused from `dp_extract._ALPHA`).
+- `_RIDGE_DP_ERASE_HALF = 2` (start was 4 — left 7artisans freq10 with pass 2 missing half the field; 2 admits closer parallel curves at the cost of slightly noisier corner readings).
+
+**Bulk regen (in-PR per the S131 precedent):**
+
+- 18 TTartisan Tier 2 logs (`mtfdigitizer.extract --accept` per slug). All 14 HIGH + 2 LOW (the LOWs are pre-existing S132 stopped-panel `not_suspiciously_flat` triggers, not regressions).
+- `src/data/mtf-readings.ts` patched (19 entries, 38 panels, 418 positions).
+- 14 calibration readings docs in `referenceset/readings/`.
+
+#### Calibration impact
+
+**TTartisan 50mm f/1.2 max-aperture (the headline):**
+
+| Field   | Baseline p95 | After p95 | Corner reading        |
+| ------- | ------------ | --------- | --------------------- | --- | ------------- |
+| freq10S | 0.027        | 0.013     | 0.78 vs GT 0.77 (     | Δ   | =0.011)       |
+| freq10M | 0.013        | 0.014     | 0.61 vs GT 0.60 (     | Δ   | =0.010)       |
+| freq30S | **0.140**    | **0.012** | \*\*0.30 vs GT 0.29 ( | Δ   | =0.011)\*\* ✓ |
+| freq30M | **0.128**    | **0.020** | \*\*0.40 vs GT 0.40 ( | Δ   | =0.003)\*\* ✓ |
+
+The freq30 corner inversion is **completely fixed**. All four fields within ±0.025 except one mid-field outlier on freq30M (fraction 0.6).
+
+**7artisans regression** (known limitation, #1104):
+
+| Field             | Baseline p95 | After p95 |
+| ----------------- | ------------ | --------- |
+| 7artisans freq10S | 0.054        | 0.124     |
+| 7artisans freq10M | 0.064        | 0.119     |
+
+Same root cause — DP smoothness prior can't disambiguate when both candidates have equal smoothness cost at a tight crossing.
+
+**Aggregate (14-anchor set):**
+
+- Paired comparisons: 604 → **627** (more samples paired)
+- Median |Δ|: 0.0112 (unchanged)
+- p95 |Δ|: 0.0633 → 0.0640 (essentially flat)
+- In band ±0.05: 93.0% → 92.5% (3-sample swing)
+
+#### Key decisions
+
+- **ADR-049 — Per-column ridge DP for freq-split dispatch.** Documents why mask-based DP's #1044 cliff-corner blind spot doesn't apply (no dilation echo on per-column ridges), why CC-based dispatch can't work here (raw mask already fused), why slope-projecting tie-break wouldn't catch the crossing (greedy is locally correct). Includes the carry-forward filter rationale and the known 7artisans limitation.
+- **Ship and open #1104 rather than keep iterating.** The TTartisan win is dramatic (corner |Δ| 0.11 → 0.011, the very thing the maintainer flagged). 7artisans is the same root cause; fixing it needs another layer (per-column dash-vs-solid detection on the raw mask). Better to ship the TTartisan fix and follow up.
+- **`_RIDGE_DP_ERASE_HALF = 2` over 4.** Smaller window admits parallel-curve pass-2 candidates in the left half of 7artisans, at the cost of a tiny noise margin. Net benefit on the cohort.
+
+#### Follow-ups for next session
+
+- **#1104 — 7artisans corner crossing.** Per-column dash-vs-solid detection on the raw mask. Three candidate approaches documented in the issue.
+- **#1085 — Triage 4 orphan optical-specs dirs** — still carried.
+- **Carried since S128:** Sparse-dash dropouts in `ridge_tracks_for_hue_freq_split` — partially addressed by the new DP (DP carries through dashes via smoothness), general case may be moot now; needs verification.
+- **Carried since S122:** `_profile_for_view` shim removal.
+- **Carried since S118:** ADR-014 mean rule validation; Tier 1 `log.py --check` false-OK; 17-40 tele `prior_violations=1`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. **Fujifilm cohort: 62 lenses on `mtf-readings.ts`** (unchanged). **TTartisan cohort: 19 lenses on `mtf-readings.ts`** (unchanged at the surface; 18 underlying Tier 2 logs + anchor readings regenerated).
+- Epic #790 (digitize all brands): **4/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **103 entries** (unchanged).
+- **Aggregate calibration: 580/627 (92.5%)** within ±0.05 band (was 562/604 / 93.0%). Net +23 paired comparisons; in-band fraction down 0.5% from a 3-sample 7artisans regression (#1104).
+- **3 Tier 1 anchors** (unchanged) — eye-read.md workflow from S133 is live.
+- **338 pytest pass** (was 327; +11 ridge-DP tests).
+- 461-page build (unchanged).
+- **49 ADRs total** (was 48; added ADR-049 per-column ridge DP).
+- **9 declared MTF profiles** (unchanged).
