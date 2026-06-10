@@ -37,11 +37,11 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from .aperture_passes import aperture_passes_for_view
 from .pipeline import ExtractedChart, SampledReading, extract_chart
 from .pipeline.dispatch import parse_field_name
 from .pipeline.rendermatch import fields_in
 from .pipeline.types import PlotBox
-from .family_profile import profile_for_chart
 from .referenceset import REFERENCE_CHARTS
 from .referenceset.charts import PlotBoxCoords, ReferenceChart
 
@@ -369,23 +369,33 @@ def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
     )
 
 
-def _emit_chart(chart: ReferenceChart, *, check_only: bool) -> Path:
-    """Extract one reference chart and write its SVG. Returns the output path."""
-    assert chart.plot_box is not None
-    profile = profile_for_chart(chart)
-    image_path = REPO_ROOT / chart.chart_path
-    extracted = extract_chart(
-        image_path,
-        profile,
-        _to_plotbox(chart.plot_box),
-        image_height_mm=chart.image_height_mm,
-    )
-    svg = render_svg(extracted)
+def _emit_chart(chart: ReferenceChart, *, check_only: bool) -> list[Path]:
+    """Extract one reference chart and write its SVG(s). Returns the output paths.
 
-    out_path = image_path.with_suffix(".svg")
-    if not check_only:
-        out_path.write_text(svg, encoding="utf-8")
-    return out_path
+    Multi-aperture charts (ADR-044) fan out into one SVG per aperture,
+    suffixed `<stem>-<aperture>.svg` (matching the production extractor's
+    naming). Single-aperture charts produce one SVG at `<stem>.svg`.
+    """
+    assert chart.plot_box is not None
+    image_path = REPO_ROOT / chart.chart_path
+    plot_box = _to_plotbox(chart.plot_box)
+    passes = aperture_passes_for_view(chart, image_path)
+    multi = len(passes) > 1
+    out_paths: list[Path] = []
+    for aperture, profile in passes:
+        extracted = extract_chart(
+            image_path, profile, plot_box,
+            image_height_mm=chart.image_height_mm,
+        )
+        svg = render_svg(extracted)
+        if multi:
+            out_path = image_path.with_name(f"{image_path.stem}-{aperture}.svg")
+        else:
+            out_path = image_path.with_suffix(".svg")
+        if not check_only:
+            out_path.write_text(svg, encoding="utf-8")
+        out_paths.append(out_path)
+    return out_paths
 
 
 def main() -> None:
@@ -404,10 +414,11 @@ def main() -> None:
     print()
 
     for chart in runnable:
-        out_path = _emit_chart(chart, check_only=args.check)
-        relative = out_path.relative_to(REPO_ROOT)
+        out_paths = _emit_chart(chart, check_only=args.check)
         action = "would write" if args.check else "wrote"
-        print(f"  {chart.slug:<40}  {action}  {relative}")
+        for out_path in out_paths:
+            relative = out_path.relative_to(REPO_ROOT)
+            print(f"  {chart.slug:<40}  {action}  {relative}")
 
 
 if __name__ == "__main__":
