@@ -6442,3 +6442,118 @@ The on-disk SVG was last regenerated in #1096 (pre-#1105 per-column ridge DP). E
 - 461-page build (unchanged).
 - **49 ADRs total** (unchanged — no architecture decision needed for this fix).
 - **9 declared MTF profiles** (unchanged).
+
+---
+
+### Session 136 — Per-stage diagnostic bundle + TTartisan triage
+
+Date: 2026-06-10 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: maintainer flagged 18 TTartisan charts as incorrectly digitized. Rather than 18 per-chart probe sessions, build a generic diagnostic — ADR-050 per-stage bundle — that exposes where in the pipeline each chart fails. Then triage the cohort using the bundle to derive failure-mode classes, file an epic + 4 root-cause issues.
+
+#### Branch / merge state
+
+- Started on `main`, with an uncommitted S135 wrap entry in `docs/dev-journal.md`. Committed via PR #1109 (wrap PR pattern from #1103/#1106). Then branched `feat/diagnostic-bundle` for the diagnostic work, merged via #1111.
+
+#### PRs merged
+
+- **PR #1109 — `docs: session 135 wrap`**. One commit (the S135 entry). CI green. Squash-merged.
+- **PR #1111 — `feat(mtf): per-stage diagnostic bundle for the digitizer (ADR-050)`** (closes #1110). One commit, 5 files, +699 LOC. CI green. Squash-merged.
+
+#### Issues opened / closed
+
+- **#1110 opened** — task for the diagnostic bundle implementation. `task` + `P1` + `Expedite`. Auto-closed by #1111.
+- **#1112 opened** — `epic` for the TTartisan cohort hardening (P1, v0.8.0). Open.
+- **#1113 opened** — RC1: max/freq30-grey hue range catches F8 orange (B aperture-leak). `task` + `P1` + v0.8.0. Open.
+- **#1114 opened** — RC2: DP curve-start misattach on freq10M dashed. `task` + `P2` + v0.8.0. Open.
+- **#1115 opened** — RC3: same-color crossing swap on M curves at corner. `task` + `P1` + v0.8.0. Consolidates #1104 on merge. Open.
+- **#1116 opened** — RC4: truncated skeleton on flat near-saturation freq10 curves. `task` + `P2` + v0.8.0. Open.
+
+#### Key changes
+
+**New ADR — `docs/decisions/050-per-stage-diagnostic-bundle.md` (+~180 LOC):**
+
+- Stages: load, plotbox, hue-masks, dispatch/skeletons, presence-masks, sampling, sister fallback, center symmetry, emit. Each gets one named artifact in `<slug>/diagnostic/[<aperture>/]`.
+- Contract: extraction values byte-identical with or without the sink. Gitignored — on-demand, not committed state.
+- Stage-to-failure-mode mapping table: lets a maintainer (or agent) jump from a symptom description to the first stage to inspect.
+
+**New module — `tools/mtfdigitizer/diagnostic.py` (+~300 LOC):**
+
+- `DiagnosticSink` Protocol with one method per stage.
+- `FileDiagnosticSink` writes numbered PNGs + `manifest.json`.
+- Helpers for faded source underlay, per-field color overlay, plotbox draw, sample-column overlay, sample-diff overlay.
+
+**New CLI — `tools/mtfdigitizer/diagnose.py` (+~160 LOC):**
+
+- `py -m mtfdigitizer.diagnose <slug>` / `--brand <prefix>` / `--all`.
+- Multi-aperture charts get one subdirectory per aperture (`max/`, `stopped/`).
+
+**Pipeline hook — `tools/mtfdigitizer/pipeline/pipeline.py` (+49 LOC):**
+
+- `extract_chart` accepts an optional `diagnostic_sink` kwarg.
+- Each stage records to the sink iff present; no-op when None (byte-identical extraction).
+- `record_fallback_visual` / `record_symmetry_visual` called duck-typed for visual diffs that need `bgr` + `plot_box`.
+
+**.gitignore — `docs/optical-specs/*/diagnostic/`** added.
+
+#### Triage matrix (8 of 19 TTartisan charts × 8 fields = 64 classifications)
+
+| Chart             | max-10S  | max-10M | max-30S | max-30M | stopped-10S | stopped-10M | stopped-30S | stopped-30M |
+| ----------------- | -------- | ------- | ------- | ------- | ----------- | ----------- | ----------- | ----------- |
+| 50/1.2 (control)  | A        | A       | A       | A       | A           | A           | A           | B+E[mod]    |
+| 25/2.0            | A        | D       | A       | G       | C           | C           | B           | E           |
+| 7.5mm fisheye     | A        | D       | A       | G       | A           | A           | B           | A           |
+| 500/6.3           | C        | D       | A       | G       | C           | C           | B           | B           |
+| 50/2.0            | A+B[min] | D+E+F   | A       | E+F     | A           | A+B[min]    | A           | E+F         |
+| 90/1.25 GFX       | A        | C[min]  | A       | A       | C[min]      | A           | A           | A           |
+| 100/2.8 macro GFX | A        | A       | A       | D+E     | A           | A           | A           | A           |
+| 500/6.3 GFX       | A        | D+C     | A       | D       | A           | A           | E[maj]      | F[min]      |
+
+A (correct) = 32/64 = 50%. Dominant non-correct: D (9), C (7), E (7), B (6), F (5), G (3).
+
+#### Four root causes explain ~80% of non-A
+
+- **RC1 (#1113)** — `max-30-grey` hue range catches F8 orange dashed pixels. Affects 6 charts' max/freq30M.
+- **RC2 (#1114)** — Per-column ridge DP at column 0 picks the wrong y when the first dash of a dashed curve falls right of the plot edge. Affects freq10M `samples[0]` on most charts.
+- **RC3 (#1115)** — Same-color S/M corner crossing swap. ADR-049 fixed the TTartisan 50/1.2 freq30 instance; the failure mode is broader than #1104 (7artisans) suggested. Consolidates #1104.
+- **RC4 (#1116)** — Truncated skeleton on flat near-saturation freq10 curves. Plot box top edge clips ridge centroids near MTF 1.0.
+
+#### Diagnosis journey
+
+1. Maintainer dropped 18-chart triage list. Right framing per the user: not 18 per-chart fixes — harden the digitizer against the failure classes the cohort exposes.
+2. Decided two-phase: **B then A** — build per-stage diagnostic first, then use the bundle to triage 18 charts faster than a probe-each-loop would.
+3. ADR-050 written before coding to nail the diagnostic contract.
+4. Implementation: opt-in sink Protocol → no pipeline behaviour change when not used. `extract_chart` accepts `diagnostic_sink=None` (default), every stage records iff sink given. CLI mirrors `svg.py` script-style for consistency.
+5. Smoke-tested on TTartisan 50/1.2 (Tier 1 anchor) + 25/2.0 (flagged) — bundle produced, manifest correct, 338 pytest pass, `svg --check` shows no SVG drift (contract preserved).
+6. Triage phase: 5 agents in batch 1, 5 in batch 2, then stopped at 8/19 to aggregate (diminishing returns — taxonomy already saturated).
+7. 4 root causes identified by pattern across the 64 classifications. Filed epic + 4 RC issues with first-stage-to-inspect notes and acceptance criteria pointing back to specific diagnostic PNGs.
+
+#### Verification
+
+- `py -m pytest tools/mtfdigitizer/tests/` — 338 passed (no regression from the sink hook).
+- `py -m mtfdigitizer.svg --check` — no SVG drift (ADR-050 byte-identity contract preserved).
+- `py -m mtfdigitizer.diagnose --brand ttartisan` — 19 charts × ~2 apertures = 38 bundles written.
+
+#### Key decisions
+
+- **B (diagnostic) before A (triage).** Investing one session in tooling rather than 18 sessions in per-chart probes. ADR-050 captures the why.
+- **Opt-in sink Protocol over a `--debug` flag.** The Protocol keeps the diagnostic concern outside `pipeline.py` and lets the same hook serve future use cases (e.g. a recording sink for offline replay).
+- **Stop triage at 8/19 charts.** Pattern saturated: 4 RCs explain ~80% of failures. Remaining 11 charts will mostly map to the same RCs. Better to spend budget on fixes than more classification.
+- **One issue per root cause, not per chart.** The epic links 4 fix-surface issues, not 18 lens-fix issues. Each RC PR targets the failure class across the cohort.
+
+#### Follow-ups for next session
+
+- **RC4 (#1116) first** — likely smallest, confidence-builder before tackling RC1's hue gate.
+- **Then RC1 (#1113), RC3 (#1115), RC2 (#1114)** — by impact / acceptance-criteria ease.
+- **Carried from S135:** #1085 (orphan optical-specs dirs); `_profile_for_view` shim removal; ADR-014 mean rule validation; 17-40 tele `prior_violations=1`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort counts unchanged.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **Aggregate calibration: unchanged at 580/627 (92.5%)** — no readings changed; pure tooling addition.
+- 3 Tier 1 anchors (unchanged).
+- **338 pytest pass** (unchanged — no test changes; sink hook is opt-in and not exercised by current tests).
+- 461-page build (unchanged).
+- **50 ADRs total** (was 49; added ADR-050 per-stage diagnostic bundle).
+- **9 declared MTF profiles** (unchanged).

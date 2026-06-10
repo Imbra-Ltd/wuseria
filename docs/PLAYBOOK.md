@@ -271,6 +271,26 @@ state when one log covers every view). Per ADR-033 the wide-end
 diffraction chart is the canonical-for-scoring view; tele rides along
 as supplementary data on the same log. (#1037)
 
+**Write a per-stage diagnostic bundle for one chart (ADR-050):**
+
+```bash
+cd tools && py -m mtfdigitizer.diagnose <lens-slug>             # one chart
+cd tools && py -m mtfdigitizer.diagnose --brand <prefix>        # whole brand cohort (e.g. `ttartisan`)
+cd tools && py -m mtfdigitizer.diagnose --all                   # whole corpus (slow)
+```
+
+Runs `extract_chart` with a `DiagnosticSink` that writes one named PNG
+per pipeline stage (source, plotbox, hue masks, skeletons, presence
+masks, sampling overlay, fallback diff, symmetry diff, emit) plus a
+`manifest.json` into `docs/optical-specs/<slug>/diagnostic/`. Multi-
+aperture charts get one subdirectory per aperture (`max/`, `stopped/`).
+The bundle is gitignored — regenerate on demand when a chart looks
+wrong. Use the stage-to-symptom mapping in ADR-050 to jump from a
+maintainer's failure description ("30lpmm completely wrong", "missing
+segments", "edge too low") to the first PNG to inspect. Extraction
+values are byte-identical with or without the sink — `py -m
+mtfdigitizer.svg --check` MUST pass after every diagnose run.
+
 **Refresh per-lens calibration-tier digitization logs (Tier 1 per ADR-041):**
 
 ```bash
