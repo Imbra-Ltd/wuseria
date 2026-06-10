@@ -774,17 +774,15 @@ def ridge_tracks_for_hue(
 # over from `dp_extract._ALPHA` (Tokina reference-set calibration).
 _RIDGE_DP_ALPHA: float = 0.30
 
-# Penalty cost when a path's y at a column doesn't sit on any ridge
-# centroid AND is more than `_RIDGE_DP_SNAP_TOLERANCE` away from the
-# nearest one. Picked large enough to discourage paths that drift
-# through empty columns but small enough to allow brief excursions
-# across dash gaps.
-_RIDGE_DP_OFF_RIDGE_PENALTY: float = 50.0
-
-# A path may carry forward its previous y across columns with no ridges
-# (dash gaps). When ridges DO exist, snap the path to the nearest ridge
-# if within this many pixels; otherwise charge the off-ridge penalty.
-_RIDGE_DP_SNAP_TOLERANCE: float = 3.0
+# Fixed cost added when a path coasts past a column whose ridges are
+# all far from its anchor (#1104). Lets pass 1 skip a lone lower-band
+# ridge instead of being forced to land on it. Picked small enough that
+# coasting beats jumping across a ~30 px gap (the 7artisans corner mode)
+# but large enough that coasting NEVER beats landing on a ridge that
+# matches the path's anchor (anchor cost ≈ 0 on a clean landing). Only
+# affects passes that supply an `anchor`; without one the coast option
+# is never cheaper than landing on a candidate.
+_RIDGE_DP_OFF_RIDGE_PENALTY: float = 4.0
 
 # After pass 1 finds the best path, pass 2 erases ridges within this
 # vertical half-window of pass 1's path at each column (so pass 2 finds
@@ -792,6 +790,20 @@ _RIDGE_DP_SNAP_TOLERANCE: float = 3.0
 # apart for part of the field (the second curve's ridge falls outside
 # the erase window even at near-coincidence).
 _RIDGE_DP_ERASE_HALF: int = 2
+
+# Y-band coherence weight (#1104). Per-column cost adds
+# `_RIDGE_DP_GAMMA * |y - anchor[col]|` when the path has an anchor.
+# Each anchor is a smoothed approximation of where one curve sits;
+# the cost pulls the DP toward its own anchor and away from the
+# other path's band when both have valid candidates at a column.
+#
+# Sized so a 30px swap (the 7artisans freq10 corner mode) costs
+# ~6.0 in anchor deviation per column — enough to dominate the
+# 0.30*|dy| smoothness cost (max 3.0 for a 10px jump) so the DP
+# rejects swaps but still picks the closer candidate when both
+# anchors agree (single-ridge / coincidence columns).
+_RIDGE_DP_GAMMA: float = 0.20
+
 
 
 def _ridges_by_column(
@@ -814,11 +826,64 @@ def _ridges_by_column(
     return by_x
 
 
+def _compute_y_anchors(
+    ridges_by_col: list[list[float]],
+) -> tuple[list[float | None], list[float | None]]:
+    """Compute per-column y anchors for the upper and lower curves (#1104).
+
+    For each column with exactly two ridges, the smaller y is taken as
+    the upper-curve seed and the larger y as the lower-curve seed
+    (image-y grows downward, so smaller y = higher MTF). Columns with
+    1 ridge (dash gaps, coincidence) or 3+ ridges (contaminated by
+    gridline echoes or other-curve halos) contribute no seed — they
+    inherit the most recent known anchor via forward/backward fill.
+
+    The anchor is intentionally NOT box-smoothed: a smoothing window
+    flattens legitimate local features (e.g. the TTartisan freq30
+    corner dive that spans ~30 columns) just as easily as it cancels
+    noise. The inner DP's smoothness term already supplies the
+    column-to-column smoothness; the anchor's job is to encode curve
+    identity, not to be smooth.
+
+    Returns ``(upper, lower)``, each of length ``len(ridges_by_col)``.
+    Entries are ``None`` only when there are no two-ridge columns
+    anywhere in the input.
+    """
+    n = len(ridges_by_col)
+    upper_raw: list[float | None] = [None] * n
+    lower_raw: list[float | None] = [None] * n
+    for col, ys in enumerate(ridges_by_col):
+        if len(ys) == 2:
+            upper_raw[col] = ys[0]
+            lower_raw[col] = ys[1]
+
+    def _carry_fill(raw: list[float | None]) -> list[float | None]:
+        filled: list[float | None] = list(raw)
+        last: float | None = None
+        for col in range(n):
+            if filled[col] is not None:
+                last = filled[col]
+            elif last is not None:
+                filled[col] = last
+        first = next((v for v in filled if v is not None), None)
+        if first is not None:
+            for col in range(n):
+                if filled[col] is None:
+                    filled[col] = first
+                else:
+                    break
+        return filled
+
+    return _carry_fill(upper_raw), _carry_fill(lower_raw)
+
+
 def _ridge_dp_one_pass(
     ridges_by_col: list[list[float]],
     *,
     alpha: float = _RIDGE_DP_ALPHA,
     erase_window: dict[int, float] | None = None,
+    anchor: list[float | None] | None = None,
+    gamma: float = _RIDGE_DP_GAMMA,
 ) -> tuple[list[float | None], list[bool]]:
     """Single Viterbi pass: pick one y per column to minimise data + smoothness.
 
@@ -837,12 +902,17 @@ def _ridge_dp_one_pass(
 
     Cost model:
       Data cost at column x placing path at y:
-        0       if y == one of column's ridges
-        alpha_off * (|y - nearest_ridge| - snap_tolerance)
-                if column has ridges but path is off-ridge
-        0       if column has NO ridges (carry-forward is free)
-    Smoothness cost transitioning from y' to y across one column:
+        0                              if y == one of column's ridges
+        _RIDGE_DP_OFF_RIDGE_PENALTY    if anchor supplied AND path
+                                       coasts past a column with ridges
+                                       (#1104: see `_ridge_dp_two_paths`)
+        0                              if column has NO ridges (carry
+                                       forward is free)
+      Smoothness cost transitioning from y' to y across one column:
         alpha * |y - y'|
+      Anchor-coherence cost at column x placing path at y (when `anchor`
+      set):
+        gamma * |y - anchor[col]|
     """
     n_cols = len(ridges_by_col)
     if n_cols == 0:
@@ -863,6 +933,14 @@ def _ridge_dp_one_pass(
             kept = list(ys)
         candidates_per_col.append(kept)
 
+    def _anchor_cost(col: int, y: float) -> float:
+        if anchor is None:
+            return 0.0
+        a = anchor[col]
+        if a is None:
+            return 0.0
+        return gamma * abs(y - a)
+
     # DP forward pass. State at each column: best total cost ending at
     # each candidate y, plus the back-pointer (previous y, or None for
     # "start").
@@ -874,7 +952,7 @@ def _ridge_dp_one_pass(
     if first_col is None:
         return [None] * n_cols, [False] * n_cols
     for y in candidates_per_col[first_col]:
-        best[first_col][y] = (0.0, None)
+        best[first_col][y] = (_anchor_cost(first_col, y), None)
 
     # Forward over each subsequent column.
     for col in range(first_col + 1, n_cols):
@@ -890,7 +968,26 @@ def _ridge_dp_one_pass(
                     if cand_cost < best_cost:
                         best_cost = cand_cost
                         best_prev_y = y_prev
-                best[col][y] = (best_cost, best_prev_y)
+                best[col][y] = (best_cost + _anchor_cost(col, y), best_prev_y)
+            # When the path has an anchor, also allow each prior state to
+            # coast through this column WITHOUT landing on a ridge — the
+            # #1104 case where a lone lower-band ridge would drag pass 1
+            # off the upper curve through a dash gap. The anchor cost
+            # still applies, so coasting is only cheaper than landing
+            # when the available ridges are far from this path's anchor.
+            # Without an anchor, coasting is NOT an option — the #1100
+            # TTartisan freq30 dive is a legitimate 67 px jump that the
+            # unanchored DP must take, not coast through.
+            if anchor is not None:
+                for y_prev, (cost_prev, _) in prev.items():
+                    coast_cost = (
+                        cost_prev
+                        + _RIDGE_DP_OFF_RIDGE_PENALTY
+                        + _anchor_cost(col, y_prev)
+                    )
+                    stored = best[col].get(y_prev)
+                    if stored is None or coast_cost < stored[0]:
+                        best[col][y_prev] = (coast_cost, y_prev)
         else:
             # Empty column: carry every state forward at zero cost.
             for y_prev, (cost_prev, _) in prev.items():
@@ -925,13 +1022,29 @@ def _ridge_dp_one_pass(
 
 def _ridge_dp_two_paths(
     ridges_by_col: list[list[float]],
+    *,
+    use_y_anchor: bool = False,
 ) -> tuple[
     tuple[list[float | None], list[bool]],
     tuple[list[float | None], list[bool]],
 ]:
-    """Two complementary passes: pass 1 finds the best path; pass 2 finds
-    the next-best with pass 1's ridges erased per column (so it picks the
-    OTHER curve where two ridges exist).
+    """Two passes: pass 1 finds the best path, pass 2 finds the next-best
+    with pass 1's ridges erased per column.
+
+    When ``use_y_anchor`` is True (#1104), pass 1 is pulled toward the
+    **upper** y-anchor (smaller y = upper in image coordinates = higher
+    MTF) and pass 2 toward the **lower** anchor. The anchor coherence
+    cost lets each pass coast past a column whose ridges sit in the
+    other path's band, instead of being forced to land on a ridge and
+    swap identity. This fixes the identity-swap failure mode described
+    in ADR-049's "Known limitation: 7artisans corner crossing".
+
+    When ``use_y_anchor`` is False (default), the DP runs identity-free
+    — global smoothness optimum across both passes. This is the #1100
+    TTartisan behaviour: the freq30 dive is a legitimate 67 px jump
+    that the unanchored DP takes correctly, but the anchored coast
+    option can mis-attribute it as a swap. Per-profile opt-in via
+    `MtfProfile.ridge_dp_y_anchor`.
 
     When a column has only one ridge (curve coincidence), pass 1 takes
     it; pass 2 then has no ridge at that column and coasts via
@@ -943,12 +1056,18 @@ def _ridge_dp_two_paths(
     columns where DP landed on a real ridge from columns where it
     coasted via carry-forward.
     """
-    pass1 = _ridge_dp_one_pass(ridges_by_col)
+    if use_y_anchor:
+        upper_anchor, lower_anchor = _compute_y_anchors(ridges_by_col)
+    else:
+        upper_anchor = lower_anchor = None
+    pass1 = _ridge_dp_one_pass(ridges_by_col, anchor=upper_anchor)
     pass1_path, _pass1_on_ridge = pass1
     erase: dict[int, float] = {
         col: y for col, y in enumerate(pass1_path) if y is not None
     }
-    pass2 = _ridge_dp_one_pass(ridges_by_col, erase_window=erase)
+    pass2 = _ridge_dp_one_pass(
+        ridges_by_col, erase_window=erase, anchor=lower_anchor
+    )
     return pass1, pass2
 
 
@@ -1043,6 +1162,7 @@ def ridge_tracks_for_hue_freq_split(
     plot_box: PlotBox,
     freq: int,
     dashed_is_sagittal: bool,
+    use_y_anchor: bool = False,
 ) -> dict[str, np.ndarray]:
     """Per-hue, 2-curve variant for SPLIT_BY_DASH families: each hue
     carries one frequency with both S (solid) and T (dashed) curves.
@@ -1091,7 +1211,9 @@ def ridge_tracks_for_hue_freq_split(
     # greedy clusterer + top-N + diversity-picker chain that the
     # frankenstein corner-crossing failure mode came from.
     ridges_by_col = _ridges_by_column(points, plot_box)
-    (p1_path, p1_on_ridge), (p2_path, p2_on_ridge) = _ridge_dp_two_paths(ridges_by_col)
+    (p1_path, p1_on_ridge), (p2_path, p2_on_ridge) = _ridge_dp_two_paths(
+        ridges_by_col, use_y_anchor=use_y_anchor
+    )
     track1 = _path_to_track(p1_path, p1_on_ridge, plot_box)
     track2 = _path_to_track(p2_path, p2_on_ridge, plot_box)
 

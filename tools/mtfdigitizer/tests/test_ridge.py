@@ -8,6 +8,7 @@ from mtfdigitizer.pipeline.ridge import (
     Track,
     _cluster_into_tracks,
     _column_runs,
+    _compute_y_anchors,
     _extract_ridge_points,
     _merge_near_duplicate_tracks,
     _path_mask_continuity,
@@ -515,3 +516,81 @@ def test_ridge_tracks_for_hue_freq_split_through_dp_crossing() -> None:
     # Each field should have nonzero rasterization
     assert len(s_ys[0]) > 0
     assert len(m_ys[0]) > 0
+
+
+# --- Y-anchor identity prior (#1104) ------------------------------------
+
+
+def test_compute_y_anchors_seeds_from_two_ridge_columns() -> None:
+    """Anchors are seeded only from columns with exactly two ridges. The
+    smaller y becomes the upper anchor; the larger becomes the lower."""
+    ridges_by_col = [[20.0, 40.0], [], [22.0, 42.0]]
+    upper, lower = _compute_y_anchors(ridges_by_col)
+    assert upper[0] == 20.0
+    assert lower[0] == 40.0
+    assert upper[2] == 22.0
+    assert lower[2] == 42.0
+
+
+def test_compute_y_anchors_carry_forward_fills_gaps() -> None:
+    """Empty and single-ridge columns inherit the most recent two-ridge
+    seed; columns before the first seed inherit it via backward fill."""
+    ridges_by_col = [[], [50.0], [20.0, 40.0], [], [25.0], [22.0, 42.0]]
+    upper, lower = _compute_y_anchors(ridges_by_col)
+    # Backward-fill before the first seed at col 2: cols 0-1 inherit 20.0/40.0.
+    assert upper[0] == 20.0
+    assert lower[0] == 40.0
+    assert upper[1] == 20.0
+    # Carry-forward past the seed at col 2: col 3 inherits, col 4 still inherits
+    # (single-ridge doesn't reset the seed), col 5 advances to the new seed.
+    assert upper[3] == 20.0
+    assert upper[4] == 20.0
+    assert upper[5] == 22.0
+
+
+def test_compute_y_anchors_skips_three_or_more_ridge_columns() -> None:
+    """A column with three ridges is treated as noisy (gridline echoes,
+    adjacent-curve halos) — the smallest/largest from it would drag the
+    anchor toward chart chrome. Only exactly-two-ridge columns seed."""
+    ridges_by_col = [[100.0, 105.0, 200.0], [20.0, 40.0]]
+    upper, lower = _compute_y_anchors(ridges_by_col)
+    # The 3-ridge col 0 does NOT seed; carry-fill from col 1's seed instead.
+    assert upper[0] == 20.0
+    assert lower[0] == 40.0
+
+
+def test_ridge_dp_two_paths_with_anchor_resists_corner_swap() -> None:
+    """Two parallel curves with a dash-gap-induced single-ridge column at
+    the end should keep their identities under the y-anchor prior.
+
+    Without the anchor, pass 1's smoothness cost is locally satisfied by
+    landing on the only available ridge — even when that ridge belongs to
+    the other physical curve. The anchor pulls each pass back to its band.
+    """
+    # Upper curve at y=20 for 8 cols. Lower curve at y=50 for 8 cols.
+    # Last 2 cols have ONLY the lower curve's ridge (upper had a dash gap).
+    ridges_by_col = [[20.0, 50.0]] * 8 + [[50.0], [50.0]]
+    (p1, _), (p2, _) = _ridge_dp_two_paths(ridges_by_col, use_y_anchor=True)
+    # Pass 1 (upper) stays at 20.0 across the first 8 cols; for the last
+    # two cols it coasts at 20.0 rather than jumping to 50.0.
+    assert p1[0] == 20.0
+    assert p1[7] == 20.0
+    assert p1[8] == 20.0  # coast, not swap
+    assert p1[9] == 20.0
+    # Pass 2 (lower) sits at 50.0 throughout — pass 1 left it untouched.
+    assert p2[0] == 50.0
+    assert p2[7] == 50.0
+    assert p2[8] == 50.0
+    assert p2[9] == 50.0
+
+
+def test_ridge_dp_two_paths_without_anchor_keeps_dive_intact() -> None:
+    """The default (no anchor) path must still take legitimate large jumps
+    — the #1100 TTartisan freq30 dive. With anchoring off and no coast
+    option, pass 1 lands on every ridge regardless of size."""
+    # A curve that dives 60 px in one column — the #1100 corner-dive shape.
+    ridges_by_col = [[100.0], [100.0], [100.0], [160.0], [160.0]]
+    (p1, p1_on), _ = _ridge_dp_two_paths(ridges_by_col, use_y_anchor=False)
+    assert p1[2] == 100.0
+    assert p1[3] == 160.0  # took the dive, did NOT coast
+    assert p1_on[3] is True
