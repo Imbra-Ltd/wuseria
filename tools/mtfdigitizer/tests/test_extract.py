@@ -586,7 +586,7 @@ def test_aperture_passes_for_view_fuji_single_pass():
 def test_aperture_passes_for_view_multi_aperture_fan_out(monkeypatch):
     """A profile with `apertures_per_chart=(...)` produces N passes, one
     per aperture, each carrying a hue-filtered profile copy."""
-    from mtfdigitizer import extract as extract_mod
+    from mtfdigitizer import aperture_passes as aperture_passes_mod
     from mtfdigitizer.extract import _aperture_passes_for_view
     from mtfdigitizer.profiles.types import HueRange, MtfProfile
 
@@ -607,7 +607,9 @@ def test_aperture_passes_for_view_multi_aperture_fan_out(monkeypatch):
     def fake_profile_for_chart(chart):
         return probe_profile
 
-    monkeypatch.setattr(extract_mod, "profile_for_chart", fake_profile_for_chart)
+    monkeypatch.setattr(
+        aperture_passes_mod, "profile_for_chart", fake_profile_for_chart
+    )
 
     probe_chart = ReferenceChart(
         slug="probe-dual",

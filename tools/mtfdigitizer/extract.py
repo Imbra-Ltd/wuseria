@@ -40,13 +40,16 @@ Implements #1021 per the ADR-041 Tier 2 design.
 from __future__ import annotations
 
 import argparse
-import dataclasses
-import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 
+from .aperture_passes import (
+    _hue_filtered_profile,
+    _parse_filename_frequency,
+    aperture_passes_for_view as _aperture_passes_for_view,
+)
 from .family_profile import profile_for_chart
 from .pipeline import PlotBox, extract_chart, score_chart
 from .pipeline.rendermatch import DEFAULT_DILATION_RADIUS_PX
@@ -63,15 +66,6 @@ from .referenceset.charts import (
 from .review import write_review
 from .svg import render_svg
 from .triage import ChartVerdict, triage
-
-
-# Per-frequency Fujifilm chart filenames carry the spatial frequency as a
-# trailing suffix: `<stem>-15lp.png`, `<stem>-45lp.png`. The orchestrator
-# parses the frequency from the filename and substitutes it onto a copy
-# of the declared profile (which carries a sentinel `frequencies_lpmm=(0,)`).
-# See ADR-043.
-_FUJI_FREQ_RE = re.compile(r"-(?P<freq>\d+)lp\.png$", re.IGNORECASE)
-_FUJI_STYLE_FAMILIES: frozenset[str] = frozenset({"fujifilm-permfreq"})
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -170,67 +164,6 @@ class ExtractRun:
     extracted: ExtractedChart
     verdict: ChartVerdict
     aperture: str = ""
-
-
-def _parse_filename_frequency(image_path: Path) -> int:
-    """Extract the spatial frequency from a per-frequency chart filename.
-
-    Fujifilm convention: filename ends in `-<N>lp.png` (e.g.
-    `fujifilm-gf-23mm-f4-r-lm-wr-15lp.png`). Raises ValueError when the
-    suffix is missing — the multipath orchestrator's contract per ADR-043
-    is that per-frequency profiles refuse non-conforming filenames rather
-    than guess.
-    """
-    m = _FUJI_FREQ_RE.search(image_path.name)
-    if m is None:
-        raise ValueError(
-            f"per-frequency chart filename must end in `-<N>lp.png`; "
-            f"got {image_path.name!r}"
-        )
-    return int(m.group("freq"))
-
-
-def _hue_filtered_profile(profile: MtfProfile, aperture: str) -> MtfProfile:
-    """Return a profile copy with `hues` filtered to one aperture.
-
-    Used by multi-aperture dispatch (ADR-044): when a chart packs N
-    apertures per image by color encoding (TTartisan-style), each
-    `HueRange.name` is prefixed `f"{aperture}-..."`. This helper keeps
-    only the hues for the requested aperture so the extractor sees a
-    standard single-aperture profile.
-    """
-    filtered = tuple(h for h in profile.hues if h.name.startswith(f"{aperture}-"))
-    return dataclasses.replace(profile, hues=filtered)
-
-
-def _aperture_passes_for_view(
-    chart: ReferenceChart, image_path: Path
-) -> list[tuple[str, MtfProfile]]:
-    """Resolve a view to one or more (aperture, profile) extraction passes.
-
-    Most style families produce one pass — the chart's declared profile,
-    paired with the chart's primary aperture label. Two style families
-    fan out to multiple passes:
-
-    - Fujifilm per-frequency (ADR-043): one pass, but the profile is
-      copied with `frequencies_lpmm` substituted from the filename.
-      Still single-aperture.
-    - Multi-aperture-per-chart (ADR-044): one chart image packs N
-      apertures by color encoding. The orchestrator returns N passes,
-      each with the profile's hues filtered to one aperture's bucket.
-
-    The default fan-out for back-compat is `[(chart.apertures[0], profile)]`.
-    """
-    base = profile_for_chart(chart)
-    if chart.style_family in _FUJI_STYLE_FAMILIES:
-        freq = _parse_filename_frequency(image_path)
-        substituted = dataclasses.replace(base, frequencies_lpmm=(freq,))
-        return [(chart.apertures[0], substituted)]
-    if base.apertures_per_chart is not None:
-        return [
-            (ap, _hue_filtered_profile(base, ap)) for ap in base.apertures_per_chart
-        ]
-    return [(chart.apertures[0] if chart.apertures else "", base)]
 
 
 def _profile_for_view(chart: ReferenceChart, image_path: Path) -> MtfProfile:
