@@ -6557,3 +6557,100 @@ A (correct) = 32/64 = 50%. Dominant non-correct: D (9), C (7), E (7), B (6), F (
 - 461-page build (unchanged).
 - **50 ADRs total** (was 49; added ADR-050 per-stage diagnostic bundle).
 - **9 declared MTF profiles** (unchanged).
+
+---
+
+### Session 137 — Y-band coherence anchor closes 7artisans corner crossing
+
+Date: 2026-06-10. Tool: Claude Code (claude-opus-4-7[1m]).
+
+#### PRs
+
+- **PR #1118 — `fix(mtf): y-band coherence anchor for ridge DP`** (closes #1104). Two commits (fix + ADR-051 table-escaping fix). 6 files, +429 LOC. CI green. Squash-merged as 4c16a19.
+
+#### Issues opened / closed
+
+- **#1104 closed** (auto, "closes #1104" trailer on #1118).
+- **#1115 comment added** — flagged that #1118 only fixes the 7artisans subset; remaining 6 of 7 E classifications from S136 triage are TTartisan-style and keep the ADR-049 unanchored DP, so #1115 stays open for a separate fix.
+
+#### Key changes
+
+**New ADR — `docs/decisions/051-ridge-dp-y-anchor.md` (+~190 LOC):** per-profile opt-in y-band coherence anchor in the ridge DP. Anchor seeds from exactly-two-ridge columns (smaller y = upper, larger = lower), carry-fills missing columns, NOT box-smoothed (smoothing flattens legitimate dives like TTartisan freq30). Each DP pass receives its anchor; cost adds `gamma * |y - anchor[col]|` to landings AND lets the pass coast past a column for `_RIDGE_DP_OFF_RIDGE_PENALTY + gamma * |y_prev - anchor|`. Coast wins only when ridges sit far from the path's anchor — the 7artisans dash-gap case where the lone ridge belongs to the other curve.
+
+**`tools/mtfdigitizer/pipeline/ridge.py` (+~135 LOC):**
+
+- `_compute_y_anchors(ridges_by_col)` — anchor builder.
+- `_ridge_dp_one_pass` gains `anchor` and `gamma` kwargs; coast option active only when anchor is supplied.
+- `_ridge_dp_two_paths(use_y_anchor: bool)` — pass 1 with upper anchor, pass 2 with lower anchor + erase.
+- `ridge_tracks_for_hue_freq_split(use_y_anchor: bool = False)` — forwards the flag.
+
+**`tools/mtfdigitizer/profiles/types.py`:** new `MtfProfile.ridge_dp_y_anchor: bool = False`.
+
+**`tools/mtfdigitizer/profiles/declared.py`:** `SEVENARTISANS_2COLOR_SAMECOLOR_DASHED.ridge_dp_y_anchor = True`. Every other profile defaults False (TTartisan unchanged).
+
+**`tools/mtfdigitizer/pipeline/dispatch.py`:** passes `profile.ridge_dp_y_anchor` into `ridge_tracks_for_hue_freq_split`.
+
+**`tools/mtfdigitizer/tests/test_ridge.py` (+79 LOC):** 5 new tests — anchor seed selection, carry-fill, 3+-ridge column skip, anchored corner-swap resistance, unanchored dive preservation.
+
+#### Calibration impact
+
+**7artisans 50mm f/1.2 Mark II (closes #1104):**
+
+| Field   | Post-#1100 p95 | Post-#1104 p95                                  |
+| ------- | -------------- | ----------------------------------------------- |
+| freq10S | 0.124          | **0.052** (meets target ≤ 0.064)                |
+| freq10M | 0.119          | **0.098** (corner fixed; pos-0.6 issue remains) |
+| freq30S | 0.087          | 0.087 (unchanged)                               |
+| freq30M | 0.069          | 0.052 (improved)                                |
+
+**Corner sample (pos 1.0), |Δ| vs ground truth:**
+
+| Field   | Pre-fix | Post-fix |
+| ------- | ------- | -------- |
+| freq10S | 0.100   | 0.029    |
+| freq10M | 0.109   | 0.020    |
+
+**TTartisan + every other profile:** byte-identical to baseline (flag defaults False). Verified TTartisan max-f/1.2 freq30 0.012/0.095 and stopped 0.192/0.199 unchanged.
+
+**Aggregate:** in-band 92.5% → **93.0%**, p95 0.0640 → 0.0638, median 0.0112 → 0.0111. 627 paired comparisons unchanged.
+
+#### Diagnosis journey
+
+1. Read #1104 (consolidates ADR-049's "Known limitation: 7artisans corner crossing"). Issue proposed Option 1: per-column dash-vs-solid detection from raw mask run lengths.
+2. Wrote a throwaway probe (`probe_7artisans_corner.py`) dumping per-column ridge centroids around the right corner. Two findings invalidated Option 1's framing:
+   - **The curves don't actually cross at the corner.** They stay parallel ~28 px apart (upper at y≈115-127, lower at y≈140-160). The "swap" is pure identity drift, not curve crossing.
+   - **Run lengths don't separate them.** Both solid and dashed render with p50=2, p95=4 column run length — the proposed signal is degenerate.
+3. Pivoted to y-band coherence: each path follows an anchor band, so the DP can prefer to stay in its band even when a single-ridge column tempts it.
+4. **First implementation:** anchors box-smoothed over 15 columns + auto-detect "use anchor" from 3+-ridge column fraction. Regression: TTartisan freq30 max-aperture 0.012 → 0.085 because smoothing flattened the legitimate corner dive.
+5. **Second implementation:** dropped smoothing — raw per-column anchors with carry-fill. Better for 7artisans but TTartisan max-30-grey still regressed (auto-detect misclassified after halo exclusion).
+6. **Third implementation:** per-profile flag. TTartisan stays unanchored (ADR-049 design preserved); 7Artisans opts in. Final calibration confirms zero TTartisan delta + corner fix on 7artisans.
+
+#### Verification
+
+- `py -m pytest tools/mtfdigitizer/tests/` — 343 passed (338 baseline + 5 new).
+- `py -m mtfdigitizer.calibrate` — aggregate 93.0% in band (up from 92.5%); TTartisan byte-identical to baseline; 7artisans corner sample passes #1104 acceptance.
+- CI green on PR #1118 (CodeQL, gate, gitleaks, links, changes, analyze).
+
+#### Key decisions
+
+- **Per-profile opt-in over global heuristic.** Chart geometry differs meaningfully: 7Artisans has clean two-ridge columns; TTartisan grey-30 has noisy three-plus-ridge columns from antialiased halos. No global threshold separates them cleanly. The `MtfProfile.ridge_dp_y_anchor` flag captures the chart-family knowledge directly.
+- **Anchor is identity, not smoothness.** Box-smoothing flattened the TTartisan dive — the inner DP already supplies smoothness via `alpha * |dy|`; the anchor's job is to break smoothness-cost ties at dash-gap columns, not to be itself smooth.
+- **Coast option ONLY when anchor is supplied.** Otherwise the #1100 TTartisan freq30 dive (a legitimate 67 px jump) would coast through silently, reverting ADR-049's fix.
+- **Ship with the pre-existing pos-0.6 limitation noted.** freq10M p95=0.098 misses the issue's ≤0.064 target because at pos 0.6 the chart resolution merges the solid and dashed curves into one ridge centroid — a chart-rendering limit, not a DP identity issue. Documented in ADR-051; tracked as follow-up rather than blocking the corner fix.
+
+#### Follow-ups for next session
+
+- **#1115** — remaining 6 of 7 E classifications (TTartisan freq30 corner cases on 50/2.0, 500/6.3 GFX, 25/2.0 etc.). Different chart geometry, need a different identity prior (the y-anchor regresses them).
+- **Pos-0.6 mid-field issue on 7artisans freq10M** — chart-resolution limit; consider documenting as known limitation or whether sub-pixel ridge fitting helps.
+- **Carried from S136:** RC4 (#1116), RC1 (#1113), RC2 (#1114) by impact order.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort unchanged.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **Aggregate calibration: 583/627 (93.0%)** — up from 580/627 (92.5%); fix improved 3 samples.
+- 3 Tier 1 anchors (unchanged).
+- **343 pytest pass** (was 338; +5 y-anchor tests).
+- 461-page build (unchanged — Python-only PR).
+- **51 ADRs total** (was 50; added ADR-051 y-band coherence anchor).
+- **9 declared MTF profiles** (unchanged; 7Artisans profile gains the `ridge_dp_y_anchor=True` flag).
