@@ -91,6 +91,13 @@ SEVENARTISANS_2COLOR_SAMECOLOR_DASHED: MtfProfile = MtfProfile(
     hue_meaning="FREQUENCY_PER_HUE_RIDGE",
     frequencies_lpmm=(10, 30),
     dashed_is_sagittal=True,
+    # Enable y-band coherence prior in the ridge DP (#1104). 7artisans
+    # charts have dashed-line rendering where every column carries at
+    # most two ridge centroids (one per curve) and dash gaps regularly
+    # leave a single centroid behind. The anchor lets the DP coast past
+    # those single-centroid columns instead of swapping curve identity
+    # at the corner crossing. See ADR-049 §"Known limitation".
+    ridge_dp_y_anchor=True,
     notes="7Artisans/Chinese convention: blue=10, green=30; T1/T2 (blue) = M pair, S1/S2 (green) = S pair; dashed=S within hue",
 )
 

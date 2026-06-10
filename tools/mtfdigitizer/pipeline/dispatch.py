@@ -440,6 +440,7 @@ def field_skeletons(
             hue_fields = ridge_tracks_for_hue_freq_split(
                 cleaned_mask, plot_box, freq=freq,
                 dashed_is_sagittal=profile.dashed_is_sagittal,
+                use_y_anchor=profile.ridge_dp_y_anchor,
             )
             out.update(hue_fields)
     elif (

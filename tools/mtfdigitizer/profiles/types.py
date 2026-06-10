@@ -195,6 +195,15 @@ class MtfProfile:
     # None for single-aperture charts (every profile shipped before this
     # extension). See ADR-044 (multi-aperture orchestrator).
     apertures_per_chart: tuple[str, ...] | None = None
+    # When True, the FREQUENCY_PER_HUE_RIDGE dispatch runs its per-column
+    # ridge DP with a y-band coherence prior (#1104): the upper and lower
+    # paths each follow a precomputed anchor curve so the DP can break
+    # smoothness-cost ties through dash gaps without swapping curve
+    # identity. Only safe on charts where 1- and 2-ridge columns dominate
+    # (7Artisans samecolor-dashed-sm). Defaults False because the option
+    # can drag a path off a legitimate dive on noisier charts (TTartisan
+    # max-aperture grey freq30 — see ADR-049's "Known limitation").
+    ridge_dp_y_anchor: bool = False
 
     @property
     def hue_count(self) -> int:
