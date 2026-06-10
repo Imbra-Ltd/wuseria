@@ -124,12 +124,12 @@ regress.
 | freq30S | 0.087          | 0.087          | unchanged                       |
 | freq30M | 0.069          | 0.052          | improved                        |
 
-Corner samples (pos 1.0):
+Corner samples (pos 1.0), absolute delta vs ground truth:
 
-| Field   | Pre-fix | Δ         |     | Post-fix | Δ   |     |
-| ------- | ------- | --------- | --- | -------- | --- | --- |
-| freq10S | 0.100   | **0.029** |
-| freq10M | 0.109   | **0.020** |
+| Field   | Pre-fix \|Δ\| | Post-fix \|Δ\| |
+| ------- | ------------- | -------------- |
+| freq10S | 0.100         | **0.029**      |
+| freq10M | 0.109         | **0.020**      |
 
 freq10S meets the issue's target ≤ 0.064. freq10M misses target — the
 new dominant outlier is at pos 0.6 (|Δ|=0.087), a pre-existing
