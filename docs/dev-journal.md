@@ -6352,3 +6352,93 @@ Same root cause — DP smoothness prior can't disambiguate when both candidates 
 - 461-page build (unchanged).
 - **49 ADRs total** (was 48; added ADR-049 per-column ridge DP).
 - **9 declared MTF profiles** (unchanged).
+
+---
+
+### Session 135 — Per-aperture SVG emit for ADR-044 charts
+
+Date: 2026-06-10 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: maintainer flagged TTartisan 50/1.2 SVG showing missing yellow/blue segments. Probe → root cause was a stale provenance artifact (last regen pre-#1105), not an extractor bug. The regenerator (`svg.py`) had been crashing on TTartisan since ADR-044 multi-aperture landed.
+
+#### Branch / merge state
+
+- Started on `main`, clean. Branch: `fix/ttartisan-50-stale-svg` (PR #1108, one commit, squash-merged).
+
+#### PRs merged
+
+- **PR #1108 — `fix(mtf): per-aperture SVG emit for ADR-044 charts`** (closes #1107). One commit, 19 files, +760 / -617. Squash-merged. CI green (`changes`, `gate`, CodeQL, gitleaks, link check — all SUCCESS). `build` / `lighthouse` SKIPPED — correctly excluded by path filter (no `src/**` changes).
+
+#### Issues opened / closed
+
+- **#1107 opened** — `svg.py` KeyError on TTartisan: bypasses ADR-044 per-aperture filtering. `bug` + `P1` + `Expedite`. Auto-closed by PR #1108.
+
+#### Diagnosis journey
+
+1. **Read the committed SVG** — confirmed missing freq30M frac 0.0–0.4 (entire left half), missing freq30S frac 0.0, swapped corner ordering at frac 1.0.
+2. **Probed renderer** — `svg.py` faithfully omits `None` from extractor output (B2 contract); bug is upstream.
+3. **Probed dispatch directly** — `ridge_tracks_for_hue_freq_split` called on the cleaned grey mask returns clean values for all 11 positions, matching eye-read at median |Δ|=0.01. Extractor itself is fine.
+4. **Probed end-to-end** — `extract_chart(path, profile_filtered_by_aperture, plot_box, ...)` returns clean values everywhere. So the committed SVG was a stale artifact.
+5. **Tried `py -m mtfdigitizer.svg`** — KeyError `'stopped-10-red'`. Found the real bug: `svg.py::_emit_chart` called `extract_chart` with the unfiltered profile (both `max-*` and `stopped-*` hues), and `FREQUENCY_PER_HUE_RIDGE` dispatch's `freq_by_color` map only had one entry per frequency.
+
+The on-disk SVG was last regenerated in #1096 (pre-#1105 per-column ridge DP). Every subsequent attempt to regenerate had crashed.
+
+#### Key changes
+
+**New shared module — `tools/mtfdigitizer/aperture_passes.py` (+64 LOC):**
+
+- `aperture_passes_for_view(chart, image_path) -> list[(aperture, profile)]` — moved from `extract.py`, now importable by both `svg.py` and `extract.py` without a cycle.
+- `_hue_filtered_profile`, `_parse_filename_frequency` — helper functions moved with it.
+
+**`svg.py`:**
+
+- `_emit_chart` fans out per aperture, emits `<stem>-<aperture>.svg` for multi-aperture charts, `<stem>.svg` for single-aperture (matching the production extractor's naming).
+- Removed unused `profile_for_chart` import.
+
+**`extract.py`:**
+
+- Re-exports the moved helpers as `_hue_filtered_profile` / `_parse_filename_frequency` / `_aperture_passes_for_view` for back-compat with existing test imports.
+- Removed now-unused `dataclasses` / `re` module imports and the `_FUJI_*` constants block.
+
+**Tests — `test_extract.py`:**
+
+- `test_aperture_passes_for_view_multi_aperture_fan_out` monkeypatches `aperture_passes.profile_for_chart` instead of `extract.profile_for_chart` to reach the moved function.
+
+**Regenerated artifacts (side effect of fixing the crash):**
+
+- TTartisan 50/1.2: `-max.svg` + `-stopped.svg` refreshed with current extractor output.
+- 11 other Tier 1 SVGs refreshed (Sigma, Samyang, Tokina, Viltrox, 7Artisans).
+- 2 new Fuji `-15lp.svg` files committed (XF 23/1.4, GF 23/4) — `svg.py` had never reached them before the crash blocked the loop.
+
+#### Verification
+
+- TTartisan 50/1.2 max-aperture `extract_chart` output vs eye-read.md: median |Δ| = 0.01, max |Δ| = 0.07 (freq30M frac 0.6).
+- All 11 positions × 4 fields non-None in the regenerated SVG.
+- Corner ordering matches eye-read: S=0.30 < M=0.40 at frac 1.0 on f/1.2.
+- `py -m pytest tools/mtfdigitizer/tests/` — 338 passed.
+- `npm run validate` — green.
+
+#### Key decisions
+
+- **Shared module over circular import.** `extract.py` already imports `svg.py`. Putting the helper in `extract.py` and importing from `svg.py` would create a cycle. New `aperture_passes.py` module is the right home.
+- **Per-aperture SVG filenames mirror `extract.py`.** `<stem>-max.svg` / `<stem>-stopped.svg` — same convention `extract.py` already uses for Tier 2 artifacts.
+- **No production-site impact.** Lens-page MTF charts read `src/data/mtf-readings.ts` (hand-maintained, already populated correctly from `emit_ttartisan_tier2.py`). The fixed SVG is provenance only. Confirmed by checking the live data matches eye-read at the corner.
+
+#### Follow-ups for next session
+
+- **#1104 — 7artisans corner crossing** (carried from S134). Per-column dash-vs-solid detection on raw mask.
+- **#1085 — Triage 4 orphan optical-specs dirs** (still carried).
+- **Carried since S128:** Sparse-dash dropouts in `ridge_tracks_for_hue_freq_split` — possibly moot post-S134, needs verification.
+- **Carried since S122:** `_profile_for_view` shim removal.
+- **Carried since S118:** ADR-014 mean rule validation; Tier 1 `log.py --check` false-OK; 17-40 tele `prior_violations=1`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort counts unchanged from S134.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **Aggregate calibration: unchanged at 580/627 (92.5%)** — no readings changed; only provenance SVGs refreshed.
+- 3 Tier 1 anchors (unchanged).
+- **338 pytest pass** (unchanged — 1 test updated, no count change).
+- 461-page build (unchanged).
+- **49 ADRs total** (unchanged — no architecture decision needed for this fix).
+- **9 declared MTF profiles** (unchanged).
