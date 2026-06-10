@@ -25,6 +25,7 @@ Post-extraction the pipeline applies two physics-grounded corrections:
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import cv2
 import numpy as np
@@ -41,6 +42,9 @@ from .sampling import (
     sample_skeleton_at_fraction,
 )
 from .types import ExtractedChart, PlotBox, SampledReading
+
+if TYPE_CHECKING:
+    from ..diagnostic import DiagnosticSink, FileDiagnosticSink
 
 
 SAMPLE_POINTS: tuple[float, ...] = SAMPLE_FRACTIONS  # re-export
@@ -327,6 +331,8 @@ def extract_chart(
     profile: MtfProfile,
     plot_box: PlotBox,
     image_height_mm: float,
+    *,
+    diagnostic_sink: "DiagnosticSink | None" = None,
 ) -> ExtractedChart:
     """End-to-end MTF extraction for one chart image.
 
@@ -337,20 +343,40 @@ def extract_chart(
 
     Raises `NotImplementedError` for profile (style_axis, hue_meaning)
     combinations not yet wired by `dispatch.field_skeletons()`.
+
+    When `diagnostic_sink` is supplied, every pipeline stage records
+    its output via the sink (ADR-050). Extraction values are byte-
+    identical with or without the sink; only side-effect output
+    differs.
     """
     bgr = load_chart_bgr(image_path)
+    if diagnostic_sink is not None:
+        diagnostic_sink.record_source(bgr)
+        diagnostic_sink.record_plotbox(bgr, plot_box)
+        # Per-hue raw masks. Recorded for ADR-050 stage 03.
+        hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
+        for name, mask in masks_by_curve_name(hsv, profile).items():
+            diagnostic_sink.record_hue_mask(name, mask)
+
     skeletons = field_skeletons(bgr, profile, plot_box)
+    if diagnostic_sink is not None:
+        for field, skel in skeletons.items():
+            diagnostic_sink.record_skeleton(field, skel, bgr)
 
     # Re-derive per-field raw masks for two uses: (1) tight-window
     # raw-centroid snapping at sample time (restores pixel-accuracy
     # on solid strokes), (2) wider-window ink-presence check for the
     # sister fallback. Cheap — HSV + range threshold on the chart.
     presence_masks = _hue_masks_for_presence(bgr, profile, plot_box)
+    if diagnostic_sink is not None:
+        for field, mask in presence_masks.items():
+            diagnostic_sink.record_presence_mask(field, mask)
 
     samples_per_field: dict[str, tuple[float | None, ...]] = {
         field: _sample_curve(skel, plot_box, raw_mask=presence_masks.get(field))
         for field, skel in skeletons.items()
     }
+    samples_before_fallback = {f: v for f, v in samples_per_field.items()}
 
     # Sister fallback: replace samples where the raw ink is absent
     # with the sister curve's value. Use the raw per-hue mask, not
@@ -363,7 +389,30 @@ def extract_chart(
         samples_per_field, fallback_count = _apply_sister_fallback(
             samples_per_field, presence
         )
+    samples_after_fallback = {f: v for f, v in samples_per_field.items()}
     samples_per_field = _apply_center_symmetry(samples_per_field)
+
+    if diagnostic_sink is not None:
+        readings_for_sampling = _readings_to_dict(
+            samples_before_fallback, plot_box, image_height_mm
+        )
+        diagnostic_sink.record_sampling(
+            readings_for_sampling, bgr, plot_box, image_height_mm
+        )
+        diagnostic_sink.record_fallback(
+            samples_before_fallback, samples_after_fallback, fallback_count
+        )
+        diagnostic_sink.record_symmetry(samples_after_fallback, samples_per_field)
+        # `FileDiagnosticSink` carries extra visual-diff methods that
+        # need bgr/plot_box — `DiagnosticSink` Protocol does not
+        # require them. Call them duck-typed if present.
+        for name, before, after in (
+            ("record_fallback_visual", samples_before_fallback, samples_after_fallback),
+            ("record_symmetry_visual", samples_after_fallback, samples_per_field),
+        ):
+            method = getattr(diagnostic_sink, name, None)
+            if method is not None:
+                method(before, after, bgr, plot_box, image_height_mm)
 
     return ExtractedChart(
         source_path=str(image_path),

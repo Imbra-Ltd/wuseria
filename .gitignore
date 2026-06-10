@@ -17,6 +17,8 @@ reports/
 .lighthouseci/
 temp/
 downloaded_files/
+# ADR-050: per-stage diagnostic bundles — on-demand debugging artifacts
+docs/optical-specs/*/diagnostic/
 .DS_Store
 Thumbs.db
 desktop.ini
