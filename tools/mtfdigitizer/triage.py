@@ -96,13 +96,21 @@ _PRIOR_NAME_TO_REASON: dict[str, LowReason] = {
 
 @dataclass(frozen=True)
 class ChartVerdict:
-    """The auto-triage decision for one chart.
+    """The auto-triage decision for one extraction pass.
 
     `verdict` is binary by design. `reasons` is empty iff `verdict ==
-    "HIGH"` (a HIGH chart has nothing to flag); a LOW chart has at
+    "HIGH"` (a HIGH pass has nothing to flag); a LOW pass has at
     least one reason. The numeric inputs (precision, IoU, violations)
     are carried so the run log + findings doc can be generated from
     `ChartVerdict` alone without re-running the signals.
+
+    `pass_key` identifies the extraction pass when a chart is fanned out
+    across multiple passes (ADR-052). For single-aperture / single-view
+    charts it stays `None` and the verdict reads as a chart-level
+    decision. For ADR-044 multi-aperture charts it carries the
+    orchestrator's aperture label (e.g. `"max"`, `"stopped"`); for
+    ADR-043 per-frequency charts it is reserved for the frequency
+    label.
     """
 
     source_path: str
@@ -112,6 +120,7 @@ class ChartVerdict:
     render_match_iou: float | None
     render_match_precision: float | None
     prior_violations: tuple[PriorViolation, ...]
+    pass_key: str | None = None
 
 
 # --- precision -------------------------------------------------------
@@ -158,12 +167,16 @@ def aggregate_precision(score: RenderMatchScore) -> float | None:
 def triage(
     score: RenderMatchScore,
     prior_violations: list[PriorViolation],
+    pass_key: str | None = None,
 ) -> ChartVerdict:
     """Combine the two confidence signals into a single verdict.
 
     Pure function — no I/O, no extractor calls, no chart loading. Takes
     the outputs of the two signal modules and applies the rule. The
     runner (`autotriage.py`) is responsible for producing those inputs.
+
+    `pass_key` identifies which extraction pass produced these signals
+    (ADR-052). Defaults to `None` for single-aperture charts.
     """
     precision = aggregate_precision(score)
     iou = score.aggregate
@@ -206,4 +219,5 @@ def triage(
         render_match_iou=iou,
         render_match_precision=precision,
         prior_violations=tuple(prior_violations),
+        pass_key=pass_key,
     )
