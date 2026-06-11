@@ -6734,3 +6734,96 @@ All deleted before wrap per `quality.md` probe-script rule. Findings folded into
 - 51 ADRs total (unchanged).
 - 9 declared MTF profiles (unchanged).
 - v0.8.0 open issue count: was 4 RC tasks + 1 epic + others; now 1 active RC task (#1115) + #1120 + #1112 epic + others (3 net reduction).
+
+---
+
+### Session 139 — #1120 wontdo + autotriage multi-aperture fan-out (ADR-052)
+
+Date: 2026-06-11 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1120 from S138's follow-up list; ended up filing+fixing #1123 (autotriage multi-aperture gap) as the architecturally-correct intermediate move. ADR-052 ships per-aperture verdict fan-out; the auto-confidence gate now covers 101 charts vs the prior 14.
+
+#### Branch / merge state
+
+- Started on `main` (clean post-S138-wrap merge).
+- One branch shipped: `fix/1123-autotriage-multi-aperture` → PR #1124 → squash-merged to main (`ec90b84`).
+- Earlier `docs/session-138-wrap` branch carried S138's journal entry to PR #1121 (squash-merged `1ee5633`).
+
+#### PRs merged
+
+- **#1121** — S138 wrap entry.
+- **#1124** — ADR-052 + autotriage per-aperture fan-out (closes #1123). 7 files changed, +441/-46.
+
+#### Issues opened / closed
+
+- **#1120 closed wontdo** — probed the original V-widen framing against actual extraction output: TTartisan published `ttartisan-50mm-f2-0` with grey-printed dashes (V p50=177; only 1.1% of low-field band ink at V≤80), so the dashed T10 line sits squarely inside the `max-30-grey` HueRange (V∈[90,160], S≤35). No V cap separates them — v_max=140 only "passes" the acceptance check because S+M both collapse onto the grey freq30 curve (false fix). Anchor tolerates v_max≤110 at most. Histogram comparison vs Tier 1 anchor (`ttartisan-50mm-f1-2`, 41.2% ink at V≤80, p50=134, bimodal) is the smoking gun: anchor has real black ink; this chart doesn't.
+- **#1122 opened** — fisheye sub-mechanism carved out from #1120: V≤80 mask admits 48% of low-field ink with bimodal V distribution, DP still mis-tracks at sample[1] (delta 0.06). Different mechanism than 50/2.0. P3, narrow scope, may also close wontdo.
+- **#1123 opened+closed** — major bug: `autotriage._run_pipeline` predated ADR-044 multi-aperture and made a single full-profile `extract_chart` call. Errored with `KeyError: 'stopped-10-red'` on every TTartisan chart except the anchor. The `c.ground_truth` filter masked it (only the GT-having anchor reached the runner). Every multi-aperture chart since ADR-044 has bypassed the HIGH/LOW gate; the S136 manual parallel-agent triage was the workaround for this unmaintained automated path. PR #1124 fixes via per-aperture verdict shape.
+- **#1112 epic updated twice** — body now reflects #1120 wontdo + #1122 carve-out + #1123 completion; the "quantitative re-triage harness" the epic called for is now the working autotriage runner.
+
+#### Key changes
+
+- **ADR-052** (`docs/decisions/052-per-aperture-triage-verdicts.md`) — per-aperture verdict shape; one `ChartVerdict` per (chart, aperture) with `pass_key` carrying the orchestrator label. Aggregation lives in the caller; the verdict stays per-aperture so reason codes route the maintainer to the actual failing extraction pass.
+- **`tools/mtfdigitizer/triage.py`** — `ChartVerdict` gains `pass_key: str | None`; `triage()` accepts it as an optional argument. Back-compatible.
+- **`tools/mtfdigitizer/autotriage.py`** — `_run_pipeline` now returns `list[PassResult]` (new dataclass). Fan-out uses `aperture_passes_for_view` (same helper `calibrate._extract_multi_aperture_chart` uses). `triage_chart()` raises on multi-aperture; new `triage_chart_all_apertures()` for multi-aperture callers. `main()` drops the `c.ground_truth` filter. Per-aperture review HTML/PNG stems get the `-{aperture}` suffix; SVG references match the per-aperture emit (ADR-044 S135).
+- **`tools/mtfdigitizer/tests/test_triage.py`** — +2 ADR-052 acceptance tests (anchor multi-aperture fan-out HIGH on max; single-aperture `triage_chart()` raises with helpful message on multi-aperture input).
+- **Refreshed artifacts** — `ttartisan-50mm-f1-2-mtf-stopped-overlay.png` regenerated (anchor's stopped pass is now visible as a separate verdict and classifies LOW with `prior_failed_center_ge_edge`); `fujifilm-gf-23mm-f4-r-lm-wr-15lp-{overlay.png,review.html}` net-new (Fuji-GF-23 15lp pass is LOW; the lifted GT filter now reaches it).
+
+#### Probe artifacts
+
+Four throwaway scripts under `tools/`, all deleted before wrap per `quality.md` probe-script rule:
+
+- `probe_1120.py` — V distribution of low-field ink on 50/2.0, fisheye, anchor; per-column empty-mask coverage trace.
+- `probe_1120_calibrate.py` — Tier 1 anchor calibration with `max-10-black` v_max monkeypatched to 140; diffed per-position readings vs baseline.
+- `probe_1120_sweep.py` — anchor sweep at v_max∈{95,110,125,140} + candidate fix verification on the two broken charts.
+- `probe_1120_dash_hist.py` — top-band ink HSV histogram on anchor vs broken charts (the print-shade smoking gun).
+- `probe_1122_cohort_triage.py` — one-shot to confirm `triage()` produced useful per-chart classification across the TTartisan cohort. Surfaced #1123 (KeyError on every chart) instead — was the trigger to file the bug and pivot to fixing it.
+
+#### Diagnosis journey
+
+1. S138 follow-up list named #1120 first. Built V-distribution probe; expected to confirm dashes have a low-V tail dropping out. Result: 99% of 50/2.0 low-field ink is V>80, dashes are grey-printed.
+2. Ran calibration probe at v_max=140; anchor collapsed (freq30 fields by 1.0). Suggested per-chart V cap as path 2.
+3. Anchor sweep showed the anchor tolerates v_max≤110; broken charts need v_max≥140 to "pass" but only by collapsing S+M onto the wrong curve. No V cap works.
+4. Dash-shade histogram confirmed mechanism: 50/2.0 dashes are V=140-180 grey ink, overlapping `max-30-grey` HueRange. Closed #1120 wontdo with full evidence.
+5. Carved fisheye out to #1122 (different mechanism — bimodal V, plenty of black candidates, DP still mis-tracks).
+6. Asked user about next move: pick up #1122/#1115, or build the quantitative re-triage harness epic #1112 called for. User picked harness.
+7. Cohort triage probe revealed `autotriage._run_pipeline` errors with `KeyError: 'stopped-10-red'` on every TTartisan multi-aperture chart. The "harness" the epic wanted already existed — `triage()` was always capable of per-chart classification — but the runner predated ADR-044 and never reached the cohort. Filed #1123 P1.
+8. Wrote ADR-052 (per-aperture verdict shape, ASCII fan-out diagram, alternatives weighed). Implemented in 4 ordered tasks: `ChartVerdict.pass_key` → `_run_pipeline` fan-out via `aperture_passes_for_view` → `main()` lifts GT filter + per-aperture stems → tests.
+9. First full-cohort run had a regression — review HTML pointed at `*.svg` instead of per-aperture `*-max.svg`. Fixed and re-ran. 345 pytest pass (was 343, +2 new). 101 charts triaged (was 14). 120 verdicts. 58 LOW with concrete reason codes.
+
+#### Verification
+
+- 345 pytest pass.
+- Full cohort autotriage run: 101 charts → 120 verdicts (62 HIGH, 58 LOW), no errors.
+- Tier 1 anchor max-aperture verdict stays HIGH (byte-identical extraction; ADR-052 acceptance criterion).
+- Reference cohort separation preserved: Sigma 56mm LOW (`precision_below_threshold`), Samyang 85mm HIGH, Samyang 300mm reflex LOW (`prior_failed_not_suspiciously_flat`).
+- All probe scripts deleted; `git status` clean post-merge.
+- `gh issue view` confirms #1120 + #1123 closed; #1122 open; #1112 epic checklist updated.
+
+#### Key decisions
+
+- **Probe-derived disproof of an issue framing is itself a deliverable.** #1120's framing was hardened by S138's evidence but still fundamentally wrong about the failure mechanism. Investing 30 minutes in HSV histograms exposed grey-printed dashes as the upstream cause. Same pattern as S138's 4-of-5 framings.
+- **When a yak shave is architecturally correct, surface it explicitly and let the user steer.** Found #1123 mid-investigation, posted three options (A: file+fix bug now, B: file bug as P1 but ship #1122 first, C: wrap), recommended A. User picked A. Avoided silently absorbing the bug into a #1122 fix.
+- **ADR before implementation when an API shape changes.** `ChartVerdict` going from chart-level to (chart, aperture)-level is a public API change. ADR-052 documents the decision with alternatives + consequences before code lands; the four alternatives section forced explicit rejection of "shove aperture into reasons" and "extend `profile_name`" — both of which would have been tempting shortcuts.
+- **`pass_key` reserved for ADR-043 frequency labeling but deferred.** Same field, same shape, but the implementation of per-frequency fan-out for Fujifilm-permfreq is a follow-up. Keeping the field generic now avoids a second API change later.
+
+#### Follow-ups for next session
+
+- **ADR-043 per-frequency fan-out.** Fujifilm-permfreq charts currently get one verdict per `chart_path` (whichever frequency the chart entry points at). The ADR-052 `pass_key` field is reserved for the frequency label; implementing fan-out across `chart.views` lands as a clean follow-up. The Fuji `*-15lp-review.html` artifact created this session is a single-frequency hint; expanding to 20lp + 40lp is the v0.8.0 follow-up.
+- **#1115 RC3 re-look.** Now that the autotriage runner produces per-chart classification, the RC3 corner-placement framing can be checked against the live cohort verdict instead of an eye-read.
+- **#1122 fisheye DP investigation.** Still open; same per-aperture verdict now lets us isolate the failure to one pass instead of the whole chart.
+- **Per-aperture LOW review files.** 58 LOW passes shipped review HTML this session; the maintainer routing in `triage.py` (`PRIOR_FAILED_*` → chart review, `*_BELOW_THRESHOLD` → extractor work) now applies per-aperture. Future RC work should consume these review files as the authoritative classification, not eye-read PNGs.
+- **Carried from S137:** pos-0.6 mid-field issue on 7artisans freq10M (chart-resolution limit).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort unchanged.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- Aggregate calibration: 583/627 (93.0%) (unchanged — no extraction changes).
+- 3 Tier 1 anchors (unchanged).
+- **345 pytest pass** (was 343; +2 ADR-052 acceptance tests).
+- 461-page build (unchanged — Python-only PR).
+- **52 ADRs total** (was 51; added ADR-052 per-aperture triage verdicts).
+- 9 declared MTF profiles (unchanged).
+- **Auto-confidence gate coverage: 101 of 103 charts** (was 14; ADR-052 lifted the GT filter).
+- v0.8.0 open issue count: was 1 active RC + 1 epic + others; now 1 active RC (#1115) + #1122 + #1112 epic + others (1 net reduction; #1120 closed, #1122 + #1123 opened, #1123 closed).

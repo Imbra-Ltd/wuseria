@@ -520,16 +520,24 @@ materially changes the numbers.
 cd tools && py -m mtfdigitizer.autotriage
 ```
 
-Combines both confidence signals into one HIGH/LOW verdict per chart:
+Combines both confidence signals into one HIGH/LOW verdict per
+extraction pass (ADR-052 — one per (chart, aperture) for ADR-044
+multi-aperture; one per chart for single-aperture):
 `precision ≥ 0.80 AND IoU ≥ 0.20 AND priors_pass` ⇒ HIGH, else LOW with
 reason codes. Reason codes route attention to extractor-side work
 (`precision_below_threshold`, `iou_below_threshold`,
 `render_match_undefined`) vs chart-side work (`prior_failed_*`). Stdout
-prints the per-chart verdict and aggregate; also writes one 3-panel
-review file per LOW chart under `docs/optical-specs/<slug>/` (HIGH
-charts skip, per ADR-038 §"Workflow"). Findings live in
-`tools/mtfdigitizer/referenceset/triage.md` — update after a run that
-materially changes the numbers.
+prints the per-pass verdict and aggregate; also writes one 3-panel
+review file per LOW pass under `docs/optical-specs/<slug>/` (HIGH passes
+skip, per ADR-038 §"Workflow"). Multi-aperture review files carry the
+aperture suffix (`<slug>-{max,stopped}-review.html`) per ADR-044 + ADR-052.
+The runner covers every chart with a `plot_box` (currently 101 of 103,
+producing ~120 per-pass verdicts) — the ground-truth filter that
+restricted earlier runs to the 14 calibration charts was lifted in
+ADR-052. Findings live in `tools/mtfdigitizer/referenceset/triage.md` —
+update after a run that materially changes the numbers. LOW passes are
+the authoritative input for RC investigation: consume the `*-review.html`
+files plus the reason codes, not eye-read diagnostics.
 
 **Render an MTF chart's provenance SVG from its readings:**
 
