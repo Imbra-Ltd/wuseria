@@ -6654,3 +6654,83 @@ Date: 2026-06-10. Tool: Claude Code (claude-opus-4-7[1m]).
 - 461-page build (unchanged — Python-only PR).
 - **51 ADRs total** (was 50; added ADR-051 y-band coherence anchor).
 - **9 declared MTF profiles** (unchanged; 7Artisans profile gains the `ridge_dp_y_anchor=True` flag).
+
+---
+
+### Session 138 — RC1/RC2/RC4 probe disproves S136 framings; #1120 surfaces
+
+Date: 2026-06-11 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up the v0.8.0 RC backlog (RC4 → RC1 → RC2 → RC3). Probe each before coding. Three of four RC framings did not reproduce against the actual extraction output. One real bug surfaced as the cross-cutting mechanism behind RC1+RC2.
+
+#### Branch / merge state
+
+- Stayed on `main` throughout. Three branches created (`fix/1116-rc4-truncated-skeleton`, `fix/1113-rc1-hue-leak`, `fix/1115-rc3-corner-swap`), all dropped without commits after probes invalidated the work.
+
+#### PRs merged
+
+- None. Session produced issue triage + investigation comments, no code.
+
+#### Issues opened / closed
+
+- **#1116 closed wontdo** — RC4 truncated freq10 skeleton. Probe: 98-100% column coverage on all 6 named (chart, aperture) pairs; samples populated for fractions 1-9; no ridges within 3 px of `y_top`. The S136 eye-read triage misclassified A as C from the diagnostic overlay's visual format.
+- **#1113 closed wontdo** — RC1 max-30-grey hue leak. Probe: orange/red contamination is 1-5% of mask pixels; 91-94% pure grey. The visible "all curves in orange" diagnostic PNG is a rendering artifact of `diagnostic.py` painting `(0,165,255)` on every mask pixel — even sparse halo pixels render as visually prominent. Real failure on flagged charts has a different mechanism (see #1120).
+- **#1114 closed wontdo** — RC2 freq10M sample[0] misattach. Probe: sample[0] is always `None` (B2 edge) or symmetry-forced equal to S[0] (`_apply_center_symmetry` in `pipeline.py`). The framing predicted "M[0]=0.77 vs printed 0.93" but the post-processing step makes sample[0] structurally incapable of holding that value. Real S/M divergence at sample[1]+ on 50/2.0 max confirmed (delta 0.11), traced to same mechanism as #1120.
+- **#1120 opened** — task, P2, v0.8.0. Low-V dashes drop out of `max-10-black` hue mask on TTartisan max-aperture. Hard evidence: `ttartisan-50mm-f2-0` max freq10M sample[1]=0.83 vs freq10S=0.94 (printed S=T=~0.93). Replaces #1113 + #1114 framing.
+- **#1115 (RC3) remains open** — probed and partially reproduces. Corner readings off by ~0.1 magnitude, not the ~0.3 framed. DP labeler (mask continuity) correctly identifies solid/dashed; the failure is in _path placement_ near the crossing, not _identity assignment_. ADR-049 fix sketch (dash-vs-solid identity prior) still applies but the design needs rework.
+
+#### Key changes
+
+None (no code commits).
+
+#### Probe artifacts
+
+Six throwaway scripts under `tools/`:
+
+- `probe_1116.py`, `probe_1116b.py`, `probe_1116c.py` — y_top clip / column coverage / saved-PNG overlay coverage for RC4
+- `probe_1113.py` — hue-mask composition (H/S/V quartiles + leak classification) for RC1
+- `probe_1114.py` — sample[0/1/2] S vs M per chart for RC2
+- `probe_1115.py` — corner physics-sanity (M > S) per chart for RC3
+- `probe_rc3_dp.py` — last-30-col DP path dump + mask-density-per-path for RC3 mechanism
+
+All deleted before wrap per `quality.md` probe-script rule. Findings folded into the issue close comments + this entry.
+
+#### Diagnosis journey
+
+1. Memory pointer named #1116 as smallest/safest first. Wrote probe; current output already meets acceptance criteria. Closed wontdo.
+2. Moved to #1113 (RC1). Probed hue mask composition; leak is tiny. Looked at `ttartisan-50mm-f2-0` max overlay — saw real freq10M dive, traced it to dashes missing from black mask (not orange leak into grey mask). Closed wontdo, filed #1120.
+3. Recognised pattern: two of two probes disproved their issue framings. Asked user; got "option 2" — probe RC2 and RC3 before deciding whether to keep coding the cohort.
+4. RC2 probe: sample[0] is symmetry-forced; the framing physically cannot hold. Real S/M divergence at sample[1]+ confirmed but same mechanism as #1120. Closed wontdo.
+5. RC3 probe: M > S at corner on 9/10 tested cells — looked like clean reproduction. Then ran a DP-instrumented probe that showed the labeler is correct (pass1 density 0.977 = solid, pass2 density 0.710 = dashed). Inspected `ttartisan-25mm-f2-0` stopped overlay carefully: the extracted SVG paths visually jump at position 10-11, but the corner magnitudes (S=0.48 vs truth ~0.55, T=0.79 vs truth ~0.70) are ~0.1 off, not the ~0.3 the issue described. The bug is real but smaller and harder to fix than framed.
+6. User picked "wrap up" rather than persist with RC3 today.
+
+#### Verification
+
+- `git status` clean.
+- All probe scripts deleted.
+- `gh issue view` confirms #1116, #1113, #1114 closed; #1120 open; #1112 epic checklist updated; #1115 open with comment noting probe results.
+
+#### Key decisions
+
+- **Quantitative probe before coding for triage-derived issues.** Three of four RCs from a parallel-agent eye-read triage produced framings that didn't survive a probe against the actual extraction output. The cost of a 5-minute probe per RC was much less than implementing a fix for the wrong mechanism.
+- **Close-and-replace over edit-in-place when issue framing is wrong.** #1113 and #1114 had real bugs hiding behind wrong descriptions; closing wontdo + filing #1120 with the actual mechanism is cleaner than rewriting the original issues. Matches `git.md` close-and-resubmit pattern for PRs.
+- **Update epic body when child framings change.** Epic #1112 body now lists the wontdo outcomes and the #1120 replacement; otherwise the checklist would read as "lots of unfinished RC work" when most of it was actually disproved-and-replaced.
+
+#### Follow-ups for next session
+
+- **#1120 first** — low-V dash dropout in `max-10-black`. Tightly scoped, hard evidence (delta 0.11 on 50/2.0 freq10M sample[1]), clear fix surface (widen `HueRange` V bound). Probe should establish the V distribution of dash pixels before picking the new bound.
+- **#1115 RC3** — corner placement bug, real but smaller than framed. ADR-049's dash-vs-solid prior idea needs revisiting now that the labeler is known to work — the issue is _path placement near the crossing_, not _which is solid_. May need a different fix entirely.
+- **Triage process gap.** Eye-read parallel-agent triage produced 75% misframed issues. Future re-triage on the remaining 11 TTartisan charts should be quantitative (manifest-vs-printed delta harness) before any RC issues get filed.
+- **Carried from S137:** pos-0.6 mid-field issue on 7artisans freq10M (chart-resolution limit).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort unchanged.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- Aggregate calibration: 583/627 (93.0%) (unchanged — no extraction changes).
+- 3 Tier 1 anchors (unchanged).
+- 343 pytest pass (unchanged).
+- 461-page build (unchanged).
+- 51 ADRs total (unchanged).
+- 9 declared MTF profiles (unchanged).
+- v0.8.0 open issue count: was 4 RC tasks + 1 epic + others; now 1 active RC task (#1115) + #1120 + #1112 epic + others (3 net reduction).
