@@ -6827,3 +6827,84 @@ Four throwaway scripts under `tools/`, all deleted before wrap per `quality.md` 
 - 9 declared MTF profiles (unchanged).
 - **Auto-confidence gate coverage: 101 of 103 charts** (was 14; ADR-052 lifted the GT filter).
 - v0.8.0 open issue count: was 1 active RC + 1 epic + others; now 1 active RC (#1115) + #1122 + #1112 epic + others (1 net reduction; #1120 closed, #1122 + #1123 opened, #1123 closed).
+
+---
+
+### Session 140 — #1115 wontdo via live autotriage cohort
+
+Date: 2026-06-11 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1115 from S139's follow-up list ("re-look via live cohort verdict instead of eye-read"). Probe disproved the framing; closed wontdo. Two narrowly-scoped follow-ups filed off the actual autotriage reason codes. No code shipped — pure triage hygiene.
+
+#### Branch / merge state
+
+- Started on `main` (clean post-S139-wrap merge).
+- Created `fix/1115-same-color-crossing-swap` for the planned fix; deleted after probe outcome (no commits).
+- Ends on `main` clean.
+
+#### PRs merged
+
+- None this session.
+
+#### Issues opened / closed
+
+- **#1115 closed wontdo** — ran `py -m mtfdigitizer.autotriage` against the full 101-chart cohort. None of #1115's three named charts (`ttartisan-50mm-f2-0` max, `ttartisan-500mm-f6-3-gfx` stopped, `ttartisan-25mm-f2-0` stopped) trip `prior_failed_center_ge_edge` — the only prior that would catch a true S↔T corner identity swap. 50/2.0 trips `precision_below_threshold` only (sparse tracing from #1120 grey-printed dashes, already wontdo); the other two are HIGH. The "7 E classifications" the issue referenced came from the S136 manual eye-read triage, which S139 retroactively explained as a workaround for `autotriage` being broken pre-#1124. With the automated gate now working, the corner-swap mechanism #1115 described does not surface anywhere in the live signal. Comment posted with full evidence; `wontdo` label applied. Fifth triage-derived issue closed wontdo this milestone (#1113/#1114/#1115/#1116/#1120).
+- **#1126 opened** — `ttartisan-af-35mm-f1-8` max trips `prior_failed_low_freq_ge_high` (first auto-detected freq-band confusion in the cohort). P3. Stopped-aperture is HIGH for this chart, narrowing the search.
+- **#1127 opened** — `ttartisan-23mm-f1-4` and `ttartisan-90mm-f1-25-gfx` stopped both produce **identical IoU = 0.776, precision = 0.936** (to 3dp) and both trip `prior_failed_center_ge_edge` + `prior_failed_not_suspiciously_flat`. Identical values across two different lenses is a smoking gun for a profile or asset-routing bug (most likely the two stopped-aperture passes resolving to the same chart asset, or to a sentinel fallback). P3. Actionable in ~30 minutes of probing.
+- **#1112 epic updated** — body now reflects #1115 wontdo + #1126 + #1127 as the new follow-ups; the "S138 + S139 update" section extended to "S138 + S139 + S140 update" noting 5-of-5 original triage-derived framings have now been disproved.
+
+#### Key changes
+
+- None — no source changes shipped. Session output is GitHub issue triage + this journal entry.
+
+#### Probe artifacts
+
+- `py -m mtfdigitizer.autotriage` — the now-working cohort runner from #1124. Took ~2 minutes. Output is 200 lines of per-pass verdicts. Not a throwaway probe script — this is the production triage harness used as intended (per S139 follow-up list: "future RC work should consume these review files as the authoritative classification, not eye-read PNGs").
+
+#### Diagnosis journey
+
+1. User said "look at #1120 and pick the next priority." #1120 was already closed wontdo S139. Filtered v0.8.0 open issues: #1115 was the only P1.
+2. Loaded ADR-049 (#1115's named fix surface) and ADR-051 (already shipped y-anchor for 7Artisans #1104). Recognized #1115's proposed fix ("per-column dash-vs-solid detection") was already ruled out by ADR-051: 7Artisans solid and dashed curves have identical run-length distributions (p50=2, p95=4 for both).
+3. Read S138/S139 wrap follow-up notes: both explicitly named "re-look at #1115 via live cohort verdict" as the right opening move. Did not start coding.
+4. Ran autotriage on the full 101-chart cohort. Cross-referenced #1115's three named charts against live verdicts.
+5. Found: none of the three trip `prior_failed_center_ge_edge`. `ttartisan-500mm-f6-3-gfx` stopped is HIGH. `ttartisan-25mm-f2-0` stopped is HIGH. `ttartisan-50mm-f2-0` max trips precision only (which is the already-wontdo #1120 mechanism).
+6. Surfaced finding to user with the cross-reference table. User chose close wontdo + file follow-ups.
+7. Filed #1126 (`low_freq_ge_high` on af-35/1.8) and #1127 (stopped-aperture cluster — the identical 0.776 / 0.936 across two lenses being the actionable signal).
+8. Deleted the empty `fix/1115-same-color-crossing-swap` branch. Reverted CRLF noise on review HTML files that autotriage touched but didn't substantively change.
+
+#### Verification
+
+- `git status` clean on `main`.
+- `gh issue view 1115` confirms CLOSED with `wontdo` label applied.
+- `gh issue view 1112` epic body shows #1115 as x'd with rationale; #1126 + #1127 added as new follow-ups.
+- `gh issue list --state open --milestone v0.8.0` shows 1 epic + 3 active TTartisan tasks (#1122 + #1126 + #1127); no open P1.
+- No throwaway scripts written this session (probe was a single CLI invocation, not a Python file).
+
+#### Key decisions
+
+- **Probe-first on triage-derived issues, every time.** Five of five RC-numbered issues in this milestone (#1113/#1114/#1115/#1116/#1120) were closed wontdo after a probe disproved the framing. The pattern is now unambiguous: any issue body that says "S136 triage identified N instances of..." is a candidate for wontdo, not implementation. Future triage-derived issues should run the autotriage harness first, then file follow-ups off the reason codes, not the other way around.
+- **A 30-second autotriage CLI invocation is preferable to writing a throwaway probe.** The production harness already produces the classification this session needed. Probes are for questions the harness can't answer; "does the framing reproduce?" is exactly what the harness was built for. Saved an hour of probe-script authoring + deletion overhead.
+- **Identical IoU/precision values across two charts is a smoking gun, not a coincidence.** The instinct to call #1127 "two separate bugs" was wrong — they almost certainly share root cause. Filing as one issue keeps the investigation coherent and avoids spawning a second wontdo when the fix lands.
+- **Empty branches get deleted, not pushed.** A branch with zero commits creates noise (a `gh pr list` entry, a "stale branch" question next session) without recording anything. The session record is the journal entry + the issue closures, not the branch name.
+
+#### Follow-ups for next session
+
+- **#1127 first** — the matching IoU/precision is the most actionable signal in the open milestone. Diffing the two review HTML pages tells the mechanism immediately; fix is likely small. P3 by impact but P1 by ease-of-progress.
+- **#1126 second** — first auto-detected freq-band confusion. Compare extracted readings vs printed chart at center (fraction 0.0) to confirm whether bands are swapped or one is missing.
+- **#1122 third** — fisheye DP investigation; still open. Per-aperture verdict now lets us isolate the failure to one pass.
+- **ADR-043 per-frequency fan-out** (carried from S139) — Fujifilm-permfreq still needs `pass_key` fan-out across `chart.views`.
+- **Carried from S137:** pos-0.6 mid-field issue on 7artisans freq10M (chart-resolution limit).
+- **Process note** — `py -m mtfdigitizer.autotriage` is now the authoritative re-triage harness. New TTartisan issues should be filed off its reason codes, not eye-read. This is the workflow #1112 epic always wanted; S140 demonstrated it for the first time.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort unchanged.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- Aggregate calibration: 583/627 (93.0%) (unchanged — no extraction changes).
+- 3 Tier 1 anchors (unchanged).
+- 345 pytest pass (unchanged).
+- 461-page build (unchanged — no PR).
+- 52 ADRs total (unchanged).
+- 9 declared MTF profiles (unchanged).
+- Auto-confidence gate coverage: 101 of 103 charts (unchanged).
+- v0.8.0 open issue count: was 1 active RC (#1115) + #1122 + #1112 epic + others; now 3 active tasks (#1122 + #1126 + #1127) + #1112 epic + others (2 net additions; #1115 closed, #1126 + #1127 opened). No open P1 in v0.8.0.
