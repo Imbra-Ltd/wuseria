@@ -396,6 +396,49 @@ def test_reference_samyang_300_reflex_classified_low_for_flatness() -> None:
     assert LowReason.PRIOR_FAILED_NOT_SUSPICIOUSLY_FLAT in verdict.reasons
 
 
+def test_reference_ttartisan_anchor_multi_aperture_fan_out() -> None:
+    """ADR-052 acceptance: multi-aperture charts emit one verdict per
+    aperture, each tagged with its `pass_key`. The Tier 1 anchor's max
+    pass must classify cleanly (HIGH), confirming the per-aperture
+    fan-out runs both passes without the pre-fix `KeyError`."""
+    from mtfdigitizer.autotriage import triage_chart_all_apertures
+
+    chart = next(
+        c for c in REFERENCE_CHARTS if c.slug == "ttartisan-50mm-f1-2"
+    )
+    verdicts = triage_chart_all_apertures(chart)
+    pass_keys = {v.pass_key for v in verdicts}
+    assert pass_keys == {"max", "stopped"}, (
+        f"expected one verdict per declared aperture; got {pass_keys}"
+    )
+    max_verdict = next(v for v in verdicts if v.pass_key == "max")
+    assert max_verdict.verdict == "HIGH", (
+        f"anchor max pass should classify HIGH; got reasons "
+        f"{max_verdict.reasons}, precision={max_verdict.render_match_precision}, "
+        f"iou={max_verdict.render_match_iou}"
+    )
+
+
+def test_triage_chart_raises_on_multi_aperture_chart() -> None:
+    """The single-aperture `triage_chart()` wrapper raises on ADR-044
+    charts so callers do not silently consume one of multiple
+    verdicts; they must opt in to `triage_chart_all_apertures()`."""
+    from mtfdigitizer.autotriage import triage_chart
+
+    chart = next(
+        c for c in REFERENCE_CHARTS if c.slug == "ttartisan-50mm-f1-2"
+    )
+    try:
+        triage_chart(chart)
+    except ValueError as e:
+        assert "triage_chart_all_apertures" in str(e)
+        return
+    raise AssertionError(
+        "expected ValueError when calling single-aperture triage_chart() "
+        "on a multi-aperture chart"
+    )
+
+
 # --- Sanity guards on the constants ---------------------------------
 
 
