@@ -6994,3 +6994,89 @@ Theme: pick up the two autotriage-filed follow-ups from S140 (#1126, #1127). Pro
 - Auto-confidence gate coverage: 101 of 103 charts (unchanged).
 - v0.8.0 open issue count: 3 active tasks before session (#1122 + #1126 + #1127) + #1112 epic; now 1 active task (#1122) + #1112 epic. No open P1.
 - Epic #1112 follow-up tally: 7-of-7 original triage-derived RCs closed wontdo (#1113/#1114/#1115/#1116/#1120/#1126/#1127). Only #1122 (carved out from #1120) and the epic itself remain open.
+
+---
+
+### Session 142 — TTartisan strategy spikes + Round 0 baseline
+
+Date: 2026-06-12 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: step back from per-edge-case debugging before opening #1122. User asked for a strategy review of the TTartisan cohort given the 7-of-7 wontdo pattern + token cost. Filed two spike issues capturing the decision space, then established a concrete Round 0 baseline on the spike's representative hard chart so any candidate method has measurable numbers to beat. Also surfaced a real bug in `review.py` while trying to refresh stale 50/1.2 overlays. No code shipped.
+
+#### Branch / merge state
+
+- Started on `docs/session-141-wrap`; merged PR #1129 to main as the first action.
+- Created `chore/refresh-ttartisan-50-overlays` for the overlay refresh; abandoned after `py -m mtfdigitizer.review` crashed on TTartisan multi-aperture profile (the bug became #1132). Branch deleted.
+- Ends on `main` clean.
+
+#### PRs merged
+
+- **#1129** — `docs: session 141 wrap` (S141 journal entry + epic #1112 7-of-7 update).
+
+#### Issues opened / closed
+
+- **#1130 opened** — `TTartisan strategy: cut losses (A) + invest in Tier 1 anchors (B)` (spike, P1, v0.8.0). A+B framing: close cohort as partial coverage and ship autotriage HIGH passes as committed data, while scaffolding 2-3 new Tier 1 anchors so the autotriage gate has GT signal beyond just priors. Investigation prompts cover data-shape decision for LOW passes, current HIGH/LOW split on the cohort, which other brands are at risk, anchor cost estimate, gate validation against existing GT, and escalation trigger to C.
+- **#1131 opened** — `Detection-method alternatives: should the digitizer pipeline change shape?` (spike, P2, v0.8.0). C framing: survey + prototype template-matching, ML segmentation, vector-source extraction, and modern plot-digitizer ML services. Designed so even if C is never adopted the ceiling measurement is reusable for future decisions. Added an "Exhibit A" comment walking the fisheye chart end-to-end through the current pipeline + scoring 4 candidate methods against this chart's hardness sources.
+- **#1132 opened** — `review.py crashes with KeyError on TTartisan multi-aperture charts (ADR-044 fan-out missing)` (bug, P2, v0.8.0). Same class as #1107 (svg.py KeyError fixed in PR #1108) but never propagated to review.py. autotriage.py got the fan-out fix in #1124 via `aperture_passes_for_view`; review.py was never updated. Reproduces immediately on `py -m mtfdigitizer.review`.
+- **#1122 commented** — added blocker comment pointing at #1130. Do not pick up before the strategy ADR lands.
+- **#1112 commented** — S142 update appended summarizing the strategy moment + Round 0 baseline location + #1132 surfacing.
+
+#### Key changes
+
+- None — no source changes shipped. Session output is GitHub issue triage (3 new issues, 2 commented), the Round 0 baseline comment on #1130, and this journal entry.
+
+#### Round 0 baseline (posted at #1130 as the canonical reference)
+
+- **Chart:** `ttartisan-7-5mm-f2-0-fisheye` max-aperture pass.
+- **Reference:** maintainer eye-pinned values at 11 sample fractions, ±0.02-±0.05 confidence band per region.
+- **Extractor source:** decoded from `docs/optical-specs/ttartisan-7-5mm-f2-0-fisheye/diagnostic/max/09-emit.svg` polyline points; MTF = (172 - y_svg) / 160.
+- **Per-field medians:** S10_F2 0.008, T10_F2 0.011, S30_F2 0.044, T30_F2 0.016.
+- **Per-field p95:** S10_F2 0.166, T10_F2 0.057, S30_F2 0.061, T30_F2 **0.258**.
+- **Within ADR-038 ±0.05 band:** 9/11, 9/11\*, 7/11, 9/11 (T10_F2 right edge honestly self-nulled).
+- **#1122 confirmed:** -0.057 at sample[1] is real and isolated against eye reading; not a measurement artifact.
+- **Acceptance bar for Round 1+ methods:** all 4 fields median \|Δ\| ≤ 0.03, p95 \|Δ\| ≤ 0.05, no |Δ| > 0.10 sample, self-nulling preserved, 50/1.2 GT regression guard.
+
+#### Verification
+
+- `git status` clean on `main`.
+- `gh issue view 1130`, `1131`, `1132` all OPEN with correct type + priority + milestone labels.
+- `gh issue view 1122` shows blocker comment pointing at #1130.
+- `gh issue list --state open --milestone v0.8.0` shows #1112 epic + #1122 + #1130 + #1131 + #1132 as the v0.8.0 open set.
+- Stale TTartisan overlays NOT refreshed — `py -m mtfdigitizer.review` crashes per #1132. Throwaway branch abandoned cleanly; three partial-output files (Sigma + 7Artisans review HTMLs / overlays touched during the crash run) reverted before returning to main.
+
+#### Key decisions
+
+- **Strategy framing before next investigation.** The 7-of-7 wontdo pattern is not a bug in the issues — it is a signal that the digitizer is correct and TTartisan is unrepresentative. Optimizing the pipeline for an outlier cohort drains v0.8.0 budget that should go to other brands in epic #790. A+B (cut losses + invest in anchors) is the proposed first move; C (change detection method) and D (outsource) are escalation paths. Filing both spikes (A+B as #1130, C as #1131) before any new investigation prevents the next session from sliding back into per-edge-case mode.
+- **Round 0 baseline is mandatory before Round 1+.** The fisheye chart's failures are not where the issue title says (#1122 sample[1] dive is real but small at -0.057); the dominant failure surface is right-edge (T30_F2 p95 = 0.258, ~5× the tolerance band). Without a baseline measurement, any "candidate method" comparison would be unfalsifiable. The eyeballed reference is one maintainer's reading and clearly weaker than the 88-point Tier 1 GT on 50/1.2, but it is sufficient for "does the candidate's p95 improve by ≥5×".
+- **`ttartisan-50mm-f1-2` is the regression guard, not the test case.** Initially proposed as the test case because it has Tier 1 GT, but the SVG + stopped overlay show the extractor handles it well. The interesting question is what breaks on charts the current method does NOT handle — the fisheye. 50/1.2 stays as the don't-make-it-worse anchor.
+- **Confirmation > pre-merge approval.** User asked to merge #1129; the merge happened immediately rather than after a CI-deep-check round. The merge succeeded and the deploy was already green (S141's merge). The session protocol's "ask before auto-merge" is satisfied by the user typing "auto" — that is the explicit permission.
+- **Stale overlay refresh is non-blocking for the spike.** The 50/1.2 max overlay being from Jun 9 is annoying but does not affect Round 0 measurement (which reads existing readings, not regenerated overlays). The proper fix is #1132. Trying to fix #1132 in this session would have been scope creep.
+
+#### Probe artifacts
+
+- Visual inspection of `ttartisan-7-5mm-f2-0-fisheye-mtf.png` via Read tool — single judgment-call pass to pin 44 reference values (4 fields × 11 fractions) at confidence ±0.02-±0.05.
+- Inspection of `09-emit.svg` polyline coordinates for extractor values — no pipeline re-run needed since main is current.
+- `py -m mtfdigitizer.review` — surfaced #1132. Aborted early; partial outputs reverted.
+
+#### Follow-ups for next session
+
+- **#1130** — TTartisan strategy spike (P1). Produce ADR with A+B vs A-only vs B-only vs neither + concrete plans + escalation trigger to #1131.
+- **#1131** — Detection-method survey + Tier 1 ceiling measurement. Lower priority than #1130 but can run in parallel if there's capacity.
+- **#1132** — review.py ADR-044 fan-out fix (P2 bug). Should land before any new Tier 1 anchor scaffolding so refresh works.
+- **#1122** — blocked behind #1130.
+- **Carried longer:** ADR-043 per-frequency fan-out (Fujifilm-permfreq `pass_key` across `chart.views`); #1085 orphan optical-specs dirs; ADR-014 mean-rule validation; Voigtländer triage (#800).
+- **Process note** — the user's instinct ("TTartisan is consuming tremendous amount of time") was correct. Filing strategy spikes before opening the next investigation is the right move when a pattern is overwhelming. The cost is one session's output being entirely meta-work; the benefit is preventing months of misdirected per-edge-case investigation.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort unchanged.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- Aggregate calibration: 583/627 (93.0%) (unchanged — no extraction changes).
+- 3 Tier 1 anchors (unchanged).
+- 345 pytest pass (unchanged — no PR).
+- 461-page build (unchanged — no PR).
+- 52 ADRs total (unchanged).
+- 9 declared MTF profiles (unchanged).
+- Auto-confidence gate coverage: 101 of 103 charts (unchanged).
+- v0.8.0 open issue count: 1 active task before session (#1122) + #1112 epic; now 2 spikes (#1130 + #1131) + 1 bug (#1132) + 1 blocked task (#1122) + #1112 epic. No open P1 implementation work; only the #1130 strategy spike at P1.
+- Epic #1112 follow-up tally: unchanged at 7-of-7 wontdo. Round 0 baseline on the fisheye now establishes the quantitative target the open #1122 (and any future per-chart investigation) must beat before adoption.
