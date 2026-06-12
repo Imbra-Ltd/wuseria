@@ -6908,3 +6908,89 @@ Theme: pick up #1115 from S139's follow-up list ("re-look via live cohort verdic
 - 9 declared MTF profiles (unchanged).
 - Auto-confidence gate coverage: 101 of 103 charts (unchanged).
 - v0.8.0 open issue count: was 1 active RC (#1115) + #1122 + #1112 epic + others; now 3 active tasks (#1122 + #1126 + #1127) + #1112 epic + others (2 net additions; #1115 closed, #1126 + #1127 opened). No open P1 in v0.8.0.
+
+---
+
+### Session 141 — #1126 + #1127 wontdo via autotriage probes
+
+Date: 2026-06-12 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up the two autotriage-filed follow-ups from S140 (#1126, #1127). Probed each via the live cohort + per-position data dump; both disproved their issue-body framings; both closed wontdo. Epic #1112 now 7-of-7 original triage-derived issues closed wontdo. No code shipped.
+
+#### Branch / merge state
+
+- Started on `docs/session-140-wrap`; merged PR #1128 to main as the first action.
+- Created `fix/ttartisan-stopped-cluster-1127` for the planned fix; deleted after probe (no commits).
+- Created `fix/ttartisan-af35-low-freq-ge-high-1126` for the planned fix; deleted after probe (no commits).
+- Ends on `main` clean.
+
+#### PRs merged
+
+- **#1128** — `docs: session 140 wrap` (S140 journal entry, autotriage cohort findings).
+
+#### Issues opened / closed
+
+- **#1127 closed wontdo** — diff of the two stopped-aperture review HTMLs showed they reference distinct per-slug image paths but the underlying `.png` files are byte-identical (md5 `d85b937b501a0606e41af7cc4f72dd5c`, both 141776 bytes, both shipped in PR #762). Tracing further: `TTArtisanExtractor.extract_image_urls` returns distinct CDN URLs for the two pages (`C23DP/Specification-MTF.webp` vs `90125DP/Specification-1.webp`), but raw `urllib.request.urlopen` against both URLs (cache bypassed) returns md5 `f126a18c3ae207c106c96330c46d9f07` — the TTartisan CDN serves byte-identical bytes from distinct URLs. Wuseria code is correct end-to-end; the dup is upstream. Out-of-scope finding: cohort-wide hash sweep of all 19 TTartisan MTF PNGs surfaced two more dup clusters — `100mm-macro-2x-gfx ≡ 100mm-macro-2x-tilt-shift` (distinct lens models sharing one chart, same upstream pattern) and `500mm-f6-3-gfx ≡ 500mm-f6-3` (possibly legitimate; same optics in two mounts).
+- **#1126 closed wontdo** — `py -m mtfdigitizer.autotriage` + `_run_pipeline` dumped per-position readings for the af-35/1.8 max pass. Exactly one position (pos 3, x=4.2mm) trips `low_freq_ge_high`: `freq30M=0.959 > freq10M=0.900` by 0.059. Direct skeleton inspection at source x=243 in `04-skeleton-freq30M.png`: a single isolated blue pixel at y=130 (MTF≈0.959), nowhere near where the gray-dashed M30 curve actually sits (~0.78 at that field height). Almost certainly a hue-classification leak at a curve crossing. Three reasons for wontdo: (1) cohort-wide isolation — exactly 1/101 charts trips this prior, non-systemic; (2) verdict already LOW from `precision_below_threshold` (0.695 < 0.8), the prior is redundant decisive signal; (3) all three issue-body framings (bands swapped, profile per-aperture, DP path-identity) ruled out by visual chart verification + stopped pass HIGH with same profile.
+- **#1112 epic updated** — body now reflects #1126 + #1127 closed wontdo; new "S141 update" section records 7-of-7 disproved framings and lists #1122 as the last open follow-up.
+
+#### Key changes
+
+- None — no source changes shipped. Session output is GitHub issue triage + this journal entry + epic body update.
+
+#### Probe artifacts
+
+- `py -m mtfdigitizer.autotriage` — production triage harness, ~2 minutes for the full 101-chart cohort. Run twice this session, both times to scope claimed failures cohort-wide.
+- `py -m mtfdigitizer.diagnose ttartisan-af-35mm-f1-8` — ADR-050 diagnostic bundle CLI. Wrote `docs/optical-specs/ttartisan-af-35mm-f1-8/diagnostic/max/` artifacts (gitignored). Used to localize the stray freq30M pixel.
+- One-shot inline `_run_pipeline` invocation via `py -c` to dump per-position `SampledReading` values — no probe-script file created. Confirms the S140 process pattern: prefer production CLIs + inline introspection over throwaway scripts.
+
+#### Diagnosis journey
+
+1. User said "merge #1128 and start #1127". Merged PR #1128 (clean, all checks green), pulled main.
+2. **#1127 probe.** Diffed the two stopped-aperture review HTMLs — identical structure, only filenames differ. Hashed the source MTF PNGs: byte-identical (`d85b937b...`). Checked git history: both shipped in PR #762 (2026-05-22) and have been duplicate since day one.
+3. Traced upstream: ran `TTArtisanExtractor.extract_image_urls` on cached current product-page HTML for both lenses (76.html for 23/1.4, 56.html for 90/1.25 GFX) — returns distinct CDN paths. Downloaded both via raw urllib (cache bypassed): identical bytes (md5 `f126a18c...`).
+4. Cohort-wide sanity check: hashed all 19 TTartisan MTF PNGs. Found two more dup clusters (100mm pair, 500mm pair). Surfaced findings + recommended close wontdo. User confirmed.
+5. Posted comprehensive comment to #1127, closed wontdo, deleted unused branch, returned to main.
+6. **#1126 probe.** Viewed the source MTF chart visually via `Read` tool — confirmed bands NOT swapped (M10_F1.8 ≈ 0.96 at center, M30_F1.8 ≈ 0.80). Viewed `*-mtf-max-overlay.png` — saw blue extractor track spiking up around x=4 in the freq30 region.
+7. Ran `_run_pipeline` with introspection on `ttartisan-af-35mm-f1-8`: exactly 1 prior violation, at pos 3 only, freq30M overread by 0.059. All other positions clean.
+8. Ran `py -m mtfdigitizer.diagnose` to write the ADR-050 bundle. Inspected `04-skeleton-freq30M.png` programmatically: found 1 isolated blue pixel at y=130 in the target column (source x=243). Confirmed single-pixel hue-leak.
+9. Cohort-wide isolation check: `grep -c prior_failed_low_freq_ge_high` over fresh autotriage output → exactly 1 occurrence (af-35/1.8 itself). Non-systemic.
+10. Surfaced wontdo argument (1/101 isolation + verdict-already-LOW + 3 framings ruled out) to user. User confirmed close.
+11. Posted comprehensive comment to #1126, closed wontdo, deleted unused branch, returned to main.
+
+#### Verification
+
+- `git status` clean on `main`.
+- `gh issue view 1126` and `gh issue view 1127` both CLOSED with `wontdo` + `task` + `P3` labels.
+- `gh issue view 1112` epic body shows #1126 + #1127 x'd with rationale; "S141 update" section appended.
+- `gh issue list --state open --milestone v0.8.0` shows #1122 + #1112 epic as the only open items (no open P1).
+- No throwaway scripts written this session — all probes used production CLIs or inline introspection.
+
+#### Key decisions
+
+- **Probe-first applies to autotriage-filed issues too, not just eye-read issues.** S140 hardened the pattern for eye-read-derived RCs (#1113/.../#1120 → wontdo). S141 extends it: autotriage's reason codes flag _candidates_ for investigation, but they don't substitute for cohort isolation + verdict-already-LOW analysis. A LOW verdict where the prior is redundant (precision already failed) is a different category than a LOW verdict where the prior is the deciding bit. Distinguishing these by running the cohort-wide grep takes 10 seconds and prevents implementation spikes on already-correct verdicts.
+- **Upstream data-quality issues count as wontdo, not bugs.** #1127 is real bad data, but it's TTartisan's CDN serving identical bytes — Wuseria's extractor, brand-tool, and digitizer are all behaving correctly. Filing a bug against our code would be misleading; filing a wontdo with a public comment that names the upstream cause is the honest record. The two extra dup clusters surfaced (100mm pair, 500mm pair) are documented inline in the #1127 close comment, not refiled as new issues, because they have the same upstream cause and no Wuseria-side fix.
+- **Single-pixel artifacts on already-LOW verdicts are not worth fixing.** #1126's freq30M overread is a real extractor leak, but the verdict it changes (LOW with 2 priors → LOW with 1 prior) is identical from any downstream consumer's perspective. The fix would touch the ridge tracker that runs over 100 other charts. ROI is negative.
+- **Inline Python introspection beats writing a probe script file when the question is "what does the production pipeline produce for this input?"** A few lines of `py -c` invoking `_run_pipeline` did this session's per-position dump. Probe-script files would have added overhead (creation + deletion + the "did I forget to delete it?" check) for zero added clarity.
+
+#### Follow-ups for next session
+
+- **#1122** — fisheye DP investigation (last open epic #1112 follow-up; carved out from #1120). Per-aperture verdict now isolates the failure to one pass.
+- **ADR-043 per-frequency fan-out** (carried from S139) — Fujifilm-permfreq still needs `pass_key` fan-out across `chart.views`.
+- **#1085** — orphan optical-specs dirs (P3, agent-doable).
+- **Carried longer:** pos-0.6 mid-field issue on 7artisans freq10M (chart-resolution limit); `_profile_for_view` shim removal (S122); ADR-014 mean-rule validation; 17-40 tele `prior_violations=1`; Voigtländer triage (#800) wontfix until APO-LANTHAR data; unified `eye-read.md` workflow trial.
+- **Process note** — probe-first pattern is now fully proven across both eye-read-derived (S138-S140) and autotriage-filed (S141) issues. For triage-derived work in v0.8.0, the cost of a 20-30 minute probe is reliably less than the cost of a misguided implementation spike. Skipping the probe should require explicit justification.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort unchanged.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- Aggregate calibration: 583/627 (93.0%) (unchanged — no extraction changes).
+- 3 Tier 1 anchors (unchanged).
+- 345 pytest pass (unchanged — no PR).
+- 461-page build (unchanged — no PR).
+- 52 ADRs total (unchanged).
+- 9 declared MTF profiles (unchanged).
+- Auto-confidence gate coverage: 101 of 103 charts (unchanged).
+- v0.8.0 open issue count: 3 active tasks before session (#1122 + #1126 + #1127) + #1112 epic; now 1 active task (#1122) + #1112 epic. No open P1.
+- Epic #1112 follow-up tally: 7-of-7 original triage-derived RCs closed wontdo (#1113/#1114/#1115/#1116/#1120/#1126/#1127). Only #1122 (carved out from #1120) and the epic itself remain open.
