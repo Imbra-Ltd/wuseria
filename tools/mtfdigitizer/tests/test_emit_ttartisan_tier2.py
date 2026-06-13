@@ -61,10 +61,38 @@ def test_format_chart_block_carries_aperture_and_readings():
             samples={"freq10S": 0.9, "freq10M": 0.9, "freq30S": 0.5, "freq30M": 0.5},
         ),
     )
-    out = _format_chart_block("f/1.2", readings)
+    out = _format_chart_block("f/1.2", readings, "HIGH", None)
     assert 'aperture: "f/1.2",' in out
     assert "readings: [" in out
     assert "position: 0," in out
+
+
+def test_format_chart_block_emits_high_confidence():
+    """HIGH passes carry `confidence: "HIGH"` and no `confidenceReason`."""
+    readings = (
+        SampledReading(
+            position_mm=0.0,
+            samples={"freq10S": 0.9},
+        ),
+    )
+    out = _format_chart_block("f/1.2", readings, "HIGH", None)
+    assert 'confidence: "HIGH",' in out
+    assert "confidenceReason" not in out
+
+
+def test_format_chart_block_emits_low_confidence_with_reason():
+    """LOW passes carry `confidence: "LOW"` and the reason code."""
+    readings = (
+        SampledReading(
+            position_mm=0.0,
+            samples={"freq10S": 0.9},
+        ),
+    )
+    out = _format_chart_block(
+        "f/5.6", readings, "LOW", "prior_failed_center_ge_edge"
+    )
+    assert 'confidence: "LOW",' in out
+    assert 'confidenceReason: "prior_failed_center_ge_edge",' in out
 
 
 def test_format_chart_block_keeps_position_0_even_when_all_null():
@@ -80,7 +108,7 @@ def test_format_chart_block_keeps_position_0_even_when_all_null():
             samples={"freq10S": 0.6, "freq10M": 0.6, "freq30S": 0.3, "freq30M": 0.3},
         ),
     )
-    out = _format_chart_block("f/1.2", readings)
+    out = _format_chart_block("f/1.2", readings, "HIGH", None)
     assert "position: 0," in out  # kept despite all-null samples
 
 
@@ -101,7 +129,7 @@ def test_format_chart_block_drops_intermediate_all_null_rows():
             samples={"freq10S": 0.6, "freq30S": 0.3},
         ),
     )
-    out = _format_chart_block("f/1.2", readings)
+    out = _format_chart_block("f/1.2", readings, "HIGH", None)
     assert "position: 0," in out
     assert "position: 14," in out
     assert "position: 5," not in out
