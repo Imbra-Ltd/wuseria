@@ -34,6 +34,7 @@ from mtfdigitizer.review import (
     ReviewPaths,
     _OVERLAY_COLOR_10,
     _OVERLAY_COLOR_30,
+    _emit_chart,
     render_overlay,
     render_review_html,
     write_review,
@@ -332,6 +333,67 @@ def test_write_review_on_real_sigma_chart(tmp_path: Path) -> None:
     assert image_path.name in html
     assert outputs.overlay_path.name in html
     assert svg_path.name in html
+
+
+def test_emit_chart_check_mode_clears_full_reference_set() -> None:
+    """`_emit_chart(check_only=True)` must complete on every runnable
+    reference chart without raising — regression for #1132 where ADR-044
+    multi-aperture charts (TTartisan cohort) crashed the review pipeline
+    with `KeyError: 'stopped-10-red'` because dispatch was handed the
+    full multi-aperture profile instead of one filtered per pass."""
+    runnable = [c for c in REFERENCE_CHARTS if c.plot_box and c.ground_truth]
+    # Must include at least one TTartisan multi-aperture chart, otherwise
+    # we're not actually exercising the fan-out path.
+    assert any(
+        c.slug.startswith("ttartisan-") for c in runnable
+    ), "reference set lost its TTartisan multi-aperture coverage"
+    for chart in runnable:
+        # In --check mode no files are written; an exception is the only
+        # failure signal.
+        _emit_chart(chart, check_only=True)
+
+
+def test_emit_chart_multi_aperture_fans_out_to_per_pass_files(
+    tmp_path: Path,
+) -> None:
+    """ADR-044 multi-aperture charts emit one (HTML, overlay PNG) pair
+    per aperture pass, stems named `<chart-stem>-<aperture>` to match
+    svg.py's `<chart-stem>-<aperture>.svg` and autotriage.py's per-pass
+    review files."""
+    chart = next(
+        c for c in REFERENCE_CHARTS if c.slug == "ttartisan-50mm-f1-2"
+    )
+    outputs = _emit_chart(chart, check_only=False, out_dir=tmp_path)
+    assert len(outputs) == 2, (
+        f"expected 2 passes for multi-aperture chart; got {len(outputs)}"
+    )
+    stems = {o.html_path.stem for o in outputs}
+    # `apertures_per_chart=("max", "stopped")` on the profile drives the
+    # pass labels — the chart's `apertures=("f/1.2", "f/5.6")` are the
+    # human aperture values, not the orchestrator's pass keys.
+    expected = {
+        "ttartisan-50mm-f1-2-mtf-max-review",
+        "ttartisan-50mm-f1-2-mtf-stopped-review",
+    }
+    assert stems == expected, f"unexpected review stems: {stems}"
+    for o in outputs:
+        assert o.html_path.is_file()
+        assert o.overlay_path.is_file()
+        assert o.overlay_path.stat().st_size > 0
+
+
+def test_emit_chart_single_aperture_emits_one_pair(tmp_path: Path) -> None:
+    """Single-aperture charts (Sigma, Samyang, 7Artisans, etc.) keep the
+    pre-#1132 shape: one review HTML + one overlay PNG, stems untouched
+    by aperture suffixes."""
+    chart = next(
+        c for c in REFERENCE_CHARTS if c.slug == "sigma-56mm-f1-4-dc-dn-c"
+    )
+    outputs = _emit_chart(chart, check_only=False, out_dir=tmp_path)
+    assert len(outputs) == 1
+    assert outputs[0].html_path.stem == (
+        "sigma-56mm-f1-4-dc-dn-c-mtf-diffraction-review"
+    )
 
 
 def test_write_review_default_out_dir_is_image_folder(tmp_path: Path) -> None:
