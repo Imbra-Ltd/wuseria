@@ -557,7 +557,7 @@ the B2 None contract: a None reading breaks the polyline at that vertex.
 **Render an MTF chart's 3-panel review file:**
 
 ```bash
-cd tools && py -m mtfdigitizer.review           # writes review files for the 3 runnable charts
+cd tools && py -m mtfdigitizer.review           # writes review files for every runnable reference chart
 cd tools && py -m mtfdigitizer.review --check   # dry-run for CI/tests
 ```
 
@@ -571,6 +571,38 @@ per ADR-038 §"Workflow"). Output: `<chart-stem>-review.html` +
 JS-free per the ADR — a viewer, not an editor. Replaces the deprecated
 `tools/mtf-overlay.html` whose hand-tuned calibration is superseded by
 deterministic plot-box registration.
+
+ADR-044 multi-aperture charts (TTartisan cohort) fan out to one
+`(review HTML, overlay PNG)` pair per aperture pass via
+`aperture_passes_for_view`, with stems `<chart-stem>-<aperture>` (e.g.
+`ttartisan-50mm-f1-2-mtf-max-review.html` +
+`ttartisan-50mm-f1-2-mtf-stopped-review.html`). Matches `svg.py`'s
+`<chart-stem>-<aperture>.svg` and the per-pass review files
+`autotriage.py` writes. Single-aperture charts keep their existing
+1-pair output with no `-<aperture>` suffix.
+
+**Refresh stale review artifacts (regenerate-and-commit hygiene):**
+
+When the extractor changes shift overlay geometry, the committed
+`<chart-stem>-overlay.png` artifacts drift from their source. The
+refresh workflow:
+
+1. Branch: `chore/refresh-stale-overlays` (or scope-specific name).
+2. Run `py -m mtfdigitizer.review` from `tools/`.
+3. **Filter platform noise from real diffs:** the regenerator writes
+   CRLF line endings on Windows; HTMLs with no template changes still
+   show as `M` in `git status`. Use `git diff --ignore-all-space <file>`
+   to identify CRLF-only diffs — drop them with `git checkout --`
+   before staging. Real changes are the binary PNG diffs and any
+   genuinely new/changed HTML content.
+4. **Visual spot-check each refreshed PNG:** open the overlay in any
+   image viewer and confirm polylines trace the source curves cleanly.
+   Binary diffs are opaque to `git diff`; the visual check is the only
+   way to catch a buggy regenerator producing garbage that still
+   tests-pass.
+5. Stage only the real artifact changes (+ any genuinely missing
+   review pairs surfaced by the run). Commit as `chore(mtf):` with
+   a note on which extractor change drove the refresh.
 
 **Emit a digitized chart's readings as a TypeScript literal for the site:**
 

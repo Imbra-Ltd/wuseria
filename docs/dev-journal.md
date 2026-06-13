@@ -7324,3 +7324,83 @@ Theme: pick up #1134's UI half (lens-page LOW badge + `/wiki/mtf-confidence`). I
 - v0.8.0 open: #1112 epic + #1122 + #1131 + #1132 + #1134 (UI deferred). Backlog: #1135.
 - `mtf-readings.ts` unchanged — per-pass confidence still carried in the data; lens pages render every pass the same way for now.
 - Wiki: +1 entry (`mtf-confidence`).
+
+---
+
+### Session 146 — #1132 review.py fan-out + stale overlay refresh
+
+Date: 2026-06-13 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: chart quality work. From the open v0.8.0 issue set, picked #1132 (review.py crashes on TTartisan multi-aperture charts) as the cleanest slice: well-defined fix shape spelled out in the issue, bounded scope, and unblocks any future chart-quality investigation that wants to look at overlays. Two-PR session: the fix (#1143) and the resulting overlay refresh (#1144) that the fix made possible.
+
+#### Branch / merge state
+
+- Started on `main` clean. Branched `fix/1132-review-fanout`. Implemented + tested + opened PR #1143. Watched CI green, squash-merged after user approval, deleted branch.
+- Branched `chore/refresh-stale-overlays` off updated `main`. Ran `py -m mtfdigitizer.review` end-to-end, scoped the real diff (separating CRLF noise from real content changes), committed only the artifacts with real geometry changes + the missing Fuji XF 23 review pair. PR #1144 opened, CI green, user said "merge it auto", squash-merged, branch deleted.
+- Ends on `main` clean.
+
+#### PRs
+
+- **#1143 MERGED** — `fix(mtf): port ADR-044 fan-out to review.py (#1132)`. Adds `aperture_passes_for_view` import to review.py, replaces the single `extract_chart` call in `_emit_chart` with a per-pass loop, adds `out_dir` parameter for test isolation. +3 tests (621 total, was 618).
+- **#1144 MERGED** — `chore(mtf): refresh stale review overlays (after #1132)`. 4 files: 2 PNG refreshes (TTartisan 50/1.2 max, 7artisans 50/1.2 II) + 2 new files (Fuji XF 23 15lp overlay PNG + review HTML — the GF 23 sibling had been committed but the XF counterpart was missed).
+
+#### Issues opened / closed
+
+- **#1132 CLOSED** — auto-closed by PR #1143 merge.
+- No issues opened.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/review.py`** — `_emit_chart` now calls `aperture_passes_for_view` and loops per pass. Stems are `<chart-stem>-<aperture>` for multi-aperture (matching svg.py's `<chart-stem>-<aperture>.svg` and the per-pass review files autotriage.py already writes), unchanged for single-aperture. `out_dir` parameter added so tests can target tmp_path. Removed unused `profile_for_chart` import (`aperture_passes_for_view` calls it internally).
+- **`tools/mtfdigitizer/tests/test_review.py`** — +3 tests: `_emit_chart(check_only=True)` clears every runnable reference chart without raising (regression for #1132, asserts TTartisan coverage is present); multi-aperture TTartisan 50/1.2 emits exactly 2 review pairs with `-max` / `-stopped` stems; single-aperture Sigma 56/1.4 still emits 1 pair with unchanged stem.
+- **`docs/optical-specs/ttartisan-50mm-f1-2/ttartisan-50mm-f1-2-mtf-max-overlay.png`** — refreshed (pre-#1095 ridge-DP geometry was stale; the side effect called out in #1132's "Side effect" section).
+- **`docs/optical-specs/7artisans-50mm-f1-2-mark-ii/mtf-chart-overlay.png`** — refreshed (drifted since the same era).
+- **`docs/optical-specs/fujifilm-xf-23mm-f1-4-r-lm-wr/fujifilm-xf-23mm-f1-4-r-lm-wr-15lp-{overlay.png,review.html}`** (NEW) — never committed; the GF 23 sibling had been but the XF counterpart was missed.
+
+#### Verification
+
+- `py -m pytest` (full tools suite): **621 pass** on PR #1143 branch (was 618 on main; +3 new tests, zero regressions).
+- `py -m mtfdigitizer.review --check` runs end-to-end on all 14 runnable reference charts — previously crashed on the 6th (ttartisan-50mm-f1-2) with `KeyError: 'stopped-10-red'`.
+- Visual spot-check on PR #1144's 3 refreshed overlays: all trace their source curves cleanly. TTartisan max-aperture: all 8 lines (2 freq × 2 dir × 2 ap) track. 7artisans solid + dashed gold (T1/T2) and blue (S1/S2) track. Fuji XF 23 solid + dashed gold track with the dashed-line distinction visible.
+- Both PRs: all required CI checks green (gate, analyze, changes, gitleaks, links, CodeQL). `build` + `lighthouse` skipped by path-filter — both PRs touched only `tools/` and `docs/optical-specs/`, which cannot affect site output. Confirms the gate-skip policy from `quality-gates.md` §"Skip noisy gates when input is unchanged" is working as intended.
+- Deploy: PR #1143 deployed clean to main; PR #1144 deploy in progress at wrap time.
+
+#### Key decisions (this session)
+
+- **Pick #1132 over #1122 for theme-of-session.** Both fit "chart quality work" but #1132 had a fix shape spelled out, single-file scope, and unblocked downstream investigation (refreshing overlays was impossible without it). #1122 is a probe-first investigation with open shape — better as its own session. Same theme, different work shape; the well-defined slice was the right pick.
+- **Add `out_dir` to `_emit_chart` rather than monkeypatch REPO_ROOT in tests.** The two write-based tests need to avoid touching the real `docs/optical-specs/` tree. Three options were considered: (1) add `out_dir` parameter to `_emit_chart` matching `write_review`'s existing API, (2) monkeypatch REPO_ROOT, (3) make tests use `check_only=True` and assert pass-counts in-memory. Picked (1) — symmetric with `write_review`, no test-only hooks in production code, clean single-line caller change.
+- **Drop CRLF-only HTML diffs from the refresh PR.** After regenerating, 7 review HTMLs showed `M` in `git status` but `git diff --ignore-all-space` reported zero content change — pure platform line-ending noise. Including them would distract from the 3 real artifact changes and reappear next time anyone regenerates on a different OS. The 4-file refresh PR (#1144) is the right scope; the CRLF noise stays out.
+- **Two PRs, not one.** The fix (#1143) is code + tests; the refresh (#1144) is regenerated artifacts. Bundling them would have made the diff harder to review and conflated "the fix works" with "we ran the tool." Separation kept each PR's framing internally consistent.
+- **Investigate the Fuji XF 23 missing-files surprise rather than just commit them.** Untracked files in a refresh run is suspicious. Compared sibling directories: GF 23 had the same `-15lp-overlay.png` + `-15lp-review.html` pair committed, so the gap was an old omission, not a deliberate exclusion. Commit was safe.
+
+#### Process pattern observed this session
+
+**Separate refresh noise from refresh content before committing.** `git status` showed 7 modified HTMLs + 2 modified PNGs + 2 untracked files — that looked like 11 changes to review. Running `git diff --ignore-all-space` revealed that 7 of the 9 modifications were pure CRLF normalization (the regenerator wrote CRLF line endings on Windows; git was about to normalize them to LF on commit). The real change set was 4 artifacts. Without that filter step, the PR would have been noisy and the next regeneration on a different OS would have looked like a regression. Generalizes: for any "regenerate-and-commit" workflow on a multi-platform project, scope the diff with whitespace-insensitive comparison before staging.
+
+**Visual spot-check on regenerated binary artifacts.** Two of the three refreshed PNGs were geometry refreshes from extractor changes — the diff itself proves nothing about correctness. Opening each overlay in the Read tool (image-mode) confirmed the polylines trace their source curves cleanly before committing. Cheap check, catches the case where a buggy regenerator produces garbage that still compiles + tests-pass.
+
+#### Follow-ups for next session
+
+- **#1122** — fisheye TTartisan freq10M dive 0.06 probe (P3, task). Probe-first investigative work; the deeper investigation slice within "chart quality direction."
+- **#1085** — orphan optical-specs dirs triage (P3, agent-doable janitorial).
+- **#1131** — detection-method survey (P2 spike, C-trigger; do not pick before trigger fires).
+- **#1135** — B' implementation (P3 Backlog; do not pick before trigger).
+- **#1134** — UI half stays deferred. Revisit when chart-quality direction is settled.
+- **Epic #1112** — stays open as a consequence of #1134 deferral.
+- **Carried longer:** ADR-043 per-frequency fan-out; ADR-014 mean-rule validation; Voigtländer triage (#800).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- Epic #1112 (TTartisan cohort hardening): stays open.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- 3 Tier 1 anchors (unchanged).
+- Aggregate calibration: 583/627 (93.0%) (unchanged).
+- **621 pytest pass** (was 618; +3 from review.py fan-out regression tests).
+- 222 vitest pass (unchanged — no front-end changes).
+- 54 ADRs total (unchanged — no new ADR; both PRs are operational, not architectural).
+- 9 declared MTF profiles (unchanged).
+- Auto-confidence gate coverage: 101 of 103 charts (unchanged).
+- v0.8.0 open: #1112 epic + #1122 + #1131 + #1134 (UI deferred). Backlog: #1135. #1132 closed this session.
+- `mtf-readings.ts` unchanged.
