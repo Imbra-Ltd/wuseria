@@ -7,6 +7,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -95,6 +96,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -183,6 +185,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -243,6 +246,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -331,6 +335,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -392,6 +397,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 10,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -475,6 +481,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 18,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -564,6 +571,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/3.5",
         focalLength: 16,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -647,6 +655,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/3.5",
         focalLength: 300,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -736,6 +745,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/1.8",
         focalLength: 17,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -819,6 +829,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/1.8",
         focalLength: 40,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -908,6 +919,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 18,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -991,6 +1003,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 50,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1080,6 +1093,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/5",
         focalLength: 100,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1163,6 +1177,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/5",
         focalLength: 400,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1252,6 +1267,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1292,6 +1308,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1338,6 +1355,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1399,6 +1417,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1466,6 +1485,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1527,6 +1547,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1594,6 +1615,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1634,6 +1656,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1680,6 +1703,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1720,6 +1744,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1766,6 +1791,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1806,6 +1832,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1852,6 +1879,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1913,6 +1941,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -1980,6 +2009,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2020,6 +2050,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2066,6 +2097,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2127,6 +2159,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2194,6 +2227,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/6.3",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2255,6 +2289,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2322,6 +2357,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.2",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2383,6 +2419,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2450,6 +2487,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2490,6 +2528,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2536,6 +2575,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.2",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2597,6 +2637,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2664,6 +2705,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2704,6 +2746,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2750,6 +2793,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2790,6 +2834,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2836,6 +2881,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2897,6 +2943,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -2964,6 +3011,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/3.5",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3025,6 +3073,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3092,6 +3141,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.0",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3139,6 +3189,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3192,6 +3243,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3239,6 +3291,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3292,6 +3345,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/3.5",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3332,6 +3386,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3378,6 +3433,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8 @ 11mm",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3460,6 +3516,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/2.8 @ 18mm",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3548,6 +3605,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3636,6 +3694,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3724,6 +3783,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.2",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3814,6 +3874,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/5.6",
         focalLength: 100,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -3908,6 +3969,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/5.6",
         focalLength: 200,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4008,6 +4070,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.0",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4107,6 +4170,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/5.6",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4207,6 +4271,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4308,6 +4373,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 20,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4402,6 +4468,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 35,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4502,6 +4569,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4601,6 +4669,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/3.5",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4689,6 +4758,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/5.6",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4789,6 +4859,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 32,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4883,6 +4954,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 64,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -4983,6 +5055,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4.5",
         focalLength: 35,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -5077,6 +5150,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4.5",
         focalLength: 70,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -5178,6 +5252,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 45,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -5272,6 +5347,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 100,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -5372,6 +5448,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -5472,6 +5549,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/5.6",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -5571,6 +5649,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/3.5",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -5670,6 +5749,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.7",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -5769,6 +5849,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -5868,6 +5949,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.7",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -5969,6 +6051,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/3.5",
         focalLength: 13,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6052,6 +6135,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/3.5",
         focalLength: 33,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6140,6 +6224,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.0",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6230,6 +6315,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4.5",
         focalLength: 50,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6313,6 +6399,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4.5",
         focalLength: 230,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6403,6 +6490,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 10,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6486,6 +6574,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 24,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6576,6 +6665,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 10,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6659,6 +6749,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 24,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6749,6 +6840,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4.5",
         focalLength: 100,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6832,6 +6924,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4.5",
         focalLength: 400,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -6921,6 +7014,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7011,6 +7105,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/5.6",
         focalLength: 150,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7094,6 +7189,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/5.6",
         focalLength: 600,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7184,6 +7280,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 16,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7267,6 +7364,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 50,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7357,6 +7455,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 16,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7440,6 +7539,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 55,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7530,6 +7630,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 16,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7613,6 +7714,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 55,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7703,6 +7805,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 16,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7779,6 +7882,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 80,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7867,6 +7971,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -7955,6 +8060,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8045,6 +8151,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 18,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8128,6 +8235,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4",
         focalLength: 120,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8218,6 +8326,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/3.5",
         focalLength: 18,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8301,6 +8410,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/3.5",
         focalLength: 135,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8391,6 +8501,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 18,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8474,6 +8585,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 55,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8563,6 +8675,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8651,6 +8764,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.0",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8740,6 +8854,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.0",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8828,6 +8943,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -8916,6 +9032,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.0",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9004,6 +9121,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9069,6 +9187,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9157,6 +9276,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9246,6 +9366,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9335,6 +9456,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9423,6 +9545,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9511,6 +9634,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.0",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9601,6 +9725,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 50,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9684,6 +9809,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 140,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9773,6 +9899,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/5.6",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9861,6 +9988,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.0",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -9949,6 +10077,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.0",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10039,6 +10168,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/3.5",
         focalLength: 55,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10122,6 +10252,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/3.5",
         focalLength: 200,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10211,6 +10342,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.2",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10299,6 +10431,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.2",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10387,6 +10520,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.2",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10475,6 +10609,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10565,6 +10700,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4.5",
         focalLength: 70,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10648,6 +10784,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/4.5",
         focalLength: 300,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10738,6 +10875,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 8,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10821,6 +10959,7 @@ const mtfReadings: Record<string, MtfData> = {
       {
         aperture: "f/2.8",
         focalLength: 16,
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10910,6 +11049,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -10999,6 +11139,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/3.5",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -11034,6 +11175,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.0",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -11122,6 +11264,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -11221,6 +11364,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -11309,6 +11453,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -11391,6 +11536,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/5.6",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -11479,6 +11625,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -11561,6 +11708,8 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/5.6",
+        confidence: "LOW",
+        confidenceReason: "prior_failed_center_ge_edge",
         readings: [
           {
             position: 0,
@@ -11649,6 +11798,8 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
         readings: [
           {
             position: 0,
@@ -11731,6 +11882,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -11812,6 +11964,8 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
         readings: [
           {
             position: 0,
@@ -11894,6 +12048,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -11982,6 +12137,8 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
         readings: [
           {
             position: 0,
@@ -12064,6 +12221,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -12152,6 +12310,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/6.3",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -12227,6 +12386,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/11",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -12308,6 +12468,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/6.3",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -12383,6 +12544,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/11",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -12464,6 +12626,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.2",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -12546,6 +12709,8 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/5.6",
+        confidence: "LOW",
+        confidenceReason: "prior_failed_center_ge_edge",
         readings: [
           {
             position: 0,
@@ -12634,6 +12799,8 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
         readings: [
           {
             position: 0,
@@ -12716,6 +12883,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -12804,6 +12972,8 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
         readings: [
           {
             position: 0,
@@ -12886,6 +13056,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -12974,6 +13145,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.25",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -13056,6 +13228,8 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/5.6",
+        confidence: "LOW",
+        confidenceReason: "prior_failed_center_ge_edge",
         readings: [
           {
             position: 0,
@@ -13144,6 +13318,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -13219,6 +13394,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -13300,6 +13476,8 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.8",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
         readings: [
           {
             position: 0,
@@ -13375,6 +13553,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/5.6",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -13456,6 +13635,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -13531,6 +13711,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/5.6",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -13612,6 +13793,8 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
         readings: [
           {
             position: 0,
@@ -13687,6 +13870,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/5.6",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -13768,6 +13952,7 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -13850,6 +14035,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -13931,6 +14117,8 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/1.4",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
         readings: [
           {
             position: 0,
@@ -14006,6 +14194,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -14087,6 +14276,8 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
         readings: [
           {
             position: 0,
@@ -14169,6 +14360,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,
@@ -14257,6 +14449,8 @@ const mtfReadings: Record<string, MtfData> = {
     charts: [
       {
         aperture: "f/2.8",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
         readings: [
           {
             position: 0,
@@ -14339,6 +14533,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
       {
         aperture: "f/8",
+        confidence: "HIGH",
         readings: [
           {
             position: 0,

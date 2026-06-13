@@ -38,6 +38,36 @@ describe("mtf-readings data integrity", () => {
     }
   });
 
+  // ADR-053 + #1134: per-pass confidence.
+  it("every chart has confidence HIGH or LOW", () => {
+    for (const [slug, data] of entries) {
+      for (const chart of data.charts) {
+        expect(
+          chart.confidence,
+          `${slug} ${chart.aperture}: confidence must be 'HIGH' or 'LOW'`,
+        ).toMatch(/^(HIGH|LOW)$/);
+      }
+    }
+  });
+
+  it("LOW charts carry a non-empty confidenceReason; HIGH charts omit it", () => {
+    for (const [slug, data] of entries) {
+      for (const chart of data.charts) {
+        if (chart.confidence === "LOW") {
+          expect(
+            chart.confidenceReason,
+            `${slug} ${chart.aperture}: LOW must have confidenceReason`,
+          ).toMatch(/\S/);
+        } else {
+          expect(
+            chart.confidenceReason,
+            `${slug} ${chart.aperture}: HIGH must omit confidenceReason`,
+          ).toBeUndefined();
+        }
+      }
+    }
+  });
+
   it("readings are sorted by position (ascending)", () => {
     for (const [slug, data] of entries) {
       for (const chart of data.charts) {

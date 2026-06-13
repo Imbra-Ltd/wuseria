@@ -120,12 +120,13 @@ def test_format_entry_wraps_a_lens_block() -> None:
         slug="test-lens",
         source="https://example.com/lens",
         mtf_type="measured",
-        panels=(("f/2.8", None, rows),),
+        panels=(("f/2.8", None, rows, "HIGH", None),),
     )
     assert '"test-lens":' in out
     assert 'source: "https://example.com/lens",' in out
     assert 'mtfType: "measured",' in out
     assert 'aperture: "f/2.8",' in out
+    assert 'confidence: "HIGH",' in out
     # Both rows appear
     assert out.count("position:") == 2
 
@@ -135,7 +136,7 @@ def test_format_entry_emits_computed_mtf_type_when_requested() -> None:
         slug="sigma-lens",
         source="https://sigma-global.com/x",
         mtf_type="computed",
-        panels=(("f/1.4", None, (_r(pos=0),)),),
+        panels=(("f/1.4", None, (_r(pos=0),), "HIGH", None),),
     )
     assert 'mtfType: "computed",' in out
     assert 'mtfType: "measured",' not in out
@@ -146,7 +147,7 @@ def test_format_entry_empty_readings_block_is_valid_ts() -> None:
         slug="test-lens",
         source="https://x",
         mtf_type="measured",
-        panels=(("f/2", None, ()),),
+        panels=(("f/2", None, (), "HIGH", None),),
     )
     assert "readings: [\n\n        ]," in out
 
@@ -158,8 +159,8 @@ def test_format_entry_emits_two_panels_for_zoom() -> None:
         source="https://sigma-global.com/x",
         mtf_type="computed",
         panels=(
-            ("f/2.8", 10, (_r(pos=0), _r(pos=14.0))),
-            ("f/2.8", 18, (_r(pos=0), _r(pos=14.0))),
+            ("f/2.8", 10, (_r(pos=0), _r(pos=14.0)), "HIGH", None),
+            ("f/2.8", 18, (_r(pos=0), _r(pos=14.0)), "HIGH", None),
         ),
     )
     # One charts: [...] array, two chart objects inside
@@ -174,6 +175,20 @@ def test_format_entry_prime_emits_no_focal_length_line() -> None:
         slug="sigma-56mm-f1-4-dc-dn-c",
         source="https://sigma-global.com/x",
         mtf_type="computed",
-        panels=(("f/1.4", None, (_r(pos=0),)),),
+        panels=(("f/1.4", None, (_r(pos=0),), "HIGH", None),),
     )
     assert "focalLength" not in out
+
+
+def test_format_entry_emits_low_confidence_with_reason() -> None:
+    """ADR-053 + #1134: LOW pass carries confidence + confidenceReason."""
+    out = _format_entry(
+        slug="ttartisan-50mm-f1-2",
+        source="https://x",
+        mtf_type="computed",
+        panels=(
+            ("f/5.6", None, (_r(pos=0),), "LOW", "prior_failed_center_ge_edge"),
+        ),
+    )
+    assert 'confidence: "LOW",' in out
+    assert 'confidenceReason: "prior_failed_center_ge_edge",' in out

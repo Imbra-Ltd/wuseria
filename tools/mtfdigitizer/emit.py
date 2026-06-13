@@ -47,11 +47,13 @@ from .per_frequency import (
     PER_FREQUENCY_STYLE_FAMILIES,
     extract_per_frequency_chart,
 )
-from .pipeline import PlotBox, extract_chart
+from .pipeline import PlotBox, extract_chart, score_chart
 from .pipeline.dispatch import parse_field_name
-from .pipeline.rendermatch import fields_in
+from .pipeline.rendermatch import DEFAULT_DILATION_RADIUS_PX, fields_in
 from .pipeline.types import ExtractedChart, SampledReading
+from .priors import check_all
 from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
+from .triage import triage
 
 
 def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
@@ -153,6 +155,8 @@ def _format_chart(
     aperture: str,
     paired: tuple[SampledReading, ...],
     focal_length: int | None = None,
+    confidence: str = "HIGH",
+    confidence_reason: str | None = None,
 ) -> str:
     readings_block = "\n".join(_format_reading(r) for r in paired)
     focal_line = (
@@ -160,10 +164,20 @@ def _format_chart(
         if focal_length is not None
         else ""
     )
+    # ADR-053 + #1134: per-pass confidence. `confidence` is required on
+    # the TS type; `confidenceReason` is set only when LOW (ADR-052
+    # reason code from `ChartVerdict.reasons[0]`).
+    reason_line = (
+        f"        confidenceReason: \"{confidence_reason}\",\n"
+        if confidence == "LOW" and confidence_reason
+        else ""
+    )
     return (
         "      {\n"
         f"        aperture: \"{aperture}\",\n"
         f"{focal_line}"
+        f"        confidence: \"{confidence}\",\n"
+        f"{reason_line}"
         "        readings: [\n"
         f"{readings_block}\n"
         "        ],\n"
@@ -171,9 +185,15 @@ def _format_chart(
     )
 
 
-# One emitted chart panel: aperture string, optional focal length in mm
-# (set on zoom panels, None on primes), and the position-keyed readings.
-ChartPanel = tuple[str, int | None, tuple[SampledReading, ...]]
+# One emitted chart panel: aperture, optional focal length, readings, and
+# per-pass confidence with optional reason code (ADR-053 + #1134).
+ChartPanel = tuple[
+    str,
+    int | None,
+    tuple[SampledReading, ...],
+    str,
+    str | None,
+]
 
 
 def _format_entry(
@@ -183,8 +203,14 @@ def _format_entry(
     panels: tuple[ChartPanel, ...],
 ) -> str:
     chart_blocks = "\n".join(
-        _format_chart(aperture, paired, focal_length=focal)
-        for aperture, focal, paired in panels
+        _format_chart(
+            aperture,
+            paired,
+            focal_length=focal,
+            confidence=confidence,
+            confidence_reason=reason,
+        )
+        for aperture, focal, paired, confidence, reason in panels
     )
     return (
         f"  \"{slug}\": {{\n"
@@ -195,6 +221,40 @@ def _format_entry(
         "    ],\n"
         "  },"
     )
+
+
+def _verdict_for_panel(
+    image_path: Path,
+    profile: object,
+    plot_box: PlotBox,
+    image_height_mm: float,
+    extracted: ExtractedChart,
+) -> tuple[str, str | None]:
+    """Compute (confidence, reason) for one emitted panel via ADR-052.
+
+    Runs the same render-match + priors as `autotriage._run_pipeline` so
+    emit's verdict and the autotriage CLI agree on every panel. Returns
+    `("HIGH", None)` when the panel passes the gate, or
+    `("LOW", "<first_reason_code>")` when it fails. The first reason is
+    the primary one (matches the autotriage CLI display); a panel that
+    trips multiple priors collapses to its first reason for the emit
+    output. The autotriage CLI run remains the authoritative report
+    when the maintainer needs the full reason list.
+    """
+    score = score_chart(
+        image_path,
+        profile,  # type: ignore[arg-type]
+        plot_box,
+        image_height_mm=image_height_mm,
+        readings=extracted.readings,
+        dilation_radius_px=DEFAULT_DILATION_RADIUS_PX,
+    )
+    violations = check_all(extracted.readings)
+    verdict = triage(score, violations)
+    if verdict.verdict == "HIGH":
+        return "HIGH", None
+    reason_code = verdict.reasons[0].value if verdict.reasons else "unknown"
+    return "LOW", reason_code
 
 
 def emit_lens(
@@ -256,15 +316,27 @@ def emit_lens(
                 f"view {index} of {chart.slug!r} has no plot_box — "
                 f"emit requires a calibrated plot box on every view"
             )
-        extracted: ExtractedChart = extract_chart(
-            root / view.chart_path,
+        view_plot_box = _to_plotbox(view.plot_box)
+        view_image_path = root / view.chart_path
+        extracted = extract_chart(
+            view_image_path,
             profile,
-            _to_plotbox(view.plot_box),
+            view_plot_box,
             image_height_mm=chart.image_height_mm,
+        )
+        # ADR-053 + #1134: per-pass confidence verdict. emit shares the
+        # autotriage gate (ADR-052) — same render-match + priors as
+        # `autotriage._run_pipeline`, no new thresholds.
+        confidence, reason = _verdict_for_panel(
+            view_image_path,
+            profile,
+            view_plot_box,
+            chart.image_height_mm,
+            extracted,
         )
         rows = tuple(r for r in extracted.readings if _has_any_data(r))
         focal = focal_lengths[index] if focal_lengths is not None else None
-        panels.append((aperture_string, focal, rows))
+        panels.append((aperture_string, focal, rows, confidence, reason))
         total_positions += len(rows)
         for field in fields_in(extracted.readings):
             null_counts.setdefault(field, 0)

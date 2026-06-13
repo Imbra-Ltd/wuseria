@@ -33,7 +33,7 @@ import re
 import sys
 from pathlib import Path
 
-from mtfdigitizer.calibrate import _extract_multi_aperture_chart
+from mtfdigitizer.autotriage import _run_pipeline
 from mtfdigitizer.pipeline.types import SampledReading
 from mtfdigitizer.referenceset.charts import REFERENCE_CHARTS, ReferenceChart
 
@@ -91,22 +91,33 @@ def _has_any_data(r: SampledReading) -> bool:
 
 
 def _format_chart_block(
-    aperture: str, readings: tuple[SampledReading, ...]
+    aperture: str,
+    readings: tuple[SampledReading, ...],
+    confidence: str,
+    confidence_reason: str | None,
 ) -> str:
     """Emit one MtfChart panel — aperture string + readings array.
 
     Mirrors the prime-shape emit in `emit_fuji_tier2._format_chart_block`
     but without focalLength (TTartisan does not publish per-focal-length
-    charts; even the 500mm super-tele ships one chart per lens).
+    charts; even the 500mm super-tele ships one chart per lens). Carries
+    the per-pass confidence verdict + reason code (ADR-053 + #1134).
     """
     rendered: list[str] = []
     for r in readings:
         if _has_any_data(r) or r.position_mm == 0.0:
             rendered.append(_format_reading(r))
     rows = "\n".join(rendered)
+    reason_line = (
+        f'        confidenceReason: "{confidence_reason}",\n'
+        if confidence == "LOW" and confidence_reason
+        else ""
+    )
     return (
         "      {\n"
         f'        aperture: "{aperture}",\n'
+        f'        confidence: "{confidence}",\n'
+        f"{reason_line}"
         "        readings: [\n"
         f"{rows}\n"
         "        ],\n"
@@ -164,8 +175,13 @@ def _emit_one_lens(
     profile's `apertures_per_chart`. The aperture in each panel is the
     actual f-number (from `chart.apertures[i]`), aligned positionally
     with the profile's aperture labels.
+
+    Confidence (ADR-053 + #1134): each panel runs through the
+    `autotriage._run_pipeline` gate (ADR-052) and emits
+    `confidence: HIGH|LOW` plus, when LOW, the first reason code from
+    `verdict.reasons`. The pipeline is the single source of truth for
+    both autotriage's CLI and emit's verdict — they always agree.
     """
-    results_by_aperture = _extract_multi_aperture_chart(chart)
     blocks: list[str] = []
     total_positions = 0
 
@@ -181,10 +197,29 @@ def _emit_one_lens(
         f"chart.apertures ({chart.apertures!r}) length"
     )
 
+    pass_results = _run_pipeline(chart)
+    by_aperture = {pr.verdict.pass_key: pr for pr in pass_results}
+
     for label, f_number in zip(profile.apertures_per_chart, chart.apertures):
-        result = results_by_aperture[label]
-        blocks.append(_format_chart_block(f_number, result.readings))
-        total_positions += len(result.readings)
+        pass_result = by_aperture[label]
+        verdict = pass_result.verdict
+        if verdict.verdict == "HIGH":
+            confidence = "HIGH"
+            reason: str | None = None
+        else:
+            confidence = "LOW"
+            reason = (
+                verdict.reasons[0].value if verdict.reasons else "unknown"
+            )
+        blocks.append(
+            _format_chart_block(
+                f_number,
+                pass_result.extracted.readings,
+                confidence,
+                reason,
+            )
+        )
+        total_positions += len(pass_result.extracted.readings)
 
     chart_blocks = "\n".join(blocks)
     literal = (

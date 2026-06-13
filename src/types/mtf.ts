@@ -24,9 +24,20 @@ interface MtfReading {
   samples: Record<number, MtfSampleSM>;
 }
 
+type MtfConfidence = "HIGH" | "LOW";
+
 interface MtfChart {
   aperture: string; // e.g. "f/1.4", "f/8"
   focalLength?: number; // mm; set on zoom panels (wide + tele), omitted on primes
+  // Per-pass confidence (ADR-053, ADR-054). HIGH covers hand-curated
+  // entries and autotriage HIGH verdicts; LOW means autotriage flagged
+  // this pass (render-match precision below threshold or a plausibility
+  // prior violated — see `confidenceReason`). Samples are kept on LOW
+  // passes; the lens page surfaces the verdict with a badge.
+  confidence: MtfConfidence;
+  // ADR-052 reason code on LOW passes (e.g. `precision_below_threshold`,
+  // `prior_failed_center_ge_edge`). Omitted on HIGH passes.
+  confidenceReason?: string;
   readings: MtfReading[];
 }
 
@@ -38,4 +49,11 @@ interface MtfData {
   charts: MtfChart[];
 }
 
-export type { MtfReading, MtfSampleSM, MtfChart, MtfData, MtfType };
+export type {
+  MtfReading,
+  MtfSampleSM,
+  MtfChart,
+  MtfData,
+  MtfType,
+  MtfConfidence,
+};

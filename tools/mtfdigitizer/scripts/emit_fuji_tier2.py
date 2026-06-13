@@ -232,10 +232,15 @@ def _format_chart_block(
         if focal_length is not None
         else ""
     )
+    # ADR-053 + #1134: Fujifilm Tier 2 charts ship as HIGH — they are
+    # hand-curated from official manufacturer optical-design charts and
+    # don't run through the autotriage gate. The HIGH literal here is
+    # the explicit operator verdict for that provenance path.
     return (
         "      {\n"
         f'        aperture: "{aperture}",\n'
         f"{focal_line}"
+        '        confidence: "HIGH",\n'
         "        readings: [\n"
         f"{rows}\n"
         "        ],\n"
