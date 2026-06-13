@@ -7404,3 +7404,87 @@ Theme: chart quality work. From the open v0.8.0 issue set, picked #1132 (review.
 - Auto-confidence gate coverage: 101 of 103 charts (unchanged).
 - v0.8.0 open: #1112 epic + #1122 + #1131 + #1134 (UI deferred). Backlog: #1135. #1132 closed this session.
 - `mtf-readings.ts` unchanged.
+
+### Session 147 — #1122 vertical chrome strip + cohort log refresh
+
+Date: 2026-06-13 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: chart quality work — picked #1122 (fisheye TTartisan freq10M sample[1] dive) per S146's "follow-ups" note. The issue framed it as "per-column DP mis-tracks with adequate black candidates"; the probe disproved that framing and uncovered the real mechanism (vertical Y-axis chrome leaking past `_strip_chrome`'s row-only pass). Two-PR session: the fix (#1146) and the resulting 12-log production refresh (#1147), following the S146 pattern.
+
+#### Branch / merge state
+
+- Started on `main` clean. Wrote a throwaway probe (`tools/mtfdigitizer/probe_1122_fisheye.py`) to dump per-column ridges + DP paths around sample[1]. Mechanism identified, probe deleted before commit per `quality.md` §"Probe scripts".
+- Branched `fix/1122-vertical-chrome-strip`. Added `_MAX_RUN_LENGTH = 20` constant + length filter in `_column_runs`. PR #1146 opened.
+- Branched `chore/1122-refresh-ttartisan-logs` stacked on the fix branch. Ran `py -m mtfdigitizer.extract --accept` on the 12 stale TTartisan production lenses (mechanical regeneration after the chrome-strip fix). PR #1147 opened.
+- Ends on `chore/1122-refresh-ttartisan-logs` (clean working tree; both branches pushed, both PRs open at wrap time).
+
+#### PRs
+
+- **#1146 OPEN** — `fix(mtf): strip vertical chrome from ridge candidates (#1122)`. Single-file ridge.py change: 18 insertions, 3 deletions. Auto-closes #1122 on merge.
+- **#1147 OPEN** — `chore(mtf): refresh TTartisan production logs after #1122`. 34 files changed across 12 lens directories (173 insertions, 175 deletions). Stacked on #1146.
+
+#### Issues opened / closed
+
+- **#1122 (pending close)** — will auto-close when PR #1146 merges; AC table fully satisfied this session.
+- No new issues opened.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — new `_MAX_RUN_LENGTH = 20` constant; `_column_runs` now drops runs outside `[_MIN_RUN_LENGTH, _MAX_RUN_LENGTH]`. Sized at ~5% of typical plot height; reference set p99 of legitimate curve runs is 13 px, so 20 admits any real ridge while dropping the 50-265-px tall chrome columns the fisheye Y-axis label produced.
+- **12 production `digitization-log.md` files** under `docs/optical-specs/ttartisan-*/` regenerated with the fix in effect. Diff shape: small (~0.005-0.01) precision/IoU shifts on most lenses, no sparkline-level reading-table changes. Two lenses retain LOW verdict (`prior_violations=3` on `ttartisan-23mm-f1-4` and `ttartisan-90mm-f1-25-gfx` — pre-existing chart-quality issues unrelated to chrome).
+- **24 artifact files** (12 × `-mtf-max.svg` + `-mtf-stopped.svg` etc.) regenerated to match the new readings. Overlay PNGs refreshed.
+
+#### Verification
+
+- **Probe-confirmed root cause.** Per-column ridge histogram on fisheye max black mask: 127/130 low-field columns have exactly 1 ridge (S=T coincident); only 4 runs > 30 px in the whole plot — all at x=88-89 (Y-axis tick-label glyph + axis line). The 52- and 265-px tall runs centered at y=168.5 (otf=0.85) anchored pass-2 of the DP at a spurious y, then `_densify_track` linearly interpolated 113 columns of fake T10 across the coincidence region. At sample[1] (x=139), this yielded otf=0.894 — matched the original manifest reading 0.893 byte-for-byte.
+- **AC #2 (fisheye sample[1] within 0.03 of freq10S):** post-fix delta is 0.000 (both read 0.948).
+- **AC #3 (50/1.2 anchor byte-identical):** every field's median/p95/paired counts identical in reference-set calibration.
+- **AC #4 (50/2.0 unchanged):** all 44 sample values byte-identical pre-vs-post extraction.
+- **AC #5 (pytest pass):** 621/621.
+- **Aggregate calibration:** 583/626 (93.1%) within ±0.05, median |d| 0.0111, p95 |d| 0.0632 — vs prior 583/627 (93.0%), p95 0.0638. One paired comparison dropped (viltrox-af-75 freq30S — a previously out-of-tolerance reading now correctly returns None). p95 _improved_ 0.0006.
+- **`py -m mtfdigitizer.extract --check`:** 87/87 production logs up to date after PR #1147.
+- **vitest:** 222/222 (no front-end changes).
+- **astro check:** 0 errors / 0 warnings.
+
+#### Key decisions (this session)
+
+- **Filter on column-run length (not skeleton post-processing).** Three fix options were considered: (A) drop short isolated track fragments in `_path_to_track` based on x-gap between fragment and bulk; (B) cap `_densify_track` interpolation gap; (C) reject ridge runs taller than a threshold. Picked (C) — the others are downstream patches that mask the symptom; chrome filtering at run-generation matches the existing `_strip_chrome` design (which strips wide _rows_) and removes the spurious points before they enter any later stage. Symmetric, minimal, no code paths to remember when adding new chart types.
+- **Sized `_MAX_RUN_LENGTH = 20` from data, not first principles.** The reference set's column-run histogram gave p99 = 13 px and max legitimate = ~17 px. 20 leaves slack without admitting chrome (next-smallest chrome run measured: 50 px). Calibration validated the threshold: only one chart (viltrox freq30S) changed, and only by losing a previously out-of-tolerance reading.
+- **The issue's predicted mechanism was wrong; honored the probe.** #1122's body hypothesized "per-column DP mis-tracks the ridge despite black pixels being available." Probe disproved this: at low field there _are_ no separate black candidates because S10 and T10 are physically coincident; the DP correctly coasts pass-2 there. The dive originates from a spurious chrome point upstream of the DP and corrupts the densify pass downstream. Followed the data, not the issue text. Recorded the disproof in the PR description so the reasoning is preserved.
+- **Two PRs (S146 pattern).** Fix and refresh shipped separately. The fix is intent-bearing (closes #1122, recorded mechanism); the refresh is mechanical regeneration. Bundling would have made the diff harder to review and obscured "the fix works" with "we ran the tool on 12 lenses."
+- **Spot-check 3/12 overlays for the refresh, not all 12.** Each refresh runs autotriage gate + HOLDs for maintainer glance; that's 12 PNG inspections. Picked 3 representative lenses (fisheye = the fix's target; tilt-50 = the most artifact-rich; 500mm GFX = clean baseline). All 3 traced cleanly; the global calibration result (only viltrox freq30S affected, no TTartisan field) was the broader signal that the change is safe across the cohort.
+- **Did NOT pick #1134 UI when user initially proposed it.** Asked first: S145 had explicitly walked the badge back ("defer UI until chart-quality direction is settled"); picking it up would have reversed last session's call. User confirmed parking #1134 and selected #1122 instead. Asking before reversing prior decisions is cheap and prevents undoing work.
+
+#### Process pattern observed this session
+
+**Probe-first is the right shape for "investigative" issues.** #1122's body included specific hypothesized mechanisms; the temptation was to code the fix matching those mechanisms (e.g. an anchor-cost tweak in the DP). The probe took ~20 minutes and disproved the framing entirely. Without it, a fix would have landed for a non-existent problem. Generalizes: when an issue's "what to investigate" section names a specific code surface, write a probe targeting that surface _and_ the symptom before writing the fix. The probe answers two questions in one run: is the hypothesis correct, and where is the real signal?
+
+**Probe scripts as `quality.md` describes them work.** Throwaway file, named `probe_1122_fisheye.py` so it's obviously temporary, deleted before the commit that uses its findings. The findings landed in source comments (the `_MAX_RUN_LENGTH` docstring referencing #1122) + this journal entry. Script itself never landed on `main`. Clean separation between "tooling to find the answer" and "the answer in the code."
+
+**Stale-log triage by spot-check + global signal.** 12 logs went stale; doing all 12 by hand is expensive. The aggregate calibration result (583/626 within ±0.05, only viltrox freq30S affected) was the global signal that the change is safe across the cohort; 3 spot-checked overlays confirmed no visible regression. Generalizes: when a fix touches a shared code path with N downstream artifacts to regenerate, pair a global metric (reference-set calibration, full test suite, link-check coverage) with a small spot-check of representative cases — cheaper than per-artifact inspection and catches the same class of regression.
+
+#### Follow-ups for next session
+
+- **Watch PR #1146 + PR #1147 land.** #1147 stacked on #1146; both squash-merge cleanly. After #1146 merges, #1122 auto-closes; epic #1112's last open task closes, completing the TTartisan cohort hardening epic.
+- **#1131** — detection-method survey (P2 spike). The fix this session was downstream of detection; the architectural question stays open as a C-trigger. Don't pick before trigger fires.
+- **#1134** — UI half stays deferred per S145.
+- **#1085** — orphan optical-specs dirs triage (P3).
+- **#1135** — B' implementation (P3 Backlog).
+- **Epic #1112** — completes when #1122 auto-closes on #1146 merge.
+- **Carried longer:** ADR-043 per-frequency fan-out; ADR-014 mean-rule validation; Voigtländer triage (#800).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- Epic #1112 (TTartisan cohort hardening): pending closure on #1146 merge.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- 3 Tier 1 anchors (unchanged).
+- Aggregate calibration: 583/626 (93.1%) (was 583/627 / 93.0%; one viltrox freq30S reading correctly dropped).
+- **621 pytest pass** (unchanged).
+- 222 vitest pass (unchanged — no front-end changes).
+- 54 ADRs total (unchanged — no new ADR; the fix is operational/symmetric with existing `_strip_chrome`).
+- 9 declared MTF profiles (unchanged).
+- Auto-confidence gate coverage: 101 of 103 charts (unchanged).
+- v0.8.0 open: #1112 epic (pending close) + #1122 (pending close) + #1131 + #1134 (UI deferred). Backlog: #1135.
+- `mtf-readings.ts` unchanged.
