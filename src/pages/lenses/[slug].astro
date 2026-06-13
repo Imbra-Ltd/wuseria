@@ -19,6 +19,16 @@ const SCORING_STATUS_PHRASES: Record<ScoringStatus, string> = {
   pending: "Scoring in progress.",
 };
 
+// ADR-052 reason codes humanized for the LOW-confidence badge. Keys
+// match `mtfdigitizer.triage.LowReason` values; unknown codes fall
+// back to the raw string so a new reason never silently renders blank.
+const MTF_REASON_PHRASES: Record<string, string> = {
+  precision_below_threshold: "render-match precision below threshold",
+  prior_failed_center_ge_edge: "prior failed (center >= edge)",
+  prior_failed_low_freq_ge_high: "prior failed (low freq >= high freq)",
+  prior_failed_not_suspiciously_flat: "prior failed (curve unusually flat)",
+};
+
 export const getStaticPaths = (() => {
   return lenses.map((lens) => ({
     params: { slug: toSlug(`${lens.brand} ${lens.model}`) },
@@ -392,6 +402,22 @@ const jsonLd = {
                     <span class="mtf-focal"> @ {chart.focalLength}mm</span>
                   )}
                 </span>
+                {chart.confidence === "LOW" && (
+                  <div class="mtf-confidence-badge" role="note">
+                    <span class="mtf-confidence-label">
+                      Low confidence{chart.confidenceReason ? ":" : ""}
+                    </span>
+                    {chart.confidenceReason && (
+                      <span class="mtf-confidence-reason">
+                        {MTF_REASON_PHRASES[chart.confidenceReason] ??
+                          chart.confidenceReason}
+                      </span>
+                    )}
+                    <a href="/wiki/mtf-confidence/" class="mtf-confidence-link">
+                      Why?
+                    </a>
+                  </div>
+                )}
                 <MtfChart chart={chart} />
                 {(() => {
                   // Per-chart frequency set, sorted low → high. Built
@@ -857,6 +883,44 @@ const jsonLd = {
 
   .mtf-focal {
     color: var(--color-text-muted);
+  }
+
+  /* ADR-053 / #1134: per-pass LOW-confidence badge. Muted-warning
+     border + label, neutral body so the chart stays the focal point;
+     wiki link inherits accent on hover. */
+  .mtf-confidence-badge {
+    display: inline-flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin: var(--space-xs) 0;
+    padding: 2px var(--space-xs);
+    border: 1px solid color-mix(in srgb, #d4a14a 60%, var(--color-border));
+    border-radius: var(--radius);
+    background: color-mix(in srgb, #d4a14a 8%, transparent);
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+  }
+
+  .mtf-confidence-label {
+    font-family: var(--font-mono);
+    color: #d4a14a;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .mtf-confidence-reason {
+    font-family: var(--font-mono);
+  }
+
+  .mtf-confidence-link {
+    color: var(--color-link);
+    text-decoration: underline;
+  }
+
+  .mtf-confidence-link:hover,
+  .mtf-confidence-link:focus-visible {
+    color: var(--color-link-hover);
   }
 
   .mtf-table {
