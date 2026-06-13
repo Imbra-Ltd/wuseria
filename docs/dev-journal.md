@@ -7250,3 +7250,77 @@ Theme: pick up #1134 (A from ADR-053). Decided middle scope — schema + emit pi
 - Auto-confidence gate coverage: 101 of 103 charts (unchanged).
 - v0.8.0 open: #1112 epic + #1122 (unblocked) + #1131 + #1132 + **#1134 (half done, UI/wiki remain)**. Backlog: #1135.
 - `mtf-readings.ts` now carries per-pass confidence on every entry: 169 HIGH + 13 LOW + 13 reason codes (182 + 13 = 195 line delta from the schema migration + TTartisan emit).
+
+### Session 145 — #1134 UI half walked back; wiki explainer only
+
+Date: 2026-06-13 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1134's UI half (lens-page LOW badge + `/wiki/mtf-confidence`). Implemented the inline pill badge end-to-end (PR #1140) — `Low confidence: <reason phrase> Why?` above the MTF chart on every LOW pass, AA contrast, role="note", `MTF_REASON_PHRASES` humanizer for the four ADR-052 codes. On UX review the badge was rejected: too technical for non-expert readers, and the broader call is to focus on chart-quality _direction_ over precision rather than pinning a confidence taxonomy on every lens page. PR #1140 closed; the wiki explainer was salvaged on a fresh branch and shipped on its own (PR #1141).
+
+#### Branch / merge state
+
+- Started on `main` clean. Branched `feat/1134-ui-mtf-confidence-badge`. Implemented + pushed + opened PR #1140. PR rejected on UX read.
+- PR #1140 closed with explanation. `feat/1134-ui-mtf-confidence-badge` deleted (local + remote).
+- Branched `docs/wiki-mtf-confidence` off `main`, brought over only `src/content/wiki/mtf-confidence.md`, reworked it to drop all badge references and focus on standalone explainer content (direction-over-precision framing).
+- PR #1141 opened, auto-merge enabled (squash + delete branch). Auto-merged after lighthouse finished. Ends on `main` clean.
+
+#### PRs
+
+- **#1140 CLOSED** — `feat(mtf): lens-page LOW badge + /wiki/mtf-confidence (#1134 UI half)`. Closed with status comment: badge framing too technical, deferring UI; wiki page moved to standalone PR.
+- **#1141 MERGED** — `docs(wiki): /wiki/mtf-confidence explainer`. Single-file docs-only PR; the salvaged explainer.
+
+#### Issues opened / closed
+
+- **#1134 commented** — UI half deferred. Schema + emit half (S144) stays shipped. AC table updated: 5 of 9 boxes ticked (data shape, emit, HIGH unchanged, LOW kept, type tests, wiki). Lens-page badge + screenshot deferred until chart-quality direction is settled. Epic #1112 stays open as a consequence.
+- No issues closed this session.
+
+#### Key changes
+
+- **`src/content/wiki/mtf-confidence.md`** (NEW) — standalone explainer. Two-paragraph intro explaining hand-read vs digitized provenance, why flagged curves are still shown (TTartisan 41/43 evidence), why hand-read curves are more trustworthy, and the pipeline diagram. No badge references; framed as "direction indicator, not precise measurement."
+- No other source changes (the lens-page edits in `[slug].astro` from PR #1140 were closed and never landed).
+
+#### Verification
+
+- `npm run validate` green on PR #1141: lint, format, check, vitest 222/222, build (462 pages), link check.
+- `/wiki/mtf-confidence/` builds and is reachable from `/wiki/`.
+- PR #1141 all 7 CI checks green: CodeQL, gate, analyze, changes, gitleaks, lighthouse, links + build.
+- `git status` clean on `main` after merge; both session branches deleted.
+
+#### Key decisions (this session)
+
+- **Direction over precision on user-facing surfaces.** When the underlying data quality is still uncertain (digitized MTF curves under continued investigation), surfacing a precision-flavored badge with extractor-internal jargon (`prior_failed_center_ge_edge`) shifts cognitive load to the reader rather than producing trust. The badge is technically honest but practically alienating for a non-expert. The right move at this stage is to fix the data first and only surface precision metadata once the underlying signal is reliable enough that the metadata adds value rather than noise.
+- **Walk back the badge but keep the explainer.** The wiki page survives standalone because it answers a genuine reader question ("why do these curves look different from official ones?") without depending on a page-side cue. Salvaging it is a smaller commitment than the badge — readers find it via the wiki index when they want it, not when the page pushes it at them.
+- **Don't close #1134 even though one half deferred.** The acceptance-criteria checkboxes are accurate to what's shipped; leaving the issue open with a "when to revisit" pointer is more honest than closing it as partial.
+- **Auto-merge on docs-only PRs is fine.** User said "merge it auto" — squash + delete branch + auto-merge wired in one gh command.
+
+#### Process pattern observed this session
+
+**UX read can flip a technically-correct implementation.** PR #1140 passed all gates (lint, format, types, tests, build, link check, axe-clean by inspection, AA contrast). The rejection was on tone, not correctness — a dimension no automated gate measures. The 30-minute implementation cost was bounded; the cost of _not_ trying it would have been guessing about UX from prose alone. Building the artifact made the right call legible in a way that descriptions couldn't have. Generalizes: when a UX decision is non-obvious, a buildable prototype is cheaper than a longer debate.
+
+**Branching off `main` is the right de-stack move when a feature branch is rejected mid-stream.** Cherry-picking only the wiki file onto a fresh `docs/wiki-mtf-confidence` branch produced an internally-consistent PR (title, body, commit, branch name all match the actual decision). Trying to amend PR #1140's title/body to match the wiki-only outcome would have left the branch name and prior commit framing wrong. Confirmed by `base/git.md` §"Close-and-resubmit when framing drifts."
+
+#### Follow-ups for next session
+
+- **#1132** — review.py ADR-044 fan-out fix (P2 bug, carried since S142). Should land before any B'-flavored work.
+- **#1131** — detection-method survey (P2). Stays open as documented C-trigger; do not pick up before trigger.
+- **#1135** — B' implementation. P3 Backlog. Do not pick up before trigger.
+- **#1122** — unblocked since S143; can pick up independently now that #1134 UI is parked.
+- **#1134** — UI half remains deferred. Revisit when chart-quality direction is settled (i.e., when the HIGH/LOW distinction is worth surfacing on every lens page).
+- **Epic #1112** — stays open as a consequence of #1134 deferral.
+- **Chart quality / direction work** — implicit next-session theme from this session's call. The actual scope (which extractor improvements, which brand to focus on, which acceptance bar) is unscoped and needs discussion before picking it up.
+- **Carried longer:** ADR-043 per-frequency fan-out; #1085 orphan optical-specs dirs; ADR-014 mean-rule validation; Voigtländer triage (#800).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort unchanged.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- 3 Tier 1 anchors (unchanged).
+- Aggregate calibration: 583/627 (93.0%) (unchanged).
+- 348 pytest pass (unchanged — no Python source change).
+- 222 vitest pass (unchanged — no test changes).
+- 54 ADRs total (unchanged — no new ADR; the session's call is operational, not architectural).
+- 9 declared MTF profiles (unchanged).
+- Auto-confidence gate coverage: 101 of 103 charts (unchanged).
+- v0.8.0 open: #1112 epic + #1122 + #1131 + #1132 + #1134 (UI deferred). Backlog: #1135.
+- `mtf-readings.ts` unchanged — per-pass confidence still carried in the data; lens pages render every pass the same way for now.
+- Wiki: +1 entry (`mtf-confidence`).
