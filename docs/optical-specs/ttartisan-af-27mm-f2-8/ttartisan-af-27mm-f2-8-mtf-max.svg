@@ -25,7 +25,7 @@
 <text class="axis-label axis-x" x="304.0" y="186">14</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
 <polyline class="curve curve-10" style="stroke:#c89b3c" points="62.8,21.3 89.6,21.5 116.4,21.3 143.2,22.2 170.0,21.3 196.8,23.1 223.6,21.0 250.4,19.4 277.2,20.8"/>
-<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="62.8,21.3 89.6,21.3 116.4,21.3 143.2,22.7 170.0,21.3 196.8,23.1 223.6,21.7 250.4,22.7 277.2,25.0" stroke-dasharray="4 2"/>
+<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="62.8,26.4 89.6,21.3 116.4,21.3 143.2,22.7 170.0,21.3 196.8,23.1 223.6,21.7 250.4,22.7 277.2,25.0" stroke-dasharray="4 2"/>
 <polyline class="curve curve-30" style="stroke:#6b9bd2" points="62.8,49.8 89.6,48.2 116.4,47.9 143.2,52.3 170.0,57.7 196.8,59.3 223.6,51.4 250.4,38.4 277.2,40.5"/>
 <polyline class="curve curve-30 curve-m" style="stroke:#6b9bd2" points="62.8,48.4 89.6,43.5 116.4,41.9 143.2,43.3 170.0,44.5 196.8,41.4 223.6,44.7 250.4,44.7 277.2,49.6" stroke-dasharray="4 2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="21.3" r="2"/>
@@ -37,7 +37,7 @@
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="223.6" cy="21.0" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="250.4" cy="19.4" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="277.2" cy="20.8" r="2"/>
-<circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="21.3" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="26.4" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="21.3" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="116.4" cy="21.3" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="143.2" cy="22.7" r="2"/>
