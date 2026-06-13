@@ -7080,3 +7080,95 @@ Theme: step back from per-edge-case debugging before opening #1122. User asked f
 - Auto-confidence gate coverage: 101 of 103 charts (unchanged).
 - v0.8.0 open issue count: 1 active task before session (#1122) + #1112 epic; now 2 spikes (#1130 + #1131) + 1 bug (#1132) + 1 blocked task (#1122) + #1112 epic. No open P1 implementation work; only the #1130 strategy spike at P1.
 - Epic #1112 follow-up tally: unchanged at 7-of-7 wontdo. Round 0 baseline on the fisheye now establishes the quantitative target the open #1122 (and any future per-chart investigation) must beat before adoption.
+
+### Session 143 — ADR-053 TTartisan cohort strategy
+
+Date: 2026-06-13 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up the #1130 strategy spike. Ran two probes (Q2 HIGH/LOW split, Q5 autotriage precision vs Tier 1 anchor) before drafting ADR-053. The probes flipped the answer from the issue's original A+B framing to **A only + defer B as B' (per-family prior whitelist) + keep C deferred** — Q5 showed the gate is correct against the one anchor we have, so adding more anchors wouldn't move it. The fix-shape Q5 points at is prior tuning, not anchor scaffolding.
+
+#### Branch / merge state
+
+- Started on `main` clean. Branch `spike/1130-ttartisan-strategy`. PR #1136 squash-merged with user permission. Branch deleted. Ends on `main` clean.
+
+#### PRs merged
+
+- **#1136** — `docs(adr): ADR-053 TTartisan cohort strategy (#1130)`. Single-file ADR; no source changes.
+
+#### Issues opened / closed
+
+- **#1130 closed** — Spike output is ADR-053 + #1134 + #1135. Comment posted with full spike outcome.
+- **#1134 opened** — `Per-pass MTF confidence badge: schema, migration, lens-page UI` (task, P1, v0.8.0). A from ADR-053. Schema gains `confidence: HIGH|LOW` + `confidenceReason: string` per pass; emit step writes the new fields; lens page renders a visible badge linking to wiki explainer. UI shape decision deferred to implementation.
+- **#1135 opened** — `Per-style-family prior whitelist (B' from ADR-053): suppress unsound priors per profile` (task, P3, Backlog). B' from ADR-053. Deferred-but-tracked: do not pick up before trigger (badged data accumulates without pushback, OR a 2nd brand shows the same Q5 pattern).
+- **#1112 commented** — closure trigger named: epic closes when #1134 ships.
+
+#### Key changes
+
+- New ADR: `docs/decisions/053-ttartisan-cohort-strategy.md` (335 lines).
+- No source changes.
+
+#### Probe findings (verbatim in ADR-053)
+
+**Q2 — TTartisan HIGH/LOW per-chart split** (probe `probe_ttartisan_split.py`, deleted before commit):
+
+- 19 charts / 38 per-pass verdicts.
+- 0 entirely-LOW, 6 entirely-HIGH (32%), 13 partially-LOW (68%) — always one pass, never both.
+- 25 HIGH / 13 LOW per-pass (66% HIGH).
+- `max` aperture LOW dominated by `precision_below_threshold`; `stopped` LOW dominated by `prior_failed_center_ge_edge` + `not_suspiciously_flat` + `low_freq_ge_high`.
+- **Every TTartisan chart ships at least one HIGH-confidence aperture.** A's badge framework is shippable across the brand with zero charts dropped.
+
+**Q5 — autotriage precision vs `ttartisan-50mm-f1-2` (88 GT)** (probe `probe_q5_autotriage_vs_gt.py`, deleted before commit):
+
+| pass            | verdict | reason           | readings vs GT                                  | GT satisfies prior?                     | classification       |
+| --------------- | ------- | ---------------- | ----------------------------------------------- | --------------------------------------- | -------------------- |
+| max (f/1.2)     | HIGH    | —                | 43/44 within ±0.05 (worst p95 0.072 on freq30M) | yes                                     | TN (correct)         |
+| stopped (f/5.6) | LOW     | `center_ge_edge` | 41/43 within ±0.05; freq30S p95 0.147           | **freq30S: GT center 0.77 < edge 0.84** | TP against the prior |
+
+- The gate is correct on this anchor — GT itself violates the prior.
+- But readings on the LOW pass are still predominantly within tolerance. The gate is rejecting plausibility, not accuracy.
+- **Adding more Tier 1 anchors won't move the gate.** The fix-shape is per-style-family prior whitelist (B'), not anchor scaffolding.
+
+#### Verification
+
+- `git status` clean on `main`.
+- `npm run check` — 0 errors / 0 warnings on project code.
+- All PR #1136 CI checks green: CodeQL, gate, analyze, changes, gitleaks, links pass; build and lighthouse skipped (docs-only PR, correct skip per quality-gates.md §"Skip noisy gates when input is unchanged").
+- `gh issue view 1130` shows CLOSED with spike-outcome comment.
+- `gh issue view 1134 1135` both OPEN with correct labels + milestones.
+- Both probe scripts deleted per `quality.md` §Probe scripts before commit.
+- TTartisan review-HTML side-effect files (auto-written by autotriage runs) reverted before commit; tree contains only the ADR.
+
+#### Key decisions (ADR-053)
+
+- **A only.** Q2 shows every chart is shippable (0 entirely-LOW); A's badge framework is brand-agnostic and bounded in cost.
+- **Defer B → B'.** Q5 shows the gate is correct, not buggy. Adding anchors would document that the prior is unsound rather than fix anything. The real fix is per-family prior whitelist; deferred until A's outcome data warrants it or a 2nd brand exhibits the same pattern.
+- **Keep C (#1131) and D deferred.** Concrete escalation triggers named: C fires when B' lands AND gate misfire >30% across new anchors, OR 2 consecutive new-brand cohorts produce <50% HIGH-ratio under A. D fires only if C runs and produces no method meeting median |Δ| ≤ 0.03 / p95 |Δ| ≤ 0.05 in a 6-week timebox.
+- **#1112 closes when #1134 ships.** Cohort-hardening is replaced by A's brand-agnostic badge framework. Probe-first policy operational and survives the closure.
+- **#1122 unblocked.** Round 0's actual finding (right-edge convergence dominates, not the named sample[1] dive) is the actual target if/when picked up.
+- **Process pattern reinforced.** The spike's recommendation flipped from A+B parallel (issue framing) to A only (probe finding) because Q5 measured something the issue couldn't predict. Two-hour probe spend saved ~21 maintainer-hours that B's original anchor scaffolding would have consumed for zero gate improvement. Probing before drafting the ADR was the right call.
+
+#### Probe artifacts
+
+- `tools/probe_ttartisan_split.py` (Q2) — 38 per-pass verdicts across 19 TTartisan charts, classified by (HIGH-only / partial / LOW-only) and split by aperture phase. Deleted.
+- `tools/probe_q5_autotriage_vs_gt.py` (Q5) — readings-vs-GT delta + GT-side prior check on `ttartisan-50mm-f1-2`, both apertures. Deleted.
+
+#### Follow-ups for next session
+
+- **#1134** — A implementation. Schema decision, emit-step update, UI badge, wiki explainer. P1 v0.8.0.
+- **#1132** — review.py ADR-044 fan-out fix. P2; carried from S142. Should land before any new Tier 1 anchor scaffolding so refresh works (relevant if/when B' fires).
+- **#1131** — Detection-method survey. P2; stays open as documented C-trigger; do not pick up before trigger fires.
+- **#1135** — B' implementation. P3 Backlog. Do not pick up before trigger.
+- **#1122** — unblocked; pick up only after #1134 lands or alongside it if the right-edge investigation informs the badge wording.
+- **Carried longer:** ADR-043 per-frequency fan-out (Fujifilm-permfreq `pass_key` across `chart.views`); #1085 orphan optical-specs dirs; ADR-014 mean-rule validation; Voigtländer triage (#800).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort unchanged.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- Aggregate calibration: 583/627 (93.0%) (unchanged — no extraction).
+- 3 Tier 1 anchors (unchanged).
+- 345 pytest pass (unchanged — no source change).
+- **53 ADRs total** (+1: ADR-053).
+- 9 declared MTF profiles (unchanged).
+- Auto-confidence gate coverage: 101 of 103 charts (unchanged).
+- v0.8.0 open: #1112 epic + #1122 (unblocked) + #1131 + #1132 + #1134. Backlog: #1135. Spike #1130 closed.
