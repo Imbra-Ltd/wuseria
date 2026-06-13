@@ -7172,3 +7172,81 @@ Theme: pick up the #1130 strategy spike. Ran two probes (Q2 HIGH/LOW split, Q5 a
 - 9 declared MTF profiles (unchanged).
 - Auto-confidence gate coverage: 101 of 103 charts (unchanged).
 - v0.8.0 open: #1112 epic + #1122 (unblocked) + #1131 + #1132 + #1134. Backlog: #1135. Spike #1130 closed.
+
+### Session 144 — #1134 schema + emit half
+
+Date: 2026-06-13 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1134 (A from ADR-053). Decided middle scope — schema + emit pipeline this session, UI + wiki next session. The cohort is now badged end-to-end in `mtf-readings.ts`: 25 HIGH + 13 LOW per-pass verdicts on TTartisan, matching ADR-053's Q2 numbers byte-for-byte.
+
+#### Branch / merge state
+
+- Started on `main` (with the uncommitted S143 wrap journal entry — first action was branching `docs/session-143-wrap`, committing, pushing, opening PR #1137 and merging).
+- Then branched `feat/1134-confidence-schema-emit` for the schema/emit work. PR #1138 squash-merged with user permission. Branch deleted. Ends on `main` clean.
+
+#### PRs merged
+
+- **#1137** — `docs(journal): S143 wrap — ADR-053 TTartisan cohort strategy (#1130)`. Caught the missed S143 wrap-commit before starting #1134.
+- **#1138** — `feat(mtf): per-pass confidence schema + emit (#1134 schema half)`. ADR-054 + schema additions + emit pipeline updates + 5 new tests.
+
+#### Issues opened / closed
+
+- **#1134 commented** — status comment posted: schema + emit half shipped, UI + wiki deferred to next session. Issue stays OPEN.
+- **#1112 epic** — stays open; closes when #1134's UI half ships per ADR-053.
+
+#### Key changes
+
+- **`src/types/mtf.ts`** — added `type MtfConfidence = "HIGH" | "LOW"`; added `confidence: MtfConfidence` (required) and `confidenceReason?: string` (optional) to `MtfChart`. Exported `MtfConfidence`.
+- **`src/data/mtf-readings.ts`** — migrated 182 hand-curated chart literals to `confidence: "HIGH"` via a throwaway probe (`tools/probe_migrate_confidence.py`, deleted before commit). Then TTartisan emit `--write` overwrote the 38 TTartisan panels with autotriage-driven HIGH/LOW + reason codes.
+- **`src/data/mtf-readings.test.ts`** — added 2 validation tests: confidence is HIGH or LOW; LOW iff confidenceReason present.
+- **`tools/mtfdigitizer/emit.py`** — added `_verdict_for_panel` helper; wired `emit_lens` to run the autotriage gate (`score_chart` + `check_all` + `triage`) per view; `_format_chart` and `_format_entry` now accept `confidence` + `confidence_reason`. `ChartPanel` tuple extended from 3 to 5 elements.
+- **`tools/mtfdigitizer/scripts/emit_ttartisan_tier2.py`** — refactored `_emit_one_lens` to use `autotriage._run_pipeline` directly (single source of truth for verdict + extracted readings). `_format_chart_block` accepts confidence + reason.
+- **`tools/mtfdigitizer/scripts/emit_fuji_tier2.py`** — `_format_chart_block` emits a `confidence: "HIGH"` literal (Fujifilm Tier 2 is hand-curated from manufacturer optical-design charts; doesn't go through the gate).
+- **`tools/mtfdigitizer/tests/test_emit.py`** — updated 5 existing tests to the new 5-tuple `panels=` shape; added 1 new test for LOW+reason emission.
+- **`tools/mtfdigitizer/tests/test_emit_ttartisan_tier2.py`** — updated 4 existing tests to the new `_format_chart_block` signature; added 2 new tests for HIGH/LOW emission shape.
+- **`docs/decisions/054-per-pass-confidence-schema.md`** — ADR-054 records the schema decision.
+
+#### Verification
+
+- `npm run validate` green: 461 pages, 0 errors, 0 warnings.
+- vitest 222/222 (was 220 in S143, +2 new validation tests).
+- pytest 348/348 (was 345 in S143, +3 new emit tests).
+- TTartisan emit dry-run produced 25 HIGH + 13 LOW + 13 reason codes — matches ADR-053's Q2 numbers byte-for-byte (0 entirely-LOW; 6 entirely-HIGH; 13 partially-LOW; 25/13 per-pass split).
+- `ttartisan-50mm-f1-2`: f/1.2 = HIGH, f/5.6 = LOW with `confidenceReason: "prior_failed_center_ge_edge"`. Matches ADR-053 Q5.
+- PR #1138 all 8 CI checks green: CodeQL, analyze, build, changes, gate, gitleaks, lighthouse, links.
+
+#### Key decisions (ADR-054)
+
+- **`confidence` is required, not optional.** The type system catches a missing field at compile time; an optional field would silently default and obscure data-quality regressions. Migration cost (182 entries) was bounded; one mechanical pass.
+- **`confidenceReason` is a free-form string, not a TS enum.** Mirroring `LowReason` in TS would force manual sync on every ADR-052 reason-code change. The Python enum is the authoritative source; the validation test on the TS side enforces the contract (LOW iff non-empty reason).
+- **Multi-reason collapse: emit writes the first reason only.** The autotriage CLI run remains the authoritative full-reason report when the maintainer needs the list; the per-pass `confidenceReason` on the lens page is the primary failure code, not a full diagnostic dump.
+- **Hand-curated entries are HIGH.** A three-way enum (`HIGH | LOW | OPERATOR`) was considered and rejected — operator-verified data is at least as trustworthy as an autotriage HIGH pass; adding a third state forces a UI decision without behavioural difference.
+- **Sample data is kept on LOW passes.** Per ADR-053 Q5 evidence: extracted readings on LOW passes are predominantly within ±0.05 of GT (41/43 on 50/1.2 stopped). Nulling samples would discard mostly-accurate data because of a plausibility-prior violation. The badge surfaces the verdict; the underlying data stays available.
+- **Middle scope (schema + emit) before UI.** The decision to defer UI to next session was deliberate: the data shape needs to land first so the next session can focus entirely on UI/wiki without redesign risk.
+
+#### Probe artifacts
+
+- `tools/probe_migrate_confidence.py` (deleted before commit) — inserted `confidence: "HIGH"` immediately before every `readings: [` in `mtf-readings.ts`. 182 insertions, exact 1-to-1 with the 182 type errors from the schema change. Throwaway per `quality.md` §Probe scripts.
+
+#### Follow-ups for next session
+
+- **#1134** — UI half (lens-page LOW badge + `/wiki/mtf-confidence` explainer). UI shape decision deferred to implementation: inline pill vs footnote icon vs other treatments. Wiki page explains the four ADR-052 reason codes plus the general pipeline.
+- **#1132** — review.py ADR-044 fan-out fix (P2 bug, carried since S142). Should land before any B'-flavored work so refresh works.
+- **#1131** — detection-method survey (P2). Stays open as documented C-trigger; do not pick up before trigger.
+- **#1135** — B' implementation. P3 Backlog. Do not pick up before trigger.
+- **#1122** — unblocked since S143; pick up alongside #1134 UI if right-edge findings inform badge wording.
+- **Carried longer:** ADR-043 per-frequency fan-out (Fujifilm-permfreq `pass_key` across `chart.views`); #1085 orphan optical-specs dirs; ADR-014 mean-rule validation; Voigtländer triage (#800).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Cohort unchanged.
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- 3 Tier 1 anchors (unchanged).
+- Aggregate calibration: 583/627 (93.0%) (unchanged — no extraction).
+- **348 pytest pass** (+3 from S143's 345).
+- **222 vitest pass** (+2 from S143's 220).
+- **54 ADRs total** (+1: ADR-054).
+- 9 declared MTF profiles (unchanged).
+- Auto-confidence gate coverage: 101 of 103 charts (unchanged).
+- v0.8.0 open: #1112 epic + #1122 (unblocked) + #1131 + #1132 + **#1134 (half done, UI/wiki remain)**. Backlog: #1135.
+- `mtf-readings.ts` now carries per-pass confidence on every entry: 169 HIGH + 13 LOW + 13 reason codes (182 + 13 = 195 line delta from the schema migration + TTartisan emit).
