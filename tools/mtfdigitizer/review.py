@@ -44,13 +44,13 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+from .aperture_passes import aperture_passes_for_view
 from .loader import load_chart_bgr
 from .pipeline import ExtractedChart, SampledReading, extract_chart
 from .pipeline.dispatch import parse_field_name
 from .pipeline.plotbox import image_height_mm_to_x_pixel
 from .pipeline.rendermatch import fields_in
 from .pipeline.types import PlotBox
-from .family_profile import profile_for_chart
 from .referenceset import REFERENCE_CHARTS
 from .referenceset.charts import PlotBoxCoords, ReferenceChart
 
@@ -356,39 +356,76 @@ def _svg_path_for(image_path: Path) -> Path:
     return image_path.with_suffix(".svg")
 
 
-def _emit_chart(chart: ReferenceChart, *, check_only: bool) -> ReviewOutputs | None:
-    """Render one reference chart's review file. Returns ``None`` in
-    ``--check`` mode after rendering everything in memory."""
+def _emit_chart(
+    chart: ReferenceChart,
+    *,
+    check_only: bool,
+    out_dir: Path | None = None,
+) -> list[ReviewOutputs]:
+    """Render one reference chart's review file(s). Returns an empty list
+    in ``--check`` mode after rendering everything in memory.
+
+    Multi-aperture charts (ADR-044) fan out to one review file per
+    aperture via ``aperture_passes_for_view`` — matching the per-aperture
+    output naming convention svg.py uses (``<stem>-<aperture>.svg``) and
+    the per-aperture review files autotriage.py already writes. Without
+    this fan-out, ``extract_chart`` is called with the full multi-aperture
+    profile and ``dispatch.field_skeletons`` raises KeyError because
+    ``unique_named_hues`` lists N aperture hues but ``frequencies_lpmm``
+    only lists the per-aperture frequencies (#1132).
+
+    ``out_dir`` defaults to the source image's directory (the production
+    layout under ``docs/optical-specs/<slug>/``); tests pass a temp dir
+    to avoid touching the reference tree.
+    """
     assert chart.plot_box is not None
-    profile = profile_for_chart(chart)
     image_path = REPO_ROOT / chart.chart_path
     plot_box = _to_plotbox(chart.plot_box)
-    extracted = extract_chart(
-        image_path, profile, plot_box, image_height_mm=chart.image_height_mm
-    )
+    passes = aperture_passes_for_view(chart, image_path)
+    multi = len(passes) > 1
 
-    if check_only:
-        # Exercise the overlay + HTML paths without touching disk so
-        # --check still catches regressions in either code path.
-        bgr = load_chart_bgr(image_path)
-        _ = render_overlay(bgr, extracted.readings, plot_box, chart.image_height_mm)
-        _ = render_review_html(
-            title=image_path.stem,
-            paths=ReviewPaths(
-                original_filename=image_path.name,
-                svg_filename=_svg_path_for(image_path).name,
-                overlay_filename=f"{image_path.stem}-overlay.png",
-            ),
+    outputs: list[ReviewOutputs] = []
+    for aperture, profile in passes:
+        extracted = extract_chart(
+            image_path, profile, plot_box, image_height_mm=chart.image_height_mm
         )
-        return None
+        stem_override = f"{image_path.stem}-{aperture}" if multi else None
+        stem = stem_override if stem_override is not None else image_path.stem
+        svg_path = (
+            image_path.with_name(f"{stem_override}.svg")
+            if stem_override is not None
+            else _svg_path_for(image_path)
+        )
 
-    return write_review(
-        extracted,
-        image_path,
-        plot_box=plot_box,
-        image_height_mm=chart.image_height_mm,
-        svg_path=_svg_path_for(image_path),
-    )
+        if check_only:
+            # Exercise the overlay + HTML paths without touching disk so
+            # --check still catches regressions in either code path.
+            bgr = load_chart_bgr(image_path)
+            _ = render_overlay(
+                bgr, extracted.readings, plot_box, chart.image_height_mm
+            )
+            _ = render_review_html(
+                title=stem,
+                paths=ReviewPaths(
+                    original_filename=image_path.name,
+                    svg_filename=svg_path.name,
+                    overlay_filename=f"{stem}-overlay.png",
+                ),
+            )
+            continue
+
+        outputs.append(
+            write_review(
+                extracted,
+                image_path,
+                plot_box=plot_box,
+                image_height_mm=chart.image_height_mm,
+                svg_path=svg_path,
+                out_dir=out_dir,
+                stem_override=stem_override,
+            )
+        )
+    return outputs
 
 
 def main() -> None:
@@ -408,13 +445,14 @@ def main() -> None:
 
     for chart in runnable:
         outputs = _emit_chart(chart, check_only=args.check)
-        if outputs is None:
+        if not outputs:
             print(f"  {chart.slug:<40}  rendered (--check)")
             continue
-        rel_html = outputs.html_path.relative_to(REPO_ROOT)
-        rel_overlay = outputs.overlay_path.relative_to(REPO_ROOT)
-        print(f"  {chart.slug:<40}  wrote  {rel_html}")
-        print(f"  {'':<40}  wrote  {rel_overlay}")
+        for out in outputs:
+            rel_html = out.html_path.relative_to(REPO_ROOT)
+            rel_overlay = out.overlay_path.relative_to(REPO_ROOT)
+            print(f"  {chart.slug:<40}  wrote  {rel_html}")
+            print(f"  {'':<40}  wrote  {rel_overlay}")
 
 
 if __name__ == "__main__":
