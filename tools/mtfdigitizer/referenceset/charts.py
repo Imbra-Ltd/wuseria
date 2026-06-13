@@ -268,6 +268,66 @@ _TTARTISAN_50_GT: GroundTruthCurves = {
     },
 }
 
+# TTartisan 7.5mm f/2.0 fisheye — second Tier 1 anchor for the
+# `ttartisan-4color-dual-aperture` style family (ADR-041 permits
+# multiple anchors per (brand, style_family); the Fujifilm GF 23 / XF
+# 23 pair set the precedent). Cross-validates the dispatch against
+# a fisheye design where edge behavior is dominated by the field
+# crash characteristic — a stress case the 50/1.2 anchor does not
+# exercise. Also exercises the #1122 vertical-chrome strip on the
+# 30M curve, where the dispatch had been picking the y-axis spine
+# as a ridge candidate.
+#
+# Image format: 800x600 px RGB (same TTartisan template as 50/1.2).
+# Image height: 14.0 mm (APS-C — Fuji X mount).
+# Plot box: detector-detected (verified by `tools/probe_ttartisan_75_corner.py`
+# during the #1122 investigation, then folded into this entry); same
+# data-edge convention as 50/1.2.
+#
+# Chart legend: solid = S (sagittal), dashed = T (tangential);
+# black/grey = f/2.0 (max), red/orange = f/8 (stopped); within each
+# aperture, the higher-luminance color (black, red) is 10 lp/mm and
+# the lower-luminance (grey, orange) is 30 lp/mm.
+#
+# Eye-read against printed 0.1-spaced gridlines (eye precision
+# ~±0.02 mid-curve, ±0.04 near crossings). Ambiguous positions
+# noted inline.
+_TTARTISAN_75_GT: GroundTruthCurves = {
+    "max": {  # f/2.0 — black/grey curves
+        # Black solid — 10S — f/2.0 sagittal at 10 lp/mm.
+        # Flat ~0.96 to 8mm, then sharp right-edge crash to ~0.74 at 14mm.
+        "freq10S": (0.96, 0.96, 0.96, 0.96, 0.96, 0.96, 0.96, 0.95, 0.93, 0.85, 0.74),
+        # Black dashed — 10M (chart label T10_F2) — f/2.0 tangential.
+        # Flatter than 10S; only mild edge dip to 0.89 at 14mm.
+        "freq10M": (0.94, 0.94, 0.94, 0.94, 0.94, 0.94, 0.93, 0.92, 0.92, 0.92, 0.89),
+        # Grey solid — 30S — f/2.0 sagittal at 30 lp/mm.
+        # Dip-and-recover shape: 0.71 center, dips to 0.46 around 11mm,
+        # recovers to 0.58 at 14mm (the corner uptick #1122 was about).
+        # Position [8]=0.46 and [10]=0.58 are ±0.04 — curves crossing.
+        "freq30S": (0.71, 0.70, 0.68, 0.66, 0.62, 0.55, 0.51, 0.50, 0.46, 0.52, 0.58),
+        # Grey dashed — 30M (chart label T30_F2) — f/2.0 tangential.
+        # Holds 0.65-0.72 through 11mm then sharp drop to 0.49 at 14mm
+        # (±0.03 at edge).
+        "freq30M": (0.72, 0.72, 0.71, 0.69, 0.66, 0.65, 0.66, 0.66, 0.66, 0.59, 0.49),
+    },
+    "stopped": {  # f/8 — red/orange curves
+        # Red solid — 10S — f/8 sagittal at 10 lp/mm.
+        # Essentially flat across the field.
+        "freq10S": (0.94, 0.94, 0.94, 0.94, 0.94, 0.94, 0.94, 0.94, 0.93, 0.93, 0.93),
+        # Red dashed — 10M (chart label T10_F8) — f/8 tangential.
+        # Tracks 10S closely (red pair overlaps in the chart).
+        "freq10M": (0.94, 0.94, 0.94, 0.94, 0.94, 0.94, 0.94, 0.94, 0.94, 0.93, 0.93),
+        # Orange solid — 30S — f/8 sagittal at 30 lp/mm.
+        # Mild dip at 4mm, recovers to 0.75 at 7mm, then drops with
+        # the grey curves to 0.58 at 14mm.
+        "freq30S": (0.77, 0.76, 0.75, 0.74, 0.73, 0.75, 0.73, 0.70, 0.65, 0.61, 0.58),
+        # Orange dashed — 30M (chart label T30_F8) — f/8 tangential.
+        # Most stable curve in the chart; 0.78-0.80 throughout, mild
+        # edge dip to 0.78 at 14mm.
+        "freq30M": (0.78, 0.79, 0.79, 0.80, 0.80, 0.80, 0.80, 0.79, 0.79, 0.78, 0.78),
+    },
+}
+
 # Tokina atx-m 23mm — x positions: 0, 1.4, 2.8, ..., 14.0
 # Beige bg, red = S (solid), blue = M (dotted), upper pair = 10 lp/mm,
 # lower pair = 30 lp/mm. The 30S red has a curious local maximum near
@@ -730,6 +790,37 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         # scaffolder would write.
         plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=_TTARTISAN_50_GT,
+    ),
+    ReferenceChart(
+        slug="ttartisan-7-5mm-f2-0-fisheye",
+        chart_path="docs/optical-specs/ttartisan-7-5mm-f2-0-fisheye/ttartisan-7-5mm-f2-0-fisheye-mtf.png",
+        style_family="ttartisan-4color-dual-aperture",
+        # Aperture order MUST match the profile's
+        # `apertures_per_chart=("max", "stopped")` — orchestrator uses
+        # the labels positionally (ADR-044, #1074).
+        apertures=("f/2", "f/8"),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes=(
+            "Second Tier 1 anchor for `ttartisan-4color-dual-aperture` "
+            "(ADR-041 allows multiple anchors per (brand, style_family); "
+            "see the GF 23 / XF 23 pair in `fujifilm-permfreq`). Fisheye "
+            "design stresses edge behavior: the 10S right-edge crash and "
+            "the 30S dip-and-recover that #1122 traced to the vertical "
+            "chrome strip on the y-axis spine. 800x600 dual-aperture "
+            "template (same as 50/1.2); max aperture f/2 (black/grey "
+            "curves), stopped aperture f/8 (red/orange curves). GT "
+            "eye-read by agent against printed 0.1 gridlines (88 values: "
+            "2 apertures x 2 frequencies x {S,M} x 11 fractions); "
+            "scaffolder `_TIER1_SKIP_SLUGS` excludes this slug from "
+            "regeneration."
+        ),
+        # Plot box (data-edge convention, #954). Detector-detected
+        # values from `ttartisan_plotbox.detect_ttartisan_plotbox` for
+        # the APS-C scheme; identical to the 50/1.2 since the template
+        # is identical.
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
+        ground_truth=_TTARTISAN_75_GT,
     ),
     ReferenceChart(
         slug="7artisans-35mm-f1-2-mark-ii",

@@ -91,6 +91,7 @@ class _ChartFile:
 # (the `test_no_duplicate_slugs` assertion would fail).
 _TIER1_SKIP_SLUGS: frozenset[str] = frozenset({
     "ttartisan-50mm-f1-2",
+    "ttartisan-7-5mm-f2-0-fisheye",
 })
 
 
