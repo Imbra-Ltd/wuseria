@@ -104,6 +104,15 @@ from .types import PlotBox
 # stray pixel between dash and gridline). Filtered before clustering.
 _MIN_RUN_LENGTH: int = 1
 
+# A column run taller than this is vertical chrome (axis tick labels,
+# axis line ink, legend box edge) that `_strip_chrome` does not catch —
+# its row-coverage pass strips horizontal chrome only. Real MTF curve
+# ridges measured across the reference set fit within ~3 px at p95 and
+# ~13 px at p99; runs >20 px are chrome. The fisheye #1122 case fired
+# 52-px and 265-px runs at the leftmost two plot columns (Y-axis "1"
+# label + axis line) and corrupted downstream densify-pass interpolation.
+_MAX_RUN_LENGTH: int = 20
+
 # Rows within this distance (inclusive) belong to the same column run.
 # Larger values merge adjacent curves; smaller values split a single
 # anti-aliased curve into two runs. 1 means "touching only".
@@ -210,7 +219,13 @@ def _strip_chrome(mask: np.ndarray, plot_box: PlotBox) -> np.ndarray:
 def _column_runs(
     column: np.ndarray, gap_tolerance: int = _RIDGE_RUN_GAP_TOLERANCE
 ) -> list[tuple[float, int]]:
-    """Group a binary column into runs; return (centroid_y, length) per run."""
+    """Group a binary column into runs; return (centroid_y, length) per run.
+
+    Runs outside ``[_MIN_RUN_LENGTH, _MAX_RUN_LENGTH]`` are dropped: too
+    short is anti-aliasing noise, too tall is vertical chrome (axis
+    label glyphs, axis line) that `_strip_chrome`'s row-coverage pass
+    misses.
+    """
     rows = np.nonzero(column)[0]
     if rows.size == 0:
         return []
@@ -223,12 +238,12 @@ def _column_runs(
             prev = y_int
             continue
         length = prev - start + 1
-        if length >= _MIN_RUN_LENGTH:
+        if _MIN_RUN_LENGTH <= length <= _MAX_RUN_LENGTH:
             runs.append(((start + prev) / 2.0, length))
         start = y_int
         prev = y_int
     length = prev - start + 1
-    if length >= _MIN_RUN_LENGTH:
+    if _MIN_RUN_LENGTH <= length <= _MAX_RUN_LENGTH:
         runs.append(((start + prev) / 2.0, length))
     return runs
 
