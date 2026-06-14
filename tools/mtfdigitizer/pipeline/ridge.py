@@ -139,6 +139,25 @@ _RIDGE_TRACK_MAX_DX: int = 40
 # tighter selection happens in track ranking below.
 _MIN_TRACK_COVERAGE: float = 0.10
 
+# Isolated-candidate filter (#1157): a ridge candidate is a "real curve
+# pixel" only if it belongs to a connected cluster spanning at least
+# `_RIDGE_ISOLATION_MIN_COLS` distinct columns, where two candidates
+# connect when their column distance is <= `_RIDGE_ISOLATION_DX` AND
+# row distance <= `_RIDGE_ISOLATION_DY`. Standalone 1-2 column "blobs"
+# (gridline fragments surviving `_strip_chrome`, JPEG/AA noise between
+# real curves) are rejected. Sized to:
+#   - Bridge dashed-curve gaps (dashes 3-4 px wide, gaps 3-4 px →
+#     adjacent column has a candidate within ~5 rows even for sparsest
+#     dashed curves), so real dashed candidates survive.
+#   - Bridge the right-axis ~3-column drop-out where a dashed curve's
+#     center pixels go missing before the corner (#1157 max.freq30M
+#     case on TTartisan 7.5 fisheye).
+#   - Drop 1-2 column blobs that the DP otherwise picks as the wrong
+#     ridge (gridline fragments at y=143, mid-air noise at y=204).
+_RIDGE_ISOLATION_DX: int = 4
+_RIDGE_ISOLATION_DY: int = 8
+_RIDGE_ISOLATION_MIN_COLS: int = 3
+
 
 @dataclass(frozen=True)
 class Track:
@@ -258,6 +277,68 @@ def _extract_ridge_points(
         for centroid_y_local, _length in _column_runs(col):
             points.append((x, centroid_y_local + plot_box.y_top))
     return points
+
+
+def _filter_isolated_ridge_points(
+    points: list[tuple[int, float]],
+    *,
+    dx: int = _RIDGE_ISOLATION_DX,
+    dy: int = _RIDGE_ISOLATION_DY,
+    min_cluster_cols: int = _RIDGE_ISOLATION_MIN_COLS,
+) -> list[tuple[int, float]]:
+    """Drop ridge candidates whose local cluster spans fewer than
+    ``min_cluster_cols`` distinct columns.
+
+    Two candidates are in the same cluster when their column distance is
+    ``<= dx`` and row distance ``<= dy`` (transitively, via union-find).
+    Real curves — even sparse dashed ones — form long multi-column
+    clusters. Standalone 1-2 column "blobs" are gridline fragments
+    surviving ``_strip_chrome`` (low-coverage 0.9 gridline at TTartisan
+    7.5 max-grey y=143) or mid-air JPEG/AA noise (TTartisan 7.5
+    max-grey y=204 between the orange S30 and T30 curves at the right
+    edge). Both fool the ridge DP into picking the wrong path. See
+    issue #1157.
+
+    Conservative bridging: ``dx=4, dy=8`` keeps real dashed candidates
+    even across a ~3-column drop-out before the right axis (the
+    TTartisan 7.5 max.freq30M case where the curve center pixels go
+    missing for x in [604, 606] but the corner pixel at x=607 is real).
+    """
+    if not points:
+        return points
+    n = len(points)
+    parent = list(range(n))
+
+    def find(i: int) -> int:
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+
+    def union(i: int, j: int) -> None:
+        ri, rj = find(i), find(j)
+        if ri != rj:
+            parent[ri] = rj
+
+    by_col: dict[int, list[int]] = {}
+    for idx, (col, _y) in enumerate(points):
+        by_col.setdefault(col, []).append(idx)
+
+    for idx, (col, y) in enumerate(points):
+        for d in range(1, dx + 1):
+            for other in by_col.get(col + d, ()):
+                if abs(points[other][1] - y) <= dy:
+                    union(idx, other)
+
+    comp_cols: dict[int, set[int]] = {}
+    for idx, (col, _y) in enumerate(points):
+        comp_cols.setdefault(find(idx), set()).add(col)
+
+    return [
+        points[idx]
+        for idx in range(n)
+        if len(comp_cols[find(idx)]) >= min_cluster_cols
+    ]
 
 
 def _cluster_into_tracks(
@@ -1220,6 +1301,9 @@ def ridge_tracks_for_hue_freq_split(
 
     cleaned = _strip_chrome(mask, plot_box)
     points = _extract_ridge_points(cleaned, plot_box)
+    # Drop isolated 1-2 column blobs (gridline fragments, mid-air noise)
+    # before the DP picks them as a ridge path. See #1157.
+    points = _filter_isolated_ridge_points(points)
 
     # Per-column ridge DP (#1100): two coherent paths through the ridge
     # set, preserving curve identity through crossings. Replaces the
