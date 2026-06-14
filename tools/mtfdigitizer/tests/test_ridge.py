@@ -103,16 +103,41 @@ def test_strip_chrome_zeros_plot_box_border_rows_unconditionally() -> None:
 
 
 def test_strip_chrome_keeps_curve_ink_just_inside_borders() -> None:
-    """A curve sample one pixel inside the y_top / y_bottom borders is
-    real data and MUST survive the border-strip. Distinguishes border
-    chrome from a curve that happens to peak/trough near the frame.
+    """A sparse curve sample one pixel inside the y_top / y_bottom
+    borders is real data and MUST survive the border-strip. Real chart
+    data at MTF~0.99 / MTF~0.01 is sparse — a few pixels per row —
+    because curves near the axis are physically rare. Dense ink at
+    those rows is anti-aliased axis-line halo and is correctly stripped
+    by the axis-halo rule (#1165).
     """
     mask = np.zeros((100, 100), dtype=np.uint8)
-    mask[21, 10:30] = 1  # one pixel inside y_top — real curve ink
-    mask[79, 10:30] = 1  # one pixel inside y_bottom — real curve ink
+    # Sparse curve corner: 5 of 100 columns = 5% coverage, well below
+    # _AXIS_HALO_MIN_COVERAGE. This represents a real curve approaching
+    # MTF=1.0 at the chart corner (e.g. 7.5 fisheye max-10-black has
+    # 2/521 ~ 0.4% coverage near the top axis).
+    mask[21, 10:15] = 1  # one pixel inside y_top
+    mask[79, 10:15] = 1  # one pixel inside y_bottom
     cleaned = _strip_chrome(mask, _box(y_top=20, y_bottom=80))
-    assert cleaned[21, 10:30].sum() == 20
-    assert cleaned[79, 10:30].sum() == 20
+    assert cleaned[21, 10:15].sum() == 5
+    assert cleaned[79, 10:15].sum() == 5
+
+
+def test_strip_chrome_kills_dense_halo_just_inside_borders() -> None:
+    """Halo immediately below the top axis (or above the bottom axis)
+    that has >= _AXIS_HALO_MIN_COVERAGE column coverage is anti-aliased
+    chrome, not real curve data. See #1165: TTartisan tilt-50 GFX
+    template has 80/517 ~ 15.5% coverage at y_top+3 from the top axis
+    halo that survives the standard 90% chrome threshold but is not a
+    real curve at MTF~0.99.
+    """
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    # Dense halo: 20 of 100 columns = 20% coverage, above
+    # _AXIS_HALO_MIN_COVERAGE (12%). Stripped.
+    mask[21, 10:30] = 1  # one pixel inside y_top
+    mask[79, 10:30] = 1  # one pixel inside y_bottom
+    cleaned = _strip_chrome(mask, _box(y_top=20, y_bottom=80))
+    assert cleaned[21, :].sum() == 0
+    assert cleaned[79, :].sum() == 0
 
 
 # --- _cluster_into_tracks ------------------------------------------------
