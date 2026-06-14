@@ -31,7 +31,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 ```
   EX   freq10S        ▆▆▇▆▆▆▅▅▄▃·  (0.75 →  — )
-  EX   freq10M        ▆▇▆▆▇▆▆▇▆▅·  (0.75 →  — )
+  EX   freq10M        ▆▆▆▆▆▆▆▅▅▄·  (0.75 →  — )
   EX   freq30S        ▃▃▃▃▂▂▂▂▂▂·  (0.28 →  — )
   EX   freq30M        ▃▃▃▃▃▃▃▃▂▂·  (0.28 →  — )
 ```
@@ -57,15 +57,15 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.75 |
-| 0.1 | 0.87 |
+| 0.1 | 0.76 |
 | 0.2 | 0.75 |
 | 0.3 | 0.76 |
-| 0.4 | 0.87 |
+| 0.4 | 0.74 |
 | 0.5 | 0.71 |
 | 0.6 | 0.67 |
-| 0.7 | 0.81 |
-| 0.8 | 0.78 |
-| 0.9 | 0.61 |
+| 0.7 | 0.63 |
+| 0.8 | 0.58 |
+| 0.9 | 0.48 |
 | 1.0 | — |
 
 **freq30S**
@@ -105,7 +105,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.75 |       0.33 |            — |
-| freq10M        |         0.75 |       0.61 |            — |
+| freq10M        |         0.75 |       0.48 |            — |
 | freq30S        |         0.28 |       0.08 |            — |
 | freq30M        |         0.28 |       0.08 |            — |
 
@@ -114,7 +114,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.2 |       0.80 |               0.9 |
-| freq10M        |       0.1 |       0.87 |                 — |
+| freq10M        |       0.3 |       0.76 |                 — |
 | freq30S        |       0.0 |       0.28 |               0.6 |
 | freq30M        |       0.3 |       0.30 |               0.9 |
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.746 |      0.80 |   no |
-| IoU       | 0.516 |      0.20 |  yes |
+| precision | 0.917 |      0.80 |  yes |
+| IoU       | 0.643 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -133,10 +133,9 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Gate
 
-**Gate verdict:** `LOW`
+**Gate verdict:** `HIGH`
 
-**Reasons:**
-- `precision_below_threshold`
+No reasons — both confidence signals cleared.
 
 ## Panel
 

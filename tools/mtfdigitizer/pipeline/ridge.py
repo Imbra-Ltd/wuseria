@@ -187,6 +187,30 @@ class Track:
 _CHROME_MAX_HEIGHT: int = 4
 _CHROME_MIN_WIDTH_FRACTION: float = 0.90
 
+# Axis-halo strip parameters (#1165). Rows immediately adjacent to a
+# stripped border row that have at least `_AXIS_HALO_MIN_COVERAGE`
+# column coverage are treated as anti-aliased halo and stripped too.
+# Confined to `_AXIS_HALO_DEPTH` rows of the border to avoid touching
+# genuine curve readings near MTF=1.0 or MTF=0.0.
+#
+# Sized from the cohort:
+# - TTartisan tilt-50 GFX template: 80 pixels (15.5%) at y_top+3,
+#   60 pixels at y_top+4 — pure top-axis anti-aliased halo, no real
+#   curve at MTF~0.99 here. Stripped.
+# - TTartisan 7.5 fisheye: 2 pixels (0.4%) at each of y_top+1..+4 —
+#   genuine freq10S/M near MTF=1.0 in the corner. Kept.
+# Threshold 10% separates them cleanly.
+_AXIS_HALO_DEPTH: int = 4
+# Coverage band for axis-halo: rows with coverage in
+# [_AXIS_HALO_MIN_COVERAGE, _AXIS_HALO_MAX_COVERAGE) within
+# `_AXIS_HALO_DEPTH` of a border are anti-aliased halo and stripped.
+# Below MIN: sparse genuine curve corners (7.5 fisheye: 0.4% near
+# MTF=1.0). Above MAX: dense real curves close to the axis (Viltrox
+# 10S contrast: 36-65% within y_top+1..y_top+6 because the curves
+# physically sit near MTF~0.95-1.0).
+_AXIS_HALO_MIN_COVERAGE: float = 0.12
+_AXIS_HALO_MAX_COVERAGE: float = 0.30
+
 
 def _strip_chrome(mask: np.ndarray, plot_box: PlotBox) -> np.ndarray:
     """Zero out plot-box border rows + rows with >=90% horizontal coverage.
@@ -228,6 +252,24 @@ def _strip_chrome(mask: np.ndarray, plot_box: PlotBox) -> np.ndarray:
     # high-coverage threshold and was misread as a curve at MTF=0.
     cleaned[plot_box.y_top, plot_box.x_left : plot_box.x_right + 1] = 0
     cleaned[plot_box.y_bottom, plot_box.x_left : plot_box.x_right + 1] = 0
+    # Also strip rows within `_AXIS_HALO_DEPTH` of the border that
+    # have at least `_AXIS_HALO_MIN_COVERAGE` column coverage — see
+    # #1165. TTartisan tilt-50's max-10-black mask has 80 sparse halo
+    # pixels at y_top+3 (15.5% coverage) from the top axis anti-
+    # aliasing that survive the 90% chrome threshold. The DP latched
+    # onto them as freq10M candidates when the dashed T10 curve was in
+    # a dash gap, producing 0.99 spikes interleaved with real readings.
+    # Threshold 12% separates that halo from genuine corner readings
+    # near MTF=1.0 (~0.4% coverage on 7.5 fisheye).
+    halo_min_count = int(_AXIS_HALO_MIN_COVERAGE * width)
+    halo_max_count = int(_AXIS_HALO_MAX_COVERAGE * width)
+    for dy in range(1, _AXIS_HALO_DEPTH + 1):
+        for y in (plot_box.y_top + dy, plot_box.y_bottom - dy):
+            if plot_box.y_top <= y <= plot_box.y_bottom:
+                row = cleaned[y, plot_box.x_left : plot_box.x_right + 1]
+                count = int(row.sum())
+                if halo_min_count <= count < halo_max_count:
+                    cleaned[y, plot_box.x_left : plot_box.x_right + 1] = 0
     for y in range(plot_box.y_top, plot_box.y_bottom + 1):
         row = cleaned[y, plot_box.x_left : plot_box.x_right + 1]
         if int(row.sum()) >= min_count:
