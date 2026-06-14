@@ -31,8 +31,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 ```
   EX   freq10S        ·▇▇▇▇▇▇▇▇▆▅  ( —  → 0.59)
-  EX   freq10M        ·▇▇▇▇▇▇▇▇▆▅  ( —  → 0.61)
-  EX   freq30S        ·▅▅▅▅▅▅▄▄▂▁  ( —  → 0.05)
+  EX   freq10M        ·▇▇▇▇▇▇▇▇▆▅  ( —  → 0.62)
+  EX   freq30S        ·▅▅▅▅▅▅▄▄▂▁  ( —  → 0.06)
   EX   freq30M        ·▅▅▅▄▄▄▄▄▃▃  ( —  → 0.28)
 ```
 
@@ -66,7 +66,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.83 |
 | 0.8 | 0.79 |
 | 0.9 | 0.74 |
-| 1.0 | 0.61 |
+| 1.0 | 0.62 |
 
 **freq30S**
 
@@ -82,7 +82,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.49 |
 | 0.8 | 0.41 |
 | 0.9 | 0.21 |
-| 1.0 | 0.05 |
+| 1.0 | 0.06 |
 
 **freq30M**
 
@@ -105,8 +105,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |            — |       0.74 |         0.59 |
-| freq10M        |            — |       0.74 |         0.61 |
-| freq30S        |            — |       0.21 |         0.05 |
+| freq10M        |            — |       0.74 |         0.62 |
+| freq30S        |            — |       0.21 |         0.06 |
 | freq30M        |            — |       0.34 |         0.28 |
 
 ### Shape metrics
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.914 |      0.80 |  yes |
-| IoU       | 0.678 |      0.20 |  yes |
+| precision | 0.911 |      0.80 |  yes |
+| IoU       | 0.673 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -249,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.955 |      0.80 |  yes |
-| IoU       | 0.725 |      0.20 |  yes |
+| precision | 0.956 |      0.80 |  yes |
+| IoU       | 0.726 |      0.20 |  yes |
 
 #### Plausibility priors
 

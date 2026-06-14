@@ -31,9 +31,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 ```
   EX   freq10S        ████████▇▇▆  (0.95 → 0.75)
-  EX   freq10M        █████████▇▅  (0.95 → 0.56)
+  EX   freq10M        █████████▇▅  (0.95 → 0.57)
   EX   freq30S        ▆▆▆▆▆▆▇▆▅▃▂  (0.75 → 0.18)
-  EX   freq30M        ▆·▆▆▆▆▆▆▆▅▂  (0.75 → 0.21)
+  EX   freq30M        ▆·▆▆▆▆▆▆▆▅▃  (0.75 → 0.22)
 ```
 
 **freq10S**
@@ -66,7 +66,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.96 |
 | 0.8 | 0.93 |
 | 0.9 | 0.83 |
-| 1.0 | 0.56 |
+| 1.0 | 0.57 |
 
 **freq30S**
 
@@ -98,16 +98,16 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.72 |
 | 0.8 | 0.72 |
 | 0.9 | 0.52 |
-| 1.0 | 0.21 |
+| 1.0 | 0.22 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.95 |       0.83 |         0.75 |
-| freq10M        |         0.95 |       0.83 |         0.56 |
+| freq10M        |         0.95 |       0.83 |         0.57 |
 | freq30S        |         0.75 |       0.32 |         0.18 |
-| freq30M        |         0.75 |       0.52 |         0.21 |
+| freq30M        |         0.75 |       0.52 |         0.22 |
 
 ### Shape metrics
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.868 |      0.80 |  yes |
-| IoU       | 0.607 |      0.20 |  yes |
+| precision | 0.866 |      0.80 |  yes |
+| IoU       | 0.604 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -249,7 +249,7 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.933 |      0.80 |  yes |
+| precision | 0.934 |      0.80 |  yes |
 | IoU       | 0.752 |      0.20 |  yes |
 
 #### Plausibility priors
