@@ -30,8 +30,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq30M        | 10/11    |  0/11       |
 
 ```
-  EX   freq10S        ███▇▇▇▇▇▇▆·  (0.97 →  — )
-  EX   freq10M        ████▇▇▇▇▇▇·  (0.97 →  — )
+  EX   freq10S        ████▇▇▇▇▇▆·  (0.97 →  — )
+  EX   freq10M        █████▇▇▇▇▇·  (0.97 →  — )
   EX   freq30S        ▇▇▆▆▆▅▅▅▅▅·  (0.83 →  — )
   EX   freq30M        ▇▇▆▆▆▆▆▆▆▅·  (0.83 →  — )
 ```
@@ -47,7 +47,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.4 | 0.92 |
 | 0.5 | 0.89 |
 | 0.6 | 0.86 |
-| 0.7 | 0.86 |
+| 0.7 | 0.82 |
 | 0.8 | 0.80 |
 | 0.9 | 0.75 |
 | 1.0 | — |
@@ -63,9 +63,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.4 | 0.93 |
 | 0.5 | 0.93 |
 | 0.6 | 0.91 |
-| 0.7 | 0.85 |
+| 0.7 | 0.90 |
 | 0.8 | 0.89 |
-| 0.9 | 0.85 |
+| 0.9 | 0.87 |
 | 1.0 | — |
 
 **freq30S**
@@ -105,7 +105,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.97 |       0.75 |            — |
-| freq10M        |         0.97 |       0.85 |            — |
+| freq10M        |         0.97 |       0.87 |            — |
 | freq30S        |         0.83 |       0.55 |            — |
 | freq30M        |         0.83 |       0.60 |            — |
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.851 |      0.80 |  yes |
-| IoU       | 0.528 |      0.20 |  yes |
+| precision | 0.908 |      0.80 |  yes |
+| IoU       | 0.647 |      0.20 |  yes |
 
 #### Plausibility priors
 

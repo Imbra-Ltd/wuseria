@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.917 |      0.80 |  yes |
-| IoU       | 0.638 |      0.20 |  yes |
+| precision | 0.920 |      0.80 |  yes |
+| IoU       | 0.681 |      0.20 |  yes |
 
 #### Plausibility priors
 

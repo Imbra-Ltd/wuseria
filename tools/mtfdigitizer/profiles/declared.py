@@ -261,6 +261,17 @@ TTARTISAN_4COLOR_DUAL_APERTURE: MtfProfile = MtfProfile(
         # Black — 10 lp/mm at max aperture. Low V, low S; the S<60 cap
         # admits anti-aliased curve edges, V<80 rejects mid-grey gridlines.
         HueRange(name="max-10-black", h_lo=0, h_hi=179, s_min=0, s_max=60, v_min=0, v_max=80),
+        # Black overlap recovery (#1159): where the f/2 black solid line
+        # physically overlaps the f/8 red solid/dashed lines on the
+        # right-edge crossing, the PNG renderer blends the colors and
+        # produces pixels with V<55 but S=255 (low-V red). These are
+        # genuinely black ink stained red by the overlap. Admit them
+        # unconditionally on V<55. Same name as above; masks_by_curve_name
+        # ORs same-name entries (same pattern as stopped-10-red wrap-around).
+        # Risk check: V<55 is below the grey mask's v_min=90 by a wide
+        # margin, so no collision. Probe (S149) found 492 new pixels
+        # recovered, 0 grey-mask collisions.
+        HueRange(name="max-10-black", h_lo=0, h_hi=179, s_min=0, s_max=255, v_min=0, v_max=55),
         # Grey — 30 lp/mm at max aperture. Mid V band, very low S; the
         # tight V∈[90,160] window separates from the light-grey
         # background gridlines (V>200) and the dark black curves (V<80).
