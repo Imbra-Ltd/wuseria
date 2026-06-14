@@ -152,13 +152,13 @@ No reasons — both confidence signals cleared.
 | freq10S        | 11/11    |  0/11       |
 | freq10M        | 11/11    |  0/11       |
 | freq30S        | 11/11    |  0/11       |
-| freq30M        | 10/11    |  0/11       |
+| freq30M        | 11/11    |  0/11       |
 
 ```
   EX   freq10S        ███████████  (0.95 → 0.94)
   EX   freq10M        ███████████  (0.95 → 0.94)
   EX   freq30S        ▇▇▇▇▇▆▆▆▆▆▆  (0.81 → 0.75)
-  EX   freq30M        ▇▇▇▇▇▇▆▆▆▆·  (0.81 →  — )
+  EX   freq30M        ▇▇▇▇▇▇▆▆▆▆▆  (0.81 → 0.78)
 ```
 
 **freq10S**
@@ -223,7 +223,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.77 |
 | 0.8 | 0.76 |
 | 0.9 | 0.76 |
-| 1.0 | — |
+| 1.0 | 0.78 |
 
 ### Center / edge summary
 
@@ -232,7 +232,7 @@ No reasons — both confidence signals cleared.
 | freq10S        |         0.95 |       0.93 |         0.94 |
 | freq10M        |         0.95 |       0.93 |         0.94 |
 | freq30S        |         0.81 |       0.76 |         0.75 |
-| freq30M        |         0.81 |       0.76 |            — |
+| freq30M        |         0.81 |       0.76 |         0.78 |
 
 ### Shape metrics
 
@@ -249,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.966 |      0.80 |  yes |
-| IoU       | 0.791 |      0.20 |  yes |
+| precision | 0.963 |      0.80 |  yes |
+| IoU       | 0.803 |      0.20 |  yes |
 
 #### Plausibility priors
 

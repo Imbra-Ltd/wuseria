@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.858 |      0.80 |  yes |
-| IoU       | 0.657 |      0.20 |  yes |
+| precision | 0.856 |      0.80 |  yes |
+| IoU       | 0.653 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -157,7 +157,7 @@ No reasons — both confidence signals cleared.
 ```
   EX   freq10S        ███████▇▇▇▇  (0.94 → 0.90)
   EX   freq10M        █████████▇█  (0.94 → 0.94)
-  EX   freq30S        ▇▇▇▇▆▆▆▆▆▅▅  (0.80 → 0.56)
+  EX   freq30S        ▇▇▇▇▆▆▆▆▆▅▅  (0.80 → 0.57)
   EX   freq30M        ▇▇▇▇▇▇▆▇▆▆▆  (0.80 → 0.77)
 ```
 
@@ -207,7 +207,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.68 |
 | 0.8 | 0.64 |
 | 0.9 | 0.61 |
-| 1.0 | 0.56 |
+| 1.0 | 0.57 |
 
 **freq30M**
 
@@ -231,7 +231,7 @@ No reasons — both confidence signals cleared.
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.94 |       0.92 |         0.90 |
 | freq10M        |         0.94 |       0.93 |         0.94 |
-| freq30S        |         0.80 |       0.61 |         0.56 |
+| freq30S        |         0.80 |       0.61 |         0.57 |
 | freq30M        |         0.80 |       0.77 |         0.77 |
 
 ### Shape metrics
@@ -249,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.895 |      0.80 |  yes |
-| IoU       | 0.665 |      0.20 |  yes |
+| precision | 0.893 |      0.80 |  yes |
+| IoU       | 0.663 |      0.20 |  yes |
 
 #### Plausibility priors
 

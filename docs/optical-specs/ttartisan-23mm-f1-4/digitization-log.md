@@ -33,7 +33,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
   EX   freq10S        ▇▇▇▇██▇▇▇▇▆  (0.93 → 0.78)
   EX   freq10M        ▇█▇▇█▇▇▇▇▆▅  (0.93 → 0.58)
   EX   freq30S        ▅▅▅▅▅▅▅▅▄▄▂  (0.58 → 0.18)
-  EX   freq30M        ▅▅▅▅▅▅▄▄▅▄▃  (0.58 → 0.35)
+  EX   freq30M        ▅▅▅▅▅▅▄▄▅▄▃  (0.58 → 0.36)
 ```
 
 **freq10S**
@@ -98,7 +98,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.46 |
 | 0.8 | 0.51 |
 | 0.9 | 0.50 |
-| 1.0 | 0.35 |
+| 1.0 | 0.36 |
 
 ### Center / edge summary
 
@@ -107,7 +107,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq10S        |         0.93 |       0.85 |         0.78 |
 | freq10M        |         0.93 |       0.71 |         0.58 |
 | freq30S        |         0.58 |       0.37 |         0.18 |
-| freq30M        |         0.58 |       0.50 |         0.35 |
+| freq30M        |         0.58 |       0.50 |         0.36 |
 
 ### Shape metrics
 
