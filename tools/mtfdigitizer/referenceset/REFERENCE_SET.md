@@ -91,14 +91,9 @@ y-axis chrome strip). The primary 50/1.2 entry is documented inline in
 
 ### 9. ttartisan-7-5mm-f2-0-fisheye — second TTartisan 4-color anchor
 
-- 800x600 dual-aperture template; solid = S, dashed = T (M). Black/grey = f/2.0; red/orange = f/8.
-- **f/2.0 panel** (max aperture):
-  - 10S (black solid) sits flat at ~0.96 through 8mm then crashes hard at the right edge — ~0.93 at 11mm, ~0.85 at 12.6mm, ~0.74 at 14mm.
-  - 10M (black dashed) only mildly drops — holds ~0.92–0.94 to 13mm, edges to ~0.89 at 14mm.
-  - 30S (grey solid) shows the dip-and-recover characteristic: ~0.71 center, ~0.55 at 7mm, dips to ~0.46 around 11mm, **recovers to ~0.58 at 14mm**.
-  - 30M (grey dashed) holds ~0.65–0.72 through 11mm then sharp drop to ~0.49 at 14mm.
-- **f/8 panel** (stopped aperture): 10S/10M (red pair) essentially flat at ~0.94 across the field. 30S (orange solid) tracks the grey 30S down to 0.58 at edge. 30M (orange dashed) is the most stable curve in the chart — 0.78–0.80 throughout.
-- Diagnostic: the 30S corner uptick is the case #1122 fixed — the dispatch was picking the y-axis vertical chrome strip as part of the ridge candidate set, pulling the right-edge value up artificially. An extractor that smooths the dip-and-recover into a monotonic fall is dropping signal; one that puts the corner above 0.65 has re-introduced the chrome leak.
+- 800x600 dual-aperture template; solid = S, dashed = T (M). Black/grey = f/2; red/orange = f/8.
+- Ground truth lives in `docs/optical-specs/ttartisan-7-5mm-f2-0-fisheye/eye-read.md` (ADR-048); currently seeded with the extractor's mechanical predictions, awaiting maintainer review. The verified-shapes summary below will be filled in once review lands.
+- Diagnostic: the 30S corner is the case #1122 fixed — the dispatch was picking the y-axis vertical chrome strip as part of the ridge candidate set, pulling the right-edge value up artificially. An extractor that puts the 30S corner above 0.65 has re-introduced the chrome leak.
 
 ## Proposed thresholds
 
