@@ -89,12 +89,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | frac | EX |
 | ---- | --- |
 | 0.0 | — |
-| 0.1 | 0.53 |
-| 0.2 | 0.56 |
+| 0.1 | 0.54 |
+| 0.2 | 0.55 |
 | 0.3 | 0.55 |
 | 0.4 | 0.55 |
-| 0.5 | 0.52 |
-| 0.6 | 0.51 |
+| 0.5 | 0.54 |
+| 0.6 | 0.56 |
 | 0.7 | 0.49 |
 | 0.8 | 0.45 |
 | 0.9 | 0.40 |
@@ -116,7 +116,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq10S        |       0.4 |       0.91 |                 — |
 | freq10M        |       0.7 |       0.91 |                 — |
 | freq30S        |       0.5 |       0.63 |                 — |
-| freq30M        |       0.2 |       0.56 |                 — |
+| freq30M        |       0.6 |       0.56 |                 — |
 
 ### Confidence signals
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.899 |      0.80 |  yes |
-| IoU       | 0.469 |      0.20 |  yes |
+| precision | 0.877 |      0.80 |  yes |
+| IoU       | 0.514 |      0.20 |  yes |
 
 #### Plausibility priors
 

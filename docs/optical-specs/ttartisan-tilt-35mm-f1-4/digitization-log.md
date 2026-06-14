@@ -27,13 +27,13 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq10S        | 10/11    |  0/11       |
 | freq10M        |  9/11    |  0/11       |
 | freq30S        | 10/11    |  0/11       |
-| freq30M        |  9/11    |  0/11       |
+| freq30M        | 10/11    |  0/11       |
 
 ```
   EX   freq10S        ·▇▇▇▇▇▇▇▇▆▅  ( —  → 0.57)
-  EX   freq10M        ·█▇▇▇▇▇▇▆▆·  ( —  →  — )
+  EX   freq10M        ·▇▇▇▇▇▇▇▆▆·  ( —  →  — )
   EX   freq30S        ·▅▅▅▅▅▅▄▄▂▁  ( —  → 0.04)
-  EX   freq30M        ··▅▅▄▄▄▄▄▃▃  ( —  → 0.27)
+  EX   freq30M        ·▅▅▅▄▄▄▄▄▃▃  ( —  → 0.27)
 ```
 
 **freq10S**
@@ -57,7 +57,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | frac | EX |
 | ---- | --- |
 | 0.0 | — |
-| 0.1 | 0.99 |
+| 0.1 | 0.91 |
 | 0.2 | 0.90 |
 | 0.3 | 0.89 |
 | 0.4 | 0.87 |
@@ -89,7 +89,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | frac | EX |
 | ---- | --- |
 | 0.0 | — |
-| 0.1 | — |
+| 0.1 | 0.58 |
 | 0.2 | 0.56 |
 | 0.3 | 0.53 |
 | 0.4 | 0.49 |
@@ -114,9 +114,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.1 |       0.91 |                 — |
-| freq10M        |       0.1 |       0.99 |                 — |
+| freq10M        |       0.1 |       0.91 |                 — |
 | freq30S        |       0.1 |       0.58 |               0.9 |
-| freq30M        |       0.2 |       0.56 |               1.0 |
+| freq30M        |       0.1 |       0.58 |               1.0 |
 
 ### Confidence signals
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.895 |      0.80 |  yes |
-| IoU       | 0.551 |      0.20 |  yes |
+| precision | 0.908 |      0.80 |  yes |
+| IoU       | 0.643 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -249,7 +249,7 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.956 |      0.80 |  yes |
+| precision | 0.957 |      0.80 |  yes |
 | IoU       | 0.667 |      0.20 |  yes |
 
 #### Plausibility priors

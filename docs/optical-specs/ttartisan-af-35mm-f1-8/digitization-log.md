@@ -31,9 +31,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 ```
   EX   freq10S        ·████▇▇▇▇▆·  ( —  →  — )
-  EX   freq10M        ·▇▇▇█▇▇▇▇▇·  ( —  →  — )
+  EX   freq10M        ·████▇▇▇▇▇·  ( —  →  — )
   EX   freq30S        ·▇▇▆▆▅▅▆▆▃·  ( —  →  — )
-  EX   freq30M        ·▆▆█▆▆▅▇▅▆·  ( —  →  — )
+  EX   freq30M        ·▆▆█▆▆▅▅▅▆·  ( —  →  — )
 ```
 
 **freq10S**
@@ -57,9 +57,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | frac | EX |
 | ---- | --- |
 | 0.0 | — |
-| 0.1 | 0.82 |
-| 0.2 | 0.86 |
-| 0.3 | 0.90 |
+| 0.1 | 0.95 |
+| 0.2 | 0.95 |
+| 0.3 | 0.94 |
 | 0.4 | 0.93 |
 | 0.5 | 0.92 |
 | 0.6 | 0.92 |
@@ -92,10 +92,10 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.1 | 0.78 |
 | 0.2 | 0.74 |
 | 0.3 | 0.96 |
-| 0.4 | 0.77 |
+| 0.4 | 0.71 |
 | 0.5 | 0.67 |
 | 0.6 | 0.64 |
-| 0.7 | 0.83 |
+| 0.7 | 0.63 |
 | 0.8 | 0.63 |
 | 0.9 | 0.66 |
 | 1.0 | — |
@@ -114,7 +114,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.2 |       0.96 |                 — |
-| freq10M        |       0.4 |       0.93 |                 — |
+| freq10M        |       0.1 |       0.95 |                 — |
 | freq30S        |       0.2 |       0.80 |               0.9 |
 | freq30M        |       0.3 |       0.96 |                 — |
 
@@ -124,14 +124,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.695 |      0.80 |   no |
-| IoU       | 0.378 |      0.20 |  yes |
+| precision | 0.771 |      0.80 |   no |
+| IoU       | 0.435 |      0.20 |  yes |
 
 #### Plausibility priors
 
-| prior | field | position | detail |
-| ----- | ----- | -------- | ------ |
-| `low_freq_ge_high` | `freq30M` | 3 | freq30M=0.959 exceeds freq10M=0.900 by 0.059 at position 3 (tolerance 0.02) — bands swapped? |
+All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_flat`, `in_range`).
 
 ### Gate
 
@@ -139,7 +137,6 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 **Reasons:**
 - `precision_below_threshold`
-- `prior_failed_low_freq_ge_high`
 
 ## Panel
 

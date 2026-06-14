@@ -10,6 +10,7 @@ from mtfdigitizer.pipeline.ridge import (
     _column_runs,
     _compute_y_anchors,
     _extract_ridge_points,
+    _filter_isolated_ridge_points,
     _merge_near_duplicate_tracks,
     _path_mask_continuity,
     _path_to_track,
@@ -354,6 +355,82 @@ def test_extract_ridge_points_walks_only_inside_plot_box() -> None:
     points = _extract_ridge_points(mask, _box(x_left=0, x_right=49))
     xs = sorted(x for x, _ in points)
     assert xs == [5]
+
+
+# --- _filter_isolated_ridge_points (#1157) -------------------------------
+
+
+def test_filter_keeps_long_dashed_curve_candidates() -> None:
+    """A sparse dashed curve (3 px on, 3 px off across 30 cols) is one
+    cluster spanning many columns — it must survive the filter."""
+    points: list[tuple[int, float]] = []
+    for x in range(0, 30, 6):
+        # Each "dash" emits 3 adjacent column points at y=50.
+        for d in (0, 1, 2):
+            points.append((x + d, 50.0))
+    kept = _filter_isolated_ridge_points(points)
+    assert len(kept) == len(points)
+
+
+def test_filter_drops_single_column_blob() -> None:
+    """A two-point cluster confined to one column is a gridline fragment
+    or noise — dropped."""
+    points = [
+        # Real curve cluster spanning 5 cols.
+        (0, 50.0), (1, 50.0), (2, 50.0), (3, 50.0), (4, 50.0),
+        # Single-column noise blob at y=20.
+        (10, 20.0),
+    ]
+    kept = _filter_isolated_ridge_points(points)
+    kept_set = set(kept)
+    assert (10, 20.0) not in kept_set
+    # The real curve survives.
+    assert all((x, 50.0) in kept_set for x in range(5))
+
+
+def test_filter_drops_two_column_blob() -> None:
+    """Two adjacent-column candidates form a 2-col cluster, below the
+    `_RIDGE_ISOLATION_MIN_COLS=3` threshold — dropped. This is the
+    #1157 TTartisan 7.5 max-grey y=204/202 case at x=604/605."""
+    points = [
+        # Real curve spans 10 cols at y=290.
+        *((x, 290.0) for x in range(10)),
+        # Two-column mid-air noise at y=204, 202 at columns 20, 21.
+        (20, 204.0),
+        (21, 202.0),
+    ]
+    kept = _filter_isolated_ridge_points(points)
+    kept_set = set(kept)
+    assert (20, 204.0) not in kept_set
+    assert (21, 202.0) not in kept_set
+    assert all((x, 290.0) in kept_set for x in range(10))
+
+
+def test_filter_bridges_dx_gap_via_chain() -> None:
+    """Candidates connected through a chain of `dx`-spaced links count
+    as one cluster, even if no two are within `dx` of every other.
+    This is what lets the TTartisan 7.5 max.freq30M corner pixel at
+    x=607 stay connected to the curve at x=603 (3-col drop-out)."""
+    points = [
+        # Cluster A: x in [0, 5], y=100
+        *((x, 100.0) for x in range(6)),
+        # 3-col drop-out at x=6,7,8
+        # Cluster B: x=9, y=100 (single pixel after the gap)
+        (9, 100.0),
+    ]
+    kept = _filter_isolated_ridge_points(points)
+    # All 7 points should survive — they form one cluster spanning 7
+    # distinct columns via the dx=4 bridge.
+    assert len(kept) == 7
+
+
+def test_filter_bridges_dy_drift_within_cluster() -> None:
+    """A real curve gently drifts in y from column to column; that
+    drift must not split it into clusters. With dy=8 the filter must
+    accept y differences up to 8 px between neighbouring columns."""
+    points = [(x, 100.0 + x * 0.5) for x in range(20)]  # drift 0.5 px/col
+    kept = _filter_isolated_ridge_points(points)
+    assert len(kept) == len(points)
 
 
 # --- Per-column ridge DP (#1100) -----------------------------------------
