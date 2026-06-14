@@ -150,9 +150,12 @@ def test_source_url_fails_loud_on_missing_official_url():
 
 
 def test_ttartisan_lenses_returns_19_entries():
-    """The Tier 2 scaffolder added 19 TTartisan ReferenceCharts; the
-    emit walker must find all of them. (#1090 unblocked the 2 100mm-
-    macro twins that were temporarily skipped via an allowlist.)"""
+    """The emit walker must find every TTartisan 4-color dual-aperture
+    chart: 17 Tier 2 (auto-scaffolded) + 2 Tier 1 anchors (50/1.2 and
+    7.5 fisheye, both maintained inline in `charts.py` per ADR-041) = 19.
+    (#1090 unblocked the 2 100mm-macro twins that were temporarily
+    skipped via an allowlist; the 7.5 fisheye was promoted from Tier 2
+    to a second Tier 1 anchor in session 148.)"""
     lenses = _ttartisan_lenses()
     assert len(lenses) == 19
     for lens in lenses:

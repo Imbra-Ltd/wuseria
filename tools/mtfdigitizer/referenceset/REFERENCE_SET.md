@@ -25,6 +25,16 @@ the set inside #933's 6–10-chart target with full coverage.
 | 6 | `tokina-atx-m-23mm-f1-4-x`            | 2color-frequency                   | Colors carry frequency not S/M — different dialect |
 | 7 | `viltrox-af-75mm-f1-2-pro`            | bw-dashed-promo                    | All-dashed, B&W, two apertures, tiny legend        |
 | 8 | `zeiss-touit-32mm-f1-8`               | multifreq-press-kit                | Three frequencies (10/20/40) — out-of-band         |
+| 9 | `ttartisan-7-5mm-f2-0-fisheye`        | ttartisan-4color-dual-aperture     | Second anchor (ADR-041); fisheye edge-crash stress |
+
+The base set was eight; #9 was added when the TTartisan 4-color
+dual-aperture family was introduced. ADR-041 allows multiple Tier 1
+anchors per `(brand, style_family)`; the TTartisan 50/1.2 is the
+primary anchor for `ttartisan-4color-dual-aperture` and the 7.5 fisheye
+is the second, chosen to stress fisheye edge behavior (the right-edge
+10S crash and the 30S dip-and-recover that #1122 traced to the vertical
+y-axis chrome strip). The primary 50/1.2 entry is documented inline in
+`charts.py` rather than here.
 
 ## Verified shapes
 
@@ -78,6 +88,12 @@ the set inside #933's 6–10-chart target with full coverage.
 - **k=1.8 panel**: 10 ~85→55%, 20 ~70→45%, 40 dips to ~30% around 11mm then recovers slightly.
 - **k=4 panel**: 10 ~95→85%, 20 ~85→78%, 40 ~75 with a dip to ~50% at 11mm.
 - Diagnostic: out-of-band for any profile that declares 2 frequencies. Must refuse, not silently drop the 20 lp/mm middle row.
+
+### 9. ttartisan-7-5mm-f2-0-fisheye — second TTartisan 4-color anchor
+
+- 800x600 dual-aperture template; solid = S, dashed = T (M). Black/grey = f/2; red/orange = f/8.
+- Ground truth lives in `docs/optical-specs/ttartisan-7-5mm-f2-0-fisheye/eye-read.md` (ADR-048); currently seeded with the extractor's mechanical predictions, awaiting maintainer review. The verified-shapes summary below will be filled in once review lands.
+- Diagnostic: the 30S corner is the case #1122 fixed — the dispatch was picking the y-axis vertical chrome strip as part of the ridge candidate set, pulling the right-edge value up artificially. An extractor that puts the 30S corner above 0.65 has re-introduced the chrome leak.
 
 ## Proposed thresholds
 
