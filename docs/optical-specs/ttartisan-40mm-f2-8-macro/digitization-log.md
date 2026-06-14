@@ -33,7 +33,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
   EX   freq10S        ████▇▇▇▇▇▇▇  (0.96 → 0.80)
   EX   freq10M        █████████▇▇  (0.96 → 0.85)
   EX   freq30S        ▆▆▆▆▆▅▅▅▅▅▅  (0.77 → 0.53)
-  EX   freq30M        ▆▆▇▇▇▆▆▄▇▆▄  (0.77 → 0.38)
+  EX   freq30M        ▆▆▆▆▇▆▆▆▆▆▅  (0.77 → 0.52)
 ```
 
 **freq10S**
@@ -90,15 +90,15 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | ---- | --- |
 | 0.0 | 0.77 |
 | 0.1 | 0.77 |
-| 0.2 | 0.84 |
-| 0.3 | 0.85 |
+| 0.2 | 0.77 |
+| 0.3 | 0.77 |
 | 0.4 | 0.82 |
 | 0.5 | 0.76 |
 | 0.6 | 0.75 |
-| 0.7 | 0.48 |
-| 0.8 | 0.84 |
+| 0.7 | 0.75 |
+| 0.8 | 0.72 |
 | 0.9 | 0.64 |
-| 1.0 | 0.38 |
+| 1.0 | 0.52 |
 
 ### Center / edge summary
 
@@ -107,7 +107,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq10S        |         0.96 |       0.81 |         0.80 |
 | freq10M        |         0.96 |       0.92 |         0.85 |
 | freq30S        |         0.77 |       0.55 |         0.53 |
-| freq30M        |         0.77 |       0.64 |         0.38 |
+| freq30M        |         0.77 |       0.64 |         0.52 |
 
 ### Shape metrics
 
@@ -116,7 +116,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq10S        |       0.2 |       0.96 |                 — |
 | freq10M        |       0.2 |       0.96 |                 — |
 | freq30S        |       0.0 |       0.77 |                 — |
-| freq30M        |       0.3 |       0.85 |               1.0 |
+| freq30M        |       0.4 |       0.82 |                 — |
 
 ### Confidence signals
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.752 |      0.80 |   no |
-| IoU       | 0.607 |      0.20 |  yes |
+| precision | 0.881 |      0.80 |  yes |
+| IoU       | 0.681 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -133,10 +133,9 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Gate
 
-**Gate verdict:** `LOW`
+**Gate verdict:** `HIGH`
 
-**Reasons:**
-- `precision_below_threshold`
+No reasons — both confidence signals cleared.
 
 ## Panel
 
@@ -153,13 +152,13 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | freq10S        | 11/11    |  0/11       |
 | freq10M        | 11/11    |  0/11       |
 | freq30S        | 11/11    |  0/11       |
-| freq30M        | 11/11    |  0/11       |
+| freq30M        | 10/11    |  0/11       |
 
 ```
   EX   freq10S        ███████████  (0.95 → 0.94)
   EX   freq10M        ███████████  (0.95 → 0.94)
   EX   freq30S        ▇▇▇▇▇▆▆▆▆▆▆  (0.81 → 0.75)
-  EX   freq30M        ▇▇▇▇▇▇▆▆▆▆▆  (0.81 → 0.78)
+  EX   freq30M        ▇▇▇▇▇▇▆▆▆▆·  (0.81 →  — )
 ```
 
 **freq10S**
@@ -224,7 +223,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.7 | 0.77 |
 | 0.8 | 0.76 |
 | 0.9 | 0.76 |
-| 1.0 | 0.78 |
+| 1.0 | — |
 
 ### Center / edge summary
 
@@ -233,7 +232,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | freq10S        |         0.95 |       0.93 |         0.94 |
 | freq10M        |         0.95 |       0.93 |         0.94 |
 | freq30S        |         0.81 |       0.76 |         0.75 |
-| freq30M        |         0.81 |       0.76 |         0.78 |
+| freq30M        |         0.81 |       0.76 |            — |
 
 ### Shape metrics
 
@@ -250,8 +249,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.963 |      0.80 |  yes |
-| IoU       | 0.801 |      0.20 |  yes |
+| precision | 0.964 |      0.80 |  yes |
+| IoU       | 0.788 |      0.20 |  yes |
 
 #### Plausibility priors
 

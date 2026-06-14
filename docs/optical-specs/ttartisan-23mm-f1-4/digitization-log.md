@@ -32,8 +32,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 ```
   EX   freq10S        ▇▇▇▇██▇▇▇▇▆  (0.93 → 0.78)
   EX   freq10M        ▇█▇▇█▇▇▇▇▆▅  (0.93 → 0.58)
-  EX   freq30S        ▅▅▅▅▅▅▅▅▄▄▃  (0.58 → 0.34)
-  EX   freq30M        ▅▅▅▅▅▅▄▄▅▄▃  (0.58 → 0.26)
+  EX   freq30S        ▅▅▅▅▅▅▅▅▄▄▂  (0.58 → 0.17)
+  EX   freq30M        ▅▅▅▅▅▅▄▄▅▄▃  (0.58 → 0.35)
 ```
 
 **freq10S**
@@ -82,7 +82,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.51 |
 | 0.8 | 0.48 |
 | 0.9 | 0.37 |
-| 1.0 | 0.34 |
+| 1.0 | 0.17 |
 
 **freq30M**
 
@@ -98,7 +98,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.46 |
 | 0.8 | 0.51 |
 | 0.9 | 0.50 |
-| 1.0 | 0.26 |
+| 1.0 | 0.35 |
 
 ### Center / edge summary
 
@@ -106,8 +106,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.93 |       0.85 |         0.78 |
 | freq10M        |         0.93 |       0.71 |         0.58 |
-| freq30S        |         0.58 |       0.37 |         0.34 |
-| freq30M        |         0.58 |       0.50 |         0.26 |
+| freq30S        |         0.58 |       0.37 |         0.17 |
+| freq30M        |         0.58 |       0.50 |         0.35 |
 
 ### Shape metrics
 
@@ -115,8 +115,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.5 |       0.93 |                 — |
 | freq10M        |       0.1 |       0.93 |                 — |
-| freq30S        |       0.0 |       0.58 |                 — |
-| freq30M        |       0.3 |       0.60 |               1.0 |
+| freq30S        |       0.0 |       0.58 |               1.0 |
+| freq30M        |       0.3 |       0.60 |                 — |
 
 ### Confidence signals
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.875 |      0.80 |  yes |
-| IoU       | 0.570 |      0.20 |  yes |
+| precision | 0.917 |      0.80 |  yes |
+| IoU       | 0.638 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -152,13 +152,13 @@ No reasons — both confidence signals cleared.
 | freq10S        | 11/11    |  0/11       |
 | freq10M        | 11/11    |  0/11       |
 | freq30S        | 11/11    |  0/11       |
-| freq30M        | 11/11    |  0/11       |
+| freq30M        | 10/11    |  0/11       |
 
 ```
   EX   freq10S        ███████████  (0.96 → 0.94)
   EX   freq10M        ███████████  (0.96 → 0.96)
   EX   freq30S        ▇▇▇▇▇▆▆▆▆▆▆  (0.81 → 0.67)
-  EX   freq30M        ▇▇▇▇▇▇▇▆▆▇▇  (0.81 → 0.86)
+  EX   freq30M        ▇▇▇▇▇▇▇▆▆▇·  (0.81 →  — )
 ```
 
 **freq10S**
@@ -223,7 +223,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.75 |
 | 0.8 | 0.77 |
 | 0.9 | 0.82 |
-| 1.0 | 0.86 |
+| 1.0 | — |
 
 ### Center / edge summary
 
@@ -232,7 +232,7 @@ No reasons — both confidence signals cleared.
 | freq10S        |         0.96 |       0.95 |         0.94 |
 | freq10M        |         0.96 |       0.95 |         0.96 |
 | freq30S        |         0.81 |       0.77 |         0.67 |
-| freq30M        |         0.81 |       0.82 |         0.86 |
+| freq30M        |         0.81 |       0.82 |            — |
 
 ### Shape metrics
 
@@ -249,14 +249,13 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.936 |      0.80 |  yes |
-| IoU       | 0.776 |      0.20 |  yes |
+| precision | 0.940 |      0.80 |  yes |
+| IoU       | 0.766 |      0.20 |  yes |
 
 #### Plausibility priors
 
 | prior | field | position | detail |
 | ----- | ----- | -------- | ------ |
-| `center_ge_edge` | `freq30M` | — | edge MTF 0.857 exceeds center MTF 0.811 by 0.045 (tolerance 0.02) |
 | `not_suspiciously_flat` | `freq10S` | — | mean 0.955 >= 0.95 and stdev 0.007 <= 0.01 (11/11 defined) — idealized/placeholder? |
 | `not_suspiciously_flat` | `freq10M` | — | mean 0.957 >= 0.95 and stdev 0.005 <= 0.01 (11/11 defined) — idealized/placeholder? |
 
@@ -265,5 +264,4 @@ No reasons — both confidence signals cleared.
 **Gate verdict:** `LOW`
 
 **Reasons:**
-- `prior_failed_center_ge_edge`
 - `prior_failed_not_suspiciously_flat`
