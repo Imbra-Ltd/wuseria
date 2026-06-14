@@ -59,7 +59,7 @@ _BRACKET_HALF_WIDTH = 3
 # without distorting curves with extreme corner dynamics. Lenses with
 # 6–8 px slack lose corner recovery; the standard B2 fail-safe still
 # applies (None when no pixel found within the window).
-_EDGE_BRACKET_INWARD = 5
+_EDGE_BRACKET_INWARD = 6
 
 # Half-width of the tight column window used to snap a DP-rasterised
 # sample to the raw-mask centroid. When the raw mask has ink within
