@@ -145,6 +145,18 @@ class HueRange:
     s_max: int = 255
     v_min: int = 60  # reject dark gridlines and text
     v_max: int = 255
+    # Per-hue override for the FREQUENCY_PER_HUE_RIDGE dispatch's
+    # `use_y_anchor` flag (see MtfProfile.ridge_dp_y_anchor). None falls
+    # back to the profile's scalar setting. Set True to stabilize S/M
+    # labels at curve crossings where the two curves of one hue are
+    # close (TTartisan stopped-30-orange on tilt-50: the solid S30 and
+    # dashed T30 cross near MTF 0.71 mid-field, and the unanchored DP
+    # swaps curve identity per column at dash gaps, producing alternating
+    # 0.71/0.55 readings). The anchor pulls each pass toward its band so
+    # neither swaps. Use cautiously: on freq30 curves with legitimate
+    # large dives (TTartisan max-30-grey on 7.5 fisheye), the anchor can
+    # punish the dive — keep that case at False. See #1168 / #1159.
+    dp_y_anchor: bool | None = None
 
 
 @dataclass(frozen=True)

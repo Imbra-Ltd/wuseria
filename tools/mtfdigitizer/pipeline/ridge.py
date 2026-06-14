@@ -825,6 +825,61 @@ def _densify_track(track: Track) -> Track:
     return Track(points=tuple(densified))
 
 
+# Maximum gap a track may be extended past to reach a plot-box edge
+# (#1171). Dashed curves naturally end at the last dash before the
+# edge; on TTartisan charts the gap between the last dash centroid
+# and the plot edge is up to ~12 px when a dash gap aligns with the
+# corner. Beyond this we refuse to extend — the corner sampler returns
+# None (B2 fail-safe) and the lens-page renderer ends the polyline at
+# the last known sample.
+_EDGE_EXTRAPOLATION_MAX = 12
+
+
+def _extend_track_to_plot_edges(track: Track, plot_box: PlotBox) -> Track:
+    """Extend a densified track to the plot-box left/right edges.
+
+    Per-column ridge tracking ends at the last dash centroid before
+    the plot edge. When a dashed curve's last dash sits a few px short
+    of the plot edge (the dash pattern's gap aligns with the corner),
+    the sampler's 6-px edge bracket finds no skeleton pixel and the
+    corner reads None.
+
+    Extension uses the last-known y (flat) rather than the trailing
+    slope: the gap is small (<= 12 px) and the densified track's
+    trailing slope is dominated by inter-dash centroid noise from the
+    last 2-3 dashes, which on stopped-aperture curves can be ±2 px/col
+    even when the curve is visually flat — slope-extrapolation across
+    6 px then overshoots by MTF ~0.08, fabricating a dive that isn't
+    on the chart (tilt-50 stopped-T10 observed in #1171). Flat
+    extension stays within ~MTF 0.01 of the curve's visual trajectory
+    across the small gap.
+
+    Refuses gaps > `_EDGE_EXTRAPOLATION_MAX`: past the bracket window
+    we genuinely don't know the curve's behavior (it may be in a sharp
+    corner crash, ADR-038 §B2). Sized to cover observed dash-gap-at-
+    edge slack on the TTartisan cohort.
+    """
+    if not track.points:
+        return track
+    sorted_pts = sorted(track.points)
+    extended: list[tuple[int, float]] = list(sorted_pts)
+
+    left_x, left_y = sorted_pts[0]
+    if left_x > plot_box.x_left and left_x - plot_box.x_left <= _EDGE_EXTRAPOLATION_MAX:
+        head = [(x, left_y) for x in range(plot_box.x_left, left_x)]
+        extended = head + extended
+
+    right_x, right_y = extended[-1]
+    if (
+        right_x < plot_box.x_right
+        and plot_box.x_right - right_x <= _EDGE_EXTRAPOLATION_MAX
+    ):
+        for x in range(right_x + 1, plot_box.x_right + 1):
+            extended.append((x, right_y))
+
+    return Track(points=tuple(extended))
+
+
 def ridge_tracks_for_hue(
     mask: np.ndarray,
     plot_box: PlotBox,
@@ -863,7 +918,9 @@ def ridge_tracks_for_hue(
     if len(by_y) == 1:
         # Whole-hue coincidence: the two curves are indistinguishable
         # across the entire field. Same value to both frequencies.
-        upper_track = _densify_track(by_y[0])
+        upper_track = _extend_track_to_plot_edges(
+            _densify_track(by_y[0]), plot_box
+        )
         lower_track = upper_track
     else:
         # Where the original chart had only one ridge run per column
@@ -873,8 +930,12 @@ def ridge_tracks_for_hue(
         shared_upper, shared_lower = _fill_coincident_column_gaps(
             by_y[0], by_y[1], column_runs
         )
-        upper_track = _densify_track(shared_upper)
-        lower_track = _densify_track(shared_lower)
+        upper_track = _extend_track_to_plot_edges(
+            _densify_track(shared_upper), plot_box
+        )
+        lower_track = _extend_track_to_plot_edges(
+            _densify_track(shared_lower), plot_box
+        )
 
     out[curve_field(upper_freq, sm)] = _rasterize(upper_track, mask.shape)
     out[curve_field(lower_freq, sm)] = _rasterize(lower_track, mask.shape)
@@ -1365,27 +1426,51 @@ def ridge_tracks_for_hue_freq_split(
     if track2 is None or track2.coverage < 10:
         # Whole-hue coincidence: only one path found. Same value to
         # both fields — same B4 physics as `ridge_tracks_for_hue`.
-        shared = _densify_track(track1)
+        shared = _extend_track_to_plot_edges(_densify_track(track1), plot_box)
         out[curve_field(freq, solid_sm)] = _rasterize(shared, mask.shape)
         out[curve_field(freq, dashed_sm)] = _rasterize(shared, mask.shape)
         return out
 
-    # S/M labeling on coherent paths: solid lines have continuous mask
-    # ink under them; dashed lines have periodic gaps. Measure each
-    # path's mask continuity inside its y-band — higher = solid.
-    cont1 = _path_mask_continuity(track1, cleaned)
-    cont2 = _path_mask_continuity(track2, cleaned)
-    if cont1 >= cont2:
+    # S/M labeling on coherent paths: solid lines have ink at almost
+    # every column the DP could lock onto; dashed lines have the DP
+    # only catching the dash centroids. `Track.coverage` (count of
+    # on-ridge columns post-`_path_to_track`) reflects this directly.
+    #
+    # Use coverage as the primary discriminator: the path with more
+    # on-ridge columns is solid. When coverage ties, fall back to
+    # `_path_mask_continuity` (in-range ink density) as tiebreaker.
+    #
+    # Earlier (#1100) used continuity as primary. It misfired on af-75
+    # stopped freq30 (#1171 follow-up): the chart's dashed M30 curve
+    # stays flat through midfield and dives only at the corner. Its DP
+    # path locks onto every column (high continuity). The solid S30
+    # curve dives steeply through midfield then rises at the corner;
+    # the DP only catches the rise (partial coverage). Continuity
+    # scored the dashed M30 higher and mislabeled S↔M. Coverage tracks
+    # which path the DP could keep anchored on real ridges across the
+    # full plot, which is the cleaner signal for solid-vs-dashed.
+    if track1.coverage > track2.coverage:
         solid_track_raw, dashed_track_raw = track1, track2
-    else:
+    elif track2.coverage > track1.coverage:
         solid_track_raw, dashed_track_raw = track2, track1
+    else:
+        cont1 = _path_mask_continuity(track1, cleaned)
+        cont2 = _path_mask_continuity(track2, cleaned)
+        if cont1 >= cont2:
+            solid_track_raw, dashed_track_raw = track1, track2
+        else:
+            solid_track_raw, dashed_track_raw = track2, track1
 
     column_runs = _column_run_count(cleaned, plot_box)
     shared_solid, shared_dashed = _fill_coincident_column_gaps_extending(
         solid_track_raw, dashed_track_raw, column_runs
     )
-    solid_track = _densify_track(shared_solid)
-    dashed_track = _densify_track(shared_dashed)
+    solid_track = _extend_track_to_plot_edges(
+        _densify_track(shared_solid), plot_box
+    )
+    dashed_track = _extend_track_to_plot_edges(
+        _densify_track(shared_dashed), plot_box
+    )
     out[curve_field(freq, solid_sm)] = _rasterize(solid_track, mask.shape)
     out[curve_field(freq, dashed_sm)] = _rasterize(dashed_track, mask.shape)
     return out

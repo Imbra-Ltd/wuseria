@@ -453,6 +453,46 @@ def test_max_10_black_admits_red_stained_overlap_pixels() -> None:
     )
 
 
+def test_ttartisan_stopped_30_orange_opts_into_y_anchor() -> None:
+    """#1168: the TTartisan `stopped-30-orange` HueRange opts into the
+    ridge DP's y-anchor mode. Without it, the unanchored DP swaps S/M
+    curve identity per column at dash gaps on the tilt-50 stopped pass
+    (where the solid S30 and dashed T30 cross near MTF 0.71 mid-field),
+    producing alternating 0.71/0.55 readings."""
+    from mtfdigitizer.profiles.declared import TTARTISAN_4COLOR_DUAL_APERTURE
+
+    orange_hues = [
+        h for h in TTARTISAN_4COLOR_DUAL_APERTURE.hues
+        if h.name == "stopped-30-orange"
+    ]
+    assert orange_hues, "stopped-30-orange HueRange missing from profile"
+    for h in orange_hues:
+        assert h.dp_y_anchor is True, (
+            f"stopped-30-orange must opt into y_anchor (#1168); got "
+            f"dp_y_anchor={h.dp_y_anchor}."
+        )
+
+
+def test_max_30_grey_keeps_default_y_anchor() -> None:
+    """`max-30-grey` MUST NOT enable y_anchor. The freq30 max-aperture
+    pass has legitimate large dives (the 7.5 fisheye 30M corner case
+    documented in #1157); anchoring would punish them and regress the
+    #1157 fix. Lock the default in a test so a future per-hue tuning
+    pass doesn't silently flip it."""
+    from mtfdigitizer.profiles.declared import TTARTISAN_4COLOR_DUAL_APERTURE
+
+    grey = [
+        h for h in TTARTISAN_4COLOR_DUAL_APERTURE.hues
+        if h.name == "max-30-grey"
+    ]
+    assert grey, "max-30-grey HueRange missing from profile"
+    for h in grey:
+        assert h.dp_y_anchor is None, (
+            f"max-30-grey must NOT enable y_anchor (would regress "
+            f"#1157 corner fix); got dp_y_anchor={h.dp_y_anchor}."
+        )
+
+
 def test_max_10_black_does_not_collide_with_max_30_grey() -> None:
     """The overlap-recovery rule v_max=55 must not catch pixels meant
     for the grey 30 lp/mm mask (V in [90, 160])."""
