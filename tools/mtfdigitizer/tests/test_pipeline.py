@@ -471,3 +471,90 @@ def test_max_10_black_does_not_collide_with_max_30_grey() -> None:
     assert masks["max-30-grey"][0, 0], (
         "V=95 pixel did not land in grey mask — grey rule regressed."
     )
+
+
+def test_edge_bracket_extends_inward_at_left_corner() -> None:
+    """TTartisan chart templates render curves with up to 8 px of slack
+    between the printed plot axis and where the curves actually start.
+    At fraction=0.0 the sampler must extend its bracket INWARD (to the
+    right) by up to _EDGE_BRACKET_INWARD px to find the curve, while
+    keeping the leftward search tight (never reaching past x_left into
+    chrome). #1163-followup."""
+    import numpy as np
+    from mtfdigitizer.pipeline.sampling import sample_skeleton_at_fraction
+
+    # 100x200 image, plot_box spans full width/height.
+    # Skeleton has a single pixel at x=14 (4 px in from the left edge
+    # at x_left=10, within the 5-px edge-bracket window). The standard
+    # ±3 window from target_x=10 (fraction=0.0) looks in [7, 13] and
+    # would miss x=14.
+    skeleton = np.zeros((100, 200), dtype=np.uint8)
+    skeleton[50, 14] = 1
+    plot_box = PlotBox(x_left=10, x_right=190, y_top=10, y_bottom=90)
+    # Standard ±3 window misses; edge-widened window catches.
+    result = sample_skeleton_at_fraction(skeleton, 0.0, plot_box)
+    assert result is not None, (
+        "Edge-bracket should reach inward to find the curve 1 px past "
+        "the standard ±3 bracket boundary."
+    )
+
+
+def test_edge_bracket_extends_inward_at_right_corner() -> None:
+    """Same as the left-corner case but at the right edge: at
+    fraction=1.0 the sampler extends INWARD (leftward) to find a curve
+    that ends a few px before the printed plot axis."""
+    import numpy as np
+    from mtfdigitizer.pipeline.sampling import sample_skeleton_at_fraction
+
+    skeleton = np.zeros((100, 200), dtype=np.uint8)
+    # Pixel 4 px in from the right edge (x=186 when x_right=190), within
+    # the 5-px edge-bracket window. Standard ±3 misses, edge-widened catches.
+    skeleton[50, 186] = 1
+    plot_box = PlotBox(x_left=10, x_right=190, y_top=10, y_bottom=90)
+    result = sample_skeleton_at_fraction(skeleton, 1.0, plot_box)
+    assert result is not None, (
+        "Edge-bracket should reach inward (leftward) to find the curve "
+        "4 px past the standard right-edge ±3 bracket boundary."
+    )
+
+
+def test_edge_bracket_caps_at_inward_distance() -> None:
+    """The edge-widened bracket caps at _EDGE_BRACKET_INWARD (5). A
+    pixel beyond that range (e.g. 8 px in) still returns None — the
+    B2 fail-safe contract is preserved past the widened window."""
+    import numpy as np
+    from mtfdigitizer.pipeline.sampling import sample_skeleton_at_fraction
+
+    skeleton = np.zeros((100, 200), dtype=np.uint8)
+    # Pixel 8 px in from the left edge — beyond the 5-px window.
+    skeleton[50, 18] = 1
+    plot_box = PlotBox(x_left=10, x_right=190, y_top=10, y_bottom=90)
+    result = sample_skeleton_at_fraction(skeleton, 0.0, plot_box)
+    assert result is None, (
+        "Edge-bracket must cap at _EDGE_BRACKET_INWARD; reaching further "
+        "would violate the B2 fail-safe contract on charts with sharp "
+        "corner crashes."
+    )
+
+
+def test_edge_bracket_does_not_widen_at_mid_field() -> None:
+    """The widened bracket triggers ONLY when target_x is within
+    _BRACKET_HALF_WIDTH of the plot edge. Mid-field samples keep the
+    standard ±3 window — never extrapolate across dash gaps further
+    than the existing tolerance."""
+    import numpy as np
+    from mtfdigitizer.pipeline.sampling import sample_skeleton_at_fraction
+
+    # Skeleton has a pixel 8 px from the target column at fraction=0.5.
+    # That pixel is mid-field, the standard ±3 window should miss it.
+    skeleton = np.zeros((100, 200), dtype=np.uint8)
+    plot_box = PlotBox(x_left=10, x_right=190, y_top=10, y_bottom=90)
+    # fraction=0.5 → target_x = 10 + 0.5*180 = 100. Place pixel at 108
+    # (just outside ±3 window). If the bracket widened to 10 here, this
+    # would be found.
+    skeleton[50, 108] = 1
+    result = sample_skeleton_at_fraction(skeleton, 0.5, plot_box)
+    assert result is None, (
+        "Mid-field sampler must keep the tight ±3 window — bridging "
+        "wider than that breaks the B2 fail-safe contract."
+    )

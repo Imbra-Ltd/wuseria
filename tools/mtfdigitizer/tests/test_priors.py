@@ -151,7 +151,9 @@ def test_10_ge_30_fires_when_bands_swapped() -> None:
 def test_10_ge_30_fires_per_position() -> None:
     """Inversion at one position only produces one violation."""
     c10s = (0.90,) * 11
-    r30s = (0.50,) * 5 + (0.95,) + (0.50,) * 5  # spike past 10 at position 5
+    # Spike past 10 at position 5 by clearly more than INEQUALITY_TOLERANCE
+    # (0.05); use 0.10 above c10s so the test is robust to tolerance bumps.
+    r30s = (0.50,) * 5 + (1.00,) + (0.50,) * 5
     violations = check_10_ge_30(_readings(c10s=c10s, r30s=r30s))
     assert len(violations) == 1
     assert violations[0].position_index == 5
