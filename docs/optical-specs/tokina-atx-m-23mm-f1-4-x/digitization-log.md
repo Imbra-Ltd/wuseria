@@ -26,23 +26,23 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 
 | Field          | paired | med \|Δ\| | p95 \|Δ\| | sister-fill |
 | -------------- | ------ | --------- | --------- | ----------- |
-| contrast10S    | 11/11  |     0.026 |     0.074 |  0/11       |
-| contrast10M    | 11/11  |     0.027 |     0.106 |  0/11       |
-| resolution30S  | 11/11  |     0.043 |     0.130 |  0/11       |
-| resolution30M  | 11/11  |     0.016 |     0.047 |  0/11       |
+| freq10S        | 11/11  |     0.026 |     0.074 |  0/11       |
+| freq10M        | 11/11  |     0.027 |     0.106 |  0/11       |
+| freq30S        | 11/11  |     0.043 |     0.130 |  0/11       |
+| freq30M        | 11/11  |     0.016 |     0.047 |  0/11       |
 
 ```
-  EX   contrast10S    █▇▇█▇▇▇▇▇▇▇  (0.93 → 0.83)
-  EYE  contrast10S    ███▇█▇▇▇▇▇▇
-  EX   contrast10M    █▇█▇▇▇▇▇▇▆▆  (0.93 → 0.67)
-  EYE  contrast10M    ██▇▇▇▇▇▇▆▆▅
-  EX   resolution30S  ▆▅▅▆▆▅▅▅▅▅▄  (0.67 → 0.45)
-  EYE  resolution30S  ▆▆▆▆▅▅▅▅▆▅▅
-  EX   resolution30M  ▆▅▅▅▅▅▅▅▅▄▃  (0.67 → 0.34)
-  EYE  resolution30M  ▆▆▅▅▅▅▅▅▅▄▃
+  EX   freq10S        █▇▇█▇▇▇▇▇▇▇  (0.93 → 0.83)
+  EYE  freq10S        ███▇█▇▇▇▇▇▇
+  EX   freq10M        █▇█▇▇▇▇▇▇▆▆  (0.93 → 0.67)
+  EYE  freq10M        ██▇▇▇▇▇▇▆▆▅
+  EX   freq30S        ▆▅▅▆▆▅▅▅▅▅▄  (0.67 → 0.45)
+  EYE  freq30S        ▆▆▆▆▅▅▅▅▆▅▅
+  EX   freq30M        ▆▅▅▅▅▅▅▅▅▄▃  (0.67 → 0.34)
+  EYE  freq30M        ▆▆▅▅▅▅▅▅▅▄▃
 ```
 
-**contrast10S**
+**freq10S**
 
 | frac | EYE | EX | Δ |
 | ---- | --- | --- | --- |
@@ -58,7 +58,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | 0.9 | 0.85 | 0.87 | 0.017 |
 | 1.0 | 0.82 | 0.83 | 0.010 |
 
-**contrast10M**
+**freq10M**
 
 | frac | EYE | EX | Δ |
 | ---- | --- | --- | --- |
@@ -74,7 +74,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | 0.9 | 0.68 | 0.75 | 0.072 |
 | 1.0 | 0.62 | 0.67 | 0.050 |
 
-**resolution30S**
+**freq30S**
 
 | frac | EYE | EX | Δ |
 | ---- | --- | --- | --- |
@@ -90,7 +90,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | 0.9 | 0.58 | 0.55 | 0.034 |
 | 1.0 | 0.55 | 0.45 | 0.102 |
 
-**resolution30M**
+**freq30M**
 
 | frac | EYE | EX | Δ |
 | ---- | --- | --- | --- |
@@ -110,16 +110,16 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| contrast10S    |         0.93 |       0.87 |         0.83 |
-| contrast10M    |         0.93 |       0.75 |         0.67 |
-| resolution30S  |         0.67 |       0.55 |         0.45 |
-| resolution30M  |         0.67 |       0.49 |         0.34 |
+| freq10S        |         0.93 |       0.87 |         0.83 |
+| freq10M        |         0.93 |       0.75 |         0.67 |
+| freq30S        |         0.67 |       0.55 |         0.45 |
+| freq30M        |         0.67 |       0.49 |         0.34 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| contrast10S    |       0.3 |       0.94 |                 — |
-| contrast10M    |       0.0 |       0.93 |                 — |
-| resolution30S  |       0.4 |       0.70 |                 — |
-| resolution30M  |       0.0 |       0.67 |                 — |
+| freq10S        |       0.3 |       0.94 |                 — |
+| freq10M        |       0.0 |       0.93 |                 — |
+| freq30S        |       0.4 |       0.70 |                 — |
+| freq30M        |       0.0 |       0.67 |                 — |

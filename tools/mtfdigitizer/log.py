@@ -25,6 +25,7 @@ import re
 import statistics
 from pathlib import Path
 
+from .aperture_passes import aperture_passes_for_view
 from .family_profile import profile_for_chart
 from .pipeline import PlotBox, extract_chart
 from .pipeline.sampling import SAMPLE_FRACTIONS
@@ -141,11 +142,14 @@ def _field_stats(extracted: ExtractedChart, field: str, ground_truth: tuple) -> 
     }
 
 
-def _render_readings_grid(extracted: ExtractedChart, ground_truth: dict) -> list[str]:
+def _render_readings_grid(
+    extracted_by_aperture: dict[str, ExtractedChart], ground_truth: dict
+) -> list[str]:
     """One markdown table per (aperture, field) summary + one wide grid table."""
     lines: list[str] = []
     fields = ("freq10S", "freq10M", "freq30S", "freq30M")
     for aperture, gt_by_field in ground_truth.items():
+        extracted = extracted_by_aperture[aperture]
         if len(ground_truth) > 1:
             lines.append(f"#### Aperture {aperture}")
             lines.append("")
@@ -213,12 +217,13 @@ def _render_readings_grid(extracted: ExtractedChart, ground_truth: dict) -> list
 
 
 def _render_center_edge_summary(
-    extracted: ExtractedChart, ground_truth: dict
+    extracted_by_aperture: dict[str, ExtractedChart], ground_truth: dict
 ) -> list[str]:
     """One block per aperture showing center (frac 0.0) and edge (frac 0.9, 1.0) values."""
     lines: list[str] = []
     fields = ("freq10S", "freq10M", "freq30S", "freq30M")
     for aperture in ground_truth:
+        extracted = extracted_by_aperture[aperture]
         if len(ground_truth) > 1:
             lines.append(f"#### Aperture {aperture}")
             lines.append("")
@@ -237,12 +242,13 @@ def _render_center_edge_summary(
 
 
 def _render_shape_metrics(
-    extracted: ExtractedChart, ground_truth: dict
+    extracted_by_aperture: dict[str, ExtractedChart], ground_truth: dict
 ) -> list[str]:
     """Per-field peak position and half-falloff position."""
     lines: list[str] = []
     fields = ("freq10S", "freq10M", "freq30S", "freq30M")
     for aperture in ground_truth:
+        extracted = extracted_by_aperture[aperture]
         if len(ground_truth) > 1:
             lines.append(f"#### Aperture {aperture}")
             lines.append("")
@@ -263,7 +269,8 @@ def _render_shape_metrics(
 
 
 def _render_lens_log(
-    lens_slug: str, panels: list[tuple[ReferenceChart, ExtractedChart]]
+    lens_slug: str,
+    panels: list[tuple[ReferenceChart, dict[str, ExtractedChart]]],
 ) -> str:
     """Build the full digitization-log.md content for one lens."""
     lines: list[str] = []
@@ -304,7 +311,7 @@ def _render_lens_log(
     )
     lines.append("")
 
-    for chart, extracted in panels:
+    for chart, extracted_by_aperture in panels:
         focal = _panel_focal_label(chart.slug)
         if focal:
             lines.append(f"## Panel at {focal}")
@@ -313,7 +320,10 @@ def _render_lens_log(
         lines.append("")
         lines.append(f"- **Chart:** `{chart.chart_path}`")
         lines.append(f"- **Style family:** `{chart.style_family}`")
-        lines.append(f"- **Dispatch profile:** `{extracted.profile_name}`")
+        # Multi-aperture (ADR-044) runs N passes with the same base profile,
+        # each with hues filtered to one aperture. Report the base name.
+        first_extracted = next(iter(extracted_by_aperture.values()))
+        lines.append(f"- **Dispatch profile:** `{first_extracted.profile_name}`")
         lines.append(
             f"- **Plot box (pixels):** x=[{chart.plot_box.x_left}, "
             f"{chart.plot_box.x_right}], y=[{chart.plot_box.y_top}, "
@@ -324,26 +334,43 @@ def _render_lens_log(
 
         lines.append("### Sample grid (EYE vs EX)")
         lines.append("")
-        lines.extend(_render_readings_grid(extracted, chart.ground_truth))
+        lines.extend(
+            _render_readings_grid(extracted_by_aperture, chart.ground_truth)
+        )
 
         lines.append("### Center / edge summary")
         lines.append("")
-        lines.extend(_render_center_edge_summary(extracted, chart.ground_truth))
+        lines.extend(
+            _render_center_edge_summary(extracted_by_aperture, chart.ground_truth)
+        )
 
         lines.append("### Shape metrics")
         lines.append("")
-        lines.extend(_render_shape_metrics(extracted, chart.ground_truth))
+        lines.extend(
+            _render_shape_metrics(extracted_by_aperture, chart.ground_truth)
+        )
 
     return "\n".join(lines)
 
 
-def _extract_panel(chart: ReferenceChart) -> ExtractedChart:
-    profile = profile_for_chart(chart)
+def _extract_panel(chart: ReferenceChart) -> dict[str, ExtractedChart]:
+    """Extract one panel, returning per-aperture results.
+
+    For single-aperture charts (Sigma, Samyang, Tokina, Viltrox, 7Artisans,
+    Fuji), returns a dict with one entry keyed by the chart's primary
+    aperture. For multi-aperture charts (TTartisan per ADR-044), returns
+    one entry per aperture using `aperture_passes_for_view` to filter the
+    profile hues to each aperture's color subset. The map keys mirror the
+    aperture labels in `chart.ground_truth`.
+    """
     image_path = REPO_ROOT / chart.chart_path
     plot_box = _to_plotbox(chart.plot_box)
-    return extract_chart(
-        image_path, profile, plot_box, image_height_mm=chart.image_height_mm
-    )
+    out: dict[str, ExtractedChart] = {}
+    for aperture, profile in aperture_passes_for_view(chart, image_path):
+        out[aperture] = extract_chart(
+            image_path, profile, plot_box, image_height_mm=chart.image_height_mm
+        )
+    return out
 
 
 def _group_by_lens(
