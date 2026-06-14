@@ -206,7 +206,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.5 | 0.77 |
 | 0.6 | 0.75 |
 | 0.7 | 0.73 |
-| 0.8 | 0.77 |
+| 0.8 | 0.68 |
 | 0.9 | 0.48 |
 | 1.0 | 0.09 |
 
@@ -217,12 +217,12 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.0 | — |
 | 0.1 | 0.79 |
 | 0.2 | 0.81 |
-| 0.3 | 0.81 |
-| 0.4 | 0.81 |
+| 0.3 | 0.80 |
+| 0.4 | 0.80 |
 | 0.5 | 0.77 |
 | 0.6 | 0.75 |
 | 0.7 | 0.73 |
-| 0.8 | 0.69 |
+| 0.8 | 0.78 |
 | 0.9 | 0.79 |
 | 1.0 | — |
 
@@ -242,7 +242,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | freq10S        |       0.4 |       0.93 |                 — |
 | freq10M        |       0.4 |       0.93 |                 — |
 | freq30S        |       0.1 |       0.79 |               1.0 |
-| freq30M        |       0.3 |       0.81 |                 — |
+| freq30M        |       0.2 |       0.81 |                 — |
 
 ### Confidence signals
 
@@ -250,8 +250,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.889 |      0.80 |  yes |
-| IoU       | 0.551 |      0.20 |  yes |
+| precision | 0.922 |      0.80 |  yes |
+| IoU       | 0.590 |      0.20 |  yes |
 
 #### Plausibility priors
 

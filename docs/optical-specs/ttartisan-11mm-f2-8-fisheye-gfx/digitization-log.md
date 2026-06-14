@@ -249,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.920 |      0.80 |  yes |
-| IoU       | 0.727 |      0.20 |  yes |
+| precision | 0.924 |      0.80 |  yes |
+| IoU       | 0.753 |      0.20 |  yes |
 
 #### Plausibility priors
 

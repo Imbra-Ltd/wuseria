@@ -158,7 +158,7 @@ No reasons — both confidence signals cleared.
   EX   freq10S        ███████▇▇▇▇  (0.94 → 0.90)
   EX   freq10M        █████████▇█  (0.94 → 0.94)
   EX   freq30S        ▇▇▇▇▆▆▆▆▆▅▅  (0.80 → 0.57)
-  EX   freq30M        ▇▇▇▇▇▇▆▇▆▆▆  (0.80 → 0.77)
+  EX   freq30M        ▇▇▇▇▇▇▇▇▆▆▆  (0.80 → 0.77)
 ```
 
 **freq10S**
@@ -203,7 +203,7 @@ No reasons — both confidence signals cleared.
 | 0.3 | 0.79 |
 | 0.4 | 0.78 |
 | 0.5 | 0.75 |
-| 0.6 | 0.76 |
+| 0.6 | 0.72 |
 | 0.7 | 0.68 |
 | 0.8 | 0.64 |
 | 0.9 | 0.61 |
@@ -219,7 +219,7 @@ No reasons — both confidence signals cleared.
 | 0.3 | 0.81 |
 | 0.4 | 0.82 |
 | 0.5 | 0.82 |
-| 0.6 | 0.76 |
+| 0.6 | 0.81 |
 | 0.7 | 0.79 |
 | 0.8 | 0.77 |
 | 0.9 | 0.77 |
@@ -249,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.893 |      0.80 |  yes |
-| IoU       | 0.663 |      0.20 |  yes |
+| precision | 0.956 |      0.80 |  yes |
+| IoU       | 0.768 |      0.20 |  yes |
 
 #### Plausibility priors
 

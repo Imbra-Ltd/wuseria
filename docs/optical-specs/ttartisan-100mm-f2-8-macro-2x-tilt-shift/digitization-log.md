@@ -157,8 +157,8 @@ No reasons — both confidence signals cleared.
 ```
   EX   freq10S        ███████▇▇▇▇  (0.94 → 0.87)
   EX   freq10M        ███████▇▇▇█  (0.94 → 0.94)
-  EX   freq30S        ▆▆▇▇▇▆▆▆▆▅▄  (0.76 → 0.44)
-  EX   freq30M        ▆▆▇▇▇▆▆▆▆▆▆  (0.76 → 0.78)
+  EX   freq30S        ▆▆▇▇▇▆▆▆▆▆▆  (0.76 → 0.78)
+  EX   freq30M        ▆▆▇▇▇▆▆▆▆▅▄  (0.76 → 0.44)
 ```
 
 **freq10S**
@@ -205,9 +205,9 @@ No reasons — both confidence signals cleared.
 | 0.5 | 0.77 |
 | 0.6 | 0.73 |
 | 0.7 | 0.70 |
-| 0.8 | 0.68 |
-| 0.9 | 0.62 |
-| 1.0 | 0.44 |
+| 0.8 | 0.69 |
+| 0.9 | 0.75 |
+| 1.0 | 0.78 |
 
 **freq30M**
 
@@ -221,9 +221,9 @@ No reasons — both confidence signals cleared.
 | 0.5 | 0.77 |
 | 0.6 | 0.73 |
 | 0.7 | 0.70 |
-| 0.8 | 0.69 |
-| 0.9 | 0.75 |
-| 1.0 | 0.78 |
+| 0.8 | 0.68 |
+| 0.9 | 0.62 |
+| 1.0 | 0.44 |
 
 ### Center / edge summary
 
@@ -231,8 +231,8 @@ No reasons — both confidence signals cleared.
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.94 |       0.91 |         0.87 |
 | freq10M        |         0.94 |       0.93 |         0.94 |
-| freq30S        |         0.76 |       0.62 |         0.44 |
-| freq30M        |         0.76 |       0.75 |         0.78 |
+| freq30S        |         0.76 |       0.75 |         0.78 |
+| freq30M        |         0.76 |       0.62 |         0.44 |
 
 ### Shape metrics
 
@@ -240,8 +240,8 @@ No reasons — both confidence signals cleared.
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.3 |       0.94 |                 — |
 | freq10M        |       0.3 |       0.94 |                 — |
-| freq30S        |       0.3 |       0.80 |                 — |
-| freq30M        |       0.4 |       0.80 |                 — |
+| freq30S        |       0.4 |       0.80 |                 — |
+| freq30M        |       0.3 |       0.80 |                 — |
 
 ### Confidence signals
 
@@ -249,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.935 |      0.80 |  yes |
-| IoU       | 0.753 |      0.20 |  yes |
+| precision | 0.930 |      0.80 |  yes |
+| IoU       | 0.764 |      0.20 |  yes |
 
 #### Plausibility priors
 

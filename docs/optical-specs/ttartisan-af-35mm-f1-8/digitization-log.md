@@ -158,8 +158,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 ```
   EX   freq10S        ██████████▇  (0.94 → 0.88)
   EX   freq10M        █████████▇▇  (0.94 → 0.88)
-  EX   freq30S        ▇▇▇▇▇▇▆▆▇▇▄  (0.84 → 0.49)
-  EX   freq30M        ▇▇▇▇▇▇▆▆▆▆▅  (0.84 → 0.63)
+  EX   freq30S        ▇▇▇▇▇▇▆▆▇▇▅  (0.84 → 0.63)
+  EX   freq30M        ▇▇▇▇▇▇▆▆▆▆▄  (0.84 → 0.49)
 ```
 
 **freq10S**
@@ -208,7 +208,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.7 | 0.78 |
 | 0.8 | 0.85 |
 | 0.9 | 0.82 |
-| 1.0 | 0.49 |
+| 1.0 | 0.63 |
 
 **freq30M**
 
@@ -224,7 +224,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.7 | 0.78 |
 | 0.8 | 0.73 |
 | 0.9 | 0.67 |
-| 1.0 | 0.63 |
+| 1.0 | 0.49 |
 
 ### Center / edge summary
 
@@ -232,8 +232,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.94 |       0.95 |         0.88 |
 | freq10M        |         0.94 |       0.91 |         0.88 |
-| freq30S        |         0.84 |       0.82 |         0.49 |
-| freq30M        |         0.84 |       0.67 |         0.63 |
+| freq30S        |         0.84 |       0.82 |         0.63 |
+| freq30M        |         0.84 |       0.67 |         0.49 |
 
 ### Shape metrics
 
@@ -250,8 +250,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.874 |      0.80 |  yes |
-| IoU       | 0.678 |      0.20 |  yes |
+| precision | 0.839 |      0.80 |  yes |
+| IoU       | 0.660 |      0.20 |  yes |
 
 #### Plausibility priors
 

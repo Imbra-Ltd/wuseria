@@ -283,7 +283,13 @@ TTARTISAN_4COLOR_DUAL_APERTURE: MtfProfile = MtfProfile(
         HueRange(name="stopped-10-red", h_lo=175, h_hi=179, s_min=80, v_min=80, v_max=220),
         # Orange — 30 lp/mm at the stopped aperture. Centered on hue 17;
         # high S to reject the brown/tan legend text background.
-        HueRange(name="stopped-30-orange", h_lo=12, h_hi=22, s_min=80, v_min=80, v_max=220),
+        # `dp_y_anchor=True` (#1168): on tilt-50 stopped pass the
+        # solid S30 and dashed T30 cross near MTF 0.71 mid-field, and
+        # the unanchored DP swaps curve identity per column at dash
+        # gaps. The anchor pulls each pass toward its band so neither
+        # swaps. Safe on stopped 30 (no legitimate large dives like the
+        # max 30 grey case the profile-level scalar avoids).
+        HueRange(name="stopped-30-orange", h_lo=12, h_hi=22, s_min=80, v_min=80, v_max=220, dp_y_anchor=True),
     ),
     style_axis="SPLIT_BY_DASH",
     # The S (solid) and T (dashed) curves of one frequency run within

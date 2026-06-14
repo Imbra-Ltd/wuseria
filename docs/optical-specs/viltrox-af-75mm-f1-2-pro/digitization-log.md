@@ -26,19 +26,19 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 
 | Field          | paired | med \|Δ\| | p95 \|Δ\| | sister-fill |
 | -------------- | ------ | --------- | --------- | ----------- |
-| freq10S        | 11/11  |     0.012 |     0.044 |  0/11       |
+| freq10S        | 11/11  |     0.012 |     0.056 |  0/11       |
 | freq10M        |  5/11  |     0.035 |     0.092 |  0/11       |
 | freq30S        |  6/11  |     0.018 |     0.061 |  0/11       |
-| freq30M        |  4/11  |     0.042 |     0.103 |  0/11       |
+| freq30M        |  4/11  |     0.039 |     0.108 |  0/11       |
 
 ```
-  EX   freq10S        ███████████  (0.99 → 0.99)
+  EX   freq10S        ███████████  (0.99 → 1.00)
   EYE  freq10S        ███████████
   EX   freq10M        ███·█▇·····  (0.99 →  — )
   EYE  freq10M        ███████▇▇▇▇
   EX   freq30S        ···▇▇·▇▇▇▇·  ( —  →  — )
   EYE  freq30S        ████▇▇▇▇▇▇▆
-  EX   freq30M        ······▇▇·▇▆  ( —  → 0.72)
+  EX   freq30M        ······▇▇·▇▆  ( —  → 0.71)
   EYE  freq30M        ▇▇▇▇▇▇▇▇▆▆▆
 ```
 
@@ -56,7 +56,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | 0.7 | 0.99 | 0.97 | 0.015 |
 | 0.8 | 0.97 | 0.98 | 0.007 |
 | 0.9 | 0.95 | 0.97 | 0.021 |
-| 1.0 | 0.95 | 0.99 | 0.038 |
+| 1.0 | 0.95 | 1.00 | 0.046 |
 
 **freq10M**
 
@@ -104,22 +104,22 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | 0.7 | 0.82 | 0.82 | 0.003 |
 | 0.8 | 0.78 | — | — |
 | 0.9 | 0.72 | 0.81 | 0.088 |
-| 1.0 | 0.65 | 0.72 | 0.069 |
+| 1.0 | 0.65 | 0.71 | 0.062 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq10S        |         0.99 |       0.97 |         0.99 |
+| freq10S        |         0.99 |       0.97 |         1.00 |
 | freq10M        |         0.99 |          — |            — |
 | freq30S        |            — |       0.87 |            — |
-| freq30M        |            — |       0.81 |         0.72 |
+| freq30M        |            — |       0.81 |         0.71 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq10S        |       0.2 |       0.99 |                 — |
+| freq10S        |       1.0 |       1.00 |                 — |
 | freq10M        |       0.0 |       0.99 |                 — |
 | freq30S        |       0.3 |       0.93 |                 — |
 | freq30M        |       0.6 |       0.84 |                 — |
