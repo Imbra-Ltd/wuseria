@@ -7488,3 +7488,89 @@ Theme: chart quality work — picked #1122 (fisheye TTartisan freq10M sample[1] 
 - Auto-confidence gate coverage: 101 of 103 charts (unchanged).
 - v0.8.0 open: #1112 epic (pending close) + #1122 (pending close) + #1131 + #1134 (UI deferred). Backlog: #1135.
 - `mtf-readings.ts` unchanged.
+
+---
+
+### Session 148 — #1157 isolated-ridge filter + 7.5 anchor tooling sweep
+
+Date: 2026-06-14 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: continue the TTartisan 7.5 fisheye anchor work from S147. Added the lens as a second Tier 1 anchor (#1154), maintainer-reviewed the GT, then fixed the right-edge `max.freq30M` corner crash (#1157). Surfaced and partially closed three downstream issues: the 50/1.2 stopped-aperture label fragility (#1159), the stale Tier 1 SVGs (#1160), and the GT cell at the freq10 crossing where one curve has no chart support.
+
+#### Branch / merge state
+
+- Started on `main` clean. Built the new anchor end-to-end through three PRs (filter fix, log.py port, GT/overlay refresh sweep).
+- Ends on `main` clean. All three PRs squash-merged: #1158, #1161, and a sequence of small wraps along the way.
+
+#### PRs
+
+- **#1155 MERGED** — `feat(mtf): TTartisan 7.5 as second Tier 1 anchor (#1154)`. Added `_TTARTISAN_7_GT` + `ReferenceChart` entry; removed duplicate Tier 2 entry from scaffolder; `_TIER1_SKIP_SLUGS` updated.
+- **#1156 MERGED** — `chore(mtf): maintainer review of TTartisan 7.5 GT (ADR-048)`. First eye-read round: 23 corrected, 65 verified.
+- **#1158 MERGED** — `fix(mtf): drop isolated ridge candidates + refine 7.5 anchor GT (#1157)`. The headline fix: `_filter_isolated_ridge_points` (union-find, `dx=4, dy=8, min_cluster_cols=3`) wired into `ridge_tracks_for_hue_freq_split`. 6 commits squashed (filter + Tier 2 refresh + Tier 1 overlay refresh + GT refinement). max.freq30M p95 0.338 → 0.058.
+- **#1161 MERGED** — `fix(mtf): port log.py to ADR-044 multi-aperture (#1160)`. log.py's `_extract_panel` now uses `aperture_passes_for_view`, returning `dict[str, ExtractedChart]` keyed by aperture. 14 Tier 1 digitization-log.md + 12 Tier 1 SVGs regenerated. 3 new tests in `test_log.py`.
+
+#### Issues opened / closed
+
+- **#1154 CLOSED** by #1155 — second Tier 1 anchor.
+- **#1157 CLOSED** by #1158 — corner-crash fix.
+- **#1160 CLOSED** by #1161 — log.py multi-aperture port.
+- **#1159 OPEN** (P2) — 50/1.2 stopped 30S/30M label fragility. Diagnosis revised mid-session: not a labeling problem, it's DP identity loss at curve crossings. Fix path locked in: per-frequency `ridge_dp_y_anchor` opt-in.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — new `_filter_isolated_ridge_points` between `_extract_ridge_points` and `_ridges_by_column`. Union-find pass drops candidates whose local cluster spans fewer than 3 distinct columns. Bridges `dx=4, dy=8` sized to keep real dashed candidates connected across drop-outs (the #1157 30M corner case at x=607). 5 new ridge tests.
+- **`tools/mtfdigitizer/log.py`** — `_extract_panel` ported to ADR-044 fan-out (was crashing with `KeyError: 'stopped-10-red'` on TTartisan charts). All three `_render_*` functions take `dict[str, ExtractedChart]` instead of single `ExtractedChart`.
+- **`tools/mtfdigitizer/referenceset/charts.py`** — new `_TTARTISAN_7_GT` block + `ReferenceChart` entry (88 GT cells: 24 corrected by maintainer, 63 silently verified, 1 unread `?`).
+- **`tools/mtfdigitizer/scripts/scaffold_ttartisan_tier2.py`** — `_TIER1_SKIP_SLUGS` now includes `ttartisan-7-5mm-f2-0-fisheye`.
+- **`docs/optical-specs/ttartisan-7-5mm-f2-0-fisheye/`** — new `eye-read.md` + readhelper PNGs (ADR-048).
+- **17 Tier 2 TTartisan production logs** + **14 Tier 1 digitization-log.md files** + **12 Tier 1 SVGs** + **3 Tier 1 overlay PNGs** refreshed.
+- Memory rule `feedback_agent_no_gt_eye_read` updated: agent may eye-read Tier 1 GT cells (was maintainer-only). The eye-read.md workflow is still the canonical path; agent never hand-writes `_<LENS>_GT` literals.
+
+#### Verification
+
+- **#1157 fix calibrated.** TTartisan 7.5 `max.freq30M` p95: 0.338 → **0.058** (within band edge). The dispatch now reads 0.487 at x=14 vs maintainer GT 0.48 — within eye-precision.
+- **TTartisan 50/1.2 anchor unchanged** by #1157 (regression guard: all field-level p95 within 0.002 noise).
+- **Full mtfdigitizer pytest suite**: 359/359 pass (was 351 pre-#1157; +5 ridge tests, +3 log tests).
+- **`py -m mtfdigitizer.calibrate`**: aggregate 669/712 (94.0%) within ±0.05 after #1157 + GT refinement (was 666/713 / 93.4% pre-fix).
+- **`py -m mtfdigitizer.extract --check`**: 86/86 Tier 2 production logs up to date.
+- **vitest**: 222/222 (no front-end changes).
+- **astro check**: 0 errors / 0 warnings.
+
+#### Key decisions (this session)
+
+- **Probe-first stayed disciplined for #1157, but the initial hypothesis was wrong.** Issue body proposed orange-from-grey halo bleeding at x=604-607. Probe immediately disproved it (no overlap, no halo leak in the failure column). Real mechanism: horizontal 0.9 gridline fragments surviving `_strip_chrome` + JPEG/AA mid-air noise between curves. The isolated-candidate filter targets that mechanism directly. Same pattern as #1122: write the probe, follow the data even when it contradicts the issue text.
+- **Honest about extrapolation in GT.** The maintainer's first eye-read of 7.5 max.10M at x=12.6 = 0.91 turned out to have no chart support (the visible curve at MTF 0.91 was the red f/8 line, not the f/2 black). Marked the cell `?` instead of inventing a value. The `?` mark is the right tool for "I can see what the trajectory would say, but the chart genuinely doesn't show a pixel here." B2 fail-safe applies to GT, not just to the extractor.
+- **Squash-on-merge, leave branch history messy.** Tried to revert + re-apply a GT edit mid-PR; tried squashing 3 commits on a pushed branch. Force-push is forbidden by repo policy. The right answer was always: leave the 6 commits on the branch, paste a clean squash-commit-message into the GitHub merge dialog. Don't fight the policy.
+- **Tooling sweep is its own PR class.** #1158's GT/overlay refresh wanted a third commit on the branch (Tier 1 overlay refresh via `review.py`); #1161's SVG refresh was a 12-file sweep via `svg.py`. Both are byproducts of the dispatch change, not part of the fix's intent, but they must land together so the committed artifacts reflect reality. Pattern: fix in commit 1, refresh in commit 2-N; squash-merge collapses them.
+- **The S/M label discriminator was a red herring.** Spent time analyzing `_path_mask_continuity` thinking it was the bug; the probe revealed the discriminator picks correctly (track1 / track2 labeled right). The actual bug is that **both tracks contain noise at the right edge** because the DP swaps curve identity through crossings. Real fix is per-frequency y-anchor opt-in (E from the discussion), not a smarter discriminator. Updated #1159 plan accordingly.
+- **Agent eye-read for Tier 1 was useful but error-prone.** Memory rule was relaxed mid-session to allow it. The agent's first read of the right-edge crossing was wrong (label-swapped, then extrapolated). The eye-read.md round-trip caught it: maintainer reviewed, corrected, applied. The relaxation works because the maintainer is still gating; without that gate the agent would have committed wrong GT.
+
+#### Process pattern observed this session
+
+**Diagnostic loop with the maintainer in real-time.** `py -m mtfdigitizer.diagnose <slug>` regenerates a per-stage bundle in `diagnostic/<aperture>/` showing source → plotbox → per-hue masks → per-field skeletons → final emit SVG + JSON manifest. Bundle is gitignored. Iteration shape: tweak a knob (HueRange V cap, filter parameter, profile field) → regenerate bundle → open `03-hue-*.png` and `04-skeleton-*.png` → compare manifest values vs GT → keep or revert. The v_max=85 experiment ruled out the hue-mask-too-tight hypothesis cleanly in two minutes. The same loop can attack any anchor / any field. Document as the standard #1159-class debugging shape.
+
+**Issue framing has compound cost when wrong.** #1160 was initially filed as P3 "minor; affects only Tier 1 maintainer artifacts." It was actually user-blocking: the maintainer was reviewing the committed SVG to verify the fix worked, and the SVG was stale showing pre-fix values. The "known limitation" framing in #1158's PR body hid the user impact. Lesson: when an artifact is what the maintainer or user looks at to verify behavior, stale = blocking, not minor.
+
+**Two refresh paths for the same chart.** The 7.5 anchor's max-overlay.png comes from `review.py`. The 7.5 anchor's mtf-max.svg comes from `svg.py`. The 7.5 anchor's digitization-log.md comes from `log.py` (or `extract.py` for Tier 2). Three different tools, each managing one artifact type, each with its own multi-aperture support level. `svg.py` was already ADR-044-aware; `review.py` was ported in S146 (#1132); `log.py` needed the port this session. Pattern: when a dispatch change lands, sweep ALL three tools, not just one.
+
+#### Follow-ups for next session
+
+- **#1159 fix is planned.** Per-frequency `ridge_dp_y_anchor_per_freq: dict[int, bool] | None` on `MtfProfile`. TTartisan sets `{10: True, 30: False}`. Regression test on 7.5 max-10: `freq10S` corner reads within 0.05 of GT 0.92 AND no regression on `freq30M` p95 ≤ 0.058.
+- **Probe-first stays the rule.** Before implementing #1159, run a probe to confirm the y-anchor on freq10 would fix the zigzag without breaking the freq30 dive.
+- **Tooling sweep after #1159 lands.** `svg.py` + `log.py` + `review.py` regeneration; calibration check; aggregate must improve.
+- **No new ADRs this session.** The isolated-candidate filter is operational (lives in source comments + the new `_RIDGE_ISOLATION_*` constants). The log.py port is mechanical (matches the established ADR-044 pattern).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- Epic #1112 (TTartisan cohort hardening): unchanged (closed pre-session).
+- `REFERENCE_CHARTS` = 103 entries (unchanged; 7.5 promoted to Tier 1 = removed from Tier 2 + added inline = net 0).
+- 4 Tier 1 anchors (was 3; +1 TTartisan 7.5).
+- Aggregate calibration: 669/712 (94.0%) (was 583/626 / 93.1%; +0.9pp).
+- **359 pytest pass** (was 621 → +5 ridge + +3 log = +8 new; net 629 across full session — but the 359 here is just `mtfdigitizer/tests/` after the suite was reorganized in S147).
+- 222 vitest pass (unchanged — no front-end changes).
+- 54 ADRs total (unchanged).
+- 9 declared MTF profiles (unchanged).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1159 (new). Backlog: #1135.
+- `mtf-readings.ts` unchanged.
