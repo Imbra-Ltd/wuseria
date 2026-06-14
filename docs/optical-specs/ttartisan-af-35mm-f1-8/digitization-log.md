@@ -26,14 +26,14 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | -------------- | -------- | ----------- |
 | freq10S        | 11/11    |  0/11       |
 | freq10M        | 11/11    |  0/11       |
-| freq30S        | 10/11    |  0/11       |
-| freq30M        | 10/11    |  0/11       |
+| freq30S        | 11/11    |  0/11       |
+| freq30M        | 11/11    |  0/11       |
 
 ```
   EX   freq10S        █████▇▇▇▇▆▄  (0.95 → 0.38)
   EX   freq10M        █████▇▇▇▇▇▇  (0.95 → 0.88)
-  EX   freq30S        ·▇▇▆▆▅▅▆▆▃▂  ( —  → 0.12)
-  EX   freq30M        ·▆▆▆▆▆▅▅▅▆▂  ( —  → 0.17)
+  EX   freq30S        ▆▇▇▆▆▅▅▆▆▃▂  (0.79 → 0.12)
+  EX   freq30M        ▆▆▆▆▆▆▅▅▅▆▂  (0.79 → 0.17)
 ```
 
 **freq10S**
@@ -72,7 +72,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 0.79 |
 | 0.1 | 0.79 |
 | 0.2 | 0.80 |
 | 0.3 | 0.77 |
@@ -88,7 +88,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 0.79 |
 | 0.1 | 0.78 |
 | 0.2 | 0.74 |
 | 0.3 | 0.72 |
@@ -106,8 +106,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.95 |       0.71 |         0.38 |
 | freq10M        |         0.95 |       0.89 |         0.88 |
-| freq30S        |            — |       0.31 |         0.12 |
-| freq30M        |            — |       0.66 |         0.17 |
+| freq30S        |         0.79 |       0.31 |         0.12 |
+| freq30M        |         0.79 |       0.66 |         0.17 |
 
 ### Shape metrics
 
@@ -116,7 +116,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq10S        |       0.3 |       0.96 |               1.0 |
 | freq10M        |       0.1 |       0.95 |                 — |
 | freq30S        |       0.2 |       0.80 |               0.9 |
-| freq30M        |       0.1 |       0.78 |               1.0 |
+| freq30M        |       0.0 |       0.79 |               1.0 |
 
 ### Confidence signals
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.753 |      0.80 |   no |
-| IoU       | 0.530 |      0.20 |  yes |
+| precision | 0.777 |      0.80 |   no |
+| IoU       | 0.562 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -158,8 +158,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 ```
   EX   freq10S        ██████████▇  (0.94 → 0.88)
   EX   freq10M        █████████▇▇  (0.94 → 0.88)
-  EX   freq30S        ▇▇▇▇▇▇▆▆▇▇▄  (0.84 → 0.49)
-  EX   freq30M        ▇▇▇▇▇▇▆▆▆▆▅  (0.84 → 0.63)
+  EX   freq30S        ▇▇▇▇▇▇▆▆▇▇▅  (0.84 → 0.63)
+  EX   freq30M        ▇▇▇▇▇▇▆▆▆▆▄  (0.84 → 0.49)
 ```
 
 **freq10S**
@@ -208,7 +208,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.7 | 0.78 |
 | 0.8 | 0.85 |
 | 0.9 | 0.82 |
-| 1.0 | 0.49 |
+| 1.0 | 0.63 |
 
 **freq30M**
 
@@ -224,7 +224,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.7 | 0.78 |
 | 0.8 | 0.73 |
 | 0.9 | 0.67 |
-| 1.0 | 0.63 |
+| 1.0 | 0.49 |
 
 ### Center / edge summary
 
@@ -232,8 +232,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.94 |       0.95 |         0.88 |
 | freq10M        |         0.94 |       0.91 |         0.88 |
-| freq30S        |         0.84 |       0.82 |         0.49 |
-| freq30M        |         0.84 |       0.67 |         0.63 |
+| freq30S        |         0.84 |       0.82 |         0.63 |
+| freq30M        |         0.84 |       0.67 |         0.49 |
 
 ### Shape metrics
 
@@ -250,8 +250,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.874 |      0.80 |  yes |
-| IoU       | 0.678 |      0.20 |  yes |
+| precision | 0.860 |      0.80 |  yes |
+| IoU       | 0.676 |      0.20 |  yes |
 
 #### Plausibility priors
 
