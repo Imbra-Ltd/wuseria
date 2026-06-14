@@ -427,3 +427,47 @@ def test_extract_raises_for_unimplemented_profile_dispatch() -> None:
             SAMYANG_85_MAX_PLOT_BOX,
             image_height_mm=21.6,
         )
+
+
+def test_max_10_black_admits_red_stained_overlap_pixels() -> None:
+    """The f/2 black solid line can physically overlap the f/8 red lines
+    on the right-edge crossing. The PNG renderer blends the colors,
+    producing pixels with V<55 but S=255 (low-V red). These are genuinely
+    black ink stained red by the overlap — they must be admitted to the
+    `max-10-black` mask, not the `stopped-10-red` mask. See #1159.
+
+    Verify with a synthetic HSV pixel matching the failure case at the
+    7.5 fisheye max-aperture chart, x=552 y=146: H=0, S=255, V=41."""
+    import numpy as np
+    from mtfdigitizer.pipeline.masks import masks_by_curve_name
+    from mtfdigitizer.profiles.declared import TTARTISAN_4COLOR_DUAL_APERTURE
+
+    # Build a 1x1 HSV image with the stained-black pixel.
+    hsv = np.array([[[0, 255, 41]]], dtype=np.uint8)
+    masks = masks_by_curve_name(hsv, TTARTISAN_4COLOR_DUAL_APERTURE)
+
+    # The pixel must land in max-10-black (the overlap-recovery branch).
+    assert masks["max-10-black"][0, 0], (
+        "V<55 pixel was rejected; the overlap-recovery HueRange entry "
+        "(s_max=255, v_max=55) is missing or mis-configured."
+    )
+
+
+def test_max_10_black_does_not_collide_with_max_30_grey() -> None:
+    """The overlap-recovery rule v_max=55 must not catch pixels meant
+    for the grey 30 lp/mm mask (V in [90, 160])."""
+    import numpy as np
+    from mtfdigitizer.pipeline.masks import masks_by_curve_name
+    from mtfdigitizer.profiles.declared import TTARTISAN_4COLOR_DUAL_APERTURE
+
+    # A pixel at the bottom of the grey V band; low S to qualify for grey.
+    hsv = np.array([[[0, 20, 95]]], dtype=np.uint8)
+    masks = masks_by_curve_name(hsv, TTARTISAN_4COLOR_DUAL_APERTURE)
+
+    assert not masks["max-10-black"][0, 0], (
+        "V=95 pixel landed in black mask — overlap-recovery rule is "
+        "leaking into the grey V band."
+    )
+    assert masks["max-30-grey"][0, 0], (
+        "V=95 pixel did not land in grey mask — grey rule regressed."
+    )

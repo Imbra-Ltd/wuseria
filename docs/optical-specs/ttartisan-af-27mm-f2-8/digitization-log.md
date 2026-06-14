@@ -44,7 +44,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.1 | 0.94 |
 | 0.2 | 0.94 |
 | 0.3 | 0.94 |
-| 0.4 | 0.94 |
+| 0.4 | 0.93 |
 | 0.5 | 0.94 |
 | 0.6 | 0.93 |
 | 0.7 | 0.94 |
@@ -60,7 +60,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.1 | 0.94 |
 | 0.2 | 0.94 |
 | 0.3 | 0.94 |
-| 0.4 | 0.93 |
+| 0.4 | 0.94 |
 | 0.5 | 0.94 |
 | 0.6 | 0.93 |
 | 0.7 | 0.94 |
@@ -114,7 +114,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.8 |       0.95 |                 — |
-| freq10M        |       0.1 |       0.94 |                 — |
+| freq10M        |       0.3 |       0.94 |                 — |
 | freq30S        |       0.8 |       0.83 |                 — |
 | freq30M        |       0.3 |       0.81 |                 — |
 
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.919 |      0.80 |  yes |
-| IoU       | 0.520 |      0.20 |  yes |
+| precision | 0.926 |      0.80 |  yes |
+| IoU       | 0.571 |      0.20 |  yes |
 
 #### Plausibility priors
 
