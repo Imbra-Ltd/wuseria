@@ -10,6 +10,7 @@ from mtfdigitizer.pipeline.ridge import (
     _column_runs,
     _compute_y_anchors,
     _densify_track,
+    _detect_and_swap_at_crossings,
     _extend_track_to_plot_edges,
     _extract_ridge_points,
     _filter_isolated_ridge_points,
@@ -826,3 +827,111 @@ def test_freq_split_dashed_corner_recovered_when_last_dash_short_of_edge() -> No
     m_track = out["freq30M"]
     assert s_track[:, 94:].any(), "solid curve missing at right edge"
     assert m_track[:, 94:].any(), "dashed curve corner not recovered"
+
+
+# --- _detect_and_swap_at_crossings (#1170) -------------------------------
+
+
+def test_detect_and_swap_returns_inputs_when_tracks_never_approach() -> None:
+    """Two parallel tracks that stay far apart get no swap — there is no
+    crossing to detect."""
+    track_a = Track(points=tuple((x, 20.0) for x in range(0, 100)))
+    track_b = Track(points=tuple((x, 60.0) for x in range(0, 100)))
+    out_a, out_b = _detect_and_swap_at_crossings(track_a, track_b)
+    assert out_a.points == track_a.points
+    assert out_b.points == track_b.points
+
+
+def test_detect_and_swap_swaps_right_of_v_crossing() -> None:
+    """Track A starts upper, dives steeply through the middle, then rises
+    on the right. Track B starts lower, slowly descends throughout.
+
+    The DP outputs upper-band (track_a left + track_b right) and
+    lower-band (track_b left + track_a right). Crossing detection MUST
+    swap them so each output track follows one physical curve end-to-end.
+
+    Mirrors af-75 stopped freq30 geometry: S30 dives then rises, M30
+    declines steadily.
+    """
+    # upper_band track: gentle decline left (M30) y 20->40, gentle rise
+    # right (S30 rising portion) y 40->30. The post-crossing rise is the
+    # slope reversal that distinguishes a true identity swap.
+    upper_band_pts = []
+    for x in range(0, 50):
+        upper_band_pts.append((x, 20.0 + 0.4 * x))  # 20 -> 40
+    for x in range(50, 100):
+        upper_band_pts.append((x, 40.0 - 0.2 * (x - 50)))  # 40 -> 30
+    upper_band = Track(points=tuple(upper_band_pts))
+
+    # lower_band track: monotonic descent left (S30 steep dive) y 25->41
+    # then right (M30 corner dive) y 41->61. Same slope sign throughout.
+    lower_band_pts = []
+    for x in range(0, 50):
+        lower_band_pts.append((x, 25.0 + 0.32 * x))  # 25 -> 41
+    for x in range(50, 100):
+        lower_band_pts.append((x, 41.0 + 0.4 * (x - 50)))  # 41 -> 61
+    lower_band = Track(points=tuple(lower_band_pts))
+
+    out_a, out_b = _detect_and_swap_at_crossings(upper_band, lower_band)
+
+    # Left of crossing: out_a should follow upper_band, out_b follow
+    # lower_band — physical identities match the input bands.
+    a_left = dict(out_a.points).get(10)
+    b_left = dict(out_b.points).get(10)
+    # upper_band(10) = 24; lower_band(10) = 28.2.
+    assert a_left is not None and abs(a_left - 24.0) < 0.01, (
+        f"out_a left should follow upper band, got {a_left}"
+    )
+    assert b_left is not None and abs(b_left - 28.2) < 0.01, (
+        f"out_b left should follow lower band, got {b_left}"
+    )
+
+    # Right of crossing: identities have swapped — out_a now follows the
+    # ORIGINAL lower_band trajectory (M30 continued descent), out_b
+    # follows the ORIGINAL upper_band trajectory (S30 rising portion).
+    a_right = dict(out_a.points).get(90)
+    b_right = dict(out_b.points).get(90)
+    # Original lower_band at col 90: 41 + 0.4*40 = 57.
+    assert a_right is not None and a_right > 50, (
+        f"out_a right should follow ORIGINAL lower band after swap, got {a_right}"
+    )
+    # Original upper_band at col 90: 40 - 0.2*40 = 32.
+    assert b_right is not None and b_right < 35, (
+        f"out_b right should follow ORIGINAL upper band after swap, got {b_right}"
+    )
+
+
+def test_detect_and_swap_leaves_single_crossing_with_no_reversal_alone() -> None:
+    """Tilt-50 case: the two curves cross near the right edge once, but
+    NEITHER curve reverses direction near the crossing — both continue
+    smoothly past each other. The DP already follows the physical curves
+    correctly here (a smooth pass-through, not a slope-reversal at the
+    crossing). The swap detector MUST NOT mis-fire and corrupt this
+    case.
+
+    This is the must-not-regress assertion called out in #1170.
+    """
+    # Curve A: gentle descent from y=20 to y=45 across the plot.
+    a_pts = tuple((x, 20.0 + 0.25 * x) for x in range(0, 100))
+    # Curve B: gentle ascent from y=45 to y=20. They cross around col 50.
+    b_pts = tuple((x, 45.0 - 0.25 * x) for x in range(0, 100))
+    track_a = Track(points=a_pts)
+    track_b = Track(points=b_pts)
+    out_a, out_b = _detect_and_swap_at_crossings(track_a, track_b)
+    # Whether the post-DP labelling swaps or not, both physical curves
+    # must remain end-to-end coherent — no kinks at the crossing column.
+    # The simplest invariant: each output track's y values are monotonic
+    # (either all-ascending or all-descending) end-to-end.
+    a_ys = [y for _, y in sorted(out_a.points)]
+    b_ys = [y for _, y in sorted(out_b.points)]
+    a_diffs = [a_ys[i + 1] - a_ys[i] for i in range(len(a_ys) - 1)]
+    b_diffs = [b_ys[i + 1] - b_ys[i] for i in range(len(b_ys) - 1)]
+    # All consecutive deltas same sign (monotonic) on each output track.
+    assert all(d >= 0 for d in a_diffs) or all(d <= 0 for d in a_diffs), (
+        "out_a should remain monotonic — swap fired incorrectly"
+    )
+    assert all(d >= 0 for d in b_diffs) or all(d <= 0 for d in b_diffs), (
+        "out_b should remain monotonic — swap fired incorrectly"
+    )
+
+
