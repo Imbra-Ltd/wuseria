@@ -1356,6 +1356,139 @@ def _path_to_track(
     return Track(points=tuple(pts))
 
 
+# Crossing detection (#1170). After the DP yields two paths in y-band
+# order (smaller-mean-y first), the bands do not always preserve
+# physical curve identity. When two physical curves cross in a way that
+# leaves both DP paths still present in adjacent columns and one curve
+# clearly reverses y-slope across the crossing column (a V-crossing),
+# we can swap right-of-crossing assignments so each output track
+# follows one physical curve end-to-end.
+#
+# The signal: both tracks' y converge within `_CROSSING_DY_THRESHOLD`
+# at one column, ONE track's y-slope reverses sign across that column
+# while the OTHER keeps its sign. That distinguishes the af-75-like V
+# (one curve dives and comes back up) from a tilt-50 X (both curves
+# pass through each other along constant-direction trajectories — no
+# swap warranted).
+#
+# Known limitation — non-converging bands (#1170 follow-up). The af-75
+# stopped freq30 case in the wild does NOT actually produce two
+# converging DP paths. Both paths stay in distinct y-bands until the
+# very right edge of the plot, even though the underlying physical
+# curves do cross in MTF space. The per-track S/M label assignment
+# downstream therefore picks one physical curve identity that is
+# correct at the corner but inverted in midfield — the labels and
+# the physical curves disagree without any "crossing column" the
+# post-DP detector can lock onto. Fixing that requires either a
+# DP-level curve-identity prior or a per-column S/M assignment driven
+# by raw-mask continuity; tracked as the follow-up to this issue.
+
+_CROSSING_DY_THRESHOLD: float = 8.0
+_CROSSING_SLOPE_WINDOW: int = 10
+_CROSSING_SLOPE_MIN_MAGNITUDE: float = 0.15
+
+
+def _local_slope(
+    points_by_x: dict[int, float], center_x: int, window: int, before: bool
+) -> float | None:
+    """Linear-fit slope (dy/dx) of `points_by_x` over `[center_x - window,
+    center_x)` if `before` else `(center_x, center_x + window]`.
+
+    Returns None when fewer than two points fall inside the window —
+    slope is undefined.
+    """
+    if before:
+        x_lo, x_hi = center_x - window, center_x
+    else:
+        x_lo, x_hi = center_x + 1, center_x + window + 1
+    xs: list[int] = []
+    ys: list[float] = []
+    for x in range(x_lo, x_hi):
+        y = points_by_x.get(x)
+        if y is not None:
+            xs.append(x)
+            ys.append(y)
+    if len(xs) < 2:
+        return None
+    xa = np.asarray(xs, dtype=np.float64)
+    ya = np.asarray(ys, dtype=np.float64)
+    slope, _ = np.polyfit(xa, ya, 1)
+    return float(slope)
+
+
+def _detect_and_swap_at_crossings(
+    track_a: Track, track_b: Track
+) -> tuple[Track, Track]:
+    """Swap track assignments at columns where two DP-extracted y-bands
+    converge AND one track's slope reverses across the convergence.
+
+    Returns `(out_a, out_b)` — same union of points, with assignments
+    swapped right of the detected V-crossing column.
+
+    Detection (see module-level comment for the rationale):
+      1. Both tracks present at a column with `|y_a - y_b|` below
+         `_CROSSING_DY_THRESHOLD` AND minimum across the shared range.
+      2. Exactly one track's slope (computed over a window before vs.
+         after the candidate column) reverses sign with magnitude
+         above `_CROSSING_SLOPE_MIN_MAGNITUDE`.
+
+    Condition 2 distinguishes the af-75 V-crossing from a tilt-50 X-
+    crossing: tilt-50 has two curves passing through each other with
+    constant slopes; af-75 has the solid curve reverse direction at
+    the crossing.
+    """
+    a_by_x = {x: y for x, y in track_a.points}
+    b_by_x = {x: y for x, y in track_b.points}
+    common_xs = sorted(set(a_by_x) & set(b_by_x))
+    if not common_xs:
+        return track_a, track_b
+
+    min_dy = float("inf")
+    crossing_x: int | None = None
+    for x in common_xs:
+        dy = abs(a_by_x[x] - b_by_x[x])
+        if dy < min_dy:
+            min_dy = dy
+            crossing_x = x
+    if crossing_x is None or min_dy >= _CROSSING_DY_THRESHOLD:
+        return track_a, track_b
+
+    a_pre = _local_slope(a_by_x, crossing_x, _CROSSING_SLOPE_WINDOW, before=True)
+    a_post = _local_slope(a_by_x, crossing_x, _CROSSING_SLOPE_WINDOW, before=False)
+    b_pre = _local_slope(b_by_x, crossing_x, _CROSSING_SLOPE_WINDOW, before=True)
+    b_post = _local_slope(b_by_x, crossing_x, _CROSSING_SLOPE_WINDOW, before=False)
+    if None in (a_pre, a_post, b_pre, b_post):
+        return track_a, track_b
+
+    def _reverses(pre: float, post: float) -> bool:
+        return (
+            abs(pre) >= _CROSSING_SLOPE_MIN_MAGNITUDE
+            and abs(post) >= _CROSSING_SLOPE_MIN_MAGNITUDE
+            and pre * post < 0
+        )
+
+    a_reverses = _reverses(a_pre, a_post)
+    b_reverses = _reverses(b_pre, b_post)
+    if a_reverses == b_reverses:
+        return track_a, track_b
+
+    swapped_a: list[tuple[int, float]] = []
+    swapped_b: list[tuple[int, float]] = []
+    for x, y in track_a.points:
+        if x > crossing_x and x in b_by_x:
+            swapped_a.append((x, b_by_x[x]))
+        else:
+            swapped_a.append((x, y))
+    for x, y in track_b.points:
+        if x > crossing_x and x in a_by_x:
+            swapped_b.append((x, a_by_x[x]))
+        else:
+            swapped_b.append((x, y))
+    swapped_a.sort()
+    swapped_b.sort()
+    return Track(points=tuple(swapped_a)), Track(points=tuple(swapped_b))
+
+
 def ridge_tracks_for_hue_freq_split(
     mask: np.ndarray,
     plot_box: PlotBox,
@@ -1418,6 +1551,16 @@ def ridge_tracks_for_hue_freq_split(
     )
     track1 = _path_to_track(p1_path, p1_on_ridge, plot_box)
     track2 = _path_to_track(p2_path, p2_on_ridge, plot_box)
+
+    # Crossing detection (#1170): when one physical curve dives then
+    # rises through the other, the two DP paths exchange physical
+    # identity at the crossing column. Swap right-of-crossing
+    # assignments so each output track follows one physical curve
+    # end-to-end. No-op when the tracks never converge (parallel),
+    # when only one is present, or when both pass through each other
+    # without slope reversal (tilt-50-style X-crossing).
+    if track1 is not None and track2 is not None:
+        track1, track2 = _detect_and_swap_at_crossings(track1, track2)
 
     solid_sm, dashed_sm = ("M", "S") if dashed_is_sagittal else ("S", "M")
     out: dict[str, np.ndarray] = {}
