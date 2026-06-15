@@ -7657,3 +7657,67 @@ Theme: pick up #1159's deferred per-hue `dp_y_anchor` plan from S148, then chase
 - 9 declared MTF profiles (unchanged).
 - v0.8.0 open: #1131 + #1134 (UI deferred) + #1159 + #1170 (new) + #1171 (closing on #1172 merge). Backlog: #1135.
 - `mtf-readings.ts` unchanged.
+
+---
+
+### Session 150 — #1170 post-DP V-crossing detector (partial fix)
+
+Date: 2026-06-15 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1170 (DP-level crossing detection for af-75 mid-field S/M swap) deferred from S149. Implement the issue's proposed approach, find out it doesn't fire on the actual chart, ship the synthetic-case win and document the deeper problem.
+
+#### Branch / merge state
+
+- Started on `main` clean. One PR off `fix/mtf-dp-crossing-detection-1170`. Single commit.
+- Ends with PR #1173 OPEN (user gates merge per `feedback_merge_workflow`).
+
+#### PRs
+
+- **#1173 OPEN** — `fix(mtf): post-DP V-crossing detector for two-band identity swap (#1170)`. Adds `_detect_and_swap_at_crossings` in `pipeline/ridge.py`. When two DP tracks converge below 8 px AND exactly one track's y-slope reverses sign across the convergence, swap right-of-crossing assignments. Wired into `ridge_tracks_for_hue_freq_split` between `_path_to_track` and S/M labelling.
+
+#### Issues opened / closed
+
+- **#1170 still OPEN** — comment posted explaining why the issue's proposed approach (post-DP swap detection) cannot close the case as filed. The in-the-wild af-75 stopped freq30 chart does NOT produce two converging DP paths; the bands stay distinct end-to-end while the physical curves cross in MTF space. Real fix needs DP-level curve-identity prior or per-column S/M assignment. Issue stays open as the follow-up.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — `_detect_and_swap_at_crossings` + `_local_slope` helper. Module-level comment documents both the detector's design and the known limitation. Three constants: `_CROSSING_DY_THRESHOLD=8`, `_CROSSING_SLOPE_WINDOW=10`, `_CROSSING_SLOPE_MIN_MAGNITUDE=0.15`.
+- **`tools/mtfdigitizer/tests/test_ridge.py`** — 4 new tests: no-swap when parallel, swap-on-V-crossing, no-swap on tilt-50 X-crossing (monotonic invariant), no-swap when tracks never approach.
+
+#### Verification
+
+- **Full mtfdigitizer pytest**: 378/378 pass (+4 from 374 at S149 end).
+- **`extract --check`**: 33 stale logs before and after the change — same set, all unrelated to TTartisan/7Artisans (the only profiles touching the changed code path). Confirms zero regression on committed digitizations.
+- **Direct af-75 diagnose comparison**: post-fix freq30S and freq30M values byte-identical to pre-fix — V-detector correctly identified the case as non-V and did not fire.
+
+#### Key decisions (this session)
+
+- **Ship partial win, not nothing.** The issue's proposed approach handles a clean V-crossing shape correctly (verified on synthetic input); reverting because it doesn't close the in-the-wild case would leave the project with no regression guard against future V-crossings. Asked the user; user agreed.
+- **Removed the speculative gap-crossing detector.** First implementation also included a "gap-bracketed swap" detector for cases where one track is absent across a coincidence stretch. Probing the actual af-75 mask showed both DP tracks are continuous through the full plot with only short dash-gap-sized holes — there is no large single-track gap. Deleted the gap detector rather than ship dead code.
+- **Detector lives in `ridge.py`, not a new module.** Single-file change keeps the surface area small. The V-detector and existing `_path_to_track` share an obvious boundary; promoting to its own module would be premature.
+- **One end-to-end synthetic test, not af-75-style.** Tried writing an af-75-style end-to-end test that builds a steep-dive-then-rise mask and asserts the labels match physical curves. It fails for the same reason the real chart fails — the DP doesn't produce a convergent V. Dropped the test rather than ship a known-failing case.
+
+#### Process pattern observed this session
+
+**Verify the fix actually fires on real data before shipping.** Unit tests on synthetic geometry passed. Pytest passed. `extract --check` showed no regression. All green. But the actual af-75 chart's digitization values were byte-identical pre-/post-fix — the detector never fired. A `diagnose ttartisan-af-75mm-f2-0` probe + comparison against the committed log caught it before commit. Pattern: when fixing a specific lens, run the digitizer on that lens and _compare numbers_, don't trust "all tests pass."
+
+**Probe the DP output directly, not just the rendered SVG.** Once I knew the V-detector wasn't firing, the right next step was a probe script that runs the DP and prints column-by-column track y values. That revealed the bands stay non-convergent — the post-DP detector physically cannot lock onto a crossing. Saved iterating on detector thresholds for a case that couldn't be solved at this layer.
+
+#### Follow-ups for next session
+
+- **#1170 needs DP-level work or per-column S/M.** Per the issue comment, two paths: (a) extend `_ridge_dp_two_paths` with a slope-continuity prior so paths follow physical curves not y-bands — affects every chart, needs careful regression coverage; (b) per-column S/M assignment driven by raw-mask continuity probe — more expensive sampling, lower risk. Recommend spike to compare.
+- **33 stale production logs (pre-existing baseline).** Not introduced this session but worth a sweep: `--all` regen pass with overlay-glance review.
+- **Per-hue anchor audit (deferred from S149).** Audit the 9 declared MTF profiles for crossing geometry similar to TTartisan stopped-30-orange; opt in to `dp_y_anchor=True` where appropriate.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- 4 Tier 1 anchors (unchanged).
+- Aggregate calibration: 669/712 (94.0%) (no aggregate re-run this session).
+- **378 mtfdigitizer pytest pass** (+4 this session).
+- 222 vitest pass (unchanged — no front-end changes).
+- 54 ADRs total (unchanged).
+- 9 declared MTF profiles (unchanged).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159 + #1170 (still open, partial fix in #1173). #1171 + #1168 closed on #1172 merge in S149.
+- `mtf-readings.ts` unchanged.
