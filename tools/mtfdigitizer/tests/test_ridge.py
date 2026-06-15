@@ -9,6 +9,8 @@ from mtfdigitizer.pipeline.ridge import (
     _cluster_into_tracks,
     _column_runs,
     _compute_y_anchors,
+    _densify_track,
+    _extend_track_to_plot_edges,
     _extract_ridge_points,
     _filter_isolated_ridge_points,
     _merge_near_duplicate_tracks,
@@ -306,11 +308,11 @@ def test_ridge_tracks_for_hue_freq_split_labels_solid_track_as_S() -> None:
     freq10S; the dashed in freq10M, by the default Sigma convention
     (`dashed_is_sagittal=False`).
 
-    Identity is decided by mask-continuity inside each DP path's y-band
-    (#1100), not by coverage of the extracted track. The DP carries
-    each path through dash gaps via smoothness, so both rasterized
-    masks may have similar pixel counts; the discriminator is what's
-    UNDER the path in the raw mask.
+    Identity is decided by `Track.coverage` — the count of on-ridge
+    columns each DP path locked onto (#1171 follow-up). Solid lines
+    are on-ridge at almost every column; dashed lines are on-ridge
+    only at the dash centroids, so coverage discriminates cleanly.
+    When coverage ties, `_path_mask_continuity` is the tiebreaker.
     """
     mask = np.zeros((100, 100), dtype=np.uint8)
     # Solid line: every column in [5, 85)
@@ -344,6 +346,32 @@ def test_ridge_tracks_for_hue_freq_split_honors_dashed_is_sagittal() -> None:
     s_y = np.nonzero(out["freq10S"])[0].mean()
     assert m_y == 20  # solid at y=20 labelled M when dashed_is_sagittal=True
     assert s_y == 40  # dashed at y=40 labelled S
+
+
+def test_ridge_tracks_for_hue_freq_split_uses_coverage_over_continuity_when_disagreeing() -> None:
+    """Regression for af-75 stopped freq30 S/M swap (#1171 follow-up).
+
+    Solid curve runs the full plot width (high coverage). Dashed
+    curve covers only the right half but every dash is densely
+    inked (high in-range continuity score). Continuity-based
+    discrimination would mislabel the short dense dashed track as
+    solid; coverage-based discrimination correctly picks the
+    full-width track as solid.
+    """
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    # Solid line: every column in [5, 90) at y=20 — full width.
+    for dy in (-1, 0, 1):
+        mask[20 + dy, 5:90] = 1
+    # Dashed line: only in right half [50, 90), but every column dense.
+    for dy in (-1, 0, 1):
+        mask[40 + dy, 50:90] = 1
+    out = ridge_tracks_for_hue_freq_split(
+        mask, _box(x_left=0, x_right=99), freq=30, dashed_is_sagittal=False,
+    )
+    # Solid (full-width at y=20) labelled S; dashed (short at y=40) labelled M.
+    s_y = np.nonzero(out["freq30S"])[0].mean()
+    m_y = np.nonzero(out["freq30M"])[0].mean()
+    assert s_y < m_y, f"solid track at y=20 should land in freq30S, got s_y={s_y} m_y={m_y}"
 
 
 def test_ridge_tracks_for_hue_freq_split_shares_value_at_whole_curve_coincidence() -> None:
@@ -696,3 +724,105 @@ def test_ridge_dp_two_paths_without_anchor_keeps_dive_intact() -> None:
     assert p1[2] == 100.0
     assert p1[3] == 160.0  # took the dive, did NOT coast
     assert p1_on[3] is True
+
+
+# --- _extend_track_to_plot_edges (#1171) ---------------------------------
+
+
+def test_extend_track_fills_small_gap_to_right_edge_using_last_y() -> None:
+    """A track ending short of the plot edge gets extended flat (last-
+    known y) so the corner sampler finds a pixel — the TTartisan
+    tilt-50 dashed-T30-corner pattern.
+
+    Flat extension (not slope-extrapolation) avoids overshoot from
+    noisy trailing-dash centroids on stopped-aperture curves where
+    the visual line is flat but per-dash centroid noise is ±2 px/col.
+    """
+    pts = tuple((x, 10.0 + (x - 80)) for x in range(80, 91))
+    track = Track(points=pts)
+    box = _box(x_left=0, x_right=99)
+    extended = _extend_track_to_plot_edges(track, box)
+    xs = [x for x, _ in extended.points]
+    assert max(xs) == 99
+    # Last known y at x=90 is 20.0; flat extension keeps that across x=91..99.
+    for x in range(91, 100):
+        y = next(y for xx, y in extended.points if xx == x)
+        assert y == 20.0
+
+
+def test_extend_track_fills_small_gap_to_left_edge_using_first_y() -> None:
+    pts = tuple((x, 10.0 + (x - 5)) for x in range(5, 21))
+    track = Track(points=pts)
+    box = _box(x_left=0, x_right=99)
+    extended = _extend_track_to_plot_edges(track, box)
+    xs = [x for x, _ in extended.points]
+    assert min(xs) == 0
+    # First known y at x=5 is 10.0; flat extension keeps that across x=0..4.
+    for x in range(0, 5):
+        y = next(y for xx, y in extended.points if xx == x)
+        assert y == 10.0
+
+
+def test_extend_track_refuses_gap_larger_than_max() -> None:
+    """Beyond _EDGE_EXTRAPOLATION_MAX we don't know the curve's behavior —
+    leave the corner None rather than fabricate (B2)."""
+    # Track ends at x=80 in a 0..99 box: 19-px gap, larger than the
+    # 12-px ceiling. Extension must NOT fire.
+    pts = tuple((x, 10.0) for x in range(70, 81))
+    track = Track(points=pts)
+    box = _box(x_left=0, x_right=99)
+    extended = _extend_track_to_plot_edges(track, box)
+    xs = [x for x, _ in extended.points]
+    assert max(xs) == 80
+    assert min(xs) == 70  # left side: 70-px gap, refused
+
+
+def test_extend_track_is_noop_when_already_at_edges() -> None:
+    pts = tuple((x, 10.0) for x in range(0, 100))
+    track = Track(points=pts)
+    box = _box(x_left=0, x_right=99)
+    extended = _extend_track_to_plot_edges(track, box)
+    assert extended.points == pts
+
+
+def test_extend_track_extends_single_point_track_within_cap() -> None:
+    """A 1-point track is still extended flat — the last-known y is
+    well-defined and the 12-px cap still bounds the extension distance."""
+    track = Track(points=((97, 10.0),))
+    box = _box(x_left=0, x_right=99)
+    extended = _extend_track_to_plot_edges(track, box)
+    # 2-px gap on right is within the cap → extended; 97-px gap on left
+    # is past the cap → not extended.
+    assert (99, 10.0) in extended.points
+    assert (0, 10.0) not in extended.points
+
+
+def test_freq_split_dashed_corner_recovered_when_last_dash_short_of_edge() -> None:
+    """End-to-end regression for the tilt-50 dashed-T30 corner — see #1171.
+
+    Two parallel curves at distinct y bands; the dashed curve's last
+    dash stops 6 px short of the right edge. Before extension the
+    corner sampler returned None; after extension the rasterized
+    skeleton has a pixel in the right-edge bracket so the corner
+    reads a finite MTF."""
+    # 3-row solid stroke so it survives `_strip_chrome` (which zeros
+    # horizontal lines with >=90% column coverage in a single row).
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    for dy in (-1, 0, 1):
+        mask[20 + dy, 5:90] = 1
+    # Dashed curve at y=40: 3-px dashes every 6 px, last dash at
+    # x=89..91 — 8 px short of right edge (within the 12-px extrapolation
+    # window).
+    for dash_start in range(5, 90, 6):
+        for dy in (-1, 0, 1):
+            mask[40 + dy, dash_start : dash_start + 3] = 1
+    out = ridge_tracks_for_hue_freq_split(
+        mask, _box(x_left=0, x_right=99), freq=30, dashed_is_sagittal=False,
+    )
+    # Both tracks must rasterize a pixel inside the right-edge bracket
+    # (last 6 px) — without extension the dashed curve's last dash sits
+    # outside that window.
+    s_track = out["freq30S"]
+    m_track = out["freq30M"]
+    assert s_track[:, 94:].any(), "solid curve missing at right edge"
+    assert m_track[:, 94:].any(), "dashed curve corner not recovered"

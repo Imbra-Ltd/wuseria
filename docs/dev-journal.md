@@ -7574,3 +7574,86 @@ Theme: continue the TTartisan 7.5 fisheye anchor work from S147. Added the lens 
 - 9 declared MTF profiles (unchanged).
 - v0.8.0 open: #1131 + #1134 (UI deferred) + #1159 (new). Backlog: #1135.
 - `mtf-readings.ts` unchanged.
+
+---
+
+### Session 149 — #1171 corner extension + per-hue anchor + coverage S/M discriminator
+
+Date: 2026-06-14 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1159's deferred per-hue `dp_y_anchor` plan from S148, then chase the cohort of related failures on `ttartisan-tilt-50mm-f1-4` stopped + `ttartisan-af-75mm-f2-0` stopped. Three independent fixes landed together because the maintainer kept flagging downstream symptoms (corner Nones, mid-field zigzag, S/M swap) that each had a distinct root cause but all manifested on the same lens family.
+
+#### Branch / merge state
+
+- Started on `main` clean. Built one PR off `fix/track-extend-to-plot-edge`. Two commits: source + cohort artifact regen.
+- Ends on the open branch (PR #1172 OPEN+MERGEABLE; user gates merge per `feedback_merge_workflow`).
+
+#### PRs
+
+- **#1172 OPEN** — `fix(mtf): recover dashed-corner Nones + per-hue anchor + coverage S/M (#1171)`. Three layered fixes:
+  1. `_extend_track_to_plot_edges` — flat extension (last-known y) when track ends within 12 px of plot edge; recovers None corners on dashed curves whose last dash falls inside the 6-px bracket.
+  2. Per-HueRange `dp_y_anchor: bool | None` opt-in on `HueRange`; set `True` on `stopped-30-orange` to stabilize S/M labels at the freq30 crossing.
+  3. `Track.coverage` replaces `_path_mask_continuity` as the S/M discriminator (continuity demoted to tiebreaker).
+
+#### Issues opened / closed
+
+- **#1171 OPEN** (P2, will auto-close on merge) — parent issue for #1172.
+- **#1170 OPEN** (P3) — DP follows y-bands not physical curves on S/M crossings (af-75 stopped freq30). Deferred: requires DP-level crossing detection, separate work.
+- **#1168 OPEN** (will auto-close on merge of #1172) — tilt-50 freq30 mid-field per-column label swap.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — `_extend_track_to_plot_edges` (flat extension, ≤12 px cap) wired into `ridge_tracks_for_hue` and `ridge_tracks_for_hue_freq_split`. S/M discriminator switched from `_path_mask_continuity` (in-range ink density) to `Track.coverage` (count of on-ridge columns); continuity kept as tiebreaker only.
+- **`tools/mtfdigitizer/profiles/types.py`** — new `HueRange.dp_y_anchor: bool | None = None` field.
+- **`tools/mtfdigitizer/profiles/declared.py`** — set `dp_y_anchor=True` on the `stopped-30-orange` HueRange in `TTARTISAN_4COLOR_DUAL_APERTURE`.
+- **`tools/mtfdigitizer/pipeline/dispatch.py`** — `field_skeletons` builds a per-color `dp_y_anchor` override map; falls back to `profile.ridge_dp_y_anchor` when None.
+- **`tools/mtfdigitizer/tests/test_ridge.py`** — +6 unit tests for `_extend_track_to_plot_edges` (right-edge, left-edge, cap refusal, no-op at edges, 1-point track) + 1 end-to-end regression for dashed-corner recovery via freq_split + 1 regression for coverage discriminator (short-dense vs full-width tracks).
+- **`tools/mtfdigitizer/tests/test_pipeline.py`** — 2 tests for per-hue `dp_y_anchor` opt-in (stopped-30-orange opts in; max-30-grey keeps default to preserve #1157 regression guard).
+- **17 Tier 2 TTartisan production logs + SVGs + overlay PNGs + review HTML refreshed** under `--accept`. **Tier 1 anchors refreshed** (svg.py + log.py --all + review.py). **120 per-stage diagnostic bundles** via diagnose --all.
+
+#### Verification
+
+- **Full mtfdigitizer pytest**: 374/374 pass (was 365 pre-session; +6 ridge + +1 freq-split end-to-end + +2 per-hue anchor).
+- **Cohort precision deltas vs main** (all HIGH unless noted):
+  - tilt-50 max: 0.892 → 0.904 (+0.012)
+  - tilt-50 stopped: 0.807 → 0.893 (+0.086)
+  - 50mm stopped: 0.898 → 0.960 (+0.062)
+  - 500mm stopped: 0.885 → 0.959 (+0.074)
+  - af-56 stopped: 0.885 → 0.940 (+0.055)
+  - af-75 stopped: 0.904 → 0.910 (corner labels now match chart)
+  - 25mm stopped: 0.889 → 0.926 (+0.037)
+  - rest: within ±0.015
+- **Pre-existing LOWs unchanged**: 23mm stopped priors=2, 90mm-gfx stopped priors=2, af-27 stopped priors=1, 25mm max precision LOW, af-35 max precision LOW.
+
+#### Key decisions (this session)
+
+- **Three fixes ship together as one PR** because each was found while debugging the previous one on the same lens (tilt-50 → af-75). Splitting would have forced regeneration cycles that obscured which fix produced which delta. The PR body carefully attributes each delta to its fix.
+- **Coverage replaces continuity as the S/M discriminator.** Earlier (#1100) chose continuity ("how much ink is under this path") because solid lines have continuous ink. But a partial dashed track can score 0.93 over its limited range while a full-width solid track scores 0.86 over the whole plot. `Track.coverage` (count of on-ridge columns post-`_path_to_track`) tracks which DP path the algorithm could anchor across the full field — the cleaner physical signal. Continuity demoted to tiebreaker.
+- **Flat extension, not slope-based.** First attempt used trailing-segment slope to extrapolate the corner; overshot by MTF ~0.08 on tilt-50 stopped T10 because the last few dash centroids had ±2 px/col noise even when the visual curve was flat. Switched to flat (last-known y): the gap is small (≤12 px), the curve hasn't drifted, and overshoot vanishes.
+- **af-75 mid-field swap deferred (#1170).** The DP follows y-bands by smoothness, not physical curves. When solid S30 and dashed M30 cross at ~17-18mm, each track contains S30 on one side and M30 on the other. No discriminator choice can label correctly end-to-end. Real fix requires crossing-detection in the DP itself — significant work, separate issue. Corner labels happen to match by band geometry, which is the user-visible payoff for this PR.
+- **Probe-first, then narrate.** Multiple times this session I caught myself misreading SVG y values (e.g. y=42.4 corresponds to MTF 0.81, not 0.55). The fix was to always trace y → MTF explicitly and quote both numbers. Saved me from a flip-flop on the coverage vs continuity decision after a misread had me convinced coverage was wrong.
+
+#### Process pattern observed this session
+
+**Pixel-level chart probe is the source of truth.** When the user said "curves switched somewhere around 5mm," I first second-guessed the user. A `py` one-liner that scans the chart PNG for orange-band y positions at every 1mm settled it: two distinct bands appear from 7mm onward, with the upper band consistently the dashed M30 through 7-17mm. That single probe replaced ~3 rounds of overlay-staring. Pattern: when in doubt about chart truth, scan the pixels.
+
+**Stale on-disk log silently undermines diagnosis.** A batched `--accept` cohort run had failed (empty output file) but left the log untouched. I then compared the on-disk log against the post-fix SVG and convinced myself the labels were swapped — they weren't, the log was just from the pre-fix state. Lesson: when on-disk artifacts disagree with what the code just produced, check artifact mtimes before reasoning about behavior. The `--accept` flag committing the log when verdict=HIGH is correct, but a broken pipeline can leave the artifact stale and silent.
+
+#### Follow-ups for next session
+
+- **#1170 is the next deep fix.** DP-level crossing detection: when two tracks' y-paths approach within a threshold, detect whether the post-crossing slopes indicate the physical curves traded places, swap track assignments at the crossing point.
+- **Per-hue anchor strategy generalizes.** Other crossing-prone HueRanges in other profiles could opt in to `dp_y_anchor=True`. Audit the 9 declared profiles for crossing geometry similar to TTartisan stopped-30-orange.
+- **af-75 stopped pixel-scan probe is reusable.** Save as a tool or document the recipe in PLAYBOOK §2.8 — "when chart truth is contested, scan the orange/blue/grey bands at every mm and compare to extractor output."
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- 4 Tier 1 anchors (unchanged).
+- Aggregate calibration: 669/712 (94.0%) (no aggregate re-run this session — out of scope; expected modest improvement from tilt-50 stopped delta).
+- **374 mtfdigitizer pytest pass** (+9 this session).
+- 222 vitest pass (unchanged — no front-end changes).
+- 54 ADRs total (unchanged).
+- 9 declared MTF profiles (unchanged).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1159 + #1170 (new) + #1171 (closing on #1172 merge). Backlog: #1135.
+- `mtf-readings.ts` unchanged.

@@ -432,15 +432,26 @@ def field_skeletons(
         halo_pairs = _build_halo_exclusion_map(
             curve_masks, freq_by_color, lower_freq
         )
+        # Per-hue `dp_y_anchor` override: pick the first HueRange entry
+        # whose name matches and use its `dp_y_anchor` when not None.
+        # Multiple entries with the same name share the same override
+        # (red wrap-around case).
+        per_hue_anchor: dict[str, bool] = {}
+        for hue in profile.hues:
+            if hue.name in per_hue_anchor:
+                continue
+            if hue.dp_y_anchor is not None:
+                per_hue_anchor[hue.name] = hue.dp_y_anchor
         for color_name, mask in curve_masks.items():
             cleaned_mask = mask
             for halo_mask in halo_pairs.get(color_name, ()):
                 cleaned_mask = cleaned_mask & ~halo_mask
             freq = freq_by_color[color_name]
+            anchor = per_hue_anchor.get(color_name, profile.ridge_dp_y_anchor)
             hue_fields = ridge_tracks_for_hue_freq_split(
                 cleaned_mask, plot_box, freq=freq,
                 dashed_is_sagittal=profile.dashed_is_sagittal,
-                use_y_anchor=profile.ridge_dp_y_anchor,
+                use_y_anchor=anchor,
             )
             out.update(hue_fields)
     elif (
