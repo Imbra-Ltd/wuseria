@@ -262,9 +262,18 @@ const opticalSpecsDir = resolve(process.cwd(), "docs/optical-specs");
 // Directories with a leading underscore are staging areas for
 // pre-collected materials (e.g. `_pending-mitakon-cine/`) and are
 // intentionally not lens slugs — exclude them from slug-shape checks.
+//
+// Directories whose only content is `diagnostic/` (ADR-050: per-stage
+// digitizer bundle, gitignored) are local-only artifacts from a
+// `mtfdigitizer diagnose` run on a slug that does not exist as a
+// lens. They appear on disk but never in git; excluding them keeps
+// `npm test` deterministic across machines (#1183).
 const lensSpecDirs: string[] = readdirSync(opticalSpecsDir).filter((entry) => {
   if (entry.startsWith("_")) return false;
-  return statSync(join(opticalSpecsDir, entry)).isDirectory();
+  const full = join(opticalSpecsDir, entry);
+  if (!statSync(full).isDirectory()) return false;
+  const trackedEntries = readdirSync(full).filter((e) => e !== "diagnostic");
+  return trackedEntries.length > 0;
 });
 
 describe("docs/optical-specs ↔ mtf-readings coverage", () => {
