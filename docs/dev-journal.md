@@ -7890,3 +7890,77 @@ Theme: ship the open S152 PR. Single-action session — auto-merge #1178 after C
 - 55 ADRs (unchanged).
 - v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + #1177 in Backlog.
 - 5 Dependabot PRs (3 days stale) — not touched this session.
+
+---
+
+### Session 153 (continued) — #1177 fix and af-35 follow-up
+
+Date: 2026-06-16 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: after wrapping the #1178 ship, user asked to take #1177 (af-75 freq30M dip). Extended into a real spike: corrected the S152 diagnosis, fixed the actual root cause, shipped a PR, then probed af-35 to see if the same fix applied (it does not — different bug filed as #1181).
+
+#### PRs
+
+- **#1180 MERGED** (`6062747`, 10:58 UTC) — `fix(mtf): drop interior singletons in crossing-swap region (#1177)`. Squash-merged via `gh pr merge --squash --auto --delete-branch` after explicit user opt-in. Closes #1177.
+
+#### Issues opened / closed
+
+- **#1177 CLOSED** — auto-closed on #1180 merge via the `Closes #1177` reference.
+- **#1181 opened** — `fix(mtf): af-35 max-pass grey-30 mask admits gridlines / chrome (precision LOW)`. P4 Backlog bug. Different family from #1177; documented as expected per ADR-053 cohort strategy. Probe findings embedded in the issue body; no code change this session.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — `_detect_and_swap_at_crossings` now distinguishes edge singletons (mirror to both tracks via B4 coincidence physics) from interior singletons (drop, let `_densify_track` bridge from neighbors). Previously kept all singletons on their original track, which left wrong-band y values for `_densify_track` to interpolate through.
+- **`docs/optical-specs/ttartisan-af-75mm-f2-0/digitization-log.md`** — freq30M frac 0.6: **0.72 → 0.83** (dip eliminated, monotonic descent restored). Gate precision 0.927 → 0.916 (-1.1%), IoU 0.608 → **0.733** (+12.5%); HIGH.
+- **`docs/optical-specs/ttartisan-11mm-f2-8-fisheye-gfx/digitization-log.md`** — collateral refresh from the patch. Gate precision 0.939 → 0.943 (+0.4%), IoU 0.776 → **0.795** (+1.9%); HIGH. Sample values unchanged.
+
+#### Verification
+
+- **direct sampling probe**: freq30M at all 11 fracs reads cleanly monotonic post-patch (0.88, 0.88, 0.87, 0.87, 0.87, 0.86, 0.83, 0.80, 0.74, 0.64, 0.55).
+- **Full pytest from `tools/`**: 381/381 mtfdigitizer pass.
+- **`--check`** after patch: 33 pre-existing stale logs unchanged (Fujifilm + Sigma baseline); 0 newly stale.
+- **Maintainer overlay glance per ADR-041**: both passes confirmed.
+
+#### Key decisions (this session)
+
+- **Re-derived the S152 probe before believing its diagnosis.** S152's "the dip comes from `_densify_track` gap-fill snapping to the wrong y" was wrong about the mechanism. The skeleton at frac 0.6 sits at y=95.5 (inside the lower cluster), not y=70 (between clusters). The actual bug is upstream: identity-swap singleton handling. The re-probe took ~15 min; it saved a session from going down the wrong fix path (sampler widen — tried, didn't fire, reverted).
+- **Tried minimal sampler patch first, then dropped it after probe.** The S153 "option 1" path (widen `_RAW_SNAP_DY_HALF`) was implemented in ~15 lines; the re-probe showed it could not fire because the tight ±8 window already finds (wrong) ink. Reverted in one command. Cost: ~10 min. Avoided shipping a meaningless patch.
+- **Fixed at `_detect_and_swap_at_crossings` instead of `_densify_track`**. The bug occurs before densification (singletons survive into the per-x track); fixing densification would require plumbing the raw mask through several layers. Fixing the swap is local to one function and one rule.
+- **Filed af-35 as separate P4 issue (#1181), didn't try to fix.** The crossing detector doesn't fire on af-35 grey-30 (no V-signature in this chart's max pass) — #1177 fix is a no-op. The real cause is mask hygiene: the grey-30 hue admits 4 strata per column (text, M curve, S curve, gridline). Fixing would require either tightening the hue range (cohort regression risk) or sharper chrome stripping. ADR-053 already documents this cohort-wide pattern and chose Option A (accept LOW max passes; stopped pass carries OQ). Filing > investing.
+
+#### Process patterns observed this session
+
+- **Re-verify the load-bearing diagnosis at the start of a follow-up spike** (carried from S151) saved a wrong direction. The S152 "probe deleted, findings in issue body" pattern is high-leverage when right, but actively misleading when wrong. The re-probe step is non-negotiable.
+- **Direct unit-probe over end-to-end re-render.** Sampling `freq30M` via `ridge_tracks_for_hue_freq_split` + `sample_skeleton_at_fraction` directly was 5 sec vs ~30 sec for the full production extract. Made it cheap to iterate on the fix.
+- **Document overlay glance reveals what numbers don't.** The pre-fix numbers (0.72 dip) looked like a "small dip" in text. The overlay PNG immediately showed the M curve dipping into the wrong cluster — visible in 1 second. The text format underplays single-sample anomalies; the overlay glance is the residual check (carried from S152).
+
+#### Follow-ups for next session
+
+- **#1181 af-35 max-pass grey-30 mask hygiene** — P4 Backlog. Cohort-wide pattern per ADR-053; only worth tackling as part of a broader TTartisan max-pass investment.
+- **33 stale Fujifilm + Sigma logs** (carried from S150/S151/S152) — separate refresh sweep. The #1177 fix may improve some of them; needs `--accept` + glance per lens.
+- **Per-hue anchor audit (deferred from S149/S150)** — 9 declared MTF profiles; audit each for crossing geometry similar to TTartisan stopped-30-orange.
+- **5 stale Dependabot PRs** (4 days old at S153 close): #1149, #1150, #1151, #1152, #1153. Batch triage.
+- **#1085 orphan optical-specs dirs triage** — P3 agent-doable janitorial.
+- **#1131 detection-method survey (P2 spike)** — C-trigger; do not pick before trigger fires.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- 4 Tier 1 anchors (unchanged).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged).
+- 222 vitest pass (unchanged).
+- 55 ADRs (unchanged).
+- 9 declared MTF profiles (unchanged).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + **#1181** in Backlog. **0 open feature PRs.** 5 Dependabot PRs stale 4 days.
+- `mtf-readings.ts` unchanged.
+
+#### Post-mortem (#1177)
+
+- **Symptom**: af-75 stopped freq30M reads 0.72 at frac 0.6, then 0.79 at frac 0.7 — visible non-monotonic dip in mid-field.
+- **Root cause**: `_detect_and_swap_at_crossings` only reassigned y-values for columns where BOTH input tracks had points. When `_path_to_track` had dropped one track's point (on_ridge=False), the surviving point stayed on its original output track in the swap region — carrying the WRONG band's y for that single column. Densification then bridged through the outlier and the rasterized skeleton sat in the wrong cluster at that x.
+- **Why missed**: gate verdict HIGH (precision 0.927, IoU 0.608, 0 prior violations) — the dip is a single-sample 0.13 MTF deviation, too small to drag down precision/IoU or trigger plausibility priors. ADR-041 maintainer overlay glance is supposed to catch this; on the original #1178 ship the user caught it in the glance and filed #1177.
+- **Fix**: PR #1180 — distinguish edge singletons (mirror coincidently to both tracks) from interior singletons (drop). Densification then bridges from neighbors with correct band identity.
+- **Prevention**: the existing maintainer overlay glance step caught it on #1178 ship. No process change needed; the pattern reinforced is "single-sample dip = file P3 with probe data, don't block ship on bounded-impact known-bug."
