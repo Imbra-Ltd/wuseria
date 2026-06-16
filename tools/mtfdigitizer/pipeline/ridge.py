@@ -1356,32 +1356,40 @@ def _path_to_track(
     return Track(points=tuple(pts))
 
 
-# Crossing detection (#1170). After the DP yields two paths in y-band
-# order (smaller-mean-y first), the bands do not always preserve
-# physical curve identity. When two physical curves cross in a way that
-# leaves both DP paths still present in adjacent columns and one curve
-# clearly reverses y-slope across the crossing column (a V-crossing),
-# we can swap right-of-crossing assignments so each output track
-# follows one physical curve end-to-end.
+# Crossing detection (#1170, S151 spike). After the DP yields two paths
+# in y-band order (smaller-mean-y first), the bands do not always
+# preserve physical curve identity. When two physical curves cross
+# monotonically, each curve continues in its own direction past the
+# crossing, but the DP follows the y-bands — so each output track
+# inherits the OTHER curve's slope after the crossing. The signature
+# in DP-track space is: both tracks' y converge within
+# `_CROSSING_DY_THRESHOLD`, and BOTH tracks' y-slopes reverse sign
+# across the convergence. We swap right-of-crossing assignments so
+# each output track follows one physical curve end-to-end.
 #
-# The signal: both tracks' y converge within `_CROSSING_DY_THRESHOLD`
-# at one column, ONE track's y-slope reverses sign across that column
-# while the OTHER keeps its sign. That distinguishes the af-75-like V
-# (one curve dives and comes back up) from a tilt-50 X (both curves
-# pass through each other along constant-direction trajectories — no
-# swap warranted).
+# Candidate-walk vs. greedy-min (S151 finding). The af-75 stopped
+# freq30 chart has a real V-crossing at col ~516 (dy=3, both tracks
+# reverse slope) AND a left-edge convergence at col ~232 (dy=2.5, no
+# left-history on track_b → slopes undefined). Picking the greedy
+# global minimum locks onto col 232 first and exits without firing.
+# Iterating local-minimum candidates left-to-right and taking the
+# first one with a defined verdict catches the real crossing.
 #
-# Known limitation — non-converging bands (#1170 follow-up). The af-75
-# stopped freq30 case in the wild does NOT actually produce two
-# converging DP paths. Both paths stay in distinct y-bands until the
-# very right edge of the plot, even though the underlying physical
-# curves do cross in MTF space. The per-track S/M label assignment
-# downstream therefore picks one physical curve identity that is
-# correct at the corner but inverted in midfield — the labels and
-# the physical curves disagree without any "crossing column" the
-# post-DP detector can lock onto. Fixing that requires either a
-# DP-level curve-identity prior or a per-column S/M assignment driven
-# by raw-mask continuity; tracked as the follow-up to this issue.
+# Why "both reverse", not "exactly one". Earlier (#1173) the rule was
+# exactly-one-reverses — modelling a single curve that dives and comes
+# back up. The S151 probe on the in-the-wild af-75 chart shows that
+# pattern does not occur on real MTF data; both physical curves cross
+# monotonically, which produces a both-reverse signature in DP-track
+# space. The synthetic V test from #1173 still passes under the new
+# rule because its construction (one curve symmetric around the
+# crossing, the other monotonic) was geometrically inconsistent —
+# the test data was updated together with the rule.
+#
+# A monotonic pass-through (neither reverses; tilt-50 synthetic and
+# real cases) means the DP is already tracking curve identity
+# correctly — no swap. Real tilt-50 stopped freq30 has no
+# sub-threshold convergence anywhere past the left edge, so the
+# detector skips it entirely.
 
 _CROSSING_DY_THRESHOLD: float = 8.0
 _CROSSING_SLOPE_WINDOW: int = 10
@@ -1416,49 +1424,79 @@ def _local_slope(
     return float(slope)
 
 
-def _detect_and_swap_at_crossings(
-    track_a: Track, track_b: Track
-) -> tuple[Track, Track]:
-    """Swap track assignments at columns where two DP-extracted y-bands
-    converge AND one track's slope reverses across the convergence.
+def _crossing_candidate_columns(
+    a_by_x: dict[int, float],
+    b_by_x: dict[int, float],
+    common_xs: list[int],
+) -> list[int]:
+    """Find local minima of |y_a - y_b| below `_CROSSING_DY_THRESHOLD`.
 
-    Returns `(out_a, out_b)` — same union of points, with assignments
-    swapped right of the detected V-crossing column.
+    A column is a candidate when its dy is below threshold AND no smaller
+    dy exists within `_CROSSING_SLOPE_WINDOW` columns on either side.
+    This collapses runs of equally-close columns (af-75 has cols 514-521
+    all near dy=3) into one representative per region — picked as the
+    leftmost of the run so the slope-after window starts as far right of
+    the convergence as possible.
 
-    Detection (see module-level comment for the rationale):
-      1. Both tracks present at a column with `|y_a - y_b|` below
-         `_CROSSING_DY_THRESHOLD` AND minimum across the shared range.
-      2. Exactly one track's slope (computed over a window before vs.
-         after the candidate column) reverses sign with magnitude
-         above `_CROSSING_SLOPE_MIN_MAGNITUDE`.
-
-    Condition 2 distinguishes the af-75 V-crossing from a tilt-50 X-
-    crossing: tilt-50 has two curves passing through each other with
-    constant slopes; af-75 has the solid curve reverse direction at
-    the crossing.
+    Returned in left-to-right order so the detector evaluates the
+    earliest-firing real crossing first.
     """
-    a_by_x = {x: y for x, y in track_a.points}
-    b_by_x = {x: y for x, y in track_b.points}
-    common_xs = sorted(set(a_by_x) & set(b_by_x))
-    if not common_xs:
-        return track_a, track_b
+    dys = [abs(a_by_x[x] - b_by_x[x]) for x in common_xs]
+    candidates: list[int] = []
+    n = len(common_xs)
+    i = 0
+    while i < n:
+        if dys[i] >= _CROSSING_DY_THRESHOLD:
+            i += 1
+            continue
+        # Find the run of consecutive sub-threshold columns.
+        j = i
+        while j + 1 < n and dys[j + 1] < _CROSSING_DY_THRESHOLD:
+            j += 1
+        # Take the leftmost minimum of the run as the candidate.
+        run_min = min(dys[i : j + 1])
+        for k in range(i, j + 1):
+            if dys[k] == run_min:
+                candidates.append(common_xs[k])
+                break
+        i = j + 1
+    return candidates
 
-    min_dy = float("inf")
-    crossing_x: int | None = None
-    for x in common_xs:
-        dy = abs(a_by_x[x] - b_by_x[x])
-        if dy < min_dy:
-            min_dy = dy
-            crossing_x = x
-    if crossing_x is None or min_dy >= _CROSSING_DY_THRESHOLD:
-        return track_a, track_b
 
+def _slopes_reverse_at(
+    a_by_x: dict[int, float],
+    b_by_x: dict[int, float],
+    crossing_x: int,
+) -> bool | None:
+    """Return True iff BOTH tracks reverse slope across `crossing_x` with
+    magnitude above `_CROSSING_SLOPE_MIN_MAGNITUDE`.
+
+    Returns None when any of the four slope fits is undefined (insufficient
+    points in the before/after window) — caller treats this candidate as
+    inconclusive and moves on.
+
+    Why both, not one (#1170 / S151 spike finding). When two physical
+    curves cross monotonically (the af-75 stopped freq30 case), each
+    curve continues in its own direction past the crossing. The DP
+    follows y-bands not curve identity, so each output track inherits
+    the OTHER curve's slope after the crossing — which reverses sign
+    on BOTH tracks. A V-crossing in DP-track space (both reverse) is
+    the signature of curves trading identity. A monotonic-pass-through
+    in DP-track space (neither reverses; tilt-50 synthetic case) means
+    the DP is already tracking curve identity correctly — no swap.
+
+    The earlier "exactly one reverses" rule from #1173 modelled a single
+    diving curve that comes back up — a shape that does not actually
+    occur in MTF chart data; real curves are monotonic in their dive
+    direction. The S151 probe found the actual af-75 chart produces a
+    classic both-reverse signature at col 516.
+    """
     a_pre = _local_slope(a_by_x, crossing_x, _CROSSING_SLOPE_WINDOW, before=True)
     a_post = _local_slope(a_by_x, crossing_x, _CROSSING_SLOPE_WINDOW, before=False)
     b_pre = _local_slope(b_by_x, crossing_x, _CROSSING_SLOPE_WINDOW, before=True)
     b_post = _local_slope(b_by_x, crossing_x, _CROSSING_SLOPE_WINDOW, before=False)
     if None in (a_pre, a_post, b_pre, b_post):
-        return track_a, track_b
+        return None
 
     def _reverses(pre: float, post: float) -> bool:
         return (
@@ -1467,20 +1505,69 @@ def _detect_and_swap_at_crossings(
             and pre * post < 0
         )
 
-    a_reverses = _reverses(a_pre, a_post)
-    b_reverses = _reverses(b_pre, b_post)
-    if a_reverses == b_reverses:
+    return _reverses(a_pre, a_post) and _reverses(b_pre, b_post)
+
+
+def _detect_and_swap_at_crossings(
+    track_a: Track, track_b: Track
+) -> tuple[Track, Track]:
+    """Swap track assignments at columns where two DP-extracted y-bands
+    converge AND both tracks' slopes reverse across the convergence.
+
+    Returns `(out_a, out_b)` — same union of points, with assignments
+    swapped right of the detected crossing column.
+
+    Detection (see module-level comment for the rationale):
+      1. Find every column where `|y_a - y_b|` falls below
+         `_CROSSING_DY_THRESHOLD` and is a local minimum of the dy
+         series (collapses multi-column convergence runs to one
+         representative).
+      2. Walk candidates left-to-right; for each, compute slopes over
+         a window before vs. after the candidate column. The first
+         candidate where BOTH tracks reverse sign with magnitude above
+         `_CROSSING_SLOPE_MIN_MAGNITUDE` is the curve-identity swap.
+
+    Walking left-to-right (instead of greedy global-min) is what makes
+    this work on real af-75 data: the global min lives at the left edge
+    where track_b's slope-before is undefined (no history). The actual
+    mid-plot crossing has dy=3 and a clean both-reverse signature, but
+    the global-min picker reached the left-edge cluster first and
+    stopped. See `_slopes_reverse_at` for the both-reverse rationale.
+    """
+    a_by_x = {x: y for x, y in track_a.points}
+    b_by_x = {x: y for x, y in track_b.points}
+    common_xs = sorted(set(a_by_x) & set(b_by_x))
+    if not common_xs:
         return track_a, track_b
 
+    crossing_x: int | None = None
+    for cand in _crossing_candidate_columns(a_by_x, b_by_x, common_xs):
+        verdict = _slopes_reverse_at(a_by_x, b_by_x, cand)
+        if verdict is True:
+            crossing_x = cand
+            break
+        # verdict is None (undefined slopes) or False (X-crossing) —
+        # keep walking; another candidate further right may qualify.
+    if crossing_x is None:
+        return track_a, track_b
+
+    # Swap LEFT of the crossing, not right. Rationale (S151): the
+    # coverage-based S/M labelling downstream picks the more-fully-on-
+    # ridge track as "solid" (S). On a charts like af-75 the solid
+    # curve is the LOW-MTF one in midfield (heavy dive) — so post-
+    # crossing the upper band IS the S curve and the label is already
+    # correct. The pre-crossing assignments are the ones that need
+    # inverting, because pre-crossing the S curve is the lower band
+    # (mid-dive) while the upper band is M (flat).
     swapped_a: list[tuple[int, float]] = []
     swapped_b: list[tuple[int, float]] = []
     for x, y in track_a.points:
-        if x > crossing_x and x in b_by_x:
+        if x < crossing_x and x in b_by_x:
             swapped_a.append((x, b_by_x[x]))
         else:
             swapped_a.append((x, y))
     for x, y in track_b.points:
-        if x > crossing_x and x in a_by_x:
+        if x < crossing_x and x in a_by_x:
             swapped_b.append((x, a_by_x[x]))
         else:
             swapped_b.append((x, y))

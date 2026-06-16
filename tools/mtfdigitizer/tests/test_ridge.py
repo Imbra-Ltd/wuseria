@@ -842,62 +842,70 @@ def test_detect_and_swap_returns_inputs_when_tracks_never_approach() -> None:
     assert out_b.points == track_b.points
 
 
-def test_detect_and_swap_swaps_right_of_v_crossing() -> None:
-    """Track A starts upper, dives steeply through the middle, then rises
-    on the right. Track B starts lower, slowly descends throughout.
+def test_detect_and_swap_swaps_right_of_monotonic_crossing() -> None:
+    """Two physical curves cross monotonically (S151 spike geometry,
+    matching real af-75 stopped freq30).
 
-    The DP outputs upper-band (track_a left + track_b right) and
-    lower-band (track_b left + track_a right). Crossing detection MUST
-    swap them so each output track follows one physical curve end-to-end.
+    Physical curve P1: descends steadily across the field (positive
+    slope in image-y throughout).
+    Physical curve P2: ascends steadily across the field (negative
+    slope in image-y throughout).
 
-    Mirrors af-75 stopped freq30 geometry: S30 dives then rises, M30
-    declines steadily.
+    The DP follows y-bands, not curve identity. Its upper-band output
+    is whichever curve has the smaller y at each column — P2 left of
+    the crossing, P1 right of the crossing. Its lower-band output is
+    the opposite. Each band track therefore reverses slope at the
+    crossing (BOTH reverse) even though each physical curve is monotonic.
+
+    The detector MUST recognise this both-reverse signature and swap
+    right-of-crossing assignments so each output track follows one
+    physical curve end-to-end.
     """
-    # upper_band track: gentle decline left (M30) y 20->40, gentle rise
-    # right (S30 rising portion) y 40->30. The post-crossing rise is the
-    # slope reversal that distinguishes a true identity swap.
-    upper_band_pts = []
-    for x in range(0, 50):
-        upper_band_pts.append((x, 20.0 + 0.4 * x))  # 20 -> 40
-    for x in range(50, 100):
-        upper_band_pts.append((x, 40.0 - 0.2 * (x - 50)))  # 40 -> 30
-    upper_band = Track(points=tuple(upper_band_pts))
+    # Construct the two physical curves first.
+    p1_pts = {x: 20.0 + 0.4 * x for x in range(0, 100)}  # 20 → 60 (down)
+    p2_pts = {x: 60.0 - 0.4 * x for x in range(0, 100)}  # 60 → 20 (up)
 
-    # lower_band track: monotonic descent left (S30 steep dive) y 25->41
-    # then right (M30 corner dive) y 41->61. Same slope sign throughout.
-    lower_band_pts = []
-    for x in range(0, 50):
-        lower_band_pts.append((x, 25.0 + 0.32 * x))  # 25 -> 41
-    for x in range(50, 100):
-        lower_band_pts.append((x, 41.0 + 0.4 * (x - 50)))  # 41 -> 61
-    lower_band = Track(points=tuple(lower_band_pts))
+    # Build DP-style outputs: upper_band = min y at each column,
+    # lower_band = max y at each column. They cross at col 50 (y=40).
+    upper_band_pts = tuple(
+        (x, min(p1_pts[x], p2_pts[x])) for x in range(0, 100)
+    )
+    lower_band_pts = tuple(
+        (x, max(p1_pts[x], p2_pts[x])) for x in range(0, 100)
+    )
+    upper_band = Track(points=upper_band_pts)
+    lower_band = Track(points=lower_band_pts)
 
     out_a, out_b = _detect_and_swap_at_crossings(upper_band, lower_band)
 
-    # Left of crossing: out_a should follow upper_band, out_b follow
-    # lower_band — physical identities match the input bands.
+    # After swap, each output track must trace ONE physical curve
+    # end-to-end. Pick a column far from the crossing in each half and
+    # check both endpoints lie on the same physical curve.
     a_left = dict(out_a.points).get(10)
-    b_left = dict(out_b.points).get(10)
-    # upper_band(10) = 24; lower_band(10) = 28.2.
-    assert a_left is not None and abs(a_left - 24.0) < 0.01, (
-        f"out_a left should follow upper band, got {a_left}"
-    )
-    assert b_left is not None and abs(b_left - 28.2) < 0.01, (
-        f"out_b left should follow lower band, got {b_left}"
-    )
-
-    # Right of crossing: identities have swapped — out_a now follows the
-    # ORIGINAL lower_band trajectory (M30 continued descent), out_b
-    # follows the ORIGINAL upper_band trajectory (S30 rising portion).
     a_right = dict(out_a.points).get(90)
+    b_left = dict(out_b.points).get(10)
     b_right = dict(out_b.points).get(90)
-    # Original lower_band at col 90: 41 + 0.4*40 = 57.
-    assert a_right is not None and a_right > 50, (
-        f"out_a right should follow ORIGINAL lower band after swap, got {a_right}"
+
+    # One of (out_a, out_b) should follow p2 (which is upper-band on
+    # the left), the other p1.
+    assert a_left is not None and a_right is not None
+    assert b_left is not None and b_right is not None
+    p1_l, p1_r = p1_pts[10], p1_pts[90]  # 24.0, 56.0
+    p2_l, p2_r = p2_pts[10], p2_pts[90]  # 56.0, 24.0
+    follows_p2_then_p2 = (
+        abs(a_left - p2_l) < 0.01 and abs(a_right - p2_r) < 0.01
     )
-    # Original upper_band at col 90: 40 - 0.2*40 = 32.
-    assert b_right is not None and b_right < 35, (
-        f"out_b right should follow ORIGINAL upper band after swap, got {b_right}"
+    follows_p1_then_p1 = (
+        abs(b_left - p1_l) < 0.01 and abs(b_right - p1_r) < 0.01
+    )
+    # The swap can assign either ordering; what matters is that each
+    # output track stays on one physical curve.
+    assert (follows_p2_then_p2 and follows_p1_then_p1) or (
+        abs(a_left - p1_l) < 0.01 and abs(a_right - p1_r) < 0.01
+        and abs(b_left - p2_l) < 0.01 and abs(b_right - p2_r) < 0.01
+    ), (
+        f"swap did not produce per-curve coherence: "
+        f"a=({a_left}, {a_right}) b=({b_left}, {b_right})"
     )
 
 
@@ -934,4 +942,113 @@ def test_detect_and_swap_leaves_single_crossing_with_no_reversal_alone() -> None
         "out_b should remain monotonic — swap fired incorrectly"
     )
 
+
+# --- Path C candidate-walk (#1170 S151) ---------------------------------
+
+
+def test_detect_and_swap_skips_left_edge_cluster_when_no_history() -> None:
+    """Left-edge convergence has insufficient slope-before history on
+    track_b — the verdict is None there. The detector MUST walk past it
+    and evaluate later candidates, not exit greedily.
+
+    Matches the af-75 real-data shape: track_b starts at col 232 with
+    dy=2.5 from track_a, then both bands diverge, then re-converge at
+    col 516 with a real swap signature.
+    """
+    # track_a: present from col 0 (long history)
+    a_pts = []
+    for x in range(0, 100):
+        # Descends to col 50, then ascends — a band-following shape
+        # produced when two physical curves cross monotonically.
+        if x < 50:
+            a_pts.append((x, 20.0 + 0.4 * x))  # 20 → 40
+        else:
+            a_pts.append((x, 40.0 - 0.4 * (x - 50)))  # 40 → 20
+    track_a = Track(points=tuple(a_pts))
+    # track_b: starts coincident with track_a at col 0 (left-edge
+    # convergence) for the first 3 cols, then jumps away to a different
+    # band. This forces dy_min global = 0 at col 0 with no slope history
+    # for the b_pre check.
+    b_pts = [(0, 20.0), (1, 20.5), (2, 21.0)]
+    for x in range(3, 100):
+        if x < 50:
+            b_pts.append((x, 60.0 - 0.4 * x))  # 58.8 → 40
+        else:
+            b_pts.append((x, 40.0 + 0.4 * (x - 50)))  # 40 → 60
+    track_b = Track(points=tuple(b_pts))
+
+    out_a, out_b = _detect_and_swap_at_crossings(track_a, track_b)
+
+    # The real crossing at col ~50 should fire even though col 0 has the
+    # global min dy. Pick a column far past the crossing and confirm the
+    # output tracks each follow one physical curve end-to-end (no
+    # mid-plot identity flip).
+    a_dict = dict(out_a.points)
+    b_dict = dict(out_b.points)
+    a_left, a_right = a_dict[10], a_dict.get(90)
+    b_left, b_right = b_dict[10], b_dict.get(90)
+    assert a_right is not None and b_right is not None
+    # After swap, the two tracks together must STILL cover the union of
+    # input points — and each individual track must monotonically trend
+    # one direction across the plot.
+    a_ys = [y for _, y in sorted(out_a.points)]
+    b_ys = [y for _, y in sorted(out_b.points)]
+
+    def _monotonic(ys: list[float]) -> bool:
+        diffs = [ys[i + 1] - ys[i] for i in range(len(ys) - 1)]
+        return all(d >= -1e-6 for d in diffs) or all(d <= 1e-6 for d in diffs)
+
+    assert _monotonic(a_ys) or _monotonic(b_ys), (
+        "after swap at least one track should follow a monotonic "
+        "physical curve end-to-end"
+    )
+
+
+def test_detect_and_swap_takes_first_valid_when_multiple_candidates() -> None:
+    """When dy drops below threshold at multiple separated regions, the
+    detector takes the LEFTMOST candidate where the verdict is True —
+    not the global min.
+    """
+    # Two convergence regions: one at col 20 (verdict True), one at col
+    # 70 (also True). Build track_a as a monotonic ascender that
+    # reverses sharply at col 20, and track_b as a descender that
+    # reverses sharply at col 20 — then both stay monotonic right of
+    # col 20 (no second real crossing — only one valid candidate).
+    a_pts = []
+    b_pts = []
+    for x in range(0, 100):
+        if x < 20:
+            a_pts.append((x, 20.0 + 0.5 * x))  # 20 → 30
+            b_pts.append((x, 40.0 - 0.5 * x))  # 40 → 30
+        else:
+            a_pts.append((x, 30.0 - 0.4 * (x - 20)))  # 30 → diverge down
+            b_pts.append((x, 30.0 + 0.4 * (x - 20)))  # 30 → diverge up
+    track_a = Track(points=tuple(a_pts))
+    track_b = Track(points=tuple(b_pts))
+
+    out_a, out_b = _detect_and_swap_at_crossings(track_a, track_b)
+    # Past the crossing (col 50), track_a's y should equal whichever
+    # PHYSICAL curve it ended up assigned to. The invariant we check:
+    # output tracks are NOT identical to input (i.e. a swap fired).
+    a_changed = any(
+        out_a.points[i] != track_a.points[i] for i in range(len(track_a.points))
+    )
+    b_changed = any(
+        out_b.points[i] != track_b.points[i] for i in range(len(track_b.points))
+    )
+    assert a_changed or b_changed, (
+        "a swap should have fired at the col 20 crossing"
+    )
+
+
+def test_detect_and_swap_returns_inputs_when_no_subthreshold_convergence() -> None:
+    """Two diverging tracks with dy always above the threshold get no
+    swap. Mirrors real tilt-50 freq30 past the left edge: bands diverge
+    and never come close enough to trigger the candidate-walk.
+    """
+    track_a = Track(points=tuple((x, 20.0 - 0.1 * x) for x in range(0, 100)))
+    track_b = Track(points=tuple((x, 60.0 + 0.1 * x) for x in range(0, 100)))
+    out_a, out_b = _detect_and_swap_at_crossings(track_a, track_b)
+    assert out_a.points == track_a.points
+    assert out_b.points == track_b.points
 

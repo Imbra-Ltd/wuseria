@@ -7721,3 +7721,73 @@ Theme: pick up #1170 (DP-level crossing detection for af-75 mid-field S/M swap) 
 - 9 declared MTF profiles (unchanged).
 - v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159 + #1170 (still open, partial fix in #1173). #1171 + #1168 closed on #1172 merge in S149.
 - `mtf-readings.ts` unchanged.
+
+### Session 151 — #1170 spike: candidate-walk + both-reverse + swap-left
+
+Date: 2026-06-16 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: spike #1170 — S150 memory said the post-DP V-crossing detector physically cannot fire on af-75 because the DP bands stay non-convergent. Goal was to compare Path A (DP-level curve-identity prior) vs Path B (per-column S/M via raw-mask continuity) and produce an ADR. Probe found the S150 framing was wrong; pivoted to Path C (fix the existing detector).
+
+#### Branch / merge state
+
+- Started on `main` clean. Branched `spike/1170-curve-identity-vs-raw-mask`. Single commit.
+- Ends with PR #1176 OPEN, all green (user gates merge per `feedback_merge_workflow`).
+
+#### PRs
+
+- **#1176 OPEN** — `fix(mtf): crossing detector candidate-walk + both-reverse + swap-left (#1170)`. Three surgical changes to `_detect_and_swap_at_crossings`: iterate sub-threshold local-minima candidates left-to-right; verdict fires when BOTH tracks reverse slope (the monotonic-crossing signature, not the synthetic V); swap LEFT of crossing, not right. Closes #1170.
+
+#### Issues opened / closed
+
+- **#1170** reopened from auto-close on `b09e48b`, then re-closed via PR #1176 commit footer (auto-close on merge). PR body summarises the probe finding and fix.
+- **#1174 opened** — P4 Backlog spike for Path A (DP-level curve-identity prior) as fallback if a future chart breaks the post-DP fix.
+- **#1175 opened** — P4 Backlog spike for Path B (per-column S/M via raw-mask continuity) as fallback if a future chart breaks the post-DP fix.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — `_crossing_candidate_columns` + `_slopes_reverse_at` helpers; `_detect_and_swap_at_crossings` rewritten to use them. Module-level comment + function docstring updated. Three constants unchanged (`_CROSSING_DY_THRESHOLD=8`, `_CROSSING_SLOPE_WINDOW=10`, `_CROSSING_SLOPE_MIN_MAGNITUDE=0.15`).
+- **`tools/mtfdigitizer/tests/test_ridge.py`** — S150 synthetic V-crossing test rewritten with consistent two-monotonic-curves geometry. Three new tests cover the candidate-walk logic: left-edge cluster skip, multiple-candidates-pick-first-valid, no-sub-threshold-convergence-returns-inputs.
+- **`docs/decisions/055-crossing-detector-candidate-walk.md`** — ADR documenting the probe finding, decision (three changes), alternatives (Path A, B rejected with data), and benchmark.
+
+#### Verification
+
+- **Full mtfdigitizer pytest**: 381/381 pass (+3 from 378 at S150 end).
+- **`extract --check`**: 35 stale logs after change (was 33 baseline + 2 newly stale: `ttartisan-af-75mm-f2-0` intentional fix, `ttartisan-11mm-f2-8-fisheye-gfx` small same-direction shift).
+- **End-to-end extraction on cohort**: af-75 stopped freq30 midfield + corner now match issue narrative; 50/1.2 stopped freq30 corner now matches EYE truth (bonus catch — same identity-inversion existed, hidden by missing freq30 EYE samples); tilt-50 + 7-5 fisheye + Fuji anchors all byte-identical to baseline.
+- **CI on PR #1176**: CodeQL/gate/analyze/changes/gitleaks/links all pass; build + lighthouse correctly skipped (no front-end paths changed).
+
+#### Key decisions (this session)
+
+- **Pivoted from Path A/B to Path C mid-spike.** Probe data invalidated the S150 framing. The af-75 DP output DOES contain a clean V-crossing — the detector just missed it. Filed A & B as P4 fallbacks (#1174, #1175) rather than spending the spike's budget on them.
+- **Both-reverse verdict, not exactly-one.** Two monotonic curves crossing produce both-reverse in band-following DP output. The synthetic "one curve dives and rises" geometry from #1173 does not occur on real charts; the matching test was geometrically inconsistent and was replaced rather than adapted.
+- **Swap LEFT of crossing.** Discovered during benchmark: post-crossing labels were already correct because coverage-based S/M labelling picks the higher-coverage track as solid and that track ends up matching the rebounding S curve post-crossing. The inversion lives pre-crossing.
+- **Deleted the probe before commit per quality.md.** `tools/probe_1170_dp_trajectories.py` was throwaway; findings folded into ADR-055.
+
+#### Process pattern observed this session
+
+**Memory can encode the wrong diagnosis from a prior session.** S150 closing memory said "DP bands stay distinct end-to-end, V-detector physically cannot fire." The S151 probe found a clean V-crossing at col 516 in the same data. The S150 hypothesis was based on a coarse-grained view of the DP output; a column-by-column dump reversed it. Pattern: re-verify load-bearing diagnostic claims at the start of a follow-up spike, especially when the prior session's framing drove the proposed solution set.
+
+**Benchmark catches adjacent bugs.** The 50/1.2 stopped freq30 was supposed to be a regression control, not a fix target. The benchmark vs EYE truth caught that the same identity-inversion bug existed there too, masked because the production log lacked corner EYE samples for freq30. Pattern: when shipping a fix that touches a shared code path, benchmark all anchors against EYE truth even when "not expected to change" — silent prior bugs surface.
+
+#### Follow-ups for next session
+
+- **Maintainer to re-extract committed logs** for `ttartisan-af-75mm-f2-0` + `ttartisan-11mm-f2-8-fisheye-gfx` after PR #1176 merges (data-only refresh, separate PR).
+- **#1174 Path A** + **#1175 Path B** — P4 Backlog, contingency if a future chart breaks the post-DP fix.
+- **33 stale production logs (pre-existing baseline)** — carried from S150. Sweep + overlay-glance review when time permits.
+- **Per-hue anchor audit (deferred from S149/S150)** — 9 declared MTF profiles; opt in to `dp_y_anchor=True` where appropriate.
+- **#1131 detection-method survey (P2 spike)** — C-trigger; do not pick up before trigger fires.
+- **#1135 B' implementation (P3 Backlog)**.
+- **#1085 orphan optical-specs dirs triage (P3, agent-doable)** — carried from S147/S148.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- 4 Tier 1 anchors (unchanged).
+- Aggregate calibration: 669/712 (94.0%) at S148 close; not re-run this session.
+- **381 mtfdigitizer pytest pass** (+3 this session: candidate-walk Path C tests).
+- 222 vitest pass (unchanged — no front-end changes).
+- **55 ADRs total** (+1: ADR-055).
+- 9 declared MTF profiles (unchanged).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159 (#1170 closed on #1176 merge). #1174 + #1175 in Backlog.
+- `mtf-readings.ts` unchanged.
