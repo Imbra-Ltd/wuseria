@@ -7861,3 +7861,32 @@ Theme: data refresh — re-extract `ttartisan-af-75mm-f2-0` + `ttartisan-11mm-f2
 - 9 declared MTF profiles (unchanged).
 - v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + #1177 in Backlog.
 - `mtf-readings.ts` unchanged.
+
+---
+
+### Session 153 — Ship #1178
+
+Date: 2026-06-16 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: ship the open S152 PR. Single-action session — auto-merge #1178 after CI re-greens.
+
+#### PRs
+
+- **#1178 MERGED** (`ef4f682`, 04:21 UTC) — `data(mtf): refresh ttartisan-af-75 + ttartisan-11mm-fisheye-gfx logs after #1176`. Squash-merged via `gh pr merge --squash --auto --delete-branch`. CI cleared between push and the auto-merge call, so the merge fast-forwarded immediately. Branch deleted (remote + local).
+
+#### Key changes
+
+- `docs/dev-journal.md` — S152 entry committed (`dff8970`) to the PR branch before merge; would otherwise have been left uncommitted on the wrap-up branch.
+
+#### Working calls
+
+- **Committed the S152 journal entry to the same PR branch rather than a separate `docs/` PR.** The entry described the work in the PR, the PR was still open, and a wrap-up commit on the same branch is the cleanest record. Trade-off: the PR's commit history gained a docs commit (squash collapses it on merge, so main history is one clean commit anyway).
+- **Used `--auto --delete-branch` after explicit user opt-in.** Default behaviour stays "ask first" per `feedback_ask_before_automerge` / `feedback_merge_workflow`; user said "merge it auto" which is the explicit override.
+
+#### State of the project
+
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- 381 mtfdigitizer pytest pass (unchanged).
+- 55 ADRs (unchanged).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + #1177 in Backlog.
+- 5 Dependabot PRs (3 days stale) — not touched this session.
