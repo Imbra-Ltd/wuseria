@@ -1559,18 +1559,60 @@ def _detect_and_swap_at_crossings(
     # correct. The pre-crossing assignments are the ones that need
     # inverting, because pre-crossing the S curve is the lower band
     # (mid-dive) while the upper band is M (flat).
+    #
+    # Singleton handling in the swap region (#1177). When a column has
+    # a point in only ONE input track (the other was dropped by
+    # `_path_to_track` because its on_ridge flag was False there) we
+    # cannot simply keep the surviving y on its original track — that
+    # bleeds a wrong-curve single-column outlier into the densified
+    # track. Concrete case: af-75 stopped freq30 col 310 had only
+    # track_b (lower cluster y=95.5) while the M curve was actually
+    # following the upper cluster; densification through that singleton
+    # produced the visible 0.13 MTF dip at frac 0.6.
+    #
+    # The shape of the singleton tells us what to do:
+    #
+    # - **Edge singletons** (consecutive run at the start of the swap
+    #   region, before any column where BOTH tracks exist): both
+    #   physical curves are near-coincident at this end of the plot
+    #   (MTF ~0.88 left edge for af-75), so the DP only resolved one
+    #   path. Mirror the surviving y to both output tracks. Same B4
+    #   coincidence physics `ridge_tracks_for_hue_freq_split` already
+    #   uses when track2.coverage<10.
+    # - **Interior singletons** (columns where the other track existed
+    #   nearby but was dropped at this exact column): the DP carried
+    #   the surviving point in the wrong band for the swapped track.
+    #   Drop the singleton so `_densify_track` bridges from neighbors.
     swapped_a: list[tuple[int, float]] = []
     swapped_b: list[tuple[int, float]] = []
+    swap_common = sorted(x for x in a_by_x if x in b_by_x and x < crossing_x)
+    first_common_x = swap_common[0] if swap_common else crossing_x
+
     for x, y in track_a.points:
-        if x < crossing_x and x in b_by_x:
-            swapped_a.append((x, b_by_x[x]))
-        else:
+        if x >= crossing_x:
             swapped_a.append((x, y))
+        elif x in b_by_x:
+            swapped_a.append((x, b_by_x[x]))
+        elif x < first_common_x:
+            # edge singleton — mirror onto both tracks (coincidence)
+            swapped_a.append((x, y))
+        # interior singleton in swap region — drop
     for x, y in track_b.points:
-        if x < crossing_x and x in a_by_x:
-            swapped_b.append((x, a_by_x[x]))
-        else:
+        if x >= crossing_x:
             swapped_b.append((x, y))
+        elif x in a_by_x:
+            swapped_b.append((x, a_by_x[x]))
+        elif x < first_common_x:
+            swapped_b.append((x, y))
+        # interior singleton in swap region — drop
+
+    # Edge-singleton coincidence: mirror track_a's edge points onto
+    # track_b (and vice versa) so both tracks carry the coincident y.
+    a_edge = [(x, y) for x, y in track_a.points if x < first_common_x]
+    b_edge = [(x, y) for x, y in track_b.points if x < first_common_x]
+    swapped_b.extend(a_edge)
+    swapped_a.extend(b_edge)
+
     swapped_a.sort()
     swapped_b.sort()
     return Track(points=tuple(swapped_a)), Track(points=tuple(swapped_b))
