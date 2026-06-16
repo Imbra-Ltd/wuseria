@@ -7791,3 +7791,73 @@ Theme: spike #1170 — S150 memory said the post-DP V-crossing detector physical
 - 9 declared MTF profiles (unchanged).
 - v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159 (#1170 closed on #1176 merge). #1174 + #1175 in Backlog.
 - `mtf-readings.ts` unchanged.
+
+---
+
+### Session 152 — Refresh stale ttartisan MTF logs
+
+Date: 2026-06-16 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: data refresh — re-extract `ttartisan-af-75mm-f2-0` + `ttartisan-11mm-f2-8-fisheye-gfx` digitization logs after #1176 (`18fdbaf`) landed, then ship the data PR. Side investigation pivoted to filing a new bug after a maintainer overlay glance surfaced a single-sample dip in the af-75 stopped freq30M curve.
+
+#### Branch / merge state
+
+- Started on `main` clean. Branched `chore/refresh-ttartisan-mtf-logs`. Single commit.
+- Ends with PR #1178 OPEN, awaiting user merge per `feedback_merge_workflow`.
+
+#### PRs
+
+- **#1178 OPEN** — `data(mtf): refresh ttartisan-af-75 + ttartisan-11mm-fisheye-gfx logs after #1176`. 6 files: both digitization-log.md, SVGs, stopped-pass overlays. Tier 2 production-mode `--accept`-overridden after maintainer overlay glance per ADR-041.
+
+#### Issues opened / closed
+
+- **#1177 opened** — `fix(mtf): af-75 stopped freq30M dip at frac 0.6 from ridge-gap interpolation`. P3 Backlog bug. Single-sample artifact discovered during the post-extraction overlay glance. Probe-confirmed as gap-fill interpolation in `_densify_track`, not a crossing-detector failure. Gate stays HIGH; OQ scoring impact bounded.
+- No issues closed this session.
+
+#### Key changes
+
+- **`docs/optical-specs/ttartisan-af-75mm-f2-0/digitization-log.md`** — re-extracted. Stopped pass freq30 corner inversion (the S151 motivating fix) now resolves correctly: S=0.81, M=0.55 (was inverted as S=0.55, M=0.81 in pre-#1176 baseline). Midfield S=0.78, M=0.85 matches S151 spike benchmark.
+- **`docs/optical-specs/ttartisan-af-75mm-f2-0/*-mtf-stopped.svg` + overlay PNG** — regenerated.
+- **`docs/optical-specs/ttartisan-11mm-f2-8-fisheye-gfx/digitization-log.md`** — re-extracted. Stopped pass slightly improved (precision 0.927 → 0.939, IoU 0.772 → 0.776). Max pass numerically identical (path not affected by #1176).
+- **`docs/optical-specs/ttartisan-11mm-f2-8-fisheye-gfx/*-mtf-stopped.svg` + overlay PNG** — regenerated.
+
+#### Verification
+
+- **`extract --check`**: 0 stale among the two target slugs (33 other Fujifilm/Sigma stale logs pre-existing baseline, out of scope).
+- **Full pytest from `tools/`**: 651 pass (mtfdigitizer 381 + brand-tool suites). Unchanged from S151.
+- **Maintainer overlay glance**: all 4 passes confirmed HIGH (af-75 stopped p=0.927/IoU=0.608, af-75 max p=0.907/IoU=0.708, 11mm stopped p=0.939/IoU=0.776, 11mm max p=0.823/IoU=0.574).
+- **S151 benchmark numbers confirmed** in committed log via SVG y-coord decode + manifest cross-check.
+
+#### Key decisions (this session)
+
+- **Investigate the dip immediately rather than ship and file.** User-flagged visual anomaly in af-75 freq30M at frac 0.6. Probe took ~30 min and produced a clear diagnosis. Decided to ship the PR anyway because (a) the corner-inversion fix (the S151 motivating win) is the larger correctness gain, (b) the dip is a single sample with gate HIGH, (c) the dip is not introduced by this PR — it is unmasked by it.
+- **Filed the dip as P3 Backlog (#1177)** with the probe findings embedded in the issue body. Probe deleted before commit per `quality.md` probe-script convention.
+- **Did not run a second --check after --accept.** Was running in background when the dip was discovered; let it complete naturally (exit 0 on the two target slugs).
+
+#### Process patterns observed this session
+
+- **Maintainer overlay glance catches what gates miss.** Both af-75 passes had gate HIGH and all 4 plausibility priors held — the dip is small enough that none of the automated signals fire. The user's eye on the overlay caught a 0.13 single-sample deviation that the precision/IoU/priors did not. Pattern: the maintainer overlay glance step (ADR-041) is load-bearing for Tier 2; gate verdicts alone are not sufficient.
+- **Probe diagnosis can clarify scope of follow-up.** Without the probe, #1177 would have been filed as "freq30M wrong at frac 0.6, investigate." With the probe, it is filed with the root cause already identified (gap-fill in `_densify_track`, not crossing detection), fix options listed (A/B/C), and a clear path for the next agent. Saves a future session's worth of orientation.
+- **Memory-driven theme worked well.** S151 memory's "next session candidates" list named this refresh as item 1; the data-only nature meant the session stayed scoped (no temptation to chase per-hue anchor audit or the 33 other stale logs).
+
+#### Follow-ups for next session
+
+- **#1177 af-75 freq30M dip** — P3 spike-shaped bug. Decision among A (tighter ridge params), B (raw-mask snap in densify), C (document as limitation) deferred. Probably 1 session.
+- **33 other stale production logs** (carried from S151) — separate Fujifilm/Sigma refresh sweep when convenient.
+- **Per-hue anchor audit (deferred from S149/S150)** — 9 declared MTF profiles; opt in to `dp_y_anchor=True` where appropriate.
+- **#1085 orphan optical-specs dirs triage (P3, agent-doable)** — carried from S147/S148.
+- **#1131 detection-method survey (P2 spike)** — C-trigger; do not pick up before trigger fires.
+- **#1135 B' implementation (P3 Backlog)**.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- 4 Tier 1 anchors (unchanged).
+- Aggregate calibration: 669/712 (94.0%) at S148 close; not re-run this session.
+- **381 mtfdigitizer pytest pass** (unchanged).
+- 222 vitest pass (unchanged — no front-end changes).
+- 55 ADRs total (unchanged).
+- 9 declared MTF profiles (unchanged).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + #1177 in Backlog.
+- `mtf-readings.ts` unchanged.
