@@ -2,8 +2,21 @@ import { existsSync, readdirSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { describe, it, expect } from "vitest";
 import { lenses } from "./lenses";
+import accessories from "./accessories";
 import { mtfReadings } from "./mtf-readings";
 import { toSlug } from "../utils/slug";
+
+// Mirror of brandkit's `slug_prefix` overrides (see ADR-056). Most brands
+// slug as `toSlug(brand)`, but a few diverge: brandkit's Python tooling
+// writes `docs/optical-specs/<slug>` paths using these prefixes, and the
+// TS invariant must agree. Only divergences belong here.
+const BRAND_SLUG_OVERRIDE: Record<string, string> = {
+  "Carl Zeiss": "Zeiss",
+};
+
+function dirBrand(brand: string): string {
+  return BRAND_SLUG_OVERRIDE[brand] ?? brand;
+}
 
 describe("mtf-readings data integrity", () => {
   const entries = Object.entries(mtfReadings);
@@ -235,7 +248,9 @@ describe("mtf-readings data integrity", () => {
 // #1061 anchor lenses with disk data but no readings entry, #1062 60
 // auto-derived 404 source URLs) would have been caught here.
 describe("mtf-readings ↔ lenses.ts coverage", () => {
-  const lensSlugs = new Set(lenses.map((l) => toSlug(`${l.brand} ${l.model}`)));
+  const lensSlugs = new Set(
+    lenses.map((l) => toSlug(`${dirBrand(l.brand)} ${l.model}`)),
+  );
   const readingSlugs = Object.keys(mtfReadings);
 
   it("every mtfReadings key matches a lens via toSlug(brand model)", () => {
@@ -310,28 +325,21 @@ describe("docs/optical-specs ↔ mtf-readings coverage", () => {
 });
 
 // Directory-name invariant (#1069). Every `docs/optical-specs/<dir>`
-// must match `toSlug(lens.brand + " " + lens.model)` for some lens in
-// `lenses.ts`. Catches the S123 (#1063, #1066) class of bug where a
-// scaffolder wrote `-t-s-` directories because the brand tooling did
-// not match `toSlug`'s `/` → `` → `-` collapse for `T/S` → `ts`.
+// must match `toSlug(brand + " " + model)` for some lens in `lenses.ts`
+// or accessory in `accessories.ts` (e.g. Thingyfy Pinhole Pro X is an
+// accessory but has a specs-log dir). Catches the S123 (#1063, #1066)
+// class of bug where a scaffolder wrote `-t-s-` directories because the
+// brand tooling did not match `toSlug`'s `/` → `` → `-` collapse for
+// `T/S` → `ts`. Brand-prefix divergences (Carl Zeiss → zeiss) are
+// handled via BRAND_SLUG_OVERRIDE — see ADR-056.
 describe("docs/optical-specs directory-name invariant", () => {
-  const lensSlugs = new Set(lenses.map((l) => toSlug(`${l.brand} ${l.model}`)));
-
-  // Directories whose lens entry has not been added to `lenses.ts`
-  // yet. Pre-existing as of #1069 landing; remove an entry when the
-  // matching lens is added (or remove the directory if the lens was
-  // surveyed and rejected). Tracked via #1085.
-  const KNOWN_PENDING_LENS_ENTRY = new Set<string>([
-    "thingyfy-pinhole-pro-x",
-    "zeiss-touit-12mm-f2-8",
-    "zeiss-touit-32mm-f1-8",
-    "zeiss-touit-50mm-f2-8-macro",
+  const lensSlugs = new Set([
+    ...lenses.map((l) => toSlug(`${dirBrand(l.brand)} ${l.model}`)),
+    ...accessories.map((a) => toSlug(`${dirBrand(a.brand)} ${a.model}`)),
   ]);
 
   it("every optical-specs directory matches a lens via toSlug", () => {
-    const orphans = lensSpecDirs
-      .filter((dir) => !lensSlugs.has(dir))
-      .filter((dir) => !KNOWN_PENDING_LENS_ENTRY.has(dir));
+    const orphans = lensSpecDirs.filter((dir) => !lensSlugs.has(dir));
     expect(
       orphans,
       `optical-specs directories with no matching lens (slug drift?): ${orphans.join(", ")}`,
