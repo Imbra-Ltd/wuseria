@@ -8036,3 +8036,85 @@ Theme: clear the 5 stale Dependabot PRs from S150–S153, then opportunistically
 - v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + #1181 + **#1186** in Backlog. **0 open feature PRs.** **0 stale Dependabot PRs** (cleared this session).
 - `mtf-readings.ts` unchanged.
 - Stale digitization logs: **0** (was 1 at S153 close per `--check --all`).
+
+---
+
+### Session 155 — Per-hue dp_y_anchor audit (null result)
+
+Date: 2026-06-17 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: close the per-hue `dp_y_anchor` audit deferred S149/S150/S153/S154. Toggle every candidate hue in `FREQUENCY_PER_HUE_RIDGE` profiles against the 14-anchor reference set and check whether the current setting is optimal. Outcome: all six candidate hues already at their locally-optimal value; no code changes. Audit findings recorded inline above the profile declarations.
+
+#### PRs
+
+- **#1187 MERGED** (`0bfeb8f`, 03:48 UTC) — `docs(journal): add Session 154 entry — Dependabot batch + #1184 + #1185`. Carryover from S154 wrap-up.
+- **#1188 MERGED** (`49a2529`, 04:39 UTC) — `docs(mtf): record S155 per-hue dp_y_anchor audit findings`. Comment-only +13 lines on `tools/mtfdigitizer/profiles/declared.py`.
+
+#### Issues opened / closed
+
+- No issues opened. No issues closed. The audit was tracked in `session_next_theme.md`, not GitHub.
+
+#### Key technical findings
+
+- **All six candidate hues are at their locally-optimal `dp_y_anchor` setting.** Probe toggled each via `family_profile.PROFILE_BY_STYLE` monkey-patch (not `declared.DECLARED_PROFILES` — REFERENCE_CHARTS bind via the family map, not the tuple). Re-ran `mtfdigitizer.calibrate` per toggle.
+
+| Hue                           | Toggle     | median            | Δ                 |             | p95 | Δ   |     | in-band 0.05 |
+| ----------------------------- | ---------- | ----------------- | ----------------- | ----------- | --- | --- | --- | ------------ |
+| 7artisans `blue`              | True→False | 0.0079→0.0079     | 0.0559→**0.0589** | 675→673     |
+| 7artisans `green`             | True→False | 0.0079→0.0080     | 0.0559→**0.0575** | 675→674     |
+| ttartisan `max-10-black`      | False→True | 0.0079→**0.0083** | 0.0559→0.0559     | 675→675     |
+| ttartisan `max-30-grey`       | False→True | 0.0079→0.0080     | 0.0559→**0.0589** | 675→**672** |
+| ttartisan `stopped-10-red`    | False→True | 0.0079→**0.0084** | 0.0559→0.0559     | 675→675     |
+| ttartisan `stopped-30-orange` | True→False | 0.0079→**0.0090** | 0.0559→**0.0589** | 675→**672** |
+
+- **`max-30-grey False→True` regresses `ttartisan-50` freq30S p95 0.024→0.146.** The anchor punishes the legitimate corner dive. Confirms ADR-049's "Known limitation" warning empirically; the code comment said "would regress" and now the regression number is on the record.
+- **`stopped-30-orange True→False` regresses `ttartisan-tilt-50mm` freq30S p95 0.011→0.188 and freq30M 0.011→0.193.** Confirms the #1168 per-hue fix is doing real work — not just papering over a single-sample noise.
+- **`stopped-10-red False→True` would improve tilt-50 freq10 p95 slightly (0.020→0.008, 0.018→0.006).** Improvement is on already-clean values; aggregate cost is real (median +0.0005 across 717 samples). Net-neutral, not worth changing.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/profiles/declared.py`** — added 13 lines of audit-result comments above `SEVENARTISANS_2COLOR_SAMECOLOR_DASHED.ridge_dp_y_anchor` and the `TTARTISAN_4COLOR_DUAL_APERTURE.hues` tuple. No behaviour change.
+
+#### Verification
+
+- `npm run validate` green (lint, format, check, 222 vitest, build, 462 pages, all internal links trailing-slash compliant).
+- `py -m pytest mtfdigitizer/tests`: 381 pass (unchanged from S154).
+- Baseline `py -m mtfdigitizer.calibrate`: 717 paired, median 0.0079, p95 0.0559, in-band 94.1% — matches S154 byte-for-byte. Post-merge: identical (changes are comment-only).
+- Probe deleted before commit per `base/quality.md` §Probe scripts.
+
+#### Key decisions (this session)
+
+- **Probe via `family_profile.PROFILE_BY_STYLE` monkey-patch, not `declared.DECLARED_PROFILES`.** First probe attempt patched the tuple and produced zero deltas across every toggle — `REFERENCE_CHARTS` bind their style_family to a profile instance via the family map at module-load time. The tuple is decorative for this lookup path. Found via grep on import sites; cost: one extra calibration run (~5 min wasted, recoverable).
+- **Inline findings rather than ADR or findings doc.** A null audit doesn't fit the ADR contract (no decision is being made or changed). Findings doc would have been heavier for a 13-line discovery. Inline comment above each profile declaration puts the evidence next to the code it explains and is auditable next time.
+- **No PR description bloat.** Captured the full delta table in the PR body (#1188) but the inline source comment is the durable record. PR body is searchable in GitHub; source comment is the thing the next maintainer sees while editing the profile.
+
+#### Process patterns observed this session
+
+- **A null audit is still progress.** "We checked and nothing changed" is a legitimate outcome of an audit, but only if the check is on record. Without #1188's inline note, the audit would have stayed in S156's `session_next_theme.md` candidates list and someone (me, in a future session) would have re-done it from scratch. The 13-line inline note costs nothing and closes the loop.
+- **`base/docs.md` §Findings docs vs ADR — null results fit neither.** Findings docs are for load-bearing constants from data; ADRs are for decisions. A "we checked and the current state is correct" outcome belongs in the source-of-truth artifact (here: the profile declaration itself), not in a separate doc. Worth flagging upstream as a gap in the doc-placement decision tree.
+- **Comments referencing closed issues remain load-bearing.** The `dp_y_anchor=True` comment on `stopped-30-orange` references #1168 (closed). #1168's closing PR landed the fix; the source comment encodes _why_. The audit confirms #1168's rationale empirically — comment stays.
+
+#### Follow-ups for next session
+
+- **#1085 orphan optical-specs dirs triage** — P3 agent-doable janitorial; rebalanced in S154's #1184 but the `KNOWN_PENDING_LENS_ENTRY` Thingyfy / Zeiss Touit entries are still in the codebase.
+- **#1186 Windows CRLF DX papercut** — P3 Backlog; carried from S154. Pick up in a Windows-DX cleanup session.
+- **#1131 detection-method survey (P2 spike)** — C-trigger; do not pick before trigger fires.
+- **#1135 B' implementation (P3 Backlog)** — carried.
+- **#1181 af-35 max-pass grey-30 spike** — P4 Backlog; only worth tackling as part of a broader TTartisan max-pass investment (ADR-053 Option B).
+- **#1134 UI half** — stays deferred.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- 4 Tier 1 anchors (unchanged).
+- Aggregate calibration: 717 paired, median 0.0079, p95 0.0559, in-band 94.1% (unchanged; audit was comment-only).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged).
+- **222 vitest pass** (unchanged).
+- 55 ADRs (unchanged).
+- 9 declared MTF profiles (unchanged; "9" in S154 memory included a TTartisan staging entry retired pre-shipment — actual count is **8**, flagged for S156 memory correction).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + #1181 + #1186 in Backlog. **0 open feature PRs.** **0 stale Dependabot PRs.**
+- `mtf-readings.ts` unchanged.
+- Stale digitization logs: **0** (unchanged from S154 close).
