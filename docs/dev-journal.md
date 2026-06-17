@@ -8189,3 +8189,71 @@ Theme: close #1085 — the four `KNOWN_PENDING_LENS_ENTRY` allowlist entries in 
 - `mtf-readings.ts` unchanged.
 - Stale digitization logs: **0** (unchanged).
 - **`KNOWN_PENDING_LENS_ENTRY` allowlist: empty (removed).**
+
+### Session 157 — #1186 Windows CRLF DX papercut
+
+Date: 2026-06-17 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: close #1186 — Python emitters writing committed content on Windows produced CRLF in the working tree, dirtying `git status` against the LF-normalized index even when content was unchanged. Issue lists three fix paths (a: Python `newline="\n"`, b: `.gitattributes` hardening, c: both). Picked (a) — root-cause fix; (b) adds nothing because `* text=auto eol=lf` is already present and the artifact is Python's _post-checkout_ writer, not git normalization.
+
+#### PRs
+
+- **#1192 MERGED** (`b46ca58`, 06:46 UTC) — `fix(tools): write committed-content files with newline="\n" (#1186)`. +26 / −14 across 11 files. Closes #1186.
+
+#### Issues opened / closed
+
+- **#1186 closed** auto via PR body. No new issues opened.
+
+#### Key technical findings
+
+- **`path.write_text(content, encoding="utf-8")` on Windows defaults to `\r\n`.** Git's `* text=auto eol=lf` normalizes on commit but does NOT touch the file Python just wrote. So the working tree has CRLF until the file is staged, and `git status` shows it modified against the LF-normalized index. `.gitattributes` hardening (option b) does not fix this — only the Python writer can.
+- **Of 28 `write_text` call sites across `tools/`, 14 produce committed content.** The other 14 are diagnostic artifacts (`diagnostic.py` per-run files), review HTML previews (`review.py`), `.cache/` writes (`pagefetch/cache.py`), user-specified out paths (`pagefetch/__main__.py`), and test temp files (`tests/test_*.py`). Patching only the committed-content sites keeps the diff focused.
+- **`git status` stat-cache can show "modified" even when blob hashes match.** After `update-index --refresh`, three logs still showed modified; `git hash-object` on the working tree matched `git ls-files -s` index hashes exactly. `git add` was a no-op (correctly), confirming the fix.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/`** — `log.py`, `svg.py`, `extract.py` (×2), `rename.py` (×3), `eyeread.py`, `calibrate.py`, plus `scripts/emit_{fuji,ttartisan}_tier2.py` and `scripts/scaffold_{fuji,ttartisan}_tier2.py`. All committed-content `write_text` calls now pass `newline="\n"`.
+- **`tools/lenstip/build_index.py`** — `lens-index.json` writer also patched (committed artifact).
+
+#### Verification
+
+- `py -m mtfdigitizer.log --all` on Windows — 14 logs written; `git status` shows only the source-code edits (no spurious log diffs).
+- `py -m mtfdigitizer.log --check` — `OK: 4 digitization log(s) up to date.`
+- `py -m pytest tools/mtfdigitizer/` — **381 passed**.
+- `py -m pytest tools/` — **651 passed** in 5m40s.
+- PR #1192 CI: all 8 checks pass (CodeQL, analyze, gate, changes, gitleaks, links; build/lighthouse correctly skip via path-filter — `tools/` changes do not affect the static-site build).
+- Deploy run 27670999994: success.
+
+#### Key decisions (this session)
+
+- **(a) Python `newline="\n"` over (c) both.** `.gitattributes` already has `* text=auto eol=lf`; adding `*.md eol=lf -text=auto` would be redundant noise. Root-cause fix only.
+- **Patch only the 14 committed-content sites.** Non-committed writers (diagnostic, review, cache, test temps) intentionally left alone — they don't appear in `git status`, so no DX impact, and touching them would expand the diff without adding signal.
+
+#### Process patterns observed this session
+
+- **Grep the call-site population before estimating "small fix" scope.** Issue body said "~7 call sites"; actual was 16 in `tools/mtfdigitizer/` plus `pagefetch`, `lenstip`. Triaged into committed (14) vs transient (3 in `diagnostic.py`, `review.py`, `pagefetch/cache.py`, `pagefetch/__main__.py`, plus all test fixtures) by reading each output destination. 30 seconds of grep saved a "fix that grows mid-PR" surprise.
+- **Stat-cache modified ≠ real diff.** When `git diff` is empty but `git status` shows modified, compare `git hash-object <file>` to `git ls-files -s <file>` — equal hashes mean the fix worked and `git status` just hasn't refreshed.
+
+#### Follow-ups for next session
+
+- **#1131 detection-method survey (P2 spike)** — C-trigger; do not pick before trigger fires.
+- **#1135 B' implementation (P3 Backlog)** — carried.
+- **#1181 af-35 max-pass grey-30 spike** — P4 Backlog; only as part of broader TTartisan max-pass investment (ADR-053 Option B).
+- **#1134 UI half** — stays deferred.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- 4 Tier 1 anchors (unchanged).
+- Aggregate calibration: 717 paired, median 0.0079, p95 0.0559, in-band 94.1% (unchanged; this session was tools-only).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged).
+- **222 vitest pass** (unchanged — no TS changes this session).
+- **56 ADRs** (unchanged — no new architectural decisions).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + #1181 in Backlog. **0 open feature PRs.** **0 stale Dependabot PRs.**
+- `mtf-readings.ts` unchanged.
+- Stale digitization logs: **0** (unchanged).
+- **#1186 closed; Windows DX papercut fixed.**
