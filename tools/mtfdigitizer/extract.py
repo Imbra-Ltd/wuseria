@@ -301,7 +301,9 @@ def _write_inspection_artifacts(run: ExtractRun) -> tuple[Path, Path, Path]:
 
     stem = _artifact_stem(run)
     svg_path = lens_dir / f"{stem}.svg"
-    svg_path.write_text(render_svg(run.extracted), encoding="utf-8")
+    svg_path.write_text(
+        render_svg(run.extracted), encoding="utf-8", newline="\n"
+    )
 
     outputs = write_review(
         run.extracted,
@@ -404,7 +406,7 @@ def extract_lens(slug: str, *, accept_override: bool) -> int:
         return 0
 
     log_path = _log_path_for(chart)
-    log_path.write_text(_render_log_for(runs), encoding="utf-8")
+    log_path.write_text(_render_log_for(runs), encoding="utf-8", newline="\n")
     print(f"  wrote {rel(log_path)}  ({reason})")
     return 0
 

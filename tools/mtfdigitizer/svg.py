@@ -393,7 +393,7 @@ def _emit_chart(chart: ReferenceChart, *, check_only: bool) -> list[Path]:
         else:
             out_path = image_path.with_suffix(".svg")
         if not check_only:
-            out_path.write_text(svg, encoding="utf-8")
+            out_path.write_text(svg, encoding="utf-8", newline="\n")
         out_paths.append(out_path)
     return out_paths
 

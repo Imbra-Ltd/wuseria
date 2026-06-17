@@ -484,7 +484,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.write:
         source = MTF_READINGS_PATH.read_text(encoding="utf-8")
         patched = _splice_entries(source, entries)
-        MTF_READINGS_PATH.write_text(patched, encoding="utf-8")
+        MTF_READINGS_PATH.write_text(patched, encoding="utf-8", newline="\n")
         print(
             f"\npatched {MTF_READINGS_PATH.relative_to(REPO_ROOT)}: "
             f"{len(entries)} entries, {total_panels} panels, "

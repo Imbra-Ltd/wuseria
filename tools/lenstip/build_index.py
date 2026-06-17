@@ -209,7 +209,11 @@ def main() -> None:
 
     index = build_index(brand_filter=args.brand, no_cache=args.no_cache)
 
-    INDEX_FILE.write_text(json.dumps(index, indent=2, ensure_ascii=False), encoding="utf-8")
+    INDEX_FILE.write_text(
+        json.dumps(index, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+        newline="\n",
+    )
     print(f"\nIndex saved to {INDEX_FILE}")
     print(f"Total: {index['_meta']['total_lenses']} lenses across {index['_meta']['total_brands']} brands")
 

@@ -222,7 +222,7 @@ def main(argv: list[str] | None = None) -> int:
         / "_ttartisan_tier2_charts.py"
     )
     if args.write:
-        target.write_text(module_source, encoding="utf-8")
+        target.write_text(module_source, encoding="utf-8", newline="\n")
         print(
             f"Wrote {target.relative_to(REPO_ROOT)} ({len(charts)} lenses).",
             file=sys.stderr,
