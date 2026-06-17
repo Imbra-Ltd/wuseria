@@ -8118,3 +8118,74 @@ Theme: close the per-hue `dp_y_anchor` audit deferred S149/S150/S153/S154. Toggl
 - v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + #1181 + #1186 in Backlog. **0 open feature PRs.** **0 stale Dependabot PRs.**
 - `mtf-readings.ts` unchanged.
 - Stale digitization logs: **0** (unchanged from S154 close).
+
+---
+
+### Session 156 — #1085 orphan optical-specs dirs (slug-system reconciliation)
+
+Date: 2026-06-17 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: close #1085 — the four `KNOWN_PENDING_LENS_ENTRY` allowlist entries in `mtf-readings.test.ts` (`thingyfy-pinhole-pro-x`, `zeiss-touit-12mm-f2-8`, `-32mm-f1-8`, `-50mm-f2-8-macro`). Initial framing was "add or delete each lens"; investigation surfaced a systematic divergence between two coexisting slug systems instead. Fix reconciles the TS dir invariant with brandkit's established `slug_prefix` convention. ADR-056 records the decision and rejected alternatives.
+
+#### PRs
+
+- **#1190 MERGED** (`ce9fafd`, 05:53 UTC) — `test(mtf): reconcile dir invariant with brandkit slug_prefix (#1085)`. +131 / −19 across `src/data/mtf-readings.test.ts` and new `docs/decisions/056-brand-slug-prefix-divergence.md`. Closes #1085.
+
+#### Issues opened / closed
+
+- **#1085 closed** auto via PR body. No new issues opened.
+
+#### Key technical findings
+
+- **Two slug systems disagreed on `docs/optical-specs/<dir>/` naming.** Python brandkit (`tools/brandkit/extractor.py`) builds dirs as `f"{slug_prefix}-{model_to_slug(model)}"`; `ZeissExtractor` deliberately sets `slug_prefix="zeiss"` (strips "carl-" — modern brand name on disk and filenames). TS invariant added in #1069 computed `toSlug(brand + " " + model)` from DB `brand: "Carl Zeiss"` and expected `carl-zeiss-touit-*`. The four "orphan" dirs were not orphan, just slug-mismatched.
+- **Thingyfy Pinhole Pro X is in `accessories.ts`, not `lenses.ts`.** The #1069 invariant only scanned `lenses`, so the Thingyfy specs-log dir was systemically invisible regardless of any slug fix.
+- **Renaming dirs to `carl-zeiss-touit-*` would have broken the Zeiss extractor** — next `--accept` run would have regenerated `zeiss-*-datasheet.pdf` files into the renamed dirs, recreating the orphan condition. Discovered mid-implementation via grep on `tools/zeiss/extractor.py`; pivoted before committing the rename.
+
+#### Key changes
+
+- **`src/data/mtf-readings.test.ts`** — added `BRAND_SLUG_OVERRIDE: Record<string, string> = { "Carl Zeiss": "Zeiss" }` and `dirBrand()` helper. Applied to both lensSlugs computations (mtf-readings ↔ lenses.ts coverage block AND the dir-name invariant block). Invariant now also iterates `accessories` from `./accessories`. `KNOWN_PENDING_LENS_ENTRY` set removed entirely.
+- **`docs/decisions/056-brand-slug-prefix-divergence.md`** — context, decision (allow brandkit `slug_prefix` to diverge from DB brand; TS honors via small override map), three rejected alternatives (dir rename, DB brand rename, keep allowlist permanently), consequences.
+
+#### Verification
+
+- `npm run validate` green (lint, format, check, 222 vitest, build 462 pages, 462 internal-link trailing-slash check).
+- PR #1190 CI: all 8 checks pass (CodeQL, analyze, build, changes, gate, gitleaks, lighthouse, links).
+- Deploy run 27668833422: success.
+- `#1085` auto-close confirmed via `gh issue view`.
+
+#### Key decisions (this session)
+
+- **Honor brandkit as authoritative for dir names; DB brand stays authoritative for display.** The override map is small (one entry today) and explicit. Each future divergence MUST be added to both `BRAND_SLUG_OVERRIDE` and the corresponding brandkit extractor's `slug_prefix`.
+- **Scan accessories in the dir invariant, not move Thingyfy out of `docs/optical-specs/`.** CLAUDE.md §2.6 already requires a `specs-log.md` in every optical-specs dir; accessories with optical-specs presence are first-class. No new dir convention needed.
+- **Ask before committing wrong direction.** First confidence pass picked "rename dirs"; mid-task grep on the Zeiss extractor revealed the rename would propagate the orphan condition. Stopped, re-asked with the right options, then committed.
+
+#### Process patterns observed this session
+
+- **Surface design conflicts via grep before editing.** Renaming 18 files (3 dirs × 5 files + 3 dirs) felt like a contained mechanical change. Grep on the slug pattern across `tools/` exposed 7 reference sites — only 4-5 functional, but one (the Zeiss extractor's `slug_prefix`) inverted the entire fix direction. Cost of the grep: 10 seconds. Cost of not grepping: a PR that breaks the extractor on its next run.
+- **The "orphan" framing can be wrong.** #1085's body assumed each dir was orphan because "lens not in `lenses.ts`." Reality: 3 were in `lenses.ts` (brand mismatch), 1 was in `accessories.ts` (table mismatch). The invariant's own structure made the wrong diagnosis. Worth flagging that test allowlists with explanatory comments still need their assumptions audited — the comment can be wrong.
+- **Two-system reconciliations belong in ADRs, not inline comments.** A 10-line code comment explaining "why Carl Zeiss → zeiss-" would have lacked the rejected-alternatives section that makes the decision durable. ADR-056 records the three rejected paths so future-me does not re-propose them.
+
+#### Follow-ups for next session
+
+- **#1186 Windows CRLF DX papercut** — P3 Backlog; carried again. Pick up in a Windows-DX cleanup session.
+- **#1131 detection-method survey (P2 spike)** — C-trigger; do not pick before trigger fires.
+- **#1135 B' implementation (P3 Backlog)** — carried.
+- **#1181 af-35 max-pass grey-30 spike** — P4 Backlog; tackle only as part of a broader TTartisan max-pass investment (ADR-053 Option B).
+- **#1134 UI half** — stays deferred.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- 4 Tier 1 anchors (unchanged).
+- Aggregate calibration: 717 paired, median 0.0079, p95 0.0559, in-band 94.1% (unchanged; this session was TS-only).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged).
+- **222 vitest pass** (unchanged — invariant changes touched only the existing test file's logic).
+- **56 ADRs** (was 55; +ADR-056).
+- 8 declared MTF profiles (corrected count from S155 close).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + #1181 + #1186 in Backlog. **0 open feature PRs.** **0 stale Dependabot PRs.**
+- `mtf-readings.ts` unchanged.
+- Stale digitization logs: **0** (unchanged).
+- **`KNOWN_PENDING_LENS_ENTRY` allowlist: empty (removed).**
