@@ -404,7 +404,7 @@ def _write_readings_log(chart: ReferenceChart, result, field_deltas: list[FieldD
             lines.append("| " + " | ".join(row) + " |")
         lines.append("")
 
-    path.write_text("\n".join(lines), encoding="utf-8")
+    path.write_text("\n".join(lines), encoding="utf-8", newline="\n")
     return path
 
 

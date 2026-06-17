@@ -415,7 +415,7 @@ def transcribe(slug: str, *, apply: bool) -> int:
             file=sys.stderr,
         )
         return 0
-    _CHARTS_PATH.write_text(new_src, encoding="utf-8")
+    _CHARTS_PATH.write_text(new_src, encoding="utf-8", newline="\n")
     print(f"wrote: {gt_var} in {_CHARTS_PATH.relative_to(REPO_ROOT)}", file=sys.stderr)
     return 0
 

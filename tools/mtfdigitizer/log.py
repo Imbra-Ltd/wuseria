@@ -401,7 +401,11 @@ def write_logs(
         )
         out_dir.mkdir(parents=True, exist_ok=True)
         path = out_dir / "digitization-log.md"
-        path.write_text(_render_lens_log(lens_slug, panels), encoding="utf-8")
+        path.write_text(
+            _render_lens_log(lens_slug, panels),
+            encoding="utf-8",
+            newline="\n",
+        )
         written.append(path)
     return written
 

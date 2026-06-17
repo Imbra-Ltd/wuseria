@@ -234,7 +234,7 @@ def main(argv: list[str] | None = None) -> int:
         / "_fuji_tier2_charts.py"
     )
     if args.write:
-        target.write_text(module_source, encoding="utf-8")
+        target.write_text(module_source, encoding="utf-8", newline="\n")
         chart_count = sum(len(v) for v in groups.values())
         print(
             f"Wrote {target.relative_to(REPO_ROOT)} "

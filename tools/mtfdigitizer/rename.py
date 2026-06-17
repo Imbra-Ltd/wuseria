@@ -450,7 +450,7 @@ def _update_charts_py(name_map: dict[str, str], apply: bool) -> int:
             return match.group(1) + match.group(2).replace(old_name, new_name) + match.group(3)
         new_text = pattern.sub(_sub, new_text)
     if apply and new_text != text:
-        CHARTS_PY.write_text(new_text, encoding="utf-8")
+        CHARTS_PY.write_text(new_text, encoding="utf-8", newline="\n")
     return n_changes
 
 
@@ -468,9 +468,11 @@ def _apply_plan(plan: FolderPlan) -> None:
             )
     for rename in plan.renames:
         rename.old.rename(rename.new)
-    (plan.folder / "analysis.md").write_text(plan.analysis_new, encoding="utf-8")
+    (plan.folder / "analysis.md").write_text(
+        plan.analysis_new, encoding="utf-8", newline="\n"
+    )
     for md_path, _old_text, new_text in plan.other_md_updates:
-        md_path.write_text(new_text, encoding="utf-8")
+        md_path.write_text(new_text, encoding="utf-8", newline="\n")
 
 
 def _print_plan(plan: FolderPlan) -> None:
