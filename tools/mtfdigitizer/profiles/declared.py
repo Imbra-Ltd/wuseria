@@ -97,6 +97,9 @@ SEVENARTISANS_2COLOR_SAMECOLOR_DASHED: MtfProfile = MtfProfile(
     # leave a single centroid behind. The anchor lets the DP coast past
     # those single-centroid columns instead of swapping curve identity
     # at the corner crossing. See ADR-049 §"Known limitation".
+    # Per-hue audit (S155, 2026-06-17): flipping blue or green to False
+    # regresses aggregate in-band count and p95 |d|. Scalar True confirmed
+    # optimal for both hues.
     ridge_dp_y_anchor=True,
     notes="7Artisans/Chinese convention: blue=10, green=30; T1/T2 (blue) = M pair, S1/S2 (green) = S pair; dashed=S within hue",
 )
@@ -257,6 +260,16 @@ FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED: MtfProfile = MtfProfile(
 #   stopped-30S-orange: 1417 px (h≈17, S≥80, V∈[80,220])
 TTARTISAN_4COLOR_DUAL_APERTURE: MtfProfile = MtfProfile(
     name="ttartisan-4color-dual-aperture",
+    # Per-hue `dp_y_anchor` audit (S155, 2026-06-17): four candidate hues
+    # toggled against the 14-anchor reference set. Findings:
+    #   max-10-black  False->True: median 0.0079->0.0083, p95 unchanged.
+    #   max-30-grey   False->True: ttartisan-50 freq30S p95 0.024->0.146
+    #                              (anchor punishes the legitimate corner
+    #                              dive — ADR-049 known limitation confirmed).
+    #   stopped-10-red False->True: median 0.0079->0.0084, p95 unchanged.
+    #   stopped-30-orange True->False: tilt-50 freq30S p95 0.011->0.188,
+    #                              freq30M 0.011->0.193 (confirms #1168 fix).
+    # No flips warranted; current settings are locally optimal.
     hues=(
         # Black — 10 lp/mm at max aperture. Low V, low S; the S<60 cap
         # admits anti-aliased curve edges, V<80 rejects mid-grey gridlines.
