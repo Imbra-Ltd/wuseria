@@ -324,6 +324,49 @@ describe("docs/optical-specs ↔ mtf-readings coverage", () => {
   });
 });
 
+// Eye-read overrides applied directly in mtf-readings.ts when the
+// extractor disagrees with maintainer-verified truth. Each entry locks
+// a single cell so a future `emit_*` re-run cannot silently revert it
+// (#1202). When the underlying extractor is fixed (e.g. the af-35
+// ridge-tracker right-corner line-loss tracked from #1201 / S162),
+// remove the corresponding entry here in the same PR.
+const EYE_READ_OVERRIDES = [
+  {
+    slug: "ttartisan-af-35mm-f1-8",
+    aperture: "f/1.8",
+    position: 12.6,
+    frequency: 30,
+    field: "M" as const,
+    expected: 0.58,
+    issue: "#1201 / #1202",
+  },
+];
+
+describe("mtf-readings eye-read overrides", () => {
+  for (const o of EYE_READ_OVERRIDES) {
+    it(`${o.slug} ${o.aperture} pos ${o.position} ${o.frequency}${o.field} stays at ${o.expected} (${o.issue})`, () => {
+      const entry = mtfReadings[o.slug];
+      expect(entry, `${o.slug}: missing from mtfReadings`).toBeDefined();
+      const chart = entry.charts.find((c) => c.aperture === o.aperture);
+      expect(chart, `${o.slug}: missing chart ${o.aperture}`).toBeDefined();
+      const reading = chart!.readings.find((r) => r.position === o.position);
+      expect(
+        reading,
+        `${o.slug} ${o.aperture}: missing position ${o.position}`,
+      ).toBeDefined();
+      const sm = reading!.samples[o.frequency];
+      expect(
+        sm,
+        `${o.slug} ${o.aperture} pos ${o.position}: missing frequency ${o.frequency}`,
+      ).toBeDefined();
+      expect(
+        sm[o.field],
+        `${o.slug} ${o.aperture} pos ${o.position} ${o.frequency}${o.field}: eye-read override drifted from ${o.expected} (extractor likely overwrote it — see ${o.issue})`,
+      ).toBe(o.expected);
+    });
+  }
+});
+
 // Directory-name invariant (#1069). Every `docs/optical-specs/<dir>`
 // must match `toSlug(brand + " " + model)` for some lens in `lenses.ts`
 // or accessory in `accessories.ts` (e.g. Thingyfy Pinhole Pro X is an
