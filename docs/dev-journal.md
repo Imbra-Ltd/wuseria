@@ -8481,3 +8481,86 @@ Theme: pivot from legend-swatch implementation work to investigating an S/M labe
 - `mtf-readings.ts` unchanged.
 - Stale digitization logs: **0** (unchanged).
 - **#1199 has a measurable calibration metric (af-35 stopped freq30S p95 0.193, freq30M p95 0.194); fix deferred to a future session with the metric as gating signal.**
+
+---
+
+### Session 161 — #1199 deep fix landed via per-lens override (af-35 stopped corner)
+
+Date: 2026-06-18 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: take the measurable target S160 created (af-35 stopped freq30 p95 ~0.19) and drive it under 0.05 without regressing the other 9 Tier 1 anchors. Same branch as S160 (`fix/ttartisan-af-35-stopped-30-edge-swap`), same PR (#1200), now closing #1199.
+
+#### PRs
+
+- **#1200 OPEN** — extended with the corner-swap fix (commit `42fb06d`). Commit subject `fix(mtf): per-lens S/M swap override for af-35 stopped-30 corner (closes #1199)`. CI green (changes, analyze, gitleaks, links, gate, CodeQL all SUCCESS; build/lighthouse correctly SKIPPED — no front-end code touched).
+
+#### Issues opened / closed
+
+- **#1198** — moved to P4 / Backlog with rationale comment. The cross-chart audit S160 produced showed legend-swatch auto-calibration is the ideal case for only 2/9 reference families; not a general-purpose fix.
+- **#1199** — will auto-close on PR merge.
+
+#### Key technical findings
+
+- **Four discriminator signals all fail on af-35 stopped-30-orange.** Probed `Track.coverage` (existing, picks t1), `_path_mask_continuity` (existing, picks t1: 0.984 vs 0.712), divergent-band presence (new — measures band-ink in the region where the two DP tracks are >MIN_DIVERGENCE_PX apart, picks t1: 0.973 vs 0.652), and mask-CC count under each track's wide band (new — bypasses DP entirely, picks t1: 18 vs 68 CCs). Every signal that follows the DP path inherits the same asymmetry: the physically-solid S30 has a dip-rise-dive shape that fragments its DP path, while the dashed M30 is smooth enough that the DP locks every dash centroid into one neat track. The CC-count signal fails for a different reason — the M30 dashes happen to fall within the wider band of the diving S30 track, contaminating its CC count.
+- **The DP traces both physical curves correctly end-to-end.** The label assignment is the only error, and only past a near-crossing at frac 0.95 (dy = 6 px) where track1 (smooth) ends MTF 0.628 and track2 (rebound) ends MTF 0.516. Mid-field labels are correct.
+- **`_detect_and_swap_at_crossings` doesn't fire on this shape.** It requires BOTH curves' slopes to reverse across the crossing column. M30 is smooth-monotone (never reverses); S30's rebound is only 2 columns wide, below the `_CROSSING_SLOPE_WINDOW=10` slope-fit window. The detector's both-reverse rule was tightened in #1170 / S151 specifically to reject the "exactly one reverses" hypothesis because no real curve was thought to come back up — but af-35 IS that case (dip → rise → dive).
+- **First fix attempt (whole-track swap) over-corrected.** Replacing the discriminator's choice end-to-end fixed the corner (Δ=0.000) but broke mid-field where the DP had labels right: frac 0.8 Δ=0.121, frac 0.9 Δ=0.148. The labels are only wrong past the near-crossing, so the swap must be narrow.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/profiles/types.py`** — `HueRange.force_sm_swap: bool = False`. Default False keeps every existing call site identical. Set True per-lens via the override path below.
+- **`tools/mtfdigitizer/referenceset/charts.py`** — `ReferenceChart.sm_swap_per_hue: tuple[str, ...] = ()`. Lens-scoped; leaves the shared `ttartisan-4color-dual-aperture` profile untouched for tilt-50, 50/1.2, 7.5 fisheye, etc. Declared `sm_swap_per_hue=("stopped-30-orange",)` on af-35 with inline comment explaining the failure mode.
+- **`tools/mtfdigitizer/aperture_passes.py`** — new `_apply_sm_swap_override(profile, swap_names)` returns a profile copy with `force_sm_swap=True` set on the matching `HueRange` entries. Applied in `aperture_passes_for_view` to every returned profile.
+- **`tools/mtfdigitizer/calibrate.py`** — `_extract_multi_aperture_chart` and the standard-path branch in `_calibrate_chart` now call `_apply_sm_swap_override` after `_hue_filtered_profile`. Without this, calibrate bypassed `aperture_passes_for_view` and the override never reached the dispatcher (caught when the first calibrate run after wiring showed no improvement on af-35).
+- **`tools/mtfdigitizer/pipeline/dispatch.py`** — `FREQUENCY_PER_HUE_RIDGE` branch reads `HueRange.force_sm_swap` per hue (same red-wrap-around handling as `dp_y_anchor`) and passes the flag to `ridge_tracks_for_hue_freq_split`.
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — `ridge_tracks_for_hue_freq_split` gets `force_sm_swap: bool = False`. New helper `_swap_after_rightmost_convergence(solid, dashed)` swaps assignments only AT/AFTER the rightmost column where dy < `_CROSSING_DY_THRESHOLD`. Falls back to whole-track swap when no convergence column exists.
+- **`tools/mtfdigitizer/referenceset/readings/ttartisan-af-35mm-f1-8.md`** — new committed readings file.
+
+#### Verification
+
+- `py -m pytest mtfdigitizer/` — 381/381 pass.
+- `py -m mtfdigitizer.calibrate` — aggregate paired comparisons 805 (unchanged); **median |Δ| 0.0061 → 0.0059**; **p95 |Δ| 0.0526 → 0.0509**; **in-band 94.5% → 94.8%**. The af-35 stopped freq30S/M p95 |Δ| 0.193/0.194 → **0.005/0.005**. No regression on the other 9 Tier 1 anchors.
+- Per-cell verification on af-35 stopped freq30S (was wrong mid-field after the whole-track-swap attempt): every fraction now matches GT within 0.005, including the corner (EX=0.49, GT=0.49) and the high-MTF dive region at frac 0.8 (EX=0.85, GT=0.85) and frac 0.9 (EX=0.82, GT=0.82).
+- PR #1200 CI: changes, analyze, gitleaks, links, gate, CodeQL → SUCCESS. build/lighthouse → SKIPPED (no front-end code touched; gate aggregator correctly reports pass not pass-by-omission per the gate-scope-agreement rule).
+
+#### Key decisions (this session)
+
+- **Per-lens override over a new discriminator.** Four signals were probed; all failed for the same root cause (DP path quality is asymmetric on this lens). A new discriminator that handles the af-35 case would either follow the DP path (and inherit the same asymmetry) or operate on the raw mask (and be contaminated by the other curve's ink within the band). The user's third option from the bug body — per-lens override — turned out to be the right call: cheap, framework-consistent (already has `dp_y_anchor` per-hue), risk-isolated. Probe-first told us to STOP looking for a magic signal after the fourth attempt failed.
+- **Narrow swap region (at-and-after rightmost convergence), not whole-track.** The whole-track swap was the first wired attempt and broke mid-field labels. Inspecting the dy series across the plot showed only one near-crossing column (dy=6 at frac 0.95), past which the labels actually flip; before it the DP got them right. Restricting the swap to that region preserves correct labels for the bulk of the curve.
+- **Bypass the `_detect_and_swap_at_crossings` slope-reversal rule for per-lens overrides.** The both-reverse rule was tightened in #1170 to reject the "one curve dives and comes back" hypothesis as data-unrealistic. af-35 violates that prior. The override skips the slope check entirely; the maintainer has eye-confirmed the swap from GT, which is a stronger signal than slope geometry.
+- **Apply override in BOTH `aperture_passes_for_view` AND `calibrate._extract_multi_aperture_chart`.** Calibrate has its own profile-resolution path that bypasses `aperture_passes_for_view`. Caught when calibrate showed no improvement after the override was wired through `aperture_passes_for_view` alone. Both paths now call `_apply_sm_swap_override`.
+
+#### Process patterns observed this session
+
+- **Probe-first discipline saved a wrong fix.** Four signal probes (~30 min total) falsified the "find a better discriminator" hypothesis before any production change. Without them the session would have shipped a discriminator change that worked on af-35 and regressed somewhere else (the divergent-band-presence signal already showed it flipping the 50/1.2 and 23mm-f1.4 labels in the probe matrix).
+- **Two-attempt fix cycle is normal.** Whole-track swap fixed the corner but broke mid-field. Narrow-swap fixed both. The two-attempt cycle isn't waste — the first attempt validated the override mechanism end-to-end (per-lens wiring, calibrate path, ridge dispatch), and the second focused only on the swap-region geometry.
+- **Reading the dy series across the plot was decisive.** All the failed probes asked "which track is solid?" The dy series asked "where do the tracks meet?" — and exposed the single near-crossing column at frac 0.95 with dy=6, which became the swap pivot. The signal was hidden in plain sight in the existing track data; the probe just had to ask the right question.
+- **Calibrate-vs-aperture-passes path divergence is a latent footgun.** Per-lens overrides are a new pattern, and calibrate bypasses the dispatcher most production code uses. Any future per-lens flag added via the same pattern will need the same dual-path application. A test that runs an override-bearing chart through BOTH paths would catch the divergence; not added this session because the symptom (calibrate p95 unchanged) was loud and immediate.
+
+#### Follow-ups for next session
+
+- **Merge PR #1200** (manual review + merge — agent never auto-merges per `[[feedback_ask_before_automerge]]`).
+- **#1198 legend-swatch spike** stays in Backlog (P4) — not in next session's priority list.
+- **LineFormer + AI-ChartParser LICENSE-clarification issues** — still carried from S159 / S160.
+- **#1135 B' implementation (P3 Backlog)** — carried.
+- **#1181 af-35 max-pass grey-30** — P4 Backlog; unaffected by this session's stopped-pass fix.
+- **#1159** — still open, unchanged.
+- **#1134 UI half** — stays deferred.
+- **Calibrate-vs-dispatcher path divergence test** — if a second per-lens override lands, write a regression test that runs an override-bearing chart through both `extract_chart` (production) and `calibrate._calibrate_chart` (Tier 1 verification) and asserts identical outputs.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **805 paired, median 0.0059, p95 0.0509, in-band 94.8%** (was 805 / 0.0061 / 0.0526 / 94.5% pre-fix).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged — counted from S160; this session added no tests).
+- **222 vitest pass** (unchanged — no TS changes this session).
+- **57 ADRs** (unchanged — no new ADR; the per-lens override is a tactical config-knob, not an architectural decision).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 (UI deferred) + #1135 + #1159**. #1198 moved to Backlog this session. #1174 + #1175 + #1181 in Backlog. **1 open PR (#1200, ready to merge).** **0 stale Dependabot PRs.**
+- `mtf-readings.ts` unchanged.
+- Stale digitization logs: **0** (unchanged).
+- **#1199 will close on PR merge.**
