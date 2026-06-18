@@ -437,21 +437,27 @@ def field_skeletons(
         # Multiple entries with the same name share the same override
         # (red wrap-around case).
         per_hue_anchor: dict[str, bool] = {}
+        # Per-hue `force_sm_swap` override (#1199). True when any entry
+        # for the hue name carries the flag — same red-wrap-around
+        # rule as `dp_y_anchor`.
+        per_hue_swap: dict[str, bool] = {}
         for hue in profile.hues:
-            if hue.name in per_hue_anchor:
-                continue
-            if hue.dp_y_anchor is not None:
+            if hue.dp_y_anchor is not None and hue.name not in per_hue_anchor:
                 per_hue_anchor[hue.name] = hue.dp_y_anchor
+            if hue.force_sm_swap:
+                per_hue_swap[hue.name] = True
         for color_name, mask in curve_masks.items():
             cleaned_mask = mask
             for halo_mask in halo_pairs.get(color_name, ()):
                 cleaned_mask = cleaned_mask & ~halo_mask
             freq = freq_by_color[color_name]
             anchor = per_hue_anchor.get(color_name, profile.ridge_dp_y_anchor)
+            swap = per_hue_swap.get(color_name, False)
             hue_fields = ridge_tracks_for_hue_freq_split(
                 cleaned_mask, plot_box, freq=freq,
                 dashed_is_sagittal=profile.dashed_is_sagittal,
                 use_y_anchor=anchor,
+                force_sm_swap=swap,
             )
             out.update(hue_fields)
     elif (

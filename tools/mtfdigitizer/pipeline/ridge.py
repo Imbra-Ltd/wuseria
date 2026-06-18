@@ -1618,12 +1618,65 @@ def _detect_and_swap_at_crossings(
     return Track(points=tuple(swapped_a)), Track(points=tuple(swapped_b))
 
 
+def _swap_after_rightmost_convergence(
+    solid: Track, dashed: Track
+) -> tuple[Track, Track]:
+    """Swap track assignments AT and AFTER the rightmost column where
+    the two tracks come within `_CROSSING_DY_THRESHOLD` of each other.
+
+    Used by `ridge_tracks_for_hue_freq_split` when a per-lens override
+    declares the discriminator picked the wrong solid track AND the DP
+    flipped curve identity at a near-crossing (af-35 stopped-30-orange:
+    dy=6 px at frac 0.95 before the final corner spread). The narrower
+    swap region preserves the labels the DP got right in the rest of
+    the field.
+
+    When no convergence column exists (the tracks stay >
+    `_CROSSING_DY_THRESHOLD` apart end-to-end), swap the whole track —
+    the situation reduces to a plain discriminator failure with no
+    mid-curve identity flip.
+    """
+    s_by_x = {x: y for x, y in solid.points}
+    d_by_x = {x: y for x, y in dashed.points}
+    common_xs = sorted(set(s_by_x) & set(d_by_x))
+    if not common_xs:
+        # No overlap at all — swap whole tracks; the override is the
+        # only signal we have.
+        return dashed, solid
+
+    near_cols = [
+        x for x in common_xs
+        if abs(s_by_x[x] - d_by_x[x]) < _CROSSING_DY_THRESHOLD
+    ]
+    if not near_cols:
+        # Tracks never converge — whole-track swap.
+        return dashed, solid
+
+    swap_from_x = near_cols[-1]
+    swapped_solid: list[tuple[int, float]] = []
+    swapped_dashed: list[tuple[int, float]] = []
+    for x, y in solid.points:
+        if x >= swap_from_x:
+            swapped_dashed.append((x, y))
+        else:
+            swapped_solid.append((x, y))
+    for x, y in dashed.points:
+        if x >= swap_from_x:
+            swapped_solid.append((x, y))
+        else:
+            swapped_dashed.append((x, y))
+    swapped_solid.sort()
+    swapped_dashed.sort()
+    return Track(points=tuple(swapped_solid)), Track(points=tuple(swapped_dashed))
+
+
 def ridge_tracks_for_hue_freq_split(
     mask: np.ndarray,
     plot_box: PlotBox,
     freq: int,
     dashed_is_sagittal: bool,
     use_y_anchor: bool = False,
+    force_sm_swap: bool = False,
 ) -> dict[str, np.ndarray]:
     """Per-hue, 2-curve variant for SPLIT_BY_DASH families: each hue
     carries one frequency with both S (solid) and T (dashed) curves.
@@ -1732,6 +1785,31 @@ def ridge_tracks_for_hue_freq_split(
             solid_track_raw, dashed_track_raw = track1, track2
         else:
             solid_track_raw, dashed_track_raw = track2, track1
+
+    # Per-lens label override (#1199). When the discriminator picks
+    # the wrong solid track AND the two tracks come close in y at
+    # least once (the af-35 case: dy=6 at frac 0.95 before the final
+    # corner spread), the swap is restricted to columns AT and AFTER
+    # the rightmost near-crossing column. Without that restriction a
+    # whole-track swap fixes the corner but breaks every column where
+    # the DP already had the labels right (most of the curve).
+    #
+    # The existing `_detect_and_swap_at_crossings` does the same
+    # rightward-swap but requires BOTH tracks' slopes to reverse,
+    # which fails on af-35 because the dashed M30 is smooth and
+    # monotone — only the solid S30 reverses (and its rebound is too
+    # narrow to register in the slope window). The per-lens override
+    # bypasses the slope check: the maintainer has already
+    # eye-confirmed the swap from GT.
+    #
+    # When no near-crossing candidate exists (tracks are well-
+    # separated end-to-end), fall back to a whole-track swap — the
+    # situation is then just a discriminator failure with no
+    # mid-curve identity flip.
+    if force_sm_swap:
+        solid_track_raw, dashed_track_raw = _swap_after_rightmost_convergence(
+            solid_track_raw, dashed_track_raw
+        )
 
     column_runs = _column_run_count(cleaned, plot_box)
     shared_solid, shared_dashed = _fill_coincident_column_gaps_extending(

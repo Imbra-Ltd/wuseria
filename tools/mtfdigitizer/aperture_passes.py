@@ -41,6 +41,27 @@ def _hue_filtered_profile(profile: MtfProfile, aperture: str) -> MtfProfile:
     return dataclasses.replace(profile, hues=filtered)
 
 
+def _apply_sm_swap_override(
+    profile: MtfProfile, swap_names: tuple[str, ...]
+) -> MtfProfile:
+    """Return a profile copy with `force_sm_swap=True` on hues named in
+    `swap_names`. Lens-scoped: the shared base profile is untouched.
+
+    No-op when `swap_names` is empty or no hue name matches. Used for
+    per-lens label-swap overrides like #1199 af-35 stopped-30-orange,
+    where the discriminator picks the wrong solid track and no
+    automated signal recovers the correct assignment.
+    """
+    if not swap_names:
+        return profile
+    swap_set = set(swap_names)
+    new_hues = tuple(
+        dataclasses.replace(h, force_sm_swap=True) if h.name in swap_set else h
+        for h in profile.hues
+    )
+    return dataclasses.replace(profile, hues=new_hues)
+
+
 def aperture_passes_for_view(
     chart: ReferenceChart, image_path: Path
 ) -> list[tuple[str, MtfProfile]]:
@@ -51,14 +72,21 @@ def aperture_passes_for_view(
     - Multi-aperture-per-chart (ADR-044): N passes, one per aperture,
       each with profile hues filtered to that aperture's bucket.
     - Default: one pass with the chart's primary aperture label.
+
+    `chart.sm_swap_per_hue` is applied to every returned profile.
     """
     base = profile_for_chart(chart)
+    swap = chart.sm_swap_per_hue
     if chart.style_family in _FUJI_STYLE_FAMILIES:
         freq = _parse_filename_frequency(image_path)
         substituted = dataclasses.replace(base, frequencies_lpmm=(freq,))
-        return [(chart.apertures[0], substituted)]
+        return [(chart.apertures[0], _apply_sm_swap_override(substituted, swap))]
     if base.apertures_per_chart is not None:
         return [
-            (ap, _hue_filtered_profile(base, ap)) for ap in base.apertures_per_chart
+            (ap, _apply_sm_swap_override(_hue_filtered_profile(base, ap), swap))
+            for ap in base.apertures_per_chart
         ]
-    return [(chart.apertures[0] if chart.apertures else "", base)]
+    return [
+        (chart.apertures[0] if chart.apertures else "",
+         _apply_sm_swap_override(base, swap))
+    ]

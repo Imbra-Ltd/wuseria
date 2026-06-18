@@ -112,6 +112,13 @@ class ReferenceChart:
     # zoom lists its tele-end chart here so the production extractor
     # emits one log per lens with one panel per chart.
     additional_views: tuple[ChartView, ...] = ()
+    # Per-lens HueRange.force_sm_swap override list. Names that appear
+    # here have `force_sm_swap=True` set on their HueRange entries via
+    # `aperture_passes_for_view`. Lens-scoped: leaves the shared profile
+    # unmodified for other lenses. Use only when every automated
+    # discriminator picks the wrong solid track on this specific lens
+    # AND the eye-read GT confirms the swap (#1199 af-35).
+    sm_swap_per_hue: tuple[str, ...] = ()
 
     @property
     def views(self) -> tuple[ChartView, ...]:
@@ -878,6 +885,19 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         # template is identical.
         plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=_TTARTISAN_AF_35_GT,
+        # Per-lens S/M label override (#1199). On the stopped pass the
+        # solid S30 dives steeply through a complex dip-rise-dive shape
+        # that fragments its DP path while the dashed M30 stays smooth
+        # enough that the DP locks every dash centroid. Every
+        # automated discriminator (coverage, continuity, divergent-band
+        # presence, mask-CC count under band) picks the smooth track
+        # as solid — the inverse of physical reality. The eye-read GT
+        # in `_TTARTISAN_AF_35_GT` carries the correct assignment;
+        # this override flips the discriminator output to match. Risk-
+        # isolated to this lens; the shared `ttartisan-4color-dual-
+        # aperture` profile remains untouched for the 50/1.2, 7.5, and
+        # other TTartisan lenses that use it.
+        sm_swap_per_hue=("stopped-30-orange",),
     ),
     ReferenceChart(
         slug="7artisans-35mm-f1-2-mark-ii",

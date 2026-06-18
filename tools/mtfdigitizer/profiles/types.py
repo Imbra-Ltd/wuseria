@@ -157,6 +157,18 @@ class HueRange:
     # large dives (TTartisan max-30-grey on 7.5 fisheye), the anchor can
     # punish the dive — keep that case at False. See #1168 / #1159.
     dp_y_anchor: bool | None = None
+    # Per-hue post-discriminator override for FREQUENCY_PER_HUE_RIDGE:
+    # after the coverage/continuity discriminator picks solid/dashed,
+    # swap them when True. Applies only on lenses where every available
+    # signal (coverage, continuity, divergent-band presence, mask-CC
+    # count under band) picks the wrong track because the physical
+    # solid line is fragmented enough by its own shape that the DP
+    # path can't trace it, while the dashed line is smooth enough that
+    # the DP locks every dash centroid (af-35 stopped-30-orange:
+    # #1199). Set per-lens by `ReferenceChart.sm_swap_per_hue` — the
+    # field stays False on the shared profile so other lenses sharing
+    # the profile are unaffected. Default False.
+    force_sm_swap: bool = False
 
 
 @dataclass(frozen=True)
