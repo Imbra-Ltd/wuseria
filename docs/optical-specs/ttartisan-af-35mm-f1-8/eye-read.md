@@ -32,19 +32,19 @@ Read each cell at the intersection of the green vertical sample line and the cur
 
 ## f/1.8 (max)
 
-| Position (mm) | 10S  | 10M  | 30S  | 30M  |
-| ------------- | ---- | ---- | ---- | ---- |
-| 0.0           | 0.95 | 0.95 | 0.79 | 0.79 |
-| 1.4           | 0.95 | 0.95 | 0.79 | 0.78 |
-| 2.8           | 0.95 | 0.95 | 0.80 | 0.74 |
-| 4.2           | 0.96 | 0.95 | 0.77 | 0.72 |
-| 5.6           | 0.93 | 0.93 | 0.67 | 0.71 |
-| 7.0           | 0.91 | 0.92 | 0.56 | 0.67 |
-| 8.4           | 0.92 | 0.92 | 0.54 | 0.64 |
-| 9.8           | 0.93 | 0.92 | 0.68 | 0.63 |
-| 11.2          | 0.89 | 0.90 | 0.67 | 0.63 |
-| 12.6          | 0.71 | 0.89 | 0.31 | 0.66 |
-| 14.0          | 0.38 | 0.88 | 0.12 | 0.17 |
+| Position (mm) | 10S  | 10M  | 30S  | 30M   |
+| ------------- | ---- | ---- | ---- | ----- |
+| 0.0           | 0.95 | 0.95 | 0.79 | 0.79  |
+| 1.4           | 0.95 | 0.95 | 0.79 | 0.78  |
+| 2.8           | 0.95 | 0.95 | 0.80 | 0.74  |
+| 4.2           | 0.96 | 0.95 | 0.77 | 0.72  |
+| 5.6           | 0.93 | 0.93 | 0.67 | 0.71  |
+| 7.0           | 0.91 | 0.92 | 0.56 | 0.67  |
+| 8.4           | 0.92 | 0.92 | 0.54 | 0.64  |
+| 9.8           | 0.93 | 0.92 | 0.68 | 0.63  |
+| 11.2          | 0.89 | 0.90 | 0.67 | 0.63  |
+| 12.6          | 0.71 | 0.89 | 0.31 | 0.58! |
+| 14.0          | 0.38 | 0.88 | 0.12 | 0.50! |
 
 ## f/5.6 (stopped)
 
@@ -61,6 +61,22 @@ Read each cell at the intersection of the green vertical sample line and the cur
 | 11.2          | 0.95 | 0.93 | 0.85  | 0.73  |
 | 12.6          | 0.95 | 0.91 | 0.82  | 0.67  |
 | 14.0          | 0.88 | 0.88 | 0.49! | 0.63! |
+
+## Manual artifact patches (#1201)
+
+The extractor mistracks the dashed grey M30 F1.8 at the right corner
+(frac 0.9 reads as 0.66, frac 1.0 reads as 0.17 — actually the solid
+S30 silhouette inverted into M30). Until the ridge tracker is fixed,
+three downstream artifacts carry hand-patched M30 right-edge values
+matching the eye-read above (0.58 at frac 0.9, 0.50 at frac 1.0):
+
+- `ttartisan-af-35mm-f1-8-mtf-max.svg` — points and dots at x=277.2 and x=304.0
+- `ttartisan-af-35mm-f1-8-mtf-max-overlay.png` — re-rendered with patched readings
+- `src/data/mtf-readings.ts` — position 12.6 M30 cell (also flagged with #1202)
+
+The auto-generated `digitization-log.md` correctly shows the extractor's
+actual reading (0.17 at frac 1.0) — do not patch it; it is the diagnostic
+record for the future ridge-tracker fix.
 
 ## Transcribing to GT
 

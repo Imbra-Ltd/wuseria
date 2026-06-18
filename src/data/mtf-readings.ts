@@ -13546,7 +13546,13 @@ const mtfReadings: Record<string, MtfData> = {
             position: 12.6,
             samples: {
               10: { S: 0.71, M: 0.89 },
-              30: { S: 0.31, M: 0.66 },
+              // 30 M: eye-read override 0.58 (extractor produced 0.66 —
+              // ridge tracker locks onto solid S30 at the right corner
+              // crossing). #1201; eye-read truth in
+              // docs/optical-specs/ttartisan-af-35mm-f1-8/eye-read.md.
+              // WARN: emit_ttartisan_tier2 --write will overwrite this
+              // override (#1202).
+              30: { S: 0.31, M: 0.58 },
             },
           },
         ],
