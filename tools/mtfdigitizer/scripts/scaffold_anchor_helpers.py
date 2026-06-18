@@ -525,10 +525,17 @@ def _ttartisan_dual_aperture_extras(chart: ReferenceChart) -> StyleFamilyExtras:
             f"        {field_lines_per_aperture}\n"
             f"    }},"
         )
-    # GT variable name: e.g. _TTARTISAN_50_GT.
+    # GT variable name: e.g. _TTARTISAN_50_GT. AF lenses
+    # (`ttartisan-af-NNmm-...`) and tilt lenses get a prefix segment to
+    # keep their var names unique — must match `eyeread.gt_var_for_chart`.
     parts = chart.slug.split("-")
-    focal = parts[1].replace("mm", "")  # 50
-    gt_var = f"_TTARTISAN_{focal}_GT"
+    if parts[1] in {"af", "tilt"}:
+        variant = parts[1].upper()
+        focal = parts[2].replace("mm", "")
+        gt_var = f"_TTARTISAN_{variant}_{focal}_GT"
+    else:
+        focal = parts[1].replace("mm", "")  # 50
+        gt_var = f"_TTARTISAN_{focal}_GT"
     gt_snippet = (
         f"```python\n"
         f"{gt_var}: GroundTruthCurves = {{\n"

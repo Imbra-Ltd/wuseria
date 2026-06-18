@@ -339,6 +339,15 @@ def gt_var_for_chart(chart) -> str:
         focal = parts[2].replace("mm", "")
         return f"_FUJI_{cohort}_{focal}_GT"
     if style == "ttartisan-4color-dual-aperture":
+        # Most slugs are `ttartisan-NNmm-...` with focal at parts[1].
+        # AF lenses (`ttartisan-af-NNmm-...`) and tilt lenses
+        # (`ttartisan-tilt-NNmm-...`) carry the prefix segment first,
+        # so the focal is at parts[2] and the variant prefix appears
+        # in the GT-var name to keep it unique across the cohort.
+        if parts[1] in {"af", "tilt"}:
+            variant = parts[1].upper()
+            focal = parts[2].replace("mm", "")
+            return f"_TTARTISAN_{variant}_{focal}_GT"
         focal = parts[1].replace("mm", "")
         return f"_TTARTISAN_{focal}_GT"
     raise ValueError(

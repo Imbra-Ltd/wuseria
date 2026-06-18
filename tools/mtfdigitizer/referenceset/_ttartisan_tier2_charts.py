@@ -8,7 +8,7 @@ in `_APERTURES_BY_SLUG` in the scaffolder.
 
 Do not hand-edit; re-run the scaffolder to update.
 
-At time of generation: 17 lenses, 17 chart images (one per lens).
+At time of generation: 16 lenses, 16 chart images (one per lens).
 """
 
 from __future__ import annotations
@@ -169,19 +169,6 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         image_height_mm=14.0,
         notes=(
             "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/2.8, stopped aperture f/8 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
-        ),
-        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
-        ground_truth=None,
-    ),
-    ReferenceChart(
-        slug="ttartisan-af-35mm-f1-8",
-        chart_path="docs/optical-specs/ttartisan-af-35mm-f1-8/ttartisan-af-35mm-f1-8-mtf.png",
-        style_family="ttartisan-4color-dual-aperture",
-        apertures=("f/1.8", "f/5.6"),
-        frequencies_lpmm=(10, 30),
-        image_height_mm=14.0,
-        notes=(
-            "Tier 2 production entry (ADR-041, ADR-044). TTartisan publishes this chart as the standard 800x600 dual-aperture template; the scaffolder classified it as 'aps-c' (image height 14.0 mm). Max aperture f/1.8, stopped aperture f/5.6 — eye-read from the chart legend per `scaffold_ttartisan_tier2._APERTURES_BY_SLUG`."
         ),
         plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=None,

@@ -26,15 +26,19 @@ the set inside #933's 6–10-chart target with full coverage.
 | 7 | `viltrox-af-75mm-f1-2-pro`            | bw-dashed-promo                    | All-dashed, B&W, two apertures, tiny legend        |
 | 8 | `zeiss-touit-32mm-f1-8`               | multifreq-press-kit                | Three frequencies (10/20/40) — out-of-band         |
 | 9 | `ttartisan-7-5mm-f2-0-fisheye`        | ttartisan-4color-dual-aperture     | Second anchor (ADR-041); fisheye edge-crash stress |
+|10 | `ttartisan-af-35mm-f1-8`              | ttartisan-4color-dual-aperture     | Third anchor (ADR-041); right-edge S/M swap (#1199)|
 
 The base set was eight; #9 was added when the TTartisan 4-color
 dual-aperture family was introduced. ADR-041 allows multiple Tier 1
 anchors per `(brand, style_family)`; the TTartisan 50/1.2 is the
-primary anchor for `ttartisan-4color-dual-aperture` and the 7.5 fisheye
-is the second, chosen to stress fisheye edge behavior (the right-edge
-10S crash and the 30S dip-and-recover that #1122 traced to the vertical
-y-axis chrome strip). The primary 50/1.2 entry is documented inline in
-`charts.py` rather than here.
+primary anchor for `ttartisan-4color-dual-aperture`, the 7.5 fisheye
+is the second (stressing fisheye edge behavior — right-edge 10S crash
+and the 30S dip-and-recover #1122 traced to the y-axis chrome strip),
+and the af-35 is the third (stressing right-edge S/M crossings where
+the solid curve's complex shape fragments its DP path while the
+dashed curve looks "solid" by every CV metric — #1199 / S160). The
+primary 50/1.2 entry is documented inline in `charts.py` rather than
+here.
 
 ## Verified shapes
 
@@ -94,6 +98,14 @@ y-axis chrome strip). The primary 50/1.2 entry is documented inline in
 - 800x600 dual-aperture template; solid = S, dashed = T (M). Black/grey = f/2; red/orange = f/8.
 - Ground truth lives in `docs/optical-specs/ttartisan-7-5mm-f2-0-fisheye/eye-read.md` (ADR-048); currently seeded with the extractor's mechanical predictions, awaiting maintainer review. The verified-shapes summary below will be filled in once review lands.
 - Diagnostic: the 30S corner is the case #1122 fixed — the dispatch was picking the y-axis vertical chrome strip as part of the ridge candidate set, pulling the right-edge value up artificially. An extractor that puts the 30S corner above 0.65 has re-introduced the chrome leak.
+
+### 10. ttartisan-af-35mm-f1-8 — third TTartisan 4-color anchor
+
+- 800x600 dual-aperture template (same as 50/1.2 and 7.5 fisheye); solid = S, dashed = T (M). Black/grey = f/1.8; red/orange = f/5.6.
+- Ground truth lives in `docs/optical-specs/ttartisan-af-35mm-f1-8/eye-read.md` (ADR-048); seeded with the extractor's mechanical predictions with maintainer overrides on the stopped 30S/30M corners only (frac=1.0): the two cells flipped from `(0.63, 0.49)` to `(0.49, 0.63)` to record the #1199 S/M label swap as ground truth.
+- **f/5.6 stopped panel — diagnostic**: the orange pair crosses at the right edge (mm 11–12) where the solid S30 dives steeply to 0.49 while the dashed M30 stays high at 0.63. The current extractor swaps these labels: per-column ridge DP tracks both physical curves correctly, but the S/M discriminator picks the wrong path as solid because (a) the solid S30 dive-recover-dive shape fragments its DP path (coverage=299, on-ridge runs=41), while (b) the dashed M30 is so smooth the DP locks every centroid (coverage=501, on-ridge runs=4). Neither `Track.coverage` nor `_path_mask_continuity` resolves this — both signals look at the post-DP track, not at the underlying mask's solid-vs-dashed character.
+- An extractor that puts the stopped 30S corner at ~0.49 and 30M corner at ~0.63 has resolved #1199. The calibration metric to watch is p95 |Δ| on `ttartisan-af-35mm-f1-8` stopped freq30S and freq30M (currently 0.193 / 0.194 — driven by the single corner sample being swapped).
+- The other 86 cells of this anchor extract very cleanly (median |Δ| 0.002–0.003), so this anchor is calibration-net-positive on the aggregate (median 0.0079 → 0.0061 and in-band 94.1% → 94.5% from S159 baseline).
 
 ## Proposed thresholds
 
