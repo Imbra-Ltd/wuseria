@@ -94,3 +94,42 @@ lead, which is the actual problem #1207 set out to fix.
   an issue (the action that surfaced the archive) is the
   worth-keeping process finding — captured in the S163 journal entry
   rather than codified as a rule here.
+
+## References for future research (not a revisit trigger)
+
+The archived `ywking/ChartParser` repo points to several upstream
+artifacts that remain live. Captured here as an audit trail for any
+future contributor who wants to rebuild a chart-extraction model from
+scratch — explicitly **not** a revisit trigger, because rebuilding from
+these references is a months-long ML project, not the low-cost
+LICENSE-publication event the ADR-057 trigger was scoped for.
+
+- **Cited paper.** Yang, He, Zhang, Gong (2025). "AI-ChartParser: A
+  Method For Extracting Experimental Data From Curve Charts in
+  Academic Papers." _Computer Graphics Forum_, e70146. Wiley Online
+  Library. Durable academic record; reachable via author email if a
+  future maintainer wants to ask about reproducibility or licensing.
+- **Architectural ancestor — YOLOP** (`hustvl/YOLOP`,
+  https://github.com/hustvl/YOLOP). MIT-licensed, alive
+  (~2.2k stars, last pushed 2023-10), the multi-task perception model
+  AI-ChartParser borrowed its backbone + multi-head structure from.
+  YOLOP itself is trained on driving data (BDD100K — detection,
+  drivable-area segmentation, lane detection), not charts; adopting
+  it for MTF extraction would require swapping the heads, building the
+  keypoint and line-seg heads from the paper, and retraining on
+  chart data.
+- **Training dataset.** Chart2019, linked from the archived ChartParser
+  README via Google Drive. Dataset license unverified; would need
+  audit before any reuse.
+- **Pretrained ChartParser weights.** Google Drive checkpoint linked
+  from the archived README. Even if downloadable, weights inherit
+  whatever license the archived repo's code carries (none) —
+  unsuitable for adoption on the same grounds as the source code.
+
+Why these are not a trigger: the ADR-057 ML-revisit triggers were
+chosen because each one is an inexpensive event to monitor (an
+upstream commits a LICENSE file, a new OSS extractor lands). "Rebuild
+the model from a paper and an MIT-licensed driving-perception backbone"
+is a research initiative requiring months of work, not an event. If
+that initiative ever happens, it gets its own ADR. This section is the
+breadcrumb so the references don't have to be re-discovered.
