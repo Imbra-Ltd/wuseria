@@ -204,6 +204,7 @@ def _extract_multi_aperture_chart(chart: ReferenceChart) -> dict[str, "object"]:
     and never call this.
     """
     from .extract import _hue_filtered_profile  # noqa: PLC0415 — avoid cycle at import
+    from .aperture_passes import _apply_sm_swap_override  # noqa: PLC0415 — avoid cycle at import
 
     assert chart.plot_box is not None
     base_profile = profile_for_chart(chart)
@@ -217,6 +218,10 @@ def _extract_multi_aperture_chart(chart: ReferenceChart) -> dict[str, "object"]:
     results: dict[str, object] = {}
     for aperture in base_profile.apertures_per_chart:
         filtered = _hue_filtered_profile(base_profile, aperture)
+        # Per-lens S/M swap override (#1199). Same override application
+        # as `aperture_passes_for_view` so calibration and production
+        # extraction agree on label assignment.
+        filtered = _apply_sm_swap_override(filtered, chart.sm_swap_per_hue)
         results[aperture] = extract_chart(
             image_path,
             filtered,
@@ -278,7 +283,8 @@ def _calibrate_chart(chart: ReferenceChart):
     if chart.style_family in _PER_FREQUENCY_STYLE_FAMILIES:
         result = _extract_per_frequency_chart(chart)
     else:
-        profile = base_profile
+        from .aperture_passes import _apply_sm_swap_override  # noqa: PLC0415
+        profile = _apply_sm_swap_override(base_profile, chart.sm_swap_per_hue)
         image_path = REPO_ROOT / chart.chart_path
         plot_box = _to_plotbox(chart.plot_box)
         result = extract_chart(

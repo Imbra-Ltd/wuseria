@@ -92,6 +92,7 @@ class _ChartFile:
 _TIER1_SKIP_SLUGS: frozenset[str] = frozenset({
     "ttartisan-50mm-f1-2",
     "ttartisan-7-5mm-f2-0-fisheye",
+    "ttartisan-af-35mm-f1-8",
 })
 
 

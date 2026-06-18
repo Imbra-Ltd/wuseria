@@ -112,6 +112,13 @@ class ReferenceChart:
     # zoom lists its tele-end chart here so the production extractor
     # emits one log per lens with one panel per chart.
     additional_views: tuple[ChartView, ...] = ()
+    # Per-lens HueRange.force_sm_swap override list. Names that appear
+    # here have `force_sm_swap=True` set on their HueRange entries via
+    # `aperture_passes_for_view`. Lens-scoped: leaves the shared profile
+    # unmodified for other lenses. Use only when every automated
+    # discriminator picks the wrong solid track on this specific lens
+    # AND the eye-read GT confirms the swap (#1199 af-35).
+    sm_swap_per_hue: tuple[str, ...] = ()
 
     @property
     def views(self) -> tuple[ChartView, ...]:
@@ -305,6 +312,49 @@ _TTARTISAN_7_GT: GroundTruthCurves = {
         "freq10M": (0.92, 0.93, 0.93, 0.93, 0.93, 0.93, 0.93, 0.93, 0.92, 0.93, 0.93),
         "freq30S": (0.77, 0.77, 0.76, 0.75, 0.73, 0.70, 0.70, 0.70, 0.69, 0.65, 0.58),
         "freq30M": (0.77, 0.78, 0.79, 0.80, 0.80, 0.79, 0.77, 0.76, 0.78, 0.79, 0.79),
+    },
+}
+
+# TTartisan AF 35mm f/1.8 — third Tier 1 anchor for the
+# `ttartisan-4color-dual-aperture` style family (ADR-041 permits
+# multiple anchors per (brand, style_family)). The 50/1.2 anchor
+# covers the basic mid-field case and the 7.5 fisheye anchor covers
+# the corner-crash case; this third anchor covers the right-edge
+# S/M crossing where the solid S30 has a complex
+# dive-recover-dive shape that fragments its DP path, and the
+# dashed M30 is so smooth the DP locks every centroid — fooling
+# the coverage and continuity discriminators into labelling them
+# backwards (#1199).
+#
+# Image format: 800x600 px (same TTartisan template as 50/1.2 and
+# 7.5 fisheye). Image height: 14.0 mm (APS-C — Fuji X mount).
+# Plot box: detector-detected, same data-edge convention.
+#
+# Chart legend: solid = S (sagittal), dashed = T (tangential);
+# black/grey = f/1.8 (max), red/orange = f/5.6 (stopped).
+#
+# Ground truth lives in
+# `docs/optical-specs/ttartisan-af-35mm-f1-8/eye-read.md` (ADR-048).
+# The tuple below is auto-transcribed from that file by
+# `py -m mtfdigitizer.eyeread ttartisan-af-35mm-f1-8 --apply` — do
+# not hand-edit. Cells are currently the extractor's mechanical
+# predictions; maintainer review pending. The stopped freq30S/M
+# corner values are the known #1199 swap (0.63 / 0.49 should be
+# 0.49 / 0.63 per the chart) — the maintainer's eye-read flips them
+# and the calibration aggregate then surfaces #1199 as p95 |d|
+# ~0.14 on those fields, providing the gating signal for the fix.
+_TTARTISAN_AF_35_GT: GroundTruthCurves = {
+    "max": {
+        "freq10S": (0.95, 0.95, 0.95, 0.96, 0.93, 0.91, 0.92, 0.93, 0.89, 0.71, 0.38),
+        "freq10M": (0.95, 0.95, 0.95, 0.95, 0.93, 0.92, 0.92, 0.92, 0.90, 0.89, 0.88),
+        "freq30S": (0.79, 0.79, 0.80, 0.77, 0.67, 0.56, 0.54, 0.68, 0.67, 0.31, 0.12),
+        "freq30M": (0.79, 0.78, 0.74, 0.72, 0.71, 0.67, 0.64, 0.63, 0.63, 0.66, 0.17),
+    },
+    "stopped": {
+        "freq10S": (0.94, 0.94, 0.94, 0.95, 0.94, 0.94, 0.94, 0.93, 0.95, 0.95, 0.88),
+        "freq10M": (0.94, 0.94, 0.94, 0.94, 0.94, 0.94, 0.94, 0.93, 0.93, 0.91, 0.88),
+        "freq30S": (0.84, 0.84, 0.86, 0.86, 0.85, 0.81, 0.79, 0.78, 0.85, 0.82, 0.49),
+        "freq30M": (0.84, 0.84, 0.84, 0.82, 0.80, 0.81, 0.78, 0.78, 0.73, 0.67, 0.63),
     },
 }
 
@@ -801,6 +851,53 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         # is identical.
         plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
         ground_truth=_TTARTISAN_7_GT,
+    ),
+    ReferenceChart(
+        slug="ttartisan-af-35mm-f1-8",
+        chart_path="docs/optical-specs/ttartisan-af-35mm-f1-8/ttartisan-af-35mm-f1-8-mtf.png",
+        style_family="ttartisan-4color-dual-aperture",
+        # Aperture order MUST match the profile's
+        # `apertures_per_chart=("max", "stopped")` — orchestrator uses
+        # the labels positionally (ADR-044, #1074).
+        apertures=("f/1.8", "f/5.6"),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=14.0,
+        notes=(
+            "Third Tier 1 anchor for `ttartisan-4color-dual-aperture` "
+            "(ADR-041 allows multiple anchors per (brand, style_family); "
+            "see the 50/1.2 and 7.5 fisheye pair, and the GF 23 / XF 23 "
+            "pair in `fujifilm-permfreq`). Covers the right-edge S/M "
+            "crossing failure mode (#1199) where the solid S30 has a "
+            "dive-recover-dive shape that fragments the DP path and the "
+            "dashed M30 is so smooth the DP locks every centroid — both "
+            "the coverage and continuity discriminators are fooled "
+            "into labelling them backwards. 800x600 dual-aperture "
+            "template (same as 50/1.2 and 7.5); max aperture f/1.8 "
+            "(black/grey curves), stopped aperture f/5.6 "
+            "(red/orange curves). GT is transcribed from `eye-read.md` "
+            "(ADR-048) — currently the extractor's mechanical "
+            "predictions; maintainer review pending. Scaffolder "
+            "`_TIER1_SKIP_SLUGS` excludes this slug from regeneration."
+        ),
+        # Plot box (data-edge convention, #954). Detector-detected
+        # values from `ttartisan_plotbox.detect_ttartisan_plotbox` for
+        # the APS-C scheme; identical to the 50/1.2 and 7.5 since the
+        # template is identical.
+        plot_box=PlotBoxCoords(x_left=87, x_right=607, y_top=116, y_bottom=461),
+        ground_truth=_TTARTISAN_AF_35_GT,
+        # Per-lens S/M label override (#1199). On the stopped pass the
+        # solid S30 dives steeply through a complex dip-rise-dive shape
+        # that fragments its DP path while the dashed M30 stays smooth
+        # enough that the DP locks every dash centroid. Every
+        # automated discriminator (coverage, continuity, divergent-band
+        # presence, mask-CC count under band) picks the smooth track
+        # as solid — the inverse of physical reality. The eye-read GT
+        # in `_TTARTISAN_AF_35_GT` carries the correct assignment;
+        # this override flips the discriminator output to match. Risk-
+        # isolated to this lens; the shared `ttartisan-4color-dual-
+        # aperture` profile remains untouched for the 50/1.2, 7.5, and
+        # other TTartisan lenses that use it.
+        sm_swap_per_hue=("stopped-30-orange",),
     ),
     ReferenceChart(
         slug="7artisans-35mm-f1-2-mark-ii",

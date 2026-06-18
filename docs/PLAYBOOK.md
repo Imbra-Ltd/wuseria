@@ -454,7 +454,11 @@ Style-family dispatch:
     `_TTARTISAN_<FL>_GT` with `"max"` / `"stopped"` aperture buckets
     (NOT f-numbers — the orchestrator keys `results_by_aperture` on
     the profile's `apertures_per_chart` tuple; mismatched keys
-    fail-loud in calibrate.py).
+    fail-loud in calibrate.py). For `ttartisan-af-NNmm-...` and
+    `ttartisan-tilt-NNmm-...` slugs the GT-var prepends the variant:
+    `_TTARTISAN_AF_NN_GT` / `_TTARTISAN_TILT_NN_GT` (kept in sync
+    between `eyeread.gt_var_for_chart` and
+    `scaffold_anchor_helpers._gt_var_for_chart`).
 
 Workflow for promoting a lens to Tier 1: (1) add a `ReferenceChart`
 entry to `REFERENCE_CHARTS` in `charts.py` with `_<LENS>_GT` of
