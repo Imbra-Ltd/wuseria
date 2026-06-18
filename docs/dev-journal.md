@@ -8257,3 +8257,73 @@ Theme: close #1186 — Python emitters writing committed content on Windows prod
 - `mtf-readings.ts` unchanged.
 - Stale digitization logs: **0** (unchanged).
 - **#1186 closed; Windows DX papercut fixed.**
+
+### Session 158 — #1131 brand vector-source audit (partial spike)
+
+Date: 2026-06-17 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1131 detection-method spike. Slice to AC #3 only — measure vector-source MTF availability across the 23-brand portfolio. Cheapest investigation that gates the rest of the spike: if >30% of brands publish SVG/PDF MTF, vector-source extraction wins as the strategy and ML segmentation evaluation is wasted. Below 10%, the strategy is dead and the spike pivots to ML / template-matching.
+
+#### PRs
+
+- None. Spike was research-only. Branch `spike/1131-vector-source-audit` was created and deleted (no file changes); durable artifact is the GitHub comment.
+
+#### Issues opened / closed
+
+- **#1131 still open** — only 1 of 5 ACs satisfied. Findings posted as comment ([#1131-4729998862](https://github.com/Imbra-Ltd/wuseria/issues/1131#issuecomment-4729998862)).
+- No new issues opened.
+
+#### Key technical findings
+
+- **Vector-source MTF available on ~9% of brands (2/23) and ~3.7% of lenses (~9/245).** Below the #1131 threshold of 30% — vector-source is rejected as a portfolio strategy.
+- **Tamron publishes MTF as SVG** on per-product `/spec.html` sub-pages (e.g. `b060_mtf_11mm_en.svg`). Main product page has no MTF. Our existing Tamron MTF SVGs in `docs/optical-specs/` came from this source (confirmed by Adobe Illustrator generator metadata + `a007_mtf-chart_*` Tamron naming in SVG `<title>` elements).
+- **Zeiss serves datasheet PDFs** with MTF rendered as vector text — `pdftotext` extracts readable "MTF [%]" axis labels from `zeiss-touit-32mm-f1-8-datasheet.pdf`. Akamai-protected; needs browser-fingerprinted fetch (pagefetch's NetworkFetcher works; raw curl gets 403).
+- **Fujifilm, Sigma, TTartisan, Samyang** — all serve structured MTF sections but uniformly raster (PNG/WebP/JPG with no extension via CMS upload). No SVG/PDF on any.
+- **Voigtländer** — per project memory: APO-LANTHAR clinical only, Noktons no MTF. Not confirmed in this session; 3–4 lenses max.
+- **Many brand pages have no MTF at all** on tested product page (7Artisans, Lensbaby, Pergear, Meike, NiSi, Kipon, Sirui, SLR Magic) — chart assets, when published, live in marketing posts or product imagery, not standardized spec sections.
+
+#### Key changes
+
+- None. Working tree clean; no source/data/docs files edited.
+
+#### Verification
+
+- Per-brand HTML fetched via `py -m pagefetch --batch ... --html --cache-dir ../.cache/fetch` (20/23 OK on first pass; Zeiss / Samyang / Sigma re-fetched individually).
+- Tamron SVG presence verified by grepping `tamron-spec.html` for `mtf*.svg` → `b060_mtf_11mm_en.svg`, `b060_mtf_20mm_en.svg`.
+- Zeiss PDF vector content verified by `pdftotext` on the prior-archived `zeiss-touit-32mm-f1-8-datasheet.pdf` in `docs/optical-specs/`.
+
+#### Key decisions (this session)
+
+- **Slice the spike to AC #3 only** (vector availability %) for S158. AC #2 (prototype), AC #5 (OSS landscape re-survey), AC #1/#4 inputs deferred to S159+ with direction informed by the % finding.
+- **Store findings as a GitHub comment, not a repo file.** No precedent for "spike findings" in `docs/spikes/`; creating that directory would have required a new ADR, which is over-investment for an interim deliverable. Durable artifact will be the ADR (next session) when the spike concludes; the comment is the bridge.
+
+#### Process patterns observed this session
+
+- **Use the cheapest gating measurement first when slicing a multi-AC spike.** The audit cost ~30 minutes and produced a clear go/no-go on a whole strategy branch — far cheaper than prototyping ML segmentation and finding out vector-source was already a better answer. Reverse order (prototype first, then realize the alternative was viable) wastes the prototype.
+- **Pagefetch corrupts binary PDFs** — its text-stream processing inserts UTF-8 replacement bytes. For binary fetches, use direct `urllib.request` with a browser User-Agent header. Pagefetch handles HTML well; PDFs need a different path. Noted but not worth a code change yet.
+- **Sub-page URL patterns matter.** Tamron's MTF is on `/b060/spec.html` (sub-page), not `/b060/` (main). A flat "fetch the product page" audit would have missed Tamron entirely. When a brand's MTF surface is absent on the canonical URL, check for `spec`, `specifications`, `specs`, `tech` sub-paths before declaring "no MTF."
+
+#### Follow-ups for next session
+
+- **#1131 S159 — landscape re-survey (AC #5) + ML segmentation prototype scoping (AC #2).** With vector-source eliminated as portfolio strategy, the spike's pivot is to alternatives: OSS chart-extractor landscape since 2025 (#942), and a time-boxed ML segmentation prototype against the ttartisan-50mm-f1-2 88-point Tier 1 GT.
+- **Tamron-only vector extractor** — optional micro-spike, only if Tamron coverage in v0.8.0 expands meaningfully. ~6 lenses in DB; cost of writing a Tamron `/spec.html` SVG parser is bounded but marginal value low.
+- **#1135 B' implementation (P3 Backlog)** — carried.
+- **#1181 af-35 max-pass grey-30 spike** — carried.
+- **#1134 UI half** — stays deferred.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- 4 Tier 1 anchors (unchanged).
+- Aggregate calibration: 717 paired, median 0.0079, p95 0.0559, in-band 94.1% (unchanged; research-only session).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged).
+- **222 vitest pass** (unchanged).
+- **56 ADRs** (unchanged — spike not yet concluded; ADR comes in S159+).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: #1131 + #1134 (UI deferred) + #1135 + #1159. #1174 + #1175 + #1181 in Backlog. **0 open feature PRs.** **0 stale Dependabot PRs.**
+- `mtf-readings.ts` unchanged.
+- Stale digitization logs: **0** (unchanged).
+- **#1131 vector-source AC closed; prototype + survey ACs remain. Vector-source rejected as portfolio strategy.**
