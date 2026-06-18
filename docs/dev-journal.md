@@ -8644,3 +8644,80 @@ Theme: maintainer spotted the dashed grey M30 F1.8 right-edge displaying a spike
 - `mtf-readings.ts` — one cell hand-patched (af-35 max f/1.8 position 12.6 M30).
 - Stale digitization logs: **0** (unchanged).
 - **#1201 closed (auto via PR #1203 merge).**
+
+---
+
+### Session 163 — #1202 regression test + ML-revisit trigger cleanup
+
+Date: 2026-06-18 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: clear the cheap S162 follow-ups before bigger work. #1202 (S162 hand-patch regression risk) and the LineFormer / AI-ChartParser LICENSE-clarification issues (carried since S159). Two narrow tasks, intentionally bounded.
+
+#### PRs
+
+- **#1205 OPEN** — `fix/1202-af35-regression-test`, one commit `0d1fc3d`. Adds an `EYE_READ_OVERRIDES` table to `src/data/mtf-readings.test.ts` that locks every maintainer-applied eye-read cell in `mtf-readings.ts`. First entry: af-35 max f/1.8 pos 12.6 M30 = 0.58. CI: build, CodeQL, lighthouse, links, analyze, gate, changes all SUCCESS; **gitleaks failing on infra (`curl: (22) The requested URL returned error: 404` resolving the gitleaks release tag — empty version, 404 tarball download)**, not on diff content. Merge deferred to maintainer.
+
+#### Issues opened / closed
+
+- **#1206 (new, spike, P4, Backlog)** filed — LineFormer LICENSE-watch. Asynchronous monitor; upstream issue https://github.com/TheJaeLal/LineFormer/issues/12 filed. Closes via follow-up spike when upstream adds permissive LICENSE, or `wontdo` after 12 months.
+- **#1207 (new, task, P3, Backlog)** filed — AI-ChartParser revisit trigger removal. Upstream `ywking/ChartParser` was found **archived** (read-only), so the ADR-057 ML-revisit trigger for it is structurally unreachable. Action: write a superseding ADR dropping it from the trigger list.
+- **#1202** — still OPEN, will auto-close on PR #1205 merge.
+
+#### Key technical findings
+
+- **`ywking/ChartParser` is archived.** Not discoverable from ADR-057 alone — required hitting the upstream GH API while attempting to file the LICENSE-clarification issue. Repo is read-only; issues cannot be opened. ADR-057 lists this repo as one of two ML-revisit triggers for v0.9.0+, which is now dead. Captured as #1207 rather than silently ignored — better than the alternative.
+- **Gitleaks CI step is broken on `main` infra, not just this PR.** The release-tag lookup against `https://api.github.com/repos/gitleaks/gitleaks/releases/latest` returned an empty `tag_name`, which downstream made the tarball URL a literal `v_linux_x64.tar.gz` → 404. Affects every PR until the workflow is pinned to a known version. Worth filing as a separate infra task, but out of scope for this session's theme.
+
+#### Key changes
+
+- **`src/data/mtf-readings.test.ts`** — added the `EYE_READ_OVERRIDES` table (43 lines) and a parameterized `describe` block. The failure message names the most likely cause (`extractor likely overwrote it — see #1201 / #1202`) so a future maintainer hits #1202 in the first search. Verified the test fires correctly on a simulated drift to 0.66, then reverted.
+
+#### Verification
+
+- `npm run validate` — green (lint, format, check, test 223 passing, build, link check). New test passes; simulated-drift assertion produces the expected failure message.
+- Upstream LineFormer issue: https://github.com/TheJaeLal/LineFormer/issues/12 — filed under maintainer identity.
+
+#### Key decisions (this session)
+
+- **Option 3 (regression test) over option 1 (fix the extractor) from the #1202 body.** The extractor fix is the architecturally clean answer but multi-session in scope; the regression test is the immediate safety net that closes the emit-overwrite footgun in ~1 hour. Both can land; the test fits this session.
+- **Both upstream + internal tracking for the LICENSE-clarification action.** Maintainer agreed to file upstream LICENSE asks AND wuseria tracking issues, rather than only one or the other. The upstream issues are the durable action; the internal trackers are the monitor.
+- **#1207 ADR-superseding task rather than silent removal.** Dropping a trigger from an immutable ADR requires a follow-up ADR; not doing it inline this session because the right home for that is a separate PR with its own review.
+
+#### Process patterns observed this session
+
+- **Verify upstream state before filing.** Attempting to file the AI-ChartParser LICENSE issue surfaced that the repo was archived — a finding ADR-057 did not capture and that materially changes the revisit branch. The verification surfaced an architectural follow-up that would have been missed by a "just file the issues" pass.
+- **Distinguish wuseria tracking from upstream contact.** "Open LICENSE-clarification issues" was ambiguous between filing on our repo and filing on theirs. Asked the maintainer before posting on third-party repos — the right default for actions visible outside the project.
+- **PR CI green-except-for-infra is not green.** The PR is functionally complete and ready, but the gitleaks failure should be acknowledged in the merge call rather than glossed over. Filing the infra task as a separate concern is the right move; pretending green is not.
+
+#### Follow-ups for next session
+
+- **Confirm PR #1205 merged + #1202 auto-closed.** First action if not already done.
+- **#1207** — write the ADR-057 supersession dropping AI-ChartParser from the ML-revisit triggers (small, ~30 min).
+- **Gitleaks CI infra fix.** Separate task: pin `gitleaks-action` to a known version in `.github/workflows/`, or switch to the official action that doesn't shell out to the GitHub releases API. Affects every PR until fixed.
+- **Ridge-tracker right-corner spike** — broader project signaled by af-35 max freq30M p95 |d| 0.433. Scope spike: does any other lens show the same pattern?
+- **#1134 (P1)** — per-pass MTF confidence badge, only P1 in v0.8.0 milestone. Multi-session.
+- **#950 (P2)** — auto-detect plot box for MTF digitizer.
+- **#1135 B' implementation (P3 Backlog)** — carried.
+- **#1159 UI half** — carried.
+- **#1198 legend-swatch spike (P4 Backlog)** — carried.
+- **#1181 af-35 max-pass grey-30 (P4 Backlog)** — partially addressed; deeper extractor work remains.
+- **Calibrate-vs-dispatcher path divergence test (carried from S161)**.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **805 paired, median 0.0061, p95 0.0526, in-band 94.5%** (unchanged from S162).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged).
+- **223 vitest pass** (was 222 — +1 from `EYE_READ_OVERRIDES` regression test).
+- **57 ADRs** (unchanged — no new ADR; #1207 will add one).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1159 + #1202 + #950 + epics #790, #932** (unchanged from S162 + carried).
+- Backlog new this session: **#1206, #1207**.
+- **1 open PR (#1205, gitleaks-failed-on-infra).** **0 stale Dependabot PRs.**
+- `mtf-readings.ts` — one cell hand-patched, now locked by regression test in `mtf-readings.test.ts`.
+- Stale digitization logs: **0** (unchanged).
+- **#1202 will close on PR #1205 merge.**
