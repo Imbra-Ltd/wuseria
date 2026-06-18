@@ -62,6 +62,22 @@ Read each cell at the intersection of the green vertical sample line and the cur
 | 12.6          | 0.95 | 0.91 | 0.82  | 0.67  |
 | 14.0          | 0.88 | 0.88 | 0.49! | 0.63! |
 
+## Manual artifact patches (#1201)
+
+The extractor mistracks the dashed grey M30 F1.8 at the right corner
+(frac 0.9 reads as 0.66, frac 1.0 reads as 0.17 — actually the solid
+S30 silhouette inverted into M30). Until the ridge tracker is fixed,
+three downstream artifacts carry hand-patched M30 right-edge values
+matching the eye-read above (0.58 at frac 0.9, 0.50 at frac 1.0):
+
+- `ttartisan-af-35mm-f1-8-mtf-max.svg` — points and dots at x=277.2 and x=304.0
+- `ttartisan-af-35mm-f1-8-mtf-max-overlay.png` — re-rendered with patched readings
+- `src/data/mtf-readings.ts` — position 12.6 M30 cell (also flagged with #1202)
+
+The auto-generated `digitization-log.md` correctly shows the extractor's
+actual reading (0.17 at frac 1.0) — do not patch it; it is the diagnostic
+record for the future ridge-tracker fix.
+
 ## Transcribing to GT
 
 After updating the cells above, ask the agent to transcribe — or run from `tools/`:
