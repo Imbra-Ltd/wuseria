@@ -476,6 +476,33 @@ the new anchor. To add a new style family, extend
 `_resolve_helper_views` and `_extras_for` in
 `scaffold_anchor_helpers.py`.
 
+**When an eye-read cell changes after Tier 1 promotion (#1201)**:
+GT in `charts.py` is the truth anchor, but the user-facing artifacts
+are rendered from the **extractor's output**, not the GT. If the
+extractor still produces the old value, three downstream artifacts
+must be hand-patched to match GT:
+
+1. `src/data/mtf-readings.ts` — the website's source data; emitted by
+   `emit_*_tier2 --write`; future emit runs will overwrite the patch
+   unless the extractor is fixed (track the risk via a follow-up
+   issue, see #1202).
+2. `docs/optical-specs/<slug>/<stem>-<aperture>.svg` — provenance
+   SVG rendered by `render_svg(extracted)` in `extract.py`. Hand-patch
+   the polyline points + dot circles to the corrected y coordinates.
+3. `docs/optical-specs/<slug>/<stem>-<aperture>-overlay.png` — the
+   overlay on the original chart, rendered by `render_overlay(
+extracted.readings, ...)` in `review.py`. Re-render with a one-shot
+   probe script that calls `render_overlay()` directly with the
+   readings dict patched at the corrected fractions, then delete the
+   probe.
+
+`digitization-log.md` is intentionally NOT patched — it is the
+auto-generated diagnostic record of the extractor's actual output and
+remains the signal for the future extractor fix. Document the
+hand-patches in `eye-read.md` under a "Manual artifact patches"
+section so a future maintainer / re-emit knows the discrepancy is
+intentional.
+
 **Before authoring an `analysis.md` MTF charts list for a folder that
 does not yet have one:** check the source product page for parallel
 chart sets. Multi-mount lenses (DG DN releases with a later Fujifilm X
