@@ -348,7 +348,7 @@ _TTARTISAN_AF_35_GT: GroundTruthCurves = {
         "freq10S": (0.95, 0.95, 0.95, 0.96, 0.93, 0.91, 0.92, 0.93, 0.89, 0.71, 0.38),
         "freq10M": (0.95, 0.95, 0.95, 0.95, 0.93, 0.92, 0.92, 0.92, 0.90, 0.89, 0.88),
         "freq30S": (0.79, 0.79, 0.80, 0.77, 0.67, 0.56, 0.54, 0.68, 0.67, 0.31, 0.12),
-        "freq30M": (0.79, 0.78, 0.74, 0.72, 0.71, 0.67, 0.64, 0.63, 0.63, 0.66, 0.17),
+        "freq30M": (0.79, 0.78, 0.74, 0.72, 0.71, 0.67, 0.64, 0.63, 0.63, 0.58, 0.50),
     },
     "stopped": {
         "freq10S": (0.94, 0.94, 0.94, 0.95, 0.94, 0.94, 0.94, 0.93, 0.95, 0.95, 0.88),
@@ -897,6 +897,16 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         # isolated to this lens; the shared `ttartisan-4color-dual-
         # aperture` profile remains untouched for the 50/1.2, 7.5, and
         # other TTartisan lenses that use it.
+        #
+        # The max pass (#1201) has a different failure mode: not a full
+        # S/M swap, but the M30 dashed grey curve tracker losing the
+        # line near the right corner (frac 0.9 / 1.0) where it crosses
+        # near the steeply-diving solid S30 and locks onto the wrong
+        # track. A full-curve sm_swap makes it worse (the mid-field
+        # M30 readings are correct). Tracked separately as #1201 — the
+        # GT now carries the correct edge values (0.58, 0.50) and the
+        # extractor p95 |d| spike (~0.43) is the signal for the future
+        # ridge-tracker fix.
         sm_swap_per_hue=("stopped-30-orange",),
     ),
     ReferenceChart(
