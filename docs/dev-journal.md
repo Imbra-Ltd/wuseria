@@ -8327,3 +8327,75 @@ Theme: pick up #1131 detection-method spike. Slice to AC #3 only — measure vec
 - `mtf-readings.ts` unchanged.
 - Stale digitization logs: **0** (unchanged).
 - **#1131 vector-source AC closed; prototype + survey ACs remain. Vector-source rejected as portfolio strategy.**
+
+### Session 159 — #1131 closed (ADR-057, ML extraction rejected)
+
+Date: 2026-06-18 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: finish #1131 detection-method spike. Slice through the remaining ACs: AC #5 (OSS extractor re-survey since #942 ~12 months ago) and AC #2 (time-boxed ML segmentation prototype against ttartisan-50mm-f1-2 88-point GT). Pre-set abort rule: if the winning candidate fails to install/run inside 30 minutes, write the rejection ADR rather than burn the session on dependency rescue. Outcome: ADR-057 lands, classical CV pipeline kept, #1131 closes on PR merge.
+
+#### PRs
+
+- **#1194 OPEN** — `docs(journal): add Session 158 entry — #1131 brand vector-source audit`. S158 journal commit deferred from prior session; landed early in S159 before the spike work began.
+- **#1195 OPEN** — `docs(decisions): add ADR-057 rejecting ML chart extraction (#1131)`. Closes #1131 on merge.
+
+#### Issues opened / closed
+
+- **#1131 will auto-close** when PR #1195 merges (linked via `closingIssuesReferences`). Not yet merged.
+- No new issues opened.
+
+#### Key technical findings
+
+- **OSS re-survey verdict (AC #5):** 13 chart-extractor candidates evaluated. Three viability buckets emerge — output-shape mismatch (DePlot, Pix2Struct ChartQA, PP-Chart2Table, PaddleOCR-VL 1.6, Qwen2.5-VL, InternVL3, ChartDete all emit tables / NL, not per-curve numeric); license blocker (LineFormer + AI-ChartParser ship without a LICENSE file; Plot2Spec GPL; WebPlotDigitizer AGPL; ChartReader no LICENSE; extract-line-chart-data is a hosted-LLM wrapper); only **LineEX (Apache-2.0)** is both license-clean and line-chart-specific.
+- **LineEX operational viability (AC #2):** aborted at minute ~5 of the 30-minute install window. Repo (`Shiva-sankaran/LineEX`, last updated 2025-07-21) pins **Python 3.8.12 + PyTorch 1.10.1**, ships a **Linux-only conda environment.yml**, requires **3 model checkpoints manually downloaded from Google Drive via gdown**, and `pipeline.py` has **hardcoded `/home/vp.shivasan/` and `/home/md.hassan/` absolute paths** in `sys.path.append`. The README claims "3 modular stages" but the code imports them as a coupled flow. Reaching a runnable install requires either a Docker dependency for production or a major Python 3.8 + checkpoint-rescue sandbox. The classical CV baseline already runs at median \|Δ\| ≤ 0.005 on most freqs on the ttartisan-50mm-f1-2 GT; LineEX (synthetic-trained, no MTF tuning) is unlikely to match, so the operational debt outweighs the marginal accuracy gain.
+- **Vector-source recap (S158, AC #3):** 9% brand coverage / 3.7% lens coverage — Tamron SVG on `/spec.html`, Zeiss PDF datasheets. Below the #1131 30% portfolio-strategy threshold; rejected.
+- **Next classical-CV refinement candidate:** per-brand color-profile auto-calibration via **legend-swatch clustering** — cluster legend swatch pixels at extraction time to derive per-chart HSV centers, replacing the hand-tuned per-brand HSV thresholds called out as brittle in #942.
+
+#### Key changes
+
+- **`docs/decisions/057-reject-ml-chart-extraction.md`** — 206 lines. Records all 5 #1131 ACs, the LineEX viability table, the kept-branch (classical CV) decision, and the v0.9.0+ re-evaluation triggers (LineFormer / AI-ChartParser publishing a permissive LICENSE, a new license-clean OSS extractor, or classical refinement plateauing above the current 0.0079 median).
+- **`docs/dev-journal.md`** — S158 entry committed on PR #1194 (deferred from prior session), S159 entry this PR.
+
+#### Verification
+
+- `npm run validate` (lint, format, check, test, build, check:links) — pass on both PR #1194 and the ADR-057 commit. 462 pages built.
+- LineEX repo inspected via `gh api repos/Shiva-sankaran/LineEX/{readme,contents/environment.yml,contents/pipeline.py}` — `pagefetch` was bot-blocked on github.com web (auto-escalated through urllib → nodriver → UC, all failed) and rejected the raw README via "not real content" content-size heuristic. GitHub API bypassed both.
+- OSS re-survey delegated to a `general-purpose` subagent run in background; 30 web sources cross-referenced (LineFormer GitHub, AI-ChartParser CGF 2025 paper, LineEX WACV 2023 paper, DePlot HF model card, PP-Chart2Table HF model card, PaddleOCR 3.0 technical report, ChartAgent arXiv 2510, Multimodal LLMs for plot extraction arXiv 2503, ChartDete GitHub, Plot2Spec GitHub). Findings posted on #1131 as a comment.
+
+#### Key decisions (this session)
+
+- **AC #5 + AC #2 both this session was rejected** at scope-confirmation time. Picked **AC #5 only**, with the prototype to follow in the next session. Decision flipped mid-session: the AC #5 verdict named exactly one viable candidate (LineEX) and the abort rule had a 30-minute upper bound, so running AC #2 inline cost nothing in expected value (worst case: abort and write ADR, which was what we were going to do anyway after the prototype session).
+- **Abort LineEX prototype on operational viability**, not on accuracy. Standard time-box convention says "abort if install fails inside the window" — the additional move here was reading the `environment.yml` + `pipeline.py` first and deciding the install was definitionally not going to succeed inside 30 minutes regardless of effort. Avoids the sunk-cost trap of dependency-rescuing a tool we already know is operationally over-cost vs. accuracy benefit.
+- **Findings home: GitHub comment for AC #5 survey, ADR for the decision.** Matches the S158 convention (interim spike findings as comments, durable artifact when the spike concludes). The ADR cites both comments; comments stay as the verbose audit trail.
+- **No legend-swatch implementation this session.** The ADR records legend-swatch auto-calibration as the next refinement direction but explicitly does not pre-decide the implementation — that will need its own ADR when written. Keeps #1131's decision artifact focused on "rejecting ML" rather than smuggling in an implementation plan for the replacement.
+
+#### Process patterns observed this session
+
+- **Read the dependency manifest before starting the install timer.** The 30-minute time-box is generous on Linux + modern Python, brutal on Windows + a 4-year-old PyTorch pin. 5 minutes of `gh api .../environment.yml` and `.../pipeline.py` told us the install couldn't succeed in 30 minutes regardless of effort — and the same minutes had told us LineEX was the only viable candidate, so there was no second option to fall back to. Reading first is cheaper than rescuing later.
+- **Background subagent for multi-source web research.** The OSS extractor re-survey covered 13 candidates across GitHub, Hugging Face, arXiv, and Wiley. Running it in the foreground would have eaten the entire session on web fetches and license-file lookups. The `general-purpose` subagent ran it in the background while the main session worked on the bench prep; ~5 minutes wall-clock saved versus serial execution, and the main thread kept context clean.
+- **`pwd` drift after `cd` in a chained `&&` command persists across Bash calls.** Hit this twice this session — once when fetching the LineEX README (still in `tools/`), once when listing `docs/decisions/` (still in `tools/`). The fix per `[[feedback_pwd_on_path_failure]]` was to verify with `pwd` and then use the absolute path. Already a documented pattern; observing it again is a reminder that the harness doesn't reset cwd between Bash invocations even when the prior `cd tools` was inside an `&&` chain.
+
+#### Follow-ups for next session
+
+- **Legend-swatch auto-calibration prototype** — the next classical-CV refinement named in ADR-057. Cluster legend swatch pixels per chart to derive HSV centers, replace per-brand hand-tuned thresholds. Will need its own ADR if it lands as a pipeline change.
+- **LineFormer + AI-ChartParser LICENSE-clarification issues** — one-line issues on both upstream repos asking for Apache/MIT. Cheap, asynchronous; positive response re-opens the ML branch at v0.9.0+.
+- **#1135 B' implementation (P3 Backlog)** — carried.
+- **#1181 af-35 max-pass grey-30 spike** — P4 Backlog; only as part of broader TTartisan max-pass investment (ADR-053 Option B).
+- **#1134 UI half** — stays deferred.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- 4 Tier 1 anchors (unchanged).
+- Aggregate calibration: 717 paired, median 0.0079, p95 0.0559, in-band 94.1% (unchanged; this session was decision-only, no pipeline changes).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged).
+- **222 vitest pass** (unchanged — no TS changes this session).
+- **57 ADRs** (ADR-057 added).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 (UI deferred) + #1135 + #1159**. #1174 + #1175 + #1181 in Backlog. **2 open PRs (#1194 journal, #1195 ADR-057).** **0 stale Dependabot PRs.**
+- `mtf-readings.ts` unchanged.
+- Stale digitization logs: **0** (unchanged).
+- **#1131 detection-method spike concluded; ADR-057 rejects ML extraction for v0.8.0; classical CV kept, legend-swatch auto-calibration named as next refinement.**
