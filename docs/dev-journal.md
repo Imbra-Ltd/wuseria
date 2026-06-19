@@ -8802,3 +8802,98 @@ Theme: clear the two S163 carry-overs. #1207 (ADR-058 supersession to drop the a
 - `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged from S163).
 - Stale digitization logs: **0** (unchanged).
 - **Gitleaks CI step now runs in 9s and passes; rate-limit failure mode eliminated.**
+
+---
+
+### Session 165 — Ridge-tracker right-corner spike + cohort triage
+
+Date: 2026-06-19 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up the ridge-tracker right-corner spike carried from S162/S163/S164. Filed #1213 with a cohort scan + hypothesis, ran the AC-5 step-1 probes inline, closed the spike with 3 follow-up tasks. Started #1214 (the first follow-up); immediately found the proposed fix is provably broken by an in-source audit comment, closed wontdo and filed replacement spike #1217. No code shipped — pure issue triage.
+
+#### PRs
+
+None — no commits, no PRs this session. The branch `fix/1214-af35-max-30M-y-anchor` was created on starting #1214 and discarded with zero code churn when the S155 audit comment surfaced.
+
+#### Issues opened / closed
+
+- **#1213 (new, spike, P2, v0.8.0)** — Ridge-tracker right-corner failure-mode cohort scan. Body: cohort scan (7 lenses, 12 (lens × pass × field) triples at p95 ≥ 0.05). Comment: step-1 probe results (4 cases classified into 3 distinct failure modes). Closed same day with handoff to 3 follow-up tasks.
+- **#1214 (new, task, P2, v0.8.0)** — af-35 max freq30M y-anchor enable. Body: removed `EYE_READ_OVERRIDES[0]` as success signal. **Closed `wontdo`** within hours: S155 audit comment at `tools/mtfdigitizer/profiles/declared.py:263-272` already recorded `max-30-grey False→True` regression on ttartisan-50 freq30S (p95 0.024 → 0.146). Same-hue / opposite-need conflict.
+- **#1215 (new, task, P2, v0.8.0)** — Tokina `2color-frequency` geodesic-DP right-edge clamping (3 lenses, freq30).
+- **#1216 (new, task, P3, v0.8.0)** — Samyang 85 freq10M `10M-pink` hue mask contamination from legend area.
+- **#1217 (new, spike, P2, v0.8.0)** — replaces #1214. Per-lens override vs smarter anchor vs sampler guard: which mechanism resolves same-hue opposite-need conflicts in the ridge DP without regressing existing fixes?
+
+#### Key technical findings
+
+- **#1213 step-1 probe via `field_skeletons()`, not `extract_chart()`.** Throwaway `tools/mtfdigitizer/scripts/probe_right_corner.py` (deleted at session end per quality.md probe-scripts rule) called `dispatch.field_skeletons()` directly to obtain binary skeletons per field, then dumped per-column y positions for the right 20% of the plot box plus a green/red crop overlay. Worked uniformly across all 3 codepaths because they all return the same `dict[str, np.ndarray]`. `extract_chart` exposes only `readings`, no skeletons — wrong hook.
+- **Three distinct failure modes, not one.** #1213's "single mechanism across cohort" hypothesis was wrong:
+  - **af-35 max freq30M** (ridge-DP / `ridge_tracks_for_hue_freq_split`) — tracker identity drift. M30 dashed-grey tracks y=244–282 cleanly through frac 0.80–0.97, then snaps y=296→416 across col 506–516 — exactly onto S30's diving ridge. Classic dash-gap identity loss; matches #1118 / ADR-051 pattern.
+  - **Tokina 33/56 freq30** (geodesic-DP / `extract_two_curves_dp`) — DP right-edge clamping. Both M30 and S30 skeletons flatline at fixed y across rightmost ~5%; smoothness prior holds last validated y when the mask thins out. Distinct from identity drift; no precedent fix.
+  - **Samyang 85 freq10M** (CC-skeleton / `close_and_skeletonize`) — mask scope problem. Two y-bands per column: spurious upper band at y=72–74 (legend / title area picked up by relaxed `10M-pink` HueRange) + real curve. Not tracker-related at all.
+- **Codepath is the grouping axis for ridge-tracker failures, not p95 |d| or profile.** Per-cell signature (flat mid-field + corner divergence) correlates by appearance, not by mechanism.
+- **#1214's premise was provably wrong.** First action on the branch was reading `tools/mtfdigitizer/profiles/declared.py` around the `max-30-grey` HueRange. The S155 audit (2026-06-17) comment at lines 263–272 enumerated every plausible flip and recorded:
+
+  > max-30-grey False->True: ttartisan-50 freq30S p95 0.024->0.146 (anchor punishes the legitimate corner dive — ADR-049 known limitation confirmed).
+
+  The same hue `max-30-grey` needs identity protection at the corner on af-35 (block the dive) and must NOT add identity protection at the corner on ttartisan-50 (let a legitimate dive through). The y-anchor mechanism (uniform off-anchor penalty) cannot satisfy both. Closing as `wontdo` saved multi-session work on a known-broken approach.
+
+- **The conflict has three distinct fix shapes** (per-lens override / smarter anchor / sampler-level guard) — captured as #1217 with concrete prototype hooks for each.
+
+#### Key changes
+
+None — no code committed. The throwaway probe and four temp body files were deleted before session end.
+
+#### Verification
+
+- `py -m mtfdigitizer.calibrate` (re-run for the spike's scan) — aggregate **805 paired, median 0.0061, p95 0.0526, in-band 94.5%** unchanged from S164.
+- `py -m mtfdigitizer.calibrate --write-readings` regenerated 5 stale per-chart readings files (last updates pre-#1118 / pre-#1199). Reverted to keep spike scope tight — the refresh is correct content but not this session's deliverable. Open question: schedule a chore PR to land the refresh.
+- All 4 probe overlays sent to maintainer inline for visual confirmation. Probe script deleted before close-out.
+
+#### Key decisions (this session)
+
+- **Cohort scan + GitHub issue (not ADR, not prototype).** Spike scope agreed at filing time. Body holds full per-cell numbers + hypothesis + gated recommendation. Code change deferred to follow-ups.
+- **Probe per-codepath, not per-lens.** First impulse was 4 lens probes; recognizing the codepath split early saved one investigation round and revealed the three distinct mechanisms.
+- **Three tasks (#1214 + #1215 + #1216), not one bundled.** Different codepaths, different fix shapes, different blast radii. P2/P2/P3 ordering by criticality.
+- **Close #1214 wontdo + file #1217.** Per `base/git.md` "close-and-resubmit when framing drifts": #1214's title and body framed the problem as "flip the anchor", which isn't the actual question. The actual question (per-lens vs smarter-anchor vs sampler-guard) deserves a new issue with internally consistent framing rather than amending #1214's title and body to mean something different.
+- **Revert calibrate --write-readings side-effect.** Refresh is correct but out-of-scope for a spike. Schedule as a dedicated chore PR if/when useful.
+
+#### Process patterns observed this session
+
+- **Read in-source audit comments at the edit site BEFORE coding.** The S155 audit comment at `declared.py:263-272` records exactly the regression #1214 proposed. The cost of reading it was seconds; the cost of skipping it would have been multi-session work on a known-broken approach. The branch was created and immediately discarded with zero code churn — proof that "always read the edit-site comments first" pays back. Worth flagging upstream.
+- **Probe via dispatch.field_skeletons(), not extract_chart().** `extract_chart` exposes only `readings`. For any DP-level / skeleton-level investigation, `field_skeletons()` is the correct entry point because it returns the binary skeleton each codepath produces, uniformly. Worth documenting in PLAYBOOK §2.3 (Quality / digitizer probing) so future debugging defaults to it.
+- **Spike + step-1-probe in one session beats spike-only.** The original AC-5 ("step-1 probes") was framed as a follow-up activity, but running it inline let the spike close-out as a complete deliverable rather than a half-step. The 4 probes took less time than re-orienting on the cohort next session would have cost.
+- **Mid-session triage caught by reading the file first.** #1214's wontdo close happened because the very first action on the branch was opening `declared.py` to find the edit point. Coding before reading would have produced a working flip + green calibrate on af-35, missed ttartisan-50 regression in the absence of a calibration spot-check, and shipped a regression.
+
+#### Follow-ups for next session
+
+- **#1217 (P2, v0.8.0)** — same-hue opposite-need conflict spike. Prototype the three mechanisms (per-lens override / smarter anchor / sampler-level guard) against the 14-chart reference set. Output: ADR + replacement implementation task. Likely 2 sessions. **Top of stack** — unblocks the `EYE_READ_OVERRIDES[0]` removal.
+- **#1215 (P2, v0.8.0)** — Tokina geodesic-DP right-edge clamping. Novel fix, 3 lenses affected. ~2 sessions.
+- **#1216 (P3, v0.8.0)** — Samyang `10M-pink` mask tightening. Single-lens, cheap.
+- **#1134 (P1)** — per-pass MTF confidence badge. Multi-session. (Carried from S164.)
+- **#950 (P2)** — auto-detect plot box. (Carried.)
+- **Calibrate readings refresh chore.** The S165 calibrate run regenerated 5 stale per-chart readings files; landing them is a 1-PR chore if useful.
+- **#1135 B' implementation (P3 Backlog)** — carried.
+- **#1159 UI half** — carried.
+- **#1198 legend-swatch spike (P4 Backlog)** — carried.
+- **#1181 af-35 max-pass grey-30 (P4 Backlog)** — carried.
+- **Calibrate-vs-dispatcher path divergence test (carried from S161)**.
+- **LineFormer LICENSE watch (#1206)** — async.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **805 paired, median 0.0061, p95 0.0526, in-band 94.5%** (unchanged).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged).
+- **223 vitest pass** (unchanged).
+- **58 ADRs** (unchanged — no new ADR; #1217 will produce one).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1159 + #950 + epics #790, #932 + new #1215, #1216, #1217** (#1213 + #1214 closed same session).
+- **0 open PRs.** **0 stale Dependabot PRs.**
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
+- Stale digitization logs: **0** (unchanged).
+- Stale `referenceset/readings/*.md` panels: **5** (af-35, ttartisan-50, 7Artisans, samyang-85, viltrox-75 — refresh deferred).
+- **#1213 closed (completed). #1214 closed (wontdo).**
