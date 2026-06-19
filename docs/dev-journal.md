@@ -8897,3 +8897,86 @@ None — no code committed. The throwaway probe and four temp body files were de
 - Stale digitization logs: **0** (unchanged).
 - Stale `referenceset/readings/*.md` panels: **5** (af-35, ttartisan-50, 7Artisans, samyang-85, viltrox-75 — refresh deferred).
 - **#1213 closed (completed). #1214 closed (wontdo).**
+
+---
+
+### Session 166 — #1217 raw-mask probe reframes the same-hue-conflict mechanisms
+
+Date: 2026-06-19 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1217 (S165 carry-over) — prototype the three mechanisms (per-lens override / smarter anchor / sampler guard) against the 14-chart reference set. Before prototyping, ran a focused raw-mask probe at the af-35 right corner; the probe revealed the failure shape is meaningfully different from what the #1213 spike body described. Posted findings to #1217 as the spike's mid-deliverable; closed the session at that finding for maintainer review.
+
+#### PRs
+
+None. The branch `spike/1217-same-hue-conflict` was created, used for the probe work, then discarded clean. No commits, no code on `main`.
+
+#### Issues opened / closed
+
+- **#1217 updated** — long comment posted with raw-mask probe findings (intermediate-band drift mechanism, ttartisan-50 comparison, reframed implications for the 3+1 mechanisms, open question on GT 0.50 vs natural extractor None at frac=1.0). Spike stays open pending maintainer decision on which mechanism to prototype.
+
+#### Key technical findings
+
+- **The af-35 max-30-grey failure is NOT direct identity drift onto S30.** Raw-mask probe at col 510 (frac 0.98) shows THREE distinct ridge clusters in the grey mask:
+  - y=282 (MTF 0.519 ≈ GT M30 0.50 ✓)
+  - y=322-328 (MTF 0.385-0.403 — intermediate band, no real curve)
+  - y=415 (MTF 0.133 ≈ GT S30 0.12 ✓)
+
+  The DP's smoothness cost prefers a gradual descent y=282 → 322 → 415 over a direct jump from 282 to 415. What the prior post-DP skeleton dump looked like "drift onto S30" is actually a **slide through an intermediate anti-aliasing halo band** that ends near S30 by col 520. The mechanism is intermediate-band identity drift, not other-curve identity drift.
+
+- **ttartisan-50 max-30-grey has the same two-cluster geometry but stays correct.** Same chart family, same hue, same FREQUENCY_PER_HUE_RIDGE codepath. The two real ridge clusters (M30 upper, S30 lower) stay 30-60 px apart through the corner — narrow enough that no intermediate AA halo cluster forms. DP smoothness keeps each path on its own real ridge. This explains the S155 audit's measured regression cleanly: with close clusters, the anchor cost dominates legitimate steep descent in S30 because the descent moves the path away from its upper anchor.
+
+- **The af-35 frac=1.0 columns are physically empty.** Cols 515, 517, 518, 519, 520 have ZERO grey-mask ridges. The chart's M30 grey curve genuinely fades before the right edge. The DP carries forward the col-514 state across the empty columns, producing the reading 0.17 at frac=1.0. The maintainer's GT 0.50 is eye-read extrapolation past where the chart shows data.
+
+- **Col 516 has 180 grey pixels — the chart's right-edge plot-box border catching the grey hue range.** This is a separate, deterministic contamination that can be stripped at the mask layer (Option 4 below).
+
+- **A fourth mechanism surfaces from the probe**: **mask-edge cleanup** — strip the right-edge plot-box border from the grey mask before the DP runs. Independent of and stackable with whichever DP-layer fix wins.
+
+#### Key changes
+
+None. Pure probe + analysis + comment.
+
+#### Verification
+
+- Raw-mask probe (`tools/mtfdigitizer/scripts/probe_1217_af35_mask.py`, throwaway, deleted) dumped per-column ridge centroids + per-column raw px lists for the right corner on af-35 and ttartisan-50.
+- Mask overlay crop saved + inline-shared with maintainer.
+- Per-pixel HSV inspection confirmed the y=322-328 cluster is NOT chart text or stopped-aperture curve contamination — it's anti-aliased grey pixels in the M30/S30 gap.
+
+#### Key decisions (this session)
+
+- **Probe raw mask before prototyping.** First impulse was to start with Option 1 (per-lens override) since it's the cheapest to implement. Decided instead to first confirm the failure mechanism at the raw-mask layer, because none of the three mechanisms is cheap to revert if the diagnosis was wrong. The probe took ~10 minutes and reshaped the mechanism analysis. Net win on session time.
+- **Stop at the probe finding rather than push through to a prototype.** The probe revealed enough that the right next decision (which mechanism to prototype) belongs with the maintainer, not the agent. Pushing through Option 1 here without that decision would commit ~1 session to a mechanism the probe shows is the least likely winner.
+- **Add Option 4 (mask-edge cleanup) explicitly.** The col-516 plot-border contamination is real and well-defined; ignoring it because it wasn't in the original spike body would conflict with the "follow the data" rule. Added it as a stackable option.
+- **Flag the GT 0.50 vs natural-None question.** If the M30 curve genuinely fades before frac=1.0, the extractor's honest answer there is `None`. The `EYE_READ_OVERRIDES[0]` regression test currently locks 0.50; whichever mechanism wins, the test may need to lock `None` instead.
+
+#### Process patterns observed this session
+
+- **Probe the raw signal before committing to a fix shape.** #1213's step-1 probe correctly classified af-35 as ridge-DP failure but worked at the post-DP skeleton layer; that produced the "drift onto S30" framing. The S166 raw-mask probe at the pre-DP layer surfaced the intermediate-band mechanism. Both probes were right at their layer; the lesson is that a multi-stage pipeline often needs to be probed at every stage before the actual root cause is visible. The early-stage probe is the one whose finding most often changes the fix scope.
+- **The agent stopping mid-spike is correct when the framing has shifted.** Continuing through three mechanism prototypes after the probe reframed the analysis would have produced data, but the data wouldn't have answered the questions the maintainer actually has. Stopping at the finding is the higher-bandwidth handoff.
+- **A "comment update" can be a real spike deliverable.** #1217 is technically still open with no ADR, but the comment posted is the substantive output of this session and is what a future implementer needs. Closing the spike formally is the maintainer's call given the open questions.
+
+#### Follow-ups for next session
+
+- **#1217 mechanism decision.** Maintainer to pick Option 1 / 2 / 3 / 4 (or combinations) based on the S166 comment. Options 2 and 4 are most likely; Option 2 with the refined "stay in own band" framing is the most likely single winner.
+- **EYE_READ_OVERRIDES[0] question.** Decide whether the af-35 frac=1.0 cell should lock 0.50 (eye-read) or `None` (natural extractor output post-fix). This decision is independent of which mechanism wins.
+- **Option 4 (mask-edge cleanup) prototype.** If the maintainer wants the cheapest first move, Option 4 is independent of the DP-layer mechanisms and can ship as a standalone PR.
+- **#1215 (Tokina edge clamp), #1216 (Samyang mask)** — still queued.
+- **#1134 (P1 confidence badge), #950 (P2 plot-box auto-detect)** — carried.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization. Unchanged from S165.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **805 paired, median 0.0061, p95 0.0526, in-band 94.5%** (unchanged).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged).
+- **223 vitest pass** (unchanged).
+- **58 ADRs** (unchanged).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1159 + #950 + #1215 + #1216 + #1217 + epics #790, #932**.
+- **0 open PRs.** **0 stale Dependabot PRs.**
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
+- Stale digitization logs: **0** (unchanged).
+- Stale `referenceset/readings/*.md` panels: **5** (refresh deferred — unchanged from S165).
+- **No issues closed this session. #1217 has a substantive comment update; open pending maintainer mechanism decision.**
