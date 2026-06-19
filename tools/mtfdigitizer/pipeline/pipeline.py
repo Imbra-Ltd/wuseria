@@ -32,7 +32,13 @@ import numpy as np
 
 from ..loader import load_chart_bgr
 from ..profiles.types import MtfProfile
-from .dispatch import curve_field, field_skeletons, unique_named_hues
+from .dispatch import (
+    _apply_declared_halo_pairs,
+    curve_field,
+    field_skeletons,
+    parse_curve_identity_name,
+    unique_named_hues,
+)
 from .masks import masks_by_curve_name
 from .skeleton import close_and_skeletonize
 from .split import split_sm_by_cc_width
@@ -264,6 +270,12 @@ def _hue_masks_for_presence(
     presence signal. We need the raw per-hue mask the dispatch
     consumed. Re-extract it here (cheap: HSV + range threshold) and
     map each hue's mask to both committed fields under that hue.
+
+    Applies the profile's `halo_pairs` subtraction (#1216) before
+    using the masks for presence — otherwise the contaminated hue's
+    pre-subtraction halo ink would mark cells "present" even when the
+    dispatcher's skeleton (post-subtraction) has nothing there, leaving
+    `None` samples that should have triggered sister fallback.
     """
     hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
     curve_masks = masks_by_curve_name(hsv, profile)
@@ -274,6 +286,7 @@ def _hue_masks_for_presence(
             plot_box.x_left : plot_box.x_right + 1,
         ] = 1
         curve_masks = {name: (m & clip) for name, m in curve_masks.items()}
+    curve_masks = _apply_declared_halo_pairs(curve_masks, profile.halo_pairs)
     # Map per-hue raw mask to the two fields that share that hue.
     # The mapping depends on the profile; we read it from the hue
     # name convention ("S-red" → contrast10S + resolution30S, etc).
@@ -306,6 +319,16 @@ def _hue_masks_for_presence(
                 (dashed_sm, cv2.dilate(split.meridional.astype(np.uint8), bridge)),
             ):
                 out[curve_field(freq, sm)] = sub
+    elif profile.style_axis == "HUE_IS_CURVE" and profile.hue_meaning == "CURVE_IDENTITY":
+        # Each hue identifies one specific (frequency, S/M) curve via its
+        # name (e.g. `10S-red`, `10M-pink`, `30S-dark-grey`,
+        # `30M-light-grey`). Map each hue mask to its single (freq, sm)
+        # field. Wired (#1216) so sister fallback can fire on Samyang
+        # when halo subtraction leaves a contaminated hue's mask empty
+        # at high-MTF overlap points.
+        for hue_name, mask in curve_masks.items():
+            freq, sm = parse_curve_identity_name(hue_name)
+            out[curve_field(freq, sm)] = mask
     elif profile.style_axis == "HUE_IS_CURVE" and profile.hue_meaning in (
         "SAGITTAL_MERIDIONAL", "SAGITTAL_MERIDIONAL_SINGLE_FREQ",
         "PER_COLUMN_RIDGE", "SKELETON_CONTINUOUS_PICK", "GEODESIC_DP",

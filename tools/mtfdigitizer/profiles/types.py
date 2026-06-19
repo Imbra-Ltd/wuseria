@@ -228,6 +228,19 @@ class MtfProfile:
     # can drag a path off a legitimate dive on noisier charts (TTartisan
     # max-aperture grey freq30 — see ADR-049's "Known limitation").
     ridge_dp_y_anchor: bool = False
+    # Cross-hue AA-halo subtractions to apply before skeletonization
+    # (#1216). Each tuple is `(contaminator_hue_name, contaminated_hue_name)`
+    # — the contaminated hue's mask gets the dilated contaminator mask
+    # subtracted before the dispatch branch runs. Used when two hues'
+    # HueRanges share an HSV boundary so the contaminated mask catches
+    # the AA gradient ring around the contaminator's curves (e.g. Samyang
+    # `10S-red` AA halo bleeds into `10M-pink` because pink's `s_max=140`
+    # equals red's `s_min=140`). Distinct from the TTartisan
+    # `_build_halo_exclusion_map` (which auto-derives pairs from
+    # aperture prefix + frequency on the FREQUENCY_PER_HUE_RIDGE branch);
+    # this field declares pairs explicitly and applies to any dispatch
+    # branch that honours it. Default empty.
+    halo_pairs: tuple[tuple[str, str], ...] = ()
 
     @property
     def hue_count(self) -> int:
