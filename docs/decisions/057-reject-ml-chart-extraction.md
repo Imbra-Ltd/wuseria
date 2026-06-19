@@ -1,7 +1,16 @@
 # ADR-057: Reject ML-based chart extraction for v0.8.0, pivot to legend-swatch auto-calibration
 
-**Status:** Accepted
+**Status:** Accepted; partially superseded by [ADR-058](058-drop-chartparser-revisit-trigger.md)
 **Date:** 2026-06-18
+
+> **Partially superseded by ADR-058 (2026-06-18).** The ML-revisit
+> trigger list in the Decision section names two upstream repos
+> (LineFormer, AI-ChartParser). AI-ChartParser's upstream repo
+> (`ywking/ChartParser`) was found to be archived (read-only) hours
+> after this ADR landed, making that branch of the trigger structurally
+> unreachable. ADR-058 drops AI-ChartParser from the trigger list;
+> LineFormer remains. The core decision (reject ML for v0.8.0, pivot
+> to legend-swatch auto-calibration) is unchanged.
 
 ## Context
 
