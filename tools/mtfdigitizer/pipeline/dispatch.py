@@ -80,7 +80,7 @@ from .dp_extract import (
     extract_one_curve_dp,
     extract_two_curves_dp,
 )
-from .masks import masks_by_curve_name
+from .masks import masks_by_curve_name, strip_plot_box_borders
 from .ridge import (
     ridge_tracks_for_hue,
     ridge_tracks_for_hue_freq_split,
@@ -406,6 +406,9 @@ def field_skeletons(
         clip[plot_box.y_top : plot_box.y_bottom + 1,
              plot_box.x_left : plot_box.x_right + 1] = 1
         curve_masks = {name: (m & clip) for name, m in curve_masks.items()}
+        # Spike #1217 Option 4 — strip plot-box border lines that fall
+        # inside the data-edge plot box (e.g. af-35 col 603 contamination).
+        curve_masks = strip_plot_box_borders(curve_masks, plot_box)
 
     # Profile-declared cross-hue halo subtraction (#1216). Empty by
     # default; Samyang opts in for the `10S-red` → `10M-pink` AA gradient.

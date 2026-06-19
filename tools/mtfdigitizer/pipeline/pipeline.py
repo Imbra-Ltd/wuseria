@@ -39,7 +39,7 @@ from .dispatch import (
     parse_curve_identity_name,
     unique_named_hues,
 )
-from .masks import masks_by_curve_name
+from .masks import masks_by_curve_name, strip_plot_box_borders
 from .skeleton import close_and_skeletonize
 from .split import split_sm_by_cc_width
 from .sampling import (
@@ -286,6 +286,7 @@ def _hue_masks_for_presence(
             plot_box.x_left : plot_box.x_right + 1,
         ] = 1
         curve_masks = {name: (m & clip) for name, m in curve_masks.items()}
+        curve_masks = strip_plot_box_borders(curve_masks, plot_box)
     curve_masks = _apply_declared_halo_pairs(curve_masks, profile.halo_pairs)
     # Map per-hue raw mask to the two fields that share that hue.
     # The mapping depends on the profile; we read it from the hue
