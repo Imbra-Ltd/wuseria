@@ -8721,3 +8721,84 @@ Theme: clear the cheap S162 follow-ups before bigger work. #1202 (S162 hand-patc
 - `mtf-readings.ts` — one cell hand-patched, now locked by regression test in `mtf-readings.test.ts`.
 - Stale digitization logs: **0** (unchanged).
 - **#1202 will close on PR #1205 merge.**
+
+---
+
+### Session 164 — ADR-058 supersession + gitleaks infra fix
+
+Date: 2026-06-19 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: clear the two S163 carry-overs. #1207 (ADR-058 supersession to drop the archived AI-ChartParser trigger) and the gitleaks CI infra failure (filed mid-session as #1210). Both were named in S163's Follow-ups list as "small, ~30 min" / "separate task" — neither blocks v0.8.0 work, both unblock cleaner CI on every future PR.
+
+#### PRs
+
+- **#1208 merged** as `6c0a916` — S163 dev-journal entry. Doc-only (+77 / -0). All CI green (build/lighthouse correctly skipped on docs-only path filter).
+- **#1209 merged** as `0b21966` — ADR-058 (drop AI-ChartParser from ADR-057 ML-revisit triggers) + supersession banner on ADR-057 + "References for future research" section capturing the citation trail surfaced from the archived ChartParser README (Yang et al. 2025 paper, YOLOP MIT ancestor, Chart2019 dataset). Closes #1207. Initial CI failed on the carried gitleaks infra issue; #1211 merged first then this branch rebased and passed clean.
+- **#1211 merged** as `664daea` — gitleaks CI infra fix. Closes #1210. Two real changes vs the original broken pattern: (1) `Authorization: Bearer ${GITHUB_TOKEN}` on the releases API call (raises rate limit from 60/hr unauth-per-IP-shared to 1000/hr auth-per-repo — the actual root cause), (2) `set -euo pipefail` + explicit empty-string guard so any future version-resolution failure fails loud instead of silently producing `v_linux_x64.tar.gz` → 404. First attempt (commit `f51a45a`) switched to `gitleaks/gitleaks-action@v3.0.0` but that action requires a paid `GITLEAKS_LICENSE` secret for organization repos (Imbra-Ltd hit the paywall on first run); reverted to the curl pattern with the real fixes applied.
+
+#### Issues opened / closed
+
+- **#1210 (new, bug, P2, Expedite)** filed — gitleaks CI workflow fails on infra; documented root cause (unauthenticated curl + 60/hr rate limit) and fix. Closed by #1211 merge.
+- **#1207** — closed via #1209 merge.
+- **#1210** — closed via #1211 merge.
+
+#### Key technical findings
+
+- **gitleaks-action@v3 is org-paywalled.** First fix attempt was the "switch to the official action" path. Action runs fine but immediately errors `[Imbra-Ltd] is an organization. License key is required.` Reverting to the curl-install pattern with the auth fix is the correct path for org-owned repos that don't want a paid SAST license.
+- **The S163-named root cause was correct.** Authenticating the releases API call is what was actually broken — not the install pattern itself. The 60/hr unauthenticated rate limit is per-IP shared across the GHA runner pool; authentication brings it to 1000/hr per-repo and decouples from the shared bucket. The fail-loud guard is the secondary safety net so if the API ever returns empty again the failure is obvious.
+- **The archived ChartParser README is a non-trivial citation trail.** Pulling the README via `gh api` (the page is GH-bot-protected for pagefetch) surfaced: (1) the Yang et al. 2025 paper in Computer Graphics Forum — a durable academic anchor reachable via author email; (2) `hustvl/YOLOP` as the MIT-licensed architectural ancestor (2.2k stars, alive); (3) the Chart2019 training dataset on Google Drive; (4) pretrained weights also on Google Drive. None of these reopen the ADR-057 revisit trigger (rebuilding from these is a months-long ML project, not a low-cost LICENSE-publication event), but they are worth capturing as audit trail for any future contributor. Folded into ADR-058's "References for future research (not a revisit trigger)" section rather than the trigger list itself.
+
+#### Key changes
+
+- **`docs/decisions/058-drop-chartparser-revisit-trigger.md`** — new ADR (135 lines). Partial-supersession of ADR-057, drops AI-ChartParser from the ML-revisit trigger list, keeps LineFormer. Includes the references-for-future-research section.
+- **`docs/decisions/057-reject-ml-chart-extraction.md`** — status banner amended (the one allowed mutation on a merged ADR per `base/docs.md` and the ADR-038 precedent) pointing forward to ADR-058. Decision content unchanged.
+- **`.github/workflows/gitleaks.yml`** — replaced the single-line unauthenticated curl with an authenticated, fail-loud install block (+16 / -3).
+
+#### Verification
+
+- `npm run validate` — green on both the ADR-058 branch and the gitleaks branch (lint, format, check, 223 vitest pass, build, link check).
+- **#1211 meta-test** — the gitleaks fix's own gitleaks step ran in 9s and passed cleanly. End-to-end proof that the install pattern works.
+- **#1209 post-rebase CI** — gitleaks ran in 9s and passed on the rebased branch; the fix from #1211 unblocked the queued PR.
+
+#### Key decisions (this session)
+
+- **Curl-with-auth over the official action.** First attempt switched to `gitleaks-action@v3.0.0` per the `platform/github.md` guidance, hit the org-license paywall, reverted. The decision tree: official action (paywalled for org), pay license (avoidable cost on a SAST tool we can install ourselves), pin a hardcoded version (stale-pinning means manual bumps), authenticated curl (free, fixes the actual root cause). The auth-curl path also keeps gitleaks tracking upstream automatically, which the hardcoded-pin path loses.
+- **Add a references section to ADR-058 rather than re-open the trigger.** Surfacing the Yang et al. 2025 paper + YOLOP ancestor was a real finding, but framing it as a new trigger would re-introduce the same problem ADR-058 set out to fix (a "trigger" that requires months of research isn't a trigger). The references section is the breadcrumb; explicit "not a revisit trigger" framing prevents future-me from misreading it as one.
+- **Rebase #1209 with merge-from-main instead of force-push.** Per the no-force-push rule. The `gh pr update-branch` flow merges main into the PR branch, retriggers CI cleanly, no rewritten history.
+
+#### Process patterns observed this session
+
+- **"Switch to the official tool" can hit a paywall.** The S163 follow-up named the official action as the fix; the meta-test surfaced the org-license requirement. Recovery was fine (the curl-with-auth fix is better than a hardcoded pin anyway), but the lesson is: "official tool" doesn't always mean "drop-in replacement" — verify pricing model before trusting it as the recommended path.
+- **File the tracking issue first, then the fix.** #1210 filed before the PR per the bug-first rule from memory. Made the PR body cleaner (`Closes #1210`) and gave the auto-close a clean target.
+- **Working-directory drift caught by absolute paths.** A `cd tools && py -m pagefetch` earlier left the shell in `tools/`; the next `npx prettier` failed against a relative path. Memory rule (`feedback_pwd_on_path_failure.md`) caught it on first failure — `pwd` showed `/c/Workspace/me-fuji/tools`, fix was `cd /c/Workspace/me-fuji && ...`.
+
+#### Follow-ups for next session
+
+- **Ridge-tracker right-corner spike** — broader project signaled by af-35 max freq30M p95 |d| 0.433. Scope spike: does any other lens show the same pattern? (Carried from S163.)
+- **#1134 (P1)** — per-pass MTF confidence badge, only P1 in v0.8.0 milestone. Multi-session. (Carried.)
+- **#950 (P2)** — auto-detect plot box for MTF digitizer. (Carried.)
+- **#1135 B' implementation (P3 Backlog)** — carried.
+- **#1159 UI half** — carried.
+- **#1198 legend-swatch spike (P4 Backlog)** — carried.
+- **#1181 af-35 max-pass grey-30 (P4 Backlog)** — carried.
+- **Calibrate-vs-dispatcher path divergence test (carried from S161)**.
+- **LineFormer LICENSE watch (#1206)** — asynchronous, no action until upstream responds.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **805 paired, median 0.0061, p95 0.0526, in-band 94.5%** (unchanged from S162).
+- **381 mtfdigitizer pytest pass** (unchanged).
+- **651 total pytest pass** from `tools/` (unchanged).
+- **223 vitest pass** (unchanged).
+- **58 ADRs** (was 57 — +1 ADR-058).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1159 + #950 + epics #790, #932** (#1202 closed in S163 via #1205 merge).
+- Backlog new this session: **#1210 (closed same session)**.
+- **0 open PRs.** **0 stale Dependabot PRs.**
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged from S163).
+- Stale digitization logs: **0** (unchanged).
+- **Gitleaks CI step now runs in 9s and passes; rate-limit failure mode eliminated.**
