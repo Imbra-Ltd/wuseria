@@ -55,6 +55,18 @@ SAMYANG_4COLOR_ALL_SOLID: MtfProfile = MtfProfile(
     style_axis="HUE_IS_CURVE",
     hue_meaning="CURVE_IDENTITY",
     frequencies_lpmm=(10, 30),
+    # Cross-hue AA-halo exclusion (#1216): `10S-red`'s saturated curve has
+    # an AA gradient ring that passes through the `10M-pink` HueRange
+    # because pink's `s_max=140` exactly equals red's `s_min=140`. The
+    # pink mask thus catches a halo band around every red curve pixel,
+    # producing a spurious second y-band in the M10 skeleton that the
+    # sampler latches onto at the right corner. Subtracting the dilated
+    # red mask from pink before skeletonization removes the halo while
+    # leaving the real M10 pink curve intact. samyang-300mm reflex chart
+    # (the other family member) stays within tolerance because its M10
+    # curve sits at MTF≈1.00 essentially overlapping S10, where sister
+    # fallback covers any cell the halo subtraction empties.
+    halo_pairs=(("10S-red", "10M-pink"),),
     notes="Samyang product page MTF; each curve identified by (hue, saturation, brightness)",
 )
 

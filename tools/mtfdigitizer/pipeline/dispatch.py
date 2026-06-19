@@ -290,6 +290,59 @@ def _aperture_prefix(hue_name: str) -> str | None:
     return None
 
 
+def _apply_declared_halo_pairs(
+    curve_masks: dict[str, np.ndarray],
+    halo_pairs: tuple[tuple[str, str], ...],
+) -> dict[str, np.ndarray]:
+    """Apply profile-declared `(contaminator, contaminated)` halo subtractions.
+
+    For each declared pair, the contaminator mask is dilated vertically
+    by `_HALO_DILATE_DY` and subtracted from the contaminated mask. Used
+    when two hues' HueRanges share an HSV boundary so the contaminated
+    mask catches the AA gradient ring around the contaminator's curves
+    (#1216 Samyang `10S-red` → `10M-pink`).
+
+    Distinct from `_build_halo_exclusion_map`, which infers pairs from
+    aperture prefix + frequency for the TTartisan FREQUENCY_PER_HUE_RIDGE
+    branch (#1095). This helper consumes explicit profile declarations
+    and runs once on the raw `curve_masks` before any dispatch branch,
+    so the benefit reaches every codepath. Returns a new dict; the
+    input is not mutated.
+
+    Unknown hue names in the declaration are silently ignored — the
+    profile author may filter `hues` per aperture (ADR-044) so a pair
+    naming a hue absent from the current run is not an error.
+
+    Uses a morphological-ring subtraction rather than full dilation:
+    `(contaminator_dilated - contaminator)` is the immediate exterior
+    shell where the AA gradient lives, not the saturated core. This
+    spares the contaminated hue's own real curve when it sits within
+    the dilation radius of the contaminator's centerline (e.g. Samyang
+    M10 and S10 both near the plot top at high MTF). Full dilation
+    would over-subtract at high-MTF overlap points; the ring only
+    targets the gradient transition zone.
+    """
+    if not halo_pairs:
+        return curve_masks
+    kernel = np.ones((2 * _HALO_DILATE_DY + 1, 1), np.uint8)
+    out = dict(curve_masks)
+    for contaminator_name, contaminated_name in halo_pairs:
+        contaminator = out.get(contaminator_name)
+        contaminated = out.get(contaminated_name)
+        if contaminator is None or contaminated is None:
+            continue
+        cont_u8 = contaminator.astype(np.uint8)
+        dilated = cv2.dilate(cont_u8, kernel)
+        # Ring = dilated minus the contaminator's own core. Only the
+        # AA gradient shell around the contaminator is subtracted from
+        # the contaminated mask; the contaminator's interior (where the
+        # contaminated hue's real curve may legitimately overlap) is
+        # left intact.
+        ring = (dilated & ~cont_u8).astype(bool)
+        out[contaminated_name] = contaminated & ~ring
+    return out
+
+
 def _build_halo_exclusion_map(
     curve_masks: dict[str, np.ndarray],
     freq_by_color: dict[str, int],
@@ -353,6 +406,11 @@ def field_skeletons(
         clip[plot_box.y_top : plot_box.y_bottom + 1,
              plot_box.x_left : plot_box.x_right + 1] = 1
         curve_masks = {name: (m & clip) for name, m in curve_masks.items()}
+
+    # Profile-declared cross-hue halo subtraction (#1216). Empty by
+    # default; Samyang opts in for the `10S-red` → `10M-pink` AA gradient.
+    # Runs before any dispatch branch, so every codepath benefits.
+    curve_masks = _apply_declared_halo_pairs(curve_masks, profile.halo_pairs)
 
     out: dict[str, np.ndarray] = {}
 
