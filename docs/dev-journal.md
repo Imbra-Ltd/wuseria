@@ -8980,3 +8980,103 @@ None. Pure probe + analysis + comment.
 - Stale digitization logs: **0** (unchanged).
 - Stale `referenceset/readings/*.md` panels: **5** (refresh deferred — unchanged from S165).
 - **No issues closed this session. #1217 has a substantive comment update; open pending maintainer mechanism decision.**
+
+---
+
+### Session 167 — #1216 Samyang cross-hue halo subtraction shipped
+
+Date: 2026-06-19 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: picked up #1216 (Samyang 85 freq10M p95 |d| 0.175 — the cheapest of the three #1213 follow-ups). Per the S166 lesson, ran a raw-mask + per-pixel HSV probe FIRST. The probe invalidated the task body's "tighten the HueRange" framing and surfaced the actual root cause: cross-hue AA halo contamination. Implemented a declared-pair halo subtraction mechanism, landed the fix, closed the task, shipped ADR-059.
+
+#### PRs
+
+- **PR #1220 merged** as `fa2aa48` — `fix(mtf): declared cross-hue halo pairs subtract AA gradient (closes #1216)`. 8 files: 4 code + ADR-059 + 2 readings refreshes + 1 test docstring/exclusion update. CI: gate + gitleaks + links + changes pass; build + lighthouse correctly skipped (Python-only diff, no source TS changed); analyze pending at auto-merge time, passed before merge. Auto-merged with `--auto --squash --delete-branch` per maintainer authorization.
+
+#### Issues opened / closed
+
+- **#1216 closed** via #1220 merge (auto-close trailer).
+- **#1216 commented** before implementation: long probe finding documenting (a) the task body's "tighten the HueRange" framing was wrong, (b) the actual mechanism is cross-hue AA halo contamination, (c) three rejected alternatives, (d) the chosen direction with the per-profile `halo_pairs` declaration.
+
+#### Key technical findings
+
+- **The "upper y-band" at y=69-75 is the REAL M10 curve, not legend text.** Plot box y_top=43, y_bottom=463 (height 421). M10 GT MTF stays high across the field (0.91 → 0.93 at frac=1.0). MTF 0.93 corresponds to y = 43 + (1 - 0.93) × 421 = 72.5 — exactly where the "spurious" cluster sits. The task body inherited #1213's post-DP-skeleton-layer view; the raw-mask probe corrected the framing.
+- **Cross-hue AA halo contamination is the actual mechanism.** `10S-red` HueRange has `s_min=140`; `10M-pink` has `s_max=140`. They share the boundary value. Around any saturated red curve, the AA gradient transitions from white (S=0) to red core (S=255) passing through every intermediate S value, so pink catches the S∈[40,140] ring around every red curve pixel.
+- **HSV ranges of the two y-bands overlap nearly completely.** Probe Stage 2 dump: upper-band H∈[171,174] S∈[40,115] V∈[220,244]; real-curve H∈[172,174] S∈[42,139] V∈[218,245]. Any HueRange tightening that strips the halo also strips the real curve. **Option 1 from the task body cannot work** — confirmed by data, not opinion.
+- **The existing TTartisan halo-exclusion mechanism (`_build_halo_exclusion_map`, #1095) is the right shape but the wrong wiring.** TTartisan auto-derives `(contaminator, contaminated)` pairs from aperture prefix + frequency. Samyang has no aperture multi-pass and both hues are same-frequency, so the derivation can't infer the pair. Need profile-level explicit declaration.
+- **Morphological RING subtraction beats full dilation.** Initial implementation used full dilation; samyang-85 frac=0.1-0.5 lost the real M10 ink because at high MTF the M10 and S10 curves sit within 2-3 px of each other. Switching to `dilate(contaminator) AND NOT contaminator` spares the contaminator's interior; high-MTF overlap points get the contaminated mask emptied (sister fallback covers them) without erasing the contaminated curve where it's spatially separated from the contaminator.
+- **The presence-mask path had a hidden gap.** `_hue_masks_for_presence` did NOT apply `halo_pairs` and had no handler for `HUE_IS_CURVE/CURVE_IDENTITY` profiles. So even after the dispatcher's skeleton-side fix, sister fallback was not firing (`sister_fallback_count: {}`). Wiring the same halo subtraction into the presence path AND adding the CURVE_IDENTITY handler made fallback fire at samyang-85 frac=0.1-0.5 (where M10 and S10 overlap and the halo-subtracted M10 mask is empty), producing honest M10 reads of 0.90-0.94 matching GT.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/profiles/types.py`** — added `MtfProfile.halo_pairs: tuple[tuple[str, str], ...] = ()` field with a paragraph explaining the cross-hue / cross-branch semantics distinct from `_build_halo_exclusion_map`.
+- **`tools/mtfdigitizer/profiles/declared.py`** — `SAMYANG_4COLOR_ALL_SOLID.halo_pairs = (("10S-red", "10M-pink"),)` + 12-line comment recording the design rationale (s_max=s_min boundary, ring subtraction, samyang-300 sister-fallback coverage).
+- **`tools/mtfdigitizer/pipeline/dispatch.py`** — new `_apply_declared_halo_pairs` helper that subtracts `(dilated_contaminator AND NOT contaminator)` ring from each contaminated mask; called from `field_skeletons` after plot-box clipping, before any dispatch branch. Unknown hue names silently ignored (per-aperture filtering compatibility).
+- **`tools/mtfdigitizer/pipeline/pipeline.py`** — `_hue_masks_for_presence` now applies the same halo subtraction; new handler for `HUE_IS_CURVE/CURVE_IDENTITY` that maps each hue mask to its single `(freq, sm)` field via `parse_curve_identity_name`.
+- **`docs/decisions/059-cross-hue-halo-pairs.md`** — ADR (175 lines) with ASCII pipeline diagram, five rejected alternatives + why, and consequences section noting the test exclusion.
+- **`tools/mtfdigitizer/tests/test_rendermatch.py`** — `test_score_chart_polyline_mostly_lands_on_skeleton` excludes `freq10M` with docstring explaining why (post-fix M10 reads come from sister fallback so polyline runs through sister-filled gaps; other 3 fields stay above 0.85 bar).
+- **`tools/mtfdigitizer/referenceset/readings/samyang-85mm-f1-4-as-if-umc.md`** + **`samyang-300mm-f6-3-ed-umc-cs-reflex.md`** — refreshed by `calibrate --write-readings`; reflect the fix's calibration impact.
+
+#### Calibration impact
+
+| Metric                         | Pre            | Post                      |
+| ------------------------------ | -------------- | ------------------------- |
+| samyang-85 freq10M p95 \|d\|   | 0.175          | **0.026**                 |
+| samyang-85 freq10M frac=1.0 EX | 0.78 (GT 0.93) | **0.93** (GT 0.93)        |
+| samyang-85 freq10S p95 \|d\|   | 0.029          | 0.029 (unchanged)         |
+| samyang-85 freq30M p95 \|d\|   | 0.078          | 0.086 (within noise)      |
+| samyang-300 freq10M paired     | 10/11          | 11/11                     |
+| samyang-300 freq30S paired     | 0/11           | **5/11**                  |
+| Aggregate paired comparisons   | 805            | **811** (+6)              |
+| Aggregate p95 \|d\|            | 0.0526         | 0.0505                    |
+| In-band 94.5% threshold        | 94.5%          | 94.9%                     |
+| Max \|d\|                      | 0.3319         | 0.3319 (af-35 still open) |
+
+#### Verification
+
+- `npm run validate` — green (lint, format, check, 223 vitest pass, build, link check).
+- `py -m pytest mtfdigitizer/` — **381 passed in 342.69s** (after the test docstring update; one failure before the update was the `test_score_chart_polyline_mostly_lands_on_skeleton` 0.807 < 0.85 threshold, expected and explained).
+- `py -m mtfdigitizer.calibrate` — aggregate moved 805→811 paired, p95 0.0526→0.0505, in-band 94.5%→94.9%. samyang-85 freq10M p95 0.175→0.026.
+- Reverted 4 unrelated readings file drifts (carry-overs from the S165 stale-refresh deferral) to keep PR scope tight; included only samyang-85 + samyang-300 reads.
+
+#### Key decisions (this session)
+
+- **Per-pipeline-stage probe before implementation, per S166 lesson.** First impulse was to start with HueRange tightening (Option 1 from the task body, simplest). Decided to run a 3-stage probe (raw mask, per-pixel HSV, post-skeleton) first. The Stage 2 HSV-overlap data killed Option 1 outright; the Stage 1 mask data identified the AA-halo mechanism. ~15 min spent, saved a session of dead-end implementation.
+- **Profile-declared `halo_pairs` over generalizing TTartisan's auto-derivation.** The TTartisan auto-deriver infers contaminator/contaminated from aperture prefix + frequency. Samyang has no apertures and both hues are same-frequency. Generalizing the deriver to "high-S contaminates low-S of same color family" is brittle and depends on string-match heuristics. Explicit per-profile declaration is clearer and easier to extend; both mechanisms coexist (each at its own dispatch layer).
+- **Ring subtraction over full dilation.** Full dilation kills the contaminated curve where it overlaps the contaminator at high MTF (Samyang frac=0.1-0.5 case where M10 and S10 are within 2-3 px). Ring spares the contaminator's interior, leaving sister fallback to cover the gap. Probed both pre-merge.
+- **Wire the same halo subtraction into the presence path.** Discovered mid-implementation that sister fallback was not firing — `_hue_masks_for_presence` did not apply the subtraction and had no handler for `CURVE_IDENTITY`. Without this, frac=0.1-0.5 returned `None` instead of the sister value. Adding both was a small, surgical fix.
+- **Update the failing rendermatch test rather than weaken the threshold.** The test's `≥ 0.85 mean precision` assumption was anchored on a contaminated skeleton where the polyline trivially landed inside the (wide) skeleton ink. Post-fix the freq10M skeleton is honestly sparse (sister-fallback territory). Excluding freq10M with a docstring keeps the test's intent intact for the 3 skeleton-resident fields; lowering the threshold globally would lose signal on other charts.
+- **Keep PR scope tight.** The calibrate run regenerated 4 unrelated stale readings files (S165 carry-over) and produced a new ttartisan-7-5 readings file. All real content but not #1216's deliverable. Reverted; queued as a separate chore.
+
+#### Process patterns observed this session
+
+- **S166's "probe at every stage" lesson paid back twice.** First by killing Option 1 (HSV-overlap data); second by exposing the presence-mask gap (the dispatcher fix would have produced silent regressions on samyang-85 frac=0.1-0.5 without the presence-path wiring).
+- **Read the audit comments at the edit site, again.** Per the S165 → solid-ai-templates#501 lesson, reading the Samyang profile docstring and the existing TTartisan `_build_halo_exclusion_map` before adding `halo_pairs` revealed the existing TTartisan mechanism is the right shape but wrong wiring, instead of inventing a new mechanism from scratch.
+- **Hidden test threshold reveals a hidden assumption.** The `0.85` precision in `test_score_chart_polyline_mostly_lands_on_skeleton` looked like a self-consistency check but was actually pinned to the contaminated-skeleton baseline. Tests that pin to "current behavior" without naming what about the current behavior they pin can mask regressions OR block fixes; this one blocked an intended fix and surfaced the assumption via the failure message.
+
+#### Follow-ups for next session
+
+- **#1217 spike (P2, v0.8.0)** — same-hue opposite-need conflict. Maintainer mechanism decision still pending (per-lens override / smarter anchor / sampler guard / mask-edge cleanup). #1216's success suggests the mask-layer mechanism (Option 4) is the cheapest direction to try first, though af-35's failure mechanism (intermediate-band drift through AA halo) is distinct from Samyang's.
+- **#1215 (task, P2, v0.8.0)** — Tokina geodesic-DP right-edge clamping (3 lenses, freq30). Novel fix; multi-session.
+- **Calibration readings refresh chore** — 5 stale `referenceset/readings/*.md` panels deferred from S165 + 1 new ttartisan-7-5 readings file from S167. One PR, no code.
+- **#1134 (P1, v0.8.0)** — per-pass MTF confidence badge. Multi-session.
+- **#950 (P2, v0.8.0)** — auto-detect plot box. Multi-session.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization.
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **811 paired** (was 805), **median \|d\| 0.0061** (unchanged), **p95 \|d\| 0.0505** (was 0.0526), **in-band 94.9%** (was 94.5%).
+- **381 mtfdigitizer pytest pass** (was 381 — one test updated, same total).
+- **651 total pytest pass** from `tools/` (unchanged).
+- **223 vitest pass** (unchanged).
+- **59 ADRs** (was 58 — +1 ADR-059).
+- 8 declared MTF profiles (unchanged — Samyang profile gained a field but counts the same).
+- v0.8.0 open: **#1134 + #1135 + #1159 + #950 + #1215 + #1217 + epics #790, #932** (#1216 closed this session).
+- **0 open PRs. 0 stale Dependabot PRs.**
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
+- Stale digitization logs: **0** (unchanged).
+- Stale `referenceset/readings/*.md` panels: **5** (still deferred).
+- **#1216 closed (completed via PR #1220).**
