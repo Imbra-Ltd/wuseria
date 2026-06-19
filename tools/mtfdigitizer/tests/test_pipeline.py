@@ -598,3 +598,58 @@ def test_edge_bracket_does_not_widen_at_mid_field() -> None:
         "Mid-field sampler must keep the tight ±3 window — bridging "
         "wider than that breaks the B2 fail-safe contract."
     )
+
+
+def test_strip_plot_box_borders_zeroes_dense_right_edge_column() -> None:
+    """#1217 Option 4: a plot-box border line drawn INSIDE the data-edge
+    plot box (e.g. af-35 grey mask col 603 with x_right=607) appears as a
+    high-density vertical column. Strip it so the DP does not lock onto
+    chart decoration."""
+    import numpy as np
+    from mtfdigitizer.pipeline.masks import strip_plot_box_borders
+
+    # 100x200 image, plot box [10, 190] x [10, 90]; plot height = 81 px.
+    mask = np.zeros((100, 200), dtype=bool)
+    # Real curve: 5 px in col 600-equivalent (col 185 in this scaled box).
+    for y in [20, 21, 22, 23, 24]:
+        mask[y, 185] = True
+    # Plot-box border: 70 px (>50% of 81-px plot height) at col 188,
+    # 2 px inside x_right=190.
+    for y in range(15, 85):
+        mask[y, 188] = True
+
+    plot_box = PlotBox(x_left=10, x_right=190, y_top=10, y_bottom=90)
+    out = strip_plot_box_borders({"grey": mask}, plot_box)
+
+    # Real curve preserved.
+    assert out["grey"][20:25, 185].all(), (
+        "Real-curve column wrongly stripped — density threshold too low."
+    )
+    # Border column zeroed.
+    assert not out["grey"][:, 188].any(), (
+        "Plot-box border column not stripped — col 188 has 70 px (>50% of "
+        "plot height 81) and should be detected as chart decoration."
+    )
+
+
+def test_strip_plot_box_borders_noop_when_border_outside_plot_box() -> None:
+    """#1217 Option 4: on charts where the plot-box border line is drawn
+    OUTSIDE the data-edge plot box (e.g. ttartisan-50 has border at col
+    609 with x_right=607), no column inside the box exceeds the density
+    threshold and the function is a no-op."""
+    import numpy as np
+    from mtfdigitizer.pipeline.masks import strip_plot_box_borders
+
+    mask = np.zeros((100, 200), dtype=bool)
+    # Real curve: tail near right edge, low density.
+    for y in [22, 23, 24, 25, 26]:
+        mask[y, 188] = True
+
+    plot_box = PlotBox(x_left=10, x_right=190, y_top=10, y_bottom=90)
+    out = strip_plot_box_borders({"grey": mask}, plot_box)
+
+    # No-op: tail-of-curve preserved.
+    assert (out["grey"] == mask).all(), (
+        "No-op case wrongly stripped low-density tail; threshold should "
+        "ignore real-curve density."
+    )
