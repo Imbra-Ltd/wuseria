@@ -14,7 +14,7 @@ jobs:
       code: ${{ steps.filter.outputs.code }}
       lighthouse: ${{ steps.filter.outputs.lighthouse }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v4
         id: filter
         with:
@@ -45,7 +45,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.code == 'true'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: true
 
@@ -62,7 +62,7 @@ jobs:
     needs: [build, changes]
     if: needs.changes.outputs.lighthouse == 'true'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: true
 
