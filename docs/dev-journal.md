@@ -9080,3 +9080,113 @@ Theme: picked up #1216 (Samyang 85 freq10M p95 |d| 0.175 — the cheapest of the
 - Stale digitization logs: **0** (unchanged).
 - Stale `referenceset/readings/*.md` panels: **5** (still deferred).
 - **#1216 closed (completed via PR #1220).**
+
+---
+
+### Session 168 — #1217 closed: Option 4 ships, Options 1+2 rejected, mechanism 2 spun off as #1224
+
+Date: 2026-06-20 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: closed the #1217 same-hue / opposite-need spike. Per the spike's acceptance criteria, prototyped all three candidate mechanisms (per-lens override, snap-anchor, mask-edge cleanup) plus the S166-surfaced Option 4. Option 4 shipped; Options 1 and 2 rejected with measured evidence; mechanism 2 (AA-halo intermediate-band drift) factored out as follow-up spike #1224 because it cannot be solved without first repairing the y-anchor seeding on noisy permissive-HSV masks. Also landed the readings-panels chore #1222 carried from S165/S167.
+
+#### PRs
+
+- **PR #1222 merged** as `a37c7f3` — `chore(mtf): refresh 5 readings panels post-#1216`. 5 files, 4 panel updates + 1 new ttartisan-7-5 panel. No shipped data changes (vitest 223/223 pass including EYE_READ_OVERRIDES lock). CI: gate + gitleaks + links + changes pass; build + lighthouse correctly skipped (Python-only diff).
+- **PR #1223 merged** as `b619644` — `fix(mtf): strip plot-box border line from grey mask (closes #1217)`. 5 files: 3 code (`pipeline/masks.py` + 2 wiring sites) + 2 unit tests + ADR-060. Auto-merged with maintainer authorization (`gh pr merge --auto --squash`).
+
+#### Issues opened / closed
+
+- **#1217 closed** via #1223 merge (auto-close trailer).
+- **#1224 opened** — `Spike: anchor-signal repair for noisy grey-mask charts (#1217 follow-up)` (P3, Backlog). Picks up mechanism 2 (AA-halo intermediate-band drift at col ~510). Names three repair candidates (seed filtering / smooth-after-fill / post-DP iterative refinement) with the same lens triplet (af-35 + ttartisan-50 + 7artisans) as acceptance criteria.
+- **Branch hygiene:** all 12 stale remote feature branches deleted after individual safety check (11 had merged PRs; 1 was an orphan superseded-PR branch). Local cleaned. `delete_branch_on_merge: false → true` enabled on the repo so this won't reaccumulate.
+
+#### Key technical findings
+
+- **Option 4 (mask-edge cleanup) closed ~3/4 of the af-35 gap.** Pre-prototype geometric probe confirmed S166's mechanism: af-35 plot-box border line is drawn at col 603, which is **inside** the data-edge `plot_box.x_right=607` and contributes 180 grey pixels spanning the full plot height. ttartisan-50's border is at col 609 (outside the data-edge box, already excluded by existing clip); 7Artisans uses a different profile with no grey hue. The detection rule `column_density >= 0.5 * plot_height within 10 px of x_right` cleanly distinguishes border (180 px) from real curve tails (5-8 px per column). Result: af-35 freq30M p95 |d| `0.433 → 0.113`, aggregate p95 `0.0505 → 0.0499`, aggregate max |d| `0.3319 → 0.1745`, ttartisan-50 and 7artisans unchanged.
+- **S166's open question on "GT vs None at frac=1.0" is now answered with data: None.** The af-35 freq30M frac=1.0 cell flipped from extracted=0.17 (border-contamination-derived) to extracted=None (honest — no real ink in cols 603-607). Paired count dropped 11/11 → 10/11. This is honest data loss replacing a wrong reading, not a regression.
+- **The shipped `mtf-readings.ts` is unaffected.** The `EYE_READ_OVERRIDES[0]` lock (`#1202`) covers `(af-35, f/1.8, position=12.6mm, freq=30M, expected=0.58)` — a different cell than the panel's frac=1.0 (panel uses fractional position coords; shipped data uses physical mm positions). The override stays valid; the hand-patch remains the source of truth for the cell it covers.
+- **Options 1 + 2 share a root cause: `_compute_y_anchors` cannot seed the anchor on the af-35 grey mask.** Diagnostic probe found only 15 two-ridge columns out of 521 (3%), and the seeds picked chart-title artifacts at y=119 (= `plot_box.y_top`) instead of the real curves at y=290/420. Option 1 (per-lens `dp_y_anchor=True` override, mirroring `sm_swap_per_hue` from #1199): plumbing worked (ttartisan-50 untouched, 7artisans untouched), but af-35 regressed (freq30M `0.113 → 0.422`, new freq30S regression `0.005 → 0.344`). Option 2 (snap-when-available anchor cost): af-35 freq30M `0.113 → 0.340`, ttartisan-50 freq30S `0.024 → 0.146` (identical to legacy S155 regression). Both rode a corrupted anchor signal — no cost-function change can fix this without first repairing the seeds.
+- **The spike's "implementation task" criterion is satisfied by PR #1223 directly.** Option 4 ships standalone; no separate impl task needed. Mechanism 2 follow-up is #1224 (deferred work, not blocking).
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/masks.py`** — new `strip_plot_box_borders(masks, plot_box) -> dict[str, np.ndarray]` function + module-level constants `_BORDER_WINDOW = 10` and `_BORDER_DENSITY_THRESHOLD = 0.5`. ~50 lines including the rationale comment.
+- **`tools/mtfdigitizer/pipeline/dispatch.py`** — wire `strip_plot_box_borders` into the dispatch path after the existing plot-box clip step. 2 lines added.
+- **`tools/mtfdigitizer/pipeline/pipeline.py`** — wire `strip_plot_box_borders` into the presence-mask path. 1 line added (mirrors the dispatch wiring).
+- **`tools/mtfdigitizer/tests/test_pipeline.py`** — `+2` unit tests (`test_strip_plot_box_borders_zeroes_dense_right_edge_column` + `test_strip_plot_box_borders_noop_when_border_outside_plot_box`). 55 lines.
+- **`docs/decisions/060-plot-box-border-mask-cleanup.md`** — ADR (222 lines) documenting the chosen mechanism, the cross-cohort geometry probe, the three rejected alternatives with measured regression numbers, the root-cause analysis for Options 1 + 2 (anchor-seed pollution), and the deferred mechanism 2 follow-up.
+- **5 `referenceset/readings/*.md` panels refreshed** via PR #1222 (separate chore PR landed first to clear S165/S167 carry-over before #1223 touched the same files).
+
+#### Calibration impact
+
+| Metric                         | S167 baseline | Option 4 (S168)  |
+| ------------------------------ | ------------- | ---------------- |
+| af-35 freq30M p95 \|d\|        | 0.433         | **0.113**        |
+| af-35 freq30M paired           | 11/11         | 10/11            |
+| af-35 freq30M frac=1.0 cell    | EX 0.17       | **EX None**      |
+| ttartisan-50 freq30S p95 \|d\| | 0.024         | 0.024            |
+| ttartisan-50 freq30M p95 \|d\| | 0.016         | 0.016            |
+| 7artisans-50 (all fields)      | unchanged     | unchanged        |
+| Aggregate p95 \|d\|            | 0.0505        | **0.0499**       |
+| Aggregate max \|d\|            | 0.3319        | **0.1745**       |
+| Aggregate paired comparisons   | 811           | 810 (-1, honest) |
+| mtfdigitizer pytest            | 381/381       | **383/383**      |
+| In-band 94.5% threshold        | 94.9%         | 94.9%            |
+
+#### Rejected-option measurements (provenance for ADR-060)
+
+| Option       | Mechanism                     | af-35 freq30M | Other lenses                  | Verdict        |
+| ------------ | ----------------------------- | ------------- | ----------------------------- | -------------- |
+| Baseline     | —                             | 0.433         | —                             | starting point |
+| **Option 4** | Plot-box border mask cleanup  | **0.113**     | None                          | **SHIP**       |
+| Option 2     | Snap-when-available anchor    | 0.340         | tt-50 freq30S 0.024→0.146     | REJECT         |
+| Option 1     | Per-lens dp_y_anchor override | 0.422         | new af-35 freq30S 0.005→0.344 | REJECT         |
+
+#### Verification
+
+- `py -m mtfdigitizer.calibrate` — aggregate moved 811→810 paired (af-35 frac=1.0 honest None), p95 0.0505→0.0499, max |d| 0.3319→0.1745.
+- `py -m pytest mtfdigitizer/` — **383 passed** (381 + 2 new strip-borders tests).
+- `npm test -- --run` — 223/223 pass; EYE_READ_OVERRIDES[0] lock still fires correctly.
+- Cohort safety probe on three lenses (af-35 / ttartisan-50 / 7artisans-50) before code change to confirm geometry — captured in ADR-060 §Cross-cohort geometry probe.
+
+#### Key decisions (this session)
+
+- **Spike order: cheapest first.** Per S166's recommendation, started with Option 4 (mask-layer mechanism) instead of the spike body's per-lens / smarter-anchor / sampler-guard ordering. Option 4 was both cheapest to write (~50 lines + 2 tests) and the one with the clearest geometric rationale (probe confirmed border vs real-curve density gap is 10×+).
+- **Reject Options 1 + 2 with measured evidence rather than re-design them.** Both regressed when measured. The diagnosis (anchor-seed pollution on noisy masks) is identifiable from a focused probe (`_compute_y_anchors` output dump on the af-35 grey skeleton). Documenting the root cause in ADR-060 lets a future spike (#1224) start from the diagnosis instead of re-rediscovering it.
+- **Spin off mechanism 2 as #1224 instead of attempting it in #1217.** The two mechanisms (border contamination + AA-halo drift) are independent and stackable; bundling them risks scope creep and a stalled PR. Option 4 ships ~3/4 of the gap standalone; mechanism 2's fix requires anchor-signal repair which is itself a multi-option spike.
+- **Land the readings-panel chore (#1222) separately before the spike PR.** Five panels carried over from S165/S167 + 1 new ttartisan-7-5 panel — refreshing them in the same PR as the Option 4 fix would have obscured the calibration impact in panel diffs. Chore-then-fix sequencing made the Option 4 PR's diff focused on the actual fix.
+- **Save the `feedback_calibrate_panel_coords` memory mid-session.** The af-35 panel showed `frac=1.0 freq30M GT 0.50 EX 0.17 p95 0.005 → 0.433`, which initially read as a #1202 regression-test failure (since the override is on the af-35 max f/1.8 pos 12.6 M30 cell). Five-minute pause to disambiguate the coord systems (frac panel vs physical-mm shipped data) avoided escalating a non-incident, and the memory makes it a one-line check next time.
+- **Enable `delete_branch_on_merge: true` on the repo.** After auditing 12 stale remote branches (all individually safety-checked before deletion), flipped the GitHub repo setting so this hygiene work is automatic going forward.
+
+#### Process patterns observed this session
+
+- **Branch + measure + revert IS the right spike shape.** Three options prototyped, three measured, only one kept — total branch lifecycle ~1 hour each. The discipline of reverting Option 1 and Option 2 cleanly (instead of trying to "save" them) preserved the comparison data for the ADR without leaving dead code on the branch.
+- **A diagnostic probe BEFORE prototyping prevents repeat failures.** S166's lesson (probe at every pipeline stage) applied again: after Option 2's measured regression, the `_compute_y_anchors` probe identified the root cause in ~10 min, which immediately explained why Option 1 (mechanically completely different but using the same anchor signal) would also fail. Option 1 was prototyped anyway for the comparison-table acceptance criterion, but the result was predictable.
+- **The same-hue / opposite-need framing is real but Option 4 dissolves it for THIS case.** The spike body framed the problem as "ttartisan-50 needs anchor off, af-35 needs anchor on, anchor mechanism cannot satisfy both." Option 4 sidesteps the conflict entirely by fixing the failure at the mask layer, where both lenses can be treated uniformly (the strip is a no-op on ttartisan-50 by geometry). The "opposite-need" pressure on the anchor mechanism remains, but it's deferred to #1224 rather than blocking the spike.
+
+#### Follow-ups for next session
+
+- **#1224 (spike, P3, Backlog)** — anchor-signal repair on noisy grey-mask charts. The natural next step on the af-35 frac=0.9 residual (~0.06 over band) if a maintainer wants to remove `EYE_READ_OVERRIDES[0]`. Multi-session; three repair candidates named.
+- **#1215 (task, P2, v0.8.0)** — Tokina geodesic-DP right-edge clamping (3 lenses, freq30). Novel fix; multi-session.
+- **#1134 (P1, v0.8.0)** — per-pass MTF confidence badge. Multi-session. Only P1 in v0.8.0.
+- **#1110 (P1, v0.8.0)** — per-stage diagnostic bundle (ADR-050). Multi-session.
+- **#950 (P2, v0.8.0)** — auto-detect plot box. Multi-session.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone, 26 open / 78 closed after S168 closes #1217).
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **810 paired** (was 811), **median \|d\| 0.0061** (unchanged), **p95 \|d\| 0.0499** (was 0.0505), **in-band 94.9%** (unchanged), **max \|d\| 0.1745** (was 0.3319).
+- **383 mtfdigitizer pytest pass** (was 381 — +2 new strip-borders unit tests).
+- **223 vitest pass** (unchanged).
+- **60 ADRs** (was 59 — +1 ADR-060).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + #1215 + epics #790, #932** (#1217 closed this session).
+- **0 open PRs. 0 stale Dependabot PRs.**
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
+- Stale digitization logs: **0** (unchanged).
+- Stale `referenceset/readings/*.md` panels: **0** (was 5+1 — all refreshed via PR #1222).
+- **#1217 closed (completed via PR #1223).** Mechanism 2 follow-up: #1224 (Backlog).
+- **Branch hygiene:** `delete_branch_on_merge: true` set on the repo; 12 stale remote branches cleared; 3 obsolete stashes audited and dropped (all were superseded by main).
