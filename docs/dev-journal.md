@@ -9190,3 +9190,112 @@ Theme: closed the #1217 same-hue / opposite-need spike. Per the spike's acceptan
 - Stale `referenceset/readings/*.md` panels: **0** (was 5+1 — all refreshed via PR #1222).
 - **#1217 closed (completed via PR #1223).** Mechanism 2 follow-up: #1224 (Backlog).
 - **Branch hygiene:** `delete_branch_on_merge: true` set on the repo; 12 stale remote branches cleared; 3 obsolete stashes audited and dropped (all were superseded by main).
+
+### Session 169 — #1215 Tokina geodesic-DP right-edge flatline trim shipped
+
+Date: 2026-06-20 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: closed #1215 (Tokina geodesic-DP right-edge clamping fix). Probe confirmed S165 step-1's hypothesis on Tokina 23 — same DP-frozen-at-trailing-edge mechanism as 33/56. Shipped trim helper in `extract_two_curves_dp` that scans inward identifying constant-y columns with no nearby raw ink and drops them from the returned curve. Required a follow-on plumbing change because the existing sister fallback's two triggers would substitute a diverging sister value back into the trimmed cells — added `presence_is_authoritative` flag + per-field skeleton-based presence mask for HUE_IS_CURVE/GEODESIC_DP so the trim's verdict survives the fallback layer.
+
+#### PRs
+
+- **PR #1226 merged** as `2003e43` — `fix(mtf): trim right-edge flatlined tail on geodesic DP (closes #1215)`. 10 files: 2 code (`pipeline/dp_extract.py` + `pipeline/pipeline.py`) + 1 test file (+6 new tests) + 6 refreshed `referenceset/readings/*.md` panels + 1 new ADR (#061). Auto-merged with maintainer authorization. CI green.
+
+#### Issues opened / closed
+
+- **#1215 closed** via #1226 merge (auto-close trailer, verified `stateReason=COMPLETED`).
+- No new issues opened.
+
+#### Key technical findings
+
+- **Three superficially-similar right-edge shapes; only one needs trimming.** S168 probe across Tokina 23 / 33 / 56 freq30M:
+  - Tokina 33/56 freq30M at frac=1.0: DP path **frozen at constant y** across the rightmost ~20-30 cols with no raw ink in window. Wrong reading (EX 0.43 / 0.35 vs GT 0.30 / 0.18). **TRIM target.**
+  - Tokina 23 freq30M near frac=1.0: DP path **descending y=447→631 with non-zero slope** across the same no-ink stretch. Correct extrapolation (EX 0.34 vs GT 0.32). **MUST NOT trim.**
+  - Tokina 23 freq10S at frac=1.0: DP path **flat at y=273 WITH raw ink at y=273** the whole way. Genuinely-flat curve, correct reading. **MUST NOT trim.**
+  - The "constant y" + "no raw ink" AND-of-two-conditions cleanly distinguishes shape 1 from shapes 2 + 3.
+- **Sister fallback's existing logic clobbered the trim's verdict on initial calibration.** First calibration after trim showed Tokina 56 freq30M frac=1.0 going from `EX 0.35 (Δ 0.175)` to `EX 0.44 (Δ 0.265)` — worse, not better. Diagnosis: the trim correctly produced `None`, but `_apply_sister_fallback`'s "sampler-None trigger" then substituted `freq30S=0.44` (sister still has a full skeleton there because freq30S doesn't dive off). Fix is two-fold: (1) per-field presence mask derived from the DP-trimmed skeleton instead of the raw per-hue mask (which carries BOTH frequencies under one color and can't distinguish "freq30M ended here" from "freq10M still has ink here"); (2) `presence_is_authoritative=True` flag on the fallback so `field_presence=False` is the trim's authoritative "no curve here" verdict, suppressing BOTH triggers. After this, frac=1.0 stays `None` honestly.
+- **The trim must be gated to `extract_two_curves_dp` only.** Initial implementation applied it to `extract_one_curve_dp` too — Sigma 56 freq30M (the dashed-meridional curve under SPLIT_BY_DASH/GEODESIC_DP) regressed from p95 0.024 to 0.366. The dashed curve's legitimate column gaps look like flatlines to the trim. Reverted that codepath; `extract_one_curve_dp` is documented as trim-exempt with the reason.
+- **The acceptance criterion's "None over wrong" is the right principle, but the sister fallback layer fights it by default.** This session uncovered a previously-implicit assumption in the fallback design: "any None is a sampler glitch worth filling." With the trim, that's no longer true — some Nones are honest "curve doesn't extend here" verdicts. The `presence_is_authoritative` flag makes the distinction explicit per-profile.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/dp_extract.py`** — `+_trim_flatlined_tail` helper (~30 lines + ~25 lines of docstring/constants) + wiring into `extract_two_curves_dp`. `extract_one_curve_dp` left trim-exempt with comment explaining why.
+- **`tools/mtfdigitizer/pipeline/pipeline.py`** — `+_per_field_presence_for_fallback` helper (~30 lines) + `presence_is_authoritative` kwarg on `_apply_sister_fallback` + extract_chart wiring. Gated to `HUE_IS_CURVE/GEODESIC_DP` only; other profiles unchanged.
+- **`tools/mtfdigitizer/tests/test_dp_extract.py`** — `+6` new unit tests covering the trim helper, the integration with `extract_two_curves_dp`, and the trim-exemption of `extract_one_curve_dp`. One pre-existing test renamed to match the new `CurvePoints` contract (curve may now be shorter than plot width).
+- **`docs/decisions/061-geodesic-dp-right-edge-trim.md`** — ADR (~150 lines) with calibration impact table, 4 rejected alternatives (each with measured regression numbers), explanation of the sister-fallback plumbing, and one Open item (Tokina 23 freq30S frac=0.8 residual, which is an earlier-stage flatline, out of scope for #1215).
+- **6 `referenceset/readings/*.md` panels refreshed**: 3 Tokina primes (23/33/56), 2 Tokina 11-18 views (at-11mm, at-18mm — which use the same GEODESIC_DP profile under the cc-rank style-family name), and 1 ttartisan-af-35 (panel was stale from before PR #1223 landed).
+
+#### Calibration impact
+
+| Metric                       | S168 baseline | Trim (S169)                                                          |
+| ---------------------------- | ------------- | -------------------------------------------------------------------- |
+| tokina-33 freq30M p95 \|d\|  | 0.153         | **0.084**                                                            |
+| tokina-33 freq30S p95 \|d\|  | 0.142         | **0.040**                                                            |
+| tokina-56 freq30M p95 \|d\|  | 0.211         | **0.102**                                                            |
+| tokina-23 freq30M p95 \|d\|  | 0.047         | 0.047                                                                |
+| tokina-23 freq30S p95 \|d\|  | 0.130         | 0.137 (frac=1.0 trimmed; frac=0.8 now drives p95)                    |
+| sigma-56 freq30M p95 \|d\|   | 0.024         | 0.024 (control — no regression on the other GEODESIC_DP user)        |
+| Aggregate p95 \|d\|          | 0.0499        | **0.0466**                                                           |
+| Aggregate max \|d\|          | 0.1745        | **0.1217**                                                           |
+| Aggregate paired comparisons | 810           | 798 (-12, all frac=1.0 on Tokina charts, honest "no curve" outcomes) |
+| In-band 94.5% threshold      | 94.9%         | **95.9%**                                                            |
+| mtfdigitizer pytest          | 383/383       | **389/389**                                                          |
+
+#### Rejected-option measurements (provenance for ADR-061)
+
+| Option                                   | Mechanism                              | Tokina 33/56 freq30M                                                                            | Other lenses                                    | Verdict        |
+| ---------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------- | -------------- |
+| Baseline                                 | —                                      | 0.153 / 0.211                                                                                   | —                                               | starting point |
+| **Trim (ship)**                          | DP-shape detection + presence rewire   | **0.084 / 0.102**                                                                               | Sigma 56 unchanged, tokina-23 freq30M unchanged | **SHIP**       |
+| Sampler refusal                          | Issue's hint: None when raw ink absent | Would also catch 33/56, but regresses tokina-23 freq30M frac=0.9/1.0 from Δ 0.015/0.018 to None | —                                               | REJECT         |
+| DP slope extrapolation                   | Continue trajectory past last ink      | Invents slope model DP has no ground truth for                                                  | —                                               | REJECT         |
+| Trim applied uniformly (incl. one_curve) | Apply to dashed-meridional too         | —                                                                                               | sigma-56 freq30M p95 0.024→0.366                | REJECT         |
+
+#### Verification
+
+- `py -m mtfdigitizer.calibrate` — aggregate moved 810→798 paired (12 honest Nones), p95 0.0499→0.0466, max |d| 0.1745→0.1217, in-band 94.9%→95.9%.
+- `py -m pytest mtfdigitizer/` — **389 passed** (383 + 6 new).
+- Sister fallback regression check: Sigma 56 (SPLIT_BY_DASH/GEODESIC_DP) and all non-DP profiles unchanged — confirms `presence_is_authoritative` gating is correctly scoped.
+- #1215 auto-closed via PR trailer (`stateReason=COMPLETED`).
+
+#### Key decisions (this session)
+
+- **Probe each Tokina lens before scoping the fix.** Acceptance criterion 1 required confirming Tokina 23 showed the same mechanism. Probe revealed a SECOND signal worth knowing: Tokina 23 freq30M is _correctly_ extrapolating through no-ink space at the right edge — confirming the issue's simpler "sampler refusal" hint would over-trim. Drove the decision to add the y-constant-AND condition.
+- **Trim at the DP-curve layer, not the sampler layer.** The two-condition signal (y constant + no raw ink) needs access to the full trace, which only the DP module has. Keeping the fix local to `dp_extract.py` (plus the plumbing for sister fallback in `pipeline.py`) avoids spreading the trim logic across modules.
+- **Discover and fix the sister fallback regression in the same PR rather than splitting.** First calibration after the trim showed regression on the very lens the trim was supposed to help (Tokina 56 freq30M Δ 0.175→0.265) — diagnosed within minutes (sister substituted from freq30S which doesn't dive). Considered shipping just the trim and filing a follow-up for the fallback fix; rejected because the trim alone would visibly regress the cohort's worst-case cell, which contradicts the PR's claim to close the issue. Bundling the two changes preserved a clean before/after story.
+- **Add `presence_is_authoritative` as an explicit kwarg rather than always-on.** Other profiles (FREQUENCY_PER_HUE_RIDGE, CURVE_IDENTITY, etc.) intentionally use a coarse raw-mask presence signal and rely on sister fallback as a safety net. Flipping the gate on for them would silently break their fallback semantics. The flag makes the dependency explicit: only profiles whose presence mask IS the trim-aware skeleton get authoritative semantics.
+
+#### Process patterns observed this session
+
+- **Two probes worth: hypothesis-confirm first, then threshold-tune.** The S165 step-1 probe established the mechanism existed; the S169 probe on Tokina 23 confirmed it AND surfaced the "Tokina 23 freq30M is correctly extrapolating" case that ruled out the simpler fix. Both probes were throwaway scripts (~50 lines each) deleted before commit.
+- **A clean before/after calibration table is the most persuasive ADR section.** The S168 ADR-060 used this format (Option 4 wins, Options 1+2 measured regressions). ADR-061 follows the same shape. Future reviewers can scan the verdict column without parsing prose.
+- **The 'sister fallback substitutes a wrong value back in' is the second-order failure mode of any 'refuse to read' strategy.** Discovered live on calibration, not anticipated from the issue spec. Worth noting for #1224 / future similar refuse-to-read fixes — always check what the layers below the trim/refuse do with `None`.
+
+#### Follow-ups for next session
+
+- **#1135 (P2, v0.8.0)** — multi-aperture chart support. Multi-session.
+- **#1134 (P1, v0.8.0)** — per-pass MTF confidence badge. Only P1 in v0.8.0. Multi-session.
+- **#1110 (P1, v0.8.0)** — per-stage diagnostic bundle (ADR-050). Multi-session.
+- **#950 (P2, v0.8.0)** — auto-detect plot box. Multi-session.
+- **#1159 (P2, v0.8.0)** — open task carried.
+- **#1224 (P3, Backlog)** — anchor-signal repair on noisy grey-mask charts; mechanism 2 of #1217. Deferred.
+- **ADR-061 Open item** — Tokina 23 freq30S frac=0.8 (Δ 0.122) is an earlier-stage flatline (DP locks at wrong y from col 1107 onward, not just the right edge). Out of scope for #1215; consider a follow-up if Tokina cohort becomes a priority again.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone, 25 open / 79 closed after S169 closes #1215).
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **798 paired** (was 810), **median \|d\| 0.0057** (was 0.0058), **p95 \|d\| 0.0466** (was 0.0499), **in-band 95.9%** (was 94.9%), **max \|d\| 0.1217** (was 0.1745).
+- **389 mtfdigitizer pytest pass** (was 383 — +6 new trim/presence tests).
+- **223 vitest pass** (unchanged).
+- **61 ADRs** (was 60 — +1 ADR-061).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + epics #790, #932** (#1215 closed this session).
+- **0 open PRs. 0 stale Dependabot PRs.**
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
+- Stale digitization logs: **0** (unchanged).
+- Stale `referenceset/readings/*.md` panels: **0** (6 refreshed in PR #1226: tokina-23/33/56 + tokina-11-18 ×2 + ttartisan-af-35 leftover from PR #1223 era).
+- **#1215 closed (completed via PR #1226).**
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (not urgent).
