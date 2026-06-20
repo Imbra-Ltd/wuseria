@@ -140,6 +140,8 @@ def _ink_presence_per_field(
 def _apply_sister_fallback(
     samples: dict[str, tuple[float | None, ...]],
     presence: dict[str, tuple[bool, ...]],
+    *,
+    presence_is_authoritative: bool = False,
 ) -> tuple[dict[str, tuple[float | None, ...]], dict[str, int]]:
     """Replace samples where ink is absent with the sister curve's value.
 
@@ -149,15 +151,24 @@ def _apply_sister_fallback(
        sister's ink is present — the historical trigger. Copies the
        sister's value, counts as a fallback.
     2. The field's own sample is `None` (sampler bracket found no
-       skeleton pixel) AND the sister has a non-None value — the
-       "sampler-None" trigger. Fires even when the raw-mask presence
-       check claimed ink nearby; the sampler's narrower window (±3 px)
-       can fail to find a skeleton pixel that the presence check's
-       wider window (±10 px) did see ink near (e.g. the first dash of
-       a curve starting just outside the sampler bracket). Without
-       this, panels with a curve-start gap leave a `—` cell in the
-       log where the sister could have filled it honestly. Counts as
-       a fallback.
+       skeleton pixel) AND the sister has a non-None value AND the
+       per-field presence window saw ink near this fraction — the
+       "sampler-None" trigger. Catches the curve-start case (first
+       dash falls just outside the sampler bracket) and the both-
+       curves-overlap case (one hue's mask dominates the other in
+       pixel-blended regions). The presence gate (#1215) keeps the
+       trigger off when our trim has explicitly said the curve does
+       NOT extend here.
+
+    ``presence_is_authoritative`` (#1215): set True when the presence
+    mask is derived from a trim-aware skeleton (HUE_IS_CURVE/GEODESIC_DP,
+    where the right-edge flatline trim has already verified curve
+    extent). In that mode, `field_presence[i] is False` is the trim's
+    verdict that the curve does not extend here, and BOTH triggers are
+    suppressed at that index — None stays None rather than being
+    overwritten by a diverging sister value (Tokina 56 freq30M
+    frac=1.0). Default False preserves historical behaviour for
+    profiles whose presence mask is a coarse per-hue raw signal.
 
     Returns ``(samples, fallback_count_by_field)``. The counter records
     how many of a field's 11 samples were filled from the sister curve
@@ -174,23 +185,16 @@ def _apply_sister_fallback(
         fixed: list[float | None] = []
         count = 0
         for i, v in enumerate(values):
-            if v is None and sister_values[i] is not None:
-                # Sampler-None trigger: our sampler bracket found no
-                # skeleton pixel (within ±3 px of the target column).
-                # If the sister has a real value, copy it — regardless
-                # of whether the raw-mask presence check claimed ink
-                # nearby. This catches the curve-start case (first
-                # dash falls just outside the sampler bracket) and the
-                # both-curves-overlap case (one hue's mask dominates
-                # the other in pixel-blended regions). Without it, the
-                # log shows `—` even when the sister could fill the
-                # cell honestly.
+            if v is None and sister_values[i] is not None and field_presence[i]:
+                # Sampler-None trigger (see docstring).
                 fixed.append(sister_values[i])
                 count += 1
             elif field_presence[i]:
                 fixed.append(v)
-            elif sister_presence[i]:
+            elif sister_presence[i] and not presence_is_authoritative:
                 # Sister has real ink here; trust it over our drifted value.
+                # Suppressed when presence is authoritative — the trim's
+                # field_presence=False verdict overrides sister-has-ink.
                 fixed.append(sister_values[i])
                 count += 1
             else:
@@ -258,6 +262,51 @@ def _readings_to_dict(
         }
         rows.append(SampledReading(position_mm=pos, samples=row_samples))
     return tuple(rows)
+
+
+# Horizontal-bridge kernel width for the GEODESIC_DP per-field presence
+# signal (#1215). The DP path rasterises one pixel per column it covers;
+# dilating horizontally by this amount lets the ±10 col presence window
+# match "skeleton present at this fraction" without false negatives on
+# the trim-aware mask. Smaller than `_INK_PRESENCE_HALF_WIDTH * 2` so
+# the dilated skeleton's right edge still reflects the trim — the
+# presence window catches it, but only within its native ±10 col reach.
+_DP_PRESENCE_BRIDGE_W: int = 5
+
+
+def _per_field_presence_for_fallback(
+    presence_masks: dict[str, np.ndarray],
+    skeletons: dict[str, np.ndarray],
+    profile: MtfProfile,
+) -> dict[str, np.ndarray]:
+    """Per-field presence mask for the sister-fallback ink check.
+
+    For HUE_IS_CURVE / GEODESIC_DP profiles, the raw per-hue mask
+    carries two curves under one hue (e.g. M-blue is freq10M + freq30M),
+    so it cannot distinguish "freq30M's curve ended here" from "freq10M
+    still has ink at this column" — the latter would force sister
+    fallback to overwrite a correctly-None freq30M with the diverging
+    freq30S value (Tokina 56 frac=1.0, see #1215). The DP-derived field
+    skeleton already encodes the right-edge trim, so use it instead
+    after a horizontal bridge to absorb dash-gap jitter. Other profiles
+    keep the raw mask — their hue maps 1:1 to a field already.
+    """
+    if (
+        profile.style_axis == "HUE_IS_CURVE"
+        and profile.hue_meaning == "GEODESIC_DP"
+    ):
+        bridge = cv2.getStructuringElement(
+            cv2.MORPH_RECT, (_DP_PRESENCE_BRIDGE_W, 3)
+        )
+        out: dict[str, np.ndarray] = {}
+        for field, mask in presence_masks.items():
+            skel = skeletons.get(field)
+            if skel is None or not skel.any():
+                out[field] = mask
+                continue
+            out[field] = cv2.dilate(skel.astype(np.uint8), bridge)
+        return out
+    return presence_masks
 
 
 def _hue_masks_for_presence(
@@ -403,15 +452,37 @@ def extract_chart(
     samples_before_fallback = {f: v for f, v in samples_per_field.items()}
 
     # Sister fallback: replace samples where the raw ink is absent
-    # with the sister curve's value. Use the raw per-hue mask, not
-    # the DP-rasterised skeleton (which has ink everywhere).
+    # with the sister curve's value. Presence masks come from the
+    # per-hue raw masks for most profiles, but for HUE_IS_CURVE /
+    # GEODESIC_DP the raw hue mask carries BOTH frequencies of one
+    # color (e.g. M-blue is freq10M and freq30M), making it useless
+    # as a per-curve presence signal at the right edge — the freq30M
+    # curve may have ended in pure-white space while freq10M's ink at
+    # the same column still marks "present." For those fields, use the
+    # per-field DP-derived skeleton instead (#1215): its trimmed right
+    # edge encodes "this curve doesn't extend here," so sister fallback
+    # honours the trim and leaves the cell None rather than copying a
+    # diverging sister value.
+    fallback_presence_masks = _per_field_presence_for_fallback(
+        presence_masks, skeletons, profile
+    )
     presence = (
-        _ink_presence_per_field(presence_masks, plot_box) if presence_masks else {}
+        _ink_presence_per_field(fallback_presence_masks, plot_box)
+        if fallback_presence_masks
+        else {}
+    )
+    # Trim-aware profiles use the DP skeleton (#1215) for the presence
+    # signal — its right-edge trim is an authoritative "no curve here"
+    # verdict that sister fallback must respect.
+    presence_authoritative = (
+        profile.style_axis == "HUE_IS_CURVE"
+        and profile.hue_meaning == "GEODESIC_DP"
     )
     fallback_count: dict[str, int] = {}
     if presence:
         samples_per_field, fallback_count = _apply_sister_fallback(
-            samples_per_field, presence
+            samples_per_field, presence,
+            presence_is_authoritative=presence_authoritative,
         )
     samples_after_fallback = {f: v for f, v in samples_per_field.items()}
     samples_per_field = _apply_center_symmetry(samples_per_field)

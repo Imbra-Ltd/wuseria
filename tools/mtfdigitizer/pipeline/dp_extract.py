@@ -95,6 +95,30 @@ _INF: float = 1e18
 _RAW_DX_HALF: int = 25
 _RAW_DY_HALF: int = 6
 
+# Right-edge flatline trim (#1215).
+#
+# When a curve dives off the bottom of the plot box at the right edge,
+# the Viterbi smoothness prior holds the path at the last validated y
+# rather than following the curve into pure-white space. Concrete case:
+# tokina-56 freq30M at frac=1.0 — GT 0.18, EX 0.35, because the DP path
+# flatlines ~139 px above where the true curve crossed the plot edge.
+#
+# The fix detects "DP y held flat for a meaningful stretch AND raw mask
+# has no ink at that y across the stretch" at the trailing edge of the
+# trace, and trims those columns from the returned curve. The B2-honest
+# sampler then returns None at any sample fraction landing in the
+# trimmed region — preferable to a confidently-wrong flatlined value
+# (acceptance criterion of #1215: frac=1.0 cells where the curve falls
+# off the visible plot may remain None rather than wrong).
+#
+# Distinguishes legitimate edge extrapolation (DP descends with non-zero
+# slope through a no-ink stretch — Tokina 23 freq30M descends y=447->631
+# correctly) from a true flatline (DP y constant across many columns
+# with no nearby raw ink — Tokina 33/56 freq30M).
+_FLATLINE_TRIM_MIN_COLS: int = 12
+_FLATLINE_TRIM_DY_TOL: int = 1
+_FLATLINE_TRIM_RAW_DY_HALF: int = 8
+
 
 @dataclass(frozen=True)
 class CurvePoints:
@@ -170,6 +194,48 @@ def _raw_centroid_in_window(
     return float(ys.mean()) + y0
 
 
+def _trim_flatlined_tail(
+    trace: np.ndarray,
+    raw_box: np.ndarray,
+) -> int:
+    """Length of the trace after stripping a trailing flatlined tail.
+
+    Scans from the right edge inward, identifying columns that are both
+    (a) within `_FLATLINE_TRIM_DY_TOL` of the trace's last y AND
+    (b) have no raw-mask ink within `_FLATLINE_TRIM_RAW_DY_HALF` rows
+    of that y. The first column that fails either condition stops the
+    scan. If the resulting tail is at least `_FLATLINE_TRIM_MIN_COLS`
+    columns long, the tail is dropped — the sampler then returns None
+    at any sample fraction landing in it. Returns the new effective
+    length; callers slice `trace[:length]`. When the tail is too short
+    (or no flatline is present), returns `len(trace)` unchanged.
+
+    The two conditions together distinguish two superficially-similar
+    shapes: a legitimately descending curve traced through pure-white
+    space (slope > 0, no ink in window — Tokina 23 freq30M, kept) versus
+    a frozen path the smoothness prior refuses to leave (slope = 0, no
+    ink in window — Tokina 33/56 freq30M, trimmed). The "no raw ink"
+    side of the AND also protects genuinely-flat curves with real ink
+    backing them: those keep their flat tail.
+    """
+    width = len(trace)
+    if width < _FLATLINE_TRIM_MIN_COLS:
+        return width
+    last_y = int(trace[-1])
+    y0 = max(0, last_y - _FLATLINE_TRIM_RAW_DY_HALF)
+    y1 = min(raw_box.shape[0], last_y + _FLATLINE_TRIM_RAW_DY_HALF + 1)
+    new_len = width
+    for i in range(width - 1, -1, -1):
+        if abs(int(trace[i]) - last_y) > _FLATLINE_TRIM_DY_TOL:
+            break
+        if raw_box[y0:y1, i].any():
+            break
+        new_len = i
+    if width - new_len < _FLATLINE_TRIM_MIN_COLS:
+        return width
+    return new_len
+
+
 def _run_two_dp_passes(
     box: np.ndarray,
     alpha: float,
@@ -210,10 +276,11 @@ def extract_two_curves_dp(
     sorted by their *verified* mean-y (i.e. mean over columns where the
     raw mask has ink) so the upper one is the upper-frequency curve.
 
-    This function still returns one (x, y) per column for every column
-    of the plot — including columns where the path crossed pure white.
-    The B2 honesty check happens in `curves_to_field_skeletons` at
-    rasterization time, not here.
+    Each returned `CurvePoints` covers one (x, y) per column EXCEPT for
+    a right-edge flatlined tail (#1215): if the trace's last y holds
+    constant over many columns with no raw ink nearby, those columns
+    are dropped so the sampler returns None at fractions that land in
+    them. See `_trim_flatlined_tail`.
     """
     box = mask[
         plot_box.y_top : plot_box.y_bottom + 1,
@@ -222,6 +289,9 @@ def extract_two_curves_dp(
     first, second = _run_two_dp_passes(
         box, alpha, max_jump, dilate_kernel_w, erase_half
     )
+    raw_box = box
+    first_len = _trim_flatlined_tail(first, raw_box)
+    second_len = _trim_flatlined_tail(second, raw_box)
 
     # Sort by verified mean-y: only consider columns where the path
     # sits on real raw-mask ink. Avoids global-mean-y inversion when
@@ -251,15 +321,18 @@ def extract_two_curves_dp(
         if second_verified_ys
         else float(second.mean())
     )
-    upper, lower = (first, second) if first_med < second_med else (second, first)
+    if first_med < second_med:
+        upper, upper_len, lower, lower_len = first, first_len, second, second_len
+    else:
+        upper, upper_len, lower, lower_len = second, second_len, first, first_len
 
     upper_pts = tuple(
         (x + plot_box.x_left, float(y + plot_box.y_top))
-        for x, y in enumerate(upper)
+        for x, y in enumerate(upper[:upper_len])
     )
     lower_pts = tuple(
         (x + plot_box.x_left, float(y + plot_box.y_top))
-        for x, y in enumerate(lower)
+        for x, y in enumerate(lower[:lower_len])
     )
     return CurvePoints(points=upper_pts), CurvePoints(points=lower_pts)
 
@@ -282,7 +355,12 @@ def extract_one_curve_dp(
     erase-and-rerun pass (there is only one curve here).
 
     Returns one (x, y) per plot column in absolute image coordinates;
-    the B2 honesty check runs later, at sampling time.
+    the B2 honesty check runs later, at sampling time. The right-edge
+    flatline trim used by `extract_two_curves_dp` (#1215) is NOT
+    applied here — the single-curve dispatch is the dashed-meridional
+    case for (SPLIT_BY_DASH, GEODESIC_DP), and dashed strokes have
+    legitimate column gaps that the trim's "no raw ink" check would
+    misread as a flatline.
     """
     box = mask[
         plot_box.y_top : plot_box.y_bottom + 1,
