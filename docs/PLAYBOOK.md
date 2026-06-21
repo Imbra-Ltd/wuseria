@@ -415,6 +415,43 @@ the lens folder; (2) add the lens's (max, stopped) aperture pair to
 look correct; (5) run `emit_ttartisan_tier2 --write` to patch
 mtf-readings.ts with the cohort.
 
+**Samyang-specific tooling (ADR-063, two-panel stacked-aperture family):**
+
+```bash
+cd tools && py -m mtfdigitizer.scripts.scaffold_samyang_tier2          # preview Tier 2 ReferenceChart entries
+cd tools && py -m mtfdigitizer.scripts.scaffold_samyang_tier2 --write  # materialize _samyang_tier2_charts.py
+```
+
+Samyang publishes one chart image per lens with TWO stacked panels:
+MAX aperture on top, F8 below. Both panels share the same hue palette;
+only the plot box differs. The orchestrator uses the per-view aperture
+override on `ChartView` (ADR-063): the primary view emits at the
+chart's first aperture label (`"MAX"`), an `additional_view` with its
+own `plot_box` and `aperture="F8"` emits the F8 panel. Inspection
+artifacts get a `-F8` suffix for the second pass so the two views'
+overlay/SVG/HTML don't overwrite each other.
+
+- **`samyang_plotbox`** — auto-detects both panel plot boxes per chart
+  via permissive-threshold axis-line probes. Handles all three canvas
+  widths Samyang publishes (462/490/498 px) and the AF-series charts
+  (different x_right, slightly shifted F8 y-range) uniformly. No
+  per-slug plot-box overrides needed.
+- **`scaffold_samyang_tier2`** — walks `docs/optical-specs/samyang-*`,
+  runs the detector per chart, and writes a `_samyang_tier2_charts.py`
+  module of 18 `ReferenceChart` entries with `additional_views=
+(ChartView(plot_box=<F8>, aperture="F8"),)`. Per-lens
+  `image_height_mm` ships in the script's `_IMAGE_HEIGHT_MM_BY_SLUG`
+  table (eye-read from the chart's x-axis tick labels — typically 21.6
+  for full-frame, 14.2 for APS-C; Samyang 8mm and 12mm fisheyes are
+  APS-C despite no `-cs` slug suffix).
+
+Workflow when adding a new Samyang lens (or another brand using the
+multi-panel stacked-aperture convention): (1) drop the chart PNG under
+the lens folder; (2) add the lens's `image_height_mm` to
+`_IMAGE_HEIGHT_MM_BY_SLUG`; (3) re-run `scaffold_samyang_tier2
+--write` to refresh the entries; (4) run `extract <slug> --accept`
+per lens once the two-panel overlays look correct.
+
 **Tier 1 anchor helper generation (cross-brand):**
 
 ```bash

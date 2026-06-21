@@ -271,20 +271,27 @@ def _artifact_stem(run: ExtractRun) -> str:
     """Stem for one ExtractRun's inspection artifacts.
 
     Single-aperture charts use the source raster's stem unchanged —
-    every Sigma / Samyang / 7Artisans / Tokina / Viltrox / Fujifilm
-    lens keeps its existing filenames. Multi-aperture charts (ADR-044
-    — TTartisan today) suffix the stem with the aperture label so
-    pass 1 and pass 2 do not overwrite each other's overlay PNG /
-    SVG / HTML files.
+    every Sigma / 7Artisans / Tokina / Viltrox / Fujifilm lens keeps
+    its existing filenames. Two cases suffix the stem so multi-pass
+    artifacts do not overwrite each other:
 
-    The aperture label is the orchestrator's identifier (``"max"`` /
-    ``"stopped"``), not the f-number — keeps the filename short and
-    cohort-stable across lenses with different stopped f-numbers.
+    - Multi-aperture charts (ADR-044, TTartisan today): hue-filtered
+      per-aperture passes, label comes from
+      ``profile.apertures_per_chart`` (``"max"`` / ``"stopped"``).
+    - Per-view aperture override (ADR-063, Samyang today): stacked-
+      panel charts where each ``ChartView`` declares its own aperture
+      label (``"MAX"`` / ``"F8"``).
+
+    The aperture label is the orchestrator's identifier, not the
+    f-number — keeps the filename short and cohort-stable across
+    lenses.
     """
     profile = profile_for_chart(run.chart)
-    if profile.apertures_per_chart is None:
-        return run.image_path.stem
-    return f"{run.image_path.stem}-{run.aperture}"
+    if profile.apertures_per_chart is not None:
+        return f"{run.image_path.stem}-{run.aperture}"
+    if run.view.aperture is not None:
+        return f"{run.image_path.stem}-{run.aperture}"
+    return run.image_path.stem
 
 
 def _write_inspection_artifacts(run: ExtractRun) -> tuple[Path, Path, Path]:
@@ -333,6 +340,7 @@ def _panel_for(run: ExtractRun) -> ProductionPanel:
         image_height_mm=run.chart.image_height_mm,
         extracted=run.extracted,
         verdict=run.verdict,
+        aperture=run.aperture,
     )
 
 

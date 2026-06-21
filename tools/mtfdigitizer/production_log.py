@@ -45,9 +45,11 @@ _SPARK_CHARS: tuple[str, ...] = ("▁", "▂", "▃", "▄", "▅", "▆", "▇"
 class ProductionPanel:
     """One panel's inputs to the production log renderer.
 
-    A lens has one panel today (no production-tier zooms yet); the
-    dataclass exists so the renderer can grow to N panels without
-    a signature break — mirrors `log.py`'s shape.
+    Multi-panel lenses come from two shapes today: Fujifilm
+    per-frequency rasters (one panel per .png file in the lens dir),
+    and Samyang stacked-aperture panels (two panels in one .png file,
+    one ChartView per panel — ADR-063). ``aperture`` distinguishes the
+    panels in the rendered heading when more than one is present.
     """
 
     chart_slug: str
@@ -57,6 +59,7 @@ class ProductionPanel:
     image_height_mm: float
     extracted: ExtractedChart
     verdict: ChartVerdict
+    aperture: str = ""
 
 
 def _spark(values: tuple[float | None, ...]) -> str:
@@ -261,7 +264,10 @@ def render_production_log(lens_slug: str, panels: list[ProductionPanel]) -> str:
     lines.append("")
 
     for panel in panels:
-        lines.append("## Panel")
+        if len(panels) > 1 and panel.aperture:
+            lines.append(f"## Panel — {panel.aperture}")
+        else:
+            lines.append("## Panel")
         lines.append("")
         lines.append(f"- **Chart:** `{panel.chart_path}`")
         lines.append(f"- **Style family:** `{panel.style_family}`")
