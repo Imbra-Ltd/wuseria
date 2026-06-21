@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from ..plotbox_primitives import cluster_consecutive
 from .types import PlotBox
 
 
@@ -147,7 +148,7 @@ def detect_sigma_plot_box(image_bgr: np.ndarray) -> PlotBox:
     # Cluster adjacent columns (the printed frame is often 1-2 px wide
     # so adjacent x values share the same axis); take the leftmost
     # cluster and the rightmost cluster.
-    clusters = _cluster_consecutive(qualifying.tolist(), gap=3)
+    clusters = cluster_consecutive(qualifying.tolist(), gap=3)
     if len(clusters) < 2:
         raise ValueError(
             f"expected at least two axis-frame columns; found {len(clusters)} "
@@ -170,7 +171,7 @@ def detect_sigma_plot_box(image_bgr: np.ndarray) -> PlotBox:
             f"{_SIGMA_MIN_GRIDLINE_INK_FRACTION:.0%} of image width — chart "
             "does not look like a Sigma plot frame"
         )
-    row_clusters = _cluster_consecutive(qualifying_rows.tolist(), gap=3)
+    row_clusters = cluster_consecutive(qualifying_rows.tolist(), gap=3)
     y_top = min(row_clusters[0])
     y_bottom = max(row_clusters[-1])
 
@@ -183,17 +184,3 @@ def detect_sigma_plot_box(image_bgr: np.ndarray) -> PlotBox:
     if box.width <= 0 or box.height <= 0:
         raise ValueError(f"degenerate detected box: {box}")
     return box
-
-
-def _cluster_consecutive(values: list[int], gap: int) -> list[list[int]]:
-    """Group sorted integers into runs where consecutive values differ
-    by at most `gap`."""
-    if not values:
-        return []
-    clusters: list[list[int]] = [[values[0]]]
-    for v in values[1:]:
-        if v - clusters[-1][-1] <= gap:
-            clusters[-1].append(v)
-        else:
-            clusters.append([v])
-    return clusters

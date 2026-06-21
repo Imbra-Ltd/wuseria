@@ -33,6 +33,8 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+from .loader import load_chart_gray
+
 
 @dataclass(frozen=True)
 class TTartisanBoxResult:
@@ -210,12 +212,7 @@ def _read_stopped_aperture_pixel_ocr_unused(img_rgb: np.ndarray) -> str:
 
 def detect_ttartisan_plotbox(image_path: Path) -> TTartisanBoxResult:
     """Detect plot box, image height, stopped aperture for one chart."""
-    img_bgr = cv2.imread(str(image_path))
-    if img_bgr is None:
-        raise ValueError(f"could not read image: {image_path}")
-    img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
-    H, W, _ = img.shape
-    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    gray = load_chart_gray(image_path)
 
     # Detect the plot-area scheme by counting x-axis label widths.
     # The bottom axis is near y=462 in the 800x600 template.

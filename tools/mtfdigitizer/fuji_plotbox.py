@@ -35,6 +35,8 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+from .plotbox_primitives import collapse_runs
+
 
 @dataclass(frozen=True)
 class FujiBoxResult:
@@ -159,21 +161,6 @@ def _label_clusters(
     return [(g[0] + g[-1]) / 2 for g in groups]
 
 
-def _gridline_runs(rows: list[int]) -> list[int]:
-    """Collapse runs of adjacent y values into a single representative y
-    (the run's midpoint). Useful when an axis line is rendered 2-3 px
-    thick and shows up as several adjacent dark rows."""
-    if not rows:
-        return []
-    runs: list[list[int]] = [[rows[0]]]
-    for y in rows[1:]:
-        if y - runs[-1][-1] <= 2:
-            runs[-1].append(y)
-        else:
-            runs.append([y])
-    return [int(round((r[0] + r[-1]) / 2)) for r in runs]
-
-
 def detect_fuji_plotbox(
     img_path: Path,
     *,
@@ -280,7 +267,7 @@ def detect_fuji_plotbox(
         image_height_mm = round(axis_span / px_per_mm, 2)
 
     # y_top from the topmost light gridline + one spacing.
-    upper_light = _gridline_runs(
+    upper_light = collapse_runs(
         [y for y in light_rows if y < y_bottom - 10]
     )
     if not upper_light:
