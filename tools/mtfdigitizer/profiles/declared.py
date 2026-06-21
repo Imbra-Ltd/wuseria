@@ -55,18 +55,33 @@ SAMYANG_4COLOR_ALL_SOLID: MtfProfile = MtfProfile(
     style_axis="HUE_IS_CURVE",
     hue_meaning="CURVE_IDENTITY",
     frequencies_lpmm=(10, 30),
-    # Cross-hue AA-halo exclusion (#1216): `10S-red`'s saturated curve has
-    # an AA gradient ring that passes through the `10M-pink` HueRange
-    # because pink's `s_max=140` exactly equals red's `s_min=140`. The
-    # pink mask thus catches a halo band around every red curve pixel,
+    # Cross-hue AA-halo exclusion (#1216, ADR-059): `10S-red`'s saturated
+    # curve has an AA gradient ring that passes through the `10M-pink`
+    # HueRange because pink's `s_max=140` exactly equals red's `s_min=140`.
+    # The pink mask thus catches a halo band around every red curve pixel,
     # producing a spurious second y-band in the M10 skeleton that the
     # sampler latches onto at the right corner. Subtracting the dilated
     # red mask from pink before skeletonization removes the halo while
     # leaving the real M10 pink curve intact. samyang-300mm reflex chart
     # (the other family member) stays within tolerance because its M10
-    # curve sits at MTF≈1.00 essentially overlapping S10, where sister
+    # curve sits at MTF~1.00 essentially overlapping S10, where sister
     # fallback covers any cell the halo subtraction empties.
-    halo_pairs=(("10S-red", "10M-pink"),),
+    #
+    # The 30S-dark-grey / 30M-light-grey pair is the same shape (ADR-062):
+    # the dark grey curve's saturated core sits at V~102 and its AA wrap
+    # rises through V~127..160, drifting into `30M-light-grey`'s band
+    # (v_min=160, v_max=195) wherever the 30S curve dives below MTF~0.7
+    # (samyang-12mm-f2-8 fisheye, 35mm f/1.4, others). Without subtraction,
+    # the M30 skeleton picks up the upper-curve halo and the sampler
+    # latches onto it at fractions where the legitimate 30M curve has
+    # already dropped further. The 85mm/300mm Tier 1 anchors stay within
+    # tolerance because their 30S curves stay above 0.85 (85mm) or 0.95
+    # (300mm reflex) across the field, keeping the halo outside the
+    # 30M band's spatial overlap with the real 30M curve.
+    halo_pairs=(
+        ("10S-red", "10M-pink"),
+        ("30S-dark-grey", "30M-light-grey"),
+    ),
     notes="Samyang product page MTF; each curve identified by (hue, saturation, brightness)",
 )
 

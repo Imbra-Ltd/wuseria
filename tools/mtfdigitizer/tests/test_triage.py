@@ -378,14 +378,30 @@ def test_reference_sigma_56_classified_low_for_precision() -> None:
     assert prior_codes == set(), f"Sigma should not trigger priors; got {prior_codes}"
 
 
-def test_reference_samyang_85_classified_high() -> None:
-    """Real 4-color chart with cleanly-traced curves — both signals clear."""
+def test_reference_samyang_85_classified_low_for_precision() -> None:
+    """Post-ADR-062: render-match precision sits at ~0.72 on this anchor
+    because the 30S-dark-grey -> 30M-light-grey halo subtraction empties
+    the M30 skeleton where the legitimate M30 curve lies under the S30
+    AA wrap. Sister fallback fills the affected cells correctly (GT
+    confirms freq30M p95 |d| 0.086 -> 0.026), but the polyline now runs
+    through skeleton-empty space and the render-match precision aggregate
+    falls below the 0.80 gate. The GT signal (calibrate) is the authority
+    for extraction quality on this anchor; the gate routes a maintainer
+    glance which is the right outcome regardless of the verdict label.
+
+    Same shape as the Sigma 56mm `test_reference_sigma_56_classified_low_for_precision`
+    above: a real lens with calibrated extraction whose render-match
+    precision the metric does not credit. Different cause (sister-fill
+    here vs polyline-skeleton geometric asymmetry there) but the same
+    consequence under the existing precision metric."""
     verdict = _triage_reference("samyang-85mm-f1-4-as-if-umc")
-    assert verdict.verdict == "HIGH", (
-        f"Samyang 85mm should classify HIGH; got reasons {verdict.reasons}, "
-        f"precision={verdict.render_match_precision}, iou={verdict.render_match_iou}"
+    assert verdict.verdict == "LOW"
+    assert LowReason.PRECISION_BELOW_THRESHOLD in verdict.reasons
+    # Priors don't fire on the 85mm (it's a real lens) - verify no false routing.
+    prior_codes = {r for r in verdict.reasons if r.value.startswith("prior_failed_")}
+    assert prior_codes == set(), (
+        f"Samyang 85mm should not trigger priors; got {prior_codes}"
     )
-    assert verdict.reasons == ()
 
 
 def test_reference_samyang_300_reflex_classified_low_for_flatness() -> None:
