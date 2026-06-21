@@ -133,8 +133,33 @@ class ReferenceChart:
 
     @property
     def views(self) -> tuple[ChartView, ...]:
-        """Every chart this lens publishes — primary first, then any extras."""
-        primary = ChartView(chart_path=self.chart_path, plot_box=self.plot_box)
+        """Every chart this lens publishes — primary first, then any extras.
+
+        When at least one ``additional_views`` entry sets its own
+        ``aperture`` role label (per ADR-063, the Samyang stacked-panel
+        pattern), the primary view inherits ``chart.apertures[0]`` so
+        the orchestrator emits a role-labelled artifact stem
+        (``*-mtf-max.svg``) instead of the bare stem (``*-mtf.svg``).
+        Per ADR-065 the primary and secondary filenames stay
+        symmetric (``-max`` / ``-stopped``).
+
+        Fuji's per-frequency raster views (ADR-043) do not set
+        ``aperture`` — those views are differentiated by per-frequency
+        filename, so the primary keeps its bare stem.
+        """
+        any_view_carries_aperture = any(
+            v.aperture is not None for v in self.additional_views
+        )
+        primary_aperture = (
+            self.apertures[0]
+            if any_view_carries_aperture and self.apertures
+            else None
+        )
+        primary = ChartView(
+            chart_path=self.chart_path,
+            plot_box=self.plot_box,
+            aperture=primary_aperture,
+        )
         return (primary, *self.additional_views)
 
 

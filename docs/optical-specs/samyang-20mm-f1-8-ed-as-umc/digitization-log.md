@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel — MAX
+## Panel — max
 
 - **Chart:** `docs/optical-specs/samyang-20mm-f1-8-ed-as-umc/samyang-20mm-f1-8-ed-as-umc-mtf.png`
 - **Style family:** `mainstream-4color-all-solid`
@@ -137,7 +137,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel — F8
+## Panel — stopped
 
 - **Chart:** `docs/optical-specs/samyang-20mm-f1-8-ed-as-umc/samyang-20mm-f1-8-ed-as-umc-mtf.png`
 - **Style family:** `mainstream-4color-all-solid`

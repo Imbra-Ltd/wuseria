@@ -356,20 +356,32 @@ def _render_lens_log(
 def _extract_panel(chart: ReferenceChart) -> dict[str, ExtractedChart]:
     """Extract one panel, returning per-aperture results.
 
-    For single-aperture charts (Sigma, Samyang, Tokina, Viltrox, 7Artisans,
-    Fuji), returns a dict with one entry keyed by the chart's primary
-    aperture. For multi-aperture charts (TTartisan per ADR-044), returns
-    one entry per aperture using `aperture_passes_for_view` to filter the
-    profile hues to each aperture's color subset. The map keys mirror the
-    aperture labels in `chart.ground_truth`.
+    For single-aperture charts (Sigma, Tokina, Viltrox, 7Artisans, Fuji),
+    returns a dict with one entry keyed by the chart's primary aperture.
+    For multi-aperture-per-chart charts (TTartisan per ADR-044), returns
+    one entry per aperture from the chart's single view, with profile
+    hues filtered to each aperture's color subset. For stacked-panel
+    charts (Samyang per ADR-063), iterates `chart.views` so each panel's
+    `plot_box` is used with its own per-view aperture role (per ADR-065
+    the primary view inherits `chart.apertures[0]` via `ReferenceChart.views`).
+    The map keys mirror the aperture labels in `chart.ground_truth`.
     """
-    image_path = REPO_ROOT / chart.chart_path
     plot_box = _to_plotbox(chart.plot_box)
     out: dict[str, ExtractedChart] = {}
-    for aperture, profile in aperture_passes_for_view(chart, image_path):
-        out[aperture] = extract_chart(
-            image_path, profile, plot_box, image_height_mm=chart.image_height_mm
+    for view in chart.views:
+        view_image_path = REPO_ROOT / view.chart_path
+        view_plot_box = (
+            _to_plotbox(view.plot_box) if view.plot_box is not None else plot_box
         )
+        for aperture, profile in aperture_passes_for_view(
+            chart, view_image_path, view
+        ):
+            out[aperture] = extract_chart(
+                view_image_path,
+                profile,
+                view_plot_box,
+                image_height_mm=chart.image_height_mm,
+            )
     return out
 
 
