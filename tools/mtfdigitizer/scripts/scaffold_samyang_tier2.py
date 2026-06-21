@@ -39,7 +39,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from mtfdigitizer.samyang_plotbox import (
-    SamyangBoxes,
+    SamyangBoxResult,
     detect_samyang_plotbox,
 )
 
@@ -96,7 +96,7 @@ class _ChartFile:
     slug: str
     path: Path  # relative to repo root
     image_height_mm: float
-    boxes: SamyangBoxes
+    boxes: SamyangBoxResult
 
 
 def _gather_charts() -> list[_ChartFile]:
@@ -172,12 +172,12 @@ def _format_lens_entry(c: _ChartFile) -> str:
         "        frequencies_lpmm=(10, 30),\n"
         f"        image_height_mm={c.image_height_mm},\n"
         f'        notes=(\n            "{notes}"\n        ),\n'
-        f"        plot_box={_box_repr(c.boxes.max_box)},\n"
+        f"        plot_box={_box_repr(c.boxes.plot_box)},\n"
         "        ground_truth=None,\n"
         "        additional_views=(\n"
         "            ChartView(\n"
         f'                chart_path="{chart_lit}",\n'
-        f"                plot_box={_box_repr(c.boxes.f8_box)},\n"
+        f"                plot_box={_box_repr(c.boxes.stopped_box)},\n"
         '                aperture="F8",\n'
         "            ),\n"
         "        ),\n"

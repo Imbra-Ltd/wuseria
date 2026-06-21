@@ -46,6 +46,15 @@ class TTartisanBoxResult:
     notes: tuple[str, ...]
 
 
+class TTartisanPlotBoxError(RuntimeError):
+    """Raised when a TTartisan chart's plot box cannot be detected.
+
+    Per ADR-064 every brand detector raises a brand-specific subclass
+    of RuntimeError on detection failure, so the failure mode is loud
+    and identifies the brand without parsing the message.
+    """
+
+
 # Verified-by-eye plot-box convention for the 800x600 TTartisan
 # template. The pixel auto-detection drifts ±2 px across the 19-chart
 # survey; the hand-verified constants below ship with the scaffolder
@@ -98,7 +107,7 @@ def _label_cluster_widths(gray: np.ndarray, y_bottom: int, x_max: int) -> list[i
 def _detect_scheme(widths: list[int]) -> str:
     """Classify the chart as APS-C (2 two-digit labels) or GFX (3)."""
     if len(widths) != 5:
-        raise ValueError(
+        raise TTartisanPlotBoxError(
             f"expected 5 x-axis label clusters, found {len(widths)}; "
             f"chart does not match the known TTartisan template"
         )
@@ -107,7 +116,7 @@ def _detect_scheme(widths: list[int]) -> str:
         return "aps-c"
     if two_digit == 3:
         return "gfx-or-ff"
-    raise ValueError(
+    raise TTartisanPlotBoxError(
         f"could not classify chart: {two_digit} two-digit labels in {widths}"
     )
 
