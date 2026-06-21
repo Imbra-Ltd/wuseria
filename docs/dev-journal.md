@@ -9397,3 +9397,104 @@ Theme: started S170 = #792 (digitize 20 Samyang charts), discovered two compound
 - Gitleaks CI: 9s pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 171 — Samyang multi-panel per-view aperture mechanism (#1238 step 1+2)
+
+Date: 2026-06-21 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: continued Samyang work from S170. Filed #1238 last session as the architectural blocker for closing #792 — this session shipped the mechanism (per-view aperture override) plus the two Tier 1 anchors' F8 panels with eye-read GT, leaving the scaffolder + 18 Tier 2 re-extraction for S172.
+
+#### PRs
+
+- **PR #1241 opened** (`dec3f90` on `feat/samyang-multi-panel-aperture`) — `feat(mtf): per-view aperture override + Samyang F8 anchors (ADR-063, #1238)`. 6 files: 3 code (`aperture_passes.py` + `extract.py` + `calibrate.py`) + 1 referenceset edit (`charts.py`) + 1 test fixture update + 1 new ADR. Awaiting merge.
+
+#### Issues opened / closed
+
+- **#1238 stays open** — step 1 (ChartView.aperture mechanism) and step 3a (Tier 1 anchors with GT) done; step 3b (scaffolder + 18 Tier 2 re-extraction) is next session.
+- **#792 stays open** — gated on #1238.
+- No issues closed or opened.
+
+#### Key technical findings
+
+- **Samyang's two stacked panels share one PNG with one hue palette, only the plot_box differs.** The ADR-044 hue-filtered fan-out (TTartisan) does not fit: filtering hues by aperture prefix would empty one panel's mask entirely. A second `ChartView` with its own `plot_box` is the right structural answer, but the existing pass resolver keys on `(chart, image_path)` and image_path is identical for both views — no way to disambiguate without a per-view aperture override.
+- **Calibrate had a hidden bug for multi-aperture GT on the standard path.** Pre-fix: `_calibrate_chart` called `extract_chart` ONCE on `chart.plot_box` (the MAX panel) and then iterated `chart.ground_truth.items()` — for BOTH MAX and F8 keys it compared against the same MAX-panel readings. Adding the F8 GT before the fix produced a fake "F8 freq30S med 0.366 / p95 0.423" delta that was actually `extractor(MAX 30S ~0.59 avg) vs eye-read(F8 30S ~0.96)`. Root cause: calibrate had no per-view walk for the non-`apertures_per_chart` case.
+- **Per-view fan-out is a clean parallel to ADR-044's hue-filtered fan-out — same dict shape, different driver.** Both produce `{aperture_label: ExtractedChart}`. Hue-filtered: driven by `MtfProfile.apertures_per_chart`, one extract per aperture with hues filtered. Per-view: driven by `ChartView.aperture`, one extract per view with the full profile. The two are orthogonal — no shipped profile uses both — but `_calibrate_chart` routes between them via a single `if-elif` that could unify later if needed.
+- **85mm F8 freq30S retains a p95 0.228 delta on two cells.** Same shape as ADR-062's accepted tradeoff: where dark-grey 30S sits a few pixels below pink 10M, the 10S->10M halo-subtraction ring spills onto the 30S curve and the sampler reads down to ~0.74 at positions 12.96mm and 17.28mm. Out of scope for this PR; tracked as ADR-063 follow-up.
+- **Axis-line probe confirmed both Samyang panels are 421 px tall identical templates.** Column 31 (y-axis) dark runs at `43..463` and `575..995`. Verified for both 85mm and 300mm reflex charts.
+- **300mm reflex F8 panel has no visible 30 lp/mm curves but the chart shape is "all curves at 1.0".** Eye-read GT mirrors the existing MAX panel's `(1.0,) * 11` quartet; passes calibrate with the same idealized-flat behaviour (5/11 paired for 30S/30M because the 1.0 line collides with the plot top).
+
+#### Key changes
+
+- **`tools/mtfdigitizer/referenceset/charts.py`** — extend `ChartView` with `aperture: str | None = None` (+11-line docstring on semantics). Extend `_SAMYANG_85_GT` and `_SAMYANG_300_GT` with `"F8"` keys (11 values x 4 fields each). Add `additional_views=(ChartView(..., aperture="F8"),)` to both Tier 1 anchor entries and rewrite their `notes` to document the two-panel layout.
+- **`tools/mtfdigitizer/aperture_passes.py`** — extend `aperture_passes_for_view` signature with `view: ChartView | None = None` (default keeps back-compat for legacy callers); add an early branch that returns `[(view.aperture, _apply_sm_swap_override(base, swap))]` when `view.aperture is not None`. +11 lines of docstring covering the new branch's priority over Fuji per-frequency and ADR-044 hue-filtered paths.
+- **`tools/mtfdigitizer/extract.py`** — single one-line change: `_run_view_passes` now passes `view` to `_aperture_passes_for_view`.
+- **`tools/mtfdigitizer/calibrate.py`** — add `_has_per_view_apertures(chart)` predicate (8 lines incl docstring) + `_extract_per_view_aperture_chart(chart)` walker (~30 lines incl docstring) that returns the `{aperture_label: ExtractedChart}` dict. Extend `_calibrate_chart` routing: when `_has_per_view_apertures(chart) or apertures_per_chart is not None`, dispatch to the matching extractor; reuse the same GT-walk loop. Error message updated from "apertures_per_chart" to "extracted passes" (more accurate for both shapes).
+- **`tools/mtfdigitizer/tests/test_calibrate.py`** — `test_multi_aperture_dispatch_rejects_unknown_gt_aperture` regex updated from `"apertures_per_chart"` to `"not in extracted passes"`.
+- **`docs/decisions/063-samyang-multi-panel-aperture.md`** — new ADR (~160 lines). 4 rejected alternatives (add to `apertures_per_chart` / encode in image_path / match by image_path / bolt onto PlotBoxCoords), ASCII diagram of the two-view-per-chart layout, mechanism comparison table vs ADR-044, "Scope this ADR does NOT cover" naming the scaffolder + 18 Tier 2 re-extraction + the render-match precision metric limitation.
+
+#### Calibration impact
+
+| Metric                      | S170    | S171                                            |
+| --------------------------- | ------- | ----------------------------------------------- |
+| Aggregate p95 \|d\|         | 0.0466  | **0.0463**                                      |
+| Aggregate in-band (+/-0.05) | 95.9%   | **96.0%**                                       |
+| Aggregate paired            | 810     | **872** (+62 F8 cells)                          |
+| Aggregate median \|d\|      | 0.0057  | 0.0066                                          |
+| Aggregate max \|d\|         | 0.1217  | 0.2265 (the two 85mm F8 freq30S dropouts)       |
+| 85mm F8 freq10S/10M p95     | n/a     | **0.023 / 0.016** (new)                         |
+| 85mm F8 freq30S/30M p95     | n/a     | **0.228 / 0.055** (new; 30S two-cell halo)      |
+| 300mm reflex F8 all fields  | n/a     | **within 0.016 p95** (new)                      |
+| MAX-panel deltas            | -       | unchanged (mechanism is per-view-additive only) |
+| mtfdigitizer pytest         | 389/389 | **389/389** (1 fixture regex updated)           |
+
+#### Verification
+
+- `py -m mtfdigitizer.calibrate` — aggregate p95 0.0466->0.0463, in-band 95.9%->96.0%, paired 810->872.
+- `py -m pytest mtfdigitizer/tests/` — 389 passed.
+- `npm run validate` — green (lint + format + check + test + build + link check).
+- Per-view extractor sanity check: ran `extract_chart` directly on the F8 view of 85mm to confirm the readings match the eye-read GT (within 0.05 on 9/11 freq30S cells); diagnosed the calibrate-side bug from the divergence between direct extract and calibrate output.
+- Pixel-level HSV probe on 85mm F8 panel columns x=100/200/300/400 confirmed the four-curve y-positions match GT eye-read (dark-grey 30S at y~591, light-grey 30M at y~639-700 depending on column).
+
+#### Key decisions (this session)
+
+- **Per-view aperture lives on `ChartView`, not on `PlotBoxCoords` or `image_path`.** Aperture is an orchestrator concern (which pass label this panel emits at), not a coordinate or a path-derived property. Keeping it on the same struct as `plot_box` means "this panel" and "this panel's aperture" travel together — the natural unit. Alternative (`image_path`-derived matching) is structurally impossible for same-PNG multi-panel.
+- **Calibrate uses a separate per-view extractor function rather than overloading `_extract_multi_aperture_chart`.** Both return the same shape but the input mechanics differ (one walks profile.apertures + hue-filters, the other walks chart.views + applies sm-swap). YAGNI-justified split — unify if a third dispatch arrives.
+- **Default `aperture_passes_for_view`'s new `view` arg to None.** Legacy callers (autotriage, diagnose, log, review, svg) keep working without churn; only the orchestrator (extract.py) passes `view` explicitly. The orchestrator is the only caller that walks multi-view today.
+- **Eye-read F8 panel GT against the 0.1 OTF gridlines directly from the chart image** rather than waiting for a separate maintainer pass. The chart's two-panel template renders both panels at the same x-scale and the legend is shared, so the eye-read is no harder than a MAX-panel read. Documented under "Verification" above so the next maintainer can re-check.
+
+#### Process patterns observed this session
+
+- **Run the extractor on the new view directly before trusting calibrate's delta report.** Initial calibrate output showed F8 freq30S med 0.366 — almost concluded "the GT is wrong". A 20-line one-shot script (load chart, build pass, call extract_chart, print readings) instead showed the extractor reading 0.95-0.97 across the F8 panel. That made the bug "calibrate uses the wrong plot_box per aperture key" obvious in 2 minutes. The probe -> diagnosis -> fix path was faster than re-reading the GT eye-read for errors.
+- **The S168/S169 "always check what the layer below does with the fix's output" pattern is becoming a session habit.** Last session it was sister fallback fighting the trim's None; this session it was calibrate's GT loop fighting the new per-view dispatch. Both times the surfaced symptom was downstream of the fix, and both times the diagnosis required understanding the layer's existing behaviour on the new input shape before declaring the fix correct.
+- **Visual chart eye-reads against axis gridlines are fast and accurate enough for Tier 1 GT when the chart's gridline pitch matches the precision target.** 0.1 OTF gridlines x 11 sample fractions = ~44 reads per panel, ~5 minutes per panel, +/-0.02 precision per value. Beats waiting for an automated tool to re-derive what's visually unambiguous.
+
+#### Follow-ups for next session (S172)
+
+- **#1238 step 3 (scaffolder + 18 Tier 2 re-extraction)** — write `scaffold_samyang_tier2.py`, eye-read `_APERTURES_BY_SLUG` (max per-lens, stopped="F8" universally per S170), emit `_samyang_tier2_charts.py`, run `extract --all --accept` per ADR-041 cohort flow, user-glance per batch. This closes both #1238 and #792.
+- **Stale Tokina digitization-logs** (4 Tokina + 1 ttartisan-af-35) — still deferred from S170. Small `--regen` PR.
+- **85mm F8 freq30S two-cell dropout** (positions 12.96mm + 17.28mm) — investigate whether ADR-059/062 halo-subtraction ring radius can be reduced where 30S and 30M sit within a few pixels of 10M without losing the existing coverage. ADR-063 lists this as out-of-scope follow-up.
+- **#1134 (P1, Backlog)** — confidence badge. Still deferred.
+- **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050).
+- **#950 (P2, v0.8.0)** — auto-detect plot box.
+- **10 Dependabot PRs** from S169 weekly update still open; bulk-merge candidate if CI green on each.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone, **23 open / 73 closed** before #1241 lands).
+- Epic #790 (digitize all brands): 4/24 done (unchanged).
+- `REFERENCE_CHARTS` = 103 entries (unchanged count; 2 extended with F8 additional_views).
+- **5 Tier 1 anchors** (unchanged count; 2 now multi-panel).
+- Aggregate calibration: **872 paired, median \|d\| 0.0066, p95 \|d\| 0.0463, in-band 96.0%, max \|d\| 0.2265**.
+- **389 mtfdigitizer pytest pass** (unchanged count; 1 fixture regex updated). **223 vitest pass.**
+- **63 ADRs** (was 62 — +1 ADR-063).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1238 (in progress) + #1134 + #1135 + #1110 + #1159 + #950 + epics #790, #932** + 19 P3 brand-digitization tasks (#792 stays open pending #1238).
+- **1 open PR (#1241 from this session). 10 stale Dependabot PRs** (carried from S169).
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
+- Stale digitization logs: **4 Tokina + 1 ttartisan-af-35** (carried from S170).
+- Stale `referenceset/readings/*.md` panels: **0** (unchanged).
+- Gitleaks CI: 9s pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
