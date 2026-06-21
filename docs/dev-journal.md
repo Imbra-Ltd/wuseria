@@ -9594,6 +9594,95 @@ Theme: closed the remaining acceptance criteria on #1238 — wrote `scaffold_sam
 - 8 declared MTF profiles (unchanged).
 - v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + epics #790, #932** + remaining P3 brand-digitization tasks.
 - **1 open PR (this session's). 10 stale Dependabot PRs** (carried from S169).
+
+---
+
+### Session 173 — Dependabot weekly triage: 9 of 10 bumps landed
+
+Date: 2026-06-21 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: triage and merge the 10 Dependabot weekly bumps carried from S169. 8 minor/patch bumps green on first try; the unicorn 65 → 68 major was a no-op for our config (only `prevent-abbreviations` was renamed and we don't use it); the @types/node 25 → 26 major was type-only and CI built clean. The sonarjs 4.0.3 → 4.1.0 bump's new `prefer-specific-assertions` rule flagged 8 generic `expect(x.length).toBe(N)` assertions across 3 test files — a small forward-compatible fix-PR (#1243) unblocked the bump.
+
+#### PRs
+
+- **#1227** — `actions/checkout` 6 → 7. Merged.
+- **#1228** — `vitest` 4.1.8 → 4.1.9. Merged.
+- **#1229** — `@vitest/coverage-v8` 4.1.8 → 4.1.9. Merged.
+- **#1230** — `typescript-eslint` 8.61.0 → 8.61.1. Merged (after Dependabot rebase against sibling merges).
+- **#1232** — `eslint-plugin-unicorn` 65.0.1 → 68.0.0 (major). Merged. Breaking change = rename of `prevent-abbreviations` to `name-replacements`; not enabled in our config. ~37 new rules also not enabled.
+- **#1234** — `astro` 6.4.6 → 6.4.8. Merged.
+- **#1235** — `eslint-plugin-react-refresh` 0.5.2 → 0.5.3. Merged.
+- **#1236** — `@types/node` 25.9.3 → 26.0.0 (major). Merged. Type-only; CI build clean.
+- **#1233** — `@vitest/ui` 4.1.8 → 4.1.9. **Auto-closed by Dependabot** — superseded once #1228 + #1229 landed (peer-dep resolved 4.1.9 transitively).
+- **#1243** (new) — `test: use toHaveLength over generic toBe length checks (#1231)`. 3 files, 8 lines. Forward-compatible (works on sonarjs 4.0.3 and 4.1.0). Merged.
+- **#1231** — `eslint-plugin-sonarjs` 4.0.3 → 4.1.0. Merged after rebase against new main containing #1243.
+
+#### Issues opened / closed
+
+- No issues opened or closed. Triage session.
+
+#### Key technical findings
+
+- **`prefer-specific-assertions` (new sonarjs 4.1.0 rule).** Flags `expect(x.length).toBe(N)` in favor of `expect(x).toHaveLength(N)`. Output is more informative when the assertion fails (shows actual vs expected length, not just a truthy comparison), and the rule is forward-compatible — `.toHaveLength()` works on 4.0.3 too. 8 occurrences across `GenreGuide.test.tsx` (1), `lens-content.test.ts` (6), `scoring.test.ts` (1). Grep `\.length\)\.toBe\(` confirmed no other occurrences slipped through.
+- **`@vitest/ui` auto-closed when peer was upgraded.** Once `vitest` and `@vitest/coverage-v8` both landed at 4.1.9, the npm lockfile resolved `@vitest/ui` to 4.1.9 transitively. Dependabot detected the superseded state and closed #1233 unmerged. Saves a no-op merge; the package.json `"^4.1.7"` range absorbed the bump.
+- **Sibling Dependabot PR merge order forces rebases.** Each squash-merge bumps `package-lock.json`, conflicting every other open PR with a lockfile change. Of 9 attempted merges, 6 went through cleanly (4 before the conflict cascade + 2 unaffected workflow files), and 2 needed `@dependabot rebase` triggers (#1230, #1233). Pattern: merge first, then trigger rebase on next conflicted, wait for CI, repeat.
+- **Branch policy blocks merge until aggregate `gate` check reports.** Even with all 7 sub-checks SUCCESS, the `gate` job runs an `if [[ "$build" == "failure" || "$lighthouse" == "failure" ]]` aggregator and lands a few seconds later. Trying `gh pr merge` in between returns `the base branch policy prohibits the merge` — easy to mis-read as a real block, but the fix is just to wait. Caused one false-fail in the merge waiter.
+
+#### Key changes
+
+- **`src/components/interactive/GenreGuide/GenreGuide.test.tsx`** — `expect(pips.length).toBe(5)` → `expect(pips).toHaveLength(5)` (1 line).
+- **`src/utils/lens-content.test.ts`** — 6 occurrences of `expect(x.length).toBe(N)` → `expect(x).toHaveLength(N)`.
+- **`src/utils/scoring.test.ts`** — `expect(Object.keys(marks).length).toBe(0)` → `expect(Object.keys(marks)).toHaveLength(0)` (1 line).
+- No production code changed. No data changed. Calibration unaffected.
+
+#### Verification
+
+- `npm run validate` on the fix branch — lint + format + check + test + build all pass (under sonarjs 4.0.3; rule lives on `recommended` config in 4.1.0 too).
+- Grep `\.length\)\.toBe\(` across `src/` — 0 remaining occurrences.
+- CI on #1243 — gate SUCCESS after lighthouse landed.
+
+#### Key decisions (this session)
+
+- **Fix-PR first, rebase the bump second.** Two paths considered: (a) ship the fix on its own PR to main, then `@dependabot rebase` #1231 against the new main so it goes green; (b) push the fix onto Dependabot's branch directly. Picked (a) — keeps the bump as Dependabot's own commit (clean history, future-Dependabot can recreate it without surprise), and the fix-PR has its own reviewable diff with a meaningful commit message.
+- **Batch the 8 green bumps in parallel before merging the conflicted ones.** Tried 3 simultaneous `gh pr merge` calls — two succeeded, the third lost the race on lockfile and needed a rebase. Faster than strict serial, and the rebase-on-conflict cost is bounded (1 cycle per affected PR).
+- **No `--auto` flag, per project convention.** `feedback_ask_before_automerge` is durable — every merge in this session was a manual `gh pr merge --squash --delete-branch` after CI green, surfaced to the user before each kick-off.
+
+#### Process patterns observed this session
+
+- **`gh pr checks <N>` is the fast triage path.** Listing the 7-check rollup per PR in a single loop surfaced the one failing PR (#1231) immediately, and the failure type (`build` → ESLint) was visible without opening the run page. Faster than reading the GitHub UI per-PR.
+- **Background waiters scale better than polling.** Used `run_in_background` for the four `until ... mergeable ...` loops. Notifications fire on completion; main loop stayed responsive to user direction. The two stale waiters from early in the session (`bnsv03tm8` for #1230's pre-rebase CI, `b35op27nc` for #1233 mergeable) became harmless after Dependabot rebased / closed those PRs — they'd just spin in their `until` condition and time out at the 5-minute clamp.
+- **Forward-compatible fixes ship in any order.** Since `.toHaveLength()` is a vitest API and not gated by the sonarjs version, the fix-PR could land on main independent of #1231 staying open. Decouples the merge sequence; #1231 becomes a pure lockfile-only PR once it rebases.
+
+#### Follow-ups for next session (S174)
+
+- **Carried from S172**:
+  - Stale Tokina digitization-logs (4 Tokina + 1 ttartisan-af-35) — small `--regen` PR.
+  - 85mm F8 freq30S two-cell dropout (positions 12.96mm + 17.28mm) — ADR-059/062 halo-subtraction ring radius reduction.
+  - **#1134 (P1, Backlog)** — confidence badge.
+  - **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050).
+  - **#950 (P2, v0.8.0)** — auto-detect plot box (Samyang now adds a 3rd auto-detector after Fuji and TTartisan; pattern worth extracting?).
+  - **Next brand in epic #790** — 5/24 done. Pick by chart-style-family-coverage gap.
+- **New from S173**:
+  - None — all 10 Dependabot bumps resolved (9 merged + 1 auto-closed superseded), fix-PR #1243 merged, sonarjs 4.1.0 in place.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone, ~21 open / 75 closed — unchanged; no issues touched this session).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **872 paired, median \|d\| 0.0066, p95 \|d\| 0.0463, in-band 96.0%, max \|d\| 0.2265** (unchanged).
+- **389 mtfdigitizer pytest pass** (unchanged). **223 vitest pass** (unchanged, assertion form swap only).
+- **63 ADRs** (unchanged).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + epics #790, #932** + remaining P3 brand-digitization tasks.
+- **0 open PRs** at wrap-up (Dependabot queue fully drained).
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
+- Stale digitization logs: **4 Tokina + 1 ttartisan-af-35** (carried).
+- Stale `referenceset/readings/*.md` panels: **0** (unchanged).
+- Gitleaks CI: 9s pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
 - `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
 - Stale digitization logs: **4 Tokina + 1 ttartisan-af-35** (carried).
 - Stale `referenceset/readings/*.md` panels: **0** (unchanged).
