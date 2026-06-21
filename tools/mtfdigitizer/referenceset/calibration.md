@@ -18,8 +18,8 @@ declared profile in `profiles/declared.py`.
 | Chart                                     | Style family                    | Profile used                          |
 | ----------------------------------------- | ------------------------------- | ------------------------------------- |
 | sigma-56mm-f1-4-dc-dn-c                   | mainstream-2color-solid-dashed  | SIGMA_2COLOR_SOLID_DASHED             |
-| samyang-85mm-f1-4-as-if-umc (MAX)         | mainstream-4color-all-solid     | SAMYANG_4COLOR_ALL_SOLID              |
-| samyang-300mm-f6-3-ed-umc-cs-reflex (MAX) | idealized-flat                  | SAMYANG_4COLOR_ALL_SOLID              |
+| samyang-85mm-f1-4-as-if-umc (max)         | mainstream-4color-all-solid     | SAMYANG_4COLOR_ALL_SOLID              |
+| samyang-300mm-f6-3-ed-umc-cs-reflex (max) | idealized-flat                  | SAMYANG_4COLOR_ALL_SOLID              |
 | 7artisans-50mm-f1-2-mark-ii               | samecolor-dashed-sm             | SEVENARTISANS_2COLOR_SAMECOLOR_DASHED |
 | tokina-atx-m-23mm-f1-4-x                  | 2color-frequency                | TOKINA_2COLOR_FREQUENCY               |
 | viltrox-af-75mm-f1-2-pro (f/1.2)          | bw-dashed-promo                 | VILTROX_BW_DASHED_F12                 |

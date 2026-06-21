@@ -17,8 +17,8 @@ hand-measured plot box.
 | Chart                                     | Style family                    | Profile used              |
 | ----------------------------------------- | ------------------------------- | ------------------------- |
 | sigma-56mm-f1-4-dc-dn-c                   | mainstream-2color-solid-dashed  | SIGMA_2COLOR_SOLID_DASHED |
-| samyang-85mm-f1-4-as-if-umc (MAX)         | mainstream-4color-all-solid     | SAMYANG_4COLOR_ALL_SOLID  |
-| samyang-300mm-f6-3-ed-umc-cs-reflex (MAX) | idealized-flat                  | SAMYANG_4COLOR_ALL_SOLID  |
+| samyang-85mm-f1-4-as-if-umc (max)         | mainstream-4color-all-solid     | SAMYANG_4COLOR_ALL_SOLID  |
+| samyang-300mm-f6-3-ed-umc-cs-reflex (max) | idealized-flat                  | SAMYANG_4COLOR_ALL_SOLID  |
 
 ## How to reproduce
 
@@ -73,7 +73,7 @@ total violations:         3
 ### 1. Clean separation across the three charts
 
 The three runnable reference charts split exactly as REFERENCE_SET.md
-predicted: the two real-lens charts (Sigma 56mm, Samyang 85mm MAX) clear
+predicted: the two real-lens charts (Sigma 56mm, Samyang 85mm max) clear
 all four priors, and the idealized-flat Samyang 300mm reflex fires the
 flatness prior. No tuning was needed to produce this — the starting
 thresholds (mean ≥ 0.95 AND stdev ≤ 0.02) hit on the first run.

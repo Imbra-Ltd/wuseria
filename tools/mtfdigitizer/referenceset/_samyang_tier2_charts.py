@@ -20,11 +20,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-100mm-f2-8-ed-umc-macro",
         chart_path="docs/optical-specs/samyang-100mm-f2-8-ed-umc-macro/samyang-100mm-f2-8-ed-umc-macro-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=21.6,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -32,7 +32,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-100mm-f2-8-ed-umc-macro/samyang-100mm-f2-8-ed-umc-macro-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -40,11 +40,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-10mm-f2-8-ed-as-ncs-cs",
         chart_path="docs/optical-specs/samyang-10mm-f2-8-ed-as-ncs-cs/samyang-10mm-f2-8-ed-as-ncs-cs-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -52,7 +52,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-10mm-f2-8-ed-as-ncs-cs/samyang-10mm-f2-8-ed-as-ncs-cs-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -60,11 +60,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-12mm-f2-0-ncs-cs",
         chart_path="docs/optical-specs/samyang-12mm-f2-0-ncs-cs/samyang-12mm-f2-0-ncs-cs-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -72,7 +72,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-12mm-f2-0-ncs-cs/samyang-12mm-f2-0-ncs-cs-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -80,11 +80,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-12mm-f2-8-ed-as-ncs-fish-eye",
         chart_path="docs/optical-specs/samyang-12mm-f2-8-ed-as-ncs-fish-eye/samyang-12mm-f2-8-ed-as-ncs-fish-eye-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -92,7 +92,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-12mm-f2-8-ed-as-ncs-fish-eye/samyang-12mm-f2-8-ed-as-ncs-fish-eye-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -100,11 +100,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-135mm-f2-0-ed-umc",
         chart_path="docs/optical-specs/samyang-135mm-f2-0-ed-umc/samyang-135mm-f2-0-ed-umc-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=21.6,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -112,7 +112,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-135mm-f2-0-ed-umc/samyang-135mm-f2-0-ed-umc-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -120,11 +120,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-14mm-f2-8-ed-as-if-umc",
         chart_path="docs/optical-specs/samyang-14mm-f2-8-ed-as-if-umc/samyang-14mm-f2-8-ed-as-if-umc-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=21.6,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -132,7 +132,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-14mm-f2-8-ed-as-if-umc/samyang-14mm-f2-8-ed-as-if-umc-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -140,11 +140,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-16mm-f2-0-ed-as-umc-cs",
         chart_path="docs/optical-specs/samyang-16mm-f2-0-ed-as-umc-cs/samyang-16mm-f2-0-ed-as-umc-cs-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -152,7 +152,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-16mm-f2-0-ed-as-umc-cs/samyang-16mm-f2-0-ed-as-umc-cs-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -160,11 +160,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-20mm-f1-8-ed-as-umc",
         chart_path="docs/optical-specs/samyang-20mm-f1-8-ed-as-umc/samyang-20mm-f1-8-ed-as-umc-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=21.6,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -172,7 +172,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-20mm-f1-8-ed-as-umc/samyang-20mm-f1-8-ed-as-umc-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -180,11 +180,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-21mm-f1-4-ed-as-umc-cs",
         chart_path="docs/optical-specs/samyang-21mm-f1-4-ed-as-umc-cs/samyang-21mm-f1-4-ed-as-umc-cs-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -192,7 +192,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-21mm-f1-4-ed-as-umc-cs/samyang-21mm-f1-4-ed-as-umc-cs-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -200,11 +200,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-35mm-f1-2-ed-as-umc-cs",
         chart_path="docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/samyang-35mm-f1-2-ed-as-umc-cs-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -212,7 +212,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-35mm-f1-2-ed-as-umc-cs/samyang-35mm-f1-2-ed-as-umc-cs-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -220,11 +220,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-35mm-f1-4-as-umc",
         chart_path="docs/optical-specs/samyang-35mm-f1-4-as-umc/samyang-35mm-f1-4-as-umc-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=21.6,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -232,7 +232,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-35mm-f1-4-as-umc/samyang-35mm-f1-4-as-umc-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -240,11 +240,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-50mm-f1-2-as-umc-cs",
         chart_path="docs/optical-specs/samyang-50mm-f1-2-as-umc-cs/samyang-50mm-f1-2-as-umc-cs-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -252,7 +252,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-50mm-f1-2-as-umc-cs/samyang-50mm-f1-2-as-umc-cs-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -260,11 +260,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-50mm-f1-4-as-umc",
         chart_path="docs/optical-specs/samyang-50mm-f1-4-as-umc/samyang-50mm-f1-4-as-umc-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=21.6,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=36, x_right=466, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -272,7 +272,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-50mm-f1-4-as-umc/samyang-50mm-f1-4-as-umc-mtf.png",
                 plot_box=PlotBoxCoords(x_left=36, x_right=466, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -280,11 +280,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-8mm-f2-8-ed-as-if-umc-fisheye",
         chart_path="docs/optical-specs/samyang-8mm-f2-8-ed-as-if-umc-fisheye/samyang-8mm-f2-8-ed-as-if-umc-fisheye-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -292,7 +292,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-8mm-f2-8-ed-as-if-umc-fisheye/samyang-8mm-f2-8-ed-as-if-umc-fisheye-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -300,11 +300,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-8mm-f3-5-aspherical-if-mc-fish-eye",
         chart_path="docs/optical-specs/samyang-8mm-f3-5-aspherical-if-mc-fish-eye/samyang-8mm-f3-5-aspherical-if-mc-fish-eye-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -312,7 +312,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-8mm-f3-5-aspherical-if-mc-fish-eye/samyang-8mm-f3-5-aspherical-if-mc-fish-eye-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -320,11 +320,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-af-12mm-f2-0",
         chart_path="docs/optical-specs/samyang-af-12mm-f2-0/samyang-af-12mm-f2-0-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=432, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -332,7 +332,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-af-12mm-f2-0/samyang-af-12mm-f2-0-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=432, y_top=570, y_bottom=990),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -340,11 +340,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-af-75mm-f1-8",
         chart_path="docs/optical-specs/samyang-af-75mm-f1-8/samyang-af-75mm-f1-8-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.2,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 14.2 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=67, x_right=477, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -352,7 +352,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-af-75mm-f1-8/samyang-af-75mm-f1-8-mtf.png",
                 plot_box=PlotBoxCoords(x_left=67, x_right=477, y_top=570, y_bottom=990),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -360,11 +360,11 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-tiltshift-24mm-f3-5-ed-as-umc",
         chart_path="docs/optical-specs/samyang-tiltshift-24mm-f3-5-ed-as-umc/samyang-tiltshift-24mm-f3-5-ed-as-umc-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=21.6,
         notes=(
-            "Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel chart: MAX panel on top, F8 panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits MAX + F8 artifacts per pass."
+            "Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang two-panel chart: max panel on top, stopped panel below, both sharing the same x-axis (image height 21.6 mm). Plot boxes auto-detected by `samyang_plotbox.detect_samyang_plotbox`; per-view aperture override emits max + stopped artifacts per pass."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=None,
@@ -372,7 +372,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-tiltshift-24mm-f3-5-ed-as-umc/samyang-tiltshift-24mm-f3-5-ed-as-umc-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),

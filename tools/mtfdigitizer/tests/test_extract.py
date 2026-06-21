@@ -146,21 +146,21 @@ def test_is_tier2_requires_plot_box_and_no_ground_truth():
     """Tier 2 = `plot_box is not None and ground_truth is None`."""
     tier1 = ReferenceChart(
         slug="fake", chart_path="x.png", style_family="x",
-        apertures=("MAX",), frequencies_lpmm=(10, 30),
+        apertures=("max",), frequencies_lpmm=(10, 30),
         image_height_mm=14.0, notes="",
         plot_box=PlotBoxCoords(x_left=0, x_right=10, y_top=0, y_bottom=10),
-        ground_truth={"MAX": {"contrast10S": (None,) * 11}},
+        ground_truth={"max": {"contrast10S": (None,) * 11}},
     )
     tier2 = ReferenceChart(
         slug="fake", chart_path="x.png", style_family="x",
-        apertures=("MAX",), frequencies_lpmm=(10, 30),
+        apertures=("max",), frequencies_lpmm=(10, 30),
         image_height_mm=14.0, notes="",
         plot_box=PlotBoxCoords(x_left=0, x_right=10, y_top=0, y_bottom=10),
         ground_truth=None,
     )
     unscoped = ReferenceChart(
         slug="fake", chart_path="x.png", style_family="x",
-        apertures=("MAX",), frequencies_lpmm=(10, 30),
+        apertures=("max",), frequencies_lpmm=(10, 30),
         image_height_mm=14.0, notes="",
         plot_box=None, ground_truth=None,
     )
@@ -189,7 +189,7 @@ def test_resolve_view_image_prefers_diffraction_when_present(tmp_path):
     chart = ReferenceChart(
         slug="fake-slug",
         chart_path=str(legacy.relative_to(tmp_path)).replace("\\", "/"),
-        style_family="x", apertures=("MAX",), frequencies_lpmm=(10, 30),
+        style_family="x", apertures=("max",), frequencies_lpmm=(10, 30),
         image_height_mm=14.0, notes="",
         plot_box=PlotBoxCoords(x_left=0, x_right=10, y_top=0, y_bottom=10),
     )
@@ -216,7 +216,7 @@ def test_resolve_view_image_falls_back_to_legacy(tmp_path):
     chart = ReferenceChart(
         slug="fake-slug",
         chart_path=str(legacy.relative_to(tmp_path)).replace("\\", "/"),
-        style_family="x", apertures=("MAX",), frequencies_lpmm=(10, 30),
+        style_family="x", apertures=("max",), frequencies_lpmm=(10, 30),
         image_height_mm=14.0, notes="",
         plot_box=PlotBoxCoords(x_left=0, x_right=10, y_top=0, y_bottom=10),
     )
@@ -252,7 +252,7 @@ def test_resolve_view_image_additional_view_skips_canonical_probe(tmp_path):
     chart = ReferenceChart(
         slug="fake-slug",
         chart_path=str(primary.relative_to(tmp_path)).replace("\\", "/"),
-        style_family="x", apertures=("MAX",), frequencies_lpmm=(10, 30),
+        style_family="x", apertures=("max",), frequencies_lpmm=(10, 30),
         image_height_mm=14.0, notes="",
         plot_box=PlotBoxCoords(x_left=0, x_right=10, y_top=0, y_bottom=10),
         additional_views=(

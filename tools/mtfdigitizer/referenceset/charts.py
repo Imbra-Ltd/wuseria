@@ -78,11 +78,12 @@ class ChartView:
 
     `aperture` overrides the pass aperture label for this view, used for
     chart families that pack multiple apertures into stacked panels
-    sharing one PNG (Samyang: MAX panel on top, F8 panel below). The
+    sharing one PNG (Samyang: max panel on top, stopped panel below). The
     view's plot_box selects the panel; `aperture` tells the orchestrator
-    which f-stop the readings belong to. None means default behavior:
-    profile-level `apertures_per_chart` fan-out for hue-filtered dual
-    aperture (TTartisan, ADR-044), or `chart.apertures[0]` for
+    which role label (per ADR-065: "max" / "stopped") the readings belong
+    to. None means default behavior: profile-level `apertures_per_chart`
+    fan-out for hue-filtered dual aperture (TTartisan, ADR-044), or
+    `chart.apertures[0]` for
     single-aperture views.
     """
 
@@ -163,7 +164,7 @@ _SIGMA_56_GT: GroundTruthCurves = {
 # F8 panel:  bottom of chart (y_top=575, y_bottom=995). Stops down to f/8 per the
 # panel label; eye-read against the chart's 0.1 OTF gridlines (#1238).
 _SAMYANG_85_GT: GroundTruthCurves = {
-    "MAX": {
+    "max": {
         # Dark red — 10S — flat near top, sharp knee past 17mm
         "freq10S": (0.91, 0.92, 0.93, 0.94, 0.94, 0.94, 0.94, 0.93, 0.91, 0.86, 0.78),
         # Pink — 10M — similar to 10S but holds at edge
@@ -173,7 +174,7 @@ _SAMYANG_85_GT: GroundTruthCurves = {
         # Light grey — 30M — near-linear drop
         "freq30M": (0.70, 0.67, 0.66, 0.64, 0.62, 0.61, 0.60, 0.59, 0.58, 0.57, 0.57),
     },
-    "F8": {
+    "stopped": {
         # Dark red — 10S — flat at ~1.0 across, slight dip at far edge
         "freq10S": (1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.99, 0.99),
         # Pink — 10M — flat ~0.98, dips at the far right
@@ -192,13 +193,13 @@ _SAMYANG_85_GT: GroundTruthCurves = {
 # set is the plausibility prior, not a render-match test — every extractor
 # scores this chart well by IoU and that's the bug the prior catches.
 _SAMYANG_300_GT: GroundTruthCurves = {
-    "MAX": {
+    "max": {
         "freq10S": (1.0,) * 11,
         "freq10M": (1.0,) * 11,
         "freq30S": (1.0,) * 11,
         "freq30M": (1.0,) * 11,
     },
-    "F8": {
+    "stopped": {
         "freq10S": (1.0,) * 11,
         "freq10M": (1.0,) * 11,
         "freq30S": (1.0,) * 11,
@@ -787,16 +788,16 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-85mm-f1-4-as-if-umc",
         chart_path="docs/optical-specs/samyang-85mm-f1-4-as-if-umc/samyang-85mm-f1-4-as-if-umc-mtf.png",
         style_family="mainstream-4color-all-solid",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=21.6,
         notes=(
-            "two stacked panels; MAX shows S/M divergence at edges, F8 "
-            "mostly recovers except 30M edge dip. Per-view aperture "
-            "override (#1238, ADR-063): primary view = MAX panel "
-            "(top, y 43..463), additional view = F8 panel (bottom, "
+            "two stacked panels; max shows S/M divergence at edges, "
+            "stopped (f/8) mostly recovers except 30M edge dip. Per-view "
+            "aperture override (#1238, ADR-063): primary view = max panel "
+            "(top, y 43..463), additional view = stopped panel (bottom, "
             "y 575..995). Both panels share the same x range (31..461) "
-            "and the same image height (21.6 mm)."
+            "and the same image height (21.6 mm). Role labels per ADR-065."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=_SAMYANG_85_GT,
@@ -804,7 +805,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-85mm-f1-4-as-if-umc/samyang-85mm-f1-4-as-if-umc-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
@@ -812,14 +813,15 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         slug="samyang-300mm-f6-3-ed-umc-cs-reflex",
         chart_path="docs/optical-specs/samyang-300mm-f6-3-ed-umc-cs-reflex/samyang-300mm-f6-3-ed-umc-cs-reflex-mtf.png",
         style_family="idealized-flat",
-        apertures=("MAX", "F8"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 30),
         image_height_mm=14.0,
         notes=(
             "ALL curves pinned at ~1.0 across both apertures; the flat-"
             "axis blind-spot probe case. Same two-panel template as the "
-            "85mm (MAX at y 43..463, F8 at y 575..995, identical x "
-            "range). Per-view aperture override (#1238, ADR-063)."
+            "85mm (max at y 43..463, stopped at y 575..995, identical x "
+            "range). Per-view aperture override (#1238, ADR-063). Role "
+            "labels per ADR-065."
         ),
         plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=43, y_bottom=463),
         ground_truth=_SAMYANG_300_GT,
@@ -827,7 +829,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
             ChartView(
                 chart_path="docs/optical-specs/samyang-300mm-f6-3-ed-umc-cs-reflex/samyang-300mm-f6-3-ed-umc-cs-reflex-mtf.png",
                 plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
-                aperture="F8",
+                aperture="stopped",
             ),
         ),
     ),
