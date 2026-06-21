@@ -45,3 +45,12 @@ def load_chart_bgr(image_path: str | Path) -> np.ndarray:
 def load_chart_hsv(image_path: str | Path) -> np.ndarray:
     """Load an MTF chart as HSV (after alpha composite)."""
     return cv2.cvtColor(load_chart_bgr(image_path), cv2.COLOR_BGR2HSV)
+
+
+def load_chart_gray(image_path: str | Path) -> np.ndarray:
+    """Load an MTF chart as a single-channel grayscale array.
+
+    Composites alpha onto white via load_chart_bgr first so transparent
+    PNG backgrounds become white (not black) under conversion.
+    """
+    return cv2.cvtColor(load_chart_bgr(image_path), cv2.COLOR_BGR2GRAY)
