@@ -51,8 +51,14 @@ _F8_TOP_BAND = (570, 585)
 
 
 @dataclass(frozen=True)
-class SamyangBoxes:
+class SamyangBoxResult:
     """Detected plot-box coordinates for both Samyang panels.
+
+    Naming follows ADR-064: the primary panel is ``plot_box``; the
+    secondary panel is ``stopped_box`` (role-based, not f-stop-based).
+    The aperture label for the stopped panel ("F8" today) is supplied
+    by the scaffolder via ``ChartView.aperture`` per ADR-063 — this
+    detector intentionally does not bake the f-number into a field name.
 
     Coordinates use the same convention as the S171 Tier 1 anchors:
     ``y_top`` is the outer plot-rectangle top edge (where the chart's
@@ -60,8 +66,8 @@ class SamyangBoxes:
     gridline row. All coordinates are pixel positions in the source PNG.
     """
 
-    max_box: tuple[int, int, int, int]  # (x_left, x_right, y_top, y_bottom)
-    f8_box: tuple[int, int, int, int]
+    plot_box: tuple[int, int, int, int]  # (x_left, x_right, y_top, y_bottom)
+    stopped_box: tuple[int, int, int, int]
     image_size: tuple[int, int]  # (width, height) of the source PNG
 
 
@@ -96,9 +102,11 @@ def _find_axis_top(
     return int(hits[0] + y_lo)
 
 
-def detect_samyang_plotbox(chart_path: Path) -> SamyangBoxes:
+def detect_samyang_plotbox(chart_path: Path) -> SamyangBoxResult:
     """Detect the MAX and F8 plot boxes for one Samyang chart image.
 
+    Returns ``SamyangBoxResult`` with ``plot_box`` for the primary
+    (MAX-aperture) panel and ``stopped_box`` for the secondary panel.
     Raises ``SamyangPlotBoxError`` if any required signal is missing.
     """
     with Image.open(chart_path) as raw:
@@ -139,10 +147,10 @@ def detect_samyang_plotbox(chart_path: Path) -> SamyangBoxes:
             f"max_top={max_top}, f8_top={f8_top} on column x={x_left}"
         )
 
-    max_box = (x_left, x_right, max_top, max_bot)
-    f8_box = (x_left, x_right, f8_top, f8_bot)
-    return SamyangBoxes(
-        max_box=max_box,
-        f8_box=f8_box,
+    plot_box = (x_left, x_right, max_top, max_bot)
+    stopped_box = (x_left, x_right, f8_top, f8_bot)
+    return SamyangBoxResult(
+        plot_box=plot_box,
+        stopped_box=stopped_box,
         image_size=(width, height),
     )
