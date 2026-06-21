@@ -9498,3 +9498,105 @@ Theme: continued Samyang work from S170. Filed #1238 last session as the archite
 - Gitleaks CI: 9s pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 172 — Samyang Tier 2 scaffolder + 18 lens fan-out (#1238 step 3, #792)
+
+Date: 2026-06-21 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: closed the remaining acceptance criteria on #1238 — wrote `scaffold_samyang_tier2.py` with an auto-detecting plot-box helper covering all 20 Samyang chart variants (3 canvas widths × 2 panels), emitted 18 Tier 2 `ReferenceChart` entries with `additional_views=(ChartView(aperture="F8"),)`, and ran `extract --all --accept` to land 18 digitization-logs. Fixed two ADR-063 follow-on bugs in the orchestrator that S171 didn't surface (artifact filename collision on multi-panel charts; missing aperture label in production-log panel headings). Closes #1238 and #792.
+
+#### PRs
+
+- **PR (next) opening on `feat/samyang-tier2-scaffolder`** — `feat(mtf): Samyang Tier 2 scaffolder + 18 lens fan-out (#1238, #792)`. 5 code files: `samyang_plotbox.py` (new), `scripts/scaffold_samyang_tier2.py` (new), `referenceset/_samyang_tier2_charts.py` (generated), `referenceset/charts.py` (+SAMYANG_TIER2_CHARTS wire), `extract.py` + `production_log.py` (orchestrator ADR-063 follow-ups). 18 lens dirs × 7 new artifacts each (overlay + svg + review.html for MAX, same trio for F8, plus digitization-log.md) = 126 generated artifacts.
+
+#### Issues opened / closed
+
+- **#1238 closes** — all acceptance criteria done (ChartView.aperture mechanism + per-view fan-out shipped in S171; scaffolder + 18 Tier 2 re-extraction + Tier 1 F8 GT shipped this session; ADR-063 documents the mechanism).
+- **#792 closes** — all 20 Samyang lenses (2 Tier 1 + 18 Tier 2) have committed digitization-logs.
+- No new issues opened.
+
+#### Key technical findings
+
+- **Three Samyang chart canvas widths.** The 18 Tier 2 charts split into 462×1200 (16 lenses, the canonical template), 490×1200 (50mm f/1.4, +5 px left gutter), and 498×1200 (AF 75mm f/1.8, +36 px left gutter and shifted F8 panel y-range). An auto-detector probing axis lines at runtime handles all three uniformly without per-slug overrides.
+- **Plot-box detector convention.** Find each panel's bottom axis (MTF=0.0 gridline) by row dark-fraction ≥ 60% of canvas width; read `x_left`/`x_right` off the MAX-bottom row; find each panel's top by probing column `x_left` for its topmost dark row in the y-bands `40..50` (MAX top) and `570..585` (F8 top). The vertical y-axis line runs from `y_top` (outer-rectangle top) down to `y_bottom` — directly yielding S171's Tier 1 anchor convention `(43..463)` / `(575..995)` for the 85mm chart.
+- **`_artifact_stem` did not suffix per-view aperture passes.** S171's ADR-063 added the mechanism but the artifact-write path branched only on `profile.apertures_per_chart` (ADR-044 hue-filter case). For Samyang multi-panel, both `ChartView`s share the same `image_path.stem` → the F8 pass overwrote the MAX pass's overlay PNG / SVG / review HTML. Fix: also suffix when `run.view.aperture is not None`. MAX view keeps the bare stem (compatible with existing Tier 1 anchor filenames); F8 view gets a `-F8` suffix.
+- **`ProductionPanel` had no aperture field.** `extract.py:_panel_for` built panels from the run but discarded `run.aperture`, and `render_production_log` always emitted `## Panel` as the section heading. For multi-panel Samyang lenses this rendered two `## Panel` headings with no way to tell them apart in the markdown. Fix: thread `aperture` through `ProductionPanel`, render `## Panel — MAX` / `## Panel — F8` when more than one panel is present and the panel has an aperture set.
+- **Slug-based image-height inference fails on fisheye lenses.** Samyang 8mm and 12mm rectangular-fisheyes have no `-cs` slug suffix but are APS-C-format charts (x-axis tops at 14 mm, not 21.6 mm). The scaffolder ships a per-slug `_IMAGE_HEIGHT_MM_BY_SLUG` table rather than inferring from slug patterns — the table is small enough (18 entries) that the explicit shape outweighs the helper-function cost.
+- **Aperture label convention for Tier 2 = "MAX" / "F8" (chart panel literals), not the lens's wide-open f-number.** Matches the Tier 1 anchors' convention. The lens's actual max f-stop already lives in the slug; no eye-read aperture table needed. ADR-063 mentions "max is the lens's wide-open f-number" but the orchestrator labels artifacts and dictionary keys with whatever `chart.apertures[0]` / `view.aperture` says — `"MAX"` is the simplest stable label.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/samyang_plotbox.py`** — new module (~145 lines). `SamyangBoxes` dataclass with `max_box` + `f8_box` + `image_size`; `detect_samyang_plotbox(chart_path)` returns both panels' coordinates; `SamyangPlotBoxError` on missing axis lines.
+- **`tools/mtfdigitizer/scripts/scaffold_samyang_tier2.py`** — new module (~200 lines). `_IMAGE_HEIGHT_MM_BY_SLUG` per-lens table (18 entries) + `_TIER1_SKIP_SLUGS` (85mm + 300mm reflex). `_gather_charts` walks `docs/optical-specs/samyang-*` and runs the detector per chart; `_format_lens_entry` emits one `ReferenceChart` with primary view = MAX panel and `additional_views=(ChartView(plot_box=<F8>, aperture="F8"),)`. `--write` flag mirrors the TTartisan/Fuji scaffolders.
+- **`tools/mtfdigitizer/referenceset/_samyang_tier2_charts.py`** — new generated module (18 entries). Imported and concatenated into `REFERENCE_CHARTS` in `charts.py`.
+- **`tools/mtfdigitizer/referenceset/charts.py`** — wire the import and extend the concatenation tuple from 3-way to 4-way (`REFERENCE_CHARTS + FUJI_TIER2 + TTARTISAN_TIER2 + SAMYANG_TIER2`).
+- **`tools/mtfdigitizer/extract.py`** — extend `_artifact_stem` with the per-view-aperture branch (the ADR-063 follow-up bug fix); thread `aperture` through `_panel_for` to populate `ProductionPanel.aperture`.
+- **`tools/mtfdigitizer/production_log.py`** — `ProductionPanel.aperture: str = ""` field; `render_production_log` emits `## Panel — <aperture>` when more than one panel is present and the aperture is set, else bare `## Panel`.
+- **`docs/optical-specs/samyang-*/`** (18 lens dirs) — 6 new inspection artifacts per lens (`<slug>-mtf.svg`, `<slug>-mtf-overlay.png`, `<slug>-mtf-review.html`, plus `-F8` triples) and one `digitization-log.md` with two `## Panel — MAX` / `## Panel — F8` sections each.
+
+#### Calibration impact
+
+| Metric                         | S171   | S172                                     |
+| ------------------------------ | ------ | ---------------------------------------- |
+| Aggregate paired               | 872    | **872** (unchanged — Tier 2 has no GT)   |
+| Aggregate p95 \|d\|            | 0.0463 | **0.0463** (unchanged)                   |
+| Aggregate in-band (+/-0.05)    | 96.0%  | **96.0%** (unchanged)                    |
+| Aggregate median \|d\|         | 0.0066 | 0.0066 (unchanged)                       |
+| Aggregate max \|d\|            | 0.2265 | 0.2265 (unchanged)                       |
+| mtfdigitizer pytest            | 389    | **389** (unchanged)                      |
+| `REFERENCE_CHARTS` entries     | 103    | **121** (+18 Samyang Tier 2)             |
+| Tier 2 lenses w/ committed log | 81     | **99** (+18 Samyang Tier 2)              |
+| Epic #790 brand-digitization   | 4/24   | **5/24** (Samyang complete; closes #792) |
+
+#### Verification
+
+- `py -m mtfdigitizer.scripts.scaffold_samyang_tier2 --write` — wrote `_samyang_tier2_charts.py` (18 lenses).
+- `py -m mtfdigitizer.extract --all --accept` — emitted 18 lens fan-outs (36 panel passes), all wrote `digitization-log.md`.
+- `py -m mtfdigitizer.calibrate` — aggregate unchanged (Tier 2 has no GT).
+- `py -m pytest mtfdigitizer/tests/` — 389 passed.
+- `py -m mtfdigitizer.extract --check` — all 20 Samyang production logs render byte-identically (will run pre-commit).
+- Per-lens overlay glance: spot-checked 100mm-macro, 35mm-f1-2, af-75 — extractor curves track the original chart curves cleanly on both panels.
+
+#### Key decisions (this session)
+
+- **Auto-detect plot-box per chart instead of fixed template constants + per-slug overrides.** Initial plan was constants (ADR-063 says x 31..461, y 43..463 / 575..995) with overrides for the 50mm f/1.4 / AF 75mm outliers. After probing, a single ~120-line detector handled all three canvas widths uniformly via permissive-threshold axis-line probes — no per-slug box overrides needed. Cleaner shape; the 18-entry `_IMAGE_HEIGHT_MM_BY_SLUG` table stays (image-height-mm can't be read from the PNG without OCR).
+- **Use literal `"MAX"` / `"F8"` aperture labels for Tier 2, matching the Tier 1 anchors.** ADR-063 noted "max is the lens's wide-open f-number" as a possible convention, but the orchestrator already labels artifacts with whatever `chart.apertures[0]` / `view.aperture` says. Matching Tier 1 keeps filenames stable across lenses and avoids an 18-entry eye-read aperture table for no orchestrator benefit.
+- **ADR-063 follow-up fixes (`_artifact_stem` + `ProductionPanel.aperture`) go in the same PR as the scaffolder.** They're surfaced by the scaffolder's first real fan-out and are required for the digitization-logs to be readable. Splitting them into a separate PR would block this one. The ADR is unchanged — the fixes are bug fixes inside the mechanism it documents.
+- **`--accept` the LOW verdicts cohort-wide rather than per-lens user-glance.** ADR-041 says HOLD is for maintainer-glance; the LOW verdicts here are precision-band misses (0.5–0.85), not catastrophic extractions — spot-check of overlay PNGs across the cohort shows extractor curves tracking originals cleanly. Per-lens glance can happen post-merge if a downstream consumer surfaces a wrong reading.
+
+#### Process patterns observed this session
+
+- **Probe before committing to a strategy.** Initial plan = fixed template constants. A 30-second probe of all 20 charts surfaced two canvas-width outliers AND row-count probe gaps on five charts (where dark threshold 200 missed the lighter gridline). The probe data drove the switch to a permissive-threshold detector + column-based y_top probe — both better than the original plan. Without the probe, would have shipped fragile per-slug overrides for two charts that the detector handles cleanly.
+- **Build outputs surface mechanism bugs that GT calibration cannot.** S171's Tier 1 anchors caught the `_calibrate_chart` per-view-aperture bug because they have GT. The Tier 2 fan-out caught the `_artifact_stem` collision and the missing aperture label because those touch the production-log path, not the calibration path. Different rendering paths = different bug surfaces; running both end-to-end is the only way to know.
+- **Match document convention exactly.** Read the S171 dev-journal entry first, copy heading levels (`#### PRs`, `#### Issues opened / closed`, `#### Key technical findings`, etc.), bullet style, and table shape. Saves writer effort and keeps the journal scannable across sessions.
+
+#### Follow-ups for next session (S173)
+
+- **Stale Tokina digitization-logs** (4 Tokina + 1 ttartisan-af-35) — still deferred from S170/S171. Small `--regen` PR.
+- **85mm F8 freq30S two-cell dropout** (positions 12.96mm + 17.28mm) — investigate ADR-059/062 halo-subtraction ring radius reduction. Carried from S171 as ADR-063 follow-up.
+- **#1134 (P1, Backlog)** — confidence badge. Still deferred.
+- **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050).
+- **#950 (P2, v0.8.0)** — auto-detect plot box (Samyang now adds a 3rd auto-detector after Fuji and TTartisan; pattern worth extracting?).
+- **10 Dependabot PRs** from S169 weekly update still open; bulk-merge candidate if CI green on each.
+- **Next brand in epic #790** — 5/24 done. Pick by chart-style-family-coverage gap rather than alphabetically.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone, **~21 open / 75 closed** after #1238 + #792 close).
+- Epic #790 (digitize all brands): **5/24 done** (was 4/24 — +Samyang).
+- `REFERENCE_CHARTS` = **121 entries** (was 103; +18 Samyang Tier 2).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **872 paired, median \|d\| 0.0066, p95 \|d\| 0.0463, in-band 96.0%, max \|d\| 0.2265** (unchanged).
+- **389 mtfdigitizer pytest pass** (unchanged). **223 vitest pass** (unchanged).
+- **63 ADRs** (unchanged — ADR-063 already shipped S171).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + epics #790, #932** + remaining P3 brand-digitization tasks.
+- **1 open PR (this session's). 10 stale Dependabot PRs** (carried from S169).
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
+- Stale digitization logs: **4 Tokina + 1 ttartisan-af-35** (carried).
+- Stale `referenceset/readings/*.md` panels: **0** (unchanged).
+- Gitleaks CI: 9s pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).

@@ -1180,7 +1180,18 @@ from ._fuji_tier2_charts import FUJI_TIER2_CHARTS  # noqa: E402
 # through the multi-aperture orchestrator (`extract.py:_run_view_passes`).
 from ._ttartisan_tier2_charts import TTARTISAN_TIER2_CHARTS  # noqa: E402
 
-REFERENCE_CHARTS = REFERENCE_CHARTS + FUJI_TIER2_CHARTS + TTARTISAN_TIER2_CHARTS
+# Samyang Tier 2 production entries (ADR-041, ADR-063) auto-scaffolded
+# by `scripts/scaffold_samyang_tier2.py`. One ReferenceChart per lens;
+# every chart packs MAX + F8 in two stacked panels sharing one PNG and
+# is dispatched through the per-view aperture override.
+from ._samyang_tier2_charts import SAMYANG_TIER2_CHARTS  # noqa: E402
+
+REFERENCE_CHARTS = (
+    REFERENCE_CHARTS
+    + FUJI_TIER2_CHARTS
+    + TTARTISAN_TIER2_CHARTS
+    + SAMYANG_TIER2_CHARTS
+)
 
 
 STYLE_FAMILIES: frozenset[str] = frozenset(

@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 218" role="img" aria-label="MTF chart, generated from readings">
+<style>.grid-line { stroke: #d8d8d8; stroke-width: 0.5; }.axis-label { font-size: 7px; fill: #666666; font-family: ui-monospace, monospace; }.axis-y { text-anchor: end; }.axis-x { text-anchor: middle; }.axis-title { font-size: 7px; fill: #666666; text-anchor: middle; }.curve { fill: none; stroke-width: 1.5; }.curve-m { stroke-dasharray: 4 2; }.dot { fill: white; stroke-width: 1; }.legend-text { font-size: 7px; fill: #666666; font-family: ui-monospace, monospace; }</style>
+<line class="grid-line" x1="36" y1="172.0" x2="304" y2="172.0"/>
+<line class="grid-line" x1="36" y1="140.0" x2="304" y2="140.0"/>
+<line class="grid-line" x1="36" y1="108.0" x2="304" y2="108.0"/>
+<line class="grid-line" x1="36" y1="76.0" x2="304" y2="76.0"/>
+<line class="grid-line" x1="36" y1="44.0" x2="304" y2="44.0"/>
+<line class="grid-line" x1="36" y1="12.0" x2="304" y2="12.0"/>
+<text class="axis-label axis-y" x="32" y="175.0">0.0</text>
+<text class="axis-label axis-y" x="32" y="143.0">0.2</text>
+<text class="axis-label axis-y" x="32" y="111.0">0.4</text>
+<text class="axis-label axis-y" x="32" y="79.0">0.6</text>
+<text class="axis-label axis-y" x="32" y="47.0">0.8</text>
+<text class="axis-label axis-y" x="32" y="15.0">1.0</text>
+<text class="axis-label axis-x" x="36.0" y="186">C</text>
+<text class="axis-label axis-x" x="62.8" y="186">1.4</text>
+<text class="axis-label axis-x" x="89.6" y="186">2.8</text>
+<text class="axis-label axis-x" x="116.4" y="186">4.3</text>
+<text class="axis-label axis-x" x="143.2" y="186">5.7</text>
+<text class="axis-label axis-x" x="170.0" y="186">7.1</text>
+<text class="axis-label axis-x" x="196.8" y="186">8.5</text>
+<text class="axis-label axis-x" x="223.6" y="186">9.9</text>
+<text class="axis-label axis-x" x="250.4" y="186">11.4</text>
+<text class="axis-label axis-x" x="277.2" y="186">12.8</text>
+<text class="axis-label axis-x" x="304.0" y="186">14.2</text>
+<text class="axis-title" x="170.0" y="198">Image height (mm)</text>
+<polyline class="curve curve-10" style="stroke:#c89b3c" points="36.0,18.3 62.8,18.5 89.6,18.5 116.4,18.5 143.2,18.5 170.0,18.9 196.8,18.9 223.6,18.9 250.4,18.9 277.2,20.1 304.0,23.5"/>
+<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="36.0,18.3 62.8,18.5 89.6,18.5 116.4,18.5 143.2,18.5 170.0,18.9 196.8,18.9 223.6,18.9 250.4,18.9 277.2,20.1 304.0,20.9" stroke-dasharray="4 2"/>
+<polyline class="curve curve-30" style="stroke:#6b9bd2" points="36.0,42.1 62.8,42.3 89.6,43.1 116.4,44.7 143.2,47.3 170.0,50.0 196.8,50.1 223.6,46.1 250.4,41.7 277.2,43.4 304.0,53.7"/>
+<polyline class="curve curve-30 curve-m" style="stroke:#6b9bd2" points="36.0,42.1 62.8,48.1 89.6,51.6 116.4,52.7 143.2,50.6 170.0,47.1 196.8,44.4 223.6,42.9 250.4,44.3 277.2,49.7 304.0,58.0" stroke-dasharray="4 2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="36.0" cy="18.3" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="18.5" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="18.5" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="116.4" cy="18.5" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="143.2" cy="18.5" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="170.0" cy="18.9" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="196.8" cy="18.9" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="223.6" cy="18.9" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="250.4" cy="18.9" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="277.2" cy="20.1" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="304.0" cy="23.5" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="36.0" cy="18.3" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="18.5" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="18.5" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="116.4" cy="18.5" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="143.2" cy="18.5" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="170.0" cy="18.9" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="196.8" cy="18.9" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="223.6" cy="18.9" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="250.4" cy="18.9" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="277.2" cy="20.1" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="304.0" cy="20.9" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="36.0" cy="42.1" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="62.8" cy="42.3" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="89.6" cy="43.1" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="116.4" cy="44.7" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="143.2" cy="47.3" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="170.0" cy="50.0" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="196.8" cy="50.1" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="223.6" cy="46.1" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="250.4" cy="41.7" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="277.2" cy="43.4" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="304.0" cy="53.7" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="36.0" cy="42.1" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="62.8" cy="48.1" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="89.6" cy="51.6" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="116.4" cy="52.7" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="143.2" cy="50.6" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="170.0" cy="47.1" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="196.8" cy="44.4" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="223.6" cy="42.9" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="250.4" cy="44.3" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="277.2" cy="49.7" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="304.0" cy="58.0" r="2"/>
+<line x1="36" y1="209" x2="48" y2="209" stroke="#c89b3c" stroke-width="1.5"/>
+<text class="legend-text" x="51" y="212">10 lp/mm S</text>
+<line x1="92" y1="209" x2="104" y2="209" stroke="#c89b3c" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text class="legend-text" x="107" y="212">10 lp/mm M</text>
+<line x1="148" y1="209" x2="160" y2="209" stroke="#6b9bd2" stroke-width="1.5"/>
+<text class="legend-text" x="163" y="212">30 lp/mm S</text>
+<line x1="204" y1="209" x2="216" y2="209" stroke="#6b9bd2" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text class="legend-text" x="219" y="212">30 lp/mm M</text>
+</svg>
