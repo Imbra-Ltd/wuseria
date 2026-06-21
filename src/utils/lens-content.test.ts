@@ -137,10 +137,10 @@ describe("generateLensContent", () => {
     it("returns clusters for scored lens", () => {
       const content = generateLensContent(scoredLens, allLenses);
       expect(content.opticalClusters).not.toBeNull();
-      expect(content.opticalClusters!.sharpness.length).toBe(4);
-      expect(content.opticalClusters!.aberrations.length).toBe(5);
-      expect(content.opticalClusters!.rendering.length).toBe(4);
-      expect(content.opticalClusters!.distortion.length).toBe(1);
+      expect(content.opticalClusters!.sharpness).toHaveLength(4);
+      expect(content.opticalClusters!.aberrations).toHaveLength(5);
+      expect(content.opticalClusters!.rendering).toHaveLength(4);
+      expect(content.opticalClusters!.distortion).toHaveLength(1);
     });
 
     it("returns null for unscored lens", () => {
@@ -167,12 +167,12 @@ describe("generateLensContent", () => {
   describe("genre fit", () => {
     it("returns entries for scored lens", () => {
       const content = generateLensContent(scoredLens, allLenses);
-      expect(content.genreFit.length).toBe(9);
+      expect(content.genreFit).toHaveLength(9);
     });
 
     it("returns empty for unscored lens", () => {
       const content = generateLensContent(unscoredLens, allLenses);
-      expect(content.genreFit.length).toBe(0);
+      expect(content.genreFit).toHaveLength(0);
     });
 
     it("follows canonical genre order", () => {

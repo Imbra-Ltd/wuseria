@@ -245,7 +245,7 @@ describe("computeAllGenreMarks", () => {
   it("returns empty object for unscored lens", () => {
     const lens = makeLens({ brand: "Fujifilm", model: "Empty" });
     const marks = computeAllGenreMarks(lens);
-    expect(Object.keys(marks).length).toBe(0);
+    expect(Object.keys(marks)).toHaveLength(0);
   });
 });
 

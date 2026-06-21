@@ -217,7 +217,7 @@ describe("GenreGuide", () => {
     const pipContainers = screen.getAllByLabelText(/Mark \d/);
     for (const container of pipContainers) {
       const pips = container.querySelectorAll("span");
-      expect(pips.length).toBe(5);
+      expect(pips).toHaveLength(5);
     }
   });
 
