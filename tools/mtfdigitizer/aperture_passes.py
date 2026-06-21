@@ -17,7 +17,7 @@ from pathlib import Path
 
 from .family_profile import profile_for_chart
 from .profiles.types import MtfProfile
-from .referenceset.charts import ReferenceChart
+from .referenceset.charts import ChartView, ReferenceChart
 
 
 _FUJI_FREQ_RE = re.compile(r"-(?P<freq>\d+)lp\.png$", re.IGNORECASE)
@@ -63,10 +63,16 @@ def _apply_sm_swap_override(
 
 
 def aperture_passes_for_view(
-    chart: ReferenceChart, image_path: Path
+    chart: ReferenceChart,
+    image_path: Path,
+    view: ChartView | None = None,
 ) -> list[tuple[str, MtfProfile]]:
     """Resolve a view to one or more (aperture, profile) extraction passes.
 
+    - Per-view aperture override (ADR-063, Samyang multi-panel): one pass,
+      labelled with `view.aperture`. Used when a chart family packs
+      multiple apertures into stacked panels sharing one PNG — each panel
+      is published as its own ChartView with its own plot_box.
     - Fujifilm per-frequency (ADR-043): one pass, profile copied with
       `frequencies_lpmm` substituted from the filename.
     - Multi-aperture-per-chart (ADR-044): N passes, one per aperture,
@@ -74,9 +80,16 @@ def aperture_passes_for_view(
     - Default: one pass with the chart's primary aperture label.
 
     `chart.sm_swap_per_hue` is applied to every returned profile.
+
+    `view` is optional for back-compat with callers that only operate on
+    the primary chart raster (autotriage, diagnose, log, review, svg —
+    all pre-multi-view orchestration). The orchestrator (extract.py)
+    always passes the active view so per-view aperture overrides apply.
     """
     base = profile_for_chart(chart)
     swap = chart.sm_swap_per_hue
+    if view is not None and view.aperture is not None:
+        return [(view.aperture, _apply_sm_swap_override(base, swap))]
     if chart.style_family in _FUJI_STYLE_FAMILIES:
         freq = _parse_filename_frequency(image_path)
         substituted = dataclasses.replace(base, frequencies_lpmm=(freq,))

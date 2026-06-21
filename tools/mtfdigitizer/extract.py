@@ -192,7 +192,7 @@ def _run_view_passes(
     )
     image_path = _resolve_view_image(chart, view)
     plot_box = _to_plotbox(view.plot_box)
-    passes = _aperture_passes_for_view(chart, image_path)
+    passes = _aperture_passes_for_view(chart, image_path, view)
 
     runs: list[ExtractRun] = []
     for aperture, profile in passes:
