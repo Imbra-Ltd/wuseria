@@ -198,21 +198,58 @@ def test_intra_curve_interp_replaces_single_sister_fill_with_neighbour_mean() ->
     assert out["freq30S"][6:] == samples["freq30S"][6:]
 
 
-def test_intra_curve_interp_skips_adjacent_sister_fills() -> None:
-    """#1254 — when sister-filled cells run consecutively (i and i+1 both
-    filled), do NOT interpolate either one. Interpolating across a run
-    propagates the sister-fill error to its neighbours; the gap is too
-    wide for intra-curve continuity to help, and the existing sister
-    fallback is the right answer at that point."""
+def test_intra_curve_interp_handles_multi_cell_sister_fill_run() -> None:
+    """#1254 / #1256 — a multi-cell run of sister-filled cells is linearly
+    interpolated between its bracketing non-sister-filled endpoints.
+
+    Original single-cell logic from #1254 handled isolated sister-fills
+    only; #1256's Samyang 14mm stopped freq30S has a 6-cell run because
+    its dark grey 30S curve visually overlaps the bright 10M curve mid-
+    field, leaving no extractable ink for ~half the field. The 6 cells
+    sister-filled from 30M (which sweeps 0.95->0.55) dragged 30S far
+    below its true ~0.97 trajectory; linear interp between the run's
+    bracketing real samples (~0.97 left, ~0.96 right) recovers the
+    correct shape."""
     from mtfdigitizer.pipeline.pipeline import (
         _replace_sister_fills_with_intra_interp,
     )
 
+    # 11 cells; indices 4 and 5 sister-filled with diverging values.
     samples = {
         "freq30S": (0.96, 0.96, 0.97, 0.97, 0.74, 0.73, 0.96, 0.96, 0.95, 0.93, 0.92),
     }
     sister_filled = {
         "freq30S": (False, False, False, False, True, True, False, False, False, False, False),
+    }
+    out, count = _replace_sister_fills_with_intra_interp(samples, sister_filled)
+    assert count["freq30S"] == 2
+    # Linear interp between values[3]=0.97 and values[6]=0.96, span=3:
+    # i=4: 0.97 + (1/3)*(0.96-0.97) = 0.9666...
+    # i=5: 0.97 + (2/3)*(0.96-0.97) = 0.9633...
+    assert out["freq30S"][4] == pytest.approx(0.9666666666666667)
+    assert out["freq30S"][5] == pytest.approx(0.9633333333333333)
+    # Non-sister-filled cells untouched.
+    assert out["freq30S"][:4] == samples["freq30S"][:4]
+    assert out["freq30S"][6:] == samples["freq30S"][6:]
+
+
+def test_intra_curve_interp_skips_run_touching_edge() -> None:
+    """#1256 — when a sister-fill run touches the last index there is no
+    right bracket, so the run cannot be interpolated. Sister fallback's
+    S~=M approximation stands.
+
+    (The mirror case at index 0 cannot happen in practice: center
+    symmetry runs downstream and re-asserts S=M at frac 0.0 regardless
+    of what happens here.)"""
+    from mtfdigitizer.pipeline.pipeline import (
+        _replace_sister_fills_with_intra_interp,
+    )
+
+    samples = {
+        "freq30S": (0.96, 0.96, 0.97, 0.97, 0.96, 0.95, 0.93, 0.92, 0.74, 0.73, 0.72),
+    }
+    sister_filled = {
+        "freq30S": (False, False, False, False, False, False, False, False, True, True, True),
     }
     out, count = _replace_sister_fills_with_intra_interp(samples, sister_filled)
     assert count["freq30S"] == 0
@@ -337,6 +374,43 @@ def test_samyang_85_stopped_30S_no_sister_fill_spikes_mid_field() -> None:
     assert 0.90 <= frac_08 <= 1.0, (
         f"30S at frac 0.8: expected ~0.95 (EYE), got {frac_08:.3f} — "
         f"value near 0.73 means sister fallback re-took mid-field (#1254)"
+    )
+
+
+def test_samyang_14mm_stopped_30S_no_mid_field_sister_drag() -> None:
+    """#1256 regression — on the 14mm stopped panel, the dark grey 30S
+    curve visually overlaps the bright pink 10M for ~half the field, so
+    the 30S skeleton is empty from frac 0.2 through frac 0.7. Before
+    the multi-cell sister-fill interp, those 6 cells got sister-filled
+    from 30M (which sweeps 0.95->0.55), dragging 30S down to ~0.92->0.89
+    and producing a visible 'sudden jump' at frac 0.8 where 30S regains
+    its own skeleton at the true ~0.96. Linear interp between the run's
+    bracketing real samples (~0.97 at frac 0.1 and ~0.96 at frac 0.8)
+    recovers the smooth flat trajectory the user reported as correct.
+    Lock both ends of the interpolated run within tolerance."""
+    SAMYANG_14_CHART, _, _ = _ref("samyang-14mm-f2-8-ed-as-if-umc")
+    pb = _ref_view_plot_box("samyang-14mm-f2-8-ed-as-if-umc", 1)
+    result = extract_chart(
+        SAMYANG_14_CHART,
+        SAMYANG_4COLOR_ALL_SOLID,
+        pb,
+        image_height_mm=21.6,
+    )
+    # frac 0.4 and 0.6 are inside the interpolated run; values should be
+    # close to 0.97 (linear between ~0.97 left bracket and ~0.96 right).
+    frac_04 = result.readings[4].samples.get("freq30S")
+    frac_06 = result.readings[6].samples.get("freq30S")
+    assert frac_04 is not None, "30S at frac 0.4 must read a value (#1256)"
+    assert frac_06 is not None, "30S at frac 0.6 must read a value (#1256)"
+    assert 0.94 <= frac_04 <= 1.0, (
+        f"30S at frac 0.4: expected ~0.97, got {frac_04:.3f} — value "
+        f"near 0.93 means multi-cell sister-fill run not interpolated "
+        f"(#1256)"
+    )
+    assert 0.94 <= frac_06 <= 1.0, (
+        f"30S at frac 0.6: expected ~0.97, got {frac_06:.3f} — value "
+        f"near 0.91 means multi-cell sister-fill run not interpolated "
+        f"(#1256)"
     )
 
 
