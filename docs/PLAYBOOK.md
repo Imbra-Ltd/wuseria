@@ -296,7 +296,8 @@ mtfdigitizer.svg --check` MUST pass after every diagnose run.
 ```bash
 cd tools && py -m mtfdigitizer.log              # Tokina lenses (default)
 cd tools && py -m mtfdigitizer.log --all        # every lens with a runnable chart
-cd tools && py -m mtfdigitizer.log --check      # verify committed logs are up to date
+cd tools && py -m mtfdigitizer.log --check      # verify committed Tokina logs are up to date
+cd tools && py -m mtfdigitizer.log --all --check # verify ALL anchor logs are up to date (use when anchor GT or ChartView semantics change)
 ```
 
 Writes `docs/optical-specs/<lens-slug>/digitization-log.md` for **Tier 1

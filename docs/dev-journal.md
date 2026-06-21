@@ -9777,3 +9777,100 @@ Theme: extract the shared geometry primitives now duplicated across the Sigma, F
 - Gitleaks CI: 8s pass on #1245.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 175 — Samyang plot-box + aperture naming aligned with cross-brand convention
+
+Date: 2026-06-21 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: formalise plot-box detector + aperture-label naming across brands and migrate Samyang. Started as a "check Samyang naming vs TTartisan" question; uncovered three layered divergences — detector dataclass field names, code-level aperture labels, on-disk artifact filenames — each warranting its own ADR + PR. Shipped as a 3-PR chain rather than one big bang.
+
+#### PRs
+
+- **#1247** — `refactor(mtfdigitizer): align Samyang plot-box names with cross-brand convention` (ADR-064). `SamyangBoxes` → `SamyangBoxResult`; `max_box` → `plot_box`; `f8_box` → `stopped_box`; `TTartisanPlotBoxError` added.
+- **#1248** — `refactor(mtfdigitizer): align Samyang aperture labels with cross-brand role convention` (ADR-065). Code-level rename: `MAX`/`F8` → `max`/`stopped` in `_SAMYANG_*_GT` keys, Tier 1 anchors, scaffolder, regenerated `_samyang_tier2_charts.py`.
+- **#1250** — `refactor(mtfdigitizer): migrate Samyang artifacts to role-label filenames + fix views/log`. 114 on-disk renames + 20 log regens + 2 code patches (`ReferenceChart.views` aperture inheritance, `log._extract_panel` per-view iteration).
+
+#### Issues opened / closed
+
+- **#1249 opened** (P3, v0.8.0, task) — refresh 40+ pre-existing stale production digitization logs across Sigma / Fujifilm / TTartisan. Surfaced by `extract --check` during the disk migration; out of scope for this session.
+- No issues closed.
+
+#### Key technical findings
+
+- **The "tooling check" found 40+ pre-existing stale logs.** `py -m mtfdigitizer.extract --check` was thought to exit clean on main; turned out the Bash tool was truncating output at ~10–30 lines, hiding the bulk. Captured to a file: 60 total stale entries. Documented in #1249; tracked separately so it doesn't gate the rename work.
+- **`ReferenceChart.views` had a primary-aperture gap.** PR 1247 + 1248 wired `chart.apertures=("max","stopped")` and added `ChartView(aperture="stopped")` to additional views, but the primary view's `aperture` was always None — so the primary panel emitted bare `samyang-*-mtf.svg` while the stopped emitted `samyang-*-mtf-stopped.svg`. Fixed in #1250 with an inheritance rule: when any additional view sets `aperture`, the primary inherits `chart.apertures[0]`. Fuji's per-frequency views (which never set aperture) are unaffected.
+- **`log._extract_panel` only saw one panel.** Iterated the chart-level `aperture_passes_for_view(chart, image_path)` without passing `view`, so per-view aperture overrides never fired. After the GT key rename, regenerating Samyang anchor logs would `KeyError` on the `stopped` key. Fixed by iterating `chart.views` and calling `aperture_passes_for_view(chart, image_path, view)` per view. Test suite still passed because the existing test_log fixtures used TTartisan (multi-aperture profile path) not Samyang (per-view path).
+- **Tier 1 anchor regen surfaces a calibration drift.** After GT key rename + view fix, calibrate re-extracted the Samyang anchor's stopped panel for the first time. Aggregate moved from `810 paired / p95 0.0499` to `872 paired / p95 0.0463 / max |d| 0.1745 → 0.2265 / in-band 96.0%` — the new stopped panels extract very cleanly but `max |d|` slightly worse. Acceptable; recorded in PR 1248 description.
+- **TTartisan's convention is split-layer.** TTartisan uses `profile.apertures_per_chart=("max","stopped")` (role labels — orchestrator authority) AND `chart.apertures=("f/1.2","f/8")` (f-stop literals — display authority for `emit_ttartisan_tier2.py`). ADR-065 §1's "MUST hold role labels" is right for Samyang but wrong for TTartisan; documented as the split-layer pattern in the ADR consequences.
+
+#### Key changes
+
+- **`docs/decisions/064-plotbox-detector-naming.md`** (new) — formalises detector contract: module `<brand>_plotbox.py`, entry `detect_<brand>_plotbox`, result `<Brand>BoxResult` with `plot_box` field, error `<Brand>PlotBoxError`.
+- **`docs/decisions/065-aperture-role-labels.md`** (new) — formalises code-level aperture labels as brand-agnostic roles (`max` / `stopped` / `stopped-N`). Display labels (f-stop literals) live in `mtf-readings.ts` and brand emit-script tables.
+- **`tools/mtfdigitizer/samyang_plotbox.py`** — `SamyangBoxes` → `SamyangBoxResult`; primary box renamed `plot_box`; secondary `stopped_box`; docstring rewritten.
+- **`tools/mtfdigitizer/ttartisan_plotbox.py`** — new `TTartisanPlotBoxError(RuntimeError)`; detector raises it instead of bare `ValueError`.
+- **`tools/mtfdigitizer/referenceset/charts.py`** — `_SAMYANG_85_GT` / `_SAMYANG_300_GT` keys lowercased; Tier 1 anchors use `apertures=("max","stopped")` + `ChartView(aperture="stopped")`; `ReferenceChart.views` property gains primary-aperture inheritance from `chart.apertures[0]` when any additional view sets aperture.
+- **`tools/mtfdigitizer/log.py`** — `_extract_panel` iterates `chart.views` and calls `aperture_passes_for_view(chart, image_path, view)` per view; per-view plot_box used for extraction.
+- **`tools/mtfdigitizer/scripts/scaffold_samyang_tier2.py`** — emits `("max","stopped")` literals; regenerated `_samyang_tier2_charts.py` for all 18 Tier 2 lenses.
+- **Disk migration (PR 1250)**: 60 file renames `samyang-*-mtf.{svg,png,html}` → `*-mtf-max.{svg,png,html}` (20 lenses × 3 file types); 54 file renames `samyang-*-mtf-F8.{svg,png,html}` → `*-mtf-stopped.{svg,png,html}` (18 lenses × 3 file types).
+- **18 Samyang Tier 2 `digitization-log.md` regenerated** with `## Panel — max` / `## Panel — stopped` headings.
+- **2 Samyang Tier 1 anchor `digitization-log.md` regenerated** with both `### Aperture max` and `### Aperture stopped` sections (previously only `max` — the GT loop only saw one key before the rename).
+
+#### Verification
+
+- **401 mtfdigitizer pytest pass** on each PR (unchanged from S174).
+- **`py -m mtfdigitizer.extract --check`** — zero Samyang stale entries after #1250.
+- **`py -m mtfdigitizer.log --all --check`** — Samyang anchors fresh (Tokina + 1 Fuji still stale, both pre-existing).
+- **`npm run validate`** green on every PR.
+- **CI on #1247, #1248, #1250**: all required checks pass; `build` + `lighthouse` skipped per path-filter (no `src/` changes).
+- Smoke checks on disk state: 0 `samyang-*-F8*` files remain; 60 `*-mtf-max.*` + 54 `*-mtf-stopped.*` files exist as expected.
+
+#### Key decisions (this session)
+
+- **Three PRs, not one.** Plot-box naming (#1247) and aperture-label naming (#1248) are independent concerns with separate ADRs; the disk migration (#1250) needed both code patches in flight to regenerate cleanly. Smaller PRs reviewed faster and isolated the bug in `ReferenceChart.views` (which only surfaced when the disk migration tried to emit role-suffixed primary-panel filenames).
+- **ADR-064 deferred `BasePlotBoxResult` Protocol.** Cross-brand abstraction is premature when no consumer treats detectors polymorphically. Convention-by-ADR delivers the same readability win without the lock-in.
+- **ADR-065's "MUST hold role labels" is Samyang-only.** TTartisan's split-layer pattern (profile labels = roles, chart labels = f-stops) is correct for the multi-aperture-per-chart pattern. Documented in ADR consequences rather than retroactively forcing TTartisan to migrate.
+- **Pre-existing 40+ stale logs out of scope (#1249).** Discovered during the migration but unrelated to Samyang. Filing the issue and shipping the Samyang work without coupling to the broader cleanup keeps both PRs reviewable.
+- **No auto-merge on #1248 or #1250 without explicit ask.** Per `feedback_ask_before_automerge`, awaited user instruction each time CI went green.
+
+#### Process patterns observed this session
+
+- **User caught a real bug in the proposed scope.** When I claimed PR 1248 was "code-only", user asked why Samyang's primary-panel filename had no `-max` suffix. Tracing through `_artifact_stem` exposed the `ChartView.aperture=None` gap. The "narrow PR" framing was actually incomplete; admitted it and folded the fix into PR 1250.
+- **Path-filtered Bash output silently truncates.** `extract --check` looked clean (~30s output truncation) until I captured it to a file. Lesson: when a maintenance gate "looks clean" but the output is unusually short, redirect to file and verify line count.
+- **Background long-runs + parallel work.** Ran calibrate (5min) + npm validate (5min) + production_log check (5min) concurrently; collapsed ~25 min sequential into ~6 min of waiting. The `until [ -s ... ]; do sleep N; done` pattern was the workhorse.
+
+#### Follow-ups for next session (S176)
+
+- **Carried from S172/S173**:
+  - 85mm freq30S two-cell dropout at 12.96mm/17.28mm — ADR-059/062 halo-subtraction ring radius reduction. _Now matters more: the regenerated stopped panel may have shifted nearby cells._
+  - **#1134 (P1, Backlog)** — confidence badge.
+  - **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050).
+  - **#950 (P2, v0.8.0)** — auto-detect plot box (coverage).
+  - **Next brand in epic #790** — 5/24 done; first new brand will validate ADR-064 + ADR-065 conventions from day one.
+- **New from S175**:
+  - **#1249 (P3, v0.8.0)** — refresh 40+ pre-existing stale production digitization logs. Workflow defined in the issue; expect per-lens HOLD review.
+  - **Viltrox `apertures=("f/1.2","F8")`** (charts.py:1056) — same Samyang anti-pattern, needs its own per-lens migration when Viltrox is next touched. ADR-065 already covers it.
+  - **`max |d|` regression from 0.1745 → 0.2265** in aggregate calibration. Worth investigating which curve in the regenerated Samyang stopped panels causes it.
+- **Tokina logs**: still stale, not addressed (S175 deferred Tokina log refresh after user pivoted to Samyang naming).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone; #1249 added).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **872 paired, median |d| 0.0066, p95 |d| 0.0463, in-band 96.0%, max |d| 0.2265** (max worsened from 0.1745 — new Samyang stopped-panel comparisons).
+- **401 mtfdigitizer pytest pass** (unchanged). **223 vitest pass** (unchanged).
+- **65 ADRs** (was 63 — ADR-064 + ADR-065 added this session).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + #1249 + epics #790, #932** + remaining P3 brand-digitization tasks.
+- **0 open PRs** at wrap-up.
+- `mtf-readings.ts` — Samyang entries unchanged (display labels already correct per ADR-065 §5); one cell still hand-patched, locked by regression test.
+- Stale eye-read digitization logs: **4 Tokina + 1 Fuji anchor** (carried; ttartisan-af-35 resolved by this session's regen).
+- Stale production digitization logs: **40+ across Sigma/Fujifilm/TTartisan** (tracked in #1249).
+- Stale `referenceset/readings/*.md` panels: **0** (Samyang regenerated this session).
+- Gitleaks CI: pass on each PR.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
