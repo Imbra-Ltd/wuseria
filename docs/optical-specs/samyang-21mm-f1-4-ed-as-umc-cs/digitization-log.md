@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel — MAX
+## Panel — max
 
 - **Chart:** `docs/optical-specs/samyang-21mm-f1-4-ed-as-umc-cs/samyang-21mm-f1-4-ed-as-umc-cs-mtf.png`
 - **Style family:** `mainstream-4color-all-solid`
@@ -142,7 +142,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 - `precision_below_threshold`
 - `prior_failed_not_suspiciously_flat`
 
-## Panel — F8
+## Panel — stopped
 
 - **Chart:** `docs/optical-specs/samyang-21mm-f1-4-ed-as-umc-cs/samyang-21mm-f1-4-ed-as-umc-cs-mtf.png`
 - **Style family:** `mainstream-4color-all-solid`
