@@ -9689,3 +9689,91 @@ Theme: triage and merge the 10 Dependabot weekly bumps carried from S169. 8 mino
 - Gitleaks CI: 9s pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 174 — Shared plot-box primitives extracted from 3 detectors
+
+Date: 2026-06-21 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: extract the shared geometry primitives now duplicated across the Sigma, Fuji, and TTartisan plot-box auto-detectors. Started by surveying actual duplication, not by assuming Samyang made it a "rule of three" — turned out Samyang shares nothing with the others (PIL-based axis-line probing vs cv2-based gridline/frame scanning), so the real triplet is Sigma + Fuji + TTartisan. Extraction was a one-PR cleanup: 2 pure helpers + 1 loader helper, net +104 lines (most are tests + docstrings), 4 call sites migrated, 1 untouched.
+
+#### PRs
+
+- **#1245** — `refactor(mtfdigitizer): extract shared plot-box primitives`. Merged via auto-merge.
+
+#### Issues opened / closed
+
+- No issues opened or closed. Refactor session; #950 (auto-detect plot box) was the prompting context but is about _coverage_ (more brands) and remains open.
+
+#### Key technical findings
+
+- **The "third call site" trigger doesn't always mean shared algorithm.** Memory note from S173 framed Samyang as the third auto-detector that should trigger extraction. Reading the four files showed Samyang's algorithm has zero overlap with the others: it probes axis-line rows on a column-by-column basis using PIL grayscale, where the other three scan for high-ink columns/rows on cv2 BGR and then need integer-run clustering. The shared primitive (`cluster_consecutive` + `collapse_runs`) appears in Sigma + Fuji + TTartisan only.
+- **`loader.load_chart_bgr` already does alpha compositing.** Fuji and TTartisan were reinventing this — TTartisan called `cv2.imread` + `cvtColor` inline; Fuji had its own `_composite_alpha`. The right move was to add `load_chart_gray` (one line over `load_chart_bgr`) and migrate the callers that don't need the alpha-presence signal. Fuji keeps its own load path because `has_alpha` is exposed in `FujiBoxResult` and asserted in tests.
+- **Banker's rounding caught my test expectations.** `(10+13)/2 = 11.5` → `round() = 12` not `11`. Original `_gridline_runs` (Fuji) had the same behaviour; I had to fix the test, not the helper, so the migration stays byte-equivalent.
+- **`pwd` drift after `cd tools`.** A bash call with `cd tools && py -m pytest` succeeded, then the next bash call also did `cd tools` from inside `tools/` and failed. The shell tool persists cwd across calls, so the second `cd` was relative-from-`tools/`. Caught by the `feedback_pwd_on_path_failure` reflex.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/plotbox_primitives.py`** (new, 63 lines) — `cluster_consecutive(values, gap)` and `collapse_runs(values, max_gap=2)`. Both are pure integer-list ops with no numpy/cv2 dependency.
+- **`tools/mtfdigitizer/tests/test_plotbox_primitives.py`** (new, 63 lines) — 12 unit tests covering empty, single-value, gap-boundary inclusion/exclusion, midpoint rounding.
+- **`tools/mtfdigitizer/loader.py`** — added `load_chart_gray()` next to existing `load_chart_bgr` / `load_chart_hsv`. 9-line addition.
+- **`tools/mtfdigitizer/pipeline/plotbox.py`** — `_cluster_consecutive` removed (15 lines); import from `plotbox_primitives`.
+- **`tools/mtfdigitizer/fuji_plotbox.py`** — `_gridline_runs` removed (13 lines); import `collapse_runs`. Alpha-detecting `cv2.imread(IMREAD_UNCHANGED)` path preserved.
+- **`tools/mtfdigitizer/ttartisan_plotbox.py`** — `cv2.imread` + 2× `cvtColor` chain replaced with `load_chart_gray()`. Bespoke label-cluster + plot-box-template constants stay local.
+- **Samyang unchanged.** Documented in the PR body; revisiting requires re-validating 12 charts for a PIL→cv2 luma-coefficient delta, which is not worth it for a one-line uniformity gain.
+
+#### Verification
+
+- 12/12 new `test_plotbox_primitives` pass.
+- 13/13 `test_plotbox_detect` (Sigma) pass — all known reference charts unchanged.
+- 12/12 `test_fuji_plotbox` pass — including alpha-detection and mount-default paths.
+- TTartisan smoke: 3 real charts (100mm macro, tilt-shift, 11mm fisheye) all detect as `(93, 609, 117, 459)` matching `_GFX_PLOT_BOX`.
+- Full `py -m pytest mtfdigitizer/tests/` → **401 passed** (was 389 in S173; +12 from new primitives tests).
+- `npm run validate` green — 462 pages built, all internal links pass.
+- CI on #1245: gate ✓, CodeQL ✓, gitleaks ✓, links ✓, changes ✓. `build` + `lighthouse` skipped per path-filter rule (no `src/` changes).
+
+#### Key decisions (this session)
+
+- **Extract primitives, not a base class.** Per `quality.md` ("no new abstraction without two or more call sites"). The shared _primitives_ have 2–4 call sites; the shared _flow_ between detectors has zero — Sigma scans frames, Fuji scans gridlines, TTartisan scans label widths, Samyang probes axis columns. A unifying `BoxDetector` ABC would be ceremony around 4 different algorithms.
+- **Skip Samyang.** Original framing was "3rd detector triggers extraction"; reading the code disproved it. Better to ship a clean 3-detector refactor than to force a 4th migration that needs separate cross-chart validation.
+- **`plotbox_primitives.py` lives at `tools/mtfdigitizer/`, not `tools/mtfdigitizer/pipeline/`.** Three of four callers are top-level brand-detector modules; only Sigma lives inside `pipeline/`. Top-level keeps the import direction one-way (brand modules don't import from `pipeline/` for anything else).
+- **Auto-merge approved.** Per `feedback_ask_before_automerge`, user explicitly authorised `merge auto` after CI went green. PR squash-merged with branch delete in one step.
+
+#### Process patterns observed this session
+
+- **Scope-check before code.** Posed two AskUserQuestion options (module location + scope size) before writing the new module. The first answer settled the import direction; the second avoided over-extraction. Cheaper than rewriting after a wrong default.
+- **Smoke-test with a real chart, not just a unit test.** After migrating TTartisan, ran the detector against 3 PNGs and confirmed the box matched `_GFX_PLOT_BOX`. Catches alpha-handling deltas that unit tests on synthetic arrays would miss.
+- **Background pytest + early continuation.** Launched the 401-test suite via `run_in_background`, kept moving on the frontend gate in parallel, returned when the notification fired. Net wall-clock: ~6 min sequential collapsed to one wait.
+
+#### Follow-ups for next session (S175)
+
+- **Carried from S172/S173**:
+  - Stale Tokina digitization-logs (4 Tokina + 1 ttartisan-af-35) — small `--regen` PR.
+  - 85mm F8 freq30S two-cell dropout (positions 12.96mm + 17.28mm) — ADR-059/062 halo-subtraction ring radius reduction.
+  - **#1134 (P1, Backlog)** — confidence badge.
+  - **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050).
+  - **#950 (P2, v0.8.0)** — auto-detect plot box (still about _coverage_, not refactor; Samyang now has bespoke detector but not a shared-primitive consumer).
+  - **Next brand in epic #790** — 5/24 done. Pick by chart-style-family-coverage gap.
+- **New from S174**:
+  - None. Refactor is self-contained; no new debt opened.
+- **Duplicated state block in S173 entry.** Lines 9686-9691 repeat 9680-9685 verbatim (state of the project section accidentally got duplicated when the entry was written). Cosmetic; flag for fix in a non-session-coupled docs PR.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone, ~21 open / 75 closed — unchanged; no issues touched this session).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **872 paired, median \|d\| 0.0066, p95 \|d\| 0.0463, in-band 96.0%, max \|d\| 0.2265** (unchanged).
+- **401 mtfdigitizer pytest pass** (was 389 in S173; +12 from `test_plotbox_primitives`). **223 vitest pass** (unchanged).
+- **63 ADRs** (unchanged — no architectural decision triggered; refactor of existing detection, no new directory or content move).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + epics #790, #932** + remaining P3 brand-digitization tasks.
+- **0 open PRs** at wrap-up.
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
+- Stale digitization logs: **4 Tokina + 1 ttartisan-af-35** (carried).
+- Stale `referenceset/readings/*.md` panels: **0** (unchanged).
+- Gitleaks CI: 8s pass on #1245.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
