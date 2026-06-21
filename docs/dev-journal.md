@@ -9299,3 +9299,101 @@ Theme: closed #1215 (Tokina geodesic-DP right-edge clamping fix). Probe confirme
 - Stale `referenceset/readings/*.md` panels: **0** (6 refreshed in PR #1226: tokina-23/33/56 + tokina-11-18 ×2 + ttartisan-af-35 leftover from PR #1223 era).
 - **#1215 closed (completed via PR #1226).**
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (not urgent).
+
+---
+
+### Session 170 — Samyang 30S->30M halo fix; dual-aperture scope split out (#1238)
+
+Date: 2026-06-21 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: started S170 = #792 (digitize 20 Samyang charts), discovered two compounding issues mid-investigation, scope-split into a small halo fix shipping now + a follow-up issue for the architectural piece. Halo fix mirrors ADR-059's pattern: declared `("30S-dark-grey", "30M-light-grey")` halo pair on `SAMYANG_4COLOR_ALL_SOLID`. Followed by #1238 filed for the Samyang dual-aperture (MAX + F8 stacked panels) rework, which is the structural blocker for closing #792.
+
+#### PRs
+
+- **PR #1239 opened** (`3a2deac` on `feat/792-samyang-digitization`) — `fix(mtf): add 30S->30M halo pair to samyang-4color-all-solid (ADR-062)`. 6 files: 1 profile edit + 2 test fixture updates + 1 new ADR + 2 refreshed Tier 1 digitization-logs. Awaiting merge.
+
+#### Issues opened / closed
+
+- **#1238 opened** — `Add multi-panel dual-aperture support for Samyang style family` (P3, task, v0.8.0). Blocker for closing #792.
+- **#792 stays open** — partial progress only; commented to link #1238.
+- No issues closed.
+
+#### Key technical findings
+
+- **Samyang charts publish stacked MAX + F8 panels per chart, but the existing scaffold path only handles MAX.** Discovered when reviewing the first batch of HIGH-verdict overlays — user flagged the F8 panel was being silently bled-onto by the MAX extractor. Architecture parallel: TTartisan (ADR-044) packs two apertures by color into ONE panel; Samyang stacks two apertures vertically as TWO panels. The TTartisan hue-filtered dispatch doesn't apply; needs per-`ChartView` aperture + per-view plot box.
+- **30M trace lifts onto 30S at right edge on samyang-12mm-f2-8 fisheye** — structurally identical to #1216 / ADR-059's 10S->10M case. Pixel probe at x=445-460 on the MAX panel: dark-grey 30S curve core sits at V≈102 wrapped in an AA halo rising through V=160-187, drifting into `30M-light-grey`'s band `[160, 195]`. Where the legitimate 30M curve dives below the S30 halo y-band (MTF ~ 0.46 vs S30 ~ 0.68), the sampler picks the top run per column and lands on the halo. Diagnostic mask `03-hue-30M-light-grey.png` confirms: only the upper curve is solid orange, the lower curve sparse.
+- **The halo affects the 85mm Tier 1 anchor too, but invisibly** — the 85mm's 30S curve stays above MTF ~ 0.85 across the field, so the halo y-band overlaps the real 30M curve at high MTF and produces no GT-detectable error. Pre-fix calibration: freq30M p95 |d| 0.086 (highest of the 4 Samyang fields). Post-fix: 0.026 (parity with freq30S).
+- **The render-match precision metric does not credit sister-filled cells.** Halo subtraction empties cells the sister fallback then fills correctly (GT confirms it). The polyline runs through skeleton-empty space; render-match precision on the 85mm anchor drops from ~0.85 to ~0.72, below the 0.80 gate. Same tradeoff ADR-059 already accepted for the 10S->10M case (and the existing Sigma 56mm `test_reference_sigma_56_classified_low_for_precision` documents). Test fixtures updated to reflect the new state.
+- **Stale Tokina digitization-logs discovered as side-effect of `log --all`** — S169's PR #1226 updated `referenceset/readings/*.md` panels but did not regenerate `docs/optical-specs/<lens>/digitization-log.md` files. 5 stale logs surfaced (4 Tokina + 1 ttartisan-af-35). Out of scope for #1239; reverted from this PR; needs its own regen pass.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/profiles/declared.py`** — append `("30S-dark-grey", "30M-light-grey")` to `SAMYANG_4COLOR_ALL_SOLID.halo_pairs` + ~10 lines of comment explaining the diagnostic, the 85mm anchor non-visibility, and the link to ADR-062.
+- **`tools/mtfdigitizer/tests/test_triage.py`** — rename `test_reference_samyang_85_classified_high` to `test_reference_samyang_85_classified_low_for_precision`; assertion mirrors the Sigma test (`verdict == "LOW"`, `LowReason.PRECISION_BELOW_THRESHOLD in reasons`). +1 priors-false-positive guard.
+- **`tools/mtfdigitizer/tests/test_rendermatch.py`** — extend `freq10M` exclusion in `test_score_chart_polyline_mostly_lands_on_skeleton` to `{"freq10M", "freq30M"}`; docstring extended.
+- **`docs/decisions/062-extend-halo-pairs-to-30s-30m.md`** — new ADR (~120 lines). 4 rejected alternatives (tighten 30M band / broaden 30S band / per-chart override / no-op-via-sister), each with the measured/theoretical regression. "Scope this ADR does NOT cover" section names #1238 and re-extraction as deferred.
+- **2 refreshed Tier 1 digitization-logs** (samyang-85mm and samyang-300mm reflex) — sister-fill counts went from 0/0 to 6/11 (85mm freq10M+30M) and 10/0 + 5/0 (300mm reflex), reflecting the halo-emptied cells the fallback covers.
+
+#### Calibration impact
+
+| Metric                         | S169 baseline | S170                                              |
+| ------------------------------ | ------------- | ------------------------------------------------- |
+| samyang-85mm freq30M p95 \|d\| | 0.086         | **0.026**                                         |
+| samyang-85mm freq10M p95 \|d\| | 0.026         | 0.026 (unchanged)                                 |
+| samyang-85mm freq10S/30S       | 0.029/0.055   | 0.029/0.055 (unchanged)                           |
+| samyang-300mm freq30S paired   | 0/11          | **5/11** (sister-filled, all ~0.97 vs GT 1.00)    |
+| Aggregate p95 \|d\|            | 0.0466        | **0.0462**                                        |
+| Aggregate max \|d\|            | 0.1217        | 0.1217 (unchanged)                                |
+| Aggregate in-band 94.5%        | 95.9%         | **96.0%**                                         |
+| Aggregate paired               | 798           | 798 (unchanged)                                   |
+| mtfdigitizer pytest            | 389/389       | **389/389** (2 fixtures updated, count unchanged) |
+
+#### Verification
+
+- `py -m mtfdigitizer.calibrate` — aggregate p95 0.0466→0.0462, in-band 95.9%→96.0%.
+- `py -m pytest mtfdigitizer/tests/` — 389 passed.
+- `npm run validate` — green.
+- Pre-fix vs post-fix samyang-85mm anchor calibrate cross-checked via `git stash`+ re-run.
+- Pixel-level diagnostic probe on samyang-12mm-f2-8-ed-as-ncs-fish-eye right edge (x=445-460) — confirms upper-curve AA wrap V=160-187 entering 30M band [160, 195] and the diagnostic `03-hue-30M-light-grey.png` mask catching the upper-curve halo.
+
+#### Key decisions (this session)
+
+- **Scope-split #792 mid-session.** Initially started building the Samyang Tier 2 scaffolder (single-aperture, MAX-only), wired it into REFERENCE_CHARTS, ran `extract` on all 18 — then the F8 panel surfaced from user-glance review. Recognized the dual-aperture rework was an architectural change (per-`ChartView` aperture + new plot-box detector + scaffolder rewrite) that compounds with the orchestrator/test work and would not fit responsibly in S170. Reverted the scaffolder commit, filed #1238, kept only the diagnosis and the halo fix.
+- **Ship the halo fix despite the anchor verdict change.** The 85mm anchor flipping from HIGH to LOW-for-precision is a real metric regression, but the GT signal (p95 |d| 0.086 → 0.026) is the authority on extraction quality, and the same shape was already accepted by ADR-059 for the 10S->10M pair. The maintainer-glance routing the gate produces is the right operational outcome regardless of label. Documented honestly in the ADR's Consequences and test docstrings.
+- **Mirror ADR-059 in ADR-062's structure exactly.** Same diagnostic-shape, same ring-subtraction mechanism, same kernel, same tradeoff. The ADR is short because the mechanism is unchanged; only the pair declaration is new.
+
+#### Process patterns observed this session
+
+- **Pixel-level probes are the disambiguator when two visually-different overlays come from the same root cause.** The 12mm fisheye and 35mm f/1.4 both showed "blue trace looks wonky at right edge" but the mechanism wasn't obvious from the chart alone. A 60-line probe iterating columns x=440-460 in the MAX panel sampling HSV and reporting distinct V values per row revealed the halo pattern in 2 minutes. Without the probe the mechanism guess (the issue's natural hypothesis was "30M HSV range too narrow") would have led to widening 30M's band, which catches the 30S core and breaks identity entirely.
+- **The "agent must always check what the layers below the fix do with `None`" pattern from S169 (sister fallback regression) applied again here.** The halo subtraction empties cells; the sister fallback's behavior on those empty cells is what determines whether the fix improves or regresses the readings. The 85mm anchor's freq30M sister-fill went from 0/11 to 6/11 — those 6 fills are why the GT signal improves. Without sister fallback, the halo subtraction would just zero out the readings.
+- **Discovering the dual-aperture issue mid-PR is the right time to discover it.** Better to find it during the first user-glance batch than after committing all 18 lenses as single-aperture and having to back out. Cost: ~30 minutes of scaffolder + extract run. Benefit: clear scope boundary for #1238, no rework cost.
+
+#### Follow-ups for next session (S171)
+
+- **#1238 (P3, v0.8.0)** — Samyang dual-aperture multi-panel support. Required to close #792. Architectural: per-`ChartView` aperture field + per-view plot-box detection (F8 panel ~ y=590-1010) + scaffolder rewrite + new ADR + re-extract 18 charts + user-glance per batch.
+- **Stale Tokina digitization-logs** — 4 Tokina + 1 ttartisan-af-35 logs were never regenerated after S169's #1226 (PR updated `readings/*.md` panels only). Small `--regen` PR.
+- **#1134 (P1, Backlog)** — confidence badge. Deferred S169 per user call.
+- **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050). Multi-session.
+- **#950 (P2, v0.8.0)** — auto-detect plot box. Multi-session.
+- **#1224 (P3, Backlog)** — anchor-signal repair on noisy grey-mask charts.
+- **#1135 (P2, Backlog)** — multi-aperture chart support (note: this is a generic ticket; #1238 is the concrete Samyang sub-case).
+- **ADR-061 Open item** — Tokina 23 freq30S frac=0.8 earlier-stage flatline.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone, **24 open / 73 closed** before #1239 lands; **+1 issue opened this session (#1238)**, no closes — net **25 open / 73 closed**).
+- Epic #790 (digitize all brands): 4/24 done (unchanged; #792 stays open pending #1238).
+- `REFERENCE_CHARTS` = 103 entries (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **798 paired, median \|d\| 0.0057, p95 \|d\| 0.0462, in-band 96.0%, max \|d\| 0.1217**.
+- **389 mtfdigitizer pytest pass** (unchanged count; 2 fixtures updated). **223 vitest pass.**
+- **62 ADRs** (was 61 — +1 ADR-062).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1238 (new) + #1134 + #1135 + #1110 + #1159 + #950 + epics #790, #932** + 20 P3 brand-digitization tasks #791-#814 (#1215 closed prior session).
+- **1 open PR (#1239 from this session). 10 stale Dependabot PRs** (from S169 weekly update; not stale yet by convention but accumulating).
+- `mtf-readings.ts` — one cell hand-patched, locked by regression test (unchanged).
+- Stale digitization logs: **4 Tokina + 1 ttartisan-af-35** discovered this session via `log --all`; reverted from PR #1239; needs own regen pass.
+- Stale `referenceset/readings/*.md` panels: **0** (unchanged from S169).
+- Gitleaks CI: 9s pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
