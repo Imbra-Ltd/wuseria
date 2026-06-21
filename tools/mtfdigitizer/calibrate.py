@@ -187,6 +187,49 @@ def _extract_per_frequency_chart(chart: ReferenceChart):
     return dataclasses.replace(last_result, readings=merged_readings)
 
 
+def _has_per_view_apertures(chart: ReferenceChart) -> bool:
+    """True when any chart view declares an explicit aperture label.
+
+    Used by `_calibrate_chart` to route multi-panel charts (Samyang
+    MAX/F8 per #1238 / ADR-063) through a per-view extraction loop
+    that builds a `{aperture_label: ExtractedChart}` dict — same
+    shape as `_extract_multi_aperture_chart`'s output for ADR-044
+    hue-filtered dual-aperture charts. The two mechanisms are
+    orthogonal: hue-filtered packs apertures by color into one panel,
+    per-view splits them across stacked panels with one plot_box per
+    panel.
+    """
+    return any(v.aperture is not None for v in chart.additional_views)
+
+
+def _extract_per_view_aperture_chart(chart: ReferenceChart) -> dict[str, "object"]:
+    """Run the extractor once per view, keyed by the view's declared aperture.
+
+    The primary view contributes the chart's first aperture label
+    (`chart.apertures[0]`); each additional view contributes its
+    declared `view.aperture`. Returns the same `{aperture_label:
+    ExtractedChart}` shape as `_extract_multi_aperture_chart` so the
+    downstream GT comparison loop in `_calibrate_chart` works
+    uniformly across both fan-out shapes.
+    """
+    from .aperture_passes import _apply_sm_swap_override  # noqa: PLC0415
+
+    assert chart.plot_box is not None
+    base_profile = profile_for_chart(chart)
+    profile = _apply_sm_swap_override(base_profile, chart.sm_swap_per_hue)
+    results: dict[str, object] = {}
+    for view in chart.views:
+        assert view.plot_box is not None
+        aperture = view.aperture if view.aperture is not None else chart.apertures[0]
+        image_path = REPO_ROOT / view.chart_path
+        plot_box = _to_plotbox(view.plot_box)
+        results[aperture] = extract_chart(
+            image_path, profile, plot_box,
+            image_height_mm=chart.image_height_mm,
+        )
+    return results
+
+
 def _extract_multi_aperture_chart(chart: ReferenceChart) -> dict[str, "object"]:
     """Run the extractor once per declared aperture and return a per-
     aperture result dict (ADR-044).
@@ -259,17 +302,20 @@ def _calibrate_chart(chart: ReferenceChart):
     assert chart.ground_truth is not None
 
     base_profile = profile_for_chart(chart)
-    if base_profile.apertures_per_chart is not None:
-        results_by_aperture = _extract_multi_aperture_chart(chart)
+    if base_profile.apertures_per_chart is not None or _has_per_view_apertures(chart):
+        if base_profile.apertures_per_chart is not None:
+            results_by_aperture = _extract_multi_aperture_chart(chart)
+        else:
+            results_by_aperture = _extract_per_view_aperture_chart(chart)
         out: list[FieldDelta] = []
         for aperture, gt_by_field in chart.ground_truth.items():
             if aperture not in results_by_aperture:
-                # GT carries an aperture key the profile didn't declare.
-                # Fail-loud: a typo here masks a missing extractor pass.
+                # GT carries an aperture key the chart didn't extract a
+                # pass for. Fail-loud: a typo or missing view here masks
+                # an absent extractor pass.
                 raise KeyError(
                     f"{chart.slug}: ground_truth aperture {aperture!r} not "
-                    f"in profile.apertures_per_chart "
-                    f"{base_profile.apertures_per_chart!r}"
+                    f"in extracted passes {sorted(results_by_aperture)!r}"
                 )
             result = results_by_aperture[aperture]
             for field, gt_values in gt_by_field.items():

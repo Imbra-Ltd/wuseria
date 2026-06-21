@@ -170,7 +170,7 @@ def test_multi_aperture_dispatch_rejects_unknown_gt_aperture(
         },
     )
 
-    with pytest.raises(KeyError, match="apertures_per_chart"):
+    with pytest.raises(KeyError, match="not in extracted passes"):
         calibrate_mod._calibrate_chart(chart_with_bad_gt)
 
 
