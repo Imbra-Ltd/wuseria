@@ -63,6 +63,26 @@ SIGMA_56_CHART, SIGMA_56_PLOT_BOX, _ = _ref("sigma-56mm-f1-4-dc-dn-c")
 SAMYANG_85_CHART, SAMYANG_85_MAX_PLOT_BOX, _ = _ref("samyang-85mm-f1-4-as-if-umc")
 
 
+def _ref_view_plot_box(slug: str, view_idx: int) -> PlotBox:
+    """Pull the plot box for a specific view of a multi-view anchor.
+
+    Samyang charts stack two apertures (max + stopped) in one PNG; each
+    view has its own plot box. View 0 == max, view 1 == stopped.
+    """
+    chart = next(c for c in REFERENCE_CHARTS if c.slug == slug)
+    box = chart.views[view_idx].plot_box
+    assert box is not None, f"{slug} view {view_idx}: no plot_box"
+    return PlotBox(
+        x_left=box.x_left, x_right=box.x_right,
+        y_top=box.y_top, y_bottom=box.y_bottom,
+    )
+
+
+SAMYANG_85_STOPPED_PLOT_BOX = _ref_view_plot_box(
+    "samyang-85mm-f1-4-as-if-umc", 1,
+)
+
+
 # --- Acceptance: 11 fixed points ------------------------------------------
 
 
@@ -149,6 +169,73 @@ def test_b2_returns_none_when_skeleton_has_no_data_at_target() -> None:
         assert sample_skeleton_at_fraction(empty, fraction, plot_box) is None
 
 
+def test_intra_curve_interp_replaces_single_sister_fill_with_neighbour_mean() -> None:
+    """#1254 — for a sister-filled cell whose neighbours are present and
+    NOT sister-filled, the intra-curve interp post-pass replaces the
+    cross-curve copy with the linear mean of the field's own neighbours.
+    Continuity within one optical curve is a stronger prior than S=~M
+    off-axis."""
+    from mtfdigitizer.pipeline.pipeline import (
+        _replace_sister_fills_with_intra_interp,
+    )
+
+    # 11 cells; index 5 was sister-filled with a diverging value (0.74)
+    # while the field's own neighbours hold ~0.96.
+    samples = {
+        "freq30S": (0.96, 0.96, 0.97, 0.97, 0.97, 0.74, 0.96, 0.96, 0.95, 0.93, 0.92),
+    }
+    sister_filled = {
+        "freq30S": (False, False, False, False, False, True, False, False, False, False, False),
+    }
+    out, count = _replace_sister_fills_with_intra_interp(samples, sister_filled)
+    assert count["freq30S"] == 1
+    assert out["freq30S"][5] == pytest.approx(0.965), (
+        f"sister-filled cell at i=5 should become mean(0.97, 0.96)=0.965, "
+        f"got {out['freq30S'][5]}"
+    )
+    # Non-sister-filled cells must not be touched.
+    assert out["freq30S"][:5] == samples["freq30S"][:5]
+    assert out["freq30S"][6:] == samples["freq30S"][6:]
+
+
+def test_intra_curve_interp_skips_adjacent_sister_fills() -> None:
+    """#1254 — when sister-filled cells run consecutively (i and i+1 both
+    filled), do NOT interpolate either one. Interpolating across a run
+    propagates the sister-fill error to its neighbours; the gap is too
+    wide for intra-curve continuity to help, and the existing sister
+    fallback is the right answer at that point."""
+    from mtfdigitizer.pipeline.pipeline import (
+        _replace_sister_fills_with_intra_interp,
+    )
+
+    samples = {
+        "freq30S": (0.96, 0.96, 0.97, 0.97, 0.74, 0.73, 0.96, 0.96, 0.95, 0.93, 0.92),
+    }
+    sister_filled = {
+        "freq30S": (False, False, False, False, True, True, False, False, False, False, False),
+    }
+    out, count = _replace_sister_fills_with_intra_interp(samples, sister_filled)
+    assert count["freq30S"] == 0
+    assert out["freq30S"] == samples["freq30S"]
+
+
+def test_intra_curve_interp_skips_edge_cells() -> None:
+    """#1254 — cells at index 0 and the last index have only one neighbour
+    and cannot be safely interpolated; leave them to sister fallback (or
+    None) regardless of the sister-fill flag. Center symmetry handles
+    index 0 separately downstream."""
+    from mtfdigitizer.pipeline.pipeline import (
+        _replace_sister_fills_with_intra_interp,
+    )
+
+    n = 11
+    samples = {"freq30S": (0.50,) + (0.96,) * (n - 2) + (0.50,)}
+    sister_filled = {"freq30S": (True,) + (False,) * (n - 2) + (True,)}
+    out, count = _replace_sister_fills_with_intra_interp(samples, sister_filled)
+    assert count["freq30S"] == 0
+    assert out["freq30S"] == samples["freq30S"]
+
+
 def test_sigma_dashed_M_curves_fully_covered_by_dp_bridging() -> None:
     """Under (SPLIT_BY_DASH, GEODESIC_DP) the dashed M curves are bridged
     end to end: the DP smoothness prior carries a continuous path across
@@ -219,6 +306,37 @@ def test_samyang_85_10S_knees_down_at_edge() -> None:
     # "drops sharply from ~0.91 center to ~0.78 edge", not exact value.
     assert edge.samples.get("freq10S") < 0.85, (
         f"10S edge should drop below 0.85, got {edge.samples.get("freq10S"):.3f}"
+    )
+
+
+def test_samyang_85_stopped_30S_no_sister_fill_spikes_mid_field() -> None:
+    """#1254 regression — on the 85mm stopped panel, the 30S skeleton has
+    single-column gaps at frac 0.6 and 0.8. Before the intra-curve interp
+    post-pass, sister fallback copied 30M's value at those columns
+    (~0.74, ~0.73), producing 0.226 / 0.222 spikes against EYE values of
+    0.97 / 0.95 — because 30S and 30M legitimately diverge by ~0.2 MTF
+    mid-field on this panel (30S flat ~0.97, 30M sweeps 0.95->0.55). The
+    intra-curve interpolation pass replaces those sister-filled cells
+    with the linear mean of the field's own neighbours. Lock both
+    affected cells within tolerance so a future change to sister-fallback
+    cannot silently re-introduce the spikes."""
+    result = extract_chart(
+        SAMYANG_85_CHART,
+        SAMYANG_4COLOR_ALL_SOLID,
+        SAMYANG_85_STOPPED_PLOT_BOX,
+        image_height_mm=21.6,
+    )
+    frac_06 = result.readings[6].samples.get("freq30S")
+    frac_08 = result.readings[8].samples.get("freq30S")
+    assert frac_06 is not None, "30S at frac 0.6 must read a value (#1254)"
+    assert frac_08 is not None, "30S at frac 0.8 must read a value (#1254)"
+    assert 0.92 <= frac_06 <= 1.0, (
+        f"30S at frac 0.6: expected ~0.97 (EYE), got {frac_06:.3f} — "
+        f"value near 0.74 means sister fallback re-took mid-field (#1254)"
+    )
+    assert 0.90 <= frac_08 <= 1.0, (
+        f"30S at frac 0.8: expected ~0.95 (EYE), got {frac_08:.3f} — "
+        f"value near 0.73 means sister fallback re-took mid-field (#1254)"
     )
 
 

@@ -137,6 +137,57 @@ def _ink_presence_per_field(
     return out
 
 
+def _replace_sister_fills_with_intra_interp(
+    samples: dict[str, tuple[float | None, ...]],
+    sister_filled: dict[str, tuple[bool, ...]],
+) -> tuple[dict[str, tuple[float | None, ...]], dict[str, int]]:
+    """Replace single-column sister-filled cells with intra-curve interp.
+
+    Sister fallback assumes S and M track each other when one has a gap
+    — true near the optical axis (B4), often true near the field edge,
+    but false at mid-field where S and M can legitimately diverge by
+    0.2+ MTF (Samyang 85mm stopped 30S flat at 0.97 while 30M sweeps
+    0.95->0.55, see #1254). Continuity within a single optical curve is
+    a stronger prior than S~=M off-axis.
+
+    Runs AFTER sister fallback so we know exactly which cells it filled.
+    For each sister-filled cell, if both neighbours i-1 and i+1 are
+    present AND were NOT themselves sister-filled, linearly interpolate
+    the field's own value at i — overriding sister fallback's diverging
+    copy.
+
+    Conservatism (do not interpolate across):
+    - edge samples (i=0 or i=last) — no two-sided neighbour
+    - multi-cell sister-filled runs — interpolating across a run propagates
+      sister-fill error; the gap is genuinely too wide for intra-curve
+      to help
+    - center symmetry — runs after this pass and re-asserts S=M at frac 0,
+      so we never touch i=0 anyway
+
+    Returns ``(samples, intra_fill_count_by_field)``.
+    """
+    out: dict[str, tuple[float | None, ...]] = {}
+    intra_count: dict[str, int] = {}
+    for field, values in samples.items():
+        fills = sister_filled.get(field, (False,) * len(values))
+        fixed: list[float | None] = list(values)
+        count = 0
+        for i in range(1, len(values) - 1):
+            if not fills[i]:
+                continue
+            if fills[i - 1] or fills[i + 1]:
+                continue
+            prev_v = values[i - 1]
+            next_v = values[i + 1]
+            if prev_v is None or next_v is None:
+                continue
+            fixed[i] = (prev_v + next_v) / 2.0
+            count += 1
+        out[field] = tuple(fixed)
+        intra_count[field] = count
+    return out, intra_count
+
+
 def _apply_sister_fallback(
     samples: dict[str, tuple[float | None, ...]],
     presence: dict[str, tuple[bool, ...]],
@@ -170,40 +221,50 @@ def _apply_sister_fallback(
     frac=1.0). Default False preserves historical behaviour for
     profiles whose presence mask is a coarse per-hue raw signal.
 
-    Returns ``(samples, fallback_count_by_field)``. The counter records
-    how many of a field's 11 samples were filled from the sister curve
-    via either trigger; samples that stayed `None` because both curves
-    lacked data do not count as fallbacks.
+    Returns ``(samples, fallback_count_by_field, sister_filled_by_field)``.
+    The counter records how many of a field's 11 samples were filled
+    from the sister curve via either trigger; samples that stayed
+    `None` because both curves lacked data do not count as fallbacks.
+    The per-cell boolean tuple flags which cells came from the sister
+    (vs. the field's own sampler) so a downstream pass can intervene
+    on the diverging-curve case (#1254).
     """
     out: dict[str, tuple[float | None, ...]] = {}
     fallback_count: dict[str, int] = {}
+    sister_filled: dict[str, tuple[bool, ...]] = {}
     for field, values in samples.items():
         sister = _sister_of(field)
         sister_values = samples.get(sister, (None,) * len(SAMPLE_FRACTIONS)) if sister else (None,) * len(SAMPLE_FRACTIONS)
         field_presence = presence.get(field, (False,) * len(SAMPLE_FRACTIONS))
         sister_presence = presence.get(sister, (False,) * len(SAMPLE_FRACTIONS)) if sister else (False,) * len(SAMPLE_FRACTIONS)
         fixed: list[float | None] = []
+        filled_flags: list[bool] = []
         count = 0
         for i, v in enumerate(values):
             if v is None and sister_values[i] is not None and field_presence[i]:
                 # Sampler-None trigger (see docstring).
                 fixed.append(sister_values[i])
+                filled_flags.append(True)
                 count += 1
             elif field_presence[i]:
                 fixed.append(v)
+                filled_flags.append(False)
             elif sister_presence[i] and not presence_is_authoritative:
                 # Sister has real ink here; trust it over our drifted value.
                 # Suppressed when presence is authoritative — the trim's
                 # field_presence=False verdict overrides sister-has-ink.
                 fixed.append(sister_values[i])
+                filled_flags.append(True)
                 count += 1
             else:
                 # Neither curve has ink — keep whatever the DP path
                 # interpolated (or None if the curve was missing entirely).
                 fixed.append(v)
+                filled_flags.append(False)
         out[field] = tuple(fixed)
         fallback_count[field] = count
-    return out, fallback_count
+        sister_filled[field] = tuple(filled_flags)
+    return out, fallback_count, sister_filled
 
 
 def _apply_center_symmetry(
@@ -479,10 +540,23 @@ def extract_chart(
         and profile.hue_meaning == "GEODESIC_DP"
     )
     fallback_count: dict[str, int] = {}
+    sister_filled: dict[str, tuple[bool, ...]] = {}
     if presence:
-        samples_per_field, fallback_count = _apply_sister_fallback(
+        samples_per_field, fallback_count, sister_filled = _apply_sister_fallback(
             samples_per_field, presence,
             presence_is_authoritative=presence_authoritative,
+        )
+    # Intra-curve interpolation pass (#1254): for single-column sister-
+    # filled cells whose neighbours are NOT sister-filled, interpolate
+    # within the field's own curve. Sister fallback's S~=M assumption
+    # fails at mid-field when S and M diverge by 0.2+ MTF (Samyang 85mm
+    # stopped 30S flat at 0.97 while 30M sweeps 0.95->0.55); continuity
+    # within one optical curve is the stronger prior.
+    if sister_filled:
+        samples_per_field, intra_interp_count = (
+            _replace_sister_fills_with_intra_interp(
+                samples_per_field, sister_filled,
+            )
         )
     samples_after_fallback = {f: v for f, v in samples_per_field.items()}
     samples_per_field = _apply_center_symmetry(samples_per_field)
