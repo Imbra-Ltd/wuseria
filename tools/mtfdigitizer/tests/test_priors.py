@@ -4,7 +4,7 @@ Acceptance criteria from issue #966:
 
 - Each of the four priors has both passing and failing fixtures.
 - The reference-set smoke separates as REFERENCE_SET.md predicts:
-  Sigma 56mm and Samyang 85mm MAX clear all priors; Samyang 300mm
+  Sigma 56mm and Samyang 85mm max clear all priors; Samyang 300mm
   reflex fires the flatness prior only.
 - `check_all()` aggregates per-prior outputs and returns an empty
   list iff every prior passed.
@@ -326,13 +326,13 @@ def test_reference_sigma_56_passes_all_priors() -> None:
 
 
 def test_reference_samyang_85_max_passes_all_priors() -> None:
-    """Real-lens 4-color chart (MAX panel) — must not trigger any prior."""
+    """Real-lens 4-color chart (max panel) — must not trigger any prior."""
     readings = _extract_reference(
         "samyang-85mm-f1-4-as-if-umc", SAMYANG_4COLOR_ALL_SOLID
     )
     violations = check_all(readings)
     assert violations == [], (
-        f"Samyang 85mm MAX should pass all priors; got {len(violations)}: "
+        f"Samyang 85mm max should pass all priors; got {len(violations)}: "
         f"{[(v.prior_name, v.field) for v in violations]}"
     )
 

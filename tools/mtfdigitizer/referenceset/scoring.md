@@ -15,8 +15,8 @@ plot box.
 | Chart                                | Style family                    | Profile used                |
 | ------------------------------------ | ------------------------------- | --------------------------- |
 | sigma-56mm-f1-4-dc-dn-c              | mainstream-2color-solid-dashed  | SIGMA_2COLOR_SOLID_DASHED   |
-| samyang-85mm-f1-4-as-if-umc (MAX)    | mainstream-4color-all-solid     | SAMYANG_4COLOR_ALL_SOLID    |
-| samyang-300mm-f6-3-ed-umc-cs-reflex (MAX) | idealized-flat              | SAMYANG_4COLOR_ALL_SOLID    |
+| samyang-85mm-f1-4-as-if-umc (max)    | mainstream-4color-all-solid     | SAMYANG_4COLOR_ALL_SOLID    |
+| samyang-300mm-f6-3-ed-umc-cs-reflex (max) | idealized-flat              | SAMYANG_4COLOR_ALL_SOLID    |
 
 ## How to reproduce
 

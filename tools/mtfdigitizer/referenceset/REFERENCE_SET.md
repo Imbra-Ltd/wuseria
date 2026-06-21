@@ -50,8 +50,8 @@ here.
 
 ### 2. samyang-85mm-f1-4-as-if-umc — Samyang 4-color, two apertures
 
-- **MAX panel** (top): four solid curves; 10S (dark red) and 10M (pink) both start ~0.91, hold flat to ~14mm, then 10S knees down sharply to ~0.78 at edge while 10M stays high (~0.93). 30S (dark grey) starts ~0.70, sags to ~0.56 around 14mm, then upticks to ~0.55. 30M (light grey) drops more linearly from ~0.70 to ~0.55.
-- **F8 panel** (bottom): all four curves recover to ~0.95–1.00 across most of the field; 30M still drops to ~0.55 at edge while 30S holds ~0.95 — the edge-30M characteristic.
+- **max panel** (top): four solid curves; 10S (dark red) and 10M (pink) both start ~0.91, hold flat to ~14mm, then 10S knees down sharply to ~0.78 at edge while 10M stays high (~0.93). 30S (dark grey) starts ~0.70, sags to ~0.56 around 14mm, then upticks to ~0.55. 30M (light grey) drops more linearly from ~0.70 to ~0.55.
+- **stopped panel** (bottom, f/8): all four curves recover to ~0.95–1.00 across most of the field; 30M still drops to ~0.55 at edge while 30S holds ~0.95 — the edge-30M characteristic.
 - Diagnostic: stopping down fixes 10 but barely helps 30M at the edge.
 
 ### 3. samyang-300mm-f6-3-ed-umc-cs-reflex — idealized-flat

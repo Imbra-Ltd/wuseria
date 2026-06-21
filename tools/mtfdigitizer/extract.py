@@ -280,11 +280,12 @@ def _artifact_stem(run: ExtractRun) -> str:
       ``profile.apertures_per_chart`` (``"max"`` / ``"stopped"``).
     - Per-view aperture override (ADR-063, Samyang today): stacked-
       panel charts where each ``ChartView`` declares its own aperture
-      label (``"MAX"`` / ``"F8"``).
+      label (``"max"`` / ``"stopped"``).
 
-    The aperture label is the orchestrator's identifier, not the
-    f-number — keeps the filename short and cohort-stable across
-    lenses.
+    Per ADR-065 the aperture label is a brand-agnostic role identifier
+    (``"max"`` / ``"stopped"``), not an f-number — keeps the filename
+    short and cohort-stable across lenses. The f-stop literal lives in
+    ``src/data/mtf-readings.ts`` as the display label.
     """
     profile = profile_for_chart(run.chart)
     if profile.apertures_per_chart is not None:

@@ -96,7 +96,7 @@ def main() -> None:
     print()
     print("  Expected separation per REFERENCE_SET.md:")
     print("    sigma-56mm           — all priors pass")
-    print("    samyang-85mm MAX     — all priors pass")
+    print("    samyang-85mm max     — all priors pass")
     print("    samyang-300mm reflex — flatness prior fires")
 
 

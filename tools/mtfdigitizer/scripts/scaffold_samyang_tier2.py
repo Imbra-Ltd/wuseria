@@ -8,13 +8,14 @@ with:
 
 - ``style_family="mainstream-4color-all-solid"`` (the registered family;
   the actual hue profile is ``SAMYANG_4COLOR_ALL_SOLID``)
-- primary view's ``plot_box`` = MAX panel (top, typically y 43..463)
-- ``additional_views=(ChartView(plot_box=<F8 panel>, aperture="F8"),)``
-  per ADR-063 — the per-view aperture override that lets one chart
-  publish two panels at different f-stops
-- ``apertures=("MAX", "F8")`` — literal panel labels matching the
-  Tier 1 anchors (85mm, 300mm reflex). The lens's wide-open f-number
-  lives in the slug; no eye-read aperture table needed.
+- primary view's ``plot_box`` = max panel (top, typically y 43..463)
+- ``additional_views=(ChartView(plot_box=<stopped panel>,
+  aperture="stopped"),)`` per ADR-063 — the per-view aperture override
+  that lets one chart publish two panels at different f-stops
+- ``apertures=("max", "stopped")`` — role labels per ADR-065. The
+  Samyang stopped panel is always f/8 across the surveyed cohort;
+  the f-stop literal is the *display* label and lives in
+  ``mtf-readings.ts``, not in code.
 - ``frequencies_lpmm=(10, 30)``
 - ``ground_truth=None`` (Tier 2 per ADR-041)
 
@@ -156,11 +157,12 @@ def _chart_path_literal(rel_path: Path) -> str:
 def _format_lens_entry(c: _ChartFile) -> str:
     """Emit one ReferenceChart literal for one Samyang lens."""
     notes = (
-        f"Tier 2 production entry (ADR-041, ADR-063). Samyang two-panel "
-        f"chart: MAX panel on top, F8 panel below, both sharing the same "
-        f"x-axis (image height {c.image_height_mm} mm). Plot boxes "
-        f"auto-detected by `samyang_plotbox.detect_samyang_plotbox`; "
-        f"per-view aperture override emits MAX + F8 artifacts per pass."
+        f"Tier 2 production entry (ADR-041, ADR-063, ADR-065). Samyang "
+        f"two-panel chart: max panel on top, stopped panel below, both "
+        f"sharing the same x-axis (image height {c.image_height_mm} mm). "
+        f"Plot boxes auto-detected by "
+        f"`samyang_plotbox.detect_samyang_plotbox`; per-view aperture "
+        f"override emits max + stopped artifacts per pass."
     )
     chart_lit = _chart_path_literal(c.path)
     return (
@@ -168,7 +170,7 @@ def _format_lens_entry(c: _ChartFile) -> str:
         f'        slug="{c.slug}",\n'
         f'        chart_path="{chart_lit}",\n'
         '        style_family="mainstream-4color-all-solid",\n'
-        '        apertures=("MAX", "F8"),\n'
+        '        apertures=("max", "stopped"),\n'
         "        frequencies_lpmm=(10, 30),\n"
         f"        image_height_mm={c.image_height_mm},\n"
         f'        notes=(\n            "{notes}"\n        ),\n'
@@ -178,7 +180,7 @@ def _format_lens_entry(c: _ChartFile) -> str:
         "            ChartView(\n"
         f'                chart_path="{chart_lit}",\n'
         f"                plot_box={_box_repr(c.boxes.stopped_box)},\n"
-        '                aperture="F8",\n'
+        '                aperture="stopped",\n'
         "            ),\n"
         "        ),\n"
         "    ),"

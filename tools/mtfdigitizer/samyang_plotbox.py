@@ -1,11 +1,12 @@
 """Plot-box detector for the Samyang two-panel MTF chart family.
 
 Samyang publishes one PNG per lens that stacks two MTF panels vertically:
-the MAX-aperture panel on top, the F8 panel below. Each panel renders the
-same 4 curves (10S, 10M, 30S, 30M) at its own f-stop. ADR-063 captures the
-per-view aperture override that lets one ``ReferenceChart`` declare both
-panels via primary ``chart.plot_box`` + an additional view with
-``aperture="F8"``.
+the wide-open panel on top, the stopped-down (f/8 across the cohort)
+panel below. Each panel renders the same 4 curves (10S, 10M, 30S, 30M)
+at its own f-stop. ADR-063 captures the per-view aperture override that
+lets one ``ReferenceChart`` declare both panels via primary
+``chart.plot_box`` + an additional view with ``aperture="stopped"``
+(role label per ADR-065).
 
 This module's job is to find both plot boxes for every Samyang chart in
 ``docs/optical-specs/samyang-*/<slug>-mtf.png``. The probe handles the
@@ -56,7 +57,7 @@ class SamyangBoxResult:
 
     Naming follows ADR-064: the primary panel is ``plot_box``; the
     secondary panel is ``stopped_box`` (role-based, not f-stop-based).
-    The aperture label for the stopped panel ("F8" today) is supplied
+    The aperture role label ("max" / "stopped" per ADR-065) is supplied
     by the scaffolder via ``ChartView.aperture`` per ADR-063 — this
     detector intentionally does not bake the f-number into a field name.
 

@@ -235,7 +235,7 @@ def main() -> None:
     print()
     print("  Expected separation per scoring.md + plausibility.md:")
     print("    sigma-56mm           LOW  (precision_below_threshold)")
-    print("    samyang-85mm MAX     HIGH (both signals clear)")
+    print("    samyang-85mm max     HIGH (both signals clear)")
     print("    samyang-300mm reflex LOW  (prior_failed_not_suspiciously_flat)")
 
 
