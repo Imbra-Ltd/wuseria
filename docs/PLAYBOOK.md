@@ -1240,6 +1240,38 @@ Review Dependabot PRs:
 gh pr list --author app/dependabot
 ```
 
+**Weekly queue triage.** When ten-ish PRs are stacked, fast-scan CI per PR
+to separate green-and-safe from broken:
+
+```bash
+for pr in <id> <id> ...; do gh pr checks $pr; echo; done
+```
+
+This surfaces failing PRs in seconds; the failure type (build vs links vs
+gate) is visible without opening the run page.
+
+**Sibling lockfile-conflict cascade.** Each squash-merge bumps
+`package-lock.json`, so every other open PR with a lockfile change
+conflicts after the first merge. Plan for it: merge a batch in parallel
+(2-3 simultaneous `gh pr merge` calls — one or two will lose the race),
+then `gh pr comment <N> --body "@dependabot rebase"` on each conflicted
+loser, wait for rebase + CI, merge. Distinct from the co-dependent-bumps
+pathology below — here each PR is independent, just lockfile-coupled.
+
+**Fix-PR-first for lint-rule bumps.** When a bump adds an ESLint rule
+that flags existing source (e.g. sonarjs 4.1.0's `prefer-specific-assertions`):
+
+1. Write the fix in the older rule's API on a separate branch — usually
+   forward-compatible (`expect(x).toHaveLength(N)` works on both old and
+   new sonarjs). One reviewable PR, one bump PR, two clean diffs.
+2. Merge the fix-PR to main.
+3. `gh pr comment <bump-PR> --body "@dependabot rebase"` so the bump
+   rebases against new main and CI goes green.
+
+Do NOT push the fix directly onto Dependabot's branch — keeps the bump
+as Dependabot's own clean commit, recreatable on future weekly runs
+without surprise.
+
 **Co-dependent bumps.** `package.json` uses `^` ranges, so the lockfile pins the actual version. When Dependabot splits interlocked packages (e.g. `react` and `react-dom`) into separate PRs, each PR's CI runs in isolation against current `main` — but merging one alone shifts the lockfile and breaks main with `Incompatible versions` on the next merge.
 
 Three resolution paths, in order of preference:
