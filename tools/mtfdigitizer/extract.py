@@ -420,6 +420,76 @@ def extract_lens(slug: str, *, accept_override: bool) -> int:
     return 0
 
 
+def extract_anchor_artifacts(slug: str) -> int:
+    """Regenerate inspection artifacts for a Tier 1 anchor lens.
+
+    Tier 1 anchors carry maintainer-eye-read ground truth in
+    ``referenceset/charts.py`` and their digitization-log.md is the
+    calibration log written by ``py -m mtfdigitizer.log``. They are
+    refused by ``extract_lens`` because the production-tier log writer
+    would clobber the calibration log.
+
+    This entry point exists so Tier 1 anchors can still emit the per-
+    view inspection artifacts (SVG, overlay PNG, review HTML) that
+    Tier 2 lenses get for free. Use case: a chart family adds a second
+    panel (per ADR-063) after the anchor's artifacts were first
+    generated for the single-panel layout, leaving the new panel
+    without overlay/svg/review files.
+
+    Does NOT write the digitization-log.md — the calibration log is
+    the authoritative log for Tier 1.
+
+    Returns 0 on success, non-zero on error.
+    """
+    chart = _chart_by_slug(slug)
+    if chart is None:
+        print(f"ERROR: unknown lens slug {slug!r}", file=sys.stderr)
+        return 1
+    if chart.ground_truth is None:
+        print(
+            f"ERROR: {slug!r} is not a Tier 1 anchor "
+            f"(ground_truth is None). Use the bare slug invocation "
+            f"for Tier 2 lenses.",
+            file=sys.stderr,
+        )
+        return 1
+    if chart.plot_box is None:
+        print(
+            f"ERROR: {slug!r} has no plot_box — extractor cannot run.",
+            file=sys.stderr,
+        )
+        return 1
+
+    n_views = len(chart.views)
+    suffix = "" if n_views == 1 else f" - {n_views} views"
+    print(f"Extracting Tier 1 anchor {slug} ({chart.style_family}){suffix}...")
+    runs = _run_all_views(chart)
+
+    rel = lambda p: p.relative_to(REPO_ROOT)
+    for run in runs:
+        svg_path, overlay_path, html_path = _write_inspection_artifacts(run)
+        print(f"  wrote {rel(svg_path)}")
+        print(f"  wrote {rel(overlay_path)}")
+        print(f"  wrote {rel(html_path)}")
+        precision = run.verdict.render_match_precision
+        iou = run.verdict.render_match_iou
+        p_str = f"{precision:.3f}" if precision is not None else "-"
+        i_str = f"{iou:.3f}" if iou is not None else "-"
+        view_label = run.image_path.stem
+        print(
+            f"  verdict ({view_label}): {run.verdict.verdict}  "
+            f"(precision={p_str}, IoU={i_str}, "
+            f"prior_violations={len(run.verdict.prior_violations)})"
+        )
+
+    print(
+        f"  Tier 1 anchor: skipped production log write "
+        f"(calibration log is authoritative; run `py -m mtfdigitizer.log` "
+        f"to refresh it)"
+    )
+    return 0
+
+
 def extract_all(*, accept_override: bool) -> int:
     """Run every Tier 2 lens that does not yet have a committed
     `digitization-log.md`. Stops on the first HOLD so the maintainer
@@ -511,6 +581,14 @@ def main(argv: list[str] | None = None) -> int:
         help="bypass the gate / overlay-glance requirement and write "
         "the production digitization-log.md regardless of verdict",
     )
+    parser.add_argument(
+        "--anchor-artifacts",
+        action="store_true",
+        help="regenerate inspection artifacts (SVG, overlay PNG, "
+        "review HTML) for a Tier 1 anchor lens without touching its "
+        "calibration log. Requires a slug; mutually exclusive with "
+        "--accept (Tier 1 has no production log to accept).",
+    )
     args = parser.parse_args(argv)
 
     mode_count = sum([bool(args.slug), args.all, args.check])
@@ -518,11 +596,18 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("must pass a lens slug, --all, or --check")
     if mode_count > 1:
         parser.error("slug, --all, and --check are mutually exclusive")
+    if args.anchor_artifacts and (args.all or args.check or args.accept):
+        parser.error(
+            "--anchor-artifacts is incompatible with --all, --check, "
+            "and --accept"
+        )
 
     if args.check:
         return check_logs()
     if args.all:
         return extract_all(accept_override=args.accept)
+    if args.anchor_artifacts:
+        return extract_anchor_artifacts(args.slug)
     return extract_lens(args.slug, accept_override=args.accept)
 
 

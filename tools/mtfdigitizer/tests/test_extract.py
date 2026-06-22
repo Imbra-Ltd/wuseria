@@ -24,6 +24,7 @@ from mtfdigitizer.extract import (
     _resolve_view_image,
     _should_write_log,
     check_logs,
+    extract_anchor_artifacts,
     extract_lens,
 )
 from mtfdigitizer.pipeline.rendermatch import FieldIou, RenderMatchScore
@@ -448,6 +449,72 @@ def test_extract_check_passes_after_fresh_write(tmp_path, monkeypatch):
 
     assert extract_lens(_SIGMA_16_SLUG, accept_override=True) == 0
     assert check_logs() == 0
+
+
+# --- Tier 1 anchor artifact regeneration (#1252) --------------------------
+
+
+_SAMYANG_85_SLUG = "samyang-85mm-f1-4-as-if-umc"
+
+
+def _samyang_85_present() -> bool:
+    return any(c.slug == _SAMYANG_85_SLUG for c in REFERENCE_CHARTS)
+
+
+@pytest.mark.skipif(
+    not _samyang_85_present(), reason="samyang-85mm anchor not in reference set"
+)
+def test_anchor_artifacts_writes_both_panels_no_log(tmp_path, monkeypatch, capsys):
+    """`--anchor-artifacts` on a multi-view Tier 1 anchor (Samyang 85mm
+    with stacked max + stopped panels per ADR-063) emits the inspection
+    artifacts for every view and never touches the digitization-log.md.
+
+    Before this entry point, the 85mm and 300mm reflex Tier 1 anchors
+    had only the max-panel artifacts on disk because the original
+    artifact-writing pass ran before ADR-063 added the stopped view.
+    The extract_lens entry point refuses Tier 1 anchors (would clobber
+    the calibration log), so there was no path to regenerate the
+    stopped-panel artifacts (#1252)."""
+    chart = next(c for c in REFERENCE_CHARTS if c.slug == _SAMYANG_85_SLUG)
+    src_png = REPO_ROOT / chart.chart_path
+    dst_png = tmp_path / chart.chart_path
+    dst_png.parent.mkdir(parents=True, exist_ok=True)
+    dst_png.write_bytes(src_png.read_bytes())
+
+    monkeypatch.setattr(extract, "REPO_ROOT", tmp_path)
+
+    rc = extract_anchor_artifacts(_SAMYANG_85_SLUG)
+    assert rc == 0
+
+    lens_dir = tmp_path / "docs" / "optical-specs" / _SAMYANG_85_SLUG
+    for panel in ("max", "stopped"):
+        overlay = lens_dir / f"{_SAMYANG_85_SLUG}-mtf-{panel}-overlay.png"
+        svg = lens_dir / f"{_SAMYANG_85_SLUG}-mtf-{panel}.svg"
+        review = lens_dir / f"{_SAMYANG_85_SLUG}-mtf-{panel}-review.html"
+        assert overlay.exists() and overlay.stat().st_size > 1000, (
+            f"{panel} overlay PNG should be a real raster"
+        )
+        assert svg.exists() and svg.stat().st_size > 100
+        assert review.exists()
+    assert not (lens_dir / "digitization-log.md").exists(), (
+        "anchor-artifacts path must NOT write the production log "
+        "(calibration log is authoritative for Tier 1 anchors)"
+    )
+
+
+def test_anchor_artifacts_rejects_tier2_lens():
+    """`--anchor-artifacts` on a Tier 2 lens (no ground_truth) errors
+    out — the user should use the bare slug invocation, which writes
+    the production log path."""
+    # sigma-16mm is Tier 2 (verified by `test_is_tier2_*`).
+    rc = extract_anchor_artifacts(_SIGMA_16_SLUG)
+    assert rc == 1
+
+
+def test_anchor_artifacts_rejects_unknown_slug():
+    """Unknown slug errors out without partial work."""
+    rc = extract_anchor_artifacts("nonexistent-lens-slug")
+    assert rc == 1
 
 
 # --- Fujifilm per-frequency orchestrator helpers (ADR-043) ----------------
