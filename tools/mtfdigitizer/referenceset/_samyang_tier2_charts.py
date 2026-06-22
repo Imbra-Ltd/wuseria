@@ -91,7 +91,7 @@ SAMYANG_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         additional_views=(
             ChartView(
                 chart_path="docs/optical-specs/samyang-12mm-f2-8-ed-as-ncs-fish-eye/samyang-12mm-f2-8-ed-as-ncs-fish-eye-mtf.png",
-                plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=575, y_bottom=995),
+                plot_box=PlotBoxCoords(x_left=31, x_right=461, y_top=583, y_bottom=995),
                 aperture="stopped",
             ),
         ),
