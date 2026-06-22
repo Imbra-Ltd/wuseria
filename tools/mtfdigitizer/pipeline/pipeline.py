@@ -141,7 +141,7 @@ def _replace_sister_fills_with_intra_interp(
     samples: dict[str, tuple[float | None, ...]],
     sister_filled: dict[str, tuple[bool, ...]],
 ) -> tuple[dict[str, tuple[float | None, ...]], dict[str, int]]:
-    """Replace single-column sister-filled cells with intra-curve interp.
+    """Replace sister-filled cells with intra-curve interp where possible.
 
     Sister fallback assumes S and M track each other when one has a gap
     — true near the optical axis (B4), often true near the field edge,
@@ -151,18 +151,22 @@ def _replace_sister_fills_with_intra_interp(
     a stronger prior than S~=M off-axis.
 
     Runs AFTER sister fallback so we know exactly which cells it filled.
-    For each sister-filled cell, if both neighbours i-1 and i+1 are
-    present AND were NOT themselves sister-filled, linearly interpolate
-    the field's own value at i — overriding sister fallback's diverging
-    copy.
+    Identifies each maximal run of consecutive sister-filled cells; if
+    both bracketing samples (the indices immediately before and after
+    the run) are present AND were NOT themselves sister-filled, linearly
+    interpolates across the run between those two endpoints.
 
-    Conservatism (do not interpolate across):
-    - edge samples (i=0 or i=last) — no two-sided neighbour
-    - multi-cell sister-filled runs — interpolating across a run propagates
-      sister-fill error; the gap is genuinely too wide for intra-curve
-      to help
-    - center symmetry — runs after this pass and re-asserts S=M at frac 0,
-      so we never touch i=0 anyway
+    Conservatism — does NOT interpolate when:
+    - the run touches index 0 or the last index (no two-sided bracket)
+    - either bracketing sample is None (sister fallback could not fill
+      because both curves lacked data)
+    - either bracketing sample is itself sister-filled (the bracket value
+      is not from the field's own curve; interpolating would propagate
+      sister-fill error across an even wider span)
+
+    Runs that fail any of these conditions keep their sister-fill values
+    — sister fallback's S~=M approximation is the best signal we have
+    when the field's own curve provides no anchor.
 
     Returns ``(samples, intra_fill_count_by_field)``.
     """
@@ -172,17 +176,31 @@ def _replace_sister_fills_with_intra_interp(
         fills = sister_filled.get(field, (False,) * len(values))
         fixed: list[float | None] = list(values)
         count = 0
-        for i in range(1, len(values) - 1):
+        n = len(values)
+        i = 0
+        while i < n:
             if not fills[i]:
+                i += 1
                 continue
-            if fills[i - 1] or fills[i + 1]:
+            run_start = i
+            while i < n and fills[i]:
+                i += 1
+            run_end = i - 1  # inclusive
+            left = run_start - 1
+            right = run_end + 1
+            if left < 0 or right >= n:
                 continue
-            prev_v = values[i - 1]
-            next_v = values[i + 1]
-            if prev_v is None or next_v is None:
+            if fills[left] or fills[right]:
                 continue
-            fixed[i] = (prev_v + next_v) / 2.0
-            count += 1
+            left_v = values[left]
+            right_v = values[right]
+            if left_v is None or right_v is None:
+                continue
+            span = right - left  # 2 for single-cell, 3 for two-cell, ...
+            for j in range(run_start, run_end + 1):
+                t = (j - left) / span
+                fixed[j] = left_v + t * (right_v - left_v)
+                count += 1
         out[field] = tuple(fixed)
         intra_count[field] = count
     return out, intra_count
