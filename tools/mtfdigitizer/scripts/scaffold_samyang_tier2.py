@@ -90,6 +90,40 @@ _TIER1_SKIP_SLUGS: frozenset[str] = frozenset({
 })
 
 
+# Per-slug plot-box y_top inset for the stopped panel (#1257).
+#
+# The detector finds y_top by locating the chart's left vertical axis
+# line's topmost dark pixel — structurally correct. But on a few charts
+# the curve nearest the plot top sits exactly one pixel below the axis,
+# and its 1-pixel AA halo (a grey value at S~0, V~177-191) lands inside
+# the detected plot box at row y_top+2. That grey halo qualifies for
+# the 30M-light-grey HSV band (S<40, V in [160,195]) and the 30M mask
+# catches it as if it were a separate light-grey curve, producing a
+# vertical-spike polyline artifact in the overlay.
+#
+# Bumping y_top inward by a few rows skips the AA halo without losing
+# real data — verified per-chart that the trimmed rows contain only
+# white background or AA halo pixels of curves below them.
+#
+# Maintainer-eyeball verified; add new entries only after confirming the
+# trimmed rows are empty of the relevant hue's legitimate ink.
+_STOPPED_Y_TOP_INSET_BY_SLUG: dict[str, int] = {
+    # 12mm fisheye: red 10S curve renders at chart-y 578-580 (across the
+    # full x range) sending grey-valued AA halos to chart-y 577 AND
+    # chart-y 581-582. Both halo bands have V in [160,195] and S~0, so
+    # they qualify for the 30M-light-grey HSV band (#1257). The
+    # legitimate 30M curve on this lens starts at chart-y 583, so
+    # insetting y_top from 575 to 583 skips both halo bands while
+    # preserving every cell of the real 30M curve. Verified per-row:
+    # rows 575-582 contain only white background OR red-curve AA halos
+    # in this chart; no legitimate 30M ink. Other Samyang lenses are
+    # NOT eligible for this inset — many (8mm fisheye, 10mm, 16mm) have
+    # legitimate 30M ink in rows 578-582 where their 30M curve sits
+    # near MTF~1.0. (#1257)
+    "samyang-12mm-f2-8-ed-as-ncs-fish-eye": 8,
+}
+
+
 @dataclass(frozen=True)
 class _ChartFile:
     """One detected chart image's metadata."""
@@ -127,6 +161,14 @@ def _gather_charts() -> list[_ChartFile]:
                 f"14.2 for APS-C)."
             )
         boxes = detect_samyang_plotbox(chart_path)
+        inset = _STOPPED_Y_TOP_INSET_BY_SLUG.get(slug, 0)
+        if inset:
+            xl, xr, yt, yb = boxes.stopped_box
+            boxes = SamyangBoxResult(
+                plot_box=boxes.plot_box,
+                stopped_box=(xl, xr, yt + inset, yb),
+                image_size=boxes.image_size,
+            )
         charts.append(
             _ChartFile(
                 slug=slug,

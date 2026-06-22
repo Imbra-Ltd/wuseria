@@ -414,6 +414,46 @@ def test_samyang_14mm_stopped_30S_no_mid_field_sister_drag() -> None:
     )
 
 
+def test_samyang_12mm_fisheye_stopped_no_chart_top_30M_contamination() -> None:
+    """#1257 regression — on the 12mm fisheye stopped panel, the bright
+    red 10S curve at chart-y 578-580 emits grey AA halos at chart-y 577
+    AND chart-y 581-582 that qualify for the 30M-light-grey HSV band
+    (S<40, V in [160,195]). Without a per-chart inset on the stopped
+    panel's y_top, the 30M skeleton catches the halos as a spurious
+    ridge at MTF~1.0, producing a vertical-spike polyline artifact
+    around mm 14. The scaffolder applies an inset of 8 px on this lens
+    specifically (_STOPPED_Y_TOP_INSET_BY_SLUG in
+    scaffold_samyang_tier2.py); the legitimate 30M curve starts at
+    chart-y 583. Lock that the spurious top-y ridge is gone.
+
+    Halo-pair subtraction was rejected as a fix: a 10S-red -> 30M
+    halo pair wipes out the 30M mask entirely on the 300mm reflex
+    Tier 1 anchor where 30M and 10S are structurally coincident at
+    MTF=1.0 across the field. The per-chart plot-box inset is the only
+    fix that does not regress the anchor."""
+    SAMYANG_12_CHART, _, _ = _ref("samyang-12mm-f2-8-ed-as-ncs-fish-eye")
+    pb = _ref_view_plot_box("samyang-12mm-f2-8-ed-as-ncs-fish-eye", 1)
+    # Sanity-check the inset landed: y_top should be 583, not 575.
+    assert pb.y_top == 583, (
+        f"stopped y_top expected 583 (575 + 8 inset, #1257), got {pb.y_top}"
+    )
+    result = extract_chart(
+        SAMYANG_12_CHART,
+        SAMYANG_4COLOR_ALL_SOLID,
+        pb,
+        image_height_mm=14.2,
+    )
+    # frac 0.6 was the spike — extracted 30M should match the legitimate
+    # curve's value (~0.62), not the spurious MTF~1.0 chart-top pickup.
+    frac_06 = result.readings[6].samples.get("freq30M")
+    assert frac_06 is not None, "30M at frac 0.6 must read a value (#1257)"
+    assert 0.50 <= frac_06 <= 0.75, (
+        f"30M at frac 0.6: expected ~0.62 (legitimate curve), got "
+        f"{frac_06:.3f} — value near 1.0 means chart-top AA halo "
+        f"contamination not inset (#1257)"
+    )
+
+
 def test_sigma_56_10S_holds_high_until_knee() -> None:
     """REFERENCE_SET.md: 'Sigma 10S solid ~0.97 flat from 0 to ~10mm,
     then knees down'."""
