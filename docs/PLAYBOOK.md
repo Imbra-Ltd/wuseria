@@ -245,10 +245,11 @@ threshold.
 **Run the MTF digitizer production extractor (Tier 2 per ADR-041):**
 
 ```bash
-cd tools && py -m mtfdigitizer.extract <lens-slug>            # one lens, gated commit
-cd tools && py -m mtfdigitizer.extract <lens-slug> --accept   # bypass HOLD, write log
-cd tools && py -m mtfdigitizer.extract --all                  # every pending Tier 2 lens; stops on first HOLD
-cd tools && py -m mtfdigitizer.extract --check                # re-render all production logs, fail on staleness
+cd tools && py -m mtfdigitizer.extract <lens-slug>                       # one lens, gated commit
+cd tools && py -m mtfdigitizer.extract <lens-slug> --accept              # bypass HOLD, write log
+cd tools && py -m mtfdigitizer.extract --all                             # every pending Tier 2 lens; stops on first HOLD
+cd tools && py -m mtfdigitizer.extract --check                           # re-render all production logs, fail on staleness
+cd tools && py -m mtfdigitizer.extract <anchor-slug> --anchor-artifacts  # Tier 1 anchor: regen overlay/svg/review HTML without touching the calibration log (#1262)
 ```
 
 Sister to `calibrate` for production-tier lenses (Tier 2 = `plot_box` set but no

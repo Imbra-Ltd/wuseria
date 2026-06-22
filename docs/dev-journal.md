@@ -9874,3 +9874,99 @@ Theme: formalise plot-box detector + aperture-label naming across brands and mig
 - Gitleaks CI: pass on each PR.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 176 — Samyang stopped-defects sweep: sister-fill + chart-top + Tier 1 artifacts
+
+Date: 2026-06-21 → 2026-06-22 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: triage user-reported Samyang stopped-overlay defects (8 lenses) into root causes, fix each class with the smallest possible blast radius. Started as a tracking issue (#1252); decomposed into 4 distinct bug classes via investigation. Shipped as a 5-PR chain — each PR closed one bug class without regressing Tier 1 anchors. Healed the S175-noted `max |d|` regression (0.1745 → 0.2265 → 0.1217 — net 0.05 better than pre-S175).
+
+#### PRs
+
+- **#1255** — `fix(mtf): intra-curve interp pass guards sister fallback at mid-field (#1254)`. Single-cell sister-fill replacement when S/M curves diverge mid-field. Adds `_replace_sister_fills_with_intra_interp` post-pass to `pipeline.py`; `_apply_sister_fallback` signature extended to return per-cell sister-filled flags. Tests: 4 added in test_pipeline.py.
+- **#1258** — `data(mtfdigitizer): re-extract 3 healed Samyang stopped overlays (#1252)`. Bulk artifact regen for 8mm fisheye, 10mm NCS CS, 50mm f/1.2 (3 of 6 healed by #1255).
+- **#1260** — `fix(mtf): intra-curve interp handles multi-cell sister-fill runs (#1256)`. Extends #1255's logic to walk maximal runs of consecutive sister-filled cells. Healed 14mm + 20mm 30S/30M; Tier 1 anchors byte-identical. Tests: 3 added/updated.
+- **#1261** — `fix(mtf): per-chart y_top inset eliminates 30M chart-top contamination on 12mm fisheye (#1257)`. Per-slug stopped-panel `y_top` inset table (`_STOPPED_Y_TOP_INSET_BY_SLUG`) in `scaffold_samyang_tier2.py`. Halo-pair extension rejected (regresses 300mm reflex anchor). Tests: 1 added.
+- **#1262** — `feat(mtf): --anchor-artifacts emits inspection artifacts for Tier 1 anchors (#1252)`. New CLI flag `extract --anchor-artifacts <slug>` runs `_run_all_views` + `_write_inspection_artifacts` for a Tier 1 anchor without touching its calibration log. Ships the 6 missing artifacts (3 per anchor for 85mm + 300mm reflex stopped). Tests: 3 added.
+
+#### Issues opened / closed
+
+- **#1252 opened then closed** — Samyang MTF stopped/digitization defects (8 lenses). All 8 resolved across the 5 PRs above.
+- **#1253 opened then closed** — initial anchor-coverage backfill hypothesis; superseded by #1254 once investigation showed anchors already had stopped GT.
+- **#1254 opened then closed** (P2, v0.8.0, bug) — single-cell sister-fallback misfire, fixed in #1255.
+- **#1256 opened then closed** (P2, v0.8.0, bug) — re-framed mid-investigation from "dual-ridge in saturated-color masks" to "multi-cell sister-fill runs"; fixed in #1260.
+- **#1257 opened then closed** (P3, v0.8.0, bug) — chart-top ink contamination on 12mm fisheye 30M; fixed in #1261.
+- **#1259 opened then closed wontdo** (P3, v0.8.0, bug) — 20mm 10S dual-ridge mask contamination. All 4 viable fix attempts regress Tier 1 anchors or other Tier 2 lenses; residual symptom (Δ 0.03-0.05) is within ±0.05 tolerance. Documented in close comment.
+
+#### Key technical findings
+
+- **Three distinct sister-fallback failure modes.** The original "sister fallback copies diverging S/M value" pattern manifested as single-cell skeleton gaps (#1254, 85mm freq30S frac 0.6/0.8), multi-cell skeleton gaps (#1256, 14mm freq30S frac 0.2-0.7), and chart-top AA halo contamination misfiring the mask itself (#1257). Each needed its own fix layer (intra-curve interp post-pass for #1254/#1256, per-chart plot-box inset for #1257) — no single mechanism solved all three.
+- **Halo-pair extension (`10S-red` → `30M-light-grey`) wipes out 300mm reflex anchor.** A/B verified: ring subtraction takes out 30M's legitimate mask everywhere 10S sits at MTF~1.0 (which is the entire 300mm reflex chart). Even `dy=1` halo dilation regresses 11/11 → 4/11 paired. Same trade-off ADR-062 documented for the 30S/30M pair on different charts.
+- **Dual-ridge isn't always contamination.** Surveyed all 19 Samyang lenses: 85mm Tier 1 anchor stopped has 152 dual-ridge columns in 10S (mostly invisible because both ridges sit near MTF 0.99). Naive "drop CCs whose mean_y is >12 px below dominant" rule regressed 85mm stopped freq10M (p95 0.016 → 0.069) — 85mm legitimately has the 10M curve descending into a separate CC. Threshold of 12 px or 20 px cannot discriminate; abandoned.
+- **The "secondary CC" on 20mm 10S IS the 10M curve.** 125 contamination pixels at S=140-172 are 10M-pink curve body pixels whose saturation crosses 10S-red's `s_min=140`. Halo subtraction can't help because the contamination IS the contaminator's core, not its halo. Closed as wontdo.
+- **Tier 1 anchors had no codepath to emit per-view inspection artifacts.** `extract_lens` refuses Tier 1 (would clobber the calibration log); `calibrate.py` writes no overlay/svg/review files. After ADR-063 added the stacked stopped view (S175), the new view's artifacts had no writer. Closed by `--anchor-artifacts` flag in #1262.
+- **S175 `max |d|` regression had a root cause.** 0.1745 → 0.2265 across S175 → fixed to 0.1217 by #1255 (single-cell sister-fill misfire on 85mm anchor stopped freq30S at frac 0.6/0.8). Net 0.05 better than pre-S175 baseline.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/pipeline.py`** — `_replace_sister_fills_with_intra_interp` (new, runs after sister fallback; targets sister-filled cells whose neighbours are present and not sister-filled themselves). `_apply_sister_fallback` returns per-cell sister-filled flags as third tuple element. Handles both single-cell and multi-cell runs (multi-cell walks maximal runs, interpolates between bracketing real samples).
+- **`tools/mtfdigitizer/scripts/scaffold_samyang_tier2.py`** — `_STOPPED_Y_TOP_INSET_BY_SLUG` per-slug override table for stopped-panel plot-box y_top insets. Currently used only by `samyang-12mm-f2-8-ed-as-ncs-fish-eye` (inset=8). Regenerated `_samyang_tier2_charts.py`.
+- **`tools/mtfdigitizer/extract.py`** — `extract_anchor_artifacts(slug)` new function. CLI flag `--anchor-artifacts` (mutually exclusive with `--all`, `--check`, `--accept`). Rejects Tier 2 lenses with clear error pointing at the bare-slug invocation.
+- **`docs/optical-specs/samyang-*/`** — 5 Tier 2 lens artifact sets regenerated (8mm, 10mm, 12mm fisheye, 14mm, 20mm, 50mm — overlays + svgs); 2 Tier 1 anchor stopped-panel artifacts created from scratch (85mm + 300mm reflex — overlays + svgs + review HTMLs).
+- **Tests**: 10 added/updated across `test_pipeline.py` and `test_extract.py`.
+
+#### Verification
+
+- **411 mtfdigitizer pytest pass** (was 401 in S175 — 10 new this session).
+- **Calibration aggregate stable across all 5 merged PRs**: paired 872, p95 0.0454, max 0.1217, in-band 96.2%. No Tier 1 anchor regression on any PR.
+- **`npm run validate`** green on every PR.
+- **CI on each PR**: required checks pass; `build` + `lighthouse` skipped per path-filter (no `src/` changes — Python-only).
+- Visual verification on every healed lens (overlays inspected against source charts).
+
+#### Key decisions (this session)
+
+- **5 PRs, not 1.** Each bug class shipped independently with its own root-cause analysis and verification. Smaller diffs reviewed faster; isolating each fix made the Tier 1 anchor regression check cleaner.
+- **Re-frame #1256 mid-investigation, don't close-and-resubmit.** The bug was originally hypothesized as "dual-ridge in saturated-color masks" but the actual fix was multi-cell sister-fill interp. Re-wrote PR #1260's description to document the misdiagnosis transparently rather than opening a new issue.
+- **#1259 closed wontdo, not deferred.** Documented all 4 attempted fixes and their failure modes; the future architectural fix (promote `samyang-4color-all-solid` to GEODESIC_DP) is the right path but warrants its own epic, not a long-running open bug.
+- **`--anchor-artifacts` as separate flag, not relaxed `extract_lens` gate.** Tier 1 anchors have a calibration log written by `mtfdigitizer.log`; allowing the production-log writer to run on them would clobber it. Separate entry point with explicit semantics is safer than conditional branching deep in the writer.
+- **No auto-merge without explicit ask.** Per `feedback_ask_before_automerge`, awaited user instruction on each of the 5 merges.
+
+#### Process patterns observed this session
+
+- **Misdiagnosis-then-rediagnosis is a recurring pattern.** #1256 was filed based on visual inspection of dual ridges in the skeleton; actual investigation showed the visible artifact was sister-fill drag (different mechanism). Documenting the misdiagnosis transparently in the PR is more honest than silently re-framing.
+- **A/B testing fixes against Tier 1 anchors caught 2 regressions early.** ADR-062 had warned that 10S→30M halo subtraction would regress 300mm reflex; verified empirically before shipping. The CC-dedup attempt on #1259 also surfaced a regression on 85mm stopped 10M (p95 0.016 → 0.069) before being abandoned.
+- **Background test runs hit a buffering quirk.** `py -m pytest mtfdigitizer -q` writes nothing to the output file until process end; reading mid-run got empty file. Switched to relying on the task-completion notification instead.
+
+#### Follow-ups for next session (S177)
+
+- **Carried forward**:
+  - **#1249 (P3, v0.8.0)** — refresh 40+ pre-existing stale production digitization logs across Sigma / Fujifilm / TTartisan.
+  - **#1134 (P1, Backlog)** — confidence badge.
+  - **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050).
+  - **#950 (P2, v0.8.0)** — auto-detect plot box (coverage).
+  - **Next brand in epic #790** — 5/24 done; first new brand will validate ADR-064 + ADR-065 from day one.
+  - **Viltrox `apertures=("f/1.2","F8")`** (charts.py:1056) — same Samyang anti-pattern; needs per-lens migration when Viltrox is touched next.
+  - **Tokina logs** — still stale.
+- **New from S176**:
+  - **`samyang-4color-all-solid` → GEODESIC_DP promotion** (future epic) — would fix #1259's residual dual-ridge issue and potentially benefit 85mm/100mm. Requires full Samyang cohort re-extraction; recorded in #1259 close comment.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged). All Post-merge defects closed.
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **872 paired, median |d| 0.0066, p95 |d| 0.0454, in-band 96.2%, max |d| 0.1217** (max improved from 0.2265 → 0.1217 — net 0.05 better than pre-S175 baseline of 0.1745).
+- **411 mtfdigitizer pytest pass** (was 401 — 10 new this session). **223 vitest pass** (unchanged).
+- **65 ADRs** (unchanged — no new ADRs this session; all fixes folded into existing mechanism layers).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + #1249 + epics #790, #932** + remaining P3 brand-digitization tasks.
+- **0 open PRs** at wrap-up.
+- `mtf-readings.ts` — unchanged (no GT or display-label edits this session).
+- Stale eye-read digitization logs: **4 Tokina + 1 Fuji anchor** (carried).
+- Stale production digitization logs: **40+ across Sigma/Fujifilm/TTartisan** (tracked in #1249; the 5 Samyangs touched this session regenerated correctly via HOLD path).
+- Gitleaks CI: pass on each PR.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
