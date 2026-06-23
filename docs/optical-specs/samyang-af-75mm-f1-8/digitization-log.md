@@ -8,6 +8,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 - **EX** — what the extractor computed for the sample point.
 - **sister-fill** — count of samples filled from the sister curve.
+- **coincident-anchor** — count of sister-filled cells overridden by the matching lower-frequency curve's value when the lower curve is pinned at MTF >= 0.95; fires when the chart artist merged two near-1.0 strokes into one visible line (#1269).
 - **·** in a sparkline — extractor returned None at that point.
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
@@ -22,18 +23,18 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 ### Sample grid
 
-| Field          | non-null | sister-fill |
-| -------------- | -------- | ----------- |
-| freq10S        | 11/11    |  0/11       |
-| freq10M        | 11/11    |  8/11       |
-| freq30S        | 11/11    |  0/11       |
-| freq30M        | 11/11    | 10/11       |
+| Field          | non-null | sister-fill | coincident-anchor |
+| -------------- | -------- | ----------- | ----------------- |
+| freq10S        | 11/11    |  0/11       |  0/11             |
+| freq10M        | 11/11    |  8/11       |  0/11             |
+| freq30S        | 11/11    |  0/11       |  0/11             |
+| freq30M        | 11/11    | 10/11       | 10/11             |
 
 ```
   EX   freq10S        ███████▇▇▇▇  (0.98 → 0.84)
   EX   freq10M        ███████▇▇▇▇  (0.98 → 0.92)
   EX   freq30S        ▇▇▇▇▇▆▆▆▆▆▆  (0.87 → 0.66)
-  EX   freq30M        ▇▇▇▇▇▆▆▆▆▆▆  (0.87 → 0.65)
+  EX   freq30M        ▇██████▇▇▇▆  (0.87 → 0.65)
 ```
 
 **freq10S**
@@ -89,15 +90,15 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.87 |
-| 0.1 | 0.86 |
-| 0.2 | 0.85 |
-| 0.3 | 0.83 |
-| 0.4 | 0.80 |
-| 0.5 | 0.77 |
-| 0.6 | 0.74 |
-| 0.7 | 0.71 |
-| 0.8 | 0.69 |
-| 0.9 | 0.68 |
+| 0.1 | 0.97 |
+| 0.2 | 0.97 |
+| 0.3 | 0.97 |
+| 0.4 | 0.96 |
+| 0.5 | 0.95 |
+| 0.6 | 0.94 |
+| 0.7 | 0.92 |
+| 0.8 | 0.93 |
+| 0.9 | 0.92 |
 | 1.0 | 0.65 |
 
 ### Center / edge summary
@@ -107,7 +108,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq10S        |         0.98 |       0.87 |         0.84 |
 | freq10M        |         0.98 |       0.92 |         0.92 |
 | freq30S        |         0.87 |       0.68 |         0.66 |
-| freq30M        |         0.87 |       0.68 |         0.65 |
+| freq30M        |         0.87 |       0.92 |         0.65 |
 
 ### Shape metrics
 
@@ -116,7 +117,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq10S        |       0.0 |       0.98 |                 — |
 | freq10M        |       0.0 |       0.98 |                 — |
 | freq30S        |       0.0 |       0.87 |                 — |
-| freq30M        |       0.0 |       0.87 |                 — |
+| freq30M        |       0.1 |       0.97 |                 — |
 
 ### Confidence signals
 
@@ -148,12 +149,12 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Sample grid
 
-| Field          | non-null | sister-fill |
-| -------------- | -------- | ----------- |
-| freq10S        | 11/11    |  0/11       |
-| freq10M        | 11/11    | 11/11       |
-| freq30S        | 11/11    |  0/11       |
-| freq30M        | 11/11    |  3/11       |
+| Field          | non-null | sister-fill | coincident-anchor |
+| -------------- | -------- | ----------- | ----------------- |
+| freq10S        | 11/11    |  0/11       |  0/11             |
+| freq10M        | 11/11    | 11/11       |  0/11             |
+| freq30S        | 11/11    |  0/11       |  0/11             |
+| freq30M        | 11/11    |  3/11       |  3/11             |
 
 ```
   EX   freq10S        ███████████  (0.99 → 0.99)
@@ -215,8 +216,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.97 |
-| 0.1 | 0.97 |
-| 0.2 | 0.97 |
+| 0.1 | 0.99 |
+| 0.2 | 0.99 |
 | 0.3 | 0.96 |
 | 0.4 | 0.96 |
 | 0.5 | 0.96 |
@@ -242,7 +243,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | freq10S        |       0.0 |       0.99 |                 — |
 | freq10M        |       0.0 |       0.99 |                 — |
 | freq30S        |       0.7 |       0.99 |                 — |
-| freq30M        |       0.2 |       0.97 |                 — |
+| freq30M        |       0.1 |       0.99 |                 — |
 
 ### Confidence signals
 
@@ -251,7 +252,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
 | precision | 0.649 |      0.80 |   no |
-| IoU       | 0.602 |      0.20 |  yes |
+| IoU       | 0.601 |      0.20 |  yes |
 
 #### Plausibility priors
 

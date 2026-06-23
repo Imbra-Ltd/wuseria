@@ -27,7 +27,7 @@
 <polyline class="curve curve-10" style="stroke:#c89b3c" points="36.0,14.7 62.8,14.7 89.6,14.7 116.4,14.5 143.2,14.3 170.0,14.4 196.8,14.9 223.6,15.3 250.4,15.8 277.2,16.9 304.0,18.5"/>
 <polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="36.0,14.7 62.8,14.7 89.6,14.7 116.4,14.5 143.2,14.3 170.0,14.4 196.8,14.9 223.6,14.7 250.4,15.0 277.2,15.4 304.0,15.8" stroke-dasharray="4 2"/>
 <polyline class="curve curve-30" style="stroke:#6b9bd2" points="36.0,22.5 62.8,22.5 89.6,22.5 116.4,22.5 143.2,22.5 170.0,22.9 196.8,24.2 223.6,26.9 250.4,31.2 277.2,37.6 304.0,47.2"/>
-<polyline class="curve curve-30 curve-m" style="stroke:#6b9bd2" points="36.0,22.5 62.8,22.5 89.6,22.5 116.4,25.0 143.2,25.2 170.0,25.5 196.8,26.5 223.6,27.4 250.4,28.3 277.2,31.5 304.0,36.8" stroke-dasharray="4 2"/>
+<polyline class="curve curve-30 curve-m" style="stroke:#6b9bd2" points="36.0,22.5 62.8,14.7 89.6,14.7 116.4,25.0 143.2,25.2 170.0,25.5 196.8,14.9 223.6,14.7 250.4,28.3 277.2,31.5 304.0,36.8" stroke-dasharray="4 2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="36.0" cy="14.7" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="14.7" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="14.7" r="2"/>
@@ -62,13 +62,13 @@
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="277.2" cy="37.6" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="304.0" cy="47.2" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="36.0" cy="22.5" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="62.8" cy="22.5" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="89.6" cy="22.5" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="62.8" cy="14.7" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="89.6" cy="14.7" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="116.4" cy="25.0" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="143.2" cy="25.2" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="170.0" cy="25.5" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="196.8" cy="26.5" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="223.6" cy="27.4" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="196.8" cy="14.9" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="223.6" cy="14.7" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="250.4" cy="28.3" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="277.2" cy="31.5" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="304.0" cy="36.8" r="2"/>
