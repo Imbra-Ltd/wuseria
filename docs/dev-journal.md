@@ -10055,3 +10055,93 @@ Theme: refresh every pre-existing stale digitization log across the corpus so `e
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 178 — Samyang stopped-panel anchor patterns: physics anchor lands, coincident anchor reverted
+
+Date: 2026-06-23 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: investigate and fix samyang-10mm-f2-8-ed-as-ncs-cs stopped panel missing M30/S30 segments at frac=0.0 (user report). Two distinct chart-rendering defects surfaced; one fix shipped, one reverted after surfacing a deeper upstream problem.
+
+#### PRs
+
+- **#1268 merged** (`fix(mtf): anchor frac=0.0 to MTF=1.0 when both S and M missing (#1267)`) — squash `840da04`. Extends `_apply_center_symmetry` with a B4 physics anchor: when both `freq{N}S[0]` and `freq{N}M[0]` are None after sister fallback + intra-interp, anchor both to MTF=1.0 (the optical-axis value). 35 files (+642/−207). Fixes 8 affected lenses: 3 Samyang (10mm, 12mm fisheye, AF 12mm) + 5 Fujifilm (45lp panels) + 1 TTartisan.
+- **#1270 merged then reverted** (`fix(mtf): anchor sister-filled high-freq cells to coincident lower-freq curve (#1269)`) — squash `efdd923`. Added `_apply_coincident_top_anchor` to repair the fisheye 30S spike where the chart artist drew dark-grey 30S coincident with red 10S for first 15mm. Worked correctly per ground-truth and gate; reverted because freq10S itself was wrong (sister-filled from diving freq10M) due to the upstream #1257 y_top inset clipping the red 10S core out of the plot region. The anchor inherited freq10S's noise, producing a visible downward bow on the rendered SVG. 45 files.
+- **#1272 merged** (`revert: PR #1270 coincident-top anchor (residual freq10S bow on fisheye)`) — squash `d76f20b`. Clean `git revert` of `efdd923`. Calibration aggregate returns to PR #1268 baseline byte-identical.
+
+#### Issues opened / closed
+
+- **#1267 opened + closed** (P2, v0.8.0, bug) — Samyang stopped-panel 30S/30M missing at frac=0.0 on 3 lenses; fixed in #1268.
+- **#1269 opened + auto-closed by #1270 + reopened after #1272 revert** (P2, v0.8.0, bug) — 30S sister-fills from 30M when actually coincident with 10S at MTF~1.0 (fisheye spike). Stays open as the original 0.45 MTF discontinuity at frac 0.7→0.8 is back on main. Blocked on #1271.
+- **#1271 opened** (P3, v0.8.0, bug) — Fisheye stopped: y_top inset over-clips red 10S, residual 0.03-0.07 error on coincident-anchored 30S. Root cause is the #1257 inset; needs per-mask exclusion zones (or chart-top-band-subtraction extension of ADR-062) before #1269 can be re-attempted.
+
+#### Key technical findings
+
+- **The frac=0.0 missing-segments defect is a "both-None" gap in `_apply_center_symmetry`.** Pipeline chain is `direct → sister-fallback → intra-interp → center-symmetry → SVG`. The existing center-symmetry guard `if s_val is None and m_val is None: continue` skips when both sides are None — sister-fallback can't fire either (needs one side present to copy). Per-field probes confirmed: on samyang-10mm stopped, freq10S first ink at x=43, freq10M at x=33, **freq30S at x=138, freq30M at x=44** — both 30\* skeletons empty in the leftmost columns where the curves are stacked tightly with 10S/10M. Adding "anchor to MTF=1.0 when both None" recovers 8 lenses; calibration improves from 872→878 paired (+6 GT-matching) and in-band 94.9%→96.0% (+1.1%).
+- **The fisheye spike at frac 0.7→0.8 has a deeper root cause than chart-merged strokes.** The freq30S skeleton is empty for x=31..335 (frac 0..0.71) because the chart artist drew the dark-grey 30S coincident with red 10S in that region. PR #1270's coincident-anchor copies `freq10S[i]` into `freq30S[i]` when `freq10S[i] >= 0.90` and a clean-cell gate confirms `median |hi-lo| <= 0.05`. The fix worked per the test, but `freq10S` itself was sister-filled from diving `freq10M` in the same range, because **the #1257 y_top inset (575→583 for the 12mm fisheye) clips the red 10S core at chart-y 578-581 out of the plot region.**
+- **#1257 inset created an architectural conflict.** The inset's purpose (skipping red-AA halos at chart-y 581-582 that contaminate the 30M-light-grey HSV band) and freq10S's need (capturing the red core at chart-y 578-581) require opposite y_top values. `y_top` is a single global plot-box value — both masks share it. The right fix is per-mask exclusion zones; out of scope for this session.
+- **Coincident-anchor needs a coincidence gate, not just a threshold.** The 0.90 threshold alone breaks samyang-85mm Tier 1 (`freq10M` is pinned ≥0.91 across the field while `freq30M` legitimately sits at ~0.6, a 0.30 gap). Without a gate, the anchor would corrupt 4 sister-filled `freq30M` cells with values 0.3+ MTF too high, taking p95 |d| on that field from 0.026 → 0.365. The clean-cell median |hi-lo| gate (≤0.05) cleanly distinguishes merged-stroke charts (fisheye) from independent-curve charts (samyang-85mm).
+- **Revert vs. iterate decision: revert when the apparent fix has upstream noise.** PR #1270's tests passed and the original spike (0.45 MTF) was gone. But visual inspection showed a residual downward bow at frac 0.5/0.6/0.7 (30S read 0.97/0.96/0.93 instead of true ~1.0). Tracing the bow back: freq10S sister-fills from freq10M because y_top inset clips red 10S → coincident-anchor inherits the diverged freq10S value. Iterating the threshold or gate further can't help; the upstream input is wrong. Revert was the right call per `ai-workflow.md` "iterate vs. revert" — the architecture, not the tuning, is wrong.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/pipeline.py`** — added `_apply_center_symmetry` "both-None → 1.0" branch (#1268). Coincident-anchor stage (#1270) added then removed via revert (#1272).
+- **`tools/mtfdigitizer/pipeline/types.py`** — added `center_anchor_count: dict[str, int]` field on `ExtractedChart` (#1268). `coincident_anchor_count` added then removed.
+- **`tools/mtfdigitizer/production_log.py`** — conditional `center-anchor` column (rendered only when at least one cell fired). #1270's `coincident-anchor` column added then removed.
+- **`tools/mtfdigitizer/tests/test_pipeline.py`** — 5 new tests for the center-axis physics anchor (#1268) covering: anchor fires on both-None, does NOT fire when either side has a value, regression on all 3 Samyang lenses (10mm, 12mm fisheye, AF 12mm).
+- **`docs/decisions/066-center-axis-physics-anchor.md`** — new ADR documenting the physics anchor rule, alternatives weighed, constraints (frac=0.0 only, both-None only, last in the chain).
+- **30 logs/SVGs/overlays regenerated** by #1268 across the 8 affected lenses. Restored to pre-#1270 byte-identical state by the revert.
+
+#### Verification
+
+- **`py -m mtfdigitizer.extract --check`** → exit 0, "OK: 103 production log(s) up to date."
+- **416 mtfdigitizer pytest pass** (411 prior + 5 new from #1268; #1270's 5 tests removed by revert).
+- **Aggregate calibration**: 878 paired (+6 from #1267 fix), median |d| 0.0066, p95 |d| 0.0462 (+0.0008 vs S177), max |d| 0.1217 (unchanged), in-band 96.0% (+1.1% vs S177).
+- **`npm run check`** → 0 errors, 0 warnings (front-end unaffected).
+- **CI** — all 3 PRs (#1268, #1270, #1272) cleared CodeQL + gate + analyze + gitleaks + links; build/lighthouse correctly skipped (no front-end source changes).
+
+#### Key decisions (this session)
+
+- **B4 physics anchor at frac=0.0 chosen over alternatives (ADR-066).** Rejected: (a) skeleton-aware corner extrapolation — drops principled signal for inferred shape, (b) cross-panel sister fallback — only works for multi-panel charts, (c) #954-style plot-box convention shift — necessary but not sufficient (doesn't recover skeletons 100+ pixels in from the axis).
+- **Coincident anchor needs coincidence gate.** Initial implementation with just `lo >= 0.90` threshold corrupted samyang-85mm Tier 1 (freq30M p95 |d| 0.026 → 0.365). Median |hi-lo| gate (≤0.05) over clean cells (both extracted, neither sister-filled) cleanly distinguishes the cases.
+- **Revert #1270 rather than iterate the gate further.** Even with the gate working correctly, the anchor inherits freq10S noise on the fisheye because freq10S is itself wrong (sister-filled from diving freq10M, due to #1257 inset clipping red 10S core). The upstream input must be fixed before the anchor can produce correct output. Filed as #1271; #1269 reopened.
+- **No auto-merge.** Each of #1268, #1270, #1272 merged with explicit user permission per `feedback_ask_before_automerge`.
+
+#### Process patterns observed this session
+
+- **Visual inspection caught what tests didn't.** PR #1270's unit tests + fisheye regression test all passed (asserting freq30S frac 0.5/0.6/0.7 read >= 0.85). The downward-bow issue surfaced only when the user looked at the rendered overlay PNG and reported "it became worser." The test threshold of 0.85 was too lax to catch the 0.93 underestimate. Lesson: when fixing a visual artifact, the test should assert the value sits within a tight band around the chart's true value, not just "above some threshold." The right post-fix assertion for the fisheye would have been `0.95 <= v <= 1.00`, which would have caught the regression.
+- **Calibration aggregate caught the samyang-85mm regression.** The clean-cell gate was added because the initial PR #1270 implementation moved samyang-85mm `freq30M` p95 |d| from 0.026 to 0.365 — visible immediately in `py -m mtfdigitizer.calibrate` output. Running calibrate before pushing was the right check; it would have caught this even without ground-truth verification.
+- **"Iterate vs. revert" — when input is upstream-noisy, revert.** Sunk-cost temptation was real: PR #1270 was ~1 hour of careful work with gate + ADR + 5 tests + 26 logs regenerated. The right call was still to revert, because no amount of threshold tuning can fix a transform whose input is wrong. Per ai-workflow.md: "if you're on the third round of fixes for the same feature and it still doesn't feel right, the approach is wrong."
+
+#### Follow-ups for next session (S179)
+
+- **New from S178**:
+  - **#1271 (P3)** — per-mask exclusion zones architecture; precondition for re-attempting #1269.
+  - **#1269 (P2, reopened)** — the 0.45 MTF spike is live again; blocked on #1271.
+- **Carried forward from S177**:
+  - **Duplicate TTartisan MTF charts** (3 pairs) — not yet filed as an issue.
+  - **#1134 (P1, Backlog)** — confidence badge.
+  - **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050).
+  - **#950 (P2, v0.8.0)** — auto-detect plot box (coverage).
+  - **#791 (smallest first-new-brand: Carl Zeiss)** — next epic-#790 brand.
+  - **Viltrox `apertures=("f/1.2","F8")`** — Samyang anti-pattern; needs per-lens migration.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **878 paired (+6 vs S177), median |d| 0.0066, p95 |d| 0.0462, max |d| 0.1217, in-band 96.0%** (+1.1% vs S177).
+- **416 mtfdigitizer pytest pass** (+5 vs S177). **223 vitest pass** (unchanged).
+- **66 ADRs** (+1: ADR-066 center-axis physics anchor; ADR-067 was created with #1270 and removed by #1272 revert).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: #1134 + #1110 + #1159 + #950 + epics #790, #932 + remaining P3 brand-digitization tasks + #1269 + #1271.
+- **0 open PRs** at wrap-up.
+- `mtf-readings.ts` — unchanged (no GT or display-label edits this session).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
