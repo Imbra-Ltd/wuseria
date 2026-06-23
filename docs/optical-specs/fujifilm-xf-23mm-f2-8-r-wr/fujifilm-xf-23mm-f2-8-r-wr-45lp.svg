@@ -28,6 +28,7 @@
 <polyline class="curve curve-45" style="stroke:#5d7bb5" points="170.0,13.3 196.8,17.6 223.6,28.7 250.4,38.9 277.2,49.3 304.0,51.1"/>
 <polyline class="curve curve-45 curve-m" style="stroke:#5d7bb5" points="89.6,12.5 116.4,12.0" stroke-dasharray="4 2"/>
 <polyline class="curve curve-45 curve-m" style="stroke:#5d7bb5" points="170.0,13.3 196.8,20.4 223.6,33.9 250.4,49.2 277.2,56.6 304.0,58.4" stroke-dasharray="4 2"/>
+<circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="12.0" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="89.6" cy="12.5" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="116.4" cy="12.0" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="170.0" cy="13.3" r="2"/>
@@ -36,6 +37,7 @@
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="250.4" cy="38.9" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="277.2" cy="49.3" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="304.0" cy="51.1" r="2"/>
+<circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="12.0" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="89.6" cy="12.5" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="116.4" cy="12.0" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="170.0" cy="13.3" r="2"/>

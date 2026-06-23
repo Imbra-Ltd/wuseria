@@ -8,6 +8,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 - **EX** — what the extractor computed for the sample point.
 - **sister-fill** — count of samples filled from the sister curve.
+- **center-anchor** — count of cells anchored to MTF=1.0 at frac=0.0 by the B4 physics rule (S=M=1.0 at the optical axis); fires only when sister fallback could not fill (#1267).
 - **·** in a sparkline — extractor returned None at that point.
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
@@ -68,21 +69,21 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Sample grid
 
-| Field          | non-null | sister-fill |
-| -------------- | -------- | ----------- |
-| freq45S        |  8/11    |  3/11       |
-| freq45M        |  8/11    |  0/11       |
+| Field          | non-null | sister-fill | center-anchor |
+| -------------- | -------- | ----------- | ------------- |
+| freq45S        |  9/11    |  3/11       |  1/11         |
+| freq45M        |  9/11    |  0/11       |  1/11         |
 
 ```
-  EX   freq45S        ··██·██▇▇▆▆  ( —  → 0.76)
-  EX   freq45M        ··██·██▇▆▆▆  ( —  → 0.71)
+  EX   freq45S        █·██·██▇▇▆▆  (1.00 → 0.76)
+  EX   freq45M        █·██·██▇▆▆▆  (1.00 → 0.71)
 ```
 
 **freq45S**
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 1.00 |
 | 0.1 | — |
 | 0.2 | 1.00 |
 | 0.3 | 1.00 |
@@ -98,7 +99,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 1.00 |
 | 0.1 | — |
 | 0.2 | 1.00 |
 | 0.3 | 1.00 |
@@ -114,15 +115,15 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq45S        |            — |       0.77 |         0.76 |
-| freq45M        |            — |       0.72 |         0.71 |
+| freq45S        |         1.00 |       0.77 |         0.76 |
+| freq45M        |         1.00 |       0.72 |         0.71 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq45S        |       0.3 |       1.00 |                 — |
-| freq45M        |       0.3 |       1.00 |                 — |
+| freq45S        |       0.0 |       1.00 |                 — |
+| freq45M        |       0.0 |       1.00 |                 — |
 
 ### Confidence signals
 

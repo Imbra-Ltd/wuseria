@@ -8,6 +8,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 - **EX** — what the extractor computed for the sample point.
 - **sister-fill** — count of samples filled from the sister curve.
+- **center-anchor** — count of cells anchored to MTF=1.0 at frac=0.0 by the B4 physics rule (S=M=1.0 at the optical axis); fires only when sister fallback could not fill (#1267).
 - **·** in a sparkline — extractor returned None at that point.
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
@@ -192,21 +193,21 @@ No reasons — both confidence signals cleared.
 
 ### Sample grid
 
-| Field          | non-null | sister-fill |
-| -------------- | -------- | ----------- |
-| freq40S        | 10/11    |  3/11       |
-| freq40M        | 10/11    |  2/11       |
+| Field          | non-null | sister-fill | center-anchor |
+| -------------- | -------- | ----------- | ------------- |
+| freq40S        | 11/11    |  3/11       |  1/11         |
+| freq40M        | 11/11    |  2/11       |  1/11         |
 
 ```
-  EX   freq40S        ·████▇▇▆▅▅▃  ( —  → 0.31)
-  EX   freq40M        ·██████▇▆▆▅  ( —  → 0.51)
+  EX   freq40S        █████▇▇▆▅▅▃  (1.00 → 0.31)
+  EX   freq40M        ███████▇▆▆▅  (1.00 → 0.51)
 ```
 
 **freq40S**
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 1.00 |
 | 0.1 | 1.00 |
 | 0.2 | 0.98 |
 | 0.3 | 1.00 |
@@ -222,7 +223,7 @@ No reasons — both confidence signals cleared.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 1.00 |
 | 0.1 | 1.00 |
 | 0.2 | 0.98 |
 | 0.3 | 1.00 |
@@ -238,15 +239,15 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq40S        |            — |       0.51 |         0.31 |
-| freq40M        |            — |       0.68 |         0.51 |
+| freq40S        |         1.00 |       0.51 |         0.31 |
+| freq40M        |         1.00 |       0.68 |         0.51 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq40S        |       0.3 |       1.00 |               1.0 |
-| freq40M        |       0.3 |       1.00 |                 — |
+| freq40S        |       0.0 |       1.00 |               1.0 |
+| freq40M        |       0.0 |       1.00 |                 — |
 
 ### Confidence signals
 
@@ -254,7 +255,7 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.794 |      0.80 |   no |
+| precision | 0.767 |      0.80 |   no |
 | IoU       | 0.525 |      0.20 |  yes |
 
 #### Plausibility priors

@@ -74,8 +74,17 @@ class ExtractedChart:
     # sample came from direct extraction. Default empty dict means
     # diagnostics weren't tracked (e.g. legacy callers).
     sister_fallback_count: dict[str, int] = None  # type: ignore[assignment]
+    # `center_anchor_count[field]` is the number of cells anchored to
+    # MTF=1.0 by the B4 physics rule (S=M=1.0 at the optical axis) —
+    # fires at frac=0.0 only, and only when both S and M of a
+    # frequency pair are None after sister-fallback (#1267). 0 or 1
+    # per field in practice; tracked per-field to make the rare
+    # firing visible in the digitization log.
+    center_anchor_count: dict[str, int] = None  # type: ignore[assignment]
 
     def __post_init__(self) -> None:
-        # Frozen dataclass + mutable default; resolve None to {} after init.
+        # Frozen dataclass + mutable defaults; resolve None to {} after init.
         if self.sister_fallback_count is None:
             object.__setattr__(self, "sister_fallback_count", {})
+        if self.center_anchor_count is None:
+            object.__setattr__(self, "center_anchor_count", {})
