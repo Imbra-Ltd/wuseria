@@ -285,24 +285,46 @@ def _apply_sister_fallback(
     return out, fallback_count, sister_filled
 
 
+_CENTER_AXIS_MTF = 1.0
+
+
 def _apply_center_symmetry(
     samples: dict[str, tuple[float | None, ...]],
-) -> dict[str, tuple[float | None, ...]]:
-    """Force S = M at the optical axis (fraction 0.0) by copying S to M.
+) -> tuple[dict[str, tuple[float | None, ...]], dict[str, int]]:
+    """Force S = M at the optical axis (fraction 0.0).
 
     At position 0 sagittal and meridional MTF are equal by physics
-    (B4). Take S as the source of truth and override M with it (not
-    the average): on charts where the DP path for the M curve has
-    drifted near center (Tokina 11-18, where 10M's ink doesn't
-    quite reach frac 0.0 and the path lands on a nearby curve's
-    stripe), averaging would split the difference between the right
-    value and the drifted value. The S curve is solid-line, less
-    susceptible to drift, and almost always the cleaner anchor.
+    (B4). Three cases per frequency pair:
+
+    1. Both S and M have a value — keep S, override M with it (not
+       the average): on charts where the DP path for the M curve has
+       drifted near center (Tokina 11-18, where 10M's ink doesn't
+       quite reach frac 0.0 and the path lands on a nearby curve's
+       stripe), averaging would split the difference between the
+       right value and the drifted value. The S curve is solid-line,
+       less susceptible to drift, and almost always the cleaner
+       anchor.
+    2. One side is None — copy the other side over.
+    3. Both are None — anchor both to MTF=1.0 (#1267). At a
+       diffraction-free chart's optical axis the curves must start
+       at 1.0 by definition; this fires only when every prior stage
+       (direct extraction, sister fallback, intra-curve interp) has
+       failed to produce a value on either side of a frequency pair,
+       and only at frac=0.0 (the right edge has no equivalent
+       physical guarantee). The Samyang stopped panel triggers this
+       when the dark-grey 30S sits hidden under the saturated red
+       10S for the first ~25% of the field and both 30S and 30M
+       skeletons miss the leftmost columns.
 
     Pairs up every `freq{N}S`/`freq{N}M` present in `samples` —
     per-frequency rule applies to every chart family (ADR-042).
+
+    Returns ``(samples, center_anchor_count_by_field)``. The counter
+    records cells filled by case 3 only; cases 1 and 2 are existing
+    symmetry behaviour and remain implicit.
     """
     out = {field: list(values) for field, values in samples.items()}
+    anchor_count: dict[str, int] = {field: 0 for field in samples}
     # Collect every S field present and look for the matching M.
     for s_field in [f for f in samples if f.endswith("S") and f.startswith("freq")]:
         m_field = s_field[:-1] + "M"
@@ -311,6 +333,10 @@ def _apply_center_symmetry(
         s_val = out[s_field][0]
         m_val = out[m_field][0]
         if s_val is None and m_val is None:
+            out[s_field][0] = _CENTER_AXIS_MTF
+            out[m_field][0] = _CENTER_AXIS_MTF
+            anchor_count[s_field] += 1
+            anchor_count[m_field] += 1
             continue
         if s_val is None:
             out[s_field][0] = m_val
@@ -318,7 +344,10 @@ def _apply_center_symmetry(
             # B4: at the optical axis, S=M. Use S for both — solid
             # strokes are less prone to centroid drift than dashed.
             out[m_field][0] = s_val
-    return {field: tuple(values) for field, values in out.items()}
+    return (
+        {field: tuple(values) for field, values in out.items()},
+        anchor_count,
+    )
 
 
 def _readings_to_dict(
@@ -577,7 +606,9 @@ def extract_chart(
             )
         )
     samples_after_fallback = {f: v for f, v in samples_per_field.items()}
-    samples_per_field = _apply_center_symmetry(samples_per_field)
+    samples_per_field, center_anchor_count = _apply_center_symmetry(
+        samples_per_field
+    )
 
     if diagnostic_sink is not None:
         readings_for_sampling = _readings_to_dict(
@@ -608,4 +639,5 @@ def extract_chart(
         image_height_mm=image_height_mm,
         readings=_readings_to_dict(samples_per_field, plot_box, image_height_mm),
         sister_fallback_count=fallback_count,
+        center_anchor_count=center_anchor_count,
     )

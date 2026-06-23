@@ -106,16 +106,37 @@ def _render_sample_grid(extracted: ExtractedChart) -> list[str]:
     lines: list[str] = []
     fields = fields_in(extracted.readings)
 
-    # Stats: paired count, sister-fill — no Δ since no GT.
-    lines.append("| Field          | non-null | sister-fill |")
-    lines.append("| -------------- | -------- | ----------- |")
+    # Stats: paired count, sister-fill, optional center-anchor — no Δ
+    # since no GT. The center-anchor column is added only when at
+    # least one field used it (#1267), keeping clean logs visually
+    # unchanged.
+    show_anchor = any(
+        extracted.center_anchor_count.get(f, 0) for f in fields
+    )
+    if show_anchor:
+        lines.append(
+            "| Field          | non-null | sister-fill | center-anchor |"
+        )
+        lines.append(
+            "| -------------- | -------- | ----------- | ------------- |"
+        )
+    else:
+        lines.append("| Field          | non-null | sister-fill |")
+        lines.append("| -------------- | -------- | ----------- |")
     for f in fields:
         ex_values = tuple(r.samples.get(f) for r in extracted.readings)
         non_null = sum(1 for v in ex_values if v is not None)
         fallback = extracted.sister_fallback_count.get(f, 0)
-        lines.append(
-            f"| {f:<14} | {non_null:>2}/11    | {fallback:>2}/11       |"
-        )
+        if show_anchor:
+            anchor = extracted.center_anchor_count.get(f, 0)
+            lines.append(
+                f"| {f:<14} | {non_null:>2}/11    | {fallback:>2}/11       "
+                f"| {anchor:>2}/11         |"
+            )
+        else:
+            lines.append(
+                f"| {f:<14} | {non_null:>2}/11    | {fallback:>2}/11       |"
+            )
     lines.append("")
 
     # Sparklines.
@@ -250,10 +271,21 @@ def render_production_log(lens_slug: str, panels: list[ProductionPanel]) -> str:
         "glance."
     )
     lines.append("")
+    any_center_anchor = any(
+        any(p.extracted.center_anchor_count.get(f, 0) for f in p.extracted.center_anchor_count)
+        for p in panels
+    )
+
     lines.append("**Legend.**")
     lines.append("")
     lines.append("- **EX** — what the extractor computed for the sample point.")
     lines.append("- **sister-fill** — count of samples filled from the sister curve.")
+    if any_center_anchor:
+        lines.append(
+            "- **center-anchor** — count of cells anchored to MTF=1.0 at "
+            "frac=0.0 by the B4 physics rule (S=M=1.0 at the optical axis); "
+            "fires only when sister fallback could not fill (#1267)."
+        )
     lines.append("- **·** in a sparkline — extractor returned None at that point.")
     lines.append("")
     lines.append(

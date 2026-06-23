@@ -454,6 +454,131 @@ def test_samyang_12mm_fisheye_stopped_no_chart_top_30M_contamination() -> None:
     )
 
 
+def test_samyang_10mm_stopped_anchors_30S_30M_at_frac_zero() -> None:
+    """#1267 regression — on the samyang-10mm-f2-8-ed-as-ncs-cs stopped
+    panel, the dark-grey 30S curve sits physically underneath the
+    saturated-red 10S across the first ~25% of the field, so the HSV
+    dispatch cannot separate them: the 30S skeleton's first ink is
+    at chart-x 138 (frac ~0.25), and the 30M skeleton's first ink is
+    at chart-x 44 (frac ~0.03). Both 30S[0] and 30M[0] are None after
+    direct extraction, and sister fallback cannot fill either (it
+    needs at least one side of the S/M pair to have a value).
+
+    The center-symmetry stage MUST anchor both to MTF=1.0 by the B4
+    physics rule (S=M=1.0 at the optical axis), recovering the
+    leftmost segment of the rendered SVG so the curves visibly start
+    at the y-axis instead of ~1.4mm in."""
+    SAMYANG_10_CHART, _, _ = _ref("samyang-10mm-f2-8-ed-as-ncs-cs")
+    pb = _ref_view_plot_box("samyang-10mm-f2-8-ed-as-ncs-cs", 1)
+    result = extract_chart(
+        SAMYANG_10_CHART,
+        SAMYANG_4COLOR_ALL_SOLID,
+        pb,
+        image_height_mm=14.2,
+    )
+    center = result.readings[0]
+    for field in ("freq30S", "freq30M"):
+        v = center.samples.get(field)
+        assert v is not None, (
+            f"{field} at frac=0.0 must be center-anchored to 1.0 (#1267), "
+            f"got None"
+        )
+        assert v == pytest.approx(1.0), (
+            f"{field} at frac=0.0 expected 1.0 (B4 physics anchor), got {v}"
+        )
+        assert result.center_anchor_count.get(field, 0) == 1, (
+            f"{field} center_anchor_count expected 1, got "
+            f"{result.center_anchor_count.get(field, 0)}"
+        )
+
+
+def test_samyang_af_12mm_stopped_anchors_10S_10M_at_frac_zero() -> None:
+    """#1267 regression — companion of the 10mm test. On the AF 12mm
+    stopped panel the freq10S and freq10M skeletons miss the leftmost
+    columns; both must be anchored to MTF=1.0 at frac=0.0."""
+    chart_path, _, _ = _ref("samyang-af-12mm-f2-0")
+    pb = _ref_view_plot_box("samyang-af-12mm-f2-0", 1)
+    result = extract_chart(
+        chart_path,
+        SAMYANG_4COLOR_ALL_SOLID,
+        pb,
+        image_height_mm=14.2,
+    )
+    center = result.readings[0]
+    for field in ("freq10S", "freq10M"):
+        v = center.samples.get(field)
+        assert v is not None, (
+            f"{field} at frac=0.0 must be center-anchored to 1.0 (#1267), "
+            f"got None"
+        )
+        assert v == pytest.approx(1.0), (
+            f"{field} at frac=0.0 expected 1.0 (B4 physics anchor), got {v}"
+        )
+
+
+def test_samyang_12mm_fisheye_stopped_anchors_all_four_at_frac_zero() -> None:
+    """#1267 regression — companion of the 10mm test. On the 12mm fisheye
+    stopped panel ALL FOUR fields miss the leftmost columns; the
+    physics anchor must cover both frequency pairs."""
+    chart_path, _, _ = _ref("samyang-12mm-f2-8-ed-as-ncs-fish-eye")
+    pb = _ref_view_plot_box("samyang-12mm-f2-8-ed-as-ncs-fish-eye", 1)
+    result = extract_chart(
+        chart_path,
+        SAMYANG_4COLOR_ALL_SOLID,
+        pb,
+        image_height_mm=14.2,
+    )
+    center = result.readings[0]
+    for field in ("freq10S", "freq10M", "freq30S", "freq30M"):
+        v = center.samples.get(field)
+        assert v is not None, (
+            f"{field} at frac=0.0 must be center-anchored to 1.0 (#1267), "
+            f"got None"
+        )
+        assert v == pytest.approx(1.0), (
+            f"{field} at frac=0.0 expected 1.0 (B4 physics anchor), got {v}"
+        )
+
+
+def test_center_anchor_never_fires_when_either_side_has_value() -> None:
+    """#1267 — the physics anchor must NOT fire when even one side of a
+    pair has a value at frac=0.0. The existing symmetry rule (copy S to
+    M, or copy the present side to the absent side) takes precedence;
+    the anchor is the last-resort fallback only."""
+    from mtfdigitizer.pipeline.pipeline import _apply_center_symmetry
+
+    # S present, M None — existing rule: copy S to M; anchor must not fire.
+    samples = {
+        "freq10S": (0.97, 0.95, 0.90),
+        "freq10M": (None, 0.93, 0.88),
+    }
+    out, anchor = _apply_center_symmetry(samples)
+    assert out["freq10M"][0] == pytest.approx(0.97), (
+        "M[0] should inherit S[0] when S has a value"
+    )
+    assert anchor["freq10S"] == 0 and anchor["freq10M"] == 0, (
+        f"anchor must not fire when either side has a value, got {anchor}"
+    )
+
+
+def test_center_anchor_fires_when_both_sides_none() -> None:
+    """#1267 — when BOTH freq{N}S[0] and freq{N}M[0] are None, anchor
+    both to MTF=1.0 and report the counts."""
+    from mtfdigitizer.pipeline.pipeline import _apply_center_symmetry
+
+    samples = {
+        "freq30S": (None, 0.95, 0.90),
+        "freq30M": (None, 0.93, 0.88),
+    }
+    out, anchor = _apply_center_symmetry(samples)
+    assert out["freq30S"][0] == pytest.approx(1.0)
+    assert out["freq30M"][0] == pytest.approx(1.0)
+    # Other indices must remain untouched — the rule is frac=0.0 only.
+    assert out["freq30S"][1:] == (0.95, 0.90)
+    assert out["freq30M"][1:] == (0.93, 0.88)
+    assert anchor["freq30S"] == 1 and anchor["freq30M"] == 1
+
+
 def test_sigma_56_10S_holds_high_until_knee() -> None:
     """REFERENCE_SET.md: 'Sigma 10S solid ~0.97 flat from 0 to ~10mm,
     then knees down'."""

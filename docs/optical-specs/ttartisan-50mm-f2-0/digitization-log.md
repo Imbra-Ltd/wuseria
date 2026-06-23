@@ -8,6 +8,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 - **EX** — what the extractor computed for the sample point.
 - **sister-fill** — count of samples filled from the sister curve.
+- **center-anchor** — count of cells anchored to MTF=1.0 at frac=0.0 by the B4 physics rule (S=M=1.0 at the optical axis); fires only when sister fallback could not fill (#1267).
 - **·** in a sparkline — extractor returned None at that point.
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
@@ -22,16 +23,16 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 ### Sample grid
 
-| Field          | non-null | sister-fill |
-| -------------- | -------- | ----------- |
-| freq10S        | 10/11    |  0/11       |
-| freq10M        | 10/11    |  0/11       |
-| freq30S        | 11/11    |  0/11       |
-| freq30M        | 11/11    |  0/11       |
+| Field          | non-null | sister-fill | center-anchor |
+| -------------- | -------- | ----------- | ------------- |
+| freq10S        | 11/11    |  0/11       |  1/11         |
+| freq10M        | 11/11    |  0/11       |  1/11         |
+| freq30S        | 11/11    |  0/11       |  0/11         |
+| freq30M        | 11/11    |  0/11       |  0/11         |
 
 ```
-  EX   freq10S        ·████▇▇▇▇▇▇  ( —  → 0.79)
-  EX   freq10M        ·███▇█▇▇▆▆▅  ( —  → 0.58)
+  EX   freq10S        █████▇▇▇▇▇▇  (1.00 → 0.79)
+  EX   freq10M        ████▇█▇▇▆▆▅  (1.00 → 0.58)
   EX   freq30S        ▆▆▆▆▆▆▅▅▄▄▃  (0.73 → 0.34)
   EX   freq30M        ▆▆▆▆▆▆▅▅▅▄▄  (0.73 → 0.42)
 ```
@@ -40,7 +41,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 1.00 |
 | 0.1 | 0.95 |
 | 0.2 | 0.96 |
 | 0.3 | 0.96 |
@@ -56,7 +57,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 1.00 |
 | 0.1 | 0.95 |
 | 0.2 | 0.96 |
 | 0.3 | 0.95 |
@@ -104,8 +105,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq10S        |            — |       0.85 |         0.79 |
-| freq10M        |            — |       0.66 |         0.58 |
+| freq10S        |         1.00 |       0.85 |         0.79 |
+| freq10M        |         1.00 |       0.66 |         0.58 |
 | freq30S        |         0.73 |       0.42 |         0.34 |
 | freq30M        |         0.73 |       0.48 |         0.42 |
 
@@ -113,8 +114,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq10S        |       0.3 |       0.96 |                 — |
-| freq10M        |       0.2 |       0.96 |                 — |
+| freq10S        |       0.0 |       1.00 |                 — |
+| freq10M        |       0.0 |       1.00 |                 — |
 | freq30S        |       0.3 |       0.78 |               1.0 |
 | freq30M        |       0.1 |       0.75 |                 — |
 
@@ -124,8 +125,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.857 |      0.80 |  yes |
-| IoU       | 0.654 |      0.20 |  yes |
+| precision | 0.825 |      0.80 |  yes |
+| IoU       | 0.643 |      0.20 |  yes |
 
 #### Plausibility priors
 

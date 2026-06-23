@@ -8,6 +8,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 - **EX** — what the extractor computed for the sample point.
 - **sister-fill** — count of samples filled from the sister curve.
+- **center-anchor** — count of cells anchored to MTF=1.0 at frac=0.0 by the B4 physics rule (S=M=1.0 at the optical axis); fires only when sister fallback could not fill (#1267).
 - **·** in a sparkline — extractor returned None at that point.
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
@@ -147,25 +148,25 @@ No reasons — both confidence signals cleared.
 
 ### Sample grid
 
-| Field          | non-null | sister-fill |
-| -------------- | -------- | ----------- |
-| freq10S        |  9/11    |  8/11       |
-| freq10M        |  9/11    |  0/11       |
-| freq30S        | 10/11    |  7/11       |
-| freq30M        | 10/11    |  0/11       |
+| Field          | non-null | sister-fill | center-anchor |
+| -------------- | -------- | ----------- | ------------- |
+| freq10S        | 10/11    |  8/11       |  1/11         |
+| freq10M        | 10/11    |  0/11       |  1/11         |
+| freq30S        | 11/11    |  7/11       |  1/11         |
+| freq30M        | 11/11    |  0/11       |  1/11         |
 
 ```
-  EX   freq10S        ··██████▇██  ( —  → 1.00)
-  EX   freq10M        ··██████▇▇▇  ( —  → 0.86)
-  EX   freq30S        ·██▇▇▆▅▅██▇  ( —  → 0.89)
-  EX   freq30M        ·██▇▇▆▅▅▄▄▄  ( —  → 0.47)
+  EX   freq10S        █·██████▇██  (1.00 → 1.00)
+  EX   freq10M        █·██████▇▇▇  (1.00 → 0.86)
+  EX   freq30S        ███▇▇▆▅▅██▇  (1.00 → 0.89)
+  EX   freq30M        ███▇▇▆▅▅▄▄▄  (1.00 → 0.47)
 ```
 
 **freq10S**
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 1.00 |
 | 0.1 | — |
 | 0.2 | 1.00 |
 | 0.3 | 1.00 |
@@ -181,7 +182,7 @@ No reasons — both confidence signals cleared.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 1.00 |
 | 0.1 | — |
 | 0.2 | 1.00 |
 | 0.3 | 1.00 |
@@ -197,7 +198,7 @@ No reasons — both confidence signals cleared.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 1.00 |
 | 0.1 | 0.99 |
 | 0.2 | 0.96 |
 | 0.3 | 0.90 |
@@ -213,7 +214,7 @@ No reasons — both confidence signals cleared.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | — |
+| 0.0 | 1.00 |
 | 0.1 | 0.99 |
 | 0.2 | 0.96 |
 | 0.3 | 0.90 |
@@ -229,19 +230,19 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq10S        |            — |       1.00 |         1.00 |
-| freq10M        |            — |       0.88 |         0.86 |
-| freq30S        |            — |       0.95 |         0.89 |
-| freq30M        |            — |       0.45 |         0.47 |
+| freq10S        |         1.00 |       1.00 |         1.00 |
+| freq10M        |         1.00 |       0.88 |         0.86 |
+| freq30S        |         1.00 |       0.95 |         0.89 |
+| freq30M        |         1.00 |       0.45 |         0.47 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq10S        |       0.9 |       1.00 |                 — |
-| freq10M        |       0.2 |       1.00 |                 — |
-| freq30S        |       0.1 |       0.99 |                 — |
-| freq30M        |       0.1 |       0.99 |               0.8 |
+| freq10S        |       0.0 |       1.00 |                 — |
+| freq10M        |       0.0 |       1.00 |                 — |
+| freq30S        |       0.0 |       1.00 |                 — |
+| freq30M        |       0.0 |       1.00 |               0.8 |
 
 ### Confidence signals
 
@@ -249,8 +250,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.534 |      0.80 |   no |
-| IoU       | 0.378 |      0.20 |  yes |
+| precision | 0.530 |      0.80 |   no |
+| IoU       | 0.389 |      0.20 |  yes |
 
 #### Plausibility priors
 
