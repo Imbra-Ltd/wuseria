@@ -674,6 +674,36 @@ refresh workflow:
    review pairs surfaced by the run). Commit as `chore(mtf):` with
    a note on which extractor change drove the refresh.
 
+**Refresh stale digitization logs (baseline reset, #1249 / S177):**
+
+When algorithm drift accumulates across multiple PRs without a
+log refresh, `extract --check` reports a large stale baseline (S177:
+100 Tier 2 + 8 Tier 1). Don't blanket `--accept` everything —
+verdict transitions HIGH→LOW would be silently swallowed. Two-stage
+verdict-aware workflow:
+
+1. Branch: `chore/refresh-stale-logs` (or scope-specific name).
+2. **Tier 1 first** (lower risk — `log --all` has no gate):
+   `py -m mtfdigitizer.log --all`. Inspect diffs; verify aggregate
+   calibration (`py -m mtfdigitizer.calibrate`) is unchanged from
+   the previous wrap-up.
+3. **Tier 2 Stage 1 — capture transitions, no writes.** Capture
+   per-lens aggregate verdict using "LOW if ANY view LOW" (not
+   `head -1`). Re-run each stale lens individually, capture new
+   aggregate verdict; tabulate transitions to a TSV.
+4. **Triage transitions.** HIGH→HIGH and LOW→LOW: safe to batch
+   `--accept`. LOW→HIGH: improvement; safe to `--accept`. **HIGH→LOW:
+   real regression** — investigate per-lens before accepting (overlay
+   glance) or file a follow-up bug. S177 surfaced zero real HIGH→LOW.
+5. **Tier 2 Stage 2 — batch `--accept`** only after no real
+   regressions confirmed: `py -m mtfdigitizer.extract <slug> --accept`
+   for each still-stale lens.
+6. Verify both `--check` commands now exit 0; run mtfdigitizer
+   pytest; run `npm run validate`; commit as `chore(mtf):` with
+   verdict-transition summary in the body. Probe scripts live in
+   `C:\tmp\` per `base/quality.md` probe-script convention — delete
+   before commit.
+
 **Emit a digitized chart's readings as a TypeScript literal for the site:**
 
 ```bash
