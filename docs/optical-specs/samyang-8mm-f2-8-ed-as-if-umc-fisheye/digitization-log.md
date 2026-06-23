@@ -8,7 +8,6 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 - **EX** — what the extractor computed for the sample point.
 - **sister-fill** — count of samples filled from the sister curve.
-- **coincident-anchor** — count of sister-filled cells overridden by the matching lower-frequency curve's value when the lower curve is pinned at MTF >= 0.95; fires when the chart artist merged two near-1.0 strokes into one visible line (#1269).
 - **·** in a sparkline — extractor returned None at that point.
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
@@ -149,12 +148,12 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Sample grid
 
-| Field          | non-null | sister-fill | coincident-anchor |
-| -------------- | -------- | ----------- | ----------------- |
-| freq10S        | 11/11    |  0/11       |  0/11             |
-| freq10M        | 11/11    |  5/11       |  0/11             |
-| freq30S        | 11/11    |  1/11       |  1/11             |
-| freq30M        | 11/11    |  1/11       |  0/11             |
+| Field          | non-null | sister-fill |
+| -------------- | -------- | ----------- |
+| freq10S        | 11/11    |  0/11       |
+| freq10M        | 11/11    |  5/11       |
+| freq30S        | 11/11    |  1/11       |
+| freq30M        | 11/11    |  1/11       |
 
 ```
   EX   freq10S        ███████████  (0.99 → 1.00)
@@ -251,8 +250,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.891 |      0.80 |  yes |
-| IoU       | 0.721 |      0.20 |  yes |
+| precision | 0.892 |      0.80 |  yes |
+| IoU       | 0.723 |      0.20 |  yes |
 
 #### Plausibility priors
 

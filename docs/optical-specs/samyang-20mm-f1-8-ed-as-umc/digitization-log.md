@@ -8,7 +8,6 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 - **EX** — what the extractor computed for the sample point.
 - **sister-fill** — count of samples filled from the sister curve.
-- **coincident-anchor** — count of sister-filled cells overridden by the matching lower-frequency curve's value when the lower curve is pinned at MTF >= 0.95; fires when the chart artist merged two near-1.0 strokes into one visible line (#1269).
 - **·** in a sparkline — extractor returned None at that point.
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
@@ -148,12 +147,12 @@ No reasons — both confidence signals cleared.
 
 ### Sample grid
 
-| Field          | non-null | sister-fill | coincident-anchor |
-| -------------- | -------- | ----------- | ----------------- |
-| freq10S        | 11/11    |  0/11       |  0/11             |
-| freq10M        | 11/11    |  4/11       |  0/11             |
-| freq30S        | 11/11    |  3/11       |  3/11             |
-| freq30M        | 11/11    |  1/11       |  0/11             |
+| Field          | non-null | sister-fill |
+| -------------- | -------- | ----------- |
+| freq10S        | 11/11    |  0/11       |
+| freq10M        | 11/11    |  4/11       |
+| freq30S        | 11/11    |  3/11       |
+| freq30M        | 11/11    |  1/11       |
 
 ```
   EX   freq10S        ███████████  (0.99 → 0.99)
@@ -199,9 +198,9 @@ No reasons — both confidence signals cleared.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.97 |
-| 0.1 | 0.99 |
-| 0.2 | 1.00 |
-| 0.3 | 0.99 |
+| 0.1 | 0.97 |
+| 0.2 | 0.97 |
+| 0.3 | 0.97 |
 | 0.4 | 0.97 |
 | 0.5 | 0.95 |
 | 0.6 | 0.92 |
@@ -241,7 +240,7 @@ No reasons — both confidence signals cleared.
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.2 |       1.00 |                 — |
 | freq10M        |       0.0 |       0.99 |                 — |
-| freq30S        |       0.2 |       1.00 |                 — |
+| freq30S        |       0.4 |       0.97 |                 — |
 | freq30M        |       0.0 |       0.97 |               0.9 |
 
 ### Confidence signals
@@ -250,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.691 |      0.80 |   no |
-| IoU       | 0.434 |      0.20 |  yes |
+| precision | 0.667 |      0.80 |   no |
+| IoU       | 0.402 |      0.20 |  yes |
 
 #### Plausibility priors
 
