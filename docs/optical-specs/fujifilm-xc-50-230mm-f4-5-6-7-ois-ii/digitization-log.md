@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xc-50-230mm-f4-5-6-7-ois-ii/fujifilm-xc-50-230mm-f4-5-6-7-ois-ii-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xc-50-230mm-f4-5-6-7-ois-ii/fujifilm-xc-50-230mm-f4-5-6-7-ois-ii-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -182,7 +182,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xc-50-230mm-f4-5-6-7-ois-ii/fujifilm-xc-50-230mm-f4-5-6-7-ois-ii-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -267,7 +267,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xc-50-230mm-f4-5-6-7-ois-ii/fujifilm-xc-50-230mm-f4-5-6-7-ois-ii-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -283,7 +283,7 @@ No reasons — both confidence signals cleared.
 | freq45M        | 11/11    |  0/11       |
 
 ```
-  EX   freq45S        ▇▇▇▇▇▇▇▇▇▅▄  (0.89 → 0.40)
+  EX   freq45S        ▇▇▇▇▇▇▇▇▇▅▄  (0.89 → 0.41)
   EX   freq45M        ▇▇▇▇▆▆▅▅▅▅▄  (0.89 → 0.48)
 ```
 
@@ -301,7 +301,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.87 |
 | 0.8 | 0.80 |
 | 0.9 | 0.63 |
-| 1.0 | 0.40 |
+| 1.0 | 0.41 |
 
 **freq45M**
 
@@ -323,7 +323,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq45S        |         0.89 |       0.63 |         0.40 |
+| freq45S        |         0.89 |       0.63 |         0.41 |
 | freq45M        |         0.89 |       0.57 |         0.48 |
 
 ### Shape metrics

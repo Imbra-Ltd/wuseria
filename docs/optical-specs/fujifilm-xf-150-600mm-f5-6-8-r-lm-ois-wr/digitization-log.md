@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-150-600mm-f5-6-8-r-lm-ois-wr/fujifilm-xf-150-600mm-f5-6-8-r-lm-ois-wr-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -100,7 +100,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 **Reasons:**
 - `prior_failed_not_suspiciously_flat`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-150-600mm-f5-6-8-r-lm-ois-wr/fujifilm-xf-150-600mm-f5-6-8-r-lm-ois-wr-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -185,7 +185,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-150-600mm-f5-6-8-r-lm-ois-wr/fujifilm-xf-150-600mm-f5-6-8-r-lm-ois-wr-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -270,7 +270,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-150-600mm-f5-6-8-r-lm-ois-wr/fujifilm-xf-150-600mm-f5-6-8-r-lm-ois-wr-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -318,7 +318,7 @@ No reasons — both confidence signals cleared.
 | 0.5 | 0.97 |
 | 0.6 | 0.94 |
 | 0.7 | 0.97 |
-| 0.8 | 0.99 |
+| 0.8 | 0.98 |
 | 0.9 | 0.99 |
 | 1.0 | 0.87 |
 

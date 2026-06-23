@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-56mm-f1-2-r-wr/fujifilm-xf-56mm-f1-2-r-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -42,7 +42,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.3 | 0.84 |
 | 0.4 | 0.84 |
 | 0.5 | 0.84 |
-| 0.6 | 0.83 |
+| 0.6 | 0.82 |
 | 0.7 | 0.81 |
 | 0.8 | 0.79 |
 | 0.9 | 0.75 |
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.726 |      0.80 |   no |
-| IoU       | 0.567 |      0.20 |  yes |
+| precision | 0.729 |      0.80 |   no |
+| IoU       | 0.572 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-56mm-f1-2-r-wr/fujifilm-xf-56mm-f1-2-r-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`

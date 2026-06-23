@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — f/2.8
 
 - **Chart:** `docs/optical-specs/sigma-18-50mm-f2-8-dc-dn-c/sigma-18-50mm-f2-8-dc-dn-c-mtf-diffraction-wide.png`
 - **Style family:** `mainstream-2color-solid-dashed`
@@ -138,7 +138,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — f/2.8
 
 - **Chart:** `docs/optical-specs/sigma-18-50mm-f2-8-dc-dn-c/sigma-18-50mm-f2-8-dc-dn-c-mtf-diffraction-tele.png`
 - **Style family:** `mainstream-2color-solid-dashed`
@@ -189,7 +189,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.4 | 0.96 |
 | 0.5 | 0.95 |
 | 0.6 | 0.94 |
-| 0.7 | 0.94 |
+| 0.7 | 0.93 |
 | 0.8 | 0.92 |
 | 0.9 | 0.90 |
 | 1.0 | 0.86 |
@@ -250,8 +250,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.647 |      0.80 |   no |
-| IoU       | 0.481 |      0.20 |  yes |
+| precision | 0.651 |      0.80 |   no |
+| IoU       | 0.485 |      0.20 |  yes |
 
 #### Plausibility priors
 

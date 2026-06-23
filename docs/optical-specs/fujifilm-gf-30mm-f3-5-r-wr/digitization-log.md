@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-30mm-f3-5-r-wr/fujifilm-gf-30mm-f3-5-r-wr-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -24,7 +24,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq10S        | 10/11    |  1/11       |
+| freq10S        | 10/11    |  0/11       |
 | freq10M        | 10/11    |  7/11       |
 
 ```
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-30mm-f3-5-r-wr/fujifilm-gf-30mm-f3-5-r-wr-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -183,7 +183,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-30mm-f3-5-r-wr/fujifilm-gf-30mm-f3-5-r-wr-40lp.png`
 - **Style family:** `fujifilm-permfreq`

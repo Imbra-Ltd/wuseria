@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — f/2.8
 
 - **Chart:** `docs/optical-specs/sigma-10-18mm-f2-8-dc-dn-c/sigma-10-18mm-f2-8-dc-dn-c-mtf-diffraction-wide.png`
 - **Style family:** `mainstream-2color-solid-dashed`
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.626 |      0.80 |   no |
-| IoU       | 0.491 |      0.20 |  yes |
+| precision | 0.639 |      0.80 |   no |
+| IoU       | 0.501 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -141,7 +141,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 - `precision_below_threshold`
 - `prior_failed_not_suspiciously_flat`
 
-## Panel
+## Panel — f/2.8
 
 - **Chart:** `docs/optical-specs/sigma-10-18mm-f2-8-dc-dn-c/sigma-10-18mm-f2-8-dc-dn-c-mtf-diffraction-tele.png`
 - **Style family:** `mainstream-2color-solid-dashed`
@@ -155,14 +155,14 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | -------------- | -------- | ----------- |
 | freq10S        | 11/11    |  0/11       |
 | freq10M        | 11/11    |  1/11       |
-| freq30S        | 11/11    |  1/11       |
+| freq30S        | 11/11    |  0/11       |
 | freq30M        | 11/11    |  2/11       |
 
 ```
   EX   freq10S        █████████▇▇  (0.98 → 0.86)
   EX   freq10M        █████████▇▇  (0.98 → 0.87)
-  EX   freq30S        ▇▇▇▇▇▇▇▇▆▅▄  (0.90 → 0.43)
-  EX   freq30M        ▇▇▇▇▇▇▇▆▆▅▄  (0.90 → 0.43)
+  EX   freq30S        ▇▇▇▇▇▇▇▇▆▅▄  (0.92 → 0.43)
+  EX   freq30M        ▇▇▇▇▇▇▇▆▆▅▄  (0.92 → 0.43)
 ```
 
 **freq10S**
@@ -201,7 +201,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | 0.90 |
+| 0.0 | 0.92 |
 | 0.1 | 0.91 |
 | 0.2 | 0.91 |
 | 0.3 | 0.90 |
@@ -217,7 +217,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | 0.90 |
+| 0.0 | 0.92 |
 | 0.1 | 0.90 |
 | 0.2 | 0.88 |
 | 0.3 | 0.86 |
@@ -235,8 +235,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.98 |       0.92 |         0.86 |
 | freq10M        |         0.98 |       0.91 |         0.87 |
-| freq30S        |         0.90 |       0.59 |         0.43 |
-| freq30M        |         0.90 |       0.56 |         0.43 |
+| freq30S        |         0.92 |       0.59 |         0.43 |
+| freq30M        |         0.92 |       0.56 |         0.43 |
 
 ### Shape metrics
 
@@ -244,8 +244,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.0 |       0.98 |                 — |
 | freq10M        |       0.0 |       0.98 |                 — |
-| freq30S        |       0.1 |       0.91 |               1.0 |
-| freq30M        |       0.0 |       0.90 |               1.0 |
+| freq30S        |       0.0 |       0.92 |               1.0 |
+| freq30M        |       0.0 |       0.92 |               1.0 |
 
 ### Confidence signals
 
@@ -253,8 +253,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.665 |      0.80 |   no |
-| IoU       | 0.505 |      0.20 |  yes |
+| precision | 0.669 |      0.80 |   no |
+| IoU       | 0.513 |      0.20 |  yes |
 
 #### Plausibility priors
 

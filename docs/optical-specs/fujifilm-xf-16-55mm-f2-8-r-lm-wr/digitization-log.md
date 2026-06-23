@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16-55mm-f2-8-r-lm-wr/fujifilm-xf-16-55mm-f2-8-r-lm-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -24,11 +24,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        | 11/11    |  4/11       |
+| freq15S        | 11/11    |  3/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```
-  EX   freq15S        ▇▇▇▇▇▇▇▇▇▇▇  (0.92 → 0.84)
+  EX   freq15S        ▇▇▇▇▇▇▇▇▇▇▇  (0.92 → 0.85)
   EX   freq15M        ▇▇▇▇▇▇▇▇▇▇▇  (0.92 → 0.84)
 ```
 
@@ -46,7 +46,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.90 |
 | 0.8 | 0.90 |
 | 0.9 | 0.88 |
-| 1.0 | 0.84 |
+| 1.0 | 0.85 |
 
 **freq15M**
 
@@ -68,7 +68,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq15S        |         0.92 |       0.88 |         0.84 |
+| freq15S        |         0.92 |       0.88 |         0.85 |
 | freq15M        |         0.92 |       0.84 |         0.84 |
 
 ### Shape metrics
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.818 |      0.80 |  yes |
-| IoU       | 0.677 |      0.20 |  yes |
+| precision | 0.816 |      0.80 |  yes |
+| IoU       | 0.674 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16-55mm-f2-8-r-lm-wr/fujifilm-xf-16-55mm-f2-8-r-lm-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -109,12 +109,12 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        |  9/11    |  0/11       |
-| freq45M        |  9/11    |  0/11       |
+| freq45S        | 10/11    |  0/11       |
+| freq45M        | 10/11    |  0/11       |
 
 ```
-  EX   freq45S        ·▇▇▇▆▆▆▆▆▆·  ( —  →  — )
-  EX   freq45M        ·▇▇▆▆▅▅▅▅▅·  ( —  →  — )
+  EX   freq45S        ·▇▇▇▆▆▆▆▆▆▅  ( —  → 0.64)
+  EX   freq45M        ·▇▇▆▆▅▅▅▅▅▅  ( —  → 0.62)
 ```
 
 **freq45S**
@@ -131,7 +131,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.73 |
 | 0.8 | 0.75 |
 | 0.9 | 0.72 |
-| 1.0 | — |
+| 1.0 | 0.64 |
 
 **freq45M**
 
@@ -147,14 +147,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.60 |
 | 0.8 | 0.60 |
 | 0.9 | 0.59 |
-| 1.0 | — |
+| 1.0 | 0.62 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq45S        |            — |       0.72 |            — |
-| freq45M        |            — |       0.59 |            — |
+| freq45S        |            — |       0.72 |         0.64 |
+| freq45M        |            — |       0.59 |         0.62 |
 
 ### Shape metrics
 
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.954 |      0.80 |  yes |
-| IoU       | 0.540 |      0.20 |  yes |
+| precision | 0.939 |      0.80 |  yes |
+| IoU       | 0.583 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -182,7 +182,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16-55mm-f2-8-r-lm-wr/fujifilm-xf-16-55mm-f2-8-r-lm-wr-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -198,7 +198,7 @@ No reasons — both confidence signals cleared.
 | freq15M        | 11/11    |  1/11       |
 
 ```
-  EX   freq15S        ▇▇▇▇▇▇▇▇▆▆▆  (0.91 → 0.76)
+  EX   freq15S        ▇▇▇▇▇▇▇▇▇▆▆  (0.91 → 0.76)
   EX   freq15M        ▇▇▇▇▇▇▇▇▆▆▆  (0.91 → 0.75)
 ```
 
@@ -214,8 +214,8 @@ No reasons — both confidence signals cleared.
 | 0.5 | 0.87 |
 | 0.6 | 0.85 |
 | 0.7 | 0.82 |
-| 0.8 | 0.78 |
-| 0.9 | 0.75 |
+| 0.8 | 0.80 |
+| 0.9 | 0.78 |
 | 1.0 | 0.76 |
 
 **freq15M**
@@ -223,7 +223,7 @@ No reasons — both confidence signals cleared.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.91 |
-| 0.1 | 0.91 |
+| 0.1 | 0.90 |
 | 0.2 | 0.89 |
 | 0.3 | 0.87 |
 | 0.4 | 0.84 |
@@ -238,7 +238,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq15S        |         0.91 |       0.75 |         0.76 |
+| freq15S        |         0.91 |       0.78 |         0.76 |
 | freq15M        |         0.91 |       0.75 |         0.75 |
 
 ### Shape metrics
@@ -254,8 +254,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.778 |      0.80 |   no |
-| IoU       | 0.636 |      0.20 |  yes |
+| precision | 0.780 |      0.80 |   no |
+| IoU       | 0.633 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -268,7 +268,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16-55mm-f2-8-r-lm-wr/fujifilm-xf-16-55mm-f2-8-r-lm-wr-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -353,7 +353,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16-55mm-f2-8-r-lm-wr/fujifilm-xf-16-55mm-f2-8-r-lm-wr-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -365,11 +365,11 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq15S        | 11/11    |  4/11       |
+| freq15S        | 11/11    |  3/11       |
 | freq15M        | 11/11    |  0/11       |
 
 ```
-  EX   freq15S        ▇▇▇▇▇▇▇▇▇▇▇  (0.92 → 0.84)
+  EX   freq15S        ▇▇▇▇▇▇▇▇▇▇▇  (0.92 → 0.85)
   EX   freq15M        ▇▇▇▇▇▇▇▇▇▇▇  (0.92 → 0.84)
 ```
 
@@ -387,7 +387,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.90 |
 | 0.8 | 0.90 |
 | 0.9 | 0.88 |
-| 1.0 | 0.84 |
+| 1.0 | 0.85 |
 
 **freq15M**
 
@@ -409,7 +409,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq15S        |         0.92 |       0.88 |         0.84 |
+| freq15S        |         0.92 |       0.88 |         0.85 |
 | freq15M        |         0.92 |       0.84 |         0.84 |
 
 ### Shape metrics
@@ -425,8 +425,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.818 |      0.80 |  yes |
-| IoU       | 0.685 |      0.20 |  yes |
+| precision | 0.815 |      0.80 |  yes |
+| IoU       | 0.681 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -438,7 +438,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16-55mm-f2-8-r-lm-wr/fujifilm-xf-16-55mm-f2-8-r-lm-wr-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -450,12 +450,12 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        |  9/11    |  0/11       |
-| freq45M        |  9/11    |  0/11       |
+| freq45S        | 10/11    |  0/11       |
+| freq45M        | 10/11    |  0/11       |
 
 ```
-  EX   freq45S        ·▇▇▇▆▆▆▆▆▆·  ( —  →  — )
-  EX   freq45M        ·▇▇▆▆▅▅▅▅▅·  ( —  →  — )
+  EX   freq45S        ·▇▇▇▆▆▆▆▆▆▅  ( —  → 0.64)
+  EX   freq45M        ·▇▇▆▆▅▅▅▅▅▅  ( —  → 0.62)
 ```
 
 **freq45S**
@@ -472,7 +472,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.73 |
 | 0.8 | 0.75 |
 | 0.9 | 0.72 |
-| 1.0 | — |
+| 1.0 | 0.64 |
 
 **freq45M**
 
@@ -488,14 +488,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.60 |
 | 0.8 | 0.60 |
 | 0.9 | 0.59 |
-| 1.0 | — |
+| 1.0 | 0.62 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq45S        |            — |       0.72 |            — |
-| freq45M        |            — |       0.59 |            — |
+| freq45S        |            — |       0.72 |         0.64 |
+| freq45M        |            — |       0.59 |         0.62 |
 
 ### Shape metrics
 
@@ -510,8 +510,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.954 |      0.80 |  yes |
-| IoU       | 0.540 |      0.20 |  yes |
+| precision | 0.939 |      0.80 |  yes |
+| IoU       | 0.583 |      0.20 |  yes |
 
 #### Plausibility priors
 

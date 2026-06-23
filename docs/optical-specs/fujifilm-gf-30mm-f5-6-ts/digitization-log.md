@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-30mm-f5-6-ts/fujifilm-gf-30mm-f5-6-ts-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -25,11 +25,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq10S        | 11/11    |  3/11       |
-| freq10M        | 11/11    |  1/11       |
+| freq10M        | 11/11    |  0/11       |
 
 ```
   EX   freq10S        ███████████  (0.99 → 0.95)
-  EX   freq10M        ███████████  (0.99 → 0.95)
+  EX   freq10M        ███████████  (0.99 → 0.98)
 ```
 
 **freq10S**
@@ -62,14 +62,14 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.99 |
 | 0.8 | 0.98 |
 | 0.9 | 0.97 |
-| 1.0 | 0.95 |
+| 1.0 | 0.98 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.99 |       0.97 |         0.95 |
-| freq10M        |         0.99 |       0.97 |         0.95 |
+| freq10M        |         0.99 |       0.97 |         0.98 |
 
 ### Shape metrics
 
@@ -84,12 +84,14 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.732 |      0.80 |   no |
-| IoU       | 0.589 |      0.20 |  yes |
+| precision | 0.755 |      0.80 |   no |
+| IoU       | 0.616 |      0.20 |  yes |
 
 #### Plausibility priors
 
-All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_flat`, `in_range`).
+| prior | field | position | detail |
+| ----- | ----- | -------- | ------ |
+| `not_suspiciously_flat` | `freq10M` | — | mean 0.985 >= 0.95 and stdev 0.006 <= 0.01 (11/11 defined) — idealized/placeholder? |
 
 ### Gate
 
@@ -97,8 +99,9 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 **Reasons:**
 - `precision_below_threshold`
+- `prior_failed_not_suspiciously_flat`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-30mm-f5-6-ts/fujifilm-gf-30mm-f5-6-ts-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -111,11 +114,11 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq20S        | 11/11    |  2/11       |
-| freq20M        | 11/11    |  1/11       |
+| freq20M        | 11/11    |  0/11       |
 
 ```
   EX   freq20S        █████████▇▇  (0.98 → 0.84)
-  EX   freq20M        ████████▇▇▇  (0.98 → 0.84)
+  EX   freq20M        ████████▇▇▇  (0.98 → 0.92)
 ```
 
 **freq20S**
@@ -127,7 +130,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.2 | 0.98 |
 | 0.3 | 0.97 |
 | 0.4 | 0.95 |
-| 0.5 | 0.93 |
+| 0.5 | 0.94 |
 | 0.6 | 0.94 |
 | 0.7 | 0.95 |
 | 0.8 | 0.95 |
@@ -148,14 +151,14 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.7 | 0.95 |
 | 0.8 | 0.92 |
 | 0.9 | 0.90 |
-| 1.0 | 0.84 |
+| 1.0 | 0.92 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq20S        |         0.98 |       0.92 |         0.84 |
-| freq20M        |         0.98 |       0.90 |         0.84 |
+| freq20M        |         0.98 |       0.90 |         0.92 |
 
 ### Shape metrics
 
@@ -170,8 +173,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.859 |      0.80 |  yes |
-| IoU       | 0.665 |      0.20 |  yes |
+| precision | 0.888 |      0.80 |  yes |
+| IoU       | 0.685 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -183,7 +186,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-30mm-f5-6-ts/fujifilm-gf-30mm-f5-6-ts-40lp.png`
 - **Style family:** `fujifilm-permfreq`

@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr/fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr/fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -164,7 +164,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `render_match_undefined`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr/fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -249,7 +249,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr/fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -265,7 +265,7 @@ No reasons — both confidence signals cleared.
 | freq45M        |  5/11    |  0/11       |
 
 ```
-  EX   freq45S        ······███▇▅  ( —  → 0.60)
+  EX   freq45S        ······███▇▅  ( —  → 0.61)
   EX   freq45M        ······███▇▅  ( —  → 0.62)
 ```
 
@@ -283,7 +283,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.94 |
 | 0.8 | 0.97 |
 | 0.9 | 0.91 |
-| 1.0 | 0.60 |
+| 1.0 | 0.61 |
 
 **freq45M**
 
@@ -305,7 +305,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq45S        |            — |       0.91 |         0.60 |
+| freq45S        |            — |       0.91 |         0.61 |
 | freq45M        |            — |       0.86 |         0.62 |
 
 ### Shape metrics
@@ -321,8 +321,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.608 |      0.80 |   no |
-| IoU       | 0.262 |      0.20 |  yes |
+| precision | 0.600 |      0.80 |   no |
+| IoU       | 0.253 |      0.20 |  yes |
 
 #### Plausibility priors
 

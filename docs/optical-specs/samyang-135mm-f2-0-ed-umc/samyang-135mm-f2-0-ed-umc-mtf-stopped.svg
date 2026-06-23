@@ -27,7 +27,7 @@
 <polyline class="curve curve-10" style="stroke:#c89b3c" points="36.0,14.3 62.8,14.3 89.6,14.3 116.4,14.3 143.2,14.3 170.0,14.3 196.8,14.7 223.6,15.0 250.4,15.7 277.2,16.6 304.0,18.1"/>
 <polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="36.0,14.3 62.8,14.3 89.6,14.3 116.4,14.3 143.2,14.3 170.0,14.3 196.8,14.7 223.6,15.0 250.4,15.7 277.2,16.6 304.0,15.8" stroke-dasharray="4 2"/>
 <polyline class="curve curve-30" style="stroke:#6b9bd2" points="36.0,21.7 62.8,21.3 89.6,21.3 116.4,21.3 143.2,21.5 170.0,22.1 196.8,23.4 223.6,26.4 250.4,31.0 277.2,37.3 304.0,45.3"/>
-<polyline class="curve curve-30 curve-m" style="stroke:#6b9bd2" points="36.0,21.7 62.8,23.8 89.6,24.0 116.4,24.2 143.2,24.4 170.0,24.8 196.8,23.4 223.6,26.4 250.4,27.4 277.2,30.7 304.0,36.1" stroke-dasharray="4 2"/>
+<polyline class="curve curve-30 curve-m" style="stroke:#6b9bd2" points="36.0,21.7 62.8,23.8 89.6,24.0 116.4,24.2 143.2,24.4 170.0,24.8 196.8,25.7 223.6,26.5 250.4,27.4 277.2,30.7 304.0,36.1" stroke-dasharray="4 2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="36.0" cy="14.3" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="14.3" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="14.3" r="2"/>
@@ -67,8 +67,8 @@
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="116.4" cy="24.2" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="143.2" cy="24.4" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="170.0" cy="24.8" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="196.8" cy="23.4" r="2"/>
-<circle class="dot dot-30" style="stroke:#6b9bd2" cx="223.6" cy="26.4" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="196.8" cy="25.7" r="2"/>
+<circle class="dot dot-30" style="stroke:#6b9bd2" cx="223.6" cy="26.5" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="250.4" cy="27.4" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="277.2" cy="30.7" r="2"/>
 <circle class="dot dot-30" style="stroke:#6b9bd2" cx="304.0" cy="36.1" r="2"/>

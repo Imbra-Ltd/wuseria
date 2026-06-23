@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -127,7 +127,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.2 | 0.83 |
 | 0.3 | 0.80 |
 | 0.4 | 0.76 |
-| 0.5 | 0.72 |
+| 0.5 | 0.73 |
 | 0.6 | 0.71 |
 | 0.7 | 0.74 |
 | 0.8 | 0.76 |
@@ -170,8 +170,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.782 |      0.80 |   no |
-| IoU       | 0.587 |      0.20 |  yes |
+| precision | 0.780 |      0.80 |   no |
+| IoU       | 0.584 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -184,7 +184,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -269,7 +269,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -354,7 +354,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -440,7 +440,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr/fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -469,7 +469,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.2 | 0.83 |
 | 0.3 | 0.80 |
 | 0.4 | 0.76 |
-| 0.5 | 0.72 |
+| 0.5 | 0.73 |
 | 0.6 | 0.71 |
 | 0.7 | 0.74 |
 | 0.8 | 0.76 |
@@ -512,8 +512,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.784 |      0.80 |   no |
-| IoU       | 0.589 |      0.20 |  yes |
+| precision | 0.782 |      0.80 |   no |
+| IoU       | 0.586 |      0.20 |  yes |
 
 #### Plausibility priors
 

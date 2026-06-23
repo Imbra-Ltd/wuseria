@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — f/5
 
 - **Chart:** `docs/optical-specs/sigma-100-400mm-f5-6-3-dg-dn-os-c/sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-wide.png`
 - **Style family:** `mainstream-2color-solid-dashed`
@@ -137,7 +137,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — f/5
 
 - **Chart:** `docs/optical-specs/sigma-100-400mm-f5-6-3-dg-dn-os-c/sigma-100-400mm-f5-6-3-dg-dn-os-c-mtf-diffraction-tele.png`
 - **Style family:** `mainstream-2color-solid-dashed`

@@ -24,9 +24,9 @@
 <text class="axis-label axis-x" x="277.2" y="186">12.8</text>
 <text class="axis-label axis-x" x="304.0" y="186">14.2</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
-<polyline class="curve curve-45" style="stroke:#5d7bb5" points="36.0,34.8 62.8,38.3 89.6,42.8 116.4,46.4 143.2,50.5 170.0,53.8 196.8,55.1 223.6,51.7 250.4,40.0 277.2,33.2 304.0,84.8"/>
-<polyline class="curve curve-45 curve-m" style="stroke:#5d7bb5" points="36.0,34.8 62.8,44.9 89.6,50.0 116.4,53.6 143.2,48.4 170.0,63.2 196.8,79.1 223.6,55.6 250.4,45.9 277.2,67.4 304.0,122.9" stroke-dasharray="4 2"/>
-<circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="34.8" r="2"/>
+<polyline class="curve curve-45" style="stroke:#5d7bb5" points="36.0,34.2 62.8,38.3 89.6,42.8 116.4,46.4 143.2,50.5 170.0,53.8 196.8,55.1 223.6,51.7 250.4,40.0 277.2,33.2 304.0,81.5"/>
+<polyline class="curve curve-45 curve-m" style="stroke:#5d7bb5" points="36.0,34.2 62.8,44.9 89.6,50.0 116.4,53.6 143.2,48.4 170.0,63.2 196.8,79.1 223.6,55.6 250.4,45.9 277.2,67.4 304.0,119.5" stroke-dasharray="4 2"/>
+<circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="34.2" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="62.8" cy="38.3" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="89.6" cy="42.8" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="116.4" cy="46.4" r="2"/>
@@ -36,8 +36,8 @@
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="223.6" cy="51.7" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="250.4" cy="40.0" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="277.2" cy="33.2" r="2"/>
-<circle class="dot dot-45" style="stroke:#5d7bb5" cx="304.0" cy="84.8" r="2"/>
-<circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="34.8" r="2"/>
+<circle class="dot dot-45" style="stroke:#5d7bb5" cx="304.0" cy="81.5" r="2"/>
+<circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="34.2" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="62.8" cy="44.9" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="89.6" cy="50.0" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="116.4" cy="53.6" r="2"/>
@@ -47,7 +47,7 @@
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="223.6" cy="55.6" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="250.4" cy="45.9" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="277.2" cy="67.4" r="2"/>
-<circle class="dot dot-45" style="stroke:#5d7bb5" cx="304.0" cy="122.9" r="2"/>
+<circle class="dot dot-45" style="stroke:#5d7bb5" cx="304.0" cy="119.5" r="2"/>
 <line x1="36" y1="209" x2="48" y2="209" stroke="#5d7bb5" stroke-width="1.5"/>
 <text class="legend-text" x="51" y="212">45 lp/mm S</text>
 <line x1="92" y1="209" x2="104" y2="209" stroke="#5d7bb5" stroke-width="1.5" stroke-dasharray="3 2"/>

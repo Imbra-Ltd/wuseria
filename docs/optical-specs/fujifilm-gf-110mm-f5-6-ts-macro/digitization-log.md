@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-110mm-f5-6-ts-macro/fujifilm-gf-110mm-f5-6-ts-macro-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -25,11 +25,11 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq10S        | 11/11    |  2/11       |
-| freq10M        | 11/11    |  1/11       |
+| freq10M        | 11/11    |  0/11       |
 
 ```
   EX   freq10S        █████▇▇▇▇▇▇  (0.93 → 0.92)
-  EX   freq10M        █████████▇▇  (0.93 → 0.92)
+  EX   freq10M        █████████▇▇  (0.93 → 0.93)
 ```
 
 **freq10S**
@@ -62,20 +62,20 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.93 |
 | 0.8 | 0.93 |
 | 0.9 | 0.93 |
-| 1.0 | 0.92 |
+| 1.0 | 0.93 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.93 |       0.92 |         0.92 |
-| freq10M        |         0.93 |       0.93 |         0.92 |
+| freq10M        |         0.93 |       0.93 |         0.93 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq10S        |       0.2 |       0.93 |                 — |
+| freq10S        |       0.0 |       0.93 |                 — |
 | freq10M        |       0.2 |       0.93 |                 — |
 
 ### Confidence signals
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.815 |      0.80 |  yes |
-| IoU       | 0.696 |      0.20 |  yes |
+| precision | 0.825 |      0.80 |  yes |
+| IoU       | 0.709 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-110mm-f5-6-ts-macro/fujifilm-gf-110mm-f5-6-ts-macro-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -123,7 +123,7 @@ No reasons — both confidence signals cleared.
 | ---- | --- |
 | 0.0 | 0.99 |
 | 0.1 | 0.98 |
-| 0.2 | 0.99 |
+| 0.2 | 0.98 |
 | 0.3 | 0.98 |
 | 0.4 | 0.98 |
 | 0.5 | 0.97 |
@@ -160,7 +160,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq20S        |       0.2 |       0.99 |                 — |
+| freq20S        |       0.0 |       0.99 |                 — |
 | freq20M        |       0.1 |       0.99 |                 — |
 
 ### Confidence signals
@@ -185,7 +185,7 @@ No reasons — both confidence signals cleared.
 **Reasons:**
 - `prior_failed_not_suspiciously_flat`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-110mm-f5-6-ts-macro/fujifilm-gf-110mm-f5-6-ts-macro-40lp.png`
 - **Style family:** `fujifilm-permfreq`

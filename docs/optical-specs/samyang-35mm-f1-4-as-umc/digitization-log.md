@@ -63,7 +63,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.4 | 0.93 |
 | 0.5 | 0.93 |
 | 0.6 | 0.92 |
-| 0.7 | 0.92 |
+| 0.7 | 0.91 |
 | 0.8 | 0.90 |
 | 0.9 | 0.88 |
 | 1.0 | 0.84 |
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.701 |      0.80 |   no |
-| IoU       | 0.612 |      0.20 |  yes |
+| precision | 0.707 |      0.80 |   no |
+| IoU       | 0.618 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -184,7 +184,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | ---- | --- |
 | 0.0 | 0.98 |
 | 0.1 | 0.98 |
-| 0.2 | 0.99 |
+| 0.2 | 0.98 |
 | 0.3 | 0.97 |
 | 0.4 | 0.97 |
 | 0.5 | 0.96 |
@@ -240,7 +240,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.5 |       0.99 |                 — |
-| freq10M        |       0.2 |       0.99 |                 — |
+| freq10M        |       0.0 |       0.98 |                 — |
 | freq30S        |       0.6 |       0.97 |                 — |
 | freq30M        |       0.0 |       0.91 |                 — |
 

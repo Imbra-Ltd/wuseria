@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-32-64mm-f4-r-lm-wr/fujifilm-gf-32-64mm-f4-r-lm-wr-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -57,7 +57,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.2 | 0.96 |
 | 0.3 | 0.96 |
 | 0.4 | 0.94 |
-| 0.5 | 0.95 |
+| 0.5 | 0.94 |
 | 0.6 | 0.95 |
 | 0.7 | 0.95 |
 | 0.8 | 0.95 |
@@ -84,14 +84,14 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.770 |      0.80 |   no |
-| IoU       | 0.678 |      0.20 |  yes |
+| precision | 0.791 |      0.80 |   no |
+| IoU       | 0.700 |      0.20 |  yes |
 
 #### Plausibility priors
 
 | prior | field | position | detail |
 | ----- | ----- | -------- | ------ |
-| `not_suspiciously_flat` | `freq15M` | — | mean 0.952 >= 0.95 and stdev 0.010 <= 0.01 (11/11 defined) — idealized/placeholder? |
+| `not_suspiciously_flat` | `freq15M` | — | mean 0.951 >= 0.95 and stdev 0.010 <= 0.01 (11/11 defined) — idealized/placeholder? |
 
 ### Gate
 
@@ -101,7 +101,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 - `precision_below_threshold`
 - `prior_failed_not_suspiciously_flat`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-32-64mm-f4-r-lm-wr/fujifilm-gf-32-64mm-f4-r-lm-wr-tele-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -186,7 +186,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-32-64mm-f4-r-lm-wr/fujifilm-gf-32-64mm-f4-r-lm-wr-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -271,7 +271,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-32-64mm-f4-r-lm-wr/fujifilm-gf-32-64mm-f4-r-lm-wr-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -356,7 +356,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-32-64mm-f4-r-lm-wr/fujifilm-gf-32-64mm-f4-r-lm-wr-wide-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -441,7 +441,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-32-64mm-f4-r-lm-wr/fujifilm-gf-32-64mm-f4-r-lm-wr-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -454,11 +454,11 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq45S        | 11/11    |  0/11       |
-| freq45M        | 11/11    |  1/11       |
+| freq45M        | 11/11    |  0/11       |
 
 ```
   EX   freq45S        ▇▇▇▇▇▇▇▇▆▅▆  (0.87 → 0.71)
-  EX   freq45M        ▇▇▆▆▆▆▅▅▅▄▃  (0.87 → 0.24)
+  EX   freq45M        ▇▇▆▆▆▆▅▅▅▄▃  (0.87 → 0.25)
 ```
 
 **freq45S**
@@ -491,14 +491,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.54 |
 | 0.8 | 0.52 |
 | 0.9 | 0.50 |
-| 1.0 | 0.24 |
+| 1.0 | 0.25 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq45S        |         0.87 |       0.64 |         0.71 |
-| freq45M        |         0.87 |       0.50 |         0.24 |
+| freq45M        |         0.87 |       0.50 |         0.25 |
 
 ### Shape metrics
 
@@ -513,7 +513,7 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.906 |      0.80 |  yes |
+| precision | 0.908 |      0.80 |  yes |
 | IoU       | 0.536 |      0.20 |  yes |
 
 #### Plausibility priors

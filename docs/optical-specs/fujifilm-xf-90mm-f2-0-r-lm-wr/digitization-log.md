@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-90mm-f2-0-r-lm-wr/fujifilm-xf-90mm-f2-0-r-lm-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -41,10 +41,10 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.2 | 0.88 |
 | 0.3 | 0.88 |
 | 0.4 | 0.88 |
-| 0.5 | 0.88 |
-| 0.6 | 0.88 |
-| 0.7 | 0.87 |
-| 0.8 | 0.86 |
+| 0.5 | 0.87 |
+| 0.6 | 0.86 |
+| 0.7 | 0.85 |
+| 0.8 | 0.84 |
 | 0.9 | 0.83 |
 | 1.0 | 0.80 |
 
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.602 |      0.80 |   no |
-| IoU       | 0.463 |      0.20 |  yes |
+| precision | 0.595 |      0.80 |   no |
+| IoU       | 0.454 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-90mm-f2-0-r-lm-wr/fujifilm-xf-90mm-f2-0-r-lm-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -128,7 +128,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.3 | 0.69 |
 | 0.4 | 0.68 |
 | 0.5 | 0.67 |
-| 0.6 | 0.67 |
+| 0.6 | 0.66 |
 | 0.7 | 0.65 |
 | 0.8 | 0.58 |
 | 0.9 | 0.52 |

@@ -31,7 +31,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | freq10S        | 11/11  |     0.016 |     0.029 |  0/11       |
 | freq10M        | 11/11  |     0.009 |     0.026 |  6/11       |
 | freq30S        | 11/11  |     0.016 |     0.055 |  0/11       |
-| freq30M        | 11/11  |     0.009 |     0.026 |  4/11       |
+| freq30M        | 11/11  |     0.012 |     0.026 |  4/11       |
 
 ```
   EX   freq10S        ▇▇▇▇▇▇▇▇▇▇▆  (0.90 → 0.78)
@@ -104,8 +104,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | 0.5 | 0.61 | 0.63 | 0.024 |
 | 0.6 | 0.60 | 0.62 | 0.020 |
 | 0.7 | 0.59 | 0.60 | 0.015 |
-| 0.8 | 0.58 | 0.57 | 0.005 |
-| 0.9 | 0.57 | 0.56 | 0.006 |
+| 0.8 | 0.58 | 0.59 | 0.012 |
+| 0.9 | 0.57 | 0.58 | 0.010 |
 | 1.0 | 0.57 | 0.57 | 0.002 |
 
 #### Aperture stopped
@@ -114,7 +114,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | -------------- | ------ | --------- | --------- | ----------- |
 | freq10S        | 11/11  |     0.005 |     0.023 |  0/11       |
 | freq10M        | 11/11  |     0.010 |     0.016 |  6/11       |
-| freq30S        | 11/11  |     0.008 |     0.228 |  2/11       |
+| freq30S        | 11/11  |     0.005 |     0.039 |  2/11       |
 | freq30M        | 11/11  |     0.012 |     0.055 |  1/11       |
 
 ```
@@ -122,7 +122,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
   EYE  freq10S        ███████████
   EX   freq10M        ██████████▇  (0.99 → 0.92)
   EYE  freq10M        ███████████
-  EX   freq30S        ██████▆█▆██  (0.95 → 0.96)
+  EX   freq30S        ███████████  (0.95 → 0.96)
   EYE  freq30S        ██████████▇
   EX   freq30M        ██▇▇▇▇▆▆▆▆▅  (0.95 → 0.54)
   EYE  freq30M        ███▇▇▇▇▆▆▆▅
@@ -154,9 +154,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | 0.3 | 0.98 | 0.98 | 0.001 |
 | 0.4 | 0.98 | 0.98 | 0.001 |
 | 0.5 | 0.98 | 0.97 | 0.009 |
-| 0.6 | 0.97 | 0.98 | 0.008 |
-| 0.7 | 0.97 | 0.98 | 0.013 |
-| 0.8 | 0.97 | 0.98 | 0.009 |
+| 0.6 | 0.97 | 0.97 | 0.004 |
+| 0.7 | 0.97 | 0.96 | 0.010 |
+| 0.8 | 0.97 | 0.95 | 0.016 |
 | 0.9 | 0.96 | 0.95 | 0.012 |
 | 1.0 | 0.93 | 0.92 | 0.014 |
 
@@ -170,9 +170,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | 0.3 | 0.97 | 0.97 | 0.004 |
 | 0.4 | 0.97 | 0.97 | 0.004 |
 | 0.5 | 0.97 | 0.96 | 0.005 |
-| 0.6 | 0.97 | 0.74 | 0.226 |
+| 0.6 | 0.97 | 0.96 | 0.005 |
 | 0.7 | 0.96 | 0.96 | 0.004 |
-| 0.8 | 0.95 | 0.73 | 0.222 |
+| 0.8 | 0.95 | 0.96 | 0.012 |
 | 0.9 | 0.93 | 0.96 | 0.030 |
 | 1.0 | 0.92 | 0.96 | 0.036 |
 
@@ -201,7 +201,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | freq10S        |         0.90 |       0.86 |         0.78 |
 | freq10M        |         0.90 |       0.93 |         0.93 |
 | freq30S        |         0.69 |       0.56 |         0.50 |
-| freq30M        |         0.69 |       0.56 |         0.57 |
+| freq30M        |         0.69 |       0.58 |         0.57 |
 
 #### Aperture stopped
 

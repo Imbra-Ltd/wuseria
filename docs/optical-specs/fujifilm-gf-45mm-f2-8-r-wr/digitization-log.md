@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-45mm-f2-8-r-wr/fujifilm-gf-45mm-f2-8-r-wr-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -56,7 +56,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.1 | 0.92 |
 | 0.2 | — |
 | 0.3 | 0.92 |
-| 0.4 | 0.91 |
+| 0.4 | 0.92 |
 | 0.5 | 0.91 |
 | 0.6 | 0.91 |
 | 0.7 | 0.90 |
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.869 |      0.80 |  yes |
-| IoU       | 0.745 |      0.20 |  yes |
+| precision | 0.879 |      0.80 |  yes |
+| IoU       | 0.758 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-45mm-f2-8-r-wr/fujifilm-gf-45mm-f2-8-r-wr-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -182,7 +182,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-45mm-f2-8-r-wr/fujifilm-gf-45mm-f2-8-r-wr-40lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -226,11 +226,11 @@ No reasons — both confidence signals cleared.
 | 0.1 | 0.75 |
 | 0.2 | 0.74 |
 | 0.3 | 0.74 |
-| 0.4 | 0.70 |
+| 0.4 | 0.71 |
 | 0.5 | 0.67 |
 | 0.6 | 0.66 |
 | 0.7 | 0.59 |
-| 0.8 | 0.52 |
+| 0.8 | 0.57 |
 | 0.9 | 0.56 |
 | 1.0 | 0.52 |
 
@@ -254,8 +254,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.797 |      0.80 |   no |
-| IoU       | 0.674 |      0.20 |  yes |
+| precision | 0.795 |      0.80 |   no |
+| IoU       | 0.671 |      0.20 |  yes |
 
 #### Plausibility priors
 

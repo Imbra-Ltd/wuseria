@@ -24,11 +24,11 @@
 <text class="axis-label axis-x" x="277.2" y="186">24.2</text>
 <text class="axis-label axis-x" x="304.0" y="186">26.9</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
-<polyline class="curve curve-10" style="stroke:#c89b3c" points="36.0,23.2 62.8,23.4 89.6,22.7 116.4,23.4 143.2,23.4 170.0,24.2 196.8,24.1 223.6,24.6 250.4,24.6 277.2,24.8 304.0,25.0"/>
-<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="36.0,23.2 62.8,22.7 89.6,22.7 116.4,23.1 143.2,22.9 170.0,22.9 196.8,23.0 223.6,23.2 250.4,23.2 277.2,23.7 304.0,25.0" stroke-dasharray="4 2"/>
+<polyline class="curve curve-10" style="stroke:#c89b3c" points="36.0,23.2 62.8,23.4 89.6,23.4 116.4,23.4 143.2,23.4 170.0,24.2 196.8,24.1 223.6,24.6 250.4,24.6 277.2,24.8 304.0,25.0"/>
+<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="36.0,23.2 62.8,22.7 89.6,22.7 116.4,23.1 143.2,22.9 170.0,22.9 196.8,23.0 223.6,23.2 250.4,23.2 277.2,23.7 304.0,23.7" stroke-dasharray="4 2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="36.0" cy="23.2" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="23.4" r="2"/>
-<circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="22.7" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="23.4" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="116.4" cy="23.4" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="143.2" cy="23.4" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="170.0" cy="24.2" r="2"/>
@@ -47,7 +47,7 @@
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="223.6" cy="23.2" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="250.4" cy="23.2" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="277.2" cy="23.7" r="2"/>
-<circle class="dot dot-10" style="stroke:#c89b3c" cx="304.0" cy="25.0" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="304.0" cy="23.7" r="2"/>
 <line x1="36" y1="209" x2="48" y2="209" stroke="#c89b3c" stroke-width="1.5"/>
 <text class="legend-text" x="51" y="212">10 lp/mm S</text>
 <line x1="92" y1="209" x2="104" y2="209" stroke="#c89b3c" stroke-width="1.5" stroke-dasharray="3 2"/>

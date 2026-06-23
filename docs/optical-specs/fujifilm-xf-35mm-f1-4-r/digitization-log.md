@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-35mm-f1-4-r/fujifilm-xf-35mm-f1-4-r-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -38,7 +38,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | ---- | --- |
 | 0.0 | 0.81 |
 | 0.1 | 0.81 |
-| 0.2 | 0.82 |
+| 0.2 | 0.80 |
 | 0.3 | 0.79 |
 | 0.4 | 0.75 |
 | 0.5 | 0.70 |
@@ -75,7 +75,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq15S        |       0.2 |       0.82 |                 — |
+| freq15S        |       0.0 |       0.81 |                 — |
 | freq15M        |       0.1 |       0.82 |                 — |
 
 ### Confidence signals
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.915 |      0.80 |  yes |
-| IoU       | 0.698 |      0.20 |  yes |
+| precision | 0.911 |      0.80 |  yes |
+| IoU       | 0.692 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-35mm-f1-4-r/fujifilm-xf-35mm-f1-4-r-45lp.png`
 - **Style family:** `fujifilm-permfreq`

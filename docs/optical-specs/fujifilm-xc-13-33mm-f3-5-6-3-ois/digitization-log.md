@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xc-13-33mm-f3-5-6-3-ois/fujifilm-xc-13-33mm-f3-5-6-3-ois-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xc-13-33mm-f3-5-6-3-ois/fujifilm-xc-13-33mm-f3-5-6-3-ois-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -109,7 +109,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 11/11    |  1/11       |
+| freq45S        | 11/11    |  0/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.946 |      0.80 |  yes |
-| IoU       | 0.689 |      0.20 |  yes |
+| precision | 0.948 |      0.80 |  yes |
+| IoU       | 0.692 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -182,7 +182,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xc-13-33mm-f3-5-6-3-ois/fujifilm-xc-13-33mm-f3-5-6-3-ois-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -267,7 +267,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xc-13-33mm-f3-5-6-3-ois/fujifilm-xc-13-33mm-f3-5-6-3-ois-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`

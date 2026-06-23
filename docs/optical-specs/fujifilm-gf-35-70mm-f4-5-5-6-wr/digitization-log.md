@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-35-70mm-f4-5-5-6-wr/fujifilm-gf-35-70mm-f4-5-5-6-wr-tele-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-35-70mm-f4-5-5-6-wr/fujifilm-gf-35-70mm-f4-5-5-6-wr-tele-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -110,11 +110,11 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq20S        | 11/11    |  3/11       |
-| freq20M        | 11/11    |  1/11       |
+| freq20M        | 11/11    |  0/11       |
 
 ```
   EX   freq20S        ████▇▇▆▆▅▅▄  (1.00 → 0.47)
-  EX   freq20M        █████▇▇▇▇▇▄  (1.00 → 0.47)
+  EX   freq20M        █████▇▇▇▇▇▆  (1.00 → 0.66)
 ```
 
 **freq20S**
@@ -124,7 +124,7 @@ No reasons — both confidence signals cleared.
 | 0.0 | 1.00 |
 | 0.1 | 1.00 |
 | 0.2 | 1.00 |
-| 0.3 | 0.97 |
+| 0.3 | 0.96 |
 | 0.4 | 0.92 |
 | 0.5 | 0.84 |
 | 0.6 | 0.74 |
@@ -147,21 +147,21 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.87 |
 | 0.8 | 0.84 |
 | 0.9 | 0.80 |
-| 1.0 | 0.47 |
+| 1.0 | 0.66 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq20S        |         1.00 |       0.52 |         0.47 |
-| freq20M        |         1.00 |       0.80 |         0.47 |
+| freq20M        |         1.00 |       0.80 |         0.66 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
 | freq20S        |       0.2 |       1.00 |               1.0 |
-| freq20M        |       0.0 |       1.00 |               1.0 |
+| freq20M        |       0.0 |       1.00 |                 — |
 
 ### Confidence signals
 
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.732 |      0.80 |   no |
-| IoU       | 0.610 |      0.20 |  yes |
+| precision | 0.815 |      0.80 |  yes |
+| IoU       | 0.673 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -178,12 +178,11 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 ### Gate
 
-**Gate verdict:** `LOW`
+**Gate verdict:** `HIGH`
 
-**Reasons:**
-- `precision_below_threshold`
+No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-35-70mm-f4-5-5-6-wr/fujifilm-gf-35-70mm-f4-5-5-6-wr-tele-40lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -268,7 +267,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-35-70mm-f4-5-5-6-wr/fujifilm-gf-35-70mm-f4-5-5-6-wr-wide-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -296,7 +295,7 @@ No reasons — both confidence signals cleared.
 | 0.1 | 0.99 |
 | 0.2 | 0.98 |
 | 0.3 | 0.96 |
-| 0.4 | 0.94 |
+| 0.4 | 0.93 |
 | 0.5 | 0.90 |
 | 0.6 | 0.86 |
 | 0.7 | 0.80 |
@@ -340,8 +339,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.860 |      0.80 |  yes |
-| IoU       | 0.699 |      0.20 |  yes |
+| precision | 0.858 |      0.80 |  yes |
+| IoU       | 0.695 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -353,7 +352,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-35-70mm-f4-5-5-6-wr/fujifilm-gf-35-70mm-f4-5-5-6-wr-wide-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -438,7 +437,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-35-70mm-f4-5-5-6-wr/fujifilm-gf-35-70mm-f4-5-5-6-wr-wide-40lp.png`
 - **Style family:** `fujifilm-permfreq`

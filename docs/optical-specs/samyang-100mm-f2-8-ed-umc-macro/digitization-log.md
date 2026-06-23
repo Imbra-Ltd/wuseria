@@ -184,12 +184,12 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | ---- | --- |
 | 0.0 | 0.99 |
 | 0.1 | 0.99 |
-| 0.2 | 0.99 |
-| 0.3 | 0.99 |
-| 0.4 | 0.99 |
-| 0.5 | 0.99 |
-| 0.6 | 0.99 |
-| 0.7 | 0.99 |
+| 0.2 | 0.98 |
+| 0.3 | 0.98 |
+| 0.4 | 0.98 |
+| 0.5 | 0.98 |
+| 0.6 | 0.98 |
+| 0.7 | 0.97 |
 | 0.8 | 0.97 |
 | 0.9 | 0.96 |
 | 1.0 | 0.94 |
@@ -240,7 +240,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.1 |       0.99 |                 — |
-| freq10M        |       0.1 |       0.99 |                 — |
+| freq10M        |       0.0 |       0.99 |                 — |
 | freq30S        |       0.0 |       0.98 |                 — |
 | freq30M        |       0.0 |       0.98 |                 — |
 
@@ -250,8 +250,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.643 |      0.80 |   no |
-| IoU       | 0.575 |      0.20 |  yes |
+| precision | 0.648 |      0.80 |   no |
+| IoU       | 0.581 |      0.20 |  yes |
 
 #### Plausibility priors
 

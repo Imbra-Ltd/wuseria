@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-20-35mm-f4-r-wr/fujifilm-gf-20-35mm-f4-r-wr-tele-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -38,7 +38,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | ---- | --- |
 | 0.0 | 0.98 |
 | 0.1 | 0.98 |
-| 0.2 | 0.97 |
+| 0.2 | 0.98 |
 | 0.3 | 0.98 |
 | 0.4 | 0.98 |
 | 0.5 | 0.98 |
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.855 |      0.80 |  yes |
-| IoU       | 0.696 |      0.20 |  yes |
+| precision | 0.859 |      0.80 |  yes |
+| IoU       | 0.703 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -100,7 +100,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 **Reasons:**
 - `prior_failed_not_suspiciously_flat`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-20-35mm-f4-r-wr/fujifilm-gf-20-35mm-f4-r-wr-tele-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -185,7 +185,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-20-35mm-f4-r-wr/fujifilm-gf-20-35mm-f4-r-wr-tele-40lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -197,19 +197,19 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq40S        | 11/11    |  1/11       |
+| freq40S        | 11/11    |  0/11       |
 | freq40M        | 11/11    |  0/11       |
 
 ```
-  EX   freq40S        ▇▇▇▇▇▇▇▆▆▆▅  (0.92 → 0.63)
-  EX   freq40M        ▇▇▇▇▇▆▆▆▆▅▅  (0.92 → 0.53)
+  EX   freq40S        █▇▇▇▇▇▇▆▆▆▅  (0.93 → 0.63)
+  EX   freq40M        █▇▇▇▇▆▆▆▆▅▅  (0.93 → 0.53)
 ```
 
 **freq40S**
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | 0.92 |
+| 0.0 | 0.93 |
 | 0.1 | 0.89 |
 | 0.2 | 0.85 |
 | 0.3 | 0.87 |
@@ -225,7 +225,7 @@ No reasons — both confidence signals cleared.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | 0.92 |
+| 0.0 | 0.93 |
 | 0.1 | 0.82 |
 | 0.2 | 0.79 |
 | 0.3 | 0.90 |
@@ -241,15 +241,15 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq40S        |         0.92 |       0.68 |         0.63 |
-| freq40M        |         0.92 |       0.60 |         0.53 |
+| freq40S        |         0.93 |       0.68 |         0.63 |
+| freq40M        |         0.93 |       0.60 |         0.53 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq40S        |       0.0 |       0.92 |                 — |
-| freq40M        |       0.0 |       0.92 |                 — |
+| freq40S        |       0.0 |       0.93 |                 — |
+| freq40M        |       0.0 |       0.93 |                 — |
 
 ### Confidence signals
 
@@ -257,8 +257,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.933 |      0.80 |  yes |
-| IoU       | 0.559 |      0.20 |  yes |
+| precision | 0.939 |      0.80 |  yes |
+| IoU       | 0.571 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -270,7 +270,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-20-35mm-f4-r-wr/fujifilm-gf-20-35mm-f4-r-wr-wide-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -342,8 +342,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.812 |      0.80 |  yes |
-| IoU       | 0.663 |      0.20 |  yes |
+| precision | 0.813 |      0.80 |  yes |
+| IoU       | 0.665 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -355,7 +355,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-20-35mm-f4-r-wr/fujifilm-gf-20-35mm-f4-r-wr-wide-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -440,7 +440,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-20-35mm-f4-r-wr/fujifilm-gf-20-35mm-f4-r-wr-wide-40lp.png`
 - **Style family:** `fujifilm-permfreq`

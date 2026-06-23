@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — f/1.8
 
 - **Chart:** `docs/optical-specs/sigma-17-40mm-f1-8-dc-art/sigma-17-40mm-f1-8-dc-art-mtf-diffraction-wide.png`
 - **Style family:** `mainstream-2color-solid-dashed`
@@ -97,7 +97,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.6 | 0.80 |
 | 0.7 | 0.71 |
 | 0.8 | 0.66 |
-| 0.9 | 0.56 |
+| 0.9 | 0.58 |
 | 1.0 | 0.50 |
 
 ### Center / edge summary
@@ -107,7 +107,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | freq10S        |         0.99 |       0.86 |         0.80 |
 | freq10M        |         0.99 |       0.93 |         0.89 |
 | freq30S        |         0.94 |       0.56 |         0.52 |
-| freq30M        |         0.94 |       0.56 |         0.50 |
+| freq30M        |         0.94 |       0.58 |         0.50 |
 
 ### Shape metrics
 
@@ -138,7 +138,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — f/1.8
 
 - **Chart:** `docs/optical-specs/sigma-17-40mm-f1-8-dc-art/sigma-17-40mm-f1-8-dc-art-mtf-diffraction-tele.png`
 - **Style family:** `mainstream-2color-solid-dashed`

@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-80mm-f2-8-r-lm-ois-wr-macro/fujifilm-xf-80mm-f2-8-r-lm-ois-wr-macro-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-80mm-f2-8-r-lm-ois-wr-macro/fujifilm-xf-80mm-f2-8-r-lm-ois-wr-macro-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -175,13 +175,10 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 #### Plausibility priors
 
-| prior | field | position | detail |
-| ----- | ----- | -------- | ------ |
-| `center_ge_edge` | `freq45S` | — | edge MTF 0.816 exceeds center MTF 0.784 by 0.032 (tolerance 0.02) |
+All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_flat`, `in_range`).
 
 ### Gate
 
-**Gate verdict:** `LOW`
+**Gate verdict:** `HIGH`
 
-**Reasons:**
-- `prior_failed_center_ge_edge`
+No reasons — both confidence signals cleared.

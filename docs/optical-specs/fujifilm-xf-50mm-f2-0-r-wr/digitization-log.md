@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-50mm-f2-0-r-wr/fujifilm-xf-50mm-f2-0-r-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -91,7 +91,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | prior | field | position | detail |
 | ----- | ----- | -------- | ------ |
-| `center_ge_edge` | `freq15M` | — | edge MTF 0.879 exceeds center MTF 0.829 by 0.051 (tolerance 0.02) |
+| `center_ge_edge` | `freq15M` | — | edge MTF 0.879 exceeds center MTF 0.829 by 0.051 (tolerance 0.05) |
 
 ### Gate
 
@@ -100,7 +100,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 **Reasons:**
 - `prior_failed_center_ge_edge`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-50mm-f2-0-r-wr/fujifilm-xf-50mm-f2-0-r-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`
