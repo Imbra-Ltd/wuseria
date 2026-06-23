@@ -136,12 +136,16 @@ def _resolve_view_image(chart: ReferenceChart, view: ChartView) -> Path:
 # --- Pipeline orchestration -----------------------------------------------
 
 
-def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
+def _to_plotbox(
+    coords: PlotBoxCoords,
+    y_top_insets: tuple[tuple[str, int], ...] = (),
+) -> PlotBox:
     return PlotBox(
         x_left=coords.x_left,
         x_right=coords.x_right,
         y_top=coords.y_top,
         y_bottom=coords.y_bottom,
+        y_top_insets=y_top_insets,
     )
 
 
@@ -191,7 +195,7 @@ def _run_view_passes(
         "cannot run extractor"
     )
     image_path = _resolve_view_image(chart, view)
-    plot_box = _to_plotbox(view.plot_box)
+    plot_box = _to_plotbox(view.plot_box, view.y_top_insets)
     passes = _aperture_passes_for_view(chart, image_path, view)
 
     runs: list[ExtractRun] = []

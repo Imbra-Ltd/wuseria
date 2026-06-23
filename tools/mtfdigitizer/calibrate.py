@@ -86,12 +86,16 @@ class FieldDelta:
         return statistics.quantiles(self.deltas, n=20)[-1]  # 95th percentile
 
 
-def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
+def _to_plotbox(
+    coords: PlotBoxCoords,
+    y_top_insets: tuple[tuple[str, int], ...] = (),
+) -> PlotBox:
     return PlotBox(
         x_left=coords.x_left,
         x_right=coords.x_right,
         y_top=coords.y_top,
         y_bottom=coords.y_bottom,
+        y_top_insets=y_top_insets,
     )
 
 
@@ -165,7 +169,7 @@ def _extract_per_frequency_chart(chart: ReferenceChart):
         image_path = REPO_ROOT / view.chart_path
         freq = _parse_filename_frequency(image_path)
         profile = dataclasses.replace(base_profile, frequencies_lpmm=(freq,))
-        plot_box = _to_plotbox(view.plot_box)
+        plot_box = _to_plotbox(view.plot_box, view.y_top_insets)
         result = extract_chart(
             image_path, profile, plot_box,
             image_height_mm=chart.image_height_mm,
@@ -222,7 +226,7 @@ def _extract_per_view_aperture_chart(chart: ReferenceChart) -> dict[str, "object
         assert view.plot_box is not None
         aperture = view.aperture if view.aperture is not None else chart.apertures[0]
         image_path = REPO_ROOT / view.chart_path
-        plot_box = _to_plotbox(view.plot_box)
+        plot_box = _to_plotbox(view.plot_box, view.y_top_insets)
         results[aperture] = extract_chart(
             image_path, profile, plot_box,
             image_height_mm=chart.image_height_mm,

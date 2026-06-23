@@ -68,13 +68,17 @@ def _ref_view_plot_box(slug: str, view_idx: int) -> PlotBox:
 
     Samyang charts stack two apertures (max + stopped) in one PNG; each
     view has its own plot box. View 0 == max, view 1 == stopped.
+    Per-view `y_top_insets` (#1271, ADR-067) are forwarded so the
+    runtime PlotBox matches what production extraction uses.
     """
     chart = next(c for c in REFERENCE_CHARTS if c.slug == slug)
-    box = chart.views[view_idx].plot_box
+    view = chart.views[view_idx]
+    box = view.plot_box
     assert box is not None, f"{slug} view {view_idx}: no plot_box"
     return PlotBox(
         x_left=box.x_left, x_right=box.x_right,
         y_top=box.y_top, y_bottom=box.y_bottom,
+        y_top_insets=view.y_top_insets,
     )
 
 
@@ -414,28 +418,43 @@ def test_samyang_14mm_stopped_30S_no_mid_field_sister_drag() -> None:
     )
 
 
-def test_samyang_12mm_fisheye_stopped_no_chart_top_30M_contamination() -> None:
-    """#1257 regression — on the 12mm fisheye stopped panel, the bright
-    red 10S curve at chart-y 578-580 emits grey AA halos at chart-y 577
-    AND chart-y 581-582 that qualify for the 30M-light-grey HSV band
-    (S<40, V in [160,195]). Without a per-chart inset on the stopped
-    panel's y_top, the 30M skeleton catches the halos as a spurious
-    ridge at MTF~1.0, producing a vertical-spike polyline artifact
-    around mm 14. The scaffolder applies an inset of 8 px on this lens
-    specifically (_STOPPED_Y_TOP_INSET_BY_SLUG in
-    scaffold_samyang_tier2.py); the legitimate 30M curve starts at
-    chart-y 583. Lock that the spurious top-y ridge is gone.
+def test_samyang_12mm_fisheye_stopped_per_hue_y_top_inset() -> None:
+    """#1257 + #1271 regression — on the 12mm fisheye stopped panel, the
+    bright red 10S curve at chart-y 578-580 emits grey AA halos at
+    chart-y 577 AND chart-y 581-582 that qualify for the 30M-light-grey
+    HSV band (S<40, V in [160,195]).
+
+    The original #1257 fix bumped the whole stopped-panel y_top from 575
+    to 583, which also clipped the red 10S core out of the plot box.
+    That broke the 10S skeleton — sister-fill from 10M pulled freq10S
+    down to ~0.93-0.97 at frac 0.5-0.7, and the coincident-top anchor
+    (ADR-066/#1268) then propagated the drop into freq30S, leaving a
+    0.03-0.07 residual underestimate on the stopped panel's high-MTF
+    region (#1271).
+
+    The replacement mechanism (ADR-067) keeps y_top=575 globally and
+    declares a per-hue y_top inset of 8 only on `30M-light-grey`, so:
+      - the 10S/10M masks see the full plot box (red curve preserved);
+      - the 30M mask is trimmed past the contaminator's halo bands.
+
+    Locks both: no spurious 30M chart-top ridge AND 10S/30S back to
+    MTF~1.0 in the coincident-curve region.
 
     Halo-pair subtraction was rejected as a fix: a 10S-red -> 30M
     halo pair wipes out the 30M mask entirely on the 300mm reflex
     Tier 1 anchor where 30M and 10S are structurally coincident at
-    MTF=1.0 across the field. The per-chart plot-box inset is the only
-    fix that does not regress the anchor."""
+    MTF=1.0 across the field. The per-hue inset is the only fix that
+    does not regress the anchor.
+    """
     SAMYANG_12_CHART, _, _ = _ref("samyang-12mm-f2-8-ed-as-ncs-fish-eye")
     pb = _ref_view_plot_box("samyang-12mm-f2-8-ed-as-ncs-fish-eye", 1)
-    # Sanity-check the inset landed: y_top should be 583, not 575.
-    assert pb.y_top == 583, (
-        f"stopped y_top expected 583 (575 + 8 inset, #1257), got {pb.y_top}"
+    # y_top stays at the un-inset detector value; the inset is per-hue.
+    assert pb.y_top == 575, (
+        f"stopped y_top expected 575 (un-inset, ADR-067), got {pb.y_top}"
+    )
+    assert ("30M-light-grey", 8) in pb.y_top_insets, (
+        f"stopped panel must declare 30M-light-grey y_top_inset=8 "
+        f"(#1271, ADR-067); got y_top_insets={pb.y_top_insets!r}"
     )
     result = extract_chart(
         SAMYANG_12_CHART,
@@ -443,14 +462,31 @@ def test_samyang_12mm_fisheye_stopped_no_chart_top_30M_contamination() -> None:
         pb,
         image_height_mm=14.2,
     )
-    # frac 0.6 was the spike — extracted 30M should match the legitimate
-    # curve's value (~0.62), not the spurious MTF~1.0 chart-top pickup.
+    # frac 0.6 was the original #1257 spike — extracted 30M should
+    # match the legitimate curve's value (~0.62), not the spurious
+    # MTF~1.0 chart-top pickup.
     frac_06 = result.readings[6].samples.get("freq30M")
     assert frac_06 is not None, "30M at frac 0.6 must read a value (#1257)"
     assert 0.50 <= frac_06 <= 0.75, (
         f"30M at frac 0.6: expected ~0.62 (legitimate curve), got "
         f"{frac_06:.3f} — value near 1.0 means chart-top AA halo "
         f"contamination not inset (#1257)"
+    )
+    # frac 0.7 was the worst #1271 residual cell (10S read 0.93 with
+    # the global inset, dragging 30S to 0.93). Without the global inset
+    # clipping the red curve, 10S reads ~1.0 again and 30S follows via
+    # the coincident-top anchor.
+    frac_07_10S = result.readings[7].samples.get("freq10S")
+    frac_07_30S = result.readings[7].samples.get("freq30S")
+    assert frac_07_10S is not None and frac_07_10S >= 0.97, (
+        f"freq10S at frac 0.7: expected ~1.0 (red curve preserved), got "
+        f"{frac_07_10S} — value near 0.93 means the global stopped y_top "
+        f"inset is still clipping the red 10S core (#1271)"
+    )
+    assert frac_07_30S is not None and frac_07_30S >= 0.97, (
+        f"freq30S at frac 0.7: expected ~1.0 (coincident with 10S at "
+        f"top), got {frac_07_30S} — value near 0.93 means the "
+        f"coincident-top anchor inherited a clipped 10S (#1271)"
     )
 
 
@@ -517,9 +553,23 @@ def test_samyang_af_12mm_stopped_anchors_10S_10M_at_frac_zero() -> None:
 
 
 def test_samyang_12mm_fisheye_stopped_anchors_all_four_at_frac_zero() -> None:
-    """#1267 regression — companion of the 10mm test. On the 12mm fisheye
-    stopped panel ALL FOUR fields miss the leftmost columns; the
-    physics anchor must cover both frequency pairs."""
+    """#1267 + #1271 — companion of the 10mm test, updated for ADR-067.
+
+    Under #1257's original global stopped-panel y_top inset, the red 10S
+    core was clipped out of the plot box, leaving freq10S/freq10M
+    skeletons empty at frac=0.0 — the B4 physics anchor (ADR-066) then
+    forced both to 1.0. ADR-067's per-hue inset removes the global
+    clip, so the 10S core is now visible at frac=0.0 and the sampler
+    reads a real value (~0.99) — close to but not exactly 1.0.
+
+    Lock the regenerated behavior: all four fields read ~1.0 at the
+    optical axis. The mechanism splits per pair:
+
+      - 10S/10M now have direct ink at frac=0.0 (≥0.95);
+      - 30S/30M skeletons remain empty (dark-grey coincident with red
+        contaminator, light-grey trimmed by the per-hue inset) and
+        still anchor to 1.0 via the physics rule.
+    """
     chart_path, _, _ = _ref("samyang-12mm-f2-8-ed-as-ncs-fish-eye")
     pb = _ref_view_plot_box("samyang-12mm-f2-8-ed-as-ncs-fish-eye", 1)
     result = extract_chart(
@@ -532,11 +582,11 @@ def test_samyang_12mm_fisheye_stopped_anchors_all_four_at_frac_zero() -> None:
     for field in ("freq10S", "freq10M", "freq30S", "freq30M"):
         v = center.samples.get(field)
         assert v is not None, (
-            f"{field} at frac=0.0 must be center-anchored to 1.0 (#1267), "
-            f"got None"
+            f"{field} at frac=0.0 must be present after symmetry + "
+            f"physics anchor (ADR-066), got None"
         )
-        assert v == pytest.approx(1.0), (
-            f"{field} at frac=0.0 expected 1.0 (B4 physics anchor), got {v}"
+        assert v >= 0.95, (
+            f"{field} at frac=0.0 expected ~1.0 (top-plate), got {v}"
         )
 
 
