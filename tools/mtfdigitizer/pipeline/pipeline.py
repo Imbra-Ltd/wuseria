@@ -288,6 +288,154 @@ def _apply_sister_fallback(
 
 _CENTER_AXIS_MTF = 1.0
 
+# When the lower-frequency curve sits at MTF >= this threshold, a
+# sister-filled higher-frequency cell at the same frac is assumed to
+# be coincident with the lower curve (the chart artist merged two
+# near-1.0 strokes into one visible line) and inherits the lower
+# curve's value. Picked at 0.90 to cover the case where the lower
+# curve has begun a mild dip but the higher-freq curve, masked by
+# coincidence, cannot plausibly have already crashed to its sister's
+# value (typical sister-fill error in this regime is 0.4+ MTF, i.e.
+# a clearly wrong reading we'd rather replace with a bounded one).
+# At 0.90 the lower curve is still effectively flat at chart top;
+# below that, the merged-stroke assumption weakens and we fall back
+# to the existing sister-fill chain.
+_COINCIDENT_ANCHOR_THRESHOLD = 0.90
+
+# Maximum **minimum** |hi - lo| over genuinely-extracted (non-sister-
+# filled, non-None) cells where the lower curve sits at chart top for
+# the coincident-stroke assumption to hold. When the chart artist
+# draws hi and lo curves as one visible line at chart top, at least
+# one cell where both curves do exist separately (typically near
+# where the higher-freq curve first emerges from coincidence) sits
+# within ~0.05 MTF of the lower curve. When the curves are genuinely
+# independent (samyang-85mm: 30M sits at MTF 0.6 while 10M is at
+# MTF 0.91, gap ~0.3 across every clean cell), no cell shows the
+# touch and the gate fires. The minimum (not median) is the right
+# statistic: natural divergence elsewhere in the field shouldn't veto
+# anchor work where the curves demonstrably touch at the top.
+_COINCIDENT_ANCHOR_MAX_PAIR_DELTA = 0.05
+
+
+def _apply_coincident_top_anchor(
+    samples: dict[str, tuple[float | None, ...]],
+    sister_filled: dict[str, tuple[bool, ...]],
+) -> tuple[dict[str, tuple[float | None, ...]], dict[str, int]]:
+    """Override sister-filled high-freq cells with the low-freq value
+    when the low-freq curve is pinned at MTF >= 0.95 (#1269).
+
+    Chart families that pack multiple frequencies into one panel often
+    draw the higher-frequency curve coincident with the lower-frequency
+    curve while both are at MTF ~1.0 — the strokes overlap into a
+    single visible line. Sister fallback (S~=M of the same frequency)
+    breaks here when one frequency's S curve is masked by the other
+    frequency's S curve: the higher-freq skeleton is empty across the
+    coincident region, sister fallback fires using the diverging M
+    sister, and the higher-freq cell inherits a value far from its
+    true position.
+
+    The fix: when a higher-freq S (or M) cell was sister-filled AND
+    the same-direction lower-freq cell at the same frac reads MTF
+    >= `_COINCIDENT_ANCHOR_THRESHOLD`, override with the lower-freq
+    value. The lower-freq curve cannot exceed the higher-freq by
+    physics; when the lower curve is at chart top, the higher curve
+    must also be at chart top (or just below); copying the lower-
+    freq value is the best available anchor.
+
+    Runs AFTER sister fallback + intra-curve interpolation, BEFORE
+    center-symmetry. Only fires on cells flagged as sister-filled by
+    the original sister-fallback pass; cells already-interpolated by
+    intra-interp keep their interp values.
+
+    Returns ``(samples, override_count_by_field)``.
+    """
+    out = {field: list(values) for field, values in samples.items()}
+    override_count: dict[str, int] = {field: 0 for field in samples}
+
+    frequencies: list[tuple[int, str]] = []  # (freq, direction) entries
+    for field in samples:
+        if not field.startswith("freq"):
+            continue
+        if not (field.endswith("S") or field.endswith("M")):
+            continue
+        freq_str = field[4:-1]
+        if not freq_str.isdigit():
+            continue
+        frequencies.append((int(freq_str), field[-1]))
+
+    distinct_freqs = sorted({f for f, _ in frequencies})
+    if len(distinct_freqs) < 2:
+        return ({k: tuple(v) for k, v in out.items()}, override_count)
+
+    for hi_field in samples:
+        if not hi_field.startswith("freq"):
+            continue
+        if hi_field[-1] not in ("S", "M"):
+            continue
+        hi_freq_str = hi_field[4:-1]
+        if not hi_freq_str.isdigit():
+            continue
+        hi_freq = int(hi_freq_str)
+        direction = hi_field[-1]
+        lower_freqs = [f for f in distinct_freqs if f < hi_freq]
+        if not lower_freqs:
+            continue
+        lo_freq = max(lower_freqs)  # closest lower frequency
+        lo_field = f"freq{lo_freq}{direction}"
+        if lo_field not in samples:
+            continue
+        hi_values = out[hi_field]
+        lo_values = out[lo_field]
+        fills = sister_filled.get(hi_field, ())
+        lo_fills = sister_filled.get(lo_field, ())
+        # Coincident-stroke gate: only fire the anchor when the lens's
+        # hi/lo curves are demonstrably close on cells where both
+        # extracted independently and the lower curve sits at chart top
+        # (lo >= the anchor threshold). The gate uses the **minimum**
+        # |hi-lo| across qualifying cells (not the median) so it asks
+        # the right question: "is there at least one anchor point on
+        # this lens where hi and lo demonstrably touch?" rather than
+        # "are they on average close" — natural divergence elsewhere
+        # in the field is irrelevant evidence about the top-regime
+        # behaviour the anchor will copy from.
+        #
+        # If the minimum |hi-lo| over those qualifying cells exceeds
+        # _COINCIDENT_ANCHOR_MAX_PAIR_DELTA the chart has genuinely
+        # separate curves with no anchor-point overlap; copying lo into
+        # a sister-filled hi cell would corrupt the value. Lenses with
+        # genuinely separate curves (samyang-85mm: hi ~0.6, lo ~0.91,
+        # gap ~0.3 across every clean cell) have minimum |Δ| ~0.3,
+        # well above the 0.05 gate. Lenses with coincident-at-top hi/lo
+        # (samyang 12mm fisheye: |Δ| 0.006 at the cell closest to the
+        # coincident region) pass even when corner divergence brings
+        # the average up.
+        clean_deltas: list[float] = []
+        for i in range(len(hi_values)):
+            hi_v = hi_values[i]
+            lo_v = lo_values[i] if i < len(lo_values) else None
+            hi_filled = i < len(fills) and fills[i]
+            lo_filled = i < len(lo_fills) and lo_fills[i]
+            if hi_v is None or lo_v is None:
+                continue
+            if hi_filled or lo_filled:
+                continue
+            if lo_v < _COINCIDENT_ANCHOR_THRESHOLD:
+                continue
+            clean_deltas.append(abs(hi_v - lo_v))
+        if clean_deltas:
+            if min(clean_deltas) > _COINCIDENT_ANCHOR_MAX_PAIR_DELTA:
+                continue  # curves never touch — skip anchor for this pair
+        for i in range(len(hi_values)):
+            if i >= len(fills) or not fills[i]:
+                continue
+            lo_v = lo_values[i]
+            if lo_v is None or lo_v < _COINCIDENT_ANCHOR_THRESHOLD:
+                continue
+            hi_values[i] = lo_v
+            override_count[hi_field] += 1
+
+    return ({k: tuple(v) for k, v in out.items()}, override_count)
+
 
 def _apply_center_symmetry(
     samples: dict[str, tuple[float | None, ...]],
@@ -607,6 +755,17 @@ def extract_chart(
                 samples_per_field, sister_filled,
             )
         )
+    # Coincident-top anchor (#1269): override sister-filled higher-
+    # frequency cells with the matching lower-frequency value when the
+    # lower curve is pinned at MTF >= 0.95 — the chart artist merged
+    # two near-1.0 strokes into one visible line, and the sister-fill
+    # from the diverging M curve underestimates the true high-freq S
+    # by a large margin.
+    coincident_anchor_count: dict[str, int] = {}
+    if sister_filled:
+        samples_per_field, coincident_anchor_count = (
+            _apply_coincident_top_anchor(samples_per_field, sister_filled)
+        )
     samples_after_fallback = {f: v for f, v in samples_per_field.items()}
     samples_per_field, center_anchor_count = _apply_center_symmetry(
         samples_per_field
@@ -642,4 +801,5 @@ def extract_chart(
         readings=_readings_to_dict(samples_per_field, plot_box, image_height_mm),
         sister_fallback_count=fallback_count,
         center_anchor_count=center_anchor_count,
+        coincident_anchor_count=coincident_anchor_count,
     )

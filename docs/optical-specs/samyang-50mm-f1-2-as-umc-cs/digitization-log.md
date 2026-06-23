@@ -8,6 +8,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 - **EX** — what the extractor computed for the sample point.
 - **sister-fill** — count of samples filled from the sister curve.
+- **coincident-anchor** — count of sister-filled cells overridden by the matching lower-frequency curve's value when the lower curve is pinned at MTF >= 0.95; fires when the chart artist merged two near-1.0 strokes into one visible line (#1269).
 - **·** in a sparkline — extractor returned None at that point.
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
@@ -152,12 +153,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 ### Sample grid
 
-| Field          | non-null | sister-fill |
-| -------------- | -------- | ----------- |
-| freq10S        | 11/11    |  0/11       |
-| freq10M        | 11/11    |  7/11       |
-| freq30S        | 11/11    |  2/11       |
-| freq30M        | 11/11    |  1/11       |
+| Field          | non-null | sister-fill | coincident-anchor |
+| -------------- | -------- | ----------- | ----------------- |
+| freq10S        | 11/11    |  0/11       |  0/11             |
+| freq10M        | 11/11    |  7/11       |  0/11             |
+| freq30S        | 11/11    |  2/11       |  2/11             |
+| freq30M        | 11/11    |  1/11       |  1/11             |
 
 ```
   EX   freq10S        ███████████  (0.98 → 0.99)
@@ -206,7 +207,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.1 | 0.97 |
 | 0.2 | 0.97 |
 | 0.3 | 0.97 |
-| 0.4 | 0.97 |
+| 0.4 | 0.98 |
 | 0.5 | 0.97 |
 | 0.6 | 0.98 |
 | 0.7 | 0.98 |
@@ -245,7 +246,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.9 |       0.99 |                 — |
 | freq10M        |       0.5 |       0.99 |                 — |
-| freq30S        |       0.8 |       0.98 |                 — |
+| freq30S        |       0.7 |       0.98 |                 — |
 | freq30M        |       0.0 |       0.97 |                 — |
 
 ### Confidence signals
@@ -254,8 +255,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.758 |      0.80 |   no |
-| IoU       | 0.582 |      0.20 |  yes |
+| precision | 0.754 |      0.80 |   no |
+| IoU       | 0.575 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -263,7 +264,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | ----- | ----- | -------- | ------ |
 | `not_suspiciously_flat` | `freq10S` | — | mean 0.985 >= 0.95 and stdev 0.002 <= 0.01 (11/11 defined) — idealized/placeholder? |
 | `not_suspiciously_flat` | `freq10M` | — | mean 0.979 >= 0.95 and stdev 0.008 <= 0.01 (11/11 defined) — idealized/placeholder? |
-| `not_suspiciously_flat` | `freq30S` | — | mean 0.973 >= 0.95 and stdev 0.003 <= 0.01 (11/11 defined) — idealized/placeholder? |
+| `not_suspiciously_flat` | `freq30S` | — | mean 0.974 >= 0.95 and stdev 0.005 <= 0.01 (11/11 defined) — idealized/placeholder? |
 
 ### Gate
 

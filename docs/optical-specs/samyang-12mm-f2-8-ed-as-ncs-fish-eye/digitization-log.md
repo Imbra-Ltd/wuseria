@@ -9,6 +9,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 - **EX** — what the extractor computed for the sample point.
 - **sister-fill** — count of samples filled from the sister curve.
 - **center-anchor** — count of cells anchored to MTF=1.0 at frac=0.0 by the B4 physics rule (S=M=1.0 at the optical axis); fires only when sister fallback could not fill (#1267).
+- **coincident-anchor** — count of sister-filled cells overridden by the matching lower-frequency curve's value when the lower curve is pinned at MTF >= 0.95; fires when the chart artist merged two near-1.0 strokes into one visible line (#1269).
 - **·** in a sparkline — extractor returned None at that point.
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
@@ -143,56 +144,56 @@ No reasons — both confidence signals cleared.
 - **Chart:** `docs/optical-specs/samyang-12mm-f2-8-ed-as-ncs-fish-eye/samyang-12mm-f2-8-ed-as-ncs-fish-eye-mtf.png`
 - **Style family:** `mainstream-4color-all-solid`
 - **Dispatch profile:** `samyang-4color-all-solid`
-- **Plot box (pixels):** x=[31, 461], y=[583, 995]
+- **Plot box (pixels):** x=[31, 461], y=[575, 995]
 - **Image height:** 14.2 mm
 
 ### Sample grid
 
-| Field          | non-null | sister-fill | center-anchor |
-| -------------- | -------- | ----------- | ------------- |
-| freq10S        | 10/11    |  8/11       |  1/11         |
-| freq10M        | 10/11    |  0/11       |  1/11         |
-| freq30S        | 11/11    |  7/11       |  1/11         |
-| freq30M        | 11/11    |  0/11       |  1/11         |
+| Field          | non-null | sister-fill | center-anchor | coincident-anchor |
+| -------------- | -------- | ----------- | ------------- | ----------------- |
+| freq10S        | 11/11    |  0/11       |  0/11         |  0/11             |
+| freq10M        | 11/11    |  3/11       |  0/11         |  0/11             |
+| freq30S        | 11/11    |  6/11       |  1/11         |  6/11             |
+| freq30M        | 11/11    |  0/11       |  1/11         |  0/11             |
 
 ```
-  EX   freq10S        █·██████▇██  (1.00 → 1.00)
-  EX   freq10M        █·██████▇▇▇  (1.00 → 0.86)
-  EX   freq30S        ███▇▇▆▅▅██▇  (1.00 → 0.89)
-  EX   freq30M        ███▇▇▆▅▅▄▄▄  (1.00 → 0.47)
+  EX   freq10S        ███████████  (0.99 → 0.98)
+  EX   freq10M        ███████▇▇▇▇  (0.99 → 0.84)
+  EX   freq30S        ██████████▇  (1.00 → 0.88)
+  EX   freq30M        ███▇▇▆▅▅▄▄▄  (1.00 → 0.46)
 ```
 
 **freq10S**
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | 1.00 |
-| 0.1 | — |
-| 0.2 | 1.00 |
-| 0.3 | 1.00 |
+| 0.0 | 0.99 |
+| 0.1 | 0.99 |
+| 0.2 | 0.99 |
+| 0.3 | 0.99 |
 | 0.4 | 0.99 |
-| 0.5 | 0.97 |
-| 0.6 | 0.96 |
-| 0.7 | 0.93 |
-| 0.8 | 0.91 |
-| 0.9 | 1.00 |
-| 1.0 | 1.00 |
+| 0.5 | 0.99 |
+| 0.6 | 0.99 |
+| 0.7 | 0.99 |
+| 0.8 | 0.99 |
+| 0.9 | 0.98 |
+| 1.0 | 0.98 |
 
 **freq10M**
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | 1.00 |
-| 0.1 | — |
-| 0.2 | 1.00 |
-| 0.3 | 1.00 |
-| 0.4 | 0.99 |
-| 0.5 | 0.97 |
-| 0.6 | 0.96 |
-| 0.7 | 0.93 |
-| 0.8 | 0.91 |
-| 0.9 | 0.88 |
-| 1.0 | 0.86 |
+| 0.0 | 0.99 |
+| 0.1 | 0.99 |
+| 0.2 | 0.99 |
+| 0.3 | 0.97 |
+| 0.4 | 0.97 |
+| 0.5 | 0.96 |
+| 0.6 | 0.94 |
+| 0.7 | 0.92 |
+| 0.8 | 0.89 |
+| 0.9 | 0.87 |
+| 1.0 | 0.84 |
 
 **freq30S**
 
@@ -200,47 +201,47 @@ No reasons — both confidence signals cleared.
 | ---- | --- |
 | 0.0 | 1.00 |
 | 0.1 | 0.99 |
-| 0.2 | 0.96 |
-| 0.3 | 0.90 |
-| 0.4 | 0.83 |
-| 0.5 | 0.74 |
-| 0.6 | 0.63 |
-| 0.7 | 0.53 |
-| 0.8 | 0.98 |
-| 0.9 | 0.95 |
-| 1.0 | 0.89 |
+| 0.2 | 0.99 |
+| 0.3 | 0.99 |
+| 0.4 | 0.99 |
+| 0.5 | 0.99 |
+| 0.6 | 0.99 |
+| 0.7 | 0.98 |
+| 0.8 | 0.96 |
+| 0.9 | 0.93 |
+| 1.0 | 0.88 |
 
 **freq30M**
 
 | frac | EX |
 | ---- | --- |
 | 0.0 | 1.00 |
-| 0.1 | 0.99 |
-| 0.2 | 0.96 |
-| 0.3 | 0.90 |
-| 0.4 | 0.83 |
-| 0.5 | 0.74 |
-| 0.6 | 0.63 |
-| 0.7 | 0.53 |
-| 0.8 | 0.47 |
+| 0.1 | 0.97 |
+| 0.2 | 0.94 |
+| 0.3 | 0.89 |
+| 0.4 | 0.81 |
+| 0.5 | 0.72 |
+| 0.6 | 0.62 |
+| 0.7 | 0.52 |
+| 0.8 | 0.46 |
 | 0.9 | 0.45 |
-| 1.0 | 0.47 |
+| 1.0 | 0.46 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq10S        |         1.00 |       1.00 |         1.00 |
-| freq10M        |         1.00 |       0.88 |         0.86 |
-| freq30S        |         1.00 |       0.95 |         0.89 |
-| freq30M        |         1.00 |       0.45 |         0.47 |
+| freq10S        |         0.99 |       0.98 |         0.98 |
+| freq10M        |         0.99 |       0.87 |         0.84 |
+| freq30S        |         1.00 |       0.93 |         0.88 |
+| freq30M        |         1.00 |       0.45 |         0.46 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq10S        |       0.0 |       1.00 |                 — |
-| freq10M        |       0.0 |       1.00 |                 — |
+| freq10S        |       0.2 |       0.99 |                 — |
+| freq10M        |       0.2 |       0.99 |                 — |
 | freq30S        |       0.0 |       1.00 |                 — |
 | freq30M        |       0.0 |       1.00 |               0.8 |
 
@@ -250,14 +251,14 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.530 |      0.80 |   no |
-| IoU       | 0.389 |      0.20 |  yes |
+| precision | 0.714 |      0.80 |   no |
+| IoU       | 0.610 |      0.20 |  yes |
 
 #### Plausibility priors
 
 | prior | field | position | detail |
 | ----- | ----- | -------- | ------ |
-| `low_freq_ge_high` | `freq30S` | 8 | freq30S=0.983 exceeds freq10S=0.909 by 0.074 at position 8 (tolerance 0.05) — bands swapped? |
+| `not_suspiciously_flat` | `freq10S` | — | mean 0.988 >= 0.95 and stdev 0.004 <= 0.01 (11/11 defined) — idealized/placeholder? |
 
 ### Gate
 
@@ -265,4 +266,4 @@ No reasons — both confidence signals cleared.
 
 **Reasons:**
 - `precision_below_threshold`
-- `prior_failed_low_freq_ge_high`
+- `prior_failed_not_suspiciously_flat`
