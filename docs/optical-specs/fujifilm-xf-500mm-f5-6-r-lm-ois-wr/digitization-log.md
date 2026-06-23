@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-500mm-f5-6-r-lm-ois-wr/fujifilm-xf-500mm-f5-6-r-lm-ois-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-500mm-f5-6-r-lm-ois-wr/fujifilm-xf-500mm-f5-6-r-lm-ois-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`

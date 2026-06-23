@@ -24,12 +24,12 @@
 <text class="axis-label axis-x" x="277.2" y="186">12.8</text>
 <text class="axis-label axis-x" x="304.0" y="186">14.2</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
-<polyline class="curve curve-45" style="stroke:#5d7bb5" points="36.0,50.8 62.8,52.2 89.6,53.6 116.4,55.2 143.2,64.8 170.0,76.3 196.8,77.6 223.6,90.5 250.4,150.9 277.2,168.5 304.0,166.5"/>
-<polyline class="curve curve-45 curve-m" style="stroke:#5d7bb5" points="36.0,50.8 62.8,55.7 89.6,56.0 116.4,55.2 143.2,58.4 170.0,64.5 196.8,89.9 223.6,97.3 250.4,132.9 277.2,139.1 304.0,140.1" stroke-dasharray="4 2"/>
+<polyline class="curve curve-45" style="stroke:#5d7bb5" points="36.0,50.8 62.8,52.2 89.6,53.6 116.4,59.2 143.2,64.8 170.0,76.3 196.8,77.6 223.6,90.5 250.4,150.9 277.2,168.5 304.0,166.5"/>
+<polyline class="curve curve-45 curve-m" style="stroke:#5d7bb5" points="36.0,50.8 62.8,55.7 89.6,56.0 116.4,55.2 143.2,58.4 170.0,64.5 196.8,89.9 223.6,97.3 250.4,132.9 277.2,139.1 304.0,141.0" stroke-dasharray="4 2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="50.8" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="62.8" cy="52.2" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="89.6" cy="53.6" r="2"/>
-<circle class="dot dot-45" style="stroke:#5d7bb5" cx="116.4" cy="55.2" r="2"/>
+<circle class="dot dot-45" style="stroke:#5d7bb5" cx="116.4" cy="59.2" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="143.2" cy="64.8" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="170.0" cy="76.3" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="196.8" cy="77.6" r="2"/>
@@ -47,7 +47,7 @@
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="223.6" cy="97.3" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="250.4" cy="132.9" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="277.2" cy="139.1" r="2"/>
-<circle class="dot dot-45" style="stroke:#5d7bb5" cx="304.0" cy="140.1" r="2"/>
+<circle class="dot dot-45" style="stroke:#5d7bb5" cx="304.0" cy="141.0" r="2"/>
 <line x1="36" y1="209" x2="48" y2="209" stroke="#5d7bb5" stroke-width="1.5"/>
 <text class="legend-text" x="51" y="212">45 lp/mm S</text>
 <line x1="92" y1="209" x2="104" y2="209" stroke="#5d7bb5" stroke-width="1.5" stroke-dasharray="3 2"/>

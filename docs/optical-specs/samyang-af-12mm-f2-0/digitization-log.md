@@ -183,11 +183,11 @@ No reasons — both confidence signals cleared.
 | ---- | --- |
 | 0.0 | — |
 | 0.1 | 0.99 |
-| 0.2 | 1.00 |
-| 0.3 | 1.00 |
-| 0.4 | 1.00 |
+| 0.2 | 0.99 |
+| 0.3 | 0.99 |
+| 0.4 | 0.98 |
 | 0.5 | 0.98 |
-| 0.6 | 1.00 |
+| 0.6 | 0.98 |
 | 0.7 | 0.98 |
 | 0.8 | 0.91 |
 | 0.9 | 0.77 |
@@ -239,7 +239,7 @@ No reasons — both confidence signals cleared.
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       0.2 |       1.00 |                 — |
-| freq10M        |       0.2 |       1.00 |                 — |
+| freq10M        |       0.1 |       0.99 |                 — |
 | freq30S        |       0.0 |       1.00 |                 — |
 | freq30M        |       0.0 |       1.00 |               0.9 |
 
@@ -249,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.873 |      0.80 |  yes |
-| IoU       | 0.635 |      0.20 |  yes |
+| precision | 0.884 |      0.80 |  yes |
+| IoU       | 0.642 |      0.20 |  yes |
 
 #### Plausibility priors
 

@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-45-100mm-f4-r-lm-ois-wr/fujifilm-gf-45-100mm-f4-r-lm-ois-wr-tele-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-45-100mm-f4-r-lm-ois-wr/fujifilm-gf-45-100mm-f4-r-lm-ois-wr-tele-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -182,7 +182,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-45-100mm-f4-r-lm-ois-wr/fujifilm-gf-45-100mm-f4-r-lm-ois-wr-tele-40lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -267,7 +267,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-45-100mm-f4-r-lm-ois-wr/fujifilm-gf-45-100mm-f4-r-lm-ois-wr-wide-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -280,11 +280,11 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq10S        | 11/11    |  0/11       |
-| freq10M        | 11/11    |  3/11       |
+| freq10M        | 11/11    |  2/11       |
 
 ```
   EX   freq10S        ███████████  (1.00 → 0.97)
-  EX   freq10M        ████████▇▇█  (1.00 → 0.97)
+  EX   freq10M        ████████▇▇▇  (1.00 → 0.83)
 ```
 
 **freq10S**
@@ -317,14 +317,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.93 |
 | 0.8 | 0.90 |
 | 0.9 | 0.88 |
-| 1.0 | 0.97 |
+| 1.0 | 0.83 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         1.00 |       0.99 |         0.97 |
-| freq10M        |         1.00 |       0.88 |         0.97 |
+| freq10M        |         1.00 |       0.88 |         0.83 |
 
 ### Shape metrics
 
@@ -339,8 +339,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.839 |      0.80 |  yes |
-| IoU       | 0.783 |      0.20 |  yes |
+| precision | 0.882 |      0.80 |  yes |
+| IoU       | 0.843 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -355,7 +355,7 @@ No reasons — both confidence signals cleared.
 **Reasons:**
 - `prior_failed_not_suspiciously_flat`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-45-100mm-f4-r-lm-ois-wr/fujifilm-gf-45-100mm-f4-r-lm-ois-wr-wide-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -440,7 +440,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-45-100mm-f4-r-lm-ois-wr/fujifilm-gf-45-100mm-f4-r-lm-ois-wr-wide-40lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -453,7 +453,7 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq40S        | 11/11    |  0/11       |
-| freq40M        | 11/11    |  1/11       |
+| freq40M        | 11/11    |  0/11       |
 
 ```
   EX   freq40S        ██▇▇▇▇▇▇▇▇▆  (0.95 → 0.77)

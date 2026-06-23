@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-27mm-f2-8-r-wr/fujifilm-xf-27mm-f2-8-r-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-27mm-f2-8-r-wr/fujifilm-xf-27mm-f2-8-r-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -110,7 +110,7 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq45S        | 11/11    |  0/11       |
-| freq45M        | 11/11    |  1/11       |
+| freq45M        | 11/11    |  0/11       |
 
 ```
   EX   freq45S        ▆▆▅▅▅▄▄▅▅▅▄  (0.72 → 0.39)

@@ -24,9 +24,9 @@
 <text class="axis-label axis-x" x="277.2" y="186">12.8</text>
 <text class="axis-label axis-x" x="304.0" y="186">14.2</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
-<polyline class="curve curve-45" style="stroke:#5d7bb5" points="36.0,39.6 62.8,39.7 89.6,42.9 116.4,47.8 143.2,54.0 170.0,58.9 196.8,60.8 223.6,62.8 250.4,75.1 277.2,98.4 304.0,120.4"/>
-<polyline class="curve curve-45 curve-m" style="stroke:#5d7bb5" points="36.0,39.6 62.8,49.5 89.6,71.6 116.4,91.1 143.2,101.8 170.0,99.2 196.8,101.8 223.6,109.7 250.4,116.0 277.2,118.8 304.0,127.5" stroke-dasharray="4 2"/>
-<circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="39.6" r="2"/>
+<polyline class="curve curve-45" style="stroke:#5d7bb5" points="36.0,38.3 62.8,39.7 89.6,42.9 116.4,47.8 143.2,54.0 170.0,58.9 196.8,60.8 223.6,62.8 250.4,75.1 277.2,98.4 304.0,120.4"/>
+<polyline class="curve curve-45 curve-m" style="stroke:#5d7bb5" points="36.0,38.3 62.8,49.5 89.6,71.6 116.4,91.1 143.2,101.8 170.0,99.2 196.8,101.8 223.6,109.7 250.4,116.0 277.2,118.8 304.0,127.5" stroke-dasharray="4 2"/>
+<circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="38.3" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="62.8" cy="39.7" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="89.6" cy="42.9" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="116.4" cy="47.8" r="2"/>
@@ -37,7 +37,7 @@
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="250.4" cy="75.1" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="277.2" cy="98.4" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="304.0" cy="120.4" r="2"/>
-<circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="39.6" r="2"/>
+<circle class="dot dot-45" style="stroke:#5d7bb5" cx="36.0" cy="38.3" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="62.8" cy="49.5" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="89.6" cy="71.6" r="2"/>
 <circle class="dot dot-45" style="stroke:#5d7bb5" cx="116.4" cy="91.1" r="2"/>

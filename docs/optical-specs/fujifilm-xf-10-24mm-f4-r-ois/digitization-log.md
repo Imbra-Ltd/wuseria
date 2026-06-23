@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-10-24mm-f4-r-ois/fujifilm-xf-10-24mm-f4-r-ois-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-10-24mm-f4-r-ois/fujifilm-xf-10-24mm-f4-r-ois-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -109,11 +109,11 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 11/11    |  2/11       |
+| freq45S        | 11/11    |  0/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```
-  EX   freq45S        ▆▆▆▅▅▅▅▄▄▃▃  (0.71 → 0.23)
+  EX   freq45S        ▆▆▆▅▅▅▅▄▄▃▃  (0.71 → 0.24)
   EX   freq45M        ▆▆▅▅▅▅▅▅▄▃▃  (0.71 → 0.23)
 ```
 
@@ -131,7 +131,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.48 |
 | 0.8 | 0.39 |
 | 0.9 | 0.27 |
-| 1.0 | 0.23 |
+| 1.0 | 0.24 |
 
 **freq45M**
 
@@ -153,7 +153,7 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq45S        |         0.71 |       0.27 |         0.23 |
+| freq45S        |         0.71 |       0.27 |         0.24 |
 | freq45M        |         0.71 |       0.30 |         0.23 |
 
 ### Shape metrics
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.867 |      0.80 |  yes |
-| IoU       | 0.627 |      0.20 |  yes |
+| precision | 0.864 |      0.80 |  yes |
+| IoU       | 0.623 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -182,7 +182,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-10-24mm-f4-r-ois/fujifilm-xf-10-24mm-f4-r-ois-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -267,7 +267,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-10-24mm-f4-r-ois/fujifilm-xf-10-24mm-f4-r-ois-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`

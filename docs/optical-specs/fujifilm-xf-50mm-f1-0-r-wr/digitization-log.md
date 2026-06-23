@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-50mm-f1-0-r-wr/fujifilm-xf-50mm-f1-0-r-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -39,7 +39,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.0 | 0.72 |
 | 0.1 | 0.74 |
 | 0.2 | 0.76 |
-| 0.3 | 0.77 |
+| 0.3 | 0.76 |
 | 0.4 | 0.76 |
 | 0.5 | 0.75 |
 | 0.6 | 0.73 |
@@ -75,7 +75,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq15S        |       0.3 |       0.77 |                 — |
+| freq15S        |       0.4 |       0.76 |                 — |
 | freq15M        |       0.2 |       0.77 |                 — |
 
 ### Confidence signals
@@ -89,18 +89,15 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 #### Plausibility priors
 
-| prior | field | position | detail |
-| ----- | ----- | -------- | ------ |
-| `center_ge_edge` | `freq15M` | — | edge MTF 0.757 exceeds center MTF 0.720 by 0.037 (tolerance 0.02) |
+All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_flat`, `in_range`).
 
 ### Gate
 
-**Gate verdict:** `LOW`
+**Gate verdict:** `HIGH`
 
-**Reasons:**
-- `prior_failed_center_ge_edge`
+No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-50mm-f1-0-r-wr/fujifilm-xf-50mm-f1-0-r-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -145,7 +142,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.2 | 0.55 |
 | 0.3 | 0.52 |
 | 0.4 | 0.45 |
-| 0.5 | 0.39 |
+| 0.5 | 0.40 |
 | 0.6 | 0.35 |
 | 0.7 | 0.34 |
 | 0.8 | 0.33 |
@@ -172,8 +169,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.716 |      0.80 |   no |
-| IoU       | 0.577 |      0.20 |  yes |
+| precision | 0.715 |      0.80 |   no |
+| IoU       | 0.576 |      0.20 |  yes |
 
 #### Plausibility priors
 

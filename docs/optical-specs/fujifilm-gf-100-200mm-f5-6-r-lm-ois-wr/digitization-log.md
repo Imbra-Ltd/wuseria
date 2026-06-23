@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr-tele-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr-tele-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -182,7 +182,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr-tele-40lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -267,7 +267,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr-wide-10lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -353,7 +353,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr-wide-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -369,8 +369,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | freq20M        | 11/11    |  0/11       |
 
 ```
-  EX   freq20S        ▇▇▇▇▇▇▇▇▇▆▅  (0.92 → 0.57)
-  EX   freq20M        ▇▇▇▇▇▇▇▇▇▇▅  (0.92 → 0.63)
+  EX   freq20S        ▇▇▇▇▇▇▇▇▇▆▅  (0.92 → 0.58)
+  EX   freq20M        ▇▇▇▇▇▇▇▇▇▇▆  (0.92 → 0.64)
 ```
 
 **freq20S**
@@ -387,7 +387,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.7 | 0.91 |
 | 0.8 | 0.88 |
 | 0.9 | 0.78 |
-| 1.0 | 0.57 |
+| 1.0 | 0.58 |
 
 **freq20M**
 
@@ -403,14 +403,14 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.7 | 0.87 |
 | 0.8 | 0.87 |
 | 0.9 | 0.84 |
-| 1.0 | 0.63 |
+| 1.0 | 0.64 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq20S        |         0.92 |       0.78 |         0.57 |
-| freq20M        |         0.92 |       0.84 |         0.63 |
+| freq20S        |         0.92 |       0.78 |         0.58 |
+| freq20M        |         0.92 |       0.84 |         0.64 |
 
 ### Shape metrics
 
@@ -425,8 +425,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.804 |      0.80 |  yes |
-| IoU       | 0.513 |      0.20 |  yes |
+| precision | 0.805 |      0.80 |  yes |
+| IoU       | 0.509 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -438,7 +438,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr/fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr-wide-40lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -454,8 +454,8 @@ No reasons — both confidence signals cleared.
 | freq40M        | 11/11    |  2/11       |
 
 ```
-  EX   freq40S        ▆▆▆▆▆▆▆▇▆▅▂  (0.78 → 0.21)
-  EX   freq40M        ▆▆▆▆▆▆▆▆▆▅▃  (0.78 → 0.33)
+  EX   freq40S        ▆▆▆▆▆▆▆▇▆▅▃  (0.78 → 0.22)
+  EX   freq40M        ▆▆▆▆▆▆▆▆▆▅▃  (0.78 → 0.36)
 ```
 
 **freq40S**
@@ -472,7 +472,7 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.79 |
 | 0.8 | 0.76 |
 | 0.9 | 0.55 |
-| 1.0 | 0.21 |
+| 1.0 | 0.22 |
 
 **freq40M**
 
@@ -488,14 +488,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.70 |
 | 0.8 | 0.69 |
 | 0.9 | 0.63 |
-| 1.0 | 0.33 |
+| 1.0 | 0.36 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq40S        |         0.78 |       0.55 |         0.21 |
-| freq40M        |         0.78 |       0.63 |         0.33 |
+| freq40S        |         0.78 |       0.55 |         0.22 |
+| freq40M        |         0.78 |       0.63 |         0.36 |
 
 ### Shape metrics
 
@@ -511,7 +511,7 @@ No reasons — both confidence signals cleared.
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
 | precision | 0.900 |      0.80 |  yes |
-| IoU       | 0.558 |      0.20 |  yes |
+| IoU       | 0.547 |      0.20 |  yes |
 
 #### Plausibility priors
 

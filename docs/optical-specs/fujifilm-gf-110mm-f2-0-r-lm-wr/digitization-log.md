@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-110mm-f2-0-r-lm-wr/fujifilm-gf-110mm-f2-0-r-lm-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-110mm-f2-0-r-lm-wr/fujifilm-gf-110mm-f2-0-r-lm-wr-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -184,7 +184,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-110mm-f2-0-r-lm-wr/fujifilm-gf-110mm-f2-0-r-lm-wr-40lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -200,7 +200,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | freq40M        | 11/11    |  2/11       |
 
 ```
-  EX   freq40S        ▇▇▇▇▇▇▆▆▅▅▃  (0.89 → 0.35)
+  EX   freq40S        ▇▇▇▇▇▇▆▆▅▅▃  (0.89 → 0.36)
   EX   freq40M        ▇▇▇▇▇▇▇▇▆▆▅  (0.89 → 0.59)
 ```
 
@@ -218,7 +218,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | 0.7 | 0.67 |
 | 0.8 | 0.63 |
 | 0.9 | 0.55 |
-| 1.0 | 0.35 |
+| 1.0 | 0.36 |
 
 **freq40M**
 
@@ -240,7 +240,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq40S        |         0.89 |       0.55 |         0.35 |
+| freq40S        |         0.89 |       0.55 |         0.36 |
 | freq40M        |         0.89 |       0.70 |         0.59 |
 
 ### Shape metrics
@@ -257,7 +257,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
 | precision | 0.833 |      0.80 |  yes |
-| IoU       | 0.617 |      0.20 |  yes |
+| IoU       | 0.614 |      0.20 |  yes |
 
 #### Plausibility priors
 

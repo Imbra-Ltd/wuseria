@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-60mm-f2-4-r-macro/fujifilm-xf-60mm-f2-4-r-macro-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -41,9 +41,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.2 | 0.86 |
 | 0.3 | 0.86 |
 | 0.4 | 0.86 |
-| 0.5 | 0.87 |
+| 0.5 | 0.86 |
 | 0.6 | 0.86 |
-| 0.7 | 0.86 |
+| 0.7 | 0.85 |
 | 0.8 | 0.83 |
 | 0.9 | 0.78 |
 | 1.0 | 0.67 |
@@ -75,7 +75,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq15S        |       0.5 |       0.87 |                 — |
+| freq15S        |       0.6 |       0.86 |                 — |
 | freq15M        |       0.5 |       0.87 |                 — |
 
 ### Confidence signals
@@ -84,8 +84,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.763 |      0.80 |   no |
-| IoU       | 0.552 |      0.20 |  yes |
+| precision | 0.758 |      0.80 |   no |
+| IoU       | 0.545 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-60mm-f2-4-r-macro/fujifilm-xf-60mm-f2-4-r-macro-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -124,7 +124,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | ---- | --- |
 | 0.0 | 0.66 |
 | 0.1 | 0.66 |
-| 0.2 | 0.66 |
+| 0.2 | 0.65 |
 | 0.3 | 0.65 |
 | 0.4 | 0.63 |
 | 0.5 | 0.62 |
@@ -170,8 +170,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.894 |      0.80 |  yes |
-| IoU       | 0.639 |      0.20 |  yes |
+| precision | 0.889 |      0.80 |  yes |
+| IoU       | 0.631 |      0.20 |  yes |
 
 #### Plausibility priors
 

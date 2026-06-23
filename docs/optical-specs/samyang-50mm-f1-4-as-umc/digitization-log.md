@@ -58,7 +58,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | ---- | --- |
 | 0.0 | 0.90 |
 | 0.1 | 0.92 |
-| 0.2 | 0.91 |
+| 0.2 | 0.90 |
 | 0.3 | 0.89 |
 | 0.4 | 0.86 |
 | 0.5 | 0.84 |
@@ -185,10 +185,10 @@ No reasons — both confidence signals cleared.
 | 0.1 | 0.99 |
 | 0.2 | 0.99 |
 | 0.3 | 0.98 |
-| 0.4 | 0.99 |
+| 0.4 | 0.97 |
 | 0.5 | 0.97 |
-| 0.6 | 0.99 |
-| 0.7 | 0.99 |
+| 0.6 | 0.97 |
+| 0.7 | 0.97 |
 | 0.8 | 0.96 |
 | 0.9 | 0.92 |
 | 1.0 | 0.84 |
@@ -249,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.782 |      0.80 |   no |
-| IoU       | 0.608 |      0.20 |  yes |
+| precision | 0.790 |      0.80 |   no |
+| IoU       | 0.614 |      0.20 |  yes |
 
 #### Plausibility priors
 

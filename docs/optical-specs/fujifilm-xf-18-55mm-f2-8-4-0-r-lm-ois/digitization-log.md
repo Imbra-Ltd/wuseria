@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-18-55mm-f2-8-4-0-r-lm-ois/fujifilm-xf-18-55mm-f2-8-4-0-r-lm-ois-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-18-55mm-f2-8-4-0-r-lm-ois/fujifilm-xf-18-55mm-f2-8-4-0-r-lm-ois-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -114,7 +114,7 @@ No reasons — both confidence signals cleared.
 
 ```
   EX   freq45S        ▆▆▆▅▅▅▅▅▄▄▄  (0.66 → 0.36)
-  EX   freq45M        ▆▆▆▅▅▄▄▄▄▅▃  (0.66 → 0.23)
+  EX   freq45M        ▆▆▆▅▅▄▄▄▄▅▃  (0.66 → 0.25)
 ```
 
 **freq45S**
@@ -147,14 +147,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.42 |
 | 0.8 | 0.44 |
 | 0.9 | 0.52 |
-| 1.0 | 0.23 |
+| 1.0 | 0.25 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq45S        |         0.66 |       0.38 |         0.36 |
-| freq45M        |         0.66 |       0.52 |         0.23 |
+| freq45M        |         0.66 |       0.52 |         0.25 |
 
 ### Shape metrics
 
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.913 |      0.80 |  yes |
-| IoU       | 0.546 |      0.20 |  yes |
+| precision | 0.909 |      0.80 |  yes |
+| IoU       | 0.538 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -182,7 +182,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-18-55mm-f2-8-4-0-r-lm-ois/fujifilm-xf-18-55mm-f2-8-4-0-r-lm-ois-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -267,7 +267,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-18-55mm-f2-8-4-0-r-lm-ois/fujifilm-xf-18-55mm-f2-8-4-0-r-lm-ois-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`

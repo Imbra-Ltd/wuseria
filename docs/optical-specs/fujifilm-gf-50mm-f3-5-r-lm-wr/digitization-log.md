@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-50mm-f3-5-r-lm-wr/fujifilm-gf-50mm-f3-5-r-lm-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-50mm-f3-5-r-lm-wr/fujifilm-gf-50mm-f3-5-r-lm-wr-20lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -183,7 +183,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-gf-50mm-f3-5-r-lm-wr/fujifilm-gf-50mm-f3-5-r-lm-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -196,7 +196,7 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq45S        | 11/11    |  0/11       |
-| freq45M        | 11/11    |  1/11       |
+| freq45M        | 11/11    |  0/11       |
 
 ```
   EX   freq45S        ▇▇▇▇▆▆▆▆▅▅▃  (0.90 → 0.30)
@@ -256,7 +256,7 @@ No reasons — both confidence signals cleared.
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
 | precision | 0.832 |      0.80 |  yes |
-| IoU       | 0.616 |      0.20 |  yes |
+| IoU       | 0.615 |      0.20 |  yes |
 
 #### Plausibility priors
 

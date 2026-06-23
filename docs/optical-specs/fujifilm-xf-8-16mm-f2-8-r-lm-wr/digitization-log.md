@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-8-16mm-f2-8-r-lm-wr/fujifilm-xf-8-16mm-f2-8-r-lm-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -98,7 +98,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-8-16mm-f2-8-r-lm-wr/fujifilm-xf-8-16mm-f2-8-r-lm-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -183,7 +183,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-8-16mm-f2-8-r-lm-wr/fujifilm-xf-8-16mm-f2-8-r-lm-wr-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -215,7 +215,7 @@ No reasons — both confidence signals cleared.
 | 0.5 | 0.90 |
 | 0.6 | 0.90 |
 | 0.7 | 0.90 |
-| 0.8 | 0.89 |
+| 0.8 | 0.87 |
 | 0.9 | 0.84 |
 | 1.0 | 0.79 |
 
@@ -229,7 +229,7 @@ No reasons — both confidence signals cleared.
 | 0.3 | 0.91 |
 | 0.4 | 0.91 |
 | 0.5 | 0.90 |
-| 0.6 | 0.90 |
+| 0.6 | 0.89 |
 | 0.7 | 0.88 |
 | 0.8 | 0.89 |
 | 0.9 | 0.88 |
@@ -255,8 +255,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.551 |      0.80 |   no |
-| IoU       | 0.452 |      0.20 |  yes |
+| precision | 0.545 |      0.80 |   no |
+| IoU       | 0.444 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -269,7 +269,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-8-16mm-f2-8-r-lm-wr/fujifilm-xf-8-16mm-f2-8-r-lm-wr-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -341,8 +341,8 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.805 |      0.80 |  yes |
-| IoU       | 0.612 |      0.20 |  yes |
+| precision | 0.802 |      0.80 |  yes |
+| IoU       | 0.607 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -354,7 +354,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-8-16mm-f2-8-r-lm-wr/fujifilm-xf-8-16mm-f2-8-r-lm-wr-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -440,7 +440,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 **Reasons:**
 - `precision_below_threshold`
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-8-16mm-f2-8-r-lm-wr/fujifilm-xf-8-16mm-f2-8-r-lm-wr-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`

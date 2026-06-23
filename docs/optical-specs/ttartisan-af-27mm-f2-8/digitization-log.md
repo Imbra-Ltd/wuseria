@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/ttartisan-af-27mm-f2-8/ttartisan-af-27mm-f2-8-mtf.png`
 - **Style family:** `ttartisan-4color-dual-aperture`
@@ -137,7 +137,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — stopped
 
 - **Chart:** `docs/optical-specs/ttartisan-af-27mm-f2-8/ttartisan-af-27mm-f2-8-mtf.png`
 - **Style family:** `ttartisan-4color-dual-aperture`

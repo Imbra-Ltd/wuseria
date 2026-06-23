@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/ttartisan-tilt-50mm-f1-4/ttartisan-tilt-50mm-f1-4-mtf.png`
 - **Style family:** `ttartisan-4color-dual-aperture`
@@ -32,7 +32,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 ```
   EX   freq10S        ▆▆▇▆▆▆▅▅▄▃▂  (0.75 → 0.15)
   EX   freq10M        ▆▆▆▆▆▆▆▅▅▄▄  (0.75 → 0.37)
-  EX   freq30S        ▃▃▃▃▂▂▂▂▂▂▁  (0.28 → 0.04)
+  EX   freq30S        ▃▃▃▃▂▂▂▂▂▂▁  (0.28 → 0.02)
   EX   freq30M        ▃▃▃▃▃▃▃▃▂▂▁  (0.28 → 0.07)
 ```
 
@@ -82,7 +82,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.7 | 0.09 |
 | 0.8 | 0.09 |
 | 0.9 | 0.08 |
-| 1.0 | 0.04 |
+| 1.0 | 0.02 |
 
 **freq30M**
 
@@ -106,7 +106,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.75 |       0.33 |         0.15 |
 | freq10M        |         0.75 |       0.48 |         0.37 |
-| freq30S        |         0.28 |       0.08 |         0.04 |
+| freq30S        |         0.28 |       0.08 |         0.02 |
 | freq30M        |         0.28 |       0.08 |         0.07 |
 
 ### Shape metrics
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.904 |      0.80 |  yes |
-| IoU       | 0.689 |      0.20 |  yes |
+| precision | 0.912 |      0.80 |  yes |
+| IoU       | 0.704 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -137,7 +137,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — stopped
 
 - **Chart:** `docs/optical-specs/ttartisan-tilt-50mm-f1-4/ttartisan-tilt-50mm-f1-4-mtf.png`
 - **Style family:** `ttartisan-4color-dual-aperture`

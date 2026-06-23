@@ -63,7 +63,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.4 | 0.97 |
 | 0.5 | 0.97 |
 | 0.6 | 0.99 |
-| 0.7 | 0.99 |
+| 0.7 | 0.98 |
 | 0.8 | 0.98 |
 | 0.9 | 0.98 |
 | 1.0 | 0.96 |
@@ -96,7 +96,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.5 | 0.84 |
 | 0.6 | 0.88 |
 | 0.7 | 0.90 |
-| 0.8 | 0.88 |
+| 0.8 | 0.87 |
 | 0.9 | 0.84 |
 | 1.0 | 0.76 |
 
@@ -124,14 +124,14 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.831 |      0.80 |  yes |
-| IoU       | 0.633 |      0.20 |  yes |
+| precision | 0.824 |      0.80 |  yes |
+| IoU       | 0.629 |      0.20 |  yes |
 
 #### Plausibility priors
 
 | prior | field | position | detail |
 | ----- | ----- | -------- | ------ |
-| `not_suspiciously_flat` | `freq10M` | — | mean 0.976 >= 0.95 and stdev 0.010 <= 0.01 (11/11 defined) — idealized/placeholder? |
+| `not_suspiciously_flat` | `freq10M` | — | mean 0.975 >= 0.95 and stdev 0.009 <= 0.01 (11/11 defined) — idealized/placeholder? |
 
 ### Gate
 
@@ -160,7 +160,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 ```
   EX   freq10S        ███████████  (0.99 → 0.98)
   EX   freq10M        ███████████  (0.99 → 0.96)
-  EX   freq30S        █████▇▇▇██▇  (0.97 → 0.90)
+  EX   freq30S        ██████████▇  (0.97 → 0.90)
   EX   freq30M        █████▇▇▇▇▇▇  (0.97 → 0.81)
 ```
 
@@ -191,9 +191,9 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.4 | 0.98 |
 | 0.5 | 0.98 |
 | 0.6 | 0.97 |
-| 0.7 | 0.98 |
-| 0.8 | 0.98 |
-| 0.9 | 0.98 |
+| 0.7 | 0.97 |
+| 0.8 | 0.97 |
+| 0.9 | 0.96 |
 | 1.0 | 0.96 |
 
 **freq30S**
@@ -202,12 +202,12 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | ---- | --- |
 | 0.0 | 0.97 |
 | 0.1 | 0.97 |
-| 0.2 | 0.95 |
-| 0.3 | 0.94 |
-| 0.4 | 0.93 |
-| 0.5 | 0.92 |
-| 0.6 | 0.91 |
-| 0.7 | 0.89 |
+| 0.2 | 0.97 |
+| 0.3 | 0.97 |
+| 0.4 | 0.97 |
+| 0.5 | 0.97 |
+| 0.6 | 0.97 |
+| 0.7 | 0.96 |
 | 0.8 | 0.96 |
 | 0.9 | 0.94 |
 | 1.0 | 0.90 |
@@ -233,7 +233,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.99 |       0.98 |         0.98 |
-| freq10M        |         0.99 |       0.98 |         0.96 |
+| freq10M        |         0.99 |       0.96 |         0.96 |
 | freq30S        |         0.97 |       0.94 |         0.90 |
 | freq30M        |         0.97 |       0.84 |         0.81 |
 
@@ -252,15 +252,15 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.672 |      0.80 |   no |
-| IoU       | 0.551 |      0.20 |  yes |
+| precision | 0.684 |      0.80 |   no |
+| IoU       | 0.564 |      0.20 |  yes |
 
 #### Plausibility priors
 
 | prior | field | position | detail |
 | ----- | ----- | -------- | ------ |
 | `not_suspiciously_flat` | `freq10S` | — | mean 0.981 >= 0.95 and stdev 0.003 <= 0.01 (11/11 defined) — idealized/placeholder? |
-| `not_suspiciously_flat` | `freq10M` | — | mean 0.979 >= 0.95 and stdev 0.007 <= 0.01 (11/11 defined) — idealized/placeholder? |
+| `not_suspiciously_flat` | `freq10M` | — | mean 0.976 >= 0.95 and stdev 0.009 <= 0.01 (11/11 defined) — idealized/placeholder? |
 
 ### Gate
 

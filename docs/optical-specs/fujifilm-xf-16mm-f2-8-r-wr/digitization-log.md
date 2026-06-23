@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16mm-f2-8-r-wr/fujifilm-xf-16mm-f2-8-r-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-16mm-f2-8-r-wr/fujifilm-xf-16mm-f2-8-r-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -127,7 +127,7 @@ No reasons — both confidence signals cleared.
 | 0.3 | 0.80 |
 | 0.4 | 0.78 |
 | 0.5 | 0.69 |
-| 0.6 | 0.60 |
+| 0.6 | 0.63 |
 | 0.7 | 0.57 |
 | 0.8 | 0.51 |
 | 0.9 | 0.42 |
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.898 |      0.80 |  yes |
-| IoU       | 0.641 |      0.20 |  yes |
+| precision | 0.879 |      0.80 |  yes |
+| IoU       | 0.608 |      0.20 |  yes |
 
 #### Plausibility priors
 

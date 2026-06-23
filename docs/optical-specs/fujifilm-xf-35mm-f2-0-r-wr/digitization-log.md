@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-35mm-f2-0-r-wr/fujifilm-xf-35mm-f2-0-r-wr-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-35mm-f2-0-r-wr/fujifilm-xf-35mm-f2-0-r-wr-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -114,7 +114,7 @@ No reasons — both confidence signals cleared.
 
 ```
   EX   freq45S        ▆▆▆▆▆▅▅▅▂▁▁  (0.76 → 0.03)
-  EX   freq45M        ▆▆▆▆▆▆▅▄▃▂▂  (0.76 → 0.20)
+  EX   freq45M        ▆▆▆▆▆▆▅▄▃▂▂  (0.76 → 0.19)
 ```
 
 **freq45S**
@@ -124,7 +124,7 @@ No reasons — both confidence signals cleared.
 | 0.0 | 0.76 |
 | 0.1 | 0.75 |
 | 0.2 | 0.74 |
-| 0.3 | 0.73 |
+| 0.3 | 0.71 |
 | 0.4 | 0.67 |
 | 0.5 | 0.60 |
 | 0.6 | 0.59 |
@@ -147,14 +147,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.47 |
 | 0.8 | 0.24 |
 | 0.9 | 0.21 |
-| 1.0 | 0.20 |
+| 1.0 | 0.19 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq45S        |         0.76 |       0.02 |         0.03 |
-| freq45M        |         0.76 |       0.21 |         0.20 |
+| freq45M        |         0.76 |       0.21 |         0.19 |
 
 ### Shape metrics
 
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.799 |      0.80 |   no |
-| IoU       | 0.556 |      0.20 |  yes |
+| precision | 0.789 |      0.80 |   no |
+| IoU       | 0.544 |      0.20 |  yes |
 
 #### Plausibility priors
 

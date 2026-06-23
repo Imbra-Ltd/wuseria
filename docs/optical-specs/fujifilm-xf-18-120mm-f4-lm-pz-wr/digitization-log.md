@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-18-120mm-f4-lm-pz-wr/fujifilm-xf-18-120mm-f4-lm-pz-wr-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-18-120mm-f4-lm-pz-wr/fujifilm-xf-18-120mm-f4-lm-pz-wr-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -109,19 +109,19 @@ No reasons — both confidence signals cleared.
 
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
-| freq45S        | 11/11    |  1/11       |
+| freq45S        | 11/11    |  0/11       |
 | freq45M        | 11/11    |  0/11       |
 
 ```
-  EX   freq45S        ▇▇▇▆▆▆▆▆▅▄▃  (0.83 → 0.32)
-  EX   freq45M        ▇▆▅▅▄▄▄▄▃▃▃  (0.83 → 0.28)
+  EX   freq45S        ▇▇▇▆▆▆▆▆▅▄▃  (0.84 → 0.32)
+  EX   freq45M        ▇▆▅▅▄▄▄▄▃▃▃  (0.84 → 0.28)
 ```
 
 **freq45S**
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | 0.83 |
+| 0.0 | 0.84 |
 | 0.1 | 0.83 |
 | 0.2 | 0.81 |
 | 0.3 | 0.78 |
@@ -137,7 +137,7 @@ No reasons — both confidence signals cleared.
 
 | frac | EX |
 | ---- | --- |
-| 0.0 | 0.83 |
+| 0.0 | 0.84 |
 | 0.1 | 0.77 |
 | 0.2 | 0.63 |
 | 0.3 | 0.51 |
@@ -153,15 +153,15 @@ No reasons — both confidence signals cleared.
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
-| freq45S        |         0.83 |       0.46 |         0.32 |
-| freq45M        |         0.83 |       0.33 |         0.28 |
+| freq45S        |         0.84 |       0.46 |         0.32 |
+| freq45M        |         0.84 |       0.33 |         0.28 |
 
 ### Shape metrics
 
 | Field          | peak frac | peak value | half-falloff frac |
 | -------------- | --------- | ---------- | ----------------- |
-| freq45S        |       0.0 |       0.83 |               1.0 |
-| freq45M        |       0.0 |       0.83 |               0.7 |
+| freq45S        |       0.0 |       0.84 |               1.0 |
+| freq45M        |       0.0 |       0.84 |               0.7 |
 
 ### Confidence signals
 
@@ -169,8 +169,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.913 |      0.80 |  yes |
-| IoU       | 0.636 |      0.20 |  yes |
+| precision | 0.918 |      0.80 |  yes |
+| IoU       | 0.644 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -182,7 +182,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-18-120mm-f4-lm-pz-wr/fujifilm-xf-18-120mm-f4-lm-pz-wr-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -267,7 +267,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-18-120mm-f4-lm-pz-wr/fujifilm-xf-18-120mm-f4-lm-pz-wr-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`

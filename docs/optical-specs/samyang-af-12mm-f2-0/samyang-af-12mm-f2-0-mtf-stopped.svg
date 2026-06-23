@@ -25,7 +25,7 @@
 <text class="axis-label axis-x" x="304.0" y="186">14.2</text>
 <text class="axis-title" x="170.0" y="198">Image height (mm)</text>
 <polyline class="curve curve-10" style="stroke:#c89b3c" points="62.8,13.1 89.6,12.0 116.4,12.4 143.2,12.6 170.0,12.8 196.8,12.8 223.6,13.0 250.4,13.0 277.2,13.0 304.0,12.7"/>
-<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="62.8,13.1 89.6,12.0 116.4,12.4 143.2,12.6 170.0,15.4 196.8,12.8 223.6,15.8 250.4,26.2 277.2,48.5 304.0,74.9" stroke-dasharray="4 2"/>
+<polyline class="curve curve-10 curve-m" style="stroke:#c89b3c" points="62.8,13.1 89.6,13.7 116.4,14.3 143.2,14.9 170.0,15.4 196.8,15.6 223.6,15.8 250.4,26.2 277.2,48.5 304.0,74.9" stroke-dasharray="4 2"/>
 <polyline class="curve curve-30" style="stroke:#6b9bd2" points="36.0,12.4 62.8,12.6 89.6,12.6 116.4,13.0 143.2,13.6 170.0,14.8 196.8,15.9 223.6,16.7 250.4,16.3 277.2,15.1 304.0,13.7"/>
 <polyline class="curve curve-30 curve-m" style="stroke:#6b9bd2" points="36.0,12.4 62.8,17.5 89.6,22.1 116.4,26.5 143.2,31.8 170.0,39.1 196.8,46.1 223.6,53.9 250.4,73.0 277.2,117.0 304.0,156.6" stroke-dasharray="4 2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="13.1" r="2"/>
@@ -39,11 +39,11 @@
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="277.2" cy="13.0" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="304.0" cy="12.7" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="62.8" cy="13.1" r="2"/>
-<circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="12.0" r="2"/>
-<circle class="dot dot-10" style="stroke:#c89b3c" cx="116.4" cy="12.4" r="2"/>
-<circle class="dot dot-10" style="stroke:#c89b3c" cx="143.2" cy="12.6" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="89.6" cy="13.7" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="116.4" cy="14.3" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="143.2" cy="14.9" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="170.0" cy="15.4" r="2"/>
-<circle class="dot dot-10" style="stroke:#c89b3c" cx="196.8" cy="12.8" r="2"/>
+<circle class="dot dot-10" style="stroke:#c89b3c" cx="196.8" cy="15.6" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="223.6" cy="15.8" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="250.4" cy="26.2" r="2"/>
 <circle class="dot dot-10" style="stroke:#c89b3c" cx="277.2" cy="48.5" r="2"/>

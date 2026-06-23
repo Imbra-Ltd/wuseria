@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.767 |      0.80 |   no |
-| IoU       | 0.664 |      0.20 |  yes |
+| precision | 0.771 |      0.80 |   no |
+| IoU       | 0.668 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -200,7 +200,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | ---- | --- |
 | 0.0 | 0.99 |
 | 0.1 | 0.99 |
-| 0.2 | 0.95 |
+| 0.2 | 0.99 |
 | 0.3 | 0.99 |
 | 0.4 | 0.99 |
 | 0.5 | 0.98 |
@@ -250,14 +250,15 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.869 |      0.80 |  yes |
-| IoU       | 0.686 |      0.20 |  yes |
+| precision | 0.892 |      0.80 |  yes |
+| IoU       | 0.723 |      0.20 |  yes |
 
 #### Plausibility priors
 
 | prior | field | position | detail |
 | ----- | ----- | -------- | ------ |
 | `not_suspiciously_flat` | `freq10S` | — | mean 0.990 >= 0.95 and stdev 0.003 <= 0.01 (11/11 defined) — idealized/placeholder? |
+| `not_suspiciously_flat` | `freq30S` | — | mean 0.983 >= 0.95 and stdev 0.006 <= 0.01 (11/11 defined) — idealized/placeholder? |
 
 ### Gate
 

@@ -12,7 +12,7 @@ Production-tier log per ADR-041. No per-lens ground truth; acceptance comes from
 
 See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../../decisions/041-production-digitization-no-per-lens-gt.md) for the production-tier acceptance rationale.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-55-200mm-f3-5-4-8-r-lm-ois/fujifilm-xf-55-200mm-f3-5-4-8-r-lm-ois-tele-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -97,7 +97,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-55-200mm-f3-5-4-8-r-lm-ois/fujifilm-xf-55-200mm-f3-5-4-8-r-lm-ois-tele-45lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -182,7 +182,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-55-200mm-f3-5-4-8-r-lm-ois/fujifilm-xf-55-200mm-f3-5-4-8-r-lm-ois-wide-15lp.png`
 - **Style family:** `fujifilm-permfreq`
@@ -195,11 +195,11 @@ No reasons — both confidence signals cleared.
 | Field          | non-null | sister-fill |
 | -------------- | -------- | ----------- |
 | freq15S        | 11/11    |  1/11       |
-| freq15M        | 11/11    |  1/11       |
+| freq15M        | 11/11    |  0/11       |
 
 ```
   EX   freq15S        ▇▇▇▇▇▇▇▇▇▇▇  (0.91 → 0.87)
-  EX   freq15M        ▇▇▇▇▇▇▇▇▇▇▇  (0.91 → 0.87)
+  EX   freq15M        ▇▇▇▇▇▇▇▇▇▇▆  (0.91 → 0.74)
 ```
 
 **freq15S**
@@ -232,14 +232,14 @@ No reasons — both confidence signals cleared.
 | 0.7 | 0.85 |
 | 0.8 | 0.83 |
 | 0.9 | 0.79 |
-| 1.0 | 0.87 |
+| 1.0 | 0.74 |
 
 ### Center / edge summary
 
 | Field          | center (0.0) | edge (0.9) | corner (1.0) |
 | -------------- | ------------ | ---------- | ------------ |
 | freq15S        |         0.91 |       0.90 |         0.87 |
-| freq15M        |         0.91 |       0.79 |         0.87 |
+| freq15M        |         0.91 |       0.79 |         0.74 |
 
 ### Shape metrics
 
@@ -254,8 +254,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.888 |      0.80 |  yes |
-| IoU       | 0.715 |      0.20 |  yes |
+| precision | 0.936 |      0.80 |  yes |
+| IoU       | 0.763 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -267,7 +267,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 No reasons — both confidence signals cleared.
 
-## Panel
+## Panel — max
 
 - **Chart:** `docs/optical-specs/fujifilm-xf-55-200mm-f3-5-4-8-r-lm-ois/fujifilm-xf-55-200mm-f3-5-4-8-r-lm-ois-wide-45lp.png`
 - **Style family:** `fujifilm-permfreq`

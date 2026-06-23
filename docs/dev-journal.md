@@ -9970,3 +9970,88 @@ Theme: triage user-reported Samyang stopped-overlay defects (8 lenses) into root
 - Gitleaks CI: pass on each PR.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 177 — Stale log refresh: 100 Tier 2 + 8 Tier 1 baseline reset
+
+Date: 2026-06-22 → 2026-06-23 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: refresh every pre-existing stale digitization log across the corpus so `extract --check` and `log --all --check` both exit zero from `main`. Issue #1249 captured the symptom (40+ stale) but actual count was 100 Tier 2 + 8 Tier 1 once Bash output buffering stopped truncating the listing. Workflow chosen per maintainer (S176 follow-up): verdict-aware refresh — re-run lenses individually, observe per-view verdict transitions, `--accept` once the transition class is understood. No real HIGH→LOW regressions surfaced.
+
+#### PRs
+
+- **#TBD** — `chore(mtf): refresh 100 stale Tier 2 + 8 stale Tier 1 digitization logs (#1249)`. 108 logs regenerated. Algorithm drift only — no Tier 1 calibration regression; aggregate stable at 872 paired, p95 0.0454, max |d| 0.1217, in-band 96.2% (byte-identical to S176 wrap-up).
+
+#### Issues opened / closed
+
+- **#1249 closed** (P3, v0.8.0, task) — stale-log baseline cleared; both `--check` commands now exit 0.
+- _Pending_: 3 duplicate-MTF-chart pairs surfaced in TTartisan (`ttartisan-23mm-f1-4` ≡ `ttartisan-90mm-f1-25-gfx`, `ttartisan-100mm-f2-8-macro-2x-gfx` ≡ its non-gfx sibling, `ttartisan-500mm-f6-3-gfx` ≡ its non-gfx sibling — same `*-mtf.png` byte hash). Pre-existing data-quality issue from PR #762 (2025-era TTartisan bulk import). File as follow-up bug, not in scope here.
+
+#### Key technical findings
+
+- **The "40+" stale count was 100 Tier 2 + 8 Tier 1.** S175 first surfaced #1249 from a Bash-truncated `extract --check` output; the truncation hid 40+ entries past line ~30. Captured to file this session: 60 Fujifilm + 16 TTartisan + 15 Samyang + 9 Sigma Tier 2 logs stale, plus 8 Tier 1 (Sigma + Samyang + TTartisan + Tokina + Viltrox + 2 Fujifilm + 2 7Artisans).
+- **Verdict aggregation is "LOW if any view LOW," not "head-1 view."** Initial classification script split using the first `Gate verdict` match in each log, which got the wrong answer for multi-view lenses (zooms, Samyang max/stopped pairs). Correct aggregation: scan all `Gate verdict` lines, return LOW if any is LOW. Once corrected: 36 lenses aggregated HIGH (already auto-accepted on commit), 64 aggregated LOW (previously committed via `--accept`).
+- **`OVERLAY_GLANCE_REQUIRED = True` means even HIGH lenses need `--accept` to refresh the log.** The two-confidence-signals gate (precision ≥ 0.80 AND IoU ≥ 0.20 AND priors clean) returns `gate-high-pending-glance` and refuses to write without `--accept` while the flag is set. So bare `extract <slug>` cannot refresh ANY existing log without maintainer confirmation. This matches ADR-041 §"Initial gate posture" — by design, not a bug.
+- **No real HIGH→LOW verdict regressions.** Of 100 stale Tier 2 lenses re-extracted, 36 stayed HIGH, 61 stayed LOW (already accepted), 3 transitioned LOW→HIGH (algorithm improvements). All "regressions" in the initial mis-classified TSV were lenses whose original aggregated verdict was already LOW — only the first view happened to be HIGH.
+- **3 LOW→HIGH improvements identified.** `fujifilm-gf-35-70mm-f4-5-5-6-wr`, `fujifilm-xf-56mm-f1-2-r`, `fujifilm-xf-56mm-f1-2-r-apd` cleared a previously-failing `center_ge_edge` prior. On the xf-56mm: edge MTF 0.829 used to exceed center MTF 0.796 by 0.034 (tolerance 0.02); after S176's sister-fill + intra-curve interp landed, the center estimate moved up to 0.83-0.84 and the prior holds. No code change this session — pure downstream benefit.
+- **TTartisan has 3 duplicate `*-mtf.png` chart pairs.** Surfaced when two ttartisan lenses produced byte-identical extraction stats (precision=0.957, IoU=0.786, prior=2). Verified via `md5sum`: 3 pairs share the same chart PNG (23/90, 100-macro/non-gfx, 500/non-gfx). Pre-existing from PR #762; not in scope.
+
+#### Key changes
+
+- **108 `digitization-log.md` files refreshed** — 100 Tier 2 production logs (via `extract --accept`) + 8 Tier 1 calibration logs (via `log --all`).
+- **94 SVG + 84 overlay PNG + 11 review HTML** regenerated as a side-effect of `extract` invocations. Numeric drift only; no structural changes.
+- **No code changes** — pure data refresh. Driver scripts (`refresh-stale-tier2.py`, `accept-still-stale.py`, `diag-regressions.py`) live in `C:\tmp\` per `base/quality.md` probe-script convention; deleted before commit.
+
+#### Verification
+
+- **`py -m mtfdigitizer.extract --check`** → exit 0, "OK: 103 production log(s) up to date." (target acceptance criterion met).
+- **`py -m mtfdigitizer.log --all --check`** → exit 0, "OK: 15 digitization log(s) up to date." (target acceptance criterion met).
+- **411 mtfdigitizer pytest pass** (unchanged from S176).
+- **Aggregate calibration**: 872 paired, median |d| 0.0066, p95 |d| 0.0454, max |d| 0.1217, in-band 96.2% — byte-identical to S176 wrap-up. No Tier 1 anchor regression from the refresh.
+- **`npm run validate`** green.
+- **CI** — pending PR.
+
+#### Key decisions (this session)
+
+- **Verdict-aware split, not blanket `--accept`.** Issue #1249's acceptance criteria called out "verdict transitions HIGH/LOW should be reviewed lens-by-lens, not silently overridden with `--accept` everywhere." Executed as: re-run all 100 lenses individually capturing new verdicts to TSV, classify transitions, accept only after confirming no real regressions. Cost: ~15 min driver runtime + analysis vs. ~30s blanket `--accept`. Benefit: would have caught any algorithm-introduced HIGH→LOW; none surfaced.
+- **`OVERLAY_GLANCE_REQUIRED = True` kept on.** Refreshing 100 HIGH lenses with `--accept` is technically a glance-bypass, but verdict-unchanged-from-HIGH transitions don't require maintainer overlay inspection per ADR-041's "Initial gate posture" reasoning. The flag's purpose is to catch _new_ HIGH lenses with subtle extraction defects; refreshing already-committed HIGH lenses where the verdict re-confirms HIGH is not that case.
+- **Duplicate-chart issue filed as follow-up, not folded in.** Out of scope per `base/scope.md` — pre-existing data quality issue from 2025-era PR #762, unrelated to algorithm drift.
+- **No auto-merge without explicit ask.** Per `feedback_ask_before_automerge`.
+
+#### Process patterns observed this session
+
+- **Verdict-classification head-1 bug.** Initial classification script grabbed the first `Gate verdict` match per file (`grep -m 1`); correct aggregation is "LOW if any view LOW." 16 false HIGH→LOW transitions appeared in the TSV until corrected. Lesson: when a multi-view artifact has an aggregation rule, code the rule explicitly — don't trust head-of-output.
+- **Bash output buffering hides scale in `--check` listings.** S175 saw "40+ stale" from truncated terminal output; reality was 100. Capturing to file early would have set expectations correctly. Already noted in S175 retrospective; recurred here in a different form (the `wc -l` count was the first reliable signal).
+- **Two-stage refresh workflow is the right shape.** Stage 1 (refresh + capture verdicts to TSV) is fast and reversible; Stage 2 (`--accept` once transition classes are understood) is the irreversible step. Stage 1 caught no regressions, so Stage 2 was safe to batch. If Stage 1 had surfaced real HIGH→LOW, Stage 2 would have been a per-lens investigation loop instead.
+
+#### Follow-ups for next session (S178)
+
+- **New from S177**:
+  - **Duplicate TTartisan MTF charts** (3 pairs) — file as bug; data integrity issue from PR #762 era. `ttartisan-23mm-f1-4-mtf.png` ≡ `ttartisan-90mm-f1-25-gfx-mtf.png` (same hash); same for the 100-macro and 500 GFX/non-GFX pairs.
+- **Carried forward**:
+  - **#1134 (P1, Backlog)** — confidence badge.
+  - **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050).
+  - **#950 (P2, v0.8.0)** — auto-detect plot box (coverage).
+  - **#791 (smallest first-new-brand: Carl Zeiss)** — next epic-#790 brand.
+  - **Viltrox `apertures=("f/1.2","F8")`** (charts.py:1056) — Samyang anti-pattern; needs per-lens migration when Viltrox is touched next.
+  - **Tokina logs** — still stale at Tier 1 anchor level (carried since S175).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **872 paired, median |d| 0.0066, p95 |d| 0.0454, in-band 96.2%, max |d| 0.1217** — byte-identical to S176 wrap-up. No regression from the refresh.
+- **411 mtfdigitizer pytest pass** (unchanged). **223 vitest pass** (unchanged).
+- **65 ADRs** (unchanged — no new ADRs; pure data refresh).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + epics #790, #932** + remaining P3 brand-digitization tasks (note: #1249 closed this session).
+- **1 open PR** at wrap-up (this session's stale-log refresh).
+- `mtf-readings.ts` — unchanged (no GT or display-label edits this session).
+- Stale eye-read digitization logs: **0** (4 Tokina + 1 Fuji anchor cleared this session via `log --all`).
+- Stale production digitization logs: **0** (all 100 cleared this session — #1249 done).
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).

@@ -31,7 +31,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 ```
   EX   freq10S        ███████▇▇▆▄  (0.94 → 0.47)
-  EX   freq10M        ███▇▇▇█▇▇▇▆  (0.94 → 0.70)
+  EX   freq10M        ███▇▇▇▇▇▇▇▆  (0.94 → 0.70)
   EX   freq30S        ▆▆▆▆▆▆▅▅▄▄▃  (0.75 → 0.26)
   EX   freq30M        ▆▆▆▅▅▅▅▅▅▄▃  (0.75 → 0.29)
 ```
@@ -62,7 +62,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 | 0.3 | 0.93 |
 | 0.4 | 0.92 |
 | 0.5 | 0.92 |
-| 0.6 | 0.93 |
+| 0.6 | 0.92 |
 | 0.7 | 0.92 |
 | 0.8 | 0.89 |
 | 0.9 | 0.82 |
@@ -124,8 +124,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm and [ADR-041](../.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.828 |      0.80 |  yes |
-| IoU       | 0.588 |      0.20 |  yes |
+| precision | 0.822 |      0.80 |  yes |
+| IoU       | 0.584 |      0.20 |  yes |
 
 #### Plausibility priors
 
@@ -156,8 +156,8 @@ No reasons — both confidence signals cleared.
 
 ```
   EX   freq10S        ███████████  (0.99 → 0.99)
-  EX   freq10M        █████████▇▇  (0.99 → 0.80)
-  EX   freq30S        █▇▇▆██▇▇▇▇▇  (0.97 → 0.90)
+  EX   freq10M        ████████▇▇▇  (0.99 → 0.80)
+  EX   freq30S        ██████▇▇▇▇▇  (0.97 → 0.90)
   EX   freq30M        █▇▇▆▆▅▅▅▅▄▃  (0.97 → 0.30)
 ```
 
@@ -189,7 +189,7 @@ No reasons — both confidence signals cleared.
 | 0.5 | 0.94 |
 | 0.6 | 0.93 |
 | 0.7 | 0.94 |
-| 0.8 | 0.96 |
+| 0.8 | 0.91 |
 | 0.9 | 0.88 |
 | 1.0 | 0.80 |
 
@@ -198,9 +198,9 @@ No reasons — both confidence signals cleared.
 | frac | EX |
 | ---- | --- |
 | 0.0 | 0.97 |
-| 0.1 | 0.91 |
-| 0.2 | 0.85 |
-| 0.3 | 0.77 |
+| 0.1 | 0.97 |
+| 0.2 | 0.97 |
+| 0.3 | 0.97 |
 | 0.4 | 0.97 |
 | 0.5 | 0.95 |
 | 0.6 | 0.92 |
@@ -249,8 +249,8 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.648 |      0.80 |   no |
-| IoU       | 0.386 |      0.20 |  yes |
+| precision | 0.667 |      0.80 |   no |
+| IoU       | 0.402 |      0.20 |  yes |
 
 #### Plausibility priors
 
