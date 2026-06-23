@@ -106,37 +106,38 @@ def _render_sample_grid(extracted: ExtractedChart) -> list[str]:
     lines: list[str] = []
     fields = fields_in(extracted.readings)
 
-    # Stats: paired count, sister-fill, optional center-anchor — no Δ
-    # since no GT. The center-anchor column is added only when at
-    # least one field used it (#1267), keeping clean logs visually
-    # unchanged.
-    show_anchor = any(
+    # Stats: paired count, sister-fill, optional center-anchor and
+    # coincident-anchor — no Δ since no GT. Optional columns are
+    # added only when at least one field used them (#1267, #1269),
+    # keeping clean logs visually unchanged.
+    show_center = any(
         extracted.center_anchor_count.get(f, 0) for f in fields
     )
-    if show_anchor:
-        lines.append(
-            "| Field          | non-null | sister-fill | center-anchor |"
-        )
-        lines.append(
-            "| -------------- | -------- | ----------- | ------------- |"
-        )
-    else:
-        lines.append("| Field          | non-null | sister-fill |")
-        lines.append("| -------------- | -------- | ----------- |")
+    show_coinc = any(
+        extracted.coincident_anchor_count.get(f, 0) for f in fields
+    )
+    header = "| Field          | non-null | sister-fill"
+    sep = "| -------------- | -------- | -----------"
+    if show_center:
+        header += " | center-anchor"
+        sep += " | -------------"
+    if show_coinc:
+        header += " | coincident-anchor"
+        sep += " | -----------------"
+    lines.append(header + " |")
+    lines.append(sep + " |")
     for f in fields:
         ex_values = tuple(r.samples.get(f) for r in extracted.readings)
         non_null = sum(1 for v in ex_values if v is not None)
         fallback = extracted.sister_fallback_count.get(f, 0)
-        if show_anchor:
+        row = f"| {f:<14} | {non_null:>2}/11    | {fallback:>2}/11      "
+        if show_center:
             anchor = extracted.center_anchor_count.get(f, 0)
-            lines.append(
-                f"| {f:<14} | {non_null:>2}/11    | {fallback:>2}/11       "
-                f"| {anchor:>2}/11         |"
-            )
-        else:
-            lines.append(
-                f"| {f:<14} | {non_null:>2}/11    | {fallback:>2}/11       |"
-            )
+            row += f" | {anchor:>2}/11        "
+        if show_coinc:
+            coinc = extracted.coincident_anchor_count.get(f, 0)
+            row += f" | {coinc:>2}/11            "
+        lines.append(row + " |")
     lines.append("")
 
     # Sparklines.
@@ -275,6 +276,10 @@ def render_production_log(lens_slug: str, panels: list[ProductionPanel]) -> str:
         any(p.extracted.center_anchor_count.get(f, 0) for f in p.extracted.center_anchor_count)
         for p in panels
     )
+    any_coinc_anchor = any(
+        any(p.extracted.coincident_anchor_count.get(f, 0) for f in p.extracted.coincident_anchor_count)
+        for p in panels
+    )
 
     lines.append("**Legend.**")
     lines.append("")
@@ -285,6 +290,14 @@ def render_production_log(lens_slug: str, panels: list[ProductionPanel]) -> str:
             "- **center-anchor** — count of cells anchored to MTF=1.0 at "
             "frac=0.0 by the B4 physics rule (S=M=1.0 at the optical axis); "
             "fires only when sister fallback could not fill (#1267)."
+        )
+    if any_coinc_anchor:
+        lines.append(
+            "- **coincident-anchor** — count of sister-filled cells "
+            "overridden by the matching lower-frequency curve's value when "
+            "the lower curve is pinned at MTF >= 0.95; fires when the "
+            "chart artist merged two near-1.0 strokes into one visible "
+            "line (#1269)."
         )
     lines.append("- **·** in a sparkline — extractor returned None at that point.")
     lines.append("")

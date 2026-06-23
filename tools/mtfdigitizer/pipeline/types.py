@@ -110,6 +110,12 @@ class ExtractedChart:
     # per field in practice; tracked per-field to make the rare
     # firing visible in the digitization log.
     center_anchor_count: dict[str, int] = None  # type: ignore[assignment]
+    # `coincident_anchor_count[field]` is the number of sister-filled
+    # cells overridden by the matching lower-frequency curve's value
+    # when the lower curve is pinned at MTF >= 0.95 (#1269). Fires
+    # mid-field on chart families where high-freq and low-freq strokes
+    # are drawn coincident at chart top.
+    coincident_anchor_count: dict[str, int] = None  # type: ignore[assignment]
 
     def __post_init__(self) -> None:
         # Frozen dataclass + mutable defaults; resolve None to {} after init.
@@ -117,3 +123,5 @@ class ExtractedChart:
             object.__setattr__(self, "sister_fallback_count", {})
         if self.center_anchor_count is None:
             object.__setattr__(self, "center_anchor_count", {})
+        if self.coincident_anchor_count is None:
+            object.__setattr__(self, "coincident_anchor_count", {})
