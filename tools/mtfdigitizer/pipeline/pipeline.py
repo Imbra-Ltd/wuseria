@@ -34,6 +34,7 @@ from ..loader import load_chart_bgr
 from ..profiles.types import MtfProfile
 from .dispatch import (
     _apply_declared_halo_pairs,
+    _hue_clip,
     curve_field,
     field_skeletons,
     parse_curve_identity_name,
@@ -437,12 +438,13 @@ def _hue_masks_for_presence(
     hsv = cv2.cvtColor(bgr, cv2.COLOR_BGR2HSV)
     curve_masks = masks_by_curve_name(hsv, profile)
     if plot_box is not None:
-        clip = np.zeros_like(next(iter(curve_masks.values())))
-        clip[
-            plot_box.y_top : plot_box.y_bottom + 1,
-            plot_box.x_left : plot_box.x_right + 1,
-        ] = 1
-        curve_masks = {name: (m & clip) for name, m in curve_masks.items()}
+        # Per-hue clip honours `PlotBox.y_top_insets` (#1271, ADR-067)
+        # so a hue contaminated by a sister curve's AA halo can be
+        # trimmed at the top without affecting the contaminator's mask.
+        curve_masks = {
+            name: (m & _hue_clip(m.shape, plot_box, name))
+            for name, m in curve_masks.items()
+        }
         curve_masks = strip_plot_box_borders(curve_masks, plot_box)
     curve_masks = _apply_declared_halo_pairs(curve_masks, profile.halo_pairs)
     # Map per-hue raw mask to the two fields that share that hue.

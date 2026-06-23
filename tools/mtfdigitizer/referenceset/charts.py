@@ -85,11 +85,22 @@ class ChartView:
     fan-out for hue-filtered dual aperture (TTartisan, ADR-044), or
     `chart.apertures[0]` for
     single-aperture views.
+
+    `y_top_insets` declares per-hue additional inset rows applied at the
+    mask-clip step on this view's plot_box (#1271, ADR-067). Each
+    `(hue_name, n)` trims `n` rows from the top of the named hue's mask
+    before skeletonization; the plot_box's `y_top` stays unchanged for
+    every other hue and for sampling/MTF conversion. Lens-scoped:
+    leaves the shared profile unmodified for other lenses. Use when
+    one contaminator curve's AA halo lands inside a contaminated hue's
+    HSV band on this one chart, where a global plot-box y_top shift
+    would clip the contaminator's own curve. Empty tuple by default.
     """
 
     chart_path: str
     plot_box: PlotBoxCoords | None = None
     aperture: str | None = None
+    y_top_insets: tuple[tuple[str, int], ...] = ()
 
 
 @dataclass(frozen=True)

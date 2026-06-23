@@ -56,12 +56,16 @@ from .referenceset.charts import REFERENCE_CHARTS, PlotBoxCoords, ReferenceChart
 from .triage import triage
 
 
-def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
+def _to_plotbox(
+    coords: PlotBoxCoords,
+    y_top_insets: tuple[tuple[str, int], ...] = (),
+) -> PlotBox:
     return PlotBox(
         x_left=coords.x_left,
         x_right=coords.x_right,
         y_top=coords.y_top,
         y_bottom=coords.y_bottom,
+        y_top_insets=y_top_insets,
     )
 
 
@@ -316,7 +320,7 @@ def emit_lens(
                 f"view {index} of {chart.slug!r} has no plot_box — "
                 f"emit requires a calibrated plot box on every view"
             )
-        view_plot_box = _to_plotbox(view.plot_box)
+        view_plot_box = _to_plotbox(view.plot_box, view.y_top_insets)
         view_image_path = root / view.chart_path
         extracted = extract_chart(
             view_image_path,

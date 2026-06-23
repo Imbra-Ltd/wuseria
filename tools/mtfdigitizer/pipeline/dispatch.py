@@ -160,6 +160,25 @@ def unique_named_hues(profile: MtfProfile) -> tuple[str, ...]:
 _SAGITTAL_MERIDIONAL_NAME = re.compile(r"^(?P<sm>[SM])(?:-.+)?$")
 
 
+def _hue_clip(
+    shape: tuple[int, ...], plot_box: PlotBox, hue_name: str
+) -> np.ndarray:
+    """Per-hue plot-box clip mask honouring `PlotBox.y_top_insets` (#1271).
+
+    Returns a boolean mask of the input shape whose region inside the
+    plot box is True. When `plot_box.y_top_insets` declares an inset for
+    `hue_name`, the True region is trimmed by that many rows from the
+    top — used to shield a contaminated hue's mask from a contaminator
+    curve's AA halo without affecting other hues. See ADR-067.
+    """
+    clip = np.zeros(shape, dtype=bool)
+    y_top = plot_box.hue_y_top(hue_name)
+    if y_top > plot_box.y_bottom:
+        return clip
+    clip[y_top : plot_box.y_bottom + 1, plot_box.x_left : plot_box.x_right + 1] = True
+    return clip
+
+
 def parse_sagittal_meridional_name(name: str) -> str:
     """Parse a `SAGITTAL_MERIDIONAL` hue name like 'S-red' → 'S'."""
     m = _SAGITTAL_MERIDIONAL_NAME.match(name)
@@ -401,11 +420,18 @@ def field_skeletons(
     # and Samyang dialects don't need this — their hue ranges are color-
     # specific enough that off-plot pixels never qualify — but applying
     # uniformly is harmless when plot_box is given.
+    #
+    # Per-hue y_top inset (#1271, ADR-067): when the plot_box declares an
+    # inset for a hue, that mask gets clipped to a tighter top than the
+    # plot box; other hues see the full plot. Used to shield a
+    # contaminated mask from a contaminator curve's AA halo without
+    # clipping the contaminator's own curve. Plot box `y_top` stays
+    # unchanged for sampling and MTF conversion.
     if plot_box is not None:
-        clip = np.zeros_like(next(iter(curve_masks.values())))
-        clip[plot_box.y_top : plot_box.y_bottom + 1,
-             plot_box.x_left : plot_box.x_right + 1] = 1
-        curve_masks = {name: (m & clip) for name, m in curve_masks.items()}
+        curve_masks = {
+            name: (m & _hue_clip(m.shape, plot_box, name))
+            for name, m in curve_masks.items()
+        }
         # Spike #1217 Option 4 — strip plot-box border lines that fall
         # inside the data-edge plot box (e.g. af-35 col 603 contamination).
         curve_masks = strip_plot_box_borders(curve_masks, plot_box)

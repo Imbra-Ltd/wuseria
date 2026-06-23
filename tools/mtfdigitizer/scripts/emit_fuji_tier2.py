@@ -64,12 +64,16 @@ _OFFICIAL_URL_RE = re.compile(
 )
 
 
-def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
+def _to_plotbox(
+    coords: PlotBoxCoords,
+    y_top_insets: tuple[tuple[str, int], ...] = (),
+) -> PlotBox:
     return PlotBox(
         x_left=coords.x_left,
         x_right=coords.x_right,
         y_top=coords.y_top,
         y_bottom=coords.y_bottom,
+        y_top_insets=y_top_insets,
     )
 
 
@@ -133,7 +137,7 @@ def _extract_view_readings(
     image_path = repo_root / view.chart_path
     freq = parse_filename_frequency(image_path)
     profile = dataclasses.replace(base_profile, frequencies_lpmm=(freq,))
-    plot_box = _to_plotbox(view.plot_box)
+    plot_box = _to_plotbox(view.plot_box, view.y_top_insets)
     result = extract_chart(
         image_path,
         profile,

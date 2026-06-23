@@ -50,12 +50,16 @@ def _lens_slug_from_chart(chart_slug: str) -> str:
     return _AT_FOCAL_RE.sub("", chart_slug)
 
 
-def _to_plotbox(coords: PlotBoxCoords) -> PlotBox:
+def _to_plotbox(
+    coords: PlotBoxCoords,
+    y_top_insets: tuple[tuple[str, int], ...] = (),
+) -> PlotBox:
     return PlotBox(
         x_left=coords.x_left,
         x_right=coords.x_right,
         y_top=coords.y_top,
         y_bottom=coords.y_bottom,
+        y_top_insets=y_top_insets,
     )
 
 
@@ -371,7 +375,9 @@ def _extract_panel(chart: ReferenceChart) -> dict[str, ExtractedChart]:
     for view in chart.views:
         view_image_path = REPO_ROOT / view.chart_path
         view_plot_box = (
-            _to_plotbox(view.plot_box) if view.plot_box is not None else plot_box
+            _to_plotbox(view.plot_box, view.y_top_insets)
+            if view.plot_box is not None
+            else plot_box
         )
         for aperture, profile in aperture_passes_for_view(
             chart, view_image_path, view

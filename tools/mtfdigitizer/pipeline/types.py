@@ -15,12 +15,27 @@ class PlotBox:
         mtf_value = (y_bottom - y_pixel) / (y_bottom - y_top)
 
     All four fields are inclusive pixel indices.
+
+    `y_top_insets` is a per-hue-name additional inset applied at the
+    mask-clip step only (#1271, ADR-067). Each entry trims `n` rows from
+    the top of the named hue's mask before skeletonization, leaving the
+    plot box's actual `y_top` untouched for every other hue. Used when
+    one curve's antialiasing halo lands inside a sister curve's HSV
+    band — a global `y_top` shift would clip the contaminator's own
+    curve, but a per-hue inset shields the contaminated mask without
+    affecting the contaminator's. Sampling, scoring, and rendering all
+    use the unmodified `y_top`/`y_bottom` for MTF conversion. None or
+    empty means no inset.
     """
 
     x_left: int
     x_right: int
     y_top: int
     y_bottom: int
+    # Per-hue additional y_top inset, as ((hue_name, n), ...) so the
+    # field stays hashable and the dataclass stays frozen. Empty tuple
+    # means no inset applied. See class docstring.
+    y_top_insets: tuple[tuple[str, int], ...] = ()
 
     @property
     def width(self) -> int:
@@ -29,6 +44,20 @@ class PlotBox:
     @property
     def height(self) -> int:
         return self.y_bottom - self.y_top
+
+    def hue_y_top(self, hue_name: str) -> int:
+        """Effective `y_top` for the named hue's mask clipping.
+
+        Equals `y_top + n` when `(hue_name, n)` appears in
+        `y_top_insets`; falls back to `y_top` otherwise. Use at the
+        per-hue mask clip step; MUST NOT be used for sampling or MTF
+        conversion (those depend on the chart's unmodified plot
+        rectangle).
+        """
+        for name, n in self.y_top_insets:
+            if name == hue_name:
+                return self.y_top + n
+        return self.y_top
 
 
 @dataclass(frozen=True)
