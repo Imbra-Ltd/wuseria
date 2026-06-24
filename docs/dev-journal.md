@@ -10406,3 +10406,83 @@ Theme: continue Samyang analysis. User flagged visible drift on the rendered `sa
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 182 — Samyang 85mm shape-snake spike: misdiagnosis confirmed, no fix needed
+
+Date: 2026-06-24 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: continue spike #1282 (samyang-85mm M-curve shape error). Session began with the spike text + ADR-070 framing assuming a real shape-blind extraction bug needing a new gate. Verification against actual extractor output (`py -m mtfdigitizer.calibrate --write-readings`) refuted the premise. Session ended with ADR-071 superseding ADR-070 and three issues closed without any code change to the extractor.
+
+#### PRs
+
+- **#1285 merged** (`docs(adr): add ADR-070 for shape-probe side-channel gate (#1282)`) — squash `21e3935`. ADR-070 documented the side-channel shape probe as Path 3 of the spike. 1 file, +318/-0. Accepted and merged before the implementation verification step revealed the premise was wrong.
+- **#1288 merged** (`docs(adr): supersede ADR-070 — samyang-85mm shape snake misdiagnosis (#1282)`) — squash `8429bde`. ADR-071 post-mortem with GT-vs-extracted tables for both panels. ADR-070 status flipped to `Superseded by ADR-071`. `SAMYANG_4COLOR_ALL_SOLID` docstring "KNOWN SHAPE LIMITATION" block (added in #1283 last session) removed — refuted by the readings dump. 3 files, +243/-18.
+
+#### Issues opened / closed
+
+- **#1286 opened then closed** (P3, v0.8.0, task) — "Implement shape-probe schema and gate (ADR-070, Path 3)". Opened after #1285 merged; closed by #1288 with the readings dump as evidence that the gate has nothing to detect.
+- **#1287 opened then closed** (P3, v0.8.0, task) — "Tighten halo subtraction with per-pixel V-test (ADR-070 follow-up, Path 1)". Opened as the next-step issue blocked on #1286; closed by #1288. F8 panel control case proves halo subtraction works correctly when chart truth genuinely separates S from M.
+- **#1282 closed** (already closed by #1285's merge; follow-up comment added linking ADR-071 as the investigation outcome).
+- Epic #932 checklist updated: `#1282` ticked.
+
+#### Key technical findings
+
+- **The "snake" the spike described does not exist.** GT on samyang-85mm max panel records `freq10S` and `freq10M` within 0.01 of each other from frac 0.0 through 0.7 (real chart truth: S and M near-coincident); `freq30S` and `freq30M` within 0.02 across the entire field. Extractor reproduces this within Δ ≤ 0.055 per cell. Last session's PR #1283 interpreted the visual overlap of two legitimately near-coincident curves in the overlay PNG as one curve tracking the other. The mechanism (halo subtraction → erased M skeleton → sister fallback) is real and active, but does not produce the failure mode #1282 hypothesised on this anchor.
+- **The F8 panel is the control case that refutes the broken-halo-subtraction hypothesis.** GT on the stopped panel records dramatic `freq30M` descent from 0.96 to 0.55 while `freq30S` stays flat at 0.96 — a 0.37 abs(S-M) separation at the corner. Extractor reads `freq30M` at 0.54 (matching GT 0.55), not at 0.96 (where sister-fill would have placed it if halo subtraction were broken systemically). Halo subtraction is healthy.
+- **The readings dump is cheap intake validation.** `py -m mtfdigitizer.calibrate --write-readings` produces a per-frac `referenceset/readings/<slug>.md` grid with `GT | EX | Δ` for every (aperture, field, frac) cell. Ten minutes from spawning the command to refuting the spike's premise. Would have caught the misdiagnosis at intake last session before #1283 shipped the docstring annotation.
+- **ADR-070 was accepted prematurely.** The four-path analysis (tighten halo subtraction / densify SAMPLE_FRACTIONS / side-channel shape probe / accept) was reasoned correctly against the _stated_ premise. The error was not in the recommendation — Path 3 was the right call _if_ the snake existed. The error was accepting the premise without first running the readings dump. ADR-071's prevention section names this gap: shape-error spikes MUST run `--write-readings` before being treated as actionable.
+
+#### Key changes
+
+- **`docs/decisions/070-shape-probe-side-channel.md`** — `Status: Accepted` → `Status: Superseded by ADR-071`. Same-day supersession noted in a 1-paragraph callout pointing at ADR-071 (#1288).
+- **`docs/decisions/071-samyang-85mm-shape-misdiagnosis.md`** — new ADR with full GT-vs-extracted tables for both samyang-85mm panels, post-mortem (Symptom / Root cause / Why missed / Fix / Prevention), and three considered alternatives. Closes #1286 and #1287 in the body (#1288).
+- **`tools/mtfdigitizer/profiles/declared.py`** — `SAMYANG_4COLOR_ALL_SOLID` docstring "KNOWN SHAPE LIMITATION (#1282)" block (15 lines added in #1283) removed. Replaced with a 2-line pointer to ADR-071 (#1288). Halo-subtraction mechanism docs (ADR-059/062 references) retained.
+
+#### Verification
+
+- **422 mtfdigitizer pytest pass** (unchanged; declared.py change is docstring-only).
+- `npm run validate` clean both before and after the commit (docs + tools/Python only; build/lighthouse correctly skipped in CI per the gate-skip ADR).
+- **CI on #1288** — CodeQL + gate + analyze + gitleaks + links + changes all SUCCESS; build/lighthouse SKIPPED.
+- **No calibration regression** — aggregate unchanged (900 paired, median |d| 0.0071, p95 |d| 0.0458, max |d| 0.1217, in-band 96.1%). No code touched the extractor.
+
+#### Key decisions (this session)
+
+- **Verify before implementing.** Branched `task/1286-shape-probe-implementation` and started reading integration points, but ran the readings dump as task 1 (per the spike's own data) before writing schema code. The dump took ~30 seconds and refuted the premise. Stopped implementation, reported to user, and pivoted to supersession.
+- **Supersede, don't quietly close.** Considered leaving ADR-070 as `Accepted` and just closing the issues with a note. Rejected because an Accepted ADR pointing at code that doesn't exist creates documentation-vs-code drift. ADR-071 with explicit supersession links keeps the decision trail honest. ADR-010 in the templates project documents this as the legitimate exception to ADR immutability.
+- **Remove the docstring, don't comment over it.** The "KNOWN SHAPE LIMITATION" block in `declared.py` would mislead future readers debugging unrelated shape problems. Replaced with a 2-line ADR-071 pointer rather than a strikethrough.
+- **No auto-merge.** Both PRs (#1285 and #1288) merged with explicit user permission per `feedback_ask_before_automerge`.
+
+#### Process patterns observed this session
+
+- **Spike outputs need data verification, not just analysis.** ADR-070 was a well-reasoned ADR built on top of an unverified premise. The supersession was avoidable: running `--write-readings` at the start of #1282's investigation last session would have produced the same refutation immediately. The prevention action in ADR-071 is to require the dump as part of shape-error spike intake.
+- **Visual reading of overlay PNGs is a confounding signal class.** The same overlay that "obviously" showed a tracking error in S181's eye is correctly showing chart truth (S and M legitimately coincident). Eye-reading the overlay is a useful diagnostic but not authoritative. The authoritative signal is the GT-vs-extracted dump.
+- **F8 control case is a free refutation.** Whenever a profile has a multi-aperture chart, one aperture's curves will inevitably diverge more than another's. That divergence is the natural control: if the halo-subtraction mechanism were broken systemically, the diverging aperture would show the failure. samyang-85mm's F8 30M correctly dives to 0.54 instead of mimicking 30S's flat 0.96 — that's the dispositive evidence.
+- **Net-negative code change is a successful outcome.** Session shipped no extractor change, removed 15 lines of misleading docstring, and recorded an ADR explaining what was learned. Prevented a ~500-line gate implementation (#1286) and a high-risk halo-subtraction rewrite (#1287). Visible from a milestone summary as "no code shipped" but actually a significant blast-radius save.
+
+#### Follow-ups for next session (S183)
+
+- **PLAYBOOK prevention action.** ADR-071 names a follow-up: PLAYBOOK §2.8 (or analogous mtfdigitizer section) should require `py -m mtfdigitizer.calibrate --write-readings` on any shape-error spike before it is treated as actionable. Deferred to S183 rather than landed in #1288 to keep PR scope focused.
+- **#1279 (P3, v0.8.0, bug)** — ADR-066 center-anchor overshoot. Carried from S180. Still the next concrete bug to land.
+- **Carried forward (still open, all P2/P3)**: #1265 duplicate MTF PNGs, #1134 confidence badge, #1110 per-stage diagnostic bundle, #950 auto-detect plot box, #791 Carl Zeiss next brand.
+- **svg.py multi-view fan-out** — orphan `samyang-85mm-f1-4-as-if-umc-mtf.svg` reappeared in S181, deleted at start of session. Did not reappear this session because no `tools/` extractor commands ran. Same bug as S180 noted (no issue yet, low priority).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, median |d| 0.0071, p95 |d| **0.0458**, max |d| 0.1217, in-band **96.1%** (all unchanged — no GT or extractor edits).
+- **422 mtfdigitizer pytest pass** (unchanged). **223 vitest pass** (unchanged).
+- **71 ADRs** (was 69; +ADR-070, +ADR-071).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: #1265 + #1134 + #1110 + #1159 + #950 + #1279 + epics #790, #932 + remaining P3 brand-digitization tasks. #1282 + #1286 + #1287 all closed.
+- **0 open PRs** at wrap-up.
+- `mtf-readings.ts` — unchanged.
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
