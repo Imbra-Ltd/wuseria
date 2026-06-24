@@ -37,3 +37,7 @@ S/M divergence at 30 lp/mm:
 FF lens. 10 lp/mm: M rises above S at edge (crossing). 30 lp/mm: both drop with moderate gap. At f/8: heavy divergence at FF edge. LensTip lab measured 10.4% (1.0).
 
 **Score: 1.0 (moderate-heavy; lab data: 1.0 -- consistent)**
+
+## Known extraction limitation (#1282)
+
+The digitized M curves in the shipped SVG follow the wrong shape in the mid-field on the MAX panel: gold dashed freq10M tracks red S10 from ~0-15mm before jumping to actual pink at the edge; blue dashed freq30M traces the dark-grey S30 dip-and-recover at ~7-15mm instead of the smooth light-grey M30 descent. Mechanism is halo subtraction (ADR-059, ADR-062) erasing legitimate M pixels where S/M overlap vertically, with sister fallback copying S values. All 22 paired calibration cells stay within ±0.05 tolerance because the coarse 11-point sampling happens to land where S/M magnitudes are numerically close. Tracked in #1282.
