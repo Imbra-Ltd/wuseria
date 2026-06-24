@@ -437,16 +437,21 @@ def _apply_coincident_top_anchor(
             if min(clean_deltas) > _COINCIDENT_ANCHOR_MAX_PAIR_DELTA:
                 continue  # curves never touch — skip anchor for this pair
         for i in range(len(hi_values)):
-            # Skip frac=0.0: the center-axis physics anchor (ADR-066)
-            # owns this cell. S=M=1.0 at the optical axis is a physical
-            # guarantee, stricter than the coincident-top estimate from
-            # the lower-freq curve (which may extract at 0.98 due to
-            # extraction noise on a true-1.0 curve). Let ADR-066 fire.
-            if i == 0:
-                continue
             # Eligible: sister-filled (ADR-068) OR None (ADR-069).
             # Cells the extractor or intra-interp produced real values
             # for keep their values.
+            #
+            # frac=0.0 is NOT skipped: when freq{lo}{D} at center reads
+            # below 1.0 due to extraction noise (e.g. 10S=0.985 on a
+            # true-1.0 chart-top curve), anchoring freq{hi}{D} to that
+            # noisy value is more honest than ADR-066's 1.0 physical
+            # constant, because lo >= hi is a strict physical invariant
+            # — hi cannot exceed lo regardless of physics at the axis.
+            # Letting ADR-066 fire instead would set hi=1.0 while
+            # lo=0.985, producing hi>lo (physically impossible) AND a
+            # visible upward kink between center and frac=0.1 in the
+            # rendered SVG. ADR-069 wins here; ADR-066 still fires for
+            # cells the pair gate or threshold rules out.
             sister_eligible = i < len(fills) and fills[i]
             none_eligible = hi_values[i] is None
             if not (sister_eligible or none_eligible):

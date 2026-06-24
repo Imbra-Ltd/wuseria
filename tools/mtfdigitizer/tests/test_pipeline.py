@@ -501,16 +501,19 @@ def test_samyang_300mm_reflex_coincident_top_fills_none_cells() -> None:
     empty), and ADR-068's coincident-top anchor in its original form
     skipped these cells because they were `None`, not sister-filled.
 
-    ADR-069 extends the anchor to fire on None cells too. The center
-    cell at frac=0.0 is explicitly skipped so ADR-066's stricter
-    physical 1.0 anchor still owns it (the lower-freq curve may
-    extract at 0.98 due to extraction noise on a true-1.0 curve).
+    ADR-069 extends the anchor to fire on None cells too, including
+    at frac=0.0: when `freq{lo}{D}` extracts at 0.985 (mild raster
+    noise on a true-1.0 chart-top curve), copying that value into
+    `freq{hi}{D}` keeps the physical invariant `lo >= hi` intact
+    AND avoids a visible upward kink between ADR-066's exact-1.0
+    center cell and ADR-069's 0.985 anchored cells at frac>=0.1.
 
     Expected post-ADR-069:
-    - frac 0.0: freq30S=freq30M=1.0 (ADR-066 center anchor, untouched)
-    - frac 0.1..0.5: freq30S=freq30M=~0.98 (filled from same-direction
-      10 curve via ADR-069)
-    - frac 0.6..1.0: extracted directly by the dispatch (~0.98)
+    - frac 0.0..0.5: freq30S=freq30M=~0.985 (filled from same-direction
+      10 curve via ADR-069 — including center)
+    - frac 0.6..1.0: extracted directly by the dispatch (~0.985)
+    - center MUST match its neighbours so the polyline reads
+      continuously without a frac 0.0->0.1 spike
     """
     chart_path, pb, image_height_mm = _ref(
         "samyang-300mm-f6-3-ed-umc-cs-reflex"
@@ -536,38 +539,53 @@ def test_samyang_300mm_reflex_coincident_top_fills_none_cells() -> None:
                 f"[0.90, 1.00] (coincident with 10 curve at chart "
                 f"top), got {v:.3f}"
             )
-    # ADR-066 still owns the center cell.
-    assert result.readings[0].samples["freq30S"] == pytest.approx(1.0), (
-        "freq30S at frac=0.0 expected 1.0 (ADR-066 center anchor), got "
-        f"{result.readings[0].samples['freq30S']} — ADR-069 must skip "
-        "frac=0.0 so the stricter physical anchor wins"
+    # Center must match its neighbours so the polyline doesn't kink.
+    # Both freq30S/30M anchored from freq10S/10M, which extract at
+    # ~0.985 — no upward spike to 1.0 vs frac 0.1's 0.985.
+    center_30S = result.readings[0].samples["freq30S"]
+    next_30S = result.readings[1].samples["freq30S"]
+    assert abs(center_30S - next_30S) < 0.01, (
+        f"freq30S center={center_30S:.3f} vs frac=0.1={next_30S:.3f}: "
+        f"expected within 0.01 so the polyline reads continuously. "
+        f"A larger gap means ADR-066's exact-1.0 anchor fired at "
+        f"center while ADR-069 anchored the rest to a noisier lo "
+        f"value — produces a visible kink in the rendered SVG."
     )
-    assert result.readings[0].samples["freq30M"] == pytest.approx(1.0), (
-        "freq30M at frac=0.0 expected 1.0 (ADR-066 center anchor), got "
-        f"{result.readings[0].samples['freq30M']}"
+    # Physical invariant: hi MTF cannot exceed lo MTF at any frac.
+    center_10S = result.readings[0].samples["freq10S"]
+    assert center_30S <= center_10S + 1e-6, (
+        f"freq30S at center ({center_30S:.3f}) exceeds freq10S "
+        f"({center_10S:.3f}) — physically impossible. ADR-066's 1.0 "
+        f"anchor must NOT fire here when freq10S sits below 1.0."
     )
-    # ADR-069 should have filled multiple None cells (frac 0.1..0.5+).
-    assert result.coincident_anchor_count.get("freq30S", 0) >= 5, (
-        "freq30S coincident_anchor_count: expected at least 5 None "
-        "cells filled (frac 0.1..0.5), got "
+    # ADR-069 should have filled multiple None cells (frac 0.0..0.5+).
+    assert result.coincident_anchor_count.get("freq30S", 0) >= 6, (
+        "freq30S coincident_anchor_count: expected at least 6 None "
+        "cells filled (frac 0.0..0.5), got "
         f"{result.coincident_anchor_count.get('freq30S', 0)}"
     )
 
 
-def test_samyang_10mm_stopped_anchors_30S_30M_at_frac_zero() -> None:
-    """#1267 regression — on the samyang-10mm-f2-8-ed-as-ncs-cs stopped
-    panel, the dark-grey 30S curve sits physically underneath the
-    saturated-red 10S across the first ~25% of the field, so the HSV
-    dispatch cannot separate them: the 30S skeleton's first ink is
+def test_samyang_10mm_stopped_recovers_30S_30M_at_frac_zero() -> None:
+    """#1267 + ADR-069 regression — on the samyang-10mm-f2-8-ed-as-ncs-cs
+    stopped panel, the dark-grey 30S curve sits physically underneath
+    the saturated-red 10S across the first ~25% of the field, so the
+    HSV dispatch cannot separate them: the 30S skeleton's first ink is
     at chart-x 138 (frac ~0.25), and the 30M skeleton's first ink is
     at chart-x 44 (frac ~0.03). Both 30S[0] and 30M[0] are None after
     direct extraction, and sister fallback cannot fill either (it
     needs at least one side of the S/M pair to have a value).
 
-    The center-symmetry stage MUST anchor both to MTF=1.0 by the B4
-    physics rule (S=M=1.0 at the optical axis), recovering the
-    leftmost segment of the rendered SVG so the curves visibly start
-    at the y-axis instead of ~1.4mm in."""
+    Originally #1267 was fixed by ADR-066's center-symmetry physics
+    anchor (S=M=1.0 at the optical axis). ADR-069 supersedes that
+    behaviour at this cell: when freq{lo}{D} at center reads below
+    1.0 due to raster noise (here ~0.99 for freq10S), copying lo
+    into hi keeps the physical invariant `hi <= lo` true and avoids
+    a visible kink between center and frac=0.1. ADR-066 still fires
+    on cells the pair gate or threshold rules out.
+
+    The user-facing #1267 deliverable — polyline visibly starts at
+    the y-axis instead of ~1.4mm in — is preserved either way."""
     SAMYANG_10_CHART, _, _ = _ref("samyang-10mm-f2-8-ed-as-ncs-cs")
     pb = _ref_view_plot_box("samyang-10mm-f2-8-ed-as-ncs-cs", 1)
     result = extract_chart(
@@ -580,16 +598,24 @@ def test_samyang_10mm_stopped_anchors_30S_30M_at_frac_zero() -> None:
     for field in ("freq30S", "freq30M"):
         v = center.samples.get(field)
         assert v is not None, (
-            f"{field} at frac=0.0 must be center-anchored to 1.0 (#1267), "
-            f"got None"
+            f"{field} at frac=0.0 must be recovered (ADR-066 or "
+            f"ADR-069), got None — polyline will not start at y-axis"
         )
-        assert v == pytest.approx(1.0), (
-            f"{field} at frac=0.0 expected 1.0 (B4 physics anchor), got {v}"
+        # Physical invariant: hi <= lo at every frac.
+        lo_field = "freq10" + field[-1]
+        lo_v = center.samples.get(lo_field)
+        assert lo_v is not None
+        assert v <= lo_v + 1e-6, (
+            f"{field}={v:.4f} at center exceeds {lo_field}={lo_v:.4f} "
+            f"— physically impossible"
         )
-        assert result.center_anchor_count.get(field, 0) == 1, (
-            f"{field} center_anchor_count expected 1, got "
-            f"{result.center_anchor_count.get(field, 0)}"
-        )
+    # No kink: center matches frac=0.1 within tight tolerance so the
+    # polyline reads continuously.
+    next_30S = result.readings[1].samples["freq30S"]
+    assert abs(center.samples["freq30S"] - next_30S) < 0.01, (
+        f"freq30S center={center.samples['freq30S']:.4f} vs "
+        f"frac=0.1={next_30S:.4f}: expected within 0.01 (no kink)"
+    )
 
 
 def test_samyang_af_12mm_stopped_anchors_10S_10M_at_frac_zero() -> None:

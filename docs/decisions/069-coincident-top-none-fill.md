@@ -111,8 +111,6 @@ extract     fallback   (#1254)          anchor (ADR-068   (ADR-066)
 For each `freq{hi}{D}` cell at frac `f`:
 
 ```
-if f == 0.0:
-    skip                                  # ADR-066 owns the center cell
 prev = samples[hi][f]
 lo   = samples[lo][f]
 if (prev is None or sister_filled[hi][f]) \
@@ -122,11 +120,29 @@ if (prev is None or sister_filled[hi][f]) \
     coincident_anchor_count[hi] += 1
 ```
 
-The frac=0.0 skip preserves ADR-066's physical guarantee: at the
-optical axis S=M=1.0 by definition. The coincident-top extrapolation
-copies `freq{lo}{D}` directly, which may carry small extraction noise
-(e.g. 0.983 instead of 1.000 on a curve that physically reads 1.0 at
-center). ADR-066's 1.0 anchor is stricter; let it own that cell.
+frac=0.0 is **NOT** skipped. The first draft of this ADR proposed
+deferring to ADR-066 (S=M=1.0 at the optical axis) at the center
+cell, on the theory that a physical guarantee beats an extrapolation.
+That was wrong for two reasons:
+
+1. **Physical invariant violation.** `freq{lo}{D}` on the 300mm
+   reflex extracts at ~0.985 at center due to raster snap to the
+   nearest pixel row. If ADR-066 fires for the high-freq curve
+   while the low-freq sits at 0.985, then `freq30S = 1.0 >
+freq10S = 0.985` — physically impossible (MTF is monotonically
+   non-increasing in frequency).
+2. **Visible polyline kink.** The rendered SVG draws a polyline
+   between the cell at frac=0.0 and the cell at frac=0.1. If
+   center reads 1.0 (ADR-066) and frac=0.1 reads 0.985 (ADR-069's
+   anchor from lo), the polyline has a visible upward spike at the
+   leftmost vertex — exactly the "missing segments" shape #1277
+   set out to fix, just relocated. Continuity across the field is
+   the user-visible deliverable.
+
+Copying `lo` into `hi` at center keeps `hi <= lo` true and reads
+continuously through frac=0.1. ADR-066's 1.0 anchor still fires for
+center cells the pair gate or threshold rules out — it is not a
+no-op, just no longer the winner here.
 
 Tracking continues to use the existing
 `ExtractedChart.coincident_anchor_count` field — no new accounting
@@ -166,7 +182,7 @@ to "sister-filled or None".
 
 | frac | freq10S | freq30S before   | freq30S after   |
 | ---- | ------- | ---------------- | --------------- |
-| 0.0  | 0.98    | 1.00 (ADR-066)   | 1.00            |
+| 0.0  | 0.98    | 1.00 (ADR-066)   | **0.98** (←10S) |
 | 0.1  | 0.98    | None             | **0.98** (←10S) |
 | 0.2  | 0.98    | None             | **0.98** (←10S) |
 | 0.3  | 0.98    | None             | **0.98** (←10S) |
