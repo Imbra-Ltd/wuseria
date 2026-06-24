@@ -1,7 +1,15 @@
 # ADR-070: Side-channel shape probe for grid-aligned shape errors
 
-**Status:** Accepted
+**Status:** Superseded by ADR-071
 **Date:** 2026-06-24
+**Superseded:** 2026-06-24
+
+> Superseded same day. The premise — that samyang-85mm max panel
+> exhibits a sister-fill shape collapse invisible to the ±0.05 gate
+> — does not survive verification against actual extractor output.
+> Truth itself records S and M near-coincident in the affected
+> region; the extractor reproduces that correctly. See ADR-071 for
+> the post-mortem and the corrected understanding.
 
 ## Prerequisites
 
