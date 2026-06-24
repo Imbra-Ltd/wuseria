@@ -10238,3 +10238,92 @@ Theme: unblock S178's reverted coincident-top anchor by fixing the upstream `y_t
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 180 — None-cell coincident-top fill on 300mm reflex
+
+Date: 2026-06-24 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: continue fixing Samyang anchors. Target: `samyang-300mm-f6-3-ed-umc-cs-reflex` stopped panel — user reported missing segments in the rendered SVG. Diagnosed the same coincident-top problem ADR-068 addressed for the 12mm fisheye, but in a state ADR-068 cannot reach (both 30S and 30M skeletons completely empty, so sister fallback cannot fire either). Extended the anchor to None cells; fix landed in two iterations after a polyline-kink revision.
+
+#### PRs
+
+- **#1278 merged** (`fix(mtf): coincident-top anchor fills None high-freq cells (#1277)`) — squash `904be66`. Extends `_apply_coincident_top_anchor` to fire on cells where the current value is `None`, not only sister-filled cells. Same pair gate (min |hi - lo| ≤ 0.05 on clean+lo≥0.90 cells), same 0.90 threshold. ADR-069 added. Regression test on 300mm reflex. **Three-commit PR** (squashed on merge): (1) ADR draft, (2) initial impl with frac=0 skip, (3) drop the frac=0 skip after user spotted a visible polyline kink at the leftmost vertex. Calibration aggregate: 878 → **900 paired** (+22 newly-recovered cells), p95 |d| 0.0462 → **0.0458**, in-band 96.0% → **96.1%**, max |d| 0.1217 unchanged. 26 files.
+- **#1280 merged** (`chore(mtf): refresh Tier 1 digitization logs after ADR-069`) — squash `f4399a4`. PR #1278 forgot to pass `--all` to `py -m mtfdigitizer.log`; Tier 1 logs stayed stale on main. This PR refreshes the 3 affected logs (300mm reflex, 85mm, viltrox-75). 3 files, docs-only.
+
+#### Issues opened / closed
+
+- **#1277 auto-closed by #1278** (P3, v0.8.0, bug) — opened and closed this session. The original report from user: "I miss segments in the svg" on the 300mm reflex stopped panel.
+- **#1279 opened** (P3, v0.8.0, bug) — `viltrox-af-75mm-f1-2-pro` f/1.2 freq30S/30M at frac=0.0 read EX=1.0 vs EYE=0.93/0.92 (Δ 0.07/0.08, outside tolerance). Surfaced by ADR-069 refreshing the digitization log — previously the cells printed `—` because EX was None, hiding the gap. Root cause: ADR-066's "both None → 1.0" center anchor fires unconditionally even on lenses whose chart-top curve sits below 1.0. Proposed fix paths in the issue body; deferred to a future session.
+
+#### Key technical findings
+
+- **The cell-state matrix for ADR-068/069 is a 2x3 truth table.** Rows = high-freq cell state {extracted, sister-filled, None}; columns = low-freq state {≥0.90, <0.90}. ADR-068 fills the (sister-filled, ≥0.90) cell. ADR-069 adds the (None, ≥0.90) cell. The other four cells either keep their value (extracted) or are out of scope (lo diving). Once written out the matrix made it obvious that the None case was the same physics as the sister-filled case, just with the extractor in a different upstream state.
+- **The user's "missing segments" report tracks back to a `None` value, NOT to the renderer.** `svg._polyline_segments` correctly breaks the polyline at any `None` per the B2 contract — that's the right behaviour. The fix has to come from the extractor producing a value. Pipeline-level inspection (`extract_chart` direct, no SVG) is the right diagnostic, not SVG inspection.
+- **frac=0.0 must NOT be a special case for ADR-069.** The initial draft skipped frac=0.0 on the theory that ADR-066's S=M=1.0 physical anchor is stricter. Two problems: (a) when `freq{lo}{D}` at center extracts at 0.985 due to raster snap, ADR-066's 1.0 violates the strict physical invariant `freq{hi}{D} ≤ freq{lo}{D}` (MTF is monotonically non-increasing in frequency), and (b) the SVG polyline kinks visibly at the leftmost vertex (1.0 at center → 0.985 at frac 0.1). Continuity is the user-visible deliverable. Dropping the skip resolves both.
+- **The pair gate vetoes the (None, ≥0.90) case on lenses where it would be wrong.** Viltrox-75 f/1.2 has freq30S at frac 0.4 reading 0.925 (genuinely extracted, below threshold), so no anchor-point cell qualifies for the gate's min check. ADR-069 doesn't fire on viltrox-75 — the (now-visible) 0.07 Δ on viltrox-75 is ADR-066's overshoot, NOT ADR-069's responsibility. The two stages are correctly partitioned by the gate.
+- **`py -m mtfdigitizer.log` skips Tier 1 by default.** Without `--all`, only Tier 2 production logs regenerate. PR #1278 missed this and left 3 Tier 1 logs stale on main. The Tier 1 log header banner says "run `py -m mtfdigitizer.log --check` to verify" but doesn't mention `--all` for the write path. Possible PLAYBOOK addition next session.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/pipeline.py`** — `_apply_coincident_top_anchor` per-cell precondition extended from `sister_filled[i]` to `sister_filled[i] or hi_values[i] is None`. Docstring updated to credit both ADR-068 and ADR-069 (#1278).
+- **`tools/mtfdigitizer/tests/test_pipeline.py`** — `test_samyang_300mm_reflex_coincident_top_fills_none_cells` new regression. `test_samyang_10mm_stopped_recovers_30S_30M_at_frac_zero` (renamed from `_anchors_30S_30M_at_frac_zero`) updated to assert (value present + hi ≤ lo physical invariant + no kink) instead of the exact 1.0 from ADR-066 (#1278).
+- **`docs/decisions/069-coincident-top-none-fill.md`** — new ADR with cell-state matrix, per-cell decision pseudocode, worked example, and explicit rationale for not skipping frac=0.0 (#1278).
+- **`tools/mtfdigitizer/referenceset/readings/samyang-300mm-f6-3-ed-umc-cs-reflex.md`** + regenerated max/stopped SVGs + overlay PNGs + review HTMLs (#1278).
+- **`docs/optical-specs/samyang-300mm-f6-3-ed-umc-cs-reflex/digitization-log.md`** + 2 other Tier 1 logs (`samyang-85mm`, `viltrox-af-75mm-f1-2-pro`) refreshed via `py -m mtfdigitizer.log --all` (#1280).
+- **Spillover artifacts**: 7 unrelated SVGs touched (Fuji, Tokina, TTartisan, Viltrox, Sigma diffraction) — flowed from the same `py -m mtfdigitizer.svg` pass on PR #1278, all minor anchor-count changes within tolerance.
+
+#### Verification
+
+- **422 mtfdigitizer pytest pass** (was 422 in S179, no new tests net — added 1 for 300mm reflex, repurposed existing #1267 test). Initial test run reported "exit 0" misleadingly because `tail -5` shadowed pytest's exit code; second run with bare invocation gave the real green.
+- **`npm run validate`** passes (lint + format + check + test + build, frontend).
+- **Aggregate calibration**: 878 → **900 paired** (+22 newly-recovered freq30S/30M cells on 300mm reflex max+stopped), median |d| 0.0070 → 0.0071, p95 |d| 0.0462 → **0.0458** (improved), max |d| 0.1217 unchanged, in-band 96.0% → **96.1%** (improved). Net win.
+- **CI** — both PRs cleared CodeQL + gate + analyze + gitleaks + links; build/lighthouse correctly skipped on PR #1278 (no front-end source changes).
+- **Visual check** — user spotted the leftmost-vertex polyline kink on the first iteration of #1278 ("what about svg max for the 300mm f6.3 lens?"). The visual gate caught what the regression test (which only checked "no None") did not. Updated test now asserts `abs(center − frac=0.1) < 0.01` to lock the no-kink property.
+
+#### Key decisions (this session)
+
+- **ADR-069 extends ADR-068 rather than replacing it.** The (sister-filled, ≥0.90) case from ADR-068 is unchanged; ADR-069 just adds the (None, ≥0.90) case. Same counter (`coincident_anchor_count`), same gate, same threshold. Naming the new ADR as an extension (not "supersedes") preserves ADR-068's record and makes the two-step physics visible.
+- **Drop the frac=0.0 special case after user-spotted kink.** The first draft of ADR-069 explicitly skipped frac=0 to defer to ADR-066. After the user pointed out the visible kink at the leftmost vertex, I traced through the physical-invariant argument (`hi ≤ lo` strict, MTF monotone in frequency) and the polyline-continuity argument (the whole point of #1277 was no missing segments) — both pointed to "no skip". The ADR was rewritten to document both arguments explicitly, and `test_samyang_10mm_stopped_*` was updated/renamed to assert the new contract. This was the right call: the user's visual catch turned an "okay" fix into the correct one.
+- **The (now-visible) viltrox-75 overshoot is a separate concern.** ADR-069 only fills cells the pair gate permits; viltrox-75 doesn't pass the gate, so ADR-066 fills there instead. The 0.07 Δ on viltrox-75 has always existed — ADR-069 just made it visible by enabling the comparison. Filing #1279 and shipping the log refresh anyway is correct: honest logs beat hiding bugs.
+- **Three commits, one squash.** PR #1278 has 3 commits (ADR draft, initial impl, kink fix). Per `git.md`'s squash-merge guidance, all three squash to a single coherent commit on main. Per-commit narrative stays in the PR history; main stays clean.
+- **No auto-merge.** Both #1278 and #1280 merged with explicit user permission per `feedback_ask_before_automerge`.
+
+#### Process patterns observed this session
+
+- **The "missing segments" user report → `extract_chart` direct inspection workflow.** When the rendered SVG looks wrong, the first diagnostic should be calling `extract_chart` and printing each `SampledReading.samples` dict, NOT inspecting the SVG. The SVG renderer is dumb (it draws what's in the readings); the bug is upstream. Saved several iterations vs. trying to interpret SVG points.
+- **A passing regression test is a necessary but not sufficient gate.** The first iteration of #1278 passed `test_samyang_300mm_reflex_coincident_top_fills_none_cells` cleanly (the test only asserted "no None and value in [0.9, 1.0]"). The user's eye caught the kink the test didn't. Lesson: write tests that lock the user-visible property (here: continuity), not just the absence-of-bug property.
+- **A successful `tail`-pipe hides the real exit code.** `py -m pytest ... | tail -5` always exits 0 if `tail` succeeds, even if pytest failed. Caught this twice this session — once when the suite actually had a failing test (#1267 broke after the kink fix) and once when reporting test counts. Run bare pytest for verdict; pipe only for output trimming after you've confirmed exit code separately.
+- **The "ADR drift" pattern is now well-trodden.** S178 reverted #1270 because of the y_top dependency; S179 landed ADR-067 + ADR-068 together; S180 added ADR-069 as a same-physics extension after user feedback exposed a state ADR-068 couldn't reach. Each ADR is small, builds on the previous, and is reachable from issue links. The pattern works.
+
+#### Follow-ups for next session (S181)
+
+- **#1279 (P3, v0.8.0)** — ADR-066 center-anchor overshoot on sub-1.0 chart-top lenses. Suggested fix path in the issue: extend ADR-069's mechanism to also cover the (both-None, frac=0.0) case, replacing ADR-066's unconditional 1.0 with the same-direction `freq{lo}{D}` value when available. Estimated 1-session scope.
+- **Carried forward from S179 / S178** (still open, all P2/P3):
+  - **#1265 (P3)** — duplicate MTF chart PNGs across 3 TTartisan lens pairs.
+  - **#1134 (P1, Backlog)** — confidence badge.
+  - **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050).
+  - **#950 (P2, v0.8.0)** — auto-detect plot box (coverage).
+  - **#791 (smallest first-new-brand: Carl Zeiss)** — next epic-#790 brand.
+  - **Viltrox `apertures=("f/1.2","F8")`** — Samyang anti-pattern; needs per-lens migration.
+- **svg.py multi-view fan-out bug** (no issue yet, low priority) — `py -m mtfdigitizer.svg` only fans out per-aperture for the primary view of a multi-view ReferenceChart. The additional_views' SVGs are produced by `py -m mtfdigitizer.extract`, but svg.py separately emits a single-stem `*-mtf.svg` for the primary view. Result: two orphan `*-mtf.svg` files (`samyang-300mm-f6-3-ed-umc-cs-reflex`, `samyang-85mm-f1-4-as-if-umc`) reappear every time svg.py runs. One of them landed in PR #1278 inadvertently. Low priority — these files are valid provenance SVGs, just have an inconsistent name vs the per-aperture pairs.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired** (+22), median |d| 0.0071, p95 |d| **0.0458** (-0.0004), max |d| 0.1217 (unchanged), in-band **96.1%** (+0.1pp).
+- **422 mtfdigitizer pytest pass** (+1 new, -1 renamed = 0 net). **223 vitest pass** (unchanged).
+- **69 ADRs** (+1: ADR-069 coincident-top None-fill).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: #1265 + #1134 + #1110 + #1159 + #950 + **#1279** (new) + epics #790, #932 + remaining P3 brand-digitization tasks.
+- **0 open PRs** at wrap-up.
+- `mtf-readings.ts` — unchanged (no GT or display-label edits this session).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0** (3 stale Tier 1 logs refreshed via #1280).
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
