@@ -77,23 +77,9 @@ SAMYANG_4COLOR_ALL_SOLID: MtfProfile = MtfProfile(
     # already dropped further. The 85mm/300mm Tier 1 anchors stay within
     # tolerance because their 30S curves stay above 0.85 (85mm) or 0.95
     # (300mm reflex) across the field, keeping the halo outside the
-    # 30M band's spatial overlap with the real 30M curve.
-    #
-    # KNOWN SHAPE LIMITATION (#1282): the "stays within tolerance" claim
-    # above is true cell-by-cell but masks a shape error on samyang-85mm.
-    # The 30S dip to ~0.57 around frac 0.5-0.6 IS inside the 30M band's
-    # vertical overlap; halo subtraction erases legitimate light-grey
-    # pixels there, the 30M skeleton goes blank, sister fallback copies
-    # 30S values, and the extracted 30M *contour* mimics 30S's dip-and-
-    # recover instead of the chart's smooth light-grey descent. Same
-    # mechanism on 10M-pink: pink sits visually adjacent to red S10
-    # for ~half the field, halo subtraction erases the legitimate pink
-    # skeleton, sister-fill copies red values. All 22 paired cells
-    # remain within the ±0.05 calibration band because at the coarse
-    # 11-point SAMPLE_FRACTIONS the S/M curves happen to be numerically
-    # close in those frac slots — the snake is invisible to the gate.
-    # See #1282 for the architectural decision (tighten subtraction vs
-    # densify sampling vs side-channel shape probe vs accept).
+    # 30M band's spatial overlap with the real 30M curve. The shape
+    # error #1282 hypothesised on samyang-85mm does not exist in the
+    # extracted data — see ADR-071 for the post-mortem.
     halo_pairs=(
         ("10S-red", "10M-pink"),
         ("30S-dark-grey", "30M-light-grey"),
