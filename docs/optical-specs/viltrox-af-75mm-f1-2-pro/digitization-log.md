@@ -28,17 +28,17 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | -------------- | ------ | --------- | --------- | ----------- |
 | freq10S        | 11/11  |     0.012 |     0.056 |  0/11       |
 | freq10M        |  5/11  |     0.035 |     0.092 |  0/11       |
-| freq30S        |  6/11  |     0.018 |     0.061 |  0/11       |
-| freq30M        |  4/11  |     0.039 |     0.108 |  0/11       |
+| freq30S        |  7/11  |     0.020 |     0.081 |  0/11       |
+| freq30M        |  5/11  |     0.062 |     0.094 |  0/11       |
 
 ```
   EX   freq10S        ███████████  (0.99 → 1.00)
   EYE  freq10S        ███████████
   EX   freq10M        ███·█▇·····  (0.99 →  — )
   EYE  freq10M        ███████▇▇▇▇
-  EX   freq30S        ···▇▇·▇▇▇▇·  ( —  →  — )
+  EX   freq30S        █··▇▇·▇▇▇▇·  (1.00 →  — )
   EYE  freq30S        ████▇▇▇▇▇▇▆
-  EX   freq30M        ······▇▇·▇▆  ( —  → 0.71)
+  EX   freq30M        █·····▇▇·▇▆  (1.00 → 0.71)
   EYE  freq30M        ▇▇▇▇▇▇▇▇▆▆▆
 ```
 
@@ -78,7 +78,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 
 | frac | EYE | EX | Δ |
 | ---- | --- | --- | --- |
-| 0.0 | 0.93 | — | — |
+| 0.0 | 0.93 | 1.00 | 0.070 |
 | 0.1 | 0.93 | — | — |
 | 0.2 | 0.93 | — | — |
 | 0.3 | 0.93 | 0.93 | 0.005 |
@@ -94,7 +94,7 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 
 | frac | EYE | EX | Δ |
 | ---- | --- | --- | --- |
-| 0.0 | 0.92 | — | — |
+| 0.0 | 0.92 | 1.00 | 0.080 |
 | 0.1 | 0.91 | — | — |
 | 0.2 | 0.90 | — | — |
 | 0.3 | 0.90 | — | — |
@@ -112,8 +112,8 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | -------------- | ------------ | ---------- | ------------ |
 | freq10S        |         0.99 |       0.97 |         1.00 |
 | freq10M        |         0.99 |          — |            — |
-| freq30S        |            — |       0.87 |            — |
-| freq30M        |            — |       0.81 |         0.71 |
+| freq30S        |         1.00 |       0.87 |            — |
+| freq30M        |         1.00 |       0.81 |         0.71 |
 
 ### Shape metrics
 
@@ -121,5 +121,5 @@ See `tools/mtfdigitizer/README.md` for the dispatch algorithm (per-hue Viterbi s
 | -------------- | --------- | ---------- | ----------------- |
 | freq10S        |       1.0 |       1.00 |                 — |
 | freq10M        |       0.0 |       0.99 |                 — |
-| freq30S        |       0.3 |       0.93 |                 — |
-| freq30M        |       0.6 |       0.84 |                 — |
+| freq30S        |       0.0 |       1.00 |                 — |
+| freq30M        |       0.0 |       1.00 |                 — |
