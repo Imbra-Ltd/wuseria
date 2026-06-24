@@ -10145,3 +10145,96 @@ Theme: investigate and fix samyang-10mm-f2-8-ed-as-ncs-cs stopped panel missing 
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 179 — Per-hue y_top inset and coincident-top anchor re-land
+
+Date: 2026-06-24 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: unblock S178's reverted coincident-top anchor by fixing the upstream `y_top` clip first (#1271), then re-land the anchor on the cleaner input (#1269). Two PRs shipped in sequence; both closed their issues; the 0.45 MTF spike on samyang-12mm-f2-8 fisheye stopped is now permanently gone.
+
+#### PRs
+
+- **#1274 merged** (`fix(mtf): per-hue y_top inset on ChartView; supersedes #1257 global inset (#1271)`) — squash `5addf33`. Adds `PlotBox.y_top_insets: tuple[(hue_name, int), ...]` + `hue_y_top(name)` accessor; `ChartView.y_top_insets` field declares the inset at lens scope. `dispatch._hue_clip()` builds a per-hue clip mask honouring the inset. 12mm fisheye stopped view declares `(("30M-light-grey", 8),)` — y_top reverts to detector value 575, only the 30M mask is trimmed past the red AA halo bands at chart-y 581-582. 16 files (+470/−125). New ADR-067.
+- **#1275 merged** (`fix(mtf): coincident-top anchor for sister-filled hi-freq cells (#1269)`) — squash `07d65c1`. Re-lands the reverted #1270 work on top of #1274's fix. Coincident-anchor stage `_apply_coincident_top_anchor` runs after sister fallback + intra-interp: when `freq{hi}{D}` is sister-filled AND `freq{lo}{D}` at the same frac reads ≥ 0.90, copy `lo` into `hi`. **Gate refinement vs. #1270**: uses `min |hi - lo|` over clean cells where `lo >= 0.90` (was `median` over all clean cells) — asks "is there at least one anchor-point overlap?" rather than "are they on average close." Natural curve divergence at corners no longer vetoes top-regime anchor work. 34 files (+829/−229). New ADR-068.
+
+#### Issues opened / closed
+
+- **#1271 auto-closed by #1274** (P3, v0.8.0, bug) — opened in S178, fixed this session.
+- **#1269 auto-closed by #1275** (P2, v0.8.0, bug) — opened then reverted to open in S178; permanently closed this session.
+- No new issues opened.
+
+#### Key technical findings
+
+- **Per-hue clip beats global y_top bump.** #1257's global inset (`y_top` 575→583 on the stopped panel) was always going to over-clip the red 10S core that sits at chart-y 578-580. The right scope is per-hue, declared at the ChartView level (not profile level — other Samyang lenses have legitimate 30M ink in rows 578-582 where 30M sits at MTF~1.0). The `PlotBox.y_top` stays at the unmodified detector value for sampling and MTF conversion; only the mask-clip step reads `hue_y_top(name)`. The mechanism mirrors the existing `sm_swap_per_hue` pattern: lens-scoped override that leaves the shared profile untouched.
+- **The coincident-stroke gate needs `min`, not `median`, after #1271.** Pre-#1271, freq10S read 0.93-0.97 across the corner — small deltas to 30S kept the median below 0.05. Post-#1271, freq10S reads ~0.99 cleanly while freq30S diverges naturally from ~0.98 at frac 0.7 down to ~0.88 at frac 1.0. The corner cell |Δ|=0.101 pushed the median to ~0.053, just above the 0.05 threshold, so the gate falsely disabled the anchor. The fix: ask "is there at least one anchor-point overlap?" via `min |Δ|`. Fisheye: min=0.006 (idx 7, where 30S just emerges from coincidence). 85mm Tier 1: min=0.29 across every clean cell (curves are genuinely separate). The gate distinguishes them confidently with two orders of magnitude of margin.
+- **Restricting the gate to `lo >= threshold` matters.** The anchor only fires in the top regime (lo ≥ 0.9). The gate should ask its question in the same regime — including low-lo cells lets dives in either curve corrupt the gate statistic. Net effect on the fisheye: idx 7-10 qualify (lo always ≥0.97), but the principle generalizes — on a future lens with corner-divergent lo, the gate would auto-restrict to the relevant cells.
+- **Both ADRs land together by design.** ADR-068 documents "prerequisite: ADR-067" up-front because the S178 revert proved the dependency. The min-based gate alone would not have rescued #1270 if freq10S itself was still wrong; the per-hue inset alone would not have fixed the 0.45 spike at frac 0.7→0.8 (only the anchor closes that). The two fixes compose: #1274 produces honest freq10S, #1275 propagates it into freq30S at coincident cells.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/types.py`** — `PlotBox.y_top_insets` + `hue_y_top()` accessor (#1274). `ExtractedChart.coincident_anchor_count` (#1275).
+- **`tools/mtfdigitizer/pipeline/dispatch.py`** — `_hue_clip()` helper; per-hue mask clip replaces shared single clip (#1274).
+- **`tools/mtfdigitizer/pipeline/pipeline.py`** — `_hue_clip` reused in `_hue_masks_for_presence` (#1274). `_apply_coincident_top_anchor` with min-based gate (#1275).
+- **`tools/mtfdigitizer/referenceset/charts.py`** — `ChartView.y_top_insets` field (#1274).
+- **`tools/mtfdigitizer/scripts/scaffold_samyang_tier2.py`** — emits `y_top_insets` on the stopped view instead of bumping global `y_top`; per-slug map `_STOPPED_Y_TOP_INSETS_BY_SLUG` (#1274).
+- **`_to_plotbox()` helpers** in extract/calibrate/log/emit/per_frequency/emit_fuji_tier2 — thread `view.y_top_insets` onto the runtime `PlotBox` (#1274).
+- **`tools/mtfdigitizer/production_log.py`** — conditional `coincident-anchor` column (#1275).
+- **`tools/mtfdigitizer/tests/test_pipeline.py`** — `_ref_view_plot_box` forwards `view.y_top_insets`; #1257/#1271 regression test updated to assert `y_top=575` un-inset, `(30M-light-grey, 8)` in insets, freq10S/30S ≥ 0.97 at frac 0.7. 6 new coincident-anchor tests (#1275).
+- **`docs/decisions/067-per-hue-y-top-inset.md`** — new ADR with conflict diagram and rejected alternatives.
+- **`docs/decisions/068-coincident-top-anchor.md`** — new ADR (renumbered from #1270's ADR-067) with prerequisite note pointing at ADR-067, min-based gate rationale, worked example using post-#1271 readings.
+- **10 stale Samyang logs/SVGs/overlays regenerated** by #1275 across affected lenses (Samyang 8mm, 10mm, 12mm, 12mm fisheye, 14mm, 16mm, 20mm, 35mm, 50mm, AF 75mm).
+
+#### Verification
+
+- **`py -m mtfdigitizer.extract --check`** → exit 0, "OK: 103 production log(s) up to date."
+- **422 mtfdigitizer pytest pass** (416 prior + 6 new from #1275).
+- **Aggregate calibration**: 878 paired (unchanged), median |d| 0.0066, p95 |d| 0.0462 (unchanged), max |d| 0.1217 (unchanged), in-band 96.0% (unchanged). The two PRs net-zero on calibration because the affected fisheye has no GT; the anchor protection on 85mm and other Tier 1 anchors held perfectly.
+- **CI** — both PRs cleared CodeQL + gate + analyze + gitleaks + links; build/lighthouse correctly skipped (no front-end source changes).
+- **Visual check** — user confirmed the regenerated fisheye stopped-panel SVG: freq30S now traces ~1.00 → 0.99 → 0.99 → 0.99 → 0.99 → 0.99 → 0.99 → 0.98 → 0.97 → 0.93 → 0.88 with no spike, no bow, smooth descent through the corner.
+
+#### Key decisions (this session)
+
+- **ChartView-scoped per-hue inset chosen over alternatives (ADR-067).** Rejected: (a) profile-level mask exclusion zones — would regress 17 other Samyang lenses with legitimate 30M ink at chart-y 578-582, (b) extending halo_pairs to a chart-top-band subtraction — conflates cross-hue contamination with chart-region exclusion in one mechanism, (c) asymmetric inset in dispatch — undeclared, hard to audit, (d) global inset + per-hue escape list — inverts the natural reading and encourages negative insets.
+- **Min-based gate chosen over median (ADR-068).** The principle: the anchor only fires in the top regime, so the gate's question is "is there at least one anchor point where hi/lo demonstrably touch?" not "are they on average close." Natural divergence elsewhere is irrelevant evidence. Median over corner-divergent cells would veto the anchor on lenses where it is most justified.
+- **Restore by cherry-pick rather than re-implementation.** The original #1270 work was sound except for the gate; cherry-picking `efdd923` preserved git authorship and the bulk of the design. The gate refinement landed as part of the same commit (amended after cherry-pick) so the PR diff is one coherent change rather than "cherry-pick + tweak" two-commit shape.
+- **Discard stale regenerated artifacts at cherry-pick time, regenerate fresh.** The 30+ optical-specs files in `efdd923` were generated from a pre-#1271 pipeline (when freq10S was 0.93-0.97). Discarded them all via `git checkout HEAD --` and ran `extract` on the 10 stale lenses post-merge — saves diff noise and produces artifacts that match the actual code.
+- **No auto-merge.** Both #1274 and #1275 merged with explicit user permission per `feedback_ask_before_automerge`.
+
+#### Process patterns observed this session
+
+- **Cherry-pick + amend is the right shape for "land a refined version of a reverted PR."** The flow: (1) `git cherry-pick <reverted-commit>`, (2) resolve conflicts on the artifacts by taking `--ours` (regenerate later), (3) renumber the ADR if needed, (4) amend with the refinement and the freshly-regenerated artifacts, (5) push. Reviewer sees one coherent commit, not the historical churn.
+- **`min` vs. `median` for "anchor-point overlap" gates.** When the gate's purpose is to prove a specific local property holds (here: curves coincident at the top), use `min` not `median`. Median asks the wrong question — it asks "is the average close" which conflates the local property with unrelated global behaviour.
+- **ADR cross-references catch latent dependency cycles.** ADR-068 names ADR-067 as a prerequisite up-front. If a future maintainer reverts #1274, the ADR-068 reference is a clear signal that #1275's behaviour depends on it — they would know to revert both or address the dependency.
+- **Visual verification (user-driven) still catches what tests do not.** The S178 lesson held this session too: I asked the user to eyeball the regenerated overlay before merging. The user confirmed it visually; tests passed but visual is the final gate.
+
+#### Follow-ups for next session (S180)
+
+- **Carried forward from S178** (still open):
+  - **#1265 (P3)** — duplicate MTF chart PNGs across 3 TTartisan lens pairs.
+  - **#1134 (P1, Backlog)** — confidence badge.
+  - **#1110 (P1, Expedite)** — per-stage diagnostic bundle (ADR-050).
+  - **#950 (P2, v0.8.0)** — auto-detect plot box (coverage).
+  - **#791 (smallest first-new-brand: Carl Zeiss)** — next epic-#790 brand.
+  - **Viltrox `apertures=("f/1.2","F8")`** — Samyang anti-pattern; needs per-lens migration.
+- **#1268 follow-up** — `samyang-12mm-f2-8-ed-as-ncs-fish-eye` stopped panel still triages LOW (precision=0.714); known render-match limitation per ADR-062 (sister-filled cells are not credited). Out of scope for #1269; a separate spike could revisit the render-match scorer's weighting.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **878 paired, median |d| 0.0066, p95 |d| 0.0462, max |d| 0.1217, in-band 96.0%** (all unchanged vs S178 — both PRs net-zero on calibration because the affected fisheye has no GT).
+- **422 mtfdigitizer pytest pass** (+6 vs S178). **223 vitest pass** (unchanged).
+- **68 ADRs** (+2: ADR-067 per-hue y_top inset; ADR-068 coincident-top anchor).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: #1265 + #1134 + #1110 + #1159 + #950 + epics #790, #932 + remaining P3 brand-digitization tasks.
+- **0 open PRs** at wrap-up.
+- `mtf-readings.ts` — unchanged (no GT or display-label edits this session).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0** (10 stale Samyangs refreshed this session).
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
