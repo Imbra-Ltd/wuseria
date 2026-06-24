@@ -490,6 +490,70 @@ def test_samyang_12mm_fisheye_stopped_per_hue_y_top_inset() -> None:
     )
 
 
+def test_samyang_300mm_reflex_coincident_top_fills_none_cells() -> None:
+    """#1277 + ADR-069 regression — on
+    `samyang-300mm-f6-3-ed-umc-cs-reflex` both panels show all four
+    curves (10S red, 10M pink, 30S dark-grey, 30M light-grey) drawn
+    coincident at MTF~1.0 across the full field. The bright 10
+    strokes swamp the grey 30 strokes under anti-aliasing, leaving
+    BOTH `freq30S` and `freq30M` skeletons completely empty across
+    frac 0.1..0.5. Sister fallback cannot fire (both sisters are
+    empty), and ADR-068's coincident-top anchor in its original form
+    skipped these cells because they were `None`, not sister-filled.
+
+    ADR-069 extends the anchor to fire on None cells too. The center
+    cell at frac=0.0 is explicitly skipped so ADR-066's stricter
+    physical 1.0 anchor still owns it (the lower-freq curve may
+    extract at 0.98 due to extraction noise on a true-1.0 curve).
+
+    Expected post-ADR-069:
+    - frac 0.0: freq30S=freq30M=1.0 (ADR-066 center anchor, untouched)
+    - frac 0.1..0.5: freq30S=freq30M=~0.98 (filled from same-direction
+      10 curve via ADR-069)
+    - frac 0.6..1.0: extracted directly by the dispatch (~0.98)
+    """
+    chart_path, pb, image_height_mm = _ref(
+        "samyang-300mm-f6-3-ed-umc-cs-reflex"
+    )
+    result = extract_chart(
+        chart_path,
+        SAMYANG_4COLOR_ALL_SOLID,
+        pb,
+        image_height_mm=image_height_mm,
+    )
+    # Every cell on every 30-lp/mm curve should now carry a value —
+    # the polyline must render continuously from frac 0 to frac 1.
+    for i, reading in enumerate(result.readings):
+        for field in ("freq30S", "freq30M"):
+            v = reading.samples.get(field)
+            assert v is not None, (
+                f"{field} at frac {i / 10:.1f}: expected a value "
+                f"(ADR-069 anchor or ADR-066 center), got None — "
+                f"polyline will break (#1277)"
+            )
+            assert 0.90 <= v <= 1.00, (
+                f"{field} at frac {i / 10:.1f}: expected MTF in "
+                f"[0.90, 1.00] (coincident with 10 curve at chart "
+                f"top), got {v:.3f}"
+            )
+    # ADR-066 still owns the center cell.
+    assert result.readings[0].samples["freq30S"] == pytest.approx(1.0), (
+        "freq30S at frac=0.0 expected 1.0 (ADR-066 center anchor), got "
+        f"{result.readings[0].samples['freq30S']} — ADR-069 must skip "
+        "frac=0.0 so the stricter physical anchor wins"
+    )
+    assert result.readings[0].samples["freq30M"] == pytest.approx(1.0), (
+        "freq30M at frac=0.0 expected 1.0 (ADR-066 center anchor), got "
+        f"{result.readings[0].samples['freq30M']}"
+    )
+    # ADR-069 should have filled multiple None cells (frac 0.1..0.5+).
+    assert result.coincident_anchor_count.get("freq30S", 0) >= 5, (
+        "freq30S coincident_anchor_count: expected at least 5 None "
+        "cells filled (frac 0.1..0.5), got "
+        f"{result.coincident_anchor_count.get('freq30S', 0)}"
+    )
+
+
 def test_samyang_10mm_stopped_anchors_30S_30M_at_frac_zero() -> None:
     """#1267 regression — on the samyang-10mm-f2-8-ed-as-ncs-cs stopped
     panel, the dark-grey 30S curve sits physically underneath the
