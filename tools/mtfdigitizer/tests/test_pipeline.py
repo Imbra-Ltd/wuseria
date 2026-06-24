@@ -868,8 +868,9 @@ def test_coincident_anchor_handles_meridional() -> None:
 
 
 def test_center_anchor_fires_when_both_sides_none() -> None:
-    """#1267 — when BOTH freq{N}S[0] and freq{N}M[0] are None, anchor
-    both to MTF=1.0 and report the counts."""
+    """#1267 — when BOTH freq{N}S[0] and freq{N}M[0] are None AND no
+    lower-freq same-direction value is available, anchor both to
+    MTF=1.0 and report the counts."""
     from mtfdigitizer.pipeline.pipeline import _apply_center_symmetry
 
     samples = {
@@ -882,6 +883,100 @@ def test_center_anchor_fires_when_both_sides_none() -> None:
     # Other indices must remain untouched — the rule is frac=0.0 only.
     assert out["freq30S"][1:] == (0.95, 0.90)
     assert out["freq30M"][1:] == (0.93, 0.88)
+    assert anchor["freq30S"] == 1 and anchor["freq30M"] == 1
+
+
+def test_center_anchor_uses_lo_when_available() -> None:
+    """ADR-072 (#1279) — when both freq{hi}{S}[0] and freq{hi}{M}[0]
+    are None at center BUT same-direction lower-freq cells carry
+    values, anchor from those values to preserve the physical
+    invariant freq{hi}{D}[0] <= freq{lo}{D}[0].
+
+    Replays viltrox-75 f/1.2: freq30 buried at center, freq10
+    extracted at 0.99 — anchor freq30 to 0.99, not 1.0."""
+    from mtfdigitizer.pipeline.pipeline import _apply_center_symmetry
+
+    samples = {
+        "freq10S": (0.99, 0.99, 0.98),
+        "freq10M": (0.99, 0.94, 0.95),
+        "freq30S": (None, None, None),
+        "freq30M": (None, None, None),
+    }
+    out, anchor = _apply_center_symmetry(samples)
+    # freq10S/M: case 1 (both extracted) — S wins, M overridden.
+    assert out["freq10S"][0] == pytest.approx(0.99)
+    assert out["freq10M"][0] == pytest.approx(0.99)
+    # freq30S/M: ADR-072 anchors from freq10 instead of 1.0.
+    assert out["freq30S"][0] == pytest.approx(0.99)
+    assert out["freq30M"][0] == pytest.approx(0.99)
+    # Anchor counter records only the both-None fills (freq30 pair).
+    assert anchor["freq30S"] == 1 and anchor["freq30M"] == 1
+    assert anchor["freq10S"] == 0 and anchor["freq10M"] == 0
+
+
+def test_center_anchor_cross_direction_fallback() -> None:
+    """ADR-072 — when same-direction lo is None but cross-direction lo
+    has a value, fall back to cross-direction. S=M at the optical axis
+    by B4, so either direction is a valid anchor."""
+    from mtfdigitizer.pipeline.pipeline import _apply_center_symmetry
+
+    samples = {
+        # freq10M[0]=None but freq10S[0]=0.97 is available.
+        "freq10S": (0.97, 0.95, 0.93),
+        "freq10M": (None, 0.94, 0.92),
+        "freq30S": (None, None, None),
+        "freq30M": (None, None, None),
+    }
+    out, anchor = _apply_center_symmetry(samples)
+    # freq10: case 2 (M None, S present) — copy S to M.
+    assert out["freq10M"][0] == pytest.approx(0.97)
+    # freq30S: same-direction lo (freq10S=0.97) exists, use it.
+    assert out["freq30S"][0] == pytest.approx(0.97)
+    # freq30M: same-direction lo (freq10M) was None going in but case 2
+    # filled it with 0.97 before freq30 iteration if order permits.
+    # Order-independent fallback chain: when same-dir is None at lookup
+    # time, cross-dir gives 0.97. Either path yields 0.97.
+    assert out["freq30M"][0] == pytest.approx(0.97)
+    assert anchor["freq30S"] == 1 and anchor["freq30M"] == 1
+
+
+def test_center_anchor_falls_back_to_1_when_no_lower_freq() -> None:
+    """ADR-072 — single-frequency chart (only freq30 present), both
+    None at center, no lower freq to anchor from: fall back to 1.0.
+    Preserves ADR-066 behaviour for charts without a freq10."""
+    from mtfdigitizer.pipeline.pipeline import _apply_center_symmetry
+
+    samples = {
+        "freq30S": (None, 0.85, 0.80),
+        "freq30M": (None, 0.83, 0.78),
+    }
+    out, anchor = _apply_center_symmetry(samples)
+    assert out["freq30S"][0] == pytest.approx(1.0)
+    assert out["freq30M"][0] == pytest.approx(1.0)
+    assert anchor["freq30S"] == 1 and anchor["freq30M"] == 1
+
+
+def test_center_anchor_chains_through_anchored_lo() -> None:
+    """ADR-072 — when freq10 itself enters _apply_center_symmetry with
+    both None, it anchors to 1.0 (no lower freq). When freq30 iterates
+    next, freq10 is now 1.0 — so freq30 anchors to 1.0 too. Replays
+    samyang-af-12mm stopped (10S+10M None AND 30S+30M None)."""
+    from mtfdigitizer.pipeline.pipeline import _apply_center_symmetry
+
+    samples = {
+        "freq10S": (None, 0.99, 0.98),
+        "freq10M": (None, 0.99, 0.96),
+        "freq30S": (None, 0.95, 0.85),
+        "freq30M": (None, 0.93, 0.83),
+    }
+    out, anchor = _apply_center_symmetry(samples)
+    # freq10 anchors to 1.0 (no lo).
+    assert out["freq10S"][0] == pytest.approx(1.0)
+    assert out["freq10M"][0] == pytest.approx(1.0)
+    # freq30 sees freq10=1.0 and inherits it.
+    assert out["freq30S"][0] == pytest.approx(1.0)
+    assert out["freq30M"][0] == pytest.approx(1.0)
+    assert anchor["freq10S"] == 1 and anchor["freq10M"] == 1
     assert anchor["freq30S"] == 1 and anchor["freq30M"] == 1
 
 

@@ -482,16 +482,35 @@ def _apply_center_symmetry(
        less susceptible to drift, and almost always the cleaner
        anchor.
     2. One side is None — copy the other side over.
-    3. Both are None — anchor both to MTF=1.0 (#1267). At a
-       diffraction-free chart's optical axis the curves must start
-       at 1.0 by definition; this fires only when every prior stage
-       (direct extraction, sister fallback, intra-curve interp) has
-       failed to produce a value on either side of a frequency pair,
-       and only at frac=0.0 (the right edge has no equivalent
-       physical guarantee). The Samyang stopped panel triggers this
-       when the dark-grey 30S sits hidden under the saturated red
-       10S for the first ~25% of the field and both 30S and 30M
-       skeletons miss the leftmost columns.
+    3. Both are None — anchor from the closest same-direction lower
+       frequency if available, else MTF=1.0.
+
+       ADR-066 (#1267) introduced the 1.0 anchor for this case. The
+       diffraction-free chart's optical axis MTF is 1.0 by definition,
+       and on most affected lenses (samyang-10mm stopped, samyang-
+       af-12mm, etc.) the lower-freq curve also sits at chart top so
+       1.0 is correct.
+
+       ADR-072 (#1279) refines the rule: when the same-direction
+       lower-freq curve has a value at center (e.g. freq10S extracts
+       at 0.99 on viltrox-75 f/1.2 where the chart artist drew
+       freq30 below chart top), copy from it instead. This preserves
+       the physical invariant `freq{hi}{D}[0] <= freq{lo}{D}[0]`
+       which the 1.0 constant violates whenever lo extracts below
+       1.0. The fallback chain is:
+         freq{hi}{S}[0] := freq{lo}{S}[0]
+                     or freq{lo}{M}[0]   (cross-direction copy at the axis)
+                     or 1.0              (no lower frequency available)
+       and symmetric for the M field. ADR-069's pair gate veto on
+       multi-cell coincident-top copy is intentionally local to that
+       pass — at the single optical-axis cell the `hi <= lo`
+       invariant holds independent of gate verdicts.
+
+       Fires only at frac=0.0 (the right edge has no equivalent
+       physical guarantee) and only when every prior stage (direct
+       extraction, sister fallback, intra-curve interp, coincident-
+       top anchor) failed to produce a value on either side of a
+       frequency pair.
 
     Pairs up every `freq{N}S`/`freq{N}M` present in `samples` —
     per-frequency rule applies to every chart family (ADR-042).
@@ -502,6 +521,26 @@ def _apply_center_symmetry(
     """
     out = {field: list(values) for field, values in samples.items()}
     anchor_count: dict[str, int] = {field: 0 for field in samples}
+
+    # Pre-compute the closest-lower-frequency map so each "both None"
+    # case is O(1). Iterates only freq{N}{S|M} fields with integer N.
+    distinct_freqs: list[int] = []
+    for field in samples:
+        if not field.startswith("freq"):
+            continue
+        if field[-1] not in ("S", "M"):
+            continue
+        freq_str = field[4:-1]
+        if freq_str.isdigit():
+            n = int(freq_str)
+            if n not in distinct_freqs:
+                distinct_freqs.append(n)
+    distinct_freqs.sort()
+
+    def _closest_lower(freq_n: int) -> int | None:
+        candidates = [f for f in distinct_freqs if f < freq_n]
+        return max(candidates) if candidates else None
+
     # Collect every S field present and look for the matching M.
     for s_field in [f for f in samples if f.endswith("S") and f.startswith("freq")]:
         m_field = s_field[:-1] + "M"
@@ -510,8 +549,25 @@ def _apply_center_symmetry(
         s_val = out[s_field][0]
         m_val = out[m_field][0]
         if s_val is None and m_val is None:
-            out[s_field][0] = _CENTER_AXIS_MTF
-            out[m_field][0] = _CENTER_AXIS_MTF
+            freq_str = s_field[4:-1]
+            lo_freq = _closest_lower(int(freq_str)) if freq_str.isdigit() else None
+            lo_s = out[f"freq{lo_freq}S"][0] if lo_freq is not None else None
+            lo_m = out[f"freq{lo_freq}M"][0] if lo_freq is not None else None
+            # Fallback chain per direction: same-direction lo -> cross-
+            # direction lo (S=M at the axis by B4) -> 1.0 physical
+            # constant. The ordering is order-independent across freq
+            # pairs because a prior iteration's anchor leaves a value
+            # in `out` that a later iteration can read as its lo.
+            out[s_field][0] = (
+                lo_s if lo_s is not None
+                else lo_m if lo_m is not None
+                else _CENTER_AXIS_MTF
+            )
+            out[m_field][0] = (
+                lo_m if lo_m is not None
+                else lo_s if lo_s is not None
+                else _CENTER_AXIS_MTF
+            )
             anchor_count[s_field] += 1
             anchor_count[m_field] += 1
             continue
