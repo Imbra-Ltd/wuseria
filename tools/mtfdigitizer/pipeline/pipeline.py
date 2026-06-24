@@ -321,31 +321,42 @@ def _apply_coincident_top_anchor(
     samples: dict[str, tuple[float | None, ...]],
     sister_filled: dict[str, tuple[bool, ...]],
 ) -> tuple[dict[str, tuple[float | None, ...]], dict[str, int]]:
-    """Override sister-filled high-freq cells with the low-freq value
-    when the low-freq curve is pinned at MTF >= 0.95 (#1269).
+    """Override sister-filled or None high-freq cells with the low-freq
+    value when the low-freq curve is pinned at MTF >= 0.90.
 
-    Chart families that pack multiple frequencies into one panel often
-    draw the higher-frequency curve coincident with the lower-frequency
-    curve while both are at MTF ~1.0 — the strokes overlap into a
-    single visible line. Sister fallback (S~=M of the same frequency)
-    breaks here when one frequency's S curve is masked by the other
-    frequency's S curve: the higher-freq skeleton is empty across the
-    coincident region, sister fallback fires using the diverging M
-    sister, and the higher-freq cell inherits a value far from its
-    true position.
+    ADR-068 (#1269): the sister-filled case. Chart families that pack
+    multiple frequencies into one panel often draw the higher-frequency
+    curve coincident with the lower-frequency curve while both are at
+    MTF ~1.0 — the strokes overlap into a single visible line. Sister
+    fallback (S~=M of the same frequency) breaks here when one
+    frequency's S curve is masked by the other frequency's S curve: the
+    higher-freq skeleton is empty across the coincident region, sister
+    fallback fires using the diverging M sister, and the higher-freq
+    cell inherits a value far from its true position.
 
-    The fix: when a higher-freq S (or M) cell was sister-filled AND
-    the same-direction lower-freq cell at the same frac reads MTF
-    >= `_COINCIDENT_ANCHOR_THRESHOLD`, override with the lower-freq
+    ADR-069 (#1277): the None case. On charts where BOTH S and M of
+    the higher frequency are buried under the lower-freq strokes (e.g.
+    samyang-300mm-f6-3-ed-umc-cs-reflex max+stopped panels, with all
+    four curves stacked at MTF~1.0 across the full field), sister
+    fallback cannot fire at all — both sisters are empty — so the cells
+    stay None and break the polyline in the provenance SVG. Extending
+    the anchor to fire on None cells fills those gaps from the same
+    same-direction lower-freq curve. The pair gate below already
+    isolates the chart-top regime correctly and protects pairs where
+    hi and lo are genuinely independent (e.g. samyang-85mm).
+
+    The fix: when a higher-freq S (or M) cell was sister-filled OR is
+    None, AND the same-direction lower-freq cell at the same frac reads
+    MTF >= `_COINCIDENT_ANCHOR_THRESHOLD`, override with the lower-freq
     value. The lower-freq curve cannot exceed the higher-freq by
     physics; when the lower curve is at chart top, the higher curve
     must also be at chart top (or just below); copying the lower-
     freq value is the best available anchor.
 
     Runs AFTER sister fallback + intra-curve interpolation, BEFORE
-    center-symmetry. Only fires on cells flagged as sister-filled by
-    the original sister-fallback pass; cells already-interpolated by
-    intra-interp keep their interp values.
+    center-symmetry. Cells the extractor or intra-interp filled with
+    real values keep their values; only sister-filled and None cells
+    are eligible for override.
 
     Returns ``(samples, override_count_by_field)``.
     """
@@ -426,7 +437,24 @@ def _apply_coincident_top_anchor(
             if min(clean_deltas) > _COINCIDENT_ANCHOR_MAX_PAIR_DELTA:
                 continue  # curves never touch — skip anchor for this pair
         for i in range(len(hi_values)):
-            if i >= len(fills) or not fills[i]:
+            # Eligible: sister-filled (ADR-068) OR None (ADR-069).
+            # Cells the extractor or intra-interp produced real values
+            # for keep their values.
+            #
+            # frac=0.0 is NOT skipped: when freq{lo}{D} at center reads
+            # below 1.0 due to extraction noise (e.g. 10S=0.985 on a
+            # true-1.0 chart-top curve), anchoring freq{hi}{D} to that
+            # noisy value is more honest than ADR-066's 1.0 physical
+            # constant, because lo >= hi is a strict physical invariant
+            # — hi cannot exceed lo regardless of physics at the axis.
+            # Letting ADR-066 fire instead would set hi=1.0 while
+            # lo=0.985, producing hi>lo (physically impossible) AND a
+            # visible upward kink between center and frac=0.1 in the
+            # rendered SVG. ADR-069 wins here; ADR-066 still fires for
+            # cells the pair gate or threshold rules out.
+            sister_eligible = i < len(fills) and fills[i]
+            none_eligible = hi_values[i] is None
+            if not (sister_eligible or none_eligible):
                 continue
             lo_v = lo_values[i]
             if lo_v is None or lo_v < _COINCIDENT_ANCHOR_THRESHOLD:
