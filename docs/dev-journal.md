@@ -10327,3 +10327,82 @@ Theme: continue fixing Samyang anchors. Target: `samyang-300mm-f6-3-ed-umc-cs-re
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 181 — Samyang 85mm M-curve snake diagnosis
+
+Date: 2026-06-24 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: continue Samyang analysis. User flagged visible drift on the rendered `samyang-85mm-f1-4-as-if-umc-mtf-max.svg` overlay: gold dashed (freq10M) diverges from pink M10 starting at ~15mm; blue dashed (freq30M) jumps to dark-grey S30 at ~6.5-7mm, follows the S30 dip-and-recover, restores at 15-19mm, diverges at the corner. Investigated, found a class of shape errors the calibration framework is mathematically blind to, documented the limitation, and opened a spike issue.
+
+#### PRs
+
+- **#1283 merged** (`docs(mtf): flag samyang-85mm M-curve shape limitation (#1282)`) — squash `91f98a4`. Extends the `samyang-4color-all-solid` profile docstring in `tools/mtfdigitizer/profiles/declared.py` to acknowledge that the 85mm Tier 1 anchor's M-curves are sister-influenced where S/M visually separate, even though all 22 paired cells stay within ±0.05. Parallel "Known extraction limitation" note added to `docs/optical-specs/samyang-85mm-f1-4-as-if-umc/analysis.md` so the limitation is discoverable from both the profile-author and lens-analyst entry points. No behavior change. 2 files.
+
+#### Issues opened / closed
+
+- **#1282 opened** (P3, v0.8.0, spike) — "Calibration at 11 frac points is shape-blind: Samyang 85mm M-curve snake invisible to ±0.05 gate". Body documents the mechanism, lists four candidate fix paths (tighten halo subtraction / densify SAMPLE_FRACTIONS / side-channel shape probe / accept), and pins the decision in an ADR as acceptance criterion.
+- Epic #932 checklist updated with a one-line pointer to #1282 under "Remaining".
+- Untracked `samyang-85mm-f1-4-as-if-umc-mtf.svg` from prior session removed at start-of-session per user request (orphan from svg.py multi-view fan-out bug, flagged in S180 follow-ups).
+
+#### Key technical findings
+
+- **The snake is a halo-subtraction over-correction.** ADR-059 (dilate-and-subtract red mask from pink to defeat AA halos) and ADR-062 (same mechanism for dark-grey→light-grey) over-erase legitimate M pixels on samyang-85mm specifically because the S and M curves sit close in y for ~half the field. Where M skeleton goes blank, the per-hue Viterbi snaps to the nearest available ridge — which is the sister S — and sister fallback then copies S values into M cells. The extracted M _contour_ mimics S's shape; magnitudes happen to land close because S/M are numerically similar in those frac slots.
+- **The profile docstring's "stays within tolerance" claim was true but misleading.** The original comment said "samyang-85mm... stays within tolerance because [its] 30S curve stays above 0.85" — measured cell-by-cell, that claim holds (max Δ on freq30M is 0.055). But 30S actually dips to ~0.57 around frac 0.5-0.6, well INSIDE the 30M band's vertical overlap. The cells passed the gate by accident, not by design. The PR rewrote the claim to make this explicit.
+- **Calibration at 11-point SAMPLE_FRACTIONS is mathematically shape-blind.** Densifying EYE GT within the existing 11 frac points cannot surface the issue: the extractor only computes EX at those 11 fractions (per ADR-038 §3), so unpaired EYE samples have nothing to compare against. Real fixes require either a denser SAMPLE_FRACTIONS (project-wide blast radius — every Tier 1 needs re-EYE-read), a side-channel shape probe (new GT machinery), or addressing the halo subtraction itself (lowest blast radius, highest engineering risk). #1282 is the spike to decide which.
+- **#1279 is a separate concern.** Cross-checked: samyang-85mm extracts cleanly at frac=0.0 (Δ ≤ 0.009 on every curve), so it does not trigger ADR-066's "both None → 1.0" overshoot. The two issues share a family (M dominated by S sister where hue is weak) but live in different code paths (center anchor vs mid-curve halo subtraction) and surface via different signals (Δ > 0.05 vs Δ < 0.05 with wrong shape).
+- **300mm reflex hides the bug.** The other Tier 1 anchor on `samyang-4color-all-solid` has all curves pinned at ~1.0, so S/M are visually identical; sister-fill produces correct values by accident. 85mm is the only Tier 1 lens for this profile where S/M visibly separate in the mid-frac region, which is exactly where the snake manifests. Pre-S181 the calibration suite had no visibility into this class of error.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/profiles/declared.py`** — `SAMYANG_4COLOR_ALL_SOLID` profile docstring extended with a "KNOWN SHAPE LIMITATION (#1282)" block explicitly retracting the earlier "stays within tolerance" framing and naming the mechanism (#1283).
+- **`docs/optical-specs/samyang-85mm-f1-4-as-if-umc/analysis.md`** — appended "Known extraction limitation (#1282)" section so the limitation is reachable from the lens entry point, not just the profile docstring (#1283).
+- **Epic #932 body** — appended `[ ] #1282` bullet under "Remaining" via `gh issue edit`.
+
+#### Verification
+
+- **22 mtfdigitizer profile tests pass** (`py -m pytest mtfdigitizer/tests/test_profiles.py -q`).
+- `npm run validate` not run — change is in `tools/` Python only, outside the front-end gate per CLAUDE.md §1.2.
+- **CI** — #1283 cleared CodeQL + gate + analyze + gitleaks + links + changes; build/lighthouse correctly skipped (no front-end source changes).
+- **No regression** — change is comment-block-only in `declared.py` and content-only in `analysis.md`.
+
+#### Key decisions (this session)
+
+- **Open a spike, do not invent a fix.** The user asked to "go with option C" (densify EYE GT) but investigation revealed the 11-point SAMPLE_FRACTIONS constraint blocks that route. Rather than scope-creep into a SAMPLE_FRACTIONS rewrite mid-session, the right call was to document the limitation honestly, file the architectural decision as a spike, and let the user pick the path next session. Lower-blast-radius, preserves the user's decision authority.
+- **Document in two places, not one.** The docstring lives where a profile author would read it; analysis.md lives where a lens-data consumer would read it. Both audiences should encounter the limitation without having to know to look at the other file. Two short notes, not one long one in CLAUDE.md.
+- **No auto-merge.** PR #1283 merged with explicit user permission per `feedback_ask_before_automerge`.
+- **#1283 is docs-only, the fix is deferred.** This session intentionally shipped no behavior change. The architectural decision belongs in #1282's ADR, which will land in a future session after probe-script evidence informs the tradeoff.
+
+#### Process patterns observed this session
+
+- **Visual gate beats numerical gate, again.** Same lesson as S180: the calibration math passed (all Δ within ±0.05) but the user could see the dashed line snaking onto the wrong curve in the overlay. Numerical gates lock magnitudes, not contours; visual review locks contours. When both are available, both should run.
+- **Constraints invalidate plans.** Three minutes into "implement option C" the SAMPLE_FRACTIONS constraint surfaced and obsoleted the plan. The right move was to pause, re-explain the constraint, surface the new options (C1/C2/C3), and let the user re-decide. Pushing on with C1 (sharpen EYE values at existing frac) would have looked like progress but produced no signal.
+- **Cross-checking related issues prevents over-fitting.** Before assuming #1279 and the Samyang snake were the same bug, ran the diagnostic log against #1279's criteria (frac=0.0 ≥ 0.07 Δ). Samyang's center cells were Δ ≤ 0.009 — clearly a different code path. Saved a wrong-issue close and a wrong-scope PR.
+- **"Stays within tolerance because X" is a smell to verify.** The original docstring claim about 85mm's 30S staying above 0.85 was easy to retract once tested against the actual log values (30S dips to 0.57). Comments that explain _why_ something is safe should be cross-checked against the data the next time the code is read; otherwise they're a confident lie.
+
+#### Follow-ups for next session (S182)
+
+- **#1282 (P3, v0.8.0, spike)** — Pick the fix path. Lowest-blast-radius candidate: probe-script the per-pixel V-channel test for halo subtraction (tighten ADR-059/062) against samyang-85mm overlay. If shape recovers without regressing 300mm reflex or any other style-family, that's the ADR. Otherwise fall back to side-channel shape probe or accept-and-document. Probe before ADR.
+- **#1279 (P3, v0.8.0, bug)** — ADR-066 center-anchor overshoot. Carried from S180. Suggested fix in issue body.
+- **Carried forward (still open, all P2/P3)**: #1265 duplicate MTF PNGs, #1134 confidence badge, #1110 per-stage diagnostic bundle, #950 auto-detect plot box, #791 Carl Zeiss next brand.
+- **svg.py multi-view fan-out** — orphan `samyang-85mm-f1-4-as-if-umc-mtf.svg` reappeared this session (deleted at start). Same bug as S180 noted (no issue yet, low priority).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, median |d| 0.0071, p95 |d| **0.0458**, max |d| 0.1217, in-band **96.1%** (all unchanged — no GT or extractor edits).
+- **422 mtfdigitizer pytest pass** (unchanged). **223 vitest pass** (unchanged).
+- **69 ADRs** (unchanged).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: #1265 + #1134 + #1110 + #1159 + #950 + #1279 + **#1282** (new) + epics #790, #932 + remaining P3 brand-digitization tasks.
+- **0 open PRs** at wrap-up.
+- `mtf-readings.ts` — unchanged.
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
