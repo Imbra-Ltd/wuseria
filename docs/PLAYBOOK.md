@@ -242,6 +242,18 @@ run that changes the numbers materially. Reference the calibration entries
 when discussing the ADR-038 offset tolerance band or the 0.75 render-match
 threshold.
 
+**Shape-error spike intake (ADR-071 prevention).** Any spike that describes
+a shape error on a reference-set lens (curves tracking each other,
+dip-and-recover, sister-fill misfires) MUST run
+`py -m mtfdigitizer.calibrate --write-readings` and verify the diagnosis
+against the per-frac `GT | EX | Δ` grid in
+`tools/mtfdigitizer/referenceset/readings/<slug>.md` BEFORE the spike is
+treated as actionable. Visual inspection of the overlay PNG is a useful
+diagnostic but not authoritative — two legitimately near-coincident GT
+curves can look like a tracking error to the eye. The readings dump is the
+authoritative signal and would have refuted spike #1282 at intake. See
+ADR-071 for the worked example and post-mortem.
+
 **Run the MTF digitizer production extractor (Tier 2 per ADR-041):**
 
 ```bash
