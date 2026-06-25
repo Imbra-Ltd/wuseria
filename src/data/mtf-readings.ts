@@ -5785,7 +5785,10 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.96, M: 0.98 },
               20: { S: 0.91, M: 0.94 },
-              40: { S: 0.96, M: 1 },
+              // 40 M: eye-read override 0.95 (extractor pins to plateau
+              // ceiling 1.0; chart shows M40 dipping below S40). See
+              // docs/optical-specs/fujifilm-gf-55mm-f1-7-r-wr/eye-read.md.
+              40: { S: 0.96, M: 0.95 },
             },
           },
           {
@@ -5793,7 +5796,10 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.93, M: 0.98 },
               20: { S: 0.81, M: 0.94 },
-              40: { S: 0.83, M: 1 },
+              // 40 M: eye-read override 0.92 (extractor pins to plateau
+              // ceiling 1.0; chart shows M40 dipping). See
+              // docs/optical-specs/fujifilm-gf-55mm-f1-7-r-wr/eye-read.md.
+              40: { S: 0.83, M: 0.92 },
             },
           },
           {
@@ -13586,7 +13592,6 @@ const mtfReadings: Record<string, MtfData> = {
               // ridge tracker still locks onto solid S30 at the right
               // corner crossing despite #1214 fixing pos 14). See
               // docs/optical-specs/ttartisan-af-35mm-f1-8/eye-read.md.
-              // WARN: emit_ttartisan_tier2 --write will overwrite this.
               30: { S: 0.31, M: 0.58 },
             },
           },
