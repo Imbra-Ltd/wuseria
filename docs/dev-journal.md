@@ -10741,3 +10741,85 @@ Theme: clear #1303. Run the Fuji bulk refresh under the `--check` gate shipped i
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 186 — Wire tools/ pytest into CI + Prettier/emit format reconciliation
+
+Date: 2026-06-25 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: clear #1299. Wire the `tools/` pytest suite into CI so the `--check` gates shipped in S184–S185 actually fire on PRs. One PR merged; one latent bug fixed in the same PR.
+
+#### PRs
+
+- **#1308 merged** (`feat(ci): run tools/ pytest on PRs that touch tools/** (#1299)`) — squash `8ac3e49`. New `pytest` job in `.github/workflows/ci.yml` triggered by `dorny/paths-filter` on `tools/**` or `.github/workflows/**` changes. Installs Python 3.13, runs `python -m pytest -n auto` from `tools/` (~1m47s on CI with xdist vs ~5min sequential). Wired into the existing `gate` aggregator so pytest failures block PR merge alongside build/lighthouse. New `tools/requirements.txt` pins mtfdigitizer's image-processing deps (opencv-python, numpy, scikit-image, Pillow) plus pytest + pytest-xdist to major-version floors. ONBOARDING §2 and PLAYBOOK §2.8 updated to point at the new file. Latent S185 Prettier/emit format conflict found and fixed in the same PR: new `format_source_line()` helper in `mtfdigitizer/emit.py` matches Prettier's `printWidth=80` wrap (single line ≤80 chars, two-line wrap otherwise); both Fuji and TTartisan emit scripts now use it. 4 boundary tests added. 8 files, +131/-14.
+
+#### Issues opened / closed
+
+- **#1299 closed** by #1308 — wire tools/ pytest into CI. PR didn't auto-close because the title used the `(#1299)` parenthetical form rather than a GitHub closing keyword; closed manually with a summary comment.
+
+#### Key technical findings
+
+- **The S185 hard-assertion flip was silently broken on commit.** When #1306 committed Fuji entries, lint-staged's Prettier pass wrapped any `    source: "<url>",` lines longer than 80 chars onto two lines. The emit script always emitted single-line. So the committed file drifted from the extractor's output the instant lint-staged ran. Local pytest at the end of S185 reported the test passing because the `--check` call happened _before_ the lint-staged rewrite. Verified post-merge that `--check` was failing on the committed file — would have failed the hard-assertion test on the next pytest run, but there was no CI pytest job to catch it. This PR's gate-wiring would have caught it immediately; instead we both caught it and fixed it in the same PR.
+- **`format_source_line()` codifies the formatter-script contract.** The fix isn't "match Prettier's specific wrap" — it's "the script's output must be a fixed point under Prettier." Now any future emit-script output that would trigger Prettier reformatting (long URLs, eventually any other field) goes through a single helper that matches Prettier's rule. Single point of truth for "what does Prettier do to this construct."
+- **Path-filtered pytest CI matches the project's per-language gate scope.** `npm run validate` already path-filters via `code:` outputs (won't run on pure docs PRs); the new `pytest` job uses the same `dorny/paths-filter` pattern with `tools:` outputs. Symmetric design — both layers gate only on PRs that could affect them. No CI burn on PRs touching only src/ or docs/.
+- **CI runtime: 1m47s wall-clock for 706 tests + 1 xfailed.** xdist parallelization on ubuntu-latest's 2-core runner provides ~3x speedup vs sequential. Acceptable for a "blocks PR merge" gate; comparable to the existing build (1m25s) and lighthouse (1m28s) jobs.
+- **The new pytest job's first run was self-validating.** PR #1308 touches `tools/**` AND `.github/workflows/**`, so the new pytest job ran on its own PR. If the workflow YAML had been malformed, or the `tools/requirements.txt` pins didn't install cleanly, or the `python -m pytest -n auto` invocation didn't work in the CI environment, all three failures would have surfaced on the merge PR rather than on some innocent downstream PR. Same pattern as #1294.
+
+#### Key changes
+
+- **`.github/workflows/ci.yml`** — new `pytest` job + extended `gate` aggregator + new `tools:` path filter (#1308).
+- **`tools/requirements.txt`** — new file. opencv-python, numpy, scikit-image, Pillow, pytest, pytest-xdist pinned to major-version floors (#1308).
+- **`tools/mtfdigitizer/emit.py`** — new `format_source_line()` helper matching Prettier's wrap rule; `_format_entry` now uses it (#1308).
+- **`tools/mtfdigitizer/scripts/emit_fuji_tier2.py`** and **`tools/mtfdigitizer/scripts/emit_ttartisan_tier2.py`** — import + use `format_source_line` instead of f-string emission (#1308).
+- **`tools/mtfdigitizer/tests/test_emit.py`** — 4 boundary tests for `format_source_line` (single-line under 80, wrap over 80, exactly-80 stays single, 81-wraps) (#1308).
+- **`docs/PLAYBOOK.md`** — §2.8 mtfdigitizer install line points at `tools/requirements.txt` (#1308).
+- **`docs/ONBOARDING.md`** — §2 first-time setup split: `cd tools && pip install -r requirements.txt` for the test-running deps, separate optional line for the pagefetch browser tiers (#1308).
+
+#### Verification
+
+- **706 mtfdigitizer pytest pass + 1 xfailed** (was 701 + 2 xfailed; +4 `format_source_line` tests, +1 hard-passing test that was xfailing). 2:00 wall-clock with xdist locally.
+- **224 vitest pass** (unchanged).
+- `npm run validate` clean.
+- **CI: 9/9 gates green on #1308**, including the new `pytest` job at 1m47s.
+- `cd tools && py -m mtfdigitizer.scripts.emit_fuji_tier2 --check` after #1308 → exit 0.
+- `cd tools && py -m mtfdigitizer.scripts.emit_ttartisan_tier2 --check` after #1308 → exit 1 by 1 cell (af-35 override per #1301; unchanged).
+
+#### Key decisions (this session)
+
+- **Fix emit format to match Prettier, not the other way around.** Three options: fix the script to emit Prettier-shaped output, exclude `mtf-readings.ts` from Prettier, or revert S185's hard-assertion flip. Picked the script fix because (a) Prettier on the data file is a real safety net we don't want to lose, (b) reverting the flip would have silently re-introduced the gate gap, (c) the fix is small (~20 lines + tests) and gives a clear formatter-script contract via `format_source_line()`. The principle: "the generated artifact must be a fixed point under whatever runs after it" (Prettier, in this case).
+- **Pin to major-version floors, not exact versions.** `tools/requirements.txt` uses `>=4,<5` shape. Exact pins would have been more reproducible but require manual upgrades; floors trust SemVer and break loudly when an upstream actually ships incompatible. Trade-off acceptable for a tool-side requirements file (not a deploy artifact).
+- **Self-validating PR.** Chose to land the new pytest CI job in a PR that itself triggers the job. Risk: if the workflow's malformed, the merge PR fails. Reward: the first run validates the wiring on the same PR that adds it, not on an unsuspecting downstream PR.
+- **Closed #1299 manually.** PR title used `(#1299)` parenthetical form rather than `Closes #1299`. GitHub didn't auto-close; closed with a summary comment instead.
+
+#### Process patterns observed this session
+
+- **Gates without enforcement are documentation, not gates.** The `--check` gates shipped in #1300 (S184) had been "working" for two sessions — locally and in maintainer pytest — but they hadn't actually prevented any merge. S185 demonstrated this concretely: the hard-assertion flip looked successful but was silently broken by Prettier the moment lint-staged ran. CI enforcement is what makes a gate a gate.
+- **Formatter and generator must agree.** When tools/generator output flows through a formatter on commit, the formatter is the authority on shape. Either the generator matches the formatter, or the formatter is told to skip the file. There's no middle ground: every time they disagree, the generator's `--check` reports false drift forever. `format_source_line()` is the contract that resolves this for `mtf-readings.ts`.
+- **Self-validating PRs are cheap insurance.** When wiring new CI gates, structure the change so the gate runs on the PR that introduces it. Catches workflow syntax errors, missing deps, environment mismatches in the diff that has the context to fix them, not in some innocent downstream PR.
+
+#### Follow-ups for next session (S187)
+
+- **#1305** (P3, Backlog, bug) — GF 55 freq40 M plateau-ceiling mistrack. If a second-lens-with-overrides argument escalates (now we have af-35 + GF 55 as candidates), this is a natural pair with #1301 fix-path-2 (per-cell override-respecting splice).
+- **#1301** (P3, Backlog, bug) — af-35 pos 12.6 extractor fix or override-respecting splice.
+- **Other open v0.8.0 items**: #1110 per-stage diagnostic bundle, #1134 confidence badge, #950 auto-detect plot box, #791 Carl Zeiss next brand.
+- **Possible refactor** (no issue yet): `_splice_entries` is duplicated in `emit_fuji_tier2.py` and `emit_ttartisan_tier2.py`. The splice patterns differ enough to justify mirror-not-refactor today (S184 decision), but as we add more brand emit scripts the duplication will grow. Worth considering an `_emit_splice.py` shared module if a third brand emit script lands.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, p95 |d| **0.0458**, in-band **96.1%** (unchanged — Tier 2-only / CI-only changes don't move aggregate metrics).
+- **706 mtfdigitizer pytest pass + 1 xfailed** (was 701 + 2 xfailed). **224 vitest pass** (unchanged).
+- **72 ADRs** (unchanged — S186 made no architectural decisions; `format_source_line()` is a small helper).
+- 8 declared MTF profiles.
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + #791**. #1296 + #1303 + #1299 closed. Backlog follow-ups: #1301, #1305.
+- **0 open PRs** at wrap-up (after this journal PR merges).
+- `mtf-readings.ts` — unchanged from S185 close; both emit scripts now produce Prettier-fixed-point output.
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
