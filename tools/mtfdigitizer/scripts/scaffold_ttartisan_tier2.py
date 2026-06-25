@@ -54,7 +54,7 @@ OPTICAL_SPECS_DIR = REPO_ROOT / "docs" / "optical-specs"
 # each chart in docs/optical-specs/<slug>/<slug>-mtf.png.
 _APERTURES_BY_SLUG: dict[str, tuple[str, str]] = {
     "ttartisan-100mm-f2-8-macro-2x-gfx": ("f/2.8", "f/8"),
-    "ttartisan-100mm-f2-8-macro-2x-tilt-shift": ("f/2.8", "f/8"),
+    "ttartisan-100mm-f2-8-macro-2x": ("f/2.8", "f/8"),
     "ttartisan-11mm-f2-8-fisheye-gfx": ("f/2.8", "f/5.6"),
     "ttartisan-23mm-f1-4": ("f/1.4", "f/5.6"),
     "ttartisan-25mm-f2-0": ("f/2", "f/8"),

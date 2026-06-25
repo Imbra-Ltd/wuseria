@@ -18,8 +18,8 @@ from .charts import PlotBoxCoords, ReferenceChart
 
 TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
     ReferenceChart(
-        slug="ttartisan-100mm-f2-8-macro-2x-gfx",
-        chart_path="docs/optical-specs/ttartisan-100mm-f2-8-macro-2x-gfx/ttartisan-100mm-f2-8-macro-2x-gfx-mtf.png",
+        slug="ttartisan-100mm-f2-8-macro-2x",
+        chart_path="docs/optical-specs/ttartisan-100mm-f2-8-macro-2x/ttartisan-100mm-f2-8-macro-2x-mtf.png",
         style_family="ttartisan-4color-dual-aperture",
         apertures=("f/2.8", "f/8"),
         frequencies_lpmm=(10, 30),
@@ -31,8 +31,8 @@ TTARTISAN_TIER2_CHARTS: tuple[ReferenceChart, ...] = (
         ground_truth=None,
     ),
     ReferenceChart(
-        slug="ttartisan-100mm-f2-8-macro-2x-tilt-shift",
-        chart_path="docs/optical-specs/ttartisan-100mm-f2-8-macro-2x-tilt-shift/ttartisan-100mm-f2-8-macro-2x-tilt-shift-mtf.png",
+        slug="ttartisan-100mm-f2-8-macro-2x-gfx",
+        chart_path="docs/optical-specs/ttartisan-100mm-f2-8-macro-2x-gfx/ttartisan-100mm-f2-8-macro-2x-gfx-mtf.png",
         style_family="ttartisan-4color-dual-aperture",
         apertures=("f/2.8", "f/8"),
         frequencies_lpmm=(10, 30),

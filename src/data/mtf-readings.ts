@@ -14449,7 +14449,7 @@ const mtfReadings: Record<string, MtfData> = {
       },
     ],
   },
-  "ttartisan-100mm-f2-8-macro-2x-tilt-shift": {
+  "ttartisan-100mm-f2-8-macro-2x": {
     source: "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
     mtfType: "computed",
     charts: [
