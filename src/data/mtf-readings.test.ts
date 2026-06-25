@@ -1,4 +1,5 @@
-import { existsSync, readdirSync, statSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { describe, it, expect } from "vitest";
 import { lenses } from "./lenses";
@@ -386,6 +387,68 @@ describe("docs/optical-specs directory-name invariant", () => {
     expect(
       orphans,
       `optical-specs directories with no matching lens (slug drift?): ${orphans.join(", ")}`,
+    ).toEqual([]);
+  });
+});
+
+// Same-product MTF chart invariant (#1265). Two lens entries that share
+// an `officialUrl` are, by construction, the same optical product sold
+// in two mount variants (e.g. TTartisan 100mm Macro 2X X-mount vs
+// GFX-mount — same lens, different rear adapter). The manufacturer
+// publishes one MTF chart per optical design, so the primary
+// `<slug>-mtf.png` source chart MUST be byte-identical across mount
+// variants. The investigation behind #1265 found three TTartisan pairs
+// in this state and confirmed all three have matching upstream charts —
+// any future drift (e.g. someone fetches a different chart for one
+// variant) is a data-quality bug.
+//
+// The test scopes to lens-pairs that share an `officialUrl` AND both
+// have a primary MTF chart file on disk; pairs missing one side are
+// out of scope (different cause).
+describe("same-product MTF chart invariant", () => {
+  const SPECS_ROOT = resolve(__dirname, "../../docs/optical-specs");
+
+  function hashFile(path: string): string {
+    // sha256: identity check, not security — sonarjs flags md5/sha1.
+    return createHash("sha256").update(readFileSync(path)).digest("hex");
+  }
+
+  function primaryChartPath(slug: string): string {
+    return join(SPECS_ROOT, slug, `${slug}-mtf.png`);
+  }
+
+  const groupsByUrl = new Map<string, string[]>();
+  for (const lens of lenses) {
+    if (!lens.officialUrl) continue;
+    const slug = toSlug(`${dirBrand(lens.brand)} ${lens.model}`);
+    const list = groupsByUrl.get(lens.officialUrl) ?? [];
+    list.push(slug);
+    groupsByUrl.set(lens.officialUrl, list);
+  }
+  const sharedUrlGroups = [...groupsByUrl.entries()].filter(
+    ([, slugs]) => slugs.length > 1,
+  );
+
+  it("lens entries sharing an officialUrl share their primary MTF chart", () => {
+    const mismatches: string[] = [];
+    for (const [url, slugs] of sharedUrlGroups) {
+      const present = slugs.filter((s) => existsSync(primaryChartPath(s)));
+      if (present.length < 2) continue;
+      const hashes = present.map((s) => ({
+        slug: s,
+        hash: hashFile(primaryChartPath(s)),
+      }));
+      const distinctHashes = new Set(hashes.map((h) => h.hash));
+      if (distinctHashes.size > 1) {
+        const detail = hashes
+          .map((h) => `${h.slug}=${h.hash.slice(0, 8)}`)
+          .join(", ");
+        mismatches.push(`${url}: ${detail}`);
+      }
+    }
+    expect(
+      mismatches,
+      `lenses sharing officialUrl have divergent MTF charts (one mount variant was likely fetched from the wrong page — see #1265): ${mismatches.join("; ")}`,
     ).toEqual([]);
   });
 });
