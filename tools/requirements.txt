@@ -1,0 +1,18 @@
+# Python dependencies for tools/ — mtfdigitizer + brand extractors.
+#
+# Install: `cd tools && pip install -r requirements.txt`
+# CI uses this file via `.github/workflows/ci.yml` (pytest job).
+#
+# Floor pins (major-version only) — minor/patch upgrades are
+# expected to stay compatible. Tighten to exact pins if a CI run
+# breaks on a published-but-untested release.
+
+# mtfdigitizer image processing.
+opencv-python>=4.0,<5
+numpy>=2.0,<3
+scikit-image>=0.20,<1
+Pillow>=10,<13
+
+# Test runner + parallel runner (cuts ~5min sequential to ~2min).
+pytest>=8,<10
+pytest-xdist>=3,<4

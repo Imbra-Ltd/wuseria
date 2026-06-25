@@ -32,19 +32,24 @@ cd wuseria
 npm install
 ```
 
-For optical specs research tools (optional):
+For Python tools (optional — needed only to run mtfdigitizer, brand
+extractors, or pagefetch's higher-tier fetchers):
 
 ```bash
-pip install playwright nodriver seleniumbase pytest
-playwright install chromium
+cd tools && pip install -r requirements.txt   # mtfdigitizer + brand tests + pytest
+pip install playwright nodriver seleniumbase  # pagefetch tiers 2-4 (optional)
+playwright install chromium                   # required only if using tier 2
 ```
 
-The web-fetch package (`tools/pagefetch/`) works with only the Python
-standard library; the browser libraries above enable its higher tiers and
-are imported lazily. `pytest` runs the Python tool tests:
+`tools/requirements.txt` pins the mtfdigitizer image-processing deps
+(opencv-python, numpy, scikit-image, Pillow) plus pytest + pytest-xdist.
+The browser libraries on the second line stay optional — pagefetch
+imports them lazily and falls back gracefully if absent. Run the Python
+tool tests:
 
 ```bash
-cd tools && py -m pytest pagefetch/tests/ brandkit/tests/
+cd tools && py -m pytest                       # full suite (~3 min with xdist)
+cd tools && py -m pytest pagefetch/tests/      # just pagefetch
 ```
 
 The `--recursive` flag pulls the `docs/solid-ai-templates` submodule. If you

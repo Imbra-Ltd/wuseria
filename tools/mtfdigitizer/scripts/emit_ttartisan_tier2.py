@@ -34,6 +34,7 @@ import sys
 from pathlib import Path
 
 from mtfdigitizer.autotriage import _run_pipeline
+from mtfdigitizer.emit import format_source_line
 from mtfdigitizer.pipeline.types import SampledReading
 from mtfdigitizer.referenceset.charts import REFERENCE_CHARTS, ReferenceChart
 
@@ -222,9 +223,10 @@ def _emit_one_lens(
         total_positions += len(pass_result.extracted.readings)
 
     chart_blocks = "\n".join(blocks)
+    source_url = _source_url(chart.slug, official_urls)
     literal = (
         f'  "{chart.slug}": {{\n'
-        f'    source: "{_source_url(chart.slug, official_urls)}",\n'
+        f"{format_source_line(source_url)}"
         '    mtfType: "computed",\n'
         "    charts: [\n"
         f"{chart_blocks}\n"

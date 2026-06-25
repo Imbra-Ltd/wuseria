@@ -35,6 +35,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from mtfdigitizer.emit import format_source_line
 from mtfdigitizer.family_profile import profile_for_chart
 from mtfdigitizer.per_frequency import parse_filename_frequency
 from mtfdigitizer.pipeline import extract_chart
@@ -357,9 +358,10 @@ def _emit_one_lens(
         total_positions += len(merged)
 
     chart_blocks = "\n".join(blocks)
+    source_url = _source_url(chart.slug, official_urls)
     literal = (
         f'  "{chart.slug}": {{\n'
-        f'    source: "{_source_url(chart.slug, official_urls)}",\n'
+        f"{format_source_line(source_url)}"
         '    mtfType: "computed",\n'
         "    charts: [\n"
         f"{chart_blocks}\n"
