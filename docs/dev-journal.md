@@ -10823,3 +10823,83 @@ Theme: clear #1299. Wire the `tools/` pytest suite into CI so the `--check` gate
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+### Session 187 — Override-respecting splice in emit\_\*\_tier2
+
+Date: 2026-06-25 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pair #1305 + #1301 fix-path-2. Build a per-cell override-respecting splice so `emit_*_tier2 --write` preserves eye-read overrides instead of clobbering them; apply it to a second lens (GF 55) and flip the last remaining xfail-strict to a hard assertion. One PR merged.
+
+#### PRs
+
+- **#1310 merged** (`feat(mtfdigitizer): override-respecting splice in emit_*_tier2 (#1305)`) — squash `0a0e7e7`. New `tools/mtfdigitizer/scripts/_emit_overrides.py` parses committed `mtf-readings.ts` entries for cells annotated with the literal marker `eye-read override` in the preceding comment block, keys overrides by `(aperture, position_mm, freq)`, and overlays them onto the freshly-emitted literal before splicing. Both `emit_fuji_tier2` and `emit_ttartisan_tier2` use the helper in their `--write` and `--check` paths so both modes always agree. Applied to GF 55mm f/1.7 freq40 M at pos 10.76 (extractor 1.0 → 0.95) and pos 13.45 (1.0 → 0.92), with the eye-read ground truth documented in `docs/optical-specs/fujifilm-gf-55mm-f1-7-r-wr/eye-read.md`. Stale `WARN: --write will overwrite this` line dropped from the af-35 pos 12.6 override block. `test_ttartisan_check_passes_on_production_data` flipped from xfail-strict to hard assertion (last remaining drift cell now preserved by the splice). 7 files, +736/-12.
+
+#### Issues opened / closed
+
+- **#1305 closed** by #1310 — GF 55 freq40 M-curve mistracks to plateau ceiling at pos 10.76 / 13.45. Auto-closed via "Closes #1305" in PR body.
+- **#1301** still open with a comment noting fix-path-2 (per-cell override-respecting splice) is done; fix-path-1 (ridge-tracker / extractor fix for the bend-point column) remains as the right long-term answer. With the override now durable, urgency is lower; the override-clobbering loop is closed regardless of when the extractor work happens.
+
+#### Key technical findings
+
+- **The first wiring keyed overrides only on `(position, freq)` — and the smoke test caught the bug immediately.** Running `emit_ttartisan_tier2 --check` against production data after the initial implementation revealed the af-35 f/1.8 override at pos 12.6 / freq 30 was being incorrectly overlaid onto the f/5.6 cell at the same position. Aperture had to be part of the override key. A dedicated regression test (`test_apply_overrides_does_not_leak_across_apertures`) pins the isolation. Lesson: production-data smoke-test catches design holes that fabricated-data unit tests don't even know to look for.
+- **Tier 1 + Tier 2 overrides converge on the same comment marker.** The af-35 pos-12.6 override is Tier 1 (it's a Tier 1 anchor); the new GF 55 pos-10.76 / 13.45 overrides are Tier 2. Both use the literal `eye-read override` marker in the comment block above the cell, both reference an `eye-read.md` in `docs/optical-specs/<slug>/`. The splice doesn't care about tier; the marker is the contract.
+- **Comment block preservation must be a contiguous walk-back.** The detector walks backward from a freq-cell line collecting contiguous `//` comment lines; the run stops as soon as a non-comment line appears (a blank line, another cell, or a `samples: {` opener). This means an override comment block must immediately abut its cell line — a blank line between them breaks the association. Matches the existing af-35 shape exactly; no surprise for the maintainer.
+- **The xfail-strict pattern was self-disarming exactly as designed.** S184 marked `test_ttartisan_check_passes_on_production_data` xfail-strict because the af-35 drift was known. S187's splice fix made that test pass, which strict-xfail flips to a test failure. The failure was the signal to flip the marker to a hard assertion (same pattern S185 used for Fuji). Now both production-data --check tests hard-assert. 720 mtfdigitizer pytest pass, 0 xfailed (was 706 + 1 xfailed).
+
+#### Key changes
+
+- **`tools/mtfdigitizer/scripts/_emit_overrides.py`** — new file (#1310). `parse_overrides`, `apply_overrides`, `extract_entry_text`, `overlay_committed_overrides`. 282 lines.
+- **`tools/mtfdigitizer/scripts/emit_fuji_tier2.py`** and **`tools/mtfdigitizer/scripts/emit_ttartisan_tier2.py`** — import + call `overlay_committed_overrides` in both `--write` and `--check` paths before splicing (#1310).
+- **`tools/mtfdigitizer/tests/test_emit_overrides.py`** — new file. 13 tests covering detector, overlay, aperture isolation, missing-position/freq fallback, end-to-end roundtrip on af-35 shape (#1310). 383 lines.
+- **`tools/mtfdigitizer/tests/test_emit_check.py`** — `test_ttartisan_check_passes_on_production_data` flipped xfail-strict → hard assertion; reason comment updated (#1310).
+- **`src/data/mtf-readings.ts`** — GF 55 freq40 M at pos 10.76 / 13.45 now carry `// eye-read override` comments + overridden values (0.95 / 0.92). af-35 pos 12.6 stale `WARN: --write will overwrite this` line dropped (#1310).
+- **`docs/optical-specs/fujifilm-gf-55mm-f1-7-r-wr/eye-read.md`** — new file. Documents the two override cells, mistrack pattern, and source chart (#1310).
+
+#### Verification
+
+- **720 mtfdigitizer pytest pass + 0 xfailed** (was 706 + 1 xfailed; +13 new override tests, +1 hard-passing test that was xfailing). 2:03 wall-clock with xdist locally.
+- **224 vitest pass** (unchanged).
+- `npm run validate` clean: 462 pages built, all internal links checked.
+- **CI: 9/9 gates green on #1310**, including the `pytest` job at 1m18s and `lighthouse` at 1m30s.
+- `py -m mtfdigitizer.scripts.emit_fuji_tier2 --check` after #1310 → exit 0.
+- `py -m mtfdigitizer.scripts.emit_ttartisan_tier2 --check` after #1310 → exit 0.
+
+#### Key decisions (this session)
+
+- **Per-aperture key, not per-(position, freq) key.** Three options surfaced after the smoke-test bug: (a) make aperture part of the key, (b) constrain overrides to single-panel lenses only, (c) require an explicit aperture qualifier in the comment text. Picked (a) because TTartisan lenses are inherently dual-aperture (max + stopped), Fuji zooms are dual-panel (wide + tele), and any future per-cell override on those needs panel disambiguation — without it, marking a cell on one panel silently freezes the same-position cell on the other.
+- **Explicit literal marker.** The marker is the literal string `eye-read override`, not a regex or a more lenient "any WARN comment" rule. Choices: explicit / lenient-but-flexible / any-commented-cell. Picked explicit because it's greppable (`rg "eye-read override" src/data/`), hard to trigger by accident, and the maintainer can clearly distinguish "this is an override" from "this is incidental commentary." A more lenient rule would risk freezing stale comments that lost their override role.
+- **Drop the af-35 WARN line in this PR.** The WARN said `emit_ttartisan_tier2 --write will overwrite this`. With the splice now respecting overrides, that statement is false. Three options: drop the line, leave it, replace with a positive note. Picked drop — false statements in code are technical debt; positive notes add noise to every override block.
+- **Close #1305 but leave #1301 open.** #1305 is fully resolved (GF 55 overrides applied and durable). #1301 has two fix paths; this PR did fix-path-2 (override-respecting splice). The original fix-path-1 (extractor / ridge-tracker fix for af-35 pos 12.6) remains the right long-term answer and stays open. Override-clobbering loop closed regardless.
+
+#### Process patterns observed this session
+
+- **Production-data smoke-test as design verification.** The cross-aperture leak in the first wiring would have passed every fabricated unit test in the suite — the unit tests didn't know to test multi-panel cases. The single `--check` against production caught it instantly. Lesson: running the new code against real data even once during development surfaces structural design holes the unit tests don't reach.
+- **Self-disarming xfail-strict is a feature, not a friction point.** S184 added xfail-strict on two production-data tests; S185 flipped one; S187 flipped the other. Each flip was triggered by the strict marker auto-failing when the underlying drift went away. No "manually remember to remove the marker" cleanup PR was ever needed. The marker is the maintainer's reminder system.
+- **One regression test per design hole closed.** The cross-aperture leak got its own test. So did the "missing position in fresh literal" graceful-skip case. So did "missing freq at known position." Each test pins a specific design decision so a future refactor that breaks the invariant fails loudly. Total: 13 tests covering 9 distinct invariants on a 282-line module.
+
+#### Follow-ups for next session (S188)
+
+- **#1301 fix-path-1** (P3, Backlog, bug) — extractor / ridge-tracker fix for af-35 pos 12.6 bend-point M30. Now that the override is durable, urgency is lower; this is the "the actual fix" rather than the safety net. Same class of mistrack as #1305 (which has its own fix-path-1 candidate: ridge-tracker prior that penalizes "value pinned at 1.0 across N consecutive positions when paired direction is dropping").
+- **Other open v0.8.0 items**: #1110 per-stage diagnostic bundle, #1134 confidence badge, #950 auto-detect plot box, #791 Carl Zeiss next brand, #1159.
+- **Possible refactor** (no issue yet): `_splice_entries` still duplicated in `emit_fuji_tier2.py` and `emit_ttartisan_tier2.py`. S184 chose mirror-not-refactor; the override-overlay logic is now shared via `_emit_overrides.overlay_committed_overrides`, but the splice itself remains per-script. Worth reconsidering when a third brand emit script lands.
+- **Override-block detector could be reused** if any other data-emit pipeline grows the same "extractor sometimes wrong, maintainer hand-patches" problem (e.g. spec-sheet parsers, future scoring scripts). Same marker, same `(scope, key)` shape.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, p95 |d| **0.0458**, in-band **96.1%** (unchanged — Tier 2-only changes don't move aggregate metrics).
+- **720 mtfdigitizer pytest pass + 0 xfailed** (was 706 + 1 xfailed; +13 override tests, +1 hard-passing flip). **224 vitest pass** (unchanged).
+- **72 ADRs** (unchanged — S187 made no architectural decisions; `_emit_overrides.py` is a helper module).
+- 8 declared MTF profiles.
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + #791**. #1305 closed. Backlog follow-ups: #1301 (fix-path-1 still open).
+- **0 open PRs** at wrap-up (after this journal PR merges).
+- `mtf-readings.ts` — 2 new cells overridden on GF 55 (pos 10.76, 13.45 freq40 M); af-35 WARN line dropped.
+- **CI gates:** build (1m12s) + lighthouse (1m30s) + pytest (1m18s) + CodeQL + gitleaks + links + analyze + changes + gate aggregator (9/9 green on #1310).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
