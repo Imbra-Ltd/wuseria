@@ -10665,3 +10665,79 @@ Theme: clear #1296. Ship the `--check` gate proposed in S183 for both Fuji and T
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 185 — Fujifilm tier 2 bulk refresh + xfail flip
+
+Date: 2026-06-25 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: clear #1303. Run the Fuji bulk refresh under the `--check` gate shipped in #1300. One PR merged, one issue filed.
+
+#### PRs
+
+- **#1306 merged** (`fix(data): refresh Fujifilm tier 2 MTF readings from current extractor (#1303)`) — squash `4278b47`. Bulk re-emit of all 62 Fujifilm tier 2 entries via `emit_fuji_tier2 --write`. 155 insertions / 167 deletions across 924 positions — smaller per-entry diff than TTartisan because Fuji's bend-point shifts were milder. Stale `source:` URL on `fujifilm-xf-8mm-f3-5-r-wr` corrected (was pointing at the GF 80/2.8 Macro page); cosmetic URL canonicalization on `fujifilm-xf-80mm-f2-8-r-lm-ois-wr-macro`. null → populated cells across the cohort from ADR-068/069 coincident-top anchor recovery. Sole regression on GF 55mm f/1.7 freq40 M (2 cells) isolated and filed as #1305. Test wiring: flipped `test_fuji_check_passes_on_production_data` from xfail-strict to a hard assertion (the strict marker auto-fails when drift is gone, which is the design — flipped in the same PR that resolves the drift). 2 files, +155/-167.
+
+#### Issues opened / closed
+
+- **#1303 closed** by #1306 — Fujifilm tier 2 drift.
+- **#1305 opened** (P3, Backlog, bug) — GF 55mm f/1.7 freq40 M-curve mistracks to plateau ceiling at pos 10.76 and pos 13.45 (regressed from 0.96/0.83 → 1.0/1.0 in this refresh). Same class as #1279 (center-anchor overshoot) and #1301 (af-35 bend-point) — ridge tracker locks onto the high-MTF plateau instead of following the M40 curve as it dips. Fix paths: extractor fix (best), eye-read override (would justify investing in #1301 fix-path-2), or status quo + `--check` gate.
+
+#### Key technical findings
+
+- **The Fuji bulk diff was milder than expected.** TTartisan refresh in #1302 was 633 lines (31 lines/entry) across 19 entries; Fuji was 322 lines (5 lines/entry) across 62 entries. The TTartisan shifts came from S/M curve swaps + new pos-14 rows from chart-edge extension; Fuji's permfreq family doesn't have those structural changes, so the diff was mostly `null → value` recoveries plus small ±0.01–0.03 bend-point tweaks. Different extractor evolution shapes hit different chart families.
+- **The `--check` gate did its real job: spot-checking the diff for surprises.** Without the gate the maintainer would have eyeballed the 322-line diff and committed. With the gate the workflow was "diff stat → grep for null-to-value vs value-to-value → find one genuine >0.10 shift on GF 55 freq40 M → look at the chart → file issue → commit anyway because the regression is isolated and the rest is a net win." The gate forces explicit handling of every drift cell — no silent merges.
+- **Initial GF 55 reading was alarmist.** First scan flagged 6 cells as "freq40 M = 1.0 (chart shows 0.92-0.95)." Comparison to HEAD revealed 4 of those 6 cells were already 1.0 before this PR (extractor behavior unchanged on those). Real new regressions: 2 cells (pos 10.76 and 13.45). Lesson: when assessing a regression, diff _new vs old_ explicitly rather than reading the new state in isolation — the old state may already have the same issue, in which case it's not a regression at all.
+- **Center-symmetry M=1.0 fill on a chart where it's wrong is intentional per ADR-072.** GF 55 pos 0 went from `(null, null)` to `(1, 1)` even though freq20 is 0.94 (which physically constrains freq40 to ≤ 0.94 by `freq{hi} <= freq{lo}`). Same case as #1279 / viltrox-75. ADR-072 fixed the case where `freq{lo}` is _available_ (use that value); when both are None, fallback is still 1.0. The lens just doesn't have data to constrain the freq40 reading at center. Not new in this refresh — same fallback existed before.
+- **xfail-strict + hard-assertion flip is the canonical sequence for known-bad gates.** #1300 introduced xfail-strict for both brands; #1302 left both still xfailing (TTartisan af-35 override + Fuji drift); #1306 flips Fuji to a hard assertion in the same PR that resolves the drift. TTartisan stays xfail-strict by exactly 1 cell (af-35 override) and will flip when #1301 lands. This is the "fail when ready" workflow the strict marker is designed for.
+
+#### Key changes
+
+- **`src/data/mtf-readings.ts`** — 62 Fujifilm tier 2 entries refreshed; XF 8mm f/3.5 source URL corrected (was pointing at GF 80mm Macro); XF 80mm Macro URL canonicalized to hyphenated form (#1306).
+- **`tools/mtfdigitizer/tests/test_emit_check.py`** — `test_fuji_check_passes_on_production_data` flipped from `xfail(strict=True)` to hard assertion (#1306).
+
+#### Verification
+
+- **701 mtfdigitizer pytest pass + 1 xfailed** (was 701 + 2 xfailed; Fuji production-data test flipped to hard pass, TTartisan still xfails by af-35 override).
+- **224 vitest pass** (unchanged — data integrity tests caught no shape issues from the bulk refresh).
+- `npm run validate` clean (Prettier auto-fixed the new file on commit via lint-staged).
+- `cd tools && py -m mtfdigitizer.scripts.emit_fuji_tier2 --check` after #1306 → exit 0 (no drift).
+- CI on #1306: 8/8 gates green.
+
+#### Key decisions (this session)
+
+- **Commit full refresh + file GF 55 as issue.** Three options: commit + file issue, skip GF 55 only, or stop and investigate. Picked commit because (a) only 2 cells genuinely regressed (not 6 as initial scan suggested), (b) 60+ other lenses gain accuracy from the refresh, (c) GF 55's mistrack is already-known-class (#1279/#1301 family), (d) the `--check` gate ensures the next regression is caught at commit time. Investigating mid-refresh would have ballooned scope; skipping GF 55 only would have left an intentional drift-cell against the gate.
+- **Flip Fuji xfail to hard assertion in the same PR.** The S184 design was "strict marker auto-fails when drift is gone, forcing the maintainer to flip." Honoured that design — flipped in the same PR that closes the drift, not as a separate cleanup PR. Keeps the gate's state synchronized with reality.
+- **Re-read the diff before reacting.** First read of GF 55 freq40 was "6 cells regressed to plateau ceiling" → reassessment via HEAD comparison was "2 cells regressed." Same evidence, different framing. Lesson recorded under process patterns.
+
+#### Process patterns observed this session
+
+- **"Looks bad in isolation, looks normal vs HEAD" is a common false-positive pattern.** Surfacing a regression requires diff _to a baseline_, not absolute-state reading. The data integrity tests in `mtf-readings.test.ts` would also catch some of this — invariant checks at boundaries are cheaper than per-cell eyeballing.
+- **The `--check` gate's true value is forcing the diff conversation, not just blocking drift.** Even with the gate failing on TTartisan (af-35 override) and Fuji (full drift) at S184 close, both PRs needed an active decision about how to resolve the drift. Without the gate, the drift would have been invisible — committed in pieces during unrelated work. The gate doesn't fix the drift; it forces the maintainer to _decide_ about every drift cell.
+- **Diff size doesn't predict diff severity.** TTartisan was 633 lines and resolved cleanly (1 cell override); Fuji was 322 lines and had a real 2-cell regression worth filing. Per-entry shape matters more than per-PR shape.
+
+#### Follow-ups for next session (S186)
+
+- **#1305** (P3, Backlog, bug) — GF 55 freq40 M-curve plateau-ceiling mistrack. If a second lens accumulates an override (af-35 was first, GF 55 might be second), justifies #1301 fix-path-2 (per-cell override-respecting splice).
+- **#1299** (P3, Backlog, task) — wire `tools/` pytest into CI so the `--check` gates actually gate PRs. Both gates now pass the unit tests (TTartisan still xfails by 1 cell; Fuji hard-asserts) — wiring this in CI completes the gate's enforcement.
+- **#1301** (P3, Backlog, bug) — af-35 pos 12.6 extractor fix or per-cell override-respecting splice.
+- **Other open v0.8.0 items**: #1110 per-stage diagnostic bundle, #1134 confidence badge, #950 auto-detect plot box, #791 Carl Zeiss next brand.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, p95 |d| **0.0458**, in-band **96.1%** (unchanged — only Tier 2 entries changed).
+- **701 mtfdigitizer pytest pass + 1 xfailed** (was 701 + 2 xfailed; Fuji production-data test flipped to hard pass). **224 vitest pass** (unchanged).
+- **72 ADRs** (unchanged — neither S184 nor S185 made architectural decisions).
+- 8 declared MTF profiles.
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + #791**. #1296 + #1303 closed. New follow-ups in Backlog: #1299, #1301, #1305.
+- **0 open PRs** at wrap-up (after #1306 + journal PR merge).
+- `mtf-readings.ts` — 19 TTartisan + 62 Fujifilm tier 2 entries on current extractor; af-35 pos 12.6 M30 override preserved (#1301); GF 55 freq40 M pos 10.76/13.45 regressed-but-accepted (#1305).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
