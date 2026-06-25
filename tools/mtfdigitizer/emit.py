@@ -200,6 +200,25 @@ ChartPanel = tuple[
 ]
 
 
+def format_source_line(source: str) -> str:
+    """Render the `    source: "<url>",` line for a top-level entry.
+
+    Matches Prettier's default printWidth=80 wrap: single line when the
+    full `    source: "<url>",` fits in 80 chars, otherwise wrapped as
+
+        source:
+          "<url>",
+
+    Without this, the bulk-emit output drifts under lint-staged's
+    Prettier pass and the --check gate (#1296/#1299) reports false
+    positives on every long-URL entry.
+    """
+    single = f'    source: "{source}",'
+    if len(single) <= 80:
+        return single + "\n"
+    return f'    source:\n      "{source}",\n'
+
+
 def _format_entry(
     slug: str,
     source: str,
@@ -218,7 +237,7 @@ def _format_entry(
     )
     return (
         f"  \"{slug}\": {{\n"
-        f"    source: \"{source}\",\n"
+        f"{format_source_line(source)}"
         f"    mtfType: \"{mtf_type}\",\n"
         "    charts: [\n"
         f"{chart_blocks}\n"

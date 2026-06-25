@@ -13,6 +13,7 @@ jobs:
     outputs:
       code: ${{ steps.filter.outputs.code }}
       lighthouse: ${{ steps.filter.outputs.lighthouse }}
+      tools: ${{ steps.filter.outputs.tools }}
     steps:
       - uses: actions/checkout@v7
       - uses: dorny/paths-filter@v4
@@ -38,6 +39,12 @@ jobs:
               - 'astro.config.mjs'
               - 'tsconfig.json'
               - 'lighthouserc.json'
+              - '.github/workflows/**'
+            # Python tooling — mtfdigitizer + brand extractors + pagefetch.
+            # The emit_*_tier2 --check gates (#1296/#1300/#1303) only have
+            # teeth when this job runs on PRs that could affect them.
+            tools:
+              - 'tools/**'
               - '.github/workflows/**'
 
   build:
@@ -80,14 +87,36 @@ jobs:
           configPath: lighthouserc.json
           uploadArtifacts: true
 
+  pytest:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.tools == 'true'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          submodules: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: tools/requirements.txt
+
+      - name: Install tools dependencies
+        run: pip install -r tools/requirements.txt
+
+      - name: Run pytest
+        working-directory: tools
+        run: python -m pytest -n auto
+
   gate:
     runs-on: ubuntu-latest
-    needs: [build, lighthouse]
+    needs: [build, lighthouse, pytest]
     if: always()
     steps:
       - name: Check results
         run: |
-          if [[ "${{ needs.build.result }}" == "failure" || "${{ needs.lighthouse.result }}" == "failure" ]]; then
+          if [[ "${{ needs.build.result }}" == "failure" || "${{ needs.lighthouse.result }}" == "failure" || "${{ needs.pytest.result }}" == "failure" ]]; then
             echo "CI failed"
             exit 1
           fi

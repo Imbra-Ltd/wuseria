@@ -906,8 +906,10 @@ detectable by the tool; manual page inspection may find additional images.
 **Extract MTF readings from chart PNGs:**
 
 Use `tools/mtfdigitizer/` — unified digitizer per ADR-038. Requires Python
-
-- scikit-image + opencv-python.
+3.13+ with image-processing dependencies pinned in `tools/requirements.txt`
+(opencv-python, numpy, scikit-image, Pillow, pytest, pytest-xdist).
+Install: `cd tools && pip install -r requirements.txt`. CI installs the
+same file to run the pytest suite on `tools/**` PRs (#1299).
 
 Charts live per-lens under `docs/optical-specs/<slug>/` (ADR-033) as
 `mtf-chart.{png,jpg}`, or `mtf-f<aperture>.png` per aperture.

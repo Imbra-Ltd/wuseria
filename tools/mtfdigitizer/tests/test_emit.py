@@ -8,8 +8,48 @@ from mtfdigitizer.emit import (
     _format_reading,
     _format_value,
     _has_any_data,
+    format_source_line,
 )
 from mtfdigitizer.pipeline.types import SampledReading
+
+
+# --- format_source_line --------------------------------------------------
+# Matches Prettier's printWidth=80 wrap. Without this, lint-staged
+# rewraps long-URL entries and the --check gate (#1296/#1299) reports
+# false positives.
+
+
+def test_format_source_line_single_line_when_under_80() -> None:
+    """Short URL fits on one line."""
+    out = format_source_line("https://example.com/short")
+    assert out == '    source: "https://example.com/short",\n'
+
+
+def test_format_source_line_wraps_when_over_80() -> None:
+    """Long URL wraps onto two lines per Prettier's default."""
+    url = "https://fujifilm-x.com/en-us/products/lenses/gf100-200mmf56-r-lm-ois-wr/"
+    out = format_source_line(url)
+    assert out == f'    source:\n      "{url}",\n'
+
+
+def test_format_source_line_boundary_at_exactly_80() -> None:
+    """A URL that makes the single-line form exactly 80 chars stays
+    single (Prettier wraps strictly >80, not ≥80)."""
+    # Build a URL such that `    source: "<url>",` is exactly 80 chars.
+    # Prefix length: 4 + 8 + 1 + (url) + 2 = 15 + len(url) = 80 → url = 65.
+    url = "https://example.com/" + "a" * (65 - len("https://example.com/"))
+    assert len(url) == 65
+    out = format_source_line(url)
+    assert out == f'    source: "{url}",\n'
+    assert len(out.rstrip("\n")) == 80
+
+
+def test_format_source_line_boundary_at_81_wraps() -> None:
+    """One char over the boundary forces the wrap."""
+    url = "https://example.com/" + "a" * (66 - len("https://example.com/"))
+    assert len(url) == 66
+    out = format_source_line(url)
+    assert out == f'    source:\n      "{url}",\n'
 
 
 def _r(
