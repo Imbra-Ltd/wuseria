@@ -10486,3 +10486,98 @@ Theme: continue spike #1282 (samyang-85mm M-curve shape error). Session began wi
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 183 — ADR-071 prevention, viltrox-75 center anchor, TTartisan audit and rename
+
+Date: 2026-06-24 to 2026-06-25 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: clear v0.8.0 follow-ups. Five PRs merged across two milestones of work: lock in the ADR-071 prevention action from last session; ship the carried-forward viltrox-75 center-anchor fix (#1279) as ADR-072; investigate and respond to the TTartisan duplicate-MTF report (#1265). Two side-finding follow-ups filed.
+
+#### PRs
+
+- **#1291 merged** (`docs(playbook): require readings dump for shape-error spike intake (ADR-071)`) — squash `ecc887d`. Adds the "Shape-error spike intake" rule to PLAYBOOK §2.7 next to the calibration runner block. Locks in the prevention action ADR-071 named — would have refuted spike #1282 at intake. 1 file, +12/-0.
+- **#1292 merged** (`fix(journal): backtick SAMPLE_FRACTIONS to stop Prettier italic-span misparse (#1290)`) — squash `2a108b0`. Single-character fix: wraps the all-caps identifier `SAMPLE_FRACTIONS` in the S182 entry in backticks to stop Prettier's emphasis tokenizer from parsing the bare underscore as italic-span-start (the auto-fix `--write` corrupts `SAMPLE_FRACTIONS` → `SAMPLE*FRACTIONS` and mangles adjacent `_stated_` → `\_stated*`). Drift surfaced when running validate on the PLAYBOOK PR locally. 1 file, +1/-1.
+- **#1293 merged** (`fix(mtfdigitizer): center anchor uses freq{lo}{D} when available (#1279)`) — squash `58f503f`. Refines ADR-066's "both None" branch in `_apply_center_symmetry` to prefer the closest same-direction lower-freq value before falling back to 1.0. Restores the physical invariant `freq{hi}{D}[0] <= freq{lo}{D}[0]` on lenses where lo extracts below 1.0 (viltrox-75: was freq30=1.00 > freq10=0.99, now freq30=0.99=freq10). Reduces viltrox-75 Tier 1 anchor Δ at frac=0.0: freq30S 0.070 → 0.057, freq30M 0.080 → 0.068. Residual is data-limited. 4 files, +446/-24, includes new ADR-072 + 4 new pipeline tests.
+- **#1294 merged** (`test(mtf-readings): same-product MTF chart invariant (#1265)`) — squash `c2105c2`. Adds a regression test that catches the future "someone fetches a different chart for one mount variant" bug class. Two lens entries sharing an `officialUrl` must share their primary `<slug>-mtf.png` byte-for-byte. Three TTartisan pairs currently in scope, all pass. Uses sha256 not md5 (sonarjs flags md5 as weak hash). Test count 223 → 224. 1 file, +64/-1.
+- **#1297 merged** (`fix(data): rename TTartisan 100mm Macro 2X (X-mount) — not tilt-shift (#1295)`) — squash `a982a77`. Renames the mis-named X-mount entry (the URL slug `TS-100-Macro` is TTartisan's internal product code, not "tilt-shift"; the actual product is a non-tilt-shift macro). Cascades through 1 directory rename, 8 artifact filename renames, regenerated extractor outputs, generated tier2 chart entry, slug key in mtf-readings.ts. Scope-disciplined: reverted the bulk `emit_ttartisan_tier2 --write` regeneration that wanted to rewrite all 19 TTartisan entries; tracked the drift as #1296. 14 files, +21/-22.
+
+#### Issues opened / closed
+
+- **#1279 closed** by #1293 — ADR-066 center-anchor overshoot on viltrox-75 f/1.2, carried from S180.
+- **#1265 closed as `wontdo`** by audit comment — three reported TTartisan duplicate MTF pairs are not bugs: pair 1 (23mm + 90mm GFX) is a manufacturer issue (TTartisan publishes byte-identical webp on both product pages); pairs 2 and 3 are legitimate mount variants of one optical design with one shared MTF chart. Regression test in #1294 catches the future-drift case.
+- **#1290 opened then closed** by #1292 — pre-existing Prettier italic-span misparse on `SAMPLE_FRACTIONS`. Opened mid-session when validate surfaced the drift, fixed and closed same day.
+- **#1295 opened then closed** by #1297 — TTartisan 100mm Macro 2X mis-named as Tilt-Shift. Side-finding from #1265 audit, separate PR per scope discipline.
+- **#1296 opened** (P3, v0.8.0, bug) — TTartisan tier 2 mtf-readings.ts entries drift from current extractor output. Surfaced during #1295 when `emit_ttartisan_tier2 --write` wanted to rewrite all 19 entries with new numeric values (~636 lines). Reverted in #1297; #1296 tracks the catch-up + a `--check` mode for the emit scripts.
+
+#### Key technical findings
+
+- **Pair gate vetoes can produce physical-invariant violations.** On viltrox-75 f/1.2 the ADR-068/069 coincident-top anchor's pair gate correctly identified that freq30S genuinely diverges from freq10S across the field (min |Δ| ~0.06–0.09 > 0.05 gate). But the veto left ADR-066's "both None" branch to slam freq30S[0] = 1.0 even though freq10S[0] = 0.99 — physically impossible (`hi > lo`). ADR-072's insight: the pair gate veto is intentionally local to multi-cell copy across the field; at the single optical-axis cell `hi <= lo` is a strict invariant that holds independent of the gate's verdict. Using lo's value at center isn't gate circumvention — it's using the gate's lo-value evidence at the one cell where physics gives a tight bound.
+- **TTartisan publishes one MTF chart per optical design, not per SKU.** Audit of three reported "duplicate" pairs revealed two patterns: (a) same `officialUrl` in lenses.ts because TTartisan sells one product across both X and GFX mounts (100mm Macro 2X, 500mm f/6.3) — chart legitimately shared; (b) different `officialUrl` but byte-identical chart upstream because TTartisan republished the same chart across two unrelated lens pages (23mm f/1.4 + 90mm f/1.25 GFX share md5 `f126a18c...` on the TTartisan CDN). Pattern (b) is a manufacturer data-quality issue we can't fix. The chart in the 23mm folder going to x-axis 20mm rather than ~14mm (APS-C half-diagonal) was the smoking gun for "not actually the 23mm's chart" — but upstream is the same file, so there's no correct file to fetch.
+- **`TS-100-Macro.html` doesn't mean "Tilt-Shift".** TTartisan's URL slug is their internal product code; the page itself self-identifies as "TTArtisan 100mm F2.8 Macro 2X" with no tilt-shift feature. Our lenses.ts entry had picked up the URL hint and propagated it into model name + `isTiltShift: true`. Found by inspecting the actual product page during the #1265 audit. The GFX entry didn't have the same mis-naming, suggesting whoever added the entries didn't apply the bad heuristic uniformly.
+- **`emit_*_tier2 --write` is non-idempotent in practice.** Running the script to refresh one entry rewrote all 19 TTartisan tier 2 entries with new numeric values across ~636 lines (S/M curve values shifted in many cells). The underlying extractor has drifted since the last bulk emit (likely from ADR-066/067/068/069/071/072 plus interim ridge-tracker / halo-pair work), and the committed mtf-readings.ts numbers are stale relative to current pipeline output. Eye-read overrides (#1201/#1202) get silently wiped when the script runs. #1296 tracks the catch-up and a proposed `--check` gate.
+- **CRLF line-ending leak from the Windows extractor.** `py -m mtfdigitizer.extract --accept` on Windows wrote review.html files with CRLF line terminators, violating the project's LF rule. Pre-existing — present in the regenerated artifacts but git's autocrlf warning would convert on next touch. Fixed in #1297 by force-rewriting to LF before commit. The extractor itself should probably write LF unconditionally; small but worth fixing in a follow-up if it recurs.
+
+#### Key changes
+
+- **`docs/PLAYBOOK.md`** — new "Shape-error spike intake (ADR-071 prevention)" sub-block in §2.7 immediately after the `--write-readings` paragraph (#1291).
+- **`docs/dev-journal.md`** — Session 182 entry's `SAMPLE_FRACTIONS` wrapped in backticks (#1292).
+- **`docs/decisions/072-center-anchor-lo-when-available.md`** — new ADR refining ADR-066's case 3 (#1293).
+- **`tools/mtfdigitizer/pipeline/pipeline.py`** — `_apply_center_symmetry` case 3 now consults `_closest_lower` helper before defaulting to 1.0; added pre-computation of `distinct_freqs` (#1293).
+- **`tools/mtfdigitizer/tests/test_pipeline.py`** — 4 new ADR-072 tests (lo available / cross-direction fallback / no lo / chained anchor). Test count 52 → 56 in the pipeline file.
+- **`docs/optical-specs/viltrox-af-75mm-f1-2-pro/digitization-log.md`** — refreshed Tier 1 log (the only stale one after the pipeline change) (#1293).
+- **`src/data/mtf-readings.test.ts`** — new "same-product MTF chart invariant" test (#1294).
+- **`src/data/lenses.ts`** — TTartisan X-mount 100mm Macro 2X: model rename, `isTiltShift` removal (#1297).
+- **`docs/optical-specs/ttartisan-100mm-f2-8-macro-2x*/*`** — folder rename + 8 artifact filename renames + regenerated extractor outputs (#1297).
+- **`src/data/mtf-readings.ts`** — single slug key rename (other values preserved per #1296 scope discipline) (#1297).
+- **`tools/mtfdigitizer/scripts/scaffold_ttartisan_tier2.py`** + **`_ttartisan_tier2_charts.py`** — slug update in the table + regenerated tier 2 entries (#1297).
+
+#### Verification
+
+- **426 mtfdigitizer pytest pass** (was 422; +4 ADR-072 tests).
+- **224 vitest pass** (was 223; +1 same-product MTF invariant test).
+- `npm run validate` clean at every PR boundary.
+- **Calibration aggregate stable** at 900 paired, median |d| 0.0071, p95 |d| 0.0458, max |d| 0.1217, in-band 96.1% (unchanged across all 5 PRs — neither ADR-072 nor the TTartisan work touched any Tier 1 anchor's input).
+- Tier 1 logs: 15/15 up to date (`py -m mtfdigitizer.log --all --check`).
+- CI on every PR: 8/8 gates green (CodeQL + gate + analyze + changes + gitleaks + links + build + lighthouse for code-touching PRs; docs PRs correctly skipped build/lighthouse).
+
+#### Key decisions (this session)
+
+- **Scope discipline on the TTartisan rename.** When `emit_ttartisan_tier2 --write` regenerated all 19 entries with new numeric values, reverted the bulk rewrite and only patched the slug key. The drift across 18 other lenses is real but unrelated to the rename — folding it into #1297 would have made the PR a silent multi-lens data refresh disguised as a rename. Filed #1296 to track the catch-up properly.
+- **#1265 closed as `wontdo`, not `fixed`.** None of the three reported pairs are project bugs. Closing as fixed would have implied a code/data change; `wontdo` with the audit comment is the honest framing. Added the regression test in #1294 so the future-drift case (someone misfetches a chart for one mount variant) is gated at commit time.
+- **Path 2 for ADR-072, not path 4 or 5.** Issue #1279 proposed three fix paths; chose path 2 (extend ADR-069's same-direction copy to the both-None case). Path 1 doesn't address the bug (lo IS ≥ 0.95 on viltrox-75). Path 4 (no anchor when pair gate vetoed) re-introduces the y-axis gap that #1267 fixed and requires plumbing veto state across passes. Path 2 wins by being the natural extension of ADR-069's mechanism, restoring the physical invariant, and having the smallest blast radius — only viltrox-75's Tier 1 log changed.
+- **Split #1265 audit from #1295 rename into separate PRs.** Tempting to bundle the test (#1294) and the rename (#1297) into one PR, but they address different concerns (regression coverage vs data correction). Separate PRs preserved review clarity and let #1295 be a focused, mechanical rename.
+- **No auto-merge.** All 5 PRs merged with explicit user permission per `feedback_ask_before_automerge`.
+
+#### Process patterns observed this session
+
+- **Net-negative-impact PRs are still wins.** #1294 added a test and closed #1265 — no production code change, no value mutation. #1297 was net 21/22 line changes for a rename. Neither moves a calibration metric, but each prevents a class of future bug or removes an active mis-naming. Visible from a milestone summary as "no shipped feature" but actually high-leverage work.
+- **The readings dump prevention rule (S182 / ADR-071) is already paying off.** This session didn't trigger it — no shape-error spikes — but the discipline of "verify against extractor output before acting on a hypothesis" carried into #1265: before fixing the duplicate MTF "bug" I fetched both upstream charts and confirmed they're byte-identical upstream. That refuted the bug-as-described in 10 minutes vs. spending hours hunting for a "missing" 90mm chart.
+- **Manufacturer data quality is its own failure class.** TTartisan publishing the same MTF chart on two unrelated product pages is not something we can fix. The right tool is an invariant test that flags the next-drift case — we can't enforce upstream correctness, but we can detect when our own copies diverge from a constraint we control.
+- **Generated files vs hand-edited drift is a recurring tax.** Both #1290 (Prettier rewrote the journal between lint-staged and CI) and #1296 (emit script rewrites all entries on partial use) are the same shape: tooling assumes idempotent rewrites, the assumption breaks on real content, and the drift surfaces during unrelated work. Adding `--check` modes to the bulk emitters (proposed in #1296) generalises ADR-040's `--check` pattern from per-lens digitization logs to the bulk-emit boundary.
+
+#### Follow-ups for next session (S184)
+
+- **#1296** (P3, v0.8.0, bug) — TTartisan tier 2 mtf-readings.ts drift. Either a per-brand catch-up PR or a `--check` mode in the emit scripts. `--check` mode first to gate future drift, then catch-up to clear the backlog.
+- **Other open v0.8.0 items**: #1265 closed, #1279 closed, #1290 closed, #1295 closed. Remaining: #1110 per-stage diagnostic bundle, #1134 confidence badge, #950 auto-detect plot box, #791 Carl Zeiss next brand, #1296 (new).
+- **CRLF in regenerated review.html.** Pre-existing extractor behaviour on Windows. Force-fixed in #1297; no issue filed yet because it didn't recur across other lenses in this session. If it surfaces again, file as a P4 extractor fix.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, median |d| 0.0071, p95 |d| **0.0458**, max |d| 0.1217, in-band **96.1%** (all unchanged — neither algorithm change touched a Tier 1 anchor's inputs).
+- **426 mtfdigitizer pytest pass** (was 422; +4 ADR-072 tests). **224 vitest pass** (was 223; +1 same-product MTF invariant test).
+- **72 ADRs** (was 71; +ADR-072).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: #1110, #1134, #950, #791, #1296. #1265 + #1279 + #1290 + #1295 closed.
+- **0 open PRs** at wrap-up.
+- `mtf-readings.ts` — TTartisan 100mm Macro 2X slug key renamed; all other values unchanged.
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
