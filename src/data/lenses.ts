@@ -5344,7 +5344,7 @@ const lenses: Lens[] = [
   },
   {
     brand: "TTartisan",
-    model: "100mm f/2.8 Macro 2X Tilt-Shift",
+    model: "100mm f/2.8 Macro 2X",
     type: "prime",
     category: "photo",
     mount: "X",
@@ -5370,7 +5370,6 @@ const lenses: Lens[] = [
     filterThread: 67,
     price: 500,
     minFocusDistance: 250,
-    isTiltShift: true,
     opticalElements: 14,
     opticalGroups: 10,
     specialElements: ["6 HR"],

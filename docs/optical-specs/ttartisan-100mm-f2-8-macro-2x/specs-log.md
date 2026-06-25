@@ -1,4 +1,4 @@
-# 100mm f/2.8 Macro 2X Tilt-Shift - Technical Specs Provenance Log
+# 100mm f/2.8 Macro 2X - Technical Specs Provenance Log
 
 ## Sources checked
 
