@@ -299,11 +299,19 @@ def _splice_entries(source: str, new_entries: dict[str, str]) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--write",
         action="store_true",
         help="Patch src/data/mtf-readings.ts with the emitted entries. "
         "Without this flag the literals print to stdout for review.",
+    )
+    mode.add_argument(
+        "--check",
+        action="store_true",
+        help="Render entries in memory and compare against the committed "
+        "src/data/mtf-readings.ts. Exit non-zero with a unified diff if "
+        "any entry drifts from the current extractor output (#1296).",
     )
     parser.add_argument(
         "--limit",
@@ -344,6 +352,17 @@ def main(argv: list[str] | None = None) -> int:
             f"{len(entries)} entries, {total_panels} panels, "
             f"{total_positions} positions.",
             file=sys.stderr,
+        )
+    elif args.check:
+        from mtfdigitizer.scripts._emit_check import report_drift  # noqa: PLC0415
+
+        source = MTF_READINGS_PATH.read_text(encoding="utf-8")
+        patched = _splice_entries(source, entries)
+        return report_drift(
+            MTF_READINGS_PATH,
+            source,
+            patched,
+            label="TTartisan tier 2",
         )
     else:
         print("\n".join(entries.values()))
