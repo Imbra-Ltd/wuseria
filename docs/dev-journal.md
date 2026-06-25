@@ -10903,3 +10903,74 @@ Theme: pair #1305 + #1301 fix-path-2. Build a per-cell override-respecting splic
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+### Session 188 — Spike on #1301 → close as duplicate of #1224, redirect override comments
+
+Date: 2026-06-25 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1301 (af-35 pos 12.6 M30 still mistracks after #1214) per the S187 follow-up. Spike-style investigation against PLAYBOOK §2.8 and the prior #1217 / S168 close-out concluded #1301 is a duplicate of the open #1224 anchor-signal-repair spike — fix-path-2 shipped in S187, fix-path-1 is already tracked. Closed #1301 with rationale; opened #1312 to redirect stale `#1214` / `#1201`-era references in `mtf-readings.ts` and `eye-read.md` so the codepath docs point at the active spike.
+
+#### PRs
+
+- **#1312 opened** (`docs(mtf): redirect af-35 pos 12.6 override comments to #1224`) — comment-only edits. The af-35 pos 12.6 M30 override block in `src/data/mtf-readings.ts` claimed `#1214 fixing pos 14` but #1214 was closed `wontdo`; the actual pos-14 fix was #1223 / ADR-060 (plot-box border strip), and the S168 raw-mask probe identified the residual mechanism as intermediate AA-halo band drift at col ~510, not a direct S30 ridge swap. Now points at #1224 (anchor-signal repair) and notes durability via S187's override-respecting splice. `eye-read.md` "Manual artifact patches" section similarly updated: frac 1.0 / pos 14.0 now returns honest `None` from the extractor after #1223 (the maintainer GT 0.50 is acknowledged extrapolation past the chart's ink).
+
+#### Issues opened / closed
+
+- **#1301 closed** as duplicate of #1224 — comment posted explaining (a) fix-path-2 shipped S187 and verified via `--check`, (b) fix-path-1 is #1224, (c) the issue was filed during PR #1300's `--check` rollout without knowledge of the parallel S168 work. Labeled `duplicate`.
+
+#### Key technical findings
+
+- **#1301 was functionally identical to the open #1224 spike.** Both target af-35 max freq30M frac=0.9 / pos 12.6 (GT 0.58 vs EX 0.66, Δ 0.079, p95 0.113 — the single worst cell on the TTartisan profile after #1223). S168 already evaluated three mechanisms (per-lens override, snap-anchor, mask-edge cleanup) with measured data and rejected the first two because they ride a corrupted anchor signal (`_compute_y_anchors` finds only 15/521 two-ridge columns on this mask, ~3%, and seeds land on chart-title artifacts at y=119). #1224 carries that open question forward; #1301 surfaced the same residual through a different lens (override-clobbering on `--write`) without referencing the prior work.
+- **The pos 14 / frac 1.0 framing in `eye-read.md` is stale by two PRs.** After #1223's `strip_plot_box_borders` shipped, the extractor returns `None` at frac 1.0 (cols 515-520 have zero grey-mask ridges; the M30 dashed curve genuinely fades before x_right). The "hand-patched values at 0.58 and 0.50" framing dates from S162 (#1201) and presupposes both cells need the patch. After S168, only pos 12.6 needs it; pos 14.0 is honest extractor data and the GT 0.50 is eye-read extrapolation.
+- **The override-respecting splice marker survives comment edits.** PR #1312 expanded the override comment block by 4 lines but kept the literal `eye-read override` marker on the first comment line. `emit_ttartisan_tier2 --check` passes after the edit, confirming the contract documented in #1310 (literal-string marker + contiguous walk-back) survives benign reflows.
+- **Following `feedback_playbook_before_research` saved an entire probe cycle.** Before launching any extractor work, read #1213 (parent spike), #1214 (closed `wontdo`), #1217 (S166/S168 spike), #1216 (Samyang sibling), #1224 (open follow-up), and the actual calibration numbers via `py -m mtfdigitizer.calibrate`. The first three would have spawned redundant probes; the calibration output (`p95 0.0458`, in-band 96.1%, max |d| 0.1217 = the af-35 cell) anchored the scope to the single residual cell rather than a multi-mechanism rework.
+
+#### Key changes
+
+- **`src/data/mtf-readings.ts`** — af-35 pos 12.6 M30 override comment block expanded from 4 lines to 8 lines, replacing the `#1214 fixing pos 14` claim with the AA-halo intermediate-band-drift mechanism (per #1217 / S168) and the #1224 / #1305 / S187 cross-references. Literal `eye-read override` marker preserved as the first comment line (#1312).
+- **`docs/optical-specs/ttartisan-af-35mm-f1-8/eye-read.md`** — "Manual artifact patches" section rewritten to reflect the current state: pos 14.0 returns honest `None` after #1223, pos 12.6 still needs the override pending #1224, durability via S187's splice (#1312).
+
+#### Verification
+
+- **224 vitest pass** (unchanged — comment-only edits to a data file; no test changes).
+- `npm run validate` clean: 462 pages built, all internal links checked, format/lint/check/build green.
+- `py -m mtfdigitizer.scripts.emit_ttartisan_tier2 --check` after edit → exit 0 (override marker still detected, override still preserved).
+- **CI on #1312**: 9/9 gates green (build 1m22s, lighthouse 1m31s, analyze 1m9s, links 25s, changes 10s, gitleaks 8s, CodeQL 2s, gate 2s, pytest correctly skipping — chore PR touched no `tools/**`). Squashed as `086cd5b`.
+
+#### Key decisions (this session)
+
+- **Spike-style triage before any probe.** Three options surfaced after reading #1301's fix paths: (a) investigate + probe, (b) attempt extractor fix directly (mirror #1214's approach), (c) close as resolved. Picked (a). Reading the prior spike history (`gh issue view 1213/1214/1216/1217/1224`) showed (b) had already been measured and rejected by S168, and (c) was effectively what S168 ended at (option 4 shipped, deeper work spun off as #1224). The single-session value was reframing #1301's relationship to that work, not re-running the probes.
+- **Close as duplicate of #1224, not `wontdo`.** Two close reasons fit: duplicate (same residual cell, same root cause) or `wontdo` (deeper extractor work deferred). Picked duplicate because #1224 is open and active — the work isn't refused, it's just tracked elsewhere. `wontdo` would imply the cell is permanently abandoned; duplicate preserves the fact that the maintainer wants the fix eventually.
+- **Open a chore PR for the comment redirect rather than closing #1301 alone.** Two options: (a) close #1301 and leave the stale comments referencing the wrong issues, or (b) open a small PR to make the codepath docs match reality. Picked (b) because future readers tracing the override from `mtf-readings.ts` would otherwise follow the `#1214` reference into a closed `wontdo` thread and miss the live #1224 spike. Cost is one comment-only PR; benefit is the docs match what S168 actually concluded.
+
+#### Process patterns observed this session
+
+- **Read the prior spike's close-out before the new one.** #1213 → #1214 → #1217 → #1224 is the full chain on the af-35 right corner. S188 spent ~15 min reading those before touching the code; this revealed that the extractor question had already been answered with measured evidence and the "investigation" was really a duplicate-issue triage. Without the read, the natural first step would have been an extractor probe duplicating S166/S168 work.
+- **Distinguish stale doc references from stale code.** The override at pos 12.6 still works; the comments referencing #1214 do not. Comment-only PRs feel low-value but compound: every subsequent reader following the wrong reference wastes time. Same shape as a broken link — small per-instance cost, large aggregate cost if left.
+- **Honest extractor `None` is better than a wrong reading.** S168 surfaced this on pos 14 (extractor used to read 0.17 from the border line; now reads `None`). The eye-read GT 0.50 is acknowledged extrapolation — the chart genuinely has no M30 ink past x_right. Updating the `eye-read.md` framing makes this explicit so future readers don't take 0.50 as ground truth the extractor "should" hit.
+
+#### Follow-ups for next session (S189)
+
+- **#1224** (P3, Backlog, spike) — anchor-signal repair for noisy grey-mask charts. The active follow-up that #1301 just got merged into. Three repair candidates named (seed filtering, smooth-after-fill, post-DP iterative refinement); acceptance criteria use the same af-35 + ttartisan-50 + 7artisans triplet.
+- **Other v0.8.0 items**: #1110 per-stage diagnostic bundle, #1134 confidence badge, #950 auto-detect plot box, #791 Carl Zeiss next brand, #1159.
+- **Possible refactor** (no issue yet, carried from S187): `_splice_entries` duplicated in `emit_fuji_tier2.py` and `emit_ttartisan_tier2.py`. Worth reconsidering when a third brand emit script lands.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, p95 |d| **0.0458**, in-band **96.1%** (unchanged — comment-only edits don't move metrics).
+- **720 mtfdigitizer pytest pass + 0 xfailed** (unchanged). **224 vitest pass** (unchanged).
+- **72 ADRs** (unchanged — S188 made no architectural decisions; the resolution of #1301 reframed it as a duplicate of an existing tracked spike).
+- 8 declared MTF profiles.
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + #791**. #1301 closed (duplicate of #1224). Backlog spike: #1224 (anchor-signal repair) carries fix-path-1.
+- **0 open PRs** at wrap-up (after #1312 merges).
+- `mtf-readings.ts` — af-35 pos 12.6 M30 override comment block rewritten; no data change.
+- **CI gates on #1312:** build (1m22s) + lighthouse (1m31s) + analyze (1m9s) + links (25s) + changes (10s) + gitleaks (8s) + CodeQL (2s) + gate aggregator + pytest skipping (no `tools/**` diff) (9/9 green; squashed as `086cd5b`).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
