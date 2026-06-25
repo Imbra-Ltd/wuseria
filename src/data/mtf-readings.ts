@@ -3868,7 +3868,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/gf100200mmf56rlmoiswr/",
+      "https://fujifilm-x.com/en-us/products/lenses/gf100-200mmf56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -3888,7 +3888,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 2.69,
             samples: {
               10: { S: 0.95, M: 0.95 },
-              20: { S: null, M: 0.91 },
+              20: { S: 0.91, M: 0.91 },
               40: { S: 0.76, M: 0.75 },
             },
           },
@@ -3896,7 +3896,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 5.38,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              20: { S: null, M: 0.91 },
+              20: { S: 0.91, M: 0.91 },
               40: { S: 0.76, M: 0.74 },
             },
           },
@@ -3905,7 +3905,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.95, M: 0.95 },
               20: { S: 0.91, M: 0.92 },
-              40: { S: 0.75, M: null },
+              40: { S: 0.75, M: 0.75 },
             },
           },
           {
@@ -3920,7 +3920,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 13.45,
             samples: {
               10: { S: 0.94, M: 0.94 },
-              20: { S: null, M: 0.91 },
+              20: { S: 0.91, M: 0.91 },
               40: { S: 0.75, M: 0.76 },
             },
           },
@@ -3960,8 +3960,8 @@ const mtfReadings: Record<string, MtfData> = {
             position: 26.9,
             samples: {
               10: { S: 0.83, M: 0.85 },
-              20: { S: 0.57, M: 0.63 },
-              40: { S: 0.21, M: 0.33 },
+              20: { S: 0.58, M: 0.64 },
+              40: { S: 0.22, M: 0.36 },
             },
           },
         ],
@@ -3982,7 +3982,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 2.69,
             samples: {
-              10: { S: 0.97, M: null },
+              10: { S: 0.97, M: 0.97 },
               20: { S: 0.92, M: 0.9 },
               40: { S: 0.8, M: 0.76 },
             },
@@ -4064,8 +4064,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-110mm-f2-0-r-lm-wr": {
-    source:
-      "https://fujifilm-x.com/en-us/products/lenses/gf100-200mmf56-r-lm-ois-wr/",
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf110mmf2-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4123,7 +4122,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 16.14,
             samples: {
-              15: { S: 0.92, M: null },
+              15: { S: 0.92, M: 0.92 },
               20: { S: 0.9, M: 0.92 },
               40: { S: 0.75, M: 0.84 },
             },
@@ -4157,7 +4156,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               15: { S: 0.66, M: 0.9 },
               20: { S: 0.47, M: 0.83 },
-              40: { S: 0.35, M: 0.59 },
+              40: { S: 0.36, M: 0.59 },
             },
           },
         ],
@@ -4191,8 +4190,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 5.38,
             samples: {
-              10: { S: null, M: 0.93 },
-              20: { S: null, M: 0.99 },
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.98, M: 0.99 },
               40: { S: 0.95, M: 0.96 },
             },
           },
@@ -4255,7 +4254,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 26.9,
             samples: {
-              10: { S: 0.92, M: null },
+              10: { S: 0.92, M: 0.93 },
               20: { S: 0.94, M: 0.97 },
               40: { S: 0.79, M: 0.88 },
             },
@@ -4266,7 +4265,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-gf-120mm-f4-r-lm-ois-wr-macro": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/gf120mmf4rlmoiswrmacro/",
+      "https://fujifilm-x.com/en-us/products/lenses/gf120mmf4-r-lm-ois-wr-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -4294,7 +4293,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               15: { S: 0.92, M: 0.92 },
               20: { S: 0.92, M: 0.92 },
-              40: { S: 0.82, M: null },
+              40: { S: 0.82, M: 0.82 },
             },
           },
           {
@@ -4366,8 +4365,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-20-35mm-f4-r-wr": {
-    source:
-      "https://fujifilm-x.com/en-us/products/lenses/gf120mmf4-r-lm-ois-wr-macro/",
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf20-35mmf4-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4394,7 +4392,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 5.38,
             samples: {
-              10: { S: null, M: 1 },
+              10: { S: 1, M: 1 },
               20: { S: 0.91, M: 0.9 },
               40: { S: 0.89, M: 0.84 },
             },
@@ -4475,7 +4473,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.98, M: 0.98 },
               20: { S: 0.97, M: 0.97 },
-              40: { S: 0.92, M: 0.92 },
+              40: { S: 0.93, M: 0.93 },
             },
           },
           {
@@ -4489,7 +4487,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 5.38,
             samples: {
-              10: { S: null, M: 0.97 },
+              10: { S: 0.98, M: 0.97 },
               20: { S: 0.95, M: 0.93 },
               40: { S: 0.85, M: 0.79 },
             },
@@ -4584,7 +4582,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               15: { S: 0.94, M: 0.94 },
               20: { S: 0.94, M: 0.94 },
-              40: { S: 0.93, M: null },
+              40: { S: 0.93, M: 0.93 },
             },
           },
           {
@@ -4598,8 +4596,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 8.07,
             samples: {
-              15: { S: 0.93, M: null },
-              20: { S: 0.93, M: null },
+              15: { S: 0.93, M: 0.93 },
+              20: { S: 0.93, M: 0.93 },
               40: { S: 0.91, M: 0.87 },
             },
           },
@@ -4656,7 +4654,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               15: { S: 0.9, M: 0.9 },
               20: { S: 0.9, M: 0.9 },
-              40: { S: 0.8, M: null },
+              40: { S: 0.8, M: 0.8 },
             },
           },
         ],
@@ -4682,7 +4680,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 2.69,
             samples: {
               10: { S: null, M: null },
-              20: { S: null, M: 0.94 },
+              20: { S: 0.94, M: 0.94 },
             },
           },
           {
@@ -4695,7 +4693,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 8.07,
             samples: {
-              10: { S: 0.96, M: null },
+              10: { S: 0.96, M: 0.96 },
               20: { S: 0.94, M: 0.93 },
             },
           },
@@ -4803,8 +4801,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 13.45,
             samples: {
-              10: { S: null, M: 0.98 },
-              20: { S: null, M: 0.93 },
+              10: { S: 0.98, M: 0.98 },
+              20: { S: 0.94, M: 0.93 },
               40: { S: 0.77, M: 0.8 },
             },
           },
@@ -4835,7 +4833,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 24.21,
             samples: {
-              10: { S: null, M: 0.97 },
+              10: { S: 0.97, M: 0.97 },
               20: { S: 0.92, M: 0.9 },
               40: { S: 0.74, M: 0.72 },
             },
@@ -4843,8 +4841,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 26.9,
             samples: {
-              10: { S: 0.95, M: null },
-              20: { S: 0.84, M: null },
+              10: { S: 0.95, M: 0.98 },
+              20: { S: 0.84, M: 0.92 },
               40: { S: 0.64, M: 0.75 },
             },
           },
@@ -4946,7 +4944,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               15: { S: 0.92, M: 0.77 },
               20: { S: 0.86, M: 0.57 },
-              45: { S: 0.71, M: 0.24 },
+              45: { S: 0.71, M: 0.25 },
             },
           },
         ],
@@ -4999,7 +4997,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 13.45,
             samples: {
-              15: { S: 0.95, M: 0.95 },
+              15: { S: 0.95, M: 0.94 },
               20: { S: 0.92, M: 0.9 },
               45: { S: 0.79, M: 0.73 },
             },
@@ -5008,7 +5006,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 16.14,
             samples: {
               15: { S: 0.95, M: 0.95 },
-              20: { S: 0.91, M: null },
+              20: { S: 0.91, M: 0.91 },
               45: { S: 0.76, M: 0.77 },
             },
           },
@@ -5092,7 +5090,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 10.76,
             samples: {
-              10: { S: null, M: 0.94 },
+              10: { S: 0.93, M: 0.94 },
               20: { S: 0.79, M: 0.81 },
               40: { S: 0.67, M: 0.69 },
             },
@@ -5179,8 +5177,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 8.07,
             samples: {
-              10: { S: null, M: 1 },
-              20: { S: null, M: 0.97 },
+              10: { S: 1, M: 1 },
+              20: { S: 0.96, M: 0.97 },
               40: { S: 0.91, M: 0.88 },
             },
           },
@@ -5236,7 +5234,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 26.9,
             samples: {
               10: { S: 0.61, M: 0.91 },
-              20: { S: 0.47, M: null },
+              20: { S: 0.47, M: 0.66 },
               40: { S: 0.35, M: 0.22 },
             },
           },
@@ -5246,7 +5244,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-gf-45-100mm-f4-r-lm-ois-wr": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/gf45100mmf4rlmoiswr/",
+      "https://fujifilm-x.com/en-us/products/lenses/gf45-100mmf4-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5337,7 +5335,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 26.9,
             samples: {
-              10: { S: 0.97, M: null },
+              10: { S: 0.97, M: 0.83 },
               20: { S: 0.9, M: 0.5 },
               40: { S: 0.77, M: 0.17 },
             },
@@ -5432,7 +5430,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 26.9,
             samples: {
-              10: { S: 0.89, M: null },
+              10: { S: 0.89, M: 0.89 },
               20: { S: 0.73, M: 0.72 },
               40: { S: 0.53, M: 0.36 },
             },
@@ -5442,8 +5440,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-45mm-f2-8-r-wr": {
-    source:
-      "https://fujifilm-x.com/en-us/products/lenses/gf45-100mmf4-r-lm-ois-wr/",
+    source: "https://fujifilm-x.com/en-us/products/lenses/gf45mmf28-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5471,7 +5468,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: null, M: null },
               20: { S: 0.87, M: 0.88 },
-              40: { S: 0.74, M: null },
+              40: { S: 0.74, M: 0.74 },
             },
           },
           {
@@ -5485,9 +5482,9 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 10.76,
             samples: {
-              10: { S: 0.91, M: null },
+              10: { S: 0.91, M: 0.92 },
               20: { S: 0.85, M: 0.88 },
-              40: { S: 0.7, M: null },
+              40: { S: 0.7, M: 0.71 },
             },
           },
           {
@@ -5519,7 +5516,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.84, M: 0.89 },
               20: { S: 0.72, M: 0.78 },
-              40: { S: 0.52, M: null },
+              40: { S: 0.52, M: 0.57 },
             },
           },
           {
@@ -5563,14 +5560,14 @@ const mtfReadings: Record<string, MtfData> = {
             position: 2.69,
             samples: {
               15: { S: 0.89, M: 0.89 },
-              20: { S: null, M: 0.89 },
+              20: { S: 0.89, M: 0.89 },
               40: { S: 0.98, M: 0.99 },
             },
           },
           {
             position: 5.38,
             samples: {
-              15: { S: null, M: 0.89 },
+              15: { S: 0.89, M: 0.89 },
               20: { S: 0.89, M: 0.89 },
               40: { S: 0.99, M: 0.97 },
             },
@@ -5678,7 +5675,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 8.07,
             samples: {
-              15: { S: 0.96, M: null },
+              15: { S: 0.96, M: 0.96 },
               20: { S: 0.92, M: 0.93 },
               45: { S: 0.81, M: 0.83 },
             },
@@ -5756,7 +5753,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.98, M: 0.98 },
               20: { S: 0.94, M: 0.94 },
-              40: { S: null, M: null },
+              40: { S: 1, M: 1 },
             },
           },
           {
@@ -5788,7 +5785,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.96, M: 0.98 },
               20: { S: 0.91, M: 0.94 },
-              40: { S: 0.96, M: 0.96 },
+              40: { S: 0.96, M: 1 },
             },
           },
           {
@@ -5796,7 +5793,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.93, M: 0.98 },
               20: { S: 0.81, M: 0.94 },
-              40: { S: 0.83, M: 0.83 },
+              40: { S: 0.83, M: 1 },
             },
           },
           {
@@ -5963,7 +5960,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 2.69,
             samples: {
               10: { S: 0.85, M: 0.84 },
-              20: { S: null, M: 0.74 },
+              20: { S: 0.74, M: 0.74 },
               40: { S: null, M: null },
             },
           },
@@ -6309,7 +6306,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xc-50-230mm-f4-5-6-7-ois-ii": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xc50230mmf4567oisii/",
+      "https://fujifilm-x.com/global/products/lenses/xc50-230mmf45-67-ois-ii/",
     mtfType: "computed",
     charts: [
       {
@@ -6391,7 +6388,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14.2,
             samples: {
               15: { S: 0.85, M: 0.77 },
-              45: { S: 0.4, M: 0.48 },
+              45: { S: 0.41, M: 0.48 },
             },
           },
         ],
@@ -6483,8 +6480,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-10-24mm-f4-r-ois": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xc50-230mmf45-67-ois-ii/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf10-24mmf4-r-ois/",
     mtfType: "computed",
     charts: [
       {
@@ -6502,7 +6498,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.42,
             samples: {
-              15: { S: null, M: 0.89 },
+              15: { S: 0.89, M: 0.89 },
               45: { S: 0.8, M: 0.78 },
             },
           },
@@ -6650,7 +6646,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14.2,
             samples: {
               15: { S: 0.65, M: 0.72 },
-              45: { S: null, M: 0.23 },
+              45: { S: 0.24, M: 0.23 },
             },
           },
         ],
@@ -6677,7 +6673,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.42,
             samples: {
-              15: { S: null, M: 0.89 },
+              15: { S: 0.89, M: 0.89 },
               45: { S: 0.8, M: 0.78 },
             },
           },
@@ -6825,7 +6821,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14.2,
             samples: {
               15: { S: 0.65, M: 0.72 },
-              45: { S: null, M: 0.23 },
+              45: { S: 0.24, M: 0.23 },
             },
           },
         ],
@@ -6834,7 +6830,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-100-400mm-f4-5-5-6-r-lm-ois-wr": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf100400mmf4556rlmoiswr/",
+      "https://fujifilm-x.com/global/products/lenses/xf100-400mmf45-56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -6853,7 +6849,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 1.42,
             samples: {
               15: { S: 0.95, M: 0.95 },
-              45: { S: null, M: 0.9 },
+              45: { S: 0.9, M: 0.9 },
             },
           },
           {
@@ -7000,7 +6996,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14.2,
             samples: {
               15: { S: 0.92, M: 0.87 },
-              45: { S: 0.7, M: null },
+              45: { S: 0.7, M: 0.6 },
             },
           },
         ],
@@ -7008,8 +7004,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-14mm-f2-8-r": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf100-400mmf45-56-r-lm-ois-wr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf14mmf28-r/",
     mtfType: "computed",
     charts: [
       {
@@ -7026,14 +7021,14 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.42,
             samples: {
-              15: { S: null, M: 0.89 },
+              15: { S: 0.89, M: 0.89 },
               45: { S: 0.71, M: 0.72 },
             },
           },
           {
             position: 2.84,
             samples: {
-              15: { S: null, M: 0.89 },
+              15: { S: 0.89, M: 0.89 },
               45: { S: 0.72, M: 0.74 },
             },
           },
@@ -7099,7 +7094,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-150-600mm-f5-6-8-r-lm-ois-wr": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf150600mmf568rlmoiswr/",
+      "https://fujifilm-x.com/global/products/lenses/xf150-600mmf56-8-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7111,7 +7106,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               15: { S: 0.99, M: 0.99 },
-              45: { S: null, M: null },
+              45: { S: 1, M: 1 },
             },
           },
           {
@@ -7167,7 +7162,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 11.36,
             samples: {
               15: { S: 0.97, M: 0.93 },
-              45: { S: 0.99, M: null },
+              45: { S: 0.99, M: 0.98 },
             },
           },
           {
@@ -7202,7 +7197,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 1.42,
             samples: {
               15: { S: 1, M: 1 },
-              45: { S: null, M: 0.98 },
+              45: { S: 0.98, M: 0.98 },
             },
           },
           {
@@ -7274,7 +7269,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf150-600mmf56-8-r-lm-ois-wr/",
+      "https://fujifilm-x.com/global/products/lenses/xf16-50mmf28-48-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7286,7 +7281,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               15: { S: 0.95, M: 0.95 },
-              45: { S: null, M: null },
+              45: { S: 1, M: 1 },
             },
           },
           {
@@ -7356,7 +7351,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14.2,
             samples: {
               15: { S: 0.74, M: 0.79 },
-              45: { S: 0.6, M: 0.62 },
+              45: { S: 0.61, M: 0.62 },
             },
           },
         ],
@@ -7383,7 +7378,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 2.84,
             samples: {
-              15: { S: null, M: 0.95 },
+              15: { S: 0.95, M: 0.95 },
               45: { S: null, M: null },
             },
           },
@@ -7461,7 +7456,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               15: { S: 0.92, M: 0.92 },
-              45: { S: null, M: null },
+              45: { S: 1, M: 1 },
             },
           },
           {
@@ -7474,7 +7469,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 2.84,
             samples: {
-              15: { S: null, M: 0.92 },
+              15: { S: 0.92, M: 0.92 },
               45: { S: 0.87, M: 0.8 },
             },
           },
@@ -7530,8 +7525,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 14.2,
             samples: {
-              15: { S: null, M: 0.84 },
-              45: { S: null, M: null },
+              15: { S: 0.85, M: 0.84 },
+              45: { S: 0.64, M: 0.62 },
             },
           },
         ],
@@ -7551,7 +7546,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.42,
             samples: {
-              15: { S: 0.91, M: null },
+              15: { S: 0.91, M: 0.9 },
               45: { S: 0.85, M: 0.82 },
             },
           },
@@ -7600,14 +7595,14 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 11.36,
             samples: {
-              15: { S: null, M: 0.78 },
-              45: { S: null, M: 0.46 },
+              15: { S: 0.8, M: 0.78 },
+              45: { S: 0.46, M: 0.46 },
             },
           },
           {
             position: 12.78,
             samples: {
-              15: { S: null, M: 0.75 },
+              15: { S: 0.78, M: 0.75 },
               45: { S: 0.41, M: 0.38 },
             },
           },
@@ -7706,7 +7701,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14.2,
             samples: {
               15: { S: 0.88, M: 0.84 },
-              45: { S: 0.54, M: 0.31 },
+              45: { S: 0.57, M: 0.33 },
             },
           },
         ],
@@ -7720,7 +7715,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               15: { S: 0.94, M: 0.94 },
-              45: { S: 0.86, M: 0.86 },
+              45: { S: 0.87, M: 0.87 },
             },
           },
           {
@@ -7811,7 +7806,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               15: { S: null, M: null },
-              45: { S: null, M: null },
+              45: { S: 1, M: 1 },
             },
           },
           {
@@ -7998,13 +7993,13 @@ const mtfReadings: Record<string, MtfData> = {
             position: 4.26,
             samples: {
               15: { S: 0.84, M: 0.84 },
-              45: { S: 0.54, M: null },
+              45: { S: 0.54, M: 0.52 },
             },
           },
           {
             position: 5.68,
             samples: {
-              15: { S: 0.84, M: null },
+              15: { S: 0.84, M: 0.84 },
               45: { S: 0.53, M: 0.53 },
             },
           },
@@ -8072,7 +8067,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.42,
             samples: {
-              15: { S: 0.91, M: null },
+              15: { S: 0.91, M: 0.91 },
               45: { S: 0.78, M: 0.75 },
             },
           },
@@ -8108,7 +8103,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 8.52,
             samples: {
               15: { S: 0.83, M: 0.81 },
-              45: { S: null, M: 0.6 },
+              45: { S: 0.63, M: 0.6 },
             },
           },
           {
@@ -8241,7 +8236,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               15: { S: 0.96, M: 0.96 },
-              45: { S: 0.83, M: 0.83 },
+              45: { S: 0.84, M: 0.84 },
             },
           },
           {
@@ -8320,7 +8315,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-18-135mm-f3-5-5-6-r-lm-ois-wr": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf18135mmf3556rlmoiswr/",
+      "https://fujifilm-x.com/global/products/lenses/xf18-135mmf35-56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8495,7 +8490,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-18-55mm-f2-8-4-0-r-lm-ois": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf1855mmf2840rlmois/",
+      "https://fujifilm-x.com/global/products/lenses/xf18-55mmf28-4-r-lm-ois/",
     mtfType: "computed",
     charts: [
       {
@@ -8605,7 +8600,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 2.84,
             samples: {
               15: { S: 0.89, M: 0.87 },
-              45: { S: null, M: 0.65 },
+              45: { S: 0.65, M: 0.65 },
             },
           },
           {
@@ -8661,7 +8656,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14.2,
             samples: {
               15: { S: 0.85, M: 0.72 },
-              45: { S: 0.36, M: 0.23 },
+              45: { S: 0.36, M: 0.25 },
             },
           },
         ],
@@ -8669,8 +8664,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-18mm-f1-4-r-lm-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf18-135mmf35-56-r-lm-ois-wr/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf18mmf14-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8716,7 +8710,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 7.1,
             samples: {
               15: { S: 0.96, M: 0.94 },
-              45: { S: 0.66, M: null },
+              45: { S: 0.66, M: 0.65 },
             },
           },
           {
@@ -8867,7 +8861,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 1.42,
             samples: {
               15: { S: 0.89, M: 0.89 },
-              45: { S: null, M: 0.82 },
+              45: { S: 0.82, M: 0.82 },
             },
           },
           {
@@ -8888,7 +8882,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 5.68,
             samples: {
               15: { S: 0.88, M: 0.88 },
-              45: { S: 0.77, M: 0.77 },
+              45: { S: 0.78, M: 0.77 },
             },
           },
           {
@@ -9051,7 +9045,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 2.84,
             samples: {
-              15: { S: null, M: 0.8 },
+              15: { S: 0.8, M: 0.8 },
               45: { S: 0.62, M: 0.55 },
             },
           },
@@ -9065,7 +9059,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 5.68,
             samples: {
-              15: { S: null, M: 0.78 },
+              15: { S: 0.78, M: 0.78 },
               45: { S: 0.52, M: 0.49 },
             },
           },
@@ -9126,7 +9120,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 0,
             samples: {
-              45: { S: null, M: null },
+              45: { S: 1, M: 1 },
             },
           },
           {
@@ -9361,7 +9355,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-30mm-f2-8-r-lm-wr-macro": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf30mmf28rlmwrmacro/",
+      "https://fujifilm-x.com/global/products/lenses/xf30mmf28-r-lm-wr-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -9378,7 +9372,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.42,
             samples: {
-              15: { S: null, M: 0.96 },
+              15: { S: 0.96, M: 0.96 },
               45: { S: 0.93, M: 0.91 },
             },
           },
@@ -9392,7 +9386,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 4.26,
             samples: {
-              15: { S: null, M: 0.94 },
+              15: { S: 0.94, M: 0.94 },
               45: { S: 0.8, M: 0.75 },
             },
           },
@@ -9450,8 +9444,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-33mm-f1-4-r-lm-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf30mmf28-r-lm-wr-macro/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf33mmf14-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9564,7 +9557,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 2.84,
             samples: {
-              15: { S: null, M: 0.82 },
+              15: { S: 0.8, M: 0.82 },
               45: { S: 0.58, M: 0.53 },
             },
           },
@@ -9661,7 +9654,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 4.26,
             samples: {
               15: { S: 0.89, M: 0.88 },
-              45: { S: null, M: 0.73 },
+              45: { S: 0.71, M: 0.73 },
             },
           },
           {
@@ -9710,7 +9703,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14.2,
             samples: {
               15: { S: 0.12, M: 0.75 },
-              45: { S: 0.03, M: 0.2 },
+              45: { S: 0.03, M: 0.19 },
             },
           },
         ],
@@ -9719,7 +9712,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf50140mmf28rlmoiswr/",
+      "https://fujifilm-x.com/global/products/lenses/xf50-140mmf28-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9766,7 +9759,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 7.1,
             samples: {
               15: { S: 0.93, M: 0.93 },
-              45: { S: null, M: 0.72 },
+              45: { S: 0.73, M: 0.72 },
             },
           },
           {
@@ -9779,7 +9772,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 9.94,
             samples: {
-              15: { S: null, M: 0.92 },
+              15: { S: 0.92, M: 0.92 },
               45: { S: 0.74, M: 0.66 },
             },
           },
@@ -9894,7 +9887,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-500mm-f5-6-r-lm-ois-wr": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf50-140mmf28-r-lm-ois-wr/",
+      "https://fujifilm-x.com/global/products/lenses/xf500mmf56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -10000,7 +9993,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.42,
             samples: {
-              15: { S: null, M: 0.74 },
+              15: { S: 0.74, M: 0.74 },
               45: { S: 0.54, M: 0.54 },
             },
           },
@@ -10014,8 +10007,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 4.26,
             samples: {
-              15: { S: null, M: 0.77 },
-              45: { S: 0.52, M: null },
+              15: { S: 0.76, M: 0.77 },
+              45: { S: 0.52, M: 0.52 },
             },
           },
           {
@@ -10029,7 +10022,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 7.1,
             samples: {
               15: { S: 0.75, M: 0.72 },
-              45: { S: 0.39, M: null },
+              45: { S: 0.39, M: 0.4 },
             },
           },
           {
@@ -10162,7 +10155,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-55-200mm-f3-5-4-8-r-lm-ois": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf55200mmf3548rlmois/",
+      "https://fujifilm-x.com/global/products/lenses/xf55-200mmf35-48-r-lm-ois/",
     mtfType: "computed",
     charts: [
       {
@@ -10243,7 +10236,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 14.2,
             samples: {
-              15: { S: 0.87, M: null },
+              15: { S: 0.87, M: 0.74 },
               45: { S: 0.63, M: 0.23 },
             },
           },
@@ -10336,8 +10329,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-56mm-f1-2-r": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf55-200mmf35-48-r-lm-ois/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r/",
     mtfType: "computed",
     charts: [
       {
@@ -10348,7 +10340,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 0,
             samples: {
               15: { S: 0.8, M: 0.8 },
-              45: { S: 0.63, M: 0.63 },
+              45: { S: 0.64, M: 0.64 },
             },
           },
           {
@@ -10539,7 +10531,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 2.84,
             samples: {
-              15: { S: null, M: 0.84 },
+              15: { S: 0.84, M: 0.84 },
               45: { S: 0.86, M: 0.81 },
             },
           },
@@ -10553,7 +10545,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 5.68,
             samples: {
-              15: { S: null, M: 0.84 },
+              15: { S: 0.84, M: 0.84 },
               45: { S: 0.85, M: 0.83 },
             },
           },
@@ -10567,7 +10559,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 8.52,
             samples: {
-              15: { S: null, M: 0.83 },
+              15: { S: 0.82, M: 0.83 },
               45: { S: 0.7, M: 0.72 },
             },
           },
@@ -10621,7 +10613,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.42,
             samples: {
-              15: { S: null, M: 0.85 },
+              15: { S: 0.85, M: 0.85 },
               45: { S: 0.66, M: 0.66 },
             },
           },
@@ -10629,7 +10621,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 2.84,
             samples: {
               15: { S: 0.86, M: 0.86 },
-              45: { S: null, M: 0.66 },
+              45: { S: 0.65, M: 0.66 },
             },
           },
           {
@@ -10649,7 +10641,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 7.1,
             samples: {
-              15: { S: null, M: 0.87 },
+              15: { S: 0.86, M: 0.87 },
               45: { S: 0.62, M: 0.68 },
             },
           },
@@ -10663,7 +10655,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 9.94,
             samples: {
-              15: { S: null, M: 0.86 },
+              15: { S: 0.85, M: 0.86 },
               45: { S: 0.62, M: 0.66 },
             },
           },
@@ -10694,7 +10686,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-70-300mm-f4-5-6-r-lm-ois-wr": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf70300mmf456rlmoiswr/",
+      "https://fujifilm-x.com/global/products/lenses/xf70-300mmf4-56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -10712,7 +10704,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 1.42,
             samples: {
-              15: { S: null, M: 0.98 },
+              15: { S: 0.98, M: 0.98 },
               45: { S: 0.89, M: 0.87 },
             },
           },
@@ -10776,7 +10768,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14.2,
             samples: {
               15: { S: 0.88, M: 0.9 },
-              45: { S: 0.39, M: 0.53 },
+              45: { S: 0.4, M: 0.53 },
             },
           },
         ],
@@ -10869,7 +10861,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-8-16mm-f2-8-r-lm-wr": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf70-300mmf4-56-r-lm-ois-wr/",
+      "https://fujifilm-x.com/global/products/lenses/xf8-16mmf28-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -10915,7 +10907,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 7.1,
             samples: {
-              15: { S: null, M: 0.91 },
+              15: { S: 0.91, M: 0.91 },
               45: { S: 0.78, M: 0.79 },
             },
           },
@@ -11000,13 +10992,13 @@ const mtfReadings: Record<string, MtfData> = {
             position: 7.1,
             samples: {
               15: { S: 0.9, M: 0.9 },
-              45: { S: null, M: 0.71 },
+              45: { S: 0.71, M: 0.71 },
             },
           },
           {
             position: 8.52,
             samples: {
-              15: { S: 0.9, M: null },
+              15: { S: 0.9, M: 0.89 },
               45: { S: 0.7, M: 0.66 },
             },
           },
@@ -11020,7 +11012,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 11.36,
             samples: {
-              15: { S: null, M: 0.89 },
+              15: { S: 0.87, M: 0.89 },
               45: { S: 0.59, M: 0.6 },
             },
           },
@@ -11044,7 +11036,7 @@ const mtfReadings: Record<string, MtfData> = {
   },
   "fujifilm-xf-80mm-f2-8-r-lm-ois-wr-macro": {
     source:
-      "https://fujifilm-x.com/global/products/lenses/xf80mmf28rlmoiswrmacro/",
+      "https://fujifilm-x.com/global/products/lenses/xf80mmf28-r-lm-ois-wr-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -11133,8 +11125,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-8mm-f3-5-r-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf80mmf28-r-lm-ois-wr-macro/",
+    source: "https://fujifilm-x.com/global/products/lenses/xf8mmf35-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -11144,7 +11135,7 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 0,
             samples: {
-              45: { S: null, M: null },
+              45: { S: 1, M: 1 },
             },
           },
           {
@@ -11195,13 +11186,13 @@ const mtfReadings: Record<string, MtfData> = {
             position: 2.84,
             samples: {
               15: { S: 0.88, M: 0.88 },
-              45: { S: null, M: 0.68 },
+              45: { S: 0.68, M: 0.68 },
             },
           },
           {
             position: 4.26,
             samples: {
-              15: { S: null, M: 0.88 },
+              15: { S: 0.88, M: 0.88 },
               45: { S: 0.69, M: 0.68 },
             },
           },
@@ -11215,29 +11206,29 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 7.1,
             samples: {
-              15: { S: 0.88, M: 0.88 },
+              15: { S: 0.87, M: 0.88 },
               45: { S: 0.67, M: 0.67 },
             },
           },
           {
             position: 8.52,
             samples: {
-              15: { S: 0.88, M: 0.88 },
-              45: { S: 0.67, M: 0.67 },
+              15: { S: 0.86, M: 0.88 },
+              45: { S: 0.66, M: 0.67 },
             },
           },
           {
             position: 9.94,
             samples: {
-              15: { S: 0.87, M: 0.87 },
+              15: { S: 0.85, M: 0.87 },
               45: { S: 0.65, M: 0.64 },
             },
           },
           {
             position: 11.36,
             samples: {
-              15: { S: null, M: 0.86 },
-              45: { S: null, M: 0.58 },
+              15: { S: 0.84, M: 0.86 },
+              45: { S: 0.58, M: 0.58 },
             },
           },
           {
@@ -11294,7 +11285,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 8.07,
             samples: {
               15: { S: 0.99, M: 0.99 },
-              20: { S: 0.95, M: 0.95 },
+              20: { S: 0.95, M: 0.94 },
               40: { S: 0.84, M: 0.84 },
             },
           },
@@ -11302,7 +11293,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 10.76,
             samples: {
               15: { S: 0.98, M: 0.98 },
-              20: { S: 0.94, M: 0.94 },
+              20: { S: 0.94, M: 0.92 },
               40: { S: 0.79, M: 0.82 },
             },
           },
@@ -11318,7 +11309,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 16.14,
             samples: {
               15: { S: 0.97, M: 0.97 },
-              20: { S: 0.89, M: 0.89 },
+              20: { S: 0.89, M: 0.9 },
               40: { S: 0.71, M: 0.73 },
             },
           },

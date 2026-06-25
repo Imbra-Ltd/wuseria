@@ -99,16 +99,13 @@ def test_ttartisan_check_passes_on_production_data() -> None:
     assert main(["--check"]) == 0
 
 
-@pytest.mark.xfail(
-    reason=(
-        "#1296: production mtf-readings.ts is stale for both TTartisan "
-        "and Fuji tier 2 entries. The --check gate correctly reports "
-        "drift; flip to a hard assertion after the bulk-refresh PRs."
-    ),
-    strict=True,
-)
 def test_fuji_check_passes_on_production_data() -> None:
-    """Production gate: Fujifilm tier 2 entries match the extractor."""
+    """Production gate: Fujifilm tier 2 entries match the extractor.
+
+    Flipped from xfail-strict to hard assertion after the S185 Fuji
+    bulk refresh (#1303). If this regresses, the next bulk refresh
+    needs to happen — the strict marker has done its job.
+    """
     from mtfdigitizer.scripts.emit_fuji_tier2 import main
 
     assert main(["--check"]) == 0
