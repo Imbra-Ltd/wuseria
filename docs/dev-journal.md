@@ -10974,3 +10974,85 @@ Theme: pick up #1301 (af-35 pos 12.6 M30 still mistracks after #1214) per the S1
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+### Session 189 — solid-ai-templates submodule bump (962a134 → ba2843d, 60 commits)
+
+Date: 2026-06-25 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: bump the `docs/solid-ai-templates` submodule from v2.9.0 to current main. 60 upstream commits, 12 of the 19 MANDATORY STARTUP templates with material changes, many direct codifications of wuseria's own lessons. Reviewed deltas with a forked agent before bumping; flagged two real wuseria deviations (dev-journal format, upstream-issue filing strictness) in CLAUDE.md as part of the bump PR. Filed 3 lesson-flag issues + 1 deviation-flag issue upstream per the new step-12 requirement. One PR merged.
+
+#### PRs
+
+- **#1314 merged** (`chore(submodule): bump solid-ai-templates 962a134 → ba2843d (60 commits)`) — squash `9d6a5cea`. Submodule pointer + CLAUDE.md §5.4 added (dev-journal format deviation alongside existing §5.3 360-audit deviation) + §6.3 step 12 strengthened ("file the issue this session" not just "name the upstream template file"). 2 files, +18/-2. CI 9/9 effective gates green (build/lighthouse/pytest correctly skipping per `dorny/paths-filter` rules — no .ts/.astro/tools changes).
+
+#### Issues opened / closed
+
+Upstream (github.com/braboj/solid-ai-templates):
+
+- **#615 opened** — `ai-workflow: read the prior spike's close-out before opening a new investigation`. Source: S188 #1301-vs-#1224 reframing. P2 task.
+- **#616 opened** — `docs/quality: distinguish stale doc references from stale code`. Source: S188 PR #1312 (af-35 override comment references). P2 task.
+- **#617 opened** — `data-quality: honest None is better than a wrong reading on extraction pipelines`. Source: S188 eye-read.md rewrite around pos 14 honest None. P3 task.
+- **#618 opened** — `docs: dev-journal format deviation in wuseria (chronological + Session N headings)`. Informational; flags wuseria's deviation against the new reverse-chronological mandate. P3 task.
+
+Local (wuseria): none opened, none closed.
+
+#### Key technical findings
+
+- **60 upstream commits, 12 of 19 MANDATORY STARTUP templates changed materially.** Forked review agent characterised the deltas: rules added in `quality.md` (calibration + cross-validation sections), `testing.md` (threshold-test-pinning, coverage-by-cohort, shared-path-breadth), `review.md` (CI-infra-vs-diff-failure distinction), `git.md` (closing-keyword-repeated, regenerated-artifact-verification, bulk-operations skip-list), `docs.md` (largest delta: dev-journal rewrite + ADR rules + arc42 conventions + writing-style additions), `config.md`, `security/security.md` (nosniff MIME gotcha), `workflow/scope.md` (startup 9→10 steps with deploy-health check), `workflow/issues.md` (labels-at-creation), `workflow/quality-gates.md` (multiple new MUST sections), `workflow/ai-workflow.md` (largest delta: +206 lines covering read-edit-site / survey-prior-art / prototype-cost / spike-findings / triage-fanout / verify-before-relying / probe-before-acting / debugging-multi-stage), `platform/github.md` (SHA-pin actions, gitleaks org-paywall, Dependabot weekly-batch, milestone-on-purpose).
+- **17 of the 60 commits trace directly to wuseria lessons that landed upstream.** Examples: `5f3b4ed` (--check on bulk emit scripts = S184 ADR-040), `c7c4f96` (probe & pipeline-debug discipline = `feedback_playbook_before_research` + S188), `dac5a7f` (regenerator-discipline = S186 Prettier/emit fixed-point), `506d4e8` (ADR one-concern + same-day supersession = S182 ADR-070→ADR-071), `4d62491` (gate & test honesty = S184 xfail-strict + calibration gates), `a931a2e` (wrap-shipped + deploy-health startup checks = wuseria's CLAUDE.md §6.1).
+- **Two real deviations needed explicit flagging.** (a) Dev-journal format: upstream now mandates reverse-chronological + `## YYYY-MM-DD — Short theme` + bold-labelled `**Tool**` / `**Key changes**` fields; wuseria is chronological + `### Session N — Theme` 188 entries deep. Flagged as §5.4 in CLAUDE.md alongside existing §5.3 360-audit deviation. (b) End-of-session step 11 strengthened: upstream candidates must be FILED as upstream issues this session, not just named. Wuseria's existing step 12 already said "name the upstream template file and create an issue" but the upstream change makes the filing requirement explicit-this-session; tightened the wording to match.
+- **The submodule grew 4 more commits while the review agent was running.** Snapshot at fork time was 55 commits ending at `a931a2e`; by commit time the count was 60 ending at `ba2843d`. The extra 4 commits include `docs(communication): add register-only base communication template` (new file, not on the MANDATORY STARTUP list) and three `docs(quality)` additions covering hidden-precondition fail-loud, maintainability decomposition, and threshold-grounding-in-real-data — all aligned with the broader 60-commit theme.
+
+#### Key changes
+
+- **`CLAUDE.md` §5.4 added** — dev-journal format deviation entry. Structured like the existing §5.3 (state the rule we deviate from, state our format, explain the cost-of-migration / why-our-format-works rationale, note format is flagged upstream). Cross-links to `feedback_match_doc_convention` so future sessions match the existing skeleton (#1314).
+- **`CLAUDE.md` §6.3 step 12 strengthened** — from "name the upstream template file and create an issue" to "name the upstream template file AND file the issue on github.com/braboj/solid-ai-templates this session — per `base/workflow/scope.md` end-of-session step 11, naming a candidate is not contributing it" (#1314).
+- **Submodule pointer bumped** — `docs/solid-ai-templates` from `962a134` (v2.9.0) to `ba2843d` (60 commits forward, 4 newer than the review-agent snapshot) (#1314).
+
+#### Verification
+
+- `npm run validate` clean before commit: 462 pages built, all internal links checked, format/lint/check/build green.
+- 224/224 vitest pass (unchanged — no source code changes).
+- **CI on #1314**: 9/9 effective gates green. Build / lighthouse / pytest correctly skipping per `dorny/paths-filter` (no .ts/.astro/tools diff). CodeQL 3s, gate 3s, analyze 53s, gitleaks 7s, links 30s, changes 6s. Squashed as `9d6a5cea`.
+- 4 upstream issues filed and discoverable via `gh issue list --repo braboj/solid-ai-templates --search "wuseria"`.
+
+#### Key decisions (this session)
+
+- **Single bump PR + review highlights (Option A) over full-diff walk or staged pin.** Three options surfaced after the diff size was assessed: (a) bump to HEAD with skim-and-flag review, (b) bump to HEAD with full per-template walk, (c) pin to an older intermediate commit. Picked (a). The forked review agent characterised the deltas in ~2 min; full per-template reading would have added cost for low marginal information (most changes are upstreams of wuseria's own lessons). Staged pinning would force a multi-PR sequence with no clear stopping point.
+- **Flag the journal-format deviation rather than migrate.** 188 entries; reverse-chronological reading harms the "what shipped today vs yesterday" narrative because newer entries reference earlier ones by `Sxxx` index. Migration cost is real (~3-4h of mechanical rewriting) and the chronological order genuinely reads better for the wuseria use case. Flagged in CLAUDE.md §5.4 + upstream issue #618 instead.
+- **File the 3 S188 upstream candidates, mark the ~30-item backlog as historical.** S188 named three upstream candidates in memory (read-prior-spike-closeout, stale-doc-references, honest-None-extractor); filed all three (#615, #616, #617). The longer backlog from S178-S187 wrap-ups was named-but-not-filed; under the new strict rule those should have been filed at the time, but retroactive filing 30 issues at once would dump noise on upstream. The new rule applies going forward; backlog is treated as historical.
+- **Bump in one shot rather than a series of smaller bumps.** Submodule bumps don't compose well across PRs because each one moves the pointer to a different commit and conflicts on overlap. One PR + the review summary + CLAUDE.md deviation flags + upstream filings closes the loop cleanly.
+
+#### Process patterns observed this session
+
+- **Forked review agent is the right tool for a 60-commit submodule diff.** Raw diff is 16k lines and would burn ~30k tokens in context. A forked agent characterised rule-level deltas in <2 minutes for ~280 tokens of input and ~5k tokens of output, none of which sits in the main loop's context. Lesson: when a diff is "I want a structured summary" rather than "I need to read the actual changes," fork.
+- **Wuseria-lineage commit count is a calibration signal.** 17 of 60 upstream commits trace directly to wuseria-observed lessons. This is healthy — wuseria is contributing upstream — but it also means many of the "new" rules in this bump aren't actually new behavioral asks for wuseria; they're upstream catching up. The right framing for the bump PR was "what does this change in our behavior" not "what's new upstream."
+- **Step-12 filing is cheap when each candidate already has a worked example.** Each of the 3 S188 candidates came from a concrete failure mode documented in S188 itself. The upstream issue body wrote itself: rule + worked example + related-rules pointer. Filing 3 issues took ~10 minutes. The historical backlog couldn't be filed this fast because most older candidates don't carry their worked examples — extracting them retroactively from journal entries would take 2-3 hours.
+- **Bump-then-deviation-flag is the right ordering.** Bumping first means CLAUDE.md edits live against the new MANDATORY STARTUP templates from the moment they land. Flagging first would create a window where CLAUDE.md references rules not yet present in the local submodule.
+
+#### Follow-ups for next session (S190)
+
+- **#1224** (P3, Backlog, spike) — anchor-signal repair for noisy grey-mask charts. Active follow-up that S188 merged #1301 into. Multi-session investigation if picked up.
+- **Other v0.8.0 items**: #1110 per-stage diagnostic bundle, #1134 confidence badge, #950 auto-detect plot box, #791 Carl Zeiss next brand, #1159.
+- **Possible refactor** (carried from S187): `_splice_entries` duplicated in Fuji + TTartisan emit scripts. KISS today; reconsider when a third brand emit script lands.
+- **Watch upstream**: 4 new issues filed (#615, #616, #617, #618). #618 is informational; the other three may produce upstream template updates that wuseria absorbs in a future submodule bump.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, median |d| 0.0071, **p95 |d| 0.0458**, max |d| 0.1217, **in-band 96.1%** (unchanged — submodule bump doesn't move metrics).
+- **720 mtfdigitizer pytest pass + 0 xfailed** (unchanged). **224 vitest pass** (unchanged).
+- **72 ADRs** (unchanged — S189 made no architectural decisions; deviations flagged in CLAUDE.md, not new ADRs).
+- 8 declared MTF profiles.
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + #791** + epics #790, #932. Backlog spike: #1224 (anchor-signal repair).
+- **0 open PRs** at wrap-up (after #1314 + the upcoming S189 journal PR merge).
+- **CI gates on #1314**: 9/9 effective green (build/lighthouse/pytest correctly skipping per path filter on docs/.gitmodules-only diff).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` at `ba2843d` — current with upstream main as of S189.
+- **Upstream contributions filed:** 4 (#615, #616, #617, #618 on braboj/solid-ai-templates).
