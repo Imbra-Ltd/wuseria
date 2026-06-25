@@ -375,7 +375,10 @@ above tools handle that case end-to-end:
   Tier 1 anchors and Tier 2 bulk (every `fujifilm-permfreq` chart).
   Derives aperture and focal length from the slug; source URL is read
   from `lenses.ts:officialUrl` (fail-loud `KeyError` if missing) — see
-  #1062.
+  #1062. Eye-read overrides preserved across `--write` and `--check`
+  via `_emit_overrides` (#1301, #1305): any cell with a comment block
+  containing the literal `eye-read override` marker immediately above
+  it stays verbatim, keyed by `(aperture, position_mm, freq)`.
 
 Workflow when adding a new Fuji lens (or another brand using the
 per-frequency convention): (1) drop the chart PNGs under the lens
@@ -420,7 +423,11 @@ ttartisan-*`, runs the classifier, and writes a
   (one per aperture pass), with the actual f-numbers from
   `chart.apertures[i]` aligned positionally with the profile's
   `apertures_per_chart` labels. `source` URL from `lenses.ts:
-officialUrl` (fail-loud `KeyError` if missing — see #1062).
+officialUrl` (fail-loud `KeyError` if missing — see #1062). Eye-read
+  overrides preserved across `--write` and `--check` via
+  `_emit_overrides` (#1301): any cell with a comment block containing
+  the literal `eye-read override` marker immediately above it stays
+  verbatim, keyed by `(aperture, position_mm, freq)`.
 
 Workflow when adding a new TTartisan lens (or another brand using
 the multi-aperture-by-color convention): (1) drop the chart PNG under
