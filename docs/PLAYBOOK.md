@@ -350,6 +350,7 @@ cd tools && py -m mtfdigitizer.scripts.scaffold_fuji_tier2        # preview Tier
 cd tools && py -m mtfdigitizer.scripts.scaffold_fuji_tier2 --write  # materialize _fuji_tier2_charts.py
 cd tools && py -m mtfdigitizer.scripts.emit_fuji_tier2            # preview TS object literals
 cd tools && py -m mtfdigitizer.scripts.emit_fuji_tier2 --write    # patch src/data/mtf-readings.ts
+cd tools && py -m mtfdigitizer.scripts.emit_fuji_tier2 --check    # diff in-memory re-emit vs committed file; exit 1 on drift (#1296)
 ```
 
 Fujifilm publishes one chart image per spatial frequency
@@ -391,6 +392,7 @@ cd tools && py -m mtfdigitizer.scripts.scaffold_ttartisan_tier2          # previ
 cd tools && py -m mtfdigitizer.scripts.scaffold_ttartisan_tier2 --write  # materialize _ttartisan_tier2_charts.py
 cd tools && py -m mtfdigitizer.scripts.emit_ttartisan_tier2              # preview TS object literals
 cd tools && py -m mtfdigitizer.scripts.emit_ttartisan_tier2 --write      # patch src/data/mtf-readings.ts
+cd tools && py -m mtfdigitizer.scripts.emit_ttartisan_tier2 --check      # diff in-memory re-emit vs committed file; exit 1 on drift (#1296)
 ```
 
 TTartisan publishes one chart image per lens packing TWO apertures by
