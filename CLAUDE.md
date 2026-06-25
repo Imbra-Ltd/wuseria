@@ -341,6 +341,22 @@ score row. This keeps one home for audit history (avoids the two-locations
 split a separate history file creates) and preserves the reasoning behind
 each score. Do NOT re-create `docs/360-audit.md`. Deviation flagged upstream.
 
+### 5.4 Dev journal format (upstream deviation)
+
+`base/core/docs.md` now mandates reverse-chronological dev journals
+(newest first) with `## YYYY-MM-DD — Short theme` headings and
+bold-labelled `**Tool**` / `**Key changes**` / `**PRs merged**` /
+`**Issues**` / `**Lesson**` fields. This project deliberately deviates:
+`docs/dev-journal.md` is chronological (oldest first) with
+`### Session N — Theme` headings and a `Date: · Tool:` byline + free-form
+`#### PRs` / `#### Issues opened / closed` / `#### Key technical findings` /
+`#### Key changes` / `#### Verification` / `#### Key decisions` /
+`#### Process patterns observed` / `#### Follow-ups for next session` /
+`#### State of the project` subsections. 188 entries deep; migration is
+expensive and the chronological order matches how sessions are written
+and read. Deviation flagged upstream. Match prior-entry skeleton when
+appending (see [[feedback_match_doc_convention]]).
+
 ## 6. Session Protocol
 
 Follow `docs/solid-ai-templates/templates/base/workflow/scope.md` for scope guard and end-of-session audit.
@@ -382,7 +398,7 @@ execution prevents missed steps.
 [ ] 9. ONBOARDING.md — for each new tool, prerequisite, or setup step, is it documented? Name the section.
 [ ] 10. PLAYBOOK.md — first list every new command and script introduced this session. Then check: is each one documented? Name the section. Do not batch-dismiss.
 [ ] 11. Submodules — check if upstream needs update
-[ ] 12. Flag conventions for solid-ai-templates upstream — list each new convention/decision by name and evaluate individually. No blanket "nothing reusable." For each: state project-specific or reusable; if reusable, name the upstream template file and create an issue
+[ ] 12. Flag conventions for solid-ai-templates upstream — list each new convention/decision by name and evaluate individually. No blanket "nothing reusable." For each: state project-specific or reusable; if reusable, name the upstream template file AND file the issue on github.com/braboj/solid-ai-templates this session — per `base/workflow/scope.md` end-of-session step 11, naming a candidate is not contributing it
 [ ] 13. Review sources — list every new external link used this session for tech specs, optical specs, or lab/field reviews. For each: is it already in `src/data/reviews.ts` or `docs/bookmarks.md`? If not, bookmark it and evaluate whether it should be added as a review source.
 [ ] 14. Summarize what was done and what's next
 ```
