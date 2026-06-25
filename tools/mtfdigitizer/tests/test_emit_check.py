@@ -84,16 +84,16 @@ def test_report_drift_fail_message_points_to_write(
 # test failure — that is the signal to remove the marker.
 
 
-@pytest.mark.xfail(
-    reason=(
-        "#1296: production mtf-readings.ts is stale for both TTartisan "
-        "and Fuji tier 2 entries. The --check gate correctly reports "
-        "drift; flip to a hard assertion after the bulk-refresh PRs."
-    ),
-    strict=True,
-)
 def test_ttartisan_check_passes_on_production_data() -> None:
-    """Production gate: TTartisan tier 2 entries match the extractor."""
+    """Production gate: TTartisan tier 2 entries match the extractor.
+
+    Flipped from xfail-strict to hard assertion in S187: the af-35
+    eye-read override (the only remaining cell of drift after S184's
+    bulk refresh) is now preserved across `--write` by the override-
+    respecting splice (#1301 fix-path-2). If this regresses, either
+    the splice's override detector broke or a new cell drifted that
+    has no override — investigate before flipping back.
+    """
     from mtfdigitizer.scripts.emit_ttartisan_tier2 import main
 
     assert main(["--check"]) == 0

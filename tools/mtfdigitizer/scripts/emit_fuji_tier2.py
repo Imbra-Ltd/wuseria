@@ -46,6 +46,7 @@ from mtfdigitizer.referenceset.charts import (
     PlotBoxCoords,
     ReferenceChart,
 )
+from mtfdigitizer.scripts._emit_overrides import overlay_committed_overrides
 
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -497,6 +498,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.write:
         source = MTF_READINGS_PATH.read_text(encoding="utf-8")
+        entries = overlay_committed_overrides(source, entries)
         patched = _splice_entries(source, entries)
         MTF_READINGS_PATH.write_text(patched, encoding="utf-8", newline="\n")
         print(
@@ -509,6 +511,7 @@ def main(argv: list[str] | None = None) -> int:
         from mtfdigitizer.scripts._emit_check import report_drift  # noqa: PLC0415
 
         source = MTF_READINGS_PATH.read_text(encoding="utf-8")
+        entries = overlay_committed_overrides(source, entries)
         patched = _splice_entries(source, entries)
         return report_drift(
             MTF_READINGS_PATH,
