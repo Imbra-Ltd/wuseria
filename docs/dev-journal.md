@@ -10581,3 +10581,87 @@ Theme: clear v0.8.0 follow-ups. Five PRs merged across two milestones of work: l
 - Gitleaks CI: pass.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
+
+---
+
+### Session 184 — `--check` gate for emit scripts + TTartisan bulk refresh
+
+Date: 2026-06-25 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: clear #1296. Ship the `--check` gate proposed in S183 for both Fuji and TTartisan emit scripts, then run the TTartisan bulk refresh under that gate. Two PRs merged; three follow-up issues filed.
+
+#### PRs
+
+- **#1300 merged** (`feat(mtfdigitizer): add --check mode to emit_*_tier2 scripts (#1296)`) — squash `a1f7fa5`. Adds `--check` to both `emit_ttartisan_tier2` and `emit_fuji_tier2`. Each script renders entries in memory, splices into the committed `mtf-readings.ts`, diffs, and exits 1 with a unified diff on drift. Shared diff/exit helper in `_emit_check.py` (KISS — each script keeps its own `_splice_entries` since the splice patterns differ between the two). 4 unit tests on the helper; 2 production-data tests marked `xfail(strict=True)` documenting both brands' known drift — the strict marker auto-fails once drift is gone, forcing the maintainer to flip them. PLAYBOOK §2.8 emit command blocks updated. 5 files, +208/-2.
+- **#1302 merged** (`fix(data): refresh TTartisan tier 2 MTF readings from current extractor (#1296)`) — squash `45b3d8b`. Bulk re-emit of all 19 TTartisan tier 2 entries via `emit_ttartisan_tier2 --write`. 633-line diff (368 insertions / 265 deletions) across 418 positions: S/M curve swaps on bend-point cells where prior output had them reversed, new position-14 rows extending to chart edge, center-anchor position-0 rows now populated (ADR-072 / #1279), one confidence flip LOW → HIGH on af-27 max. The af-35 max f/1.8 M30 cell at position 12.6 (eye-read 0.58 vs extractor 0.66) restored post-emit with its WARN comment — #1214 fixed the pos-14 corner but the pos-12.6 bend-point mistrack persists. 1 file, +368/-265.
+
+#### Issues opened / closed
+
+- **#1296 closed** by #1302 — TTartisan drift. The issue title scoped to TTartisan only; the broader gate work (also raised in #1296 as fix path 2) shipped in #1300. Fuji drift was a side-discovery during #1300's smoke test; filed separately as #1303 to keep #1296 honest to its title.
+- **#1299 opened** (P3, Backlog, task) — wire `tools/` pytest into CI so the new `--check` gates actually fire on PRs. Today they run locally + in the maintainer's pytest, but CI runs `npm run validate` only (vitest-only). Separate scope from #1296.
+- **#1301 opened** (P3, Backlog, bug) — af-35 max M30 right-edge pos 12.6 still mistracks after #1214. The eye-read override at pos 12.6 had to be restored post-bulk-emit. #1214 fixed pos 14 (extractor: 0.49 ≈ eye-read 0.50) but not the bend point one column inboard. Fix paths: extractor fix (best), per-cell inline-override-respecting splice (general safety net), or status quo (the `--check` gate catches the next clobber attempt).
+- **#1303 opened** (P3, Backlog, bug) — Fuji tier 2 mtf-readings.ts drift. Surfaced unexpectedly during #1300's `--check` smoke test. Beyond numeric drift, the `fujifilm-xf-8mm-f3-5-r-wr` entry has a stale `source:` URL pointing at the GF 80/2.8 Macro page — re-emit corrects it (script reads from `lenses.ts:officialUrl`).
+
+#### Key technical findings
+
+- **Fuji tier 2 is also stale, not just TTartisan.** #1296 framed the drift as TTartisan-only. Running `--check` on the Fuji script revealed it's drifted too, and worse: a stale `source:` URL on the XF 8mm f/3.5 entry that points at a completely different lens (the GF 80mm Macro). The script reads URLs from `lenses.ts:officialUrl` per #1062, so re-emit corrects it organically — meaning the URL was hand-edited (or copy-pasted from another entry) at some point after the last bulk emit. The `--check` gate would have caught this at commit time.
+- **The `--check` gate found Fuji drift on its first run.** This is exactly the failure mode the gate is designed for: a slow background-drift bug surfaces during a routine smoke test instead of during a single-lens rename PR (where #1296 originally surfaced as a 636-line diff blob blocking an unrelated commit). The cheapest gate is the one that already exists.
+- **#1214 didn't fully fix af-35.** The fix enabled `dp_y_anchor` on max-30-grey to address the right-corner identity drift, and the regression test at pos 14 passes (extractor 0.49 ≈ eye-read 0.50, within ±0.02 eye precision). But the bend-point one ridge column inboard (pos 12.6) still reads 0.66 vs eye-read 0.58. The mistrack pattern is "ridge tracker locks onto solid S30 at the right corner crossing" — the corner column was fixed, the bend-point column wasn't. Confirms the value of the `--check` xfail-strict test design: when drift goes away, the test fails, forcing the maintainer to ask "did all the drift go away, or just some of it?" before flipping to a hard assertion.
+- **Override-preservation is a real category of work, not a one-off.** The af-35 override at pos 12.6 has been clobbered twice now (in S183's `--write` attempt that prompted #1296, and again in this session's bulk refresh). Each time, the maintainer has to re-apply it manually with the WARN comment. The cleanest fix is to make `_splice_entries` respect inline `// eye-read override` comments — but that's bigger scope and only worth building if a second lens accumulates an override. Recorded as fix path 2 in #1301; status quo + `--check` is the minimum viable answer until then.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/scripts/_emit_check.py`** — new shared helper module; `report_drift(path, source, patched, label)` returns 0 on match, 1 on drift with unified diff on stderr (#1300).
+- **`tools/mtfdigitizer/scripts/emit_ttartisan_tier2.py`** — adds `--check` to a mutually-exclusive group with `--write` (#1300).
+- **`tools/mtfdigitizer/scripts/emit_fuji_tier2.py`** — same `--check` wiring (#1300).
+- **`tools/mtfdigitizer/tests/test_emit_check.py`** — 4 unit tests on the helper + 2 `xfail(strict=True)` production-data tests for both brands (#1300).
+- **`docs/PLAYBOOK.md`** — `--check` lines added to both emit command blocks in §2.8 (#1300).
+- **`src/data/mtf-readings.ts`** — 19 TTartisan entries refreshed; af-35 pos 12.6 override restored with new WARN comment referencing #1301 (#1302).
+
+#### Verification
+
+- **701 mtfdigitizer pytest pass + 2 xfailed** (was 701; +4 unit tests in `test_emit_check.py`, +2 xfail-strict production-data tests).
+- **224 vitest pass** (unchanged — the data integrity tests caught no shape issues from the bulk refresh).
+- `npm run validate` clean at every PR boundary.
+- `cd tools && py -m mtfdigitizer.scripts.emit_ttartisan_tier2 --check` after #1302 → exit 1 by exactly 1 cell (the af-35 override). The xfail-strict test continues to xfail by that one cell — fail-condition is "all drift gone," which `--check` correctly reports as not-yet-true.
+- `cd tools && py -m mtfdigitizer.scripts.emit_fuji_tier2 --check` → exit 1 with full Fuji drift (tracked as #1303; xfail-strict test xfails as expected).
+- CI on every PR: 8/8 gates green.
+
+#### Key decisions (this session)
+
+- **Skip CI wiring in #1300.** The `--check` gate is useful as a local + pytest gate, but scope discipline applies — adding `tools/` pytest to CI is its own concern (CI infra change, affects 701 tests not just the gate). Filed as #1299 and shipped the gate as-is.
+- **Restore the af-35 override + file #1301.** Three options on the table: restore + re-file, skip af-35 from the refresh, or investigate the extractor before re-emitting. Picked restore because (a) the eye-read truth is documented, (b) the override has prior art (#1201/#1202), (c) the bulk refresh's value is real for the other 18 lenses, and (d) the `--check` gate now catches the next clobber attempt. Investigating the extractor mid-refresh would have ballooned scope.
+- **Leave #1296 closed by the auto-link.** The issue title scoped to TTartisan; closing on the TTartisan refresh is honest. The Fuji drift discovered during this session is a different issue (#1303) with different symptoms (stale URL on top of numeric drift). Re-opening #1296 to expand its scope post-hoc would have confused its history.
+- **Mirror not refactor.** The two emit scripts share `main()` shape and `_splice_entries` shape but the splice patterns differ (Fuji handles bare-named views differently than TTartisan handles dual-aperture). Refactoring to a shared base class would have been speculative DRY — KISS wins. Extracted only the diff/exit helper, which is genuinely identical.
+
+#### Process patterns observed this session
+
+- **The gate catches its own design assumption.** Built `--check` expecting TTartisan to fail (per #1296) and Fuji to pass. Fuji failed too. The gate doesn't just catch the drift it was designed for — it surfaces drift the maintainer didn't know existed. ADR-040's `--check` pattern keeps generalising to new boundaries; each one finds something on its first run.
+- **Override-clobbering loops emerge from extractor evolution + manual eye-read fixes.** The af-35 override has now been clobbered twice (S183 and S184). Each loop is "extractor partially improves → bulk emit → some overrides become unnecessary, others persist → maintainer manually sorts which is which → restore the persistent ones." The status quo works but it's tax on every brand refresh. A per-cell override-preserving splice would amortize the tax across refreshes; fix path 2 on #1301 if a second lens accumulates an override.
+- **Scope discipline pays for itself in time savings.** Three explicit scope decisions in this session: (1) `--check` only, no refresh in #1300; (2) skip CI wiring; (3) preserve af-35 override + file separate issue rather than dig into the extractor. Each one prevented an hours-long detour. The pattern: when an opportunity to expand surfaces, file it as a follow-up and keep moving.
+
+#### Follow-ups for next session (S185)
+
+- **#1303** (P3, Backlog, bug) — Fuji tier 2 bulk refresh. Same shape as #1302 but Fuji-side: run `emit_fuji_tier2 --write`, eyeball diff for surprises, check for any analogous eye-read overrides that need preserving, restore them, commit. Bigger blast radius than TTartisan because Fuji has more entries; do it under #1300's `--check` gate.
+- **#1299** (P3, Backlog, task) — wire `tools/` pytest into CI so the `--check` gates actually gate PRs.
+- **#1301** (P3, Backlog, bug) — af-35 pos 12.6 extractor fix. Lower priority than Fuji refresh; only worth doing if a second lens accumulates an override (justifies the per-cell preservation work in fix path 2).
+- **Other open v0.8.0 items**: #1110 per-stage diagnostic bundle, #1134 confidence badge, #950 auto-detect plot box, #791 Carl Zeiss next brand.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: unchanged (this session didn't touch any Tier 1 anchor's inputs; only Tier 2 entries in `mtf-readings.ts` shifted).
+- **701 mtfdigitizer pytest pass + 2 xfailed**. **224 vitest pass** (unchanged).
+- **72 ADRs** (unchanged — neither PR was an architectural decision; both implemented #1296's fix paths verbatim).
+- 8 declared MTF profiles (unchanged).
+- v0.8.0 open: #1110, #1134, #950, #791. #1296 closed. New follow-ups in Backlog: #1299, #1301, #1303.
+- **0 open PRs** at wrap-up.
+- `mtf-readings.ts` — 19 TTartisan tier 2 entries refreshed to current extractor; af-35 pos 12.6 M30 override preserved with WARN comment; Fuji entries still stale (#1303).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` 1 docs-only commit behind upstream (unchanged).
