@@ -13589,9 +13589,13 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.71, M: 0.89 },
               // 30 M: eye-read override 0.58 (extractor produces 0.66 —
-              // ridge tracker still locks onto solid S30 at the right
-              // corner crossing despite #1214 fixing pos 14). See
-              // docs/optical-specs/ttartisan-af-35mm-f1-8/eye-read.md.
+              // ridge DP slides through an intermediate AA-halo band at
+              // col ~510 instead of staying on the dashed M30 ridge;
+              // anchor-seed signal too noisy to fix at the cost-function
+              // layer per #1217 / S168). Deeper extractor fix tracked as
+              // #1224. Override is durable across emit_ttartisan_tier2
+              // --write via the override-respecting splice (#1305 / S187).
+              // See docs/optical-specs/ttartisan-af-35mm-f1-8/eye-read.md.
               30: { S: 0.31, M: 0.58 },
             },
           },

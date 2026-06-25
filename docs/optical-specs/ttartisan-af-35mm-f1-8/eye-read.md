@@ -62,21 +62,33 @@ Read each cell at the intersection of the green vertical sample line and the cur
 | 12.6          | 0.95 | 0.91 | 0.82  | 0.67  |
 | 14.0          | 0.88 | 0.88 | 0.49! | 0.63! |
 
-## Manual artifact patches (#1201)
+## Manual artifact patches (#1201 → #1224)
 
-The extractor mistracks the dashed grey M30 F1.8 at the right corner
-(frac 0.9 reads as 0.66, frac 1.0 reads as 0.17 — actually the solid
-S30 silhouette inverted into M30). Until the ridge tracker is fixed,
-three downstream artifacts carry hand-patched M30 right-edge values
-matching the eye-read above (0.58 at frac 0.9, 0.50 at frac 1.0):
+The extractor still mistracks the dashed grey M30 F1.8 at the bend
+column (frac 0.9 reads as 0.66 — the ridge DP slides through an
+intermediate AA-halo band at col ~510 instead of staying on the
+dashed M30 ridge; see #1217 / S168 for the mechanism analysis).
+Deeper extractor fix tracked as #1224 (anchor-signal repair).
+
+frac 1.0 / pos 14.0 used to read as 0.17 (border-line contamination)
+but #1223 / ADR-060 stripped the plot-box border from the grey mask;
+the extractor now correctly returns None there because the chart's
+M30 dashed curve genuinely fades before x_right. The eye-read 0.50
+is extrapolation past where data exists.
+
+Until #1224 lands, three downstream artifacts carry hand-patched M30
+right-edge values matching the eye-read above (0.58 at frac 0.9,
+0.50 at frac 1.0):
 
 - `ttartisan-af-35mm-f1-8-mtf-max.svg` — points and dots at x=277.2 and x=304.0
 - `ttartisan-af-35mm-f1-8-mtf-max-overlay.png` — re-rendered with patched readings
-- `src/data/mtf-readings.ts` — position 12.6 M30 cell (also flagged with #1202)
+- `src/data/mtf-readings.ts` — position 12.6 M30 cell; durability across
+  `emit_ttartisan_tier2 --write` provided by the override-respecting
+  splice (#1305 / S187), not just the regression test (#1202).
 
 The auto-generated `digitization-log.md` correctly shows the extractor's
-actual reading (0.17 at frac 1.0) — do not patch it; it is the diagnostic
-record for the future ridge-tracker fix.
+actual reading (`—` at frac 1.0, 0.66 at frac 0.9) — do not patch it;
+it is the diagnostic record for #1224.
 
 ## Transcribing to GT
 
