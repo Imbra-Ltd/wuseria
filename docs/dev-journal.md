@@ -11307,3 +11307,88 @@ Theme: pick up #1318 (SVG drift on `main`, filed S191) and fix it. The original 
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
 - **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
+
+---
+
+### Session 193 — #791 Phase 1 — Zeiss chart format survey + spike conversion
+
+Date: 2026-06-26 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #791 (Carl Zeiss 3-chart digitization), originally labeled `task P3 v0.8.0`. Survey of the 3 Touit MTF charts revealed the AC drastically understated the work — Zeiss is the FIRST new brand profile since Samyang Tier 2 (#1242) and requires a new dispatch mode (3 stacked frequencies, monochrome black solid/dashed, no color hue distinction). Pure investigation session: converted #791 to a spike (P2), posted a structured findings comment with chart format details + dispatch-gap analysis + open design questions + S194 deliverables list. No source code change.
+
+#### PRs
+
+- None merged. Branch `feat/791-zeiss-profile-phase1` opened for investigation, deleted at wrap (empty — no commits).
+
+#### Issues opened / closed
+
+- **#791** — relabeled from `task,P3` to `spike,P2`. Posted survey comment as interim spike deliverable per `ai-workflow-spike-findings` (multi-AC spike sliced across sessions). Not closed — stays open for the design-ADR + Tier-1-anchor sequence in S194+.
+- None opened.
+
+#### Key technical findings
+
+- **All 3 Touit lenses share the same chart template.** Stacked 2-panel layout (max + stopped aperture), 3 frequencies (10/20/40 lp/mm), monochrome black curves (solid = sagittal, dashed = tangential), German + English captions. Apertures differ per lens (Touit 12: f/2.8 + f/5.6; Touit 32: f/1.8 + f/4; Touit 50: f/2.8 + f/5.6). Source images range 1636x1770 px (32mm) down to lower-resolution (50mm macro).
+- **None of the 8 declared profiles handles this combination.** 7 use 2 frequencies (10, 30); the only 3-frequency support is `fujifilm-permfreq`, which sidesteps the problem by splitting frequencies across per-image rasters via ADR-043 — Zeiss can't do that because the source PDF packs 3 frequencies per panel. The closest profile is `viltrox-bw-dashed-f1.2` (monochrome, `Y_BAND_IS_FREQUENCY`), but `y_band_split: float | None` is a SINGLE split point that only allows 2 bands.
+- **The pipeline supports 3-frequency tuples at the data-model level.** `referenceset/charts.py:1008,1124,1201` declare 3- and 4-frequency Fuji entries; what's missing is dispatch for "3-stacked-frequency-curves in one panel."
+- **ADR-063 stacked-panel pattern applies.** Samyang's per-view aperture override pattern lets one PNG host multiple aperture panels via two `ChartView` entries with different `plot_box`. Zeiss inherits that — no new infrastructure needed for the panel split.
+- **Eye-read tooling needs a new branch.** `scaffold_anchor_helpers._resolve_helper_views` raises `ValueError` for any style family other than `fujifilm-permfreq` or `ttartisan-4color-dual-aperture`. Zeiss will need a `_zeiss_mono_3freq_views` branch added — but blocked until profile is declared (the scaffolder calls `extract_chart` which needs a profile).
+- **Anchor lens choice.** Touit 32 f/1.8 has the cleanest legend and mid-resolution; Touit 12 wide-angle has more curve crossings (harder); Touit 50 macro is lowest-resolution (lossy). 32mm is the right Tier 1 candidate.
+
+#### Key changes
+
+- None to source code. Investigation-only.
+- **#791 issue updated** — labels changed (`task` → `spike`, `P3` → `P2`). Two comments added: scope-refinement (renaming intent) and the structured survey findings.
+
+#### Verification
+
+- Read all 3 source PNGs via image-read tool (32mm, 12mm, 50mm macro). Visually confirmed consistent template across the cohort.
+- Read the 8 declared profiles in `tools/mtfdigitizer/profiles/declared.py` and the `StyleAxis` / `HueMeaning` enums in `tools/mtfdigitizer/profiles/types.py`. Confirmed gap.
+- Read existing eye-read.md format (`docs/optical-specs/ttartisan-7-5mm-f2-0-fisheye/eye-read.md`) and `scaffold_anchor_helpers.py:120-130` to confirm scaffolder boundaries.
+- Verified `[[feedback_agent_no_gt_eye_read]]` rule still applies: agent does NOT propose Tier 1 GT cell values; the scaffolder publishes extractor mechanical predictions for the maintainer to verify/correct.
+- No build/test runs — pure investigation. No source change to validate.
+
+#### Key decisions (this session)
+
+- **Convert #791 from task to spike.** Original AC ("digitize 3 Zeiss MTF charts") understates the work by an order of magnitude. Renaming to spike per `base/workflow/issues.md` (Spike = research where output is a decision). Re-prioritized P3 → P2 because it blocks epic #790's tail brands (each new monochrome brand may rediscover the same dispatch challenges).
+- **Phase-1 deliverable: spike findings comment, NOT code.** Three options at decision time: (a) hand-write eye-read.md with `?` placeholders (chicken-and-egg — scaffolder needs profile, profile needs design decision); (b) write a research notes.md in the lens folder (no existing convention for "digitization research" — would invent a new file type); (c) post findings as spike issue comment per `ai-workflow-spike-findings`. Picked (c) — durable, queryable, bidirectionally linked, no new directory or convention. The eventual design ADR (S194+) cites the comment.
+- **Pushed back on initial "Phase 1: declare profile + scaffold anchor in this session" plan.** First scoping attempt assumed Phase 1 could land profile declaration + ReferenceChart entry + first extraction pass. Surfaced during survey that step 1 alone needs a design ADR (3 viable dispatch options, each with different schema implications). Re-scoped to survey-only mid-session per `feedback_probe_before_acting` applied at the scoping stage. Lesson: a spike's deliverable size is often N/2 of its first estimate; reassess after the survey, not after starting implementation.
+- **Bias toward the existing `viltrox-bw-dashed-f1.2` extension over a fresh dispatch mode.** Of the 3 design options listed in the spike comment, "extend `y_band_split` to `y_band_splits: tuple[float, ...]`" is the smallest schema change and reuses the existing monochrome mask logic. To be re-decided in S194's ADR with the actual eye-read data in hand — but worth recording as the agent's prior for the next session.
+
+#### Process patterns observed this session
+
+- **Spike scope expansion is normal; surface it explicitly via label change.** Original task framing was preserved in the AC; converting to spike + bumping priority makes the scope mismatch visible to anyone scanning the milestone. Compared to leaving the task open and shipping minimal Phase 1 silently, the relabel is the honest signal.
+- **The "first new X" pattern.** Zeiss is the first new brand profile since Samyang; the first new monochrome brand (after viltrox-bw); the first 3-frequency stacked-panel chart. Each "first" tends to spawn its own ADR. Tracking "what's a first" up front prevents the AC-vs-reality gap that S193 caught for #791.
+- **Investigation-only sessions ship via issue comment, not PR.** S191 had a similar shape (#1110 verification → close); S193 has the same (#791 survey → spike comment). Each delivered without code. Pattern: when the deliverable is a finding or a decision, the artifact is an issue comment or ADR — branching is wasted overhead. The "delete empty branch at wrap" step is becoming a habit.
+
+#### Follow-ups for next session (S194)
+
+- **#791 design ADR**: pick from 3 options listed in the spike comment (extend `y_band_splits`, new dispatch mode, new style family). Single ADR per `base/core/docs.md` "one concern per ADR" rule; alternatives in the Alternatives section.
+- **#791 profile declaration**: `zeiss-touit-mono-3freq` (or whatever name the ADR commits to). Add to `declared.py` + `suggest.py` registry.
+- **#791 reference set entry**: `ReferenceChart` for `zeiss-touit-32mm-f1-8` with 2 view panels via ADR-063 pattern.
+- **#791 scaffolder extension**: add `_zeiss_mono_3freq_views` to `scaffold_anchor_helpers._resolve_helper_views`. Then eye-read.md can be scaffolded for the maintainer to fill.
+- **#791 eye-read + calibrate cycle**: maintainer reads cells; `--apply` + `calibrate` reports deltas; iterate until p95 |d| < 0.05 (same bar TTartisan and Samyang anchors meet).
+- **Stale production logs cleanup** (carried from S192): samyang-10mm + samyang-12mm fisheye both flagged by `extract --check`. Small task — fits any session with extractor changes.
+- **`_splice_entries` + `_artifact_stem` extraction** (carried from S187/S190/S191/S192): track for the third caller of either pattern.
+- **Carry-forward**: 5 upstream issues open (#615, #616, #617, #618 from S189 + #638 from S191).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, median |d| 0.0071, **p95 |d| 0.0458**, max |d| 0.1217, **in-band 96.1%** (unchanged — no extractor source touched).
+- **720 tools pytest collected, 450 mtfdigitizer subset pass + 0 xfailed** (unchanged). **224 vitest pass**.
+- **73 ADRs** (unchanged — design ADR for Zeiss deferred to S194).
+- 8 declared MTF profiles (unchanged — Zeiss profile deferred to S194 post-ADR).
+- **v0.8.0 open: 22 issues** (unchanged; #791 stays open in v0.8.0).
+- **Backlog spikes: 1** (#791 — converted this session from task; previously had `none` for several sessions).
+- **Expedite open: 0**.
+- **0 open PRs** at wrap-up.
+- Pre-existing SVG drift on main: 0 (#1318 cleanup landed S192).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **2** (samyang-10mm, samyang-12mm fisheye — flagged by `extract --check`; carry-forward from S192).
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
+- **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
