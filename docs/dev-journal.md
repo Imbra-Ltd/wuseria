@@ -11056,3 +11056,84 @@ Local (wuseria): none opened, none closed.
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` at `ba2843d` — current with upstream main as of S189.
 - **Upstream contributions filed:** 4 (#615, #616, #617, #618 on braboj/solid-ai-templates).
+
+---
+
+### Session 190 — Spike #1224 closes as dead end (ADR-073)
+
+Date: 2026-06-26 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: investigate spike #1224 (anchor-signal repair for noisy grey-mask charts). Two throwaway probes measured the three candidates (seed_filter, smooth_fill, iterative) against the af-35 + ttartisan-50 + 7artisans triplet from ADR-060 baselines. None moves af-35 max freq30M. The anchor-dump probe shows the two-ridge ratio is now 41.8% (not 3% as S166 reported pre-ADR-060) and baseline seeds already match GT curve positions — the seed signal isn't broken. The af-35 regression under anchor=ON is band-overlap geometry at the cost-model level, independent of seed quality. Spike closes with ADR-073, `EYE_READ_OVERRIDES[0]` declared permanent. One PR merged.
+
+#### PRs
+
+- **#1316 merged** (`docs(spike): close #1224 anchor-signal repair as dead end (ADR-073)`) — squash `4d0340e`. ADR-073 + EYE_READ_OVERRIDES test-comment update. 2 files, +158/-4. CI 9/9 effective gates green (pytest correctly skipping per `dorny/paths-filter` — no `tools/` diff).
+
+#### Issues opened / closed
+
+- **#1224 closed** via PR body `Closes #1224`. Auto-closed at 2026-06-26T03:59:02Z.
+- None opened.
+
+#### Key technical findings
+
+- **Spike's premise was already stale.** S166 measured "3% two-ridge columns" before ADR-060's plot-box border strip landed. Stripping the col-516 contamination (180 grey px in one vertical column) re-classified most of the af-35 max-30-grey mask: current ratio is **218/521 = 41.8% two-ridge, 197/521 = 37.8% three-plus, only 93/521 = 17.8% one-ridge, 13/521 = 2.5% zero-ridge**. Seeds were never the binding constraint after ADR-060 shipped.
+- **Baseline seeds already match GT curve positions.** Sampled at cols 0/52/130/260/390/468/520, baseline upper anchor sits at y=132/188/185/148/208/256/327 and lower at y=189/196/209/268/242/328/419 — matching the M30 (y~290-330) and S30 (y~410-420) curves from the S166 probe at the right corner. All three candidates either match baseline or differ by ≤1 px on a single edge column.
+- **The af-35 anchor=ON regression is band-overlap geometry, not seed quality.** Under per-lens Option 1 (anchor enabled on max-30-grey), the AA-halo cluster at col ~510 sits between the upper anchor (y~190 in midfield) and the lower anchor (y~240 in midfield). The `gamma * |y - anchor|` cost gradient picks the closer-to-anchor halo over the real M30 ridge. All three candidates produced identical 0.422 freq30M / 0.344 freq30S regressions under anchor=ON, matching ADR-060's documented Option 1 baseline numbers exactly — confirming the candidates don't change the cost-model behaviour.
+- **C1 also regresses ttartisan-50 stopped under anchor=OFF.** Seed-filter dropped legitimate stopped-aperture seeds via its top-decile threshold: 0.011 → 0.026 (freq30S), 0.011 → 0.038 (freq30M). C2/C3 are no-ops on every cell measured under anchor=OFF (anchor isn't consulted in production today).
+- **Aggregate metrics shifted between sessions.** S188 reported 810 paired / p95 0.0499 / max 0.1745 / 94.9% in-band; today's calibrate shows **900 paired / p95 0.0458 / max 0.1217 / 96.1% in-band**. The shift is data-driven (more charts landed) and unrelated to this spike — no source changed it.
+
+#### Key changes
+
+- **ADR-073 written** — `docs/decisions/073-anchor-signal-repair-dead-end.md`. Records the three-candidate measurement matrix (anchor-OFF + anchor-ON × baseline + C1 + C2 + C3), the seed-dump findings (41.8% two-ridge ratio + clean baseline seeds), and the band-overlap geometry conclusion. Declares `EYE_READ_OVERRIDES[0]` permanent. Re-gates future ridge-DP work on a new cohort lens hitting AA-halo drift without an override available.
+- **`src/data/mtf-readings.test.ts` comment updated** — `EYE_READ_OVERRIDES[0]` comment now references ADR-073 (permanent), drops the "when extractor is fixed" framing for this specific entry, and the issue tag becomes `#1201 / #1202 / ADR-073 (permanent)`.
+- **Probes deleted before commit** — `probe_1224_anchor_repair.py` (the four-candidate × two-regime runner) and `probe_1224_anchor_dump.py` (the af-35 anchor-signal inspector) both removed before staging per `base/core/quality.md` probe-script rule. Findings live in ADR-073 + the spike's closing comment.
+
+#### Verification
+
+- `npm run validate` clean: 462 pages built, all internal links checked, lint/format/check/build green.
+- 224/224 vitest pass including the updated `EYE_READ_OVERRIDES` permanence test.
+- 720/720 tools pytest collected; mtfdigitizer subset run = 450 passed.
+- `py -m mtfdigitizer.calibrate` baseline captured pre-change matches ADR-060 numbers exactly: af-35 max freq30M = 0.113, ttartisan-50 max freq30S = 0.024, 7artisans freq10S = 0.052. Post-change identical (no source code touched).
+- **CI on #1316**: 9/9 effective gates green. CodeQL 2s, build 1m19s, gate 2s, lighthouse 1m33s, analyze 1m19s, gitleaks 10s, links 41s. pytest "skipping" per path filter (no `tools/` diff).
+- #1224 auto-close verified — `gh issue view 1224` shows `state=CLOSED closedAt=2026-06-26T03:59:02Z`.
+
+#### Key decisions (this session)
+
+- **Production-harness over throwaway probe for measurement, throwaway probe for inspection.** AC2 required p95 |d| numbers under each candidate — that's `calibrate`'s output, not something to reinvent. Probe #1 monkey-patched `_compute_y_anchors` + `profile_for_chart` and called `_calibrate_chart` directly. Probe #2 (the anchor-dump) needed insight `calibrate` doesn't expose, so it called the pipeline up to `_ridges_by_column` then ran each candidate transformer in-process. Both deleted before commit.
+- **Close as dead end, declare override permanent, gate future work on new cohort lens.** Three options at decision time: (a) ship one candidate anyway as "framework for future use," (b) close as dead end with override-permanent + new-cohort revisit trigger, (c) reframe the spike as a cost-model spike (Option 2 from S166: "stay-in-band" / off-other-anchor cost). Picked (b). (a) ships dormant infrastructure with no caller — YAGNI violation. (c) is a different problem on a different timescale and shouldn't ride the close-out of this one. Recorded the cost-model option in ADR-073's "Alternatives considered" with the explicit YAGNI revisit trigger.
+- **No EYE_READ_OVERRIDES[0] removal task filed.** Per AC4 the override is now declared permanent in both the test comment and ADR-073 — opening a removal-tracking issue would be noise against a documented permanent state. If a future ridge-DP cost-model change makes the cell extractable, the override comes out in that PR; until then there's nothing actionable to track.
+- **Probes deleted before commit, not retained as `_dev_scripts`.** Probe-script rule in `base/core/quality.md` is explicit: findings into source comments, ADRs, or docs — never the probe itself. ADR-073's "Context" section + the spike's closing comment carry the measurement matrix; the probes themselves can be rebuilt from the ADR text in ~15 min if needed.
+
+#### Process patterns observed this session
+
+- **The "garbage in / garbage out" framing from the spike was right at session-start time but wrong by spike-execution time.** ADR-060 closed the data-quality issue (border-strip) that made the seeds noisy. The spike was filed before that landed; by the time the spike ran, the anchor signal was already 14× cleaner than the spike body assumed. Lesson: when a follow-up spike inherits a hypothesis from a prior session, re-measure the premise before designing the experiment — the upstream fix may have invalidated it. (This is `feedback_probe_before_acting` applied at spike intake.)
+- **`_run_variant` monkey-patching needed three patch sites, not one.** Patched `ridge_mod._compute_y_anchors`, `family_profile_mod.profile_for_chart`, AND `calibrate.profile_for_chart` (which had bound the name at import time). First two patches alone leaked through `calibrate`'s already-bound reference. Lesson: when monkey-patching a function imported via `from module import name`, every module that already imported it holds a separate reference — patch all of them. (Worth a future memory if the pattern recurs.)
+- **Windows console codec rejects unicode `≤` etc.** First probe run failed on `UnicodeEncodeError` for `≤` in the format string under `cp1251`. Replaced with ASCII `<=`. Lesson: throwaway scripts that print to a Windows console MUST stay ASCII-only — this is consistent with the project's source-content ASCII-only rule, but probes are easy to forget about.
+- **Working directory drift caught twice** — once on a `cd tools && py -m ...` attempt that failed because shell cwd was already `tools/`, and once on a path-relative `rm` that failed for the same reason. Used absolute paths after the first hit, per `[[feedback_pwd_on_path_failure]]`. The `pwd` check that resolved it cost ~5 seconds; the failed commands ate ~30 seconds of confusion. Habit pattern: when a shell command unexpectedly fails on a path, the first response is `pwd`, not retry.
+
+#### Follow-ups for next session (S191)
+
+- **v0.8.0 remaining**: #1110 per-stage diagnostic bundle, #1134 confidence badge, #950 auto-detect plot box, #791 Carl Zeiss next brand, #1159.
+- **Possible refactor** (carried from S187): `_splice_entries` duplicated in Fuji + TTartisan emit scripts. KISS today; reconsider when a third brand emit script lands.
+- **Carry-forward from S189**: 4 upstream issues open at braboj/solid-ai-templates (#615, #616, #617, #618). Watch for upstream uptake — may produce template updates absorbed in a future submodule bump.
+- **#1201 + #1202** — the right-corner M30 ridge-tracker line-loss bug. Originally framed as "extractor will eventually fix this" — ADR-073 reframes the cell as permanently override-locked. The issues themselves stay open as the historical context for the override; consider closing as `wontdo` next session if no actionable extractor work survives.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, median |d| 0.0071, **p95 |d| 0.0458**, max |d| 0.1217, **in-band 96.1%** (unchanged from pre-spike baseline — no source code touched on the extractor).
+- **720 tools pytest collected, 450 mtfdigitizer subset pass + 0 xfailed** (unchanged). **224 vitest pass** including the updated `EYE_READ_OVERRIDES` permanence test.
+- **73 ADRs** (+1: ADR-073).
+- 8 declared MTF profiles.
+- v0.8.0 open: **#1134 + #1135 + #1110 + #1159 + #950 + #791** + epics #790, #932. Backlog spikes: none (#1224 closed this session).
+- **0 open PRs** at wrap-up.
+- **CI gates on #1316**: 9/9 effective green.
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` at `ba2843d` — current with upstream main as of S189.
+- **Upstream contributions filed in S189 still open:** 4 (#615, #616, #617, #618 on braboj/solid-ai-templates).
