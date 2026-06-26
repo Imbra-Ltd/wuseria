@@ -11137,3 +11137,80 @@ Theme: investigate spike #1224 (anchor-signal repair for noisy grey-mask charts)
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` at `ba2843d` — current with upstream main as of S189.
 - **Upstream contributions filed in S189 still open:** 4 (#615, #616, #617, #618 on braboj/solid-ai-templates).
+
+---
+
+### Session 191 — Verify and close #1110, file SVG drift on main
+
+Date: 2026-06-26 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick the cheapest item off the S191 candidate list and close it. The S190 handoff pointer named six candidates; first action was to triage them against open-issue state — and discover five of the six were already closed. The real open Expedite item (#1110, all 6 ACs pre-checked) was verified live and closed. Verification incidentally surfaced pre-existing SVG drift on `main` (separate from #1110 sink work) which was filed as #1318. Investigation-only session — no commits, no branch left behind. One issue closed, one issue filed.
+
+#### PRs
+
+- None merged. Branch `chore/s191-close-1110` opened for verification work, deleted at wrap (empty — no commits).
+
+#### Issues opened / closed
+
+- **#1110 closed** as completed. All 6 ACs verified live on `main` (`56ea189`); verification report posted as a comment. Issue auto-close was not in scope (no PR), so closed manually with `gh issue close --reason completed`.
+- **#1318 opened** (`bug`, `P2`, `Expedite`) — pre-existing SVG drift on `main`: 16 reference charts re-render under `py -m mtfdigitizer.svg --check`, with 2 real content diffs after CRLF-noise filter (`viltrox-af-75mm-f1-2-pro-mtf.svg` 2px y-shift, `samyang-85mm-f1-4-as-if-umc-mtf.svg` never-committed). Unrelated to #1110 sink work — sink calls don't touch SVG render.
+
+#### Key technical findings
+
+- **The S190 handoff pointer rotted fast.** Listed 6 candidates: #1110 #1134 #950 #791 #1159 #1201/#1202. Actual state: #1159 closed 2026-06-18, #1201 closed 2026-06-18, #1202 closed 2026-06-18, #1134 moved to Backlog. Only #1110, #950, #791 are genuinely open. Five of six closed/moved without updating the pointer — the wrap-up writer captures `state-at-write-time` but issue tracker keeps moving. Re-reads `verify before relying on a claim` and `feedback_current_milestone_focus`.
+- **#1110 was code-complete at filing.** All 6 ACs already checked in the issue body when it was opened (Expedite, P1). The "verify and close" task was: confirm the code matches the AC text, not implement anything. Verification took ~10 minutes end-to-end: read the diagnose CLI source, run it on `ttartisan-af-35mm-f1-8` (wrote 2 bundles cleanly), confirm bundle layout matches AC, write a 35-line throwaway probe to compare `dataclasses.asdict(extract_chart(..., sink=None))` vs `extract_chart(..., sink=FileDiagnosticSink(...))` on both apertures (byte-identical, ALL OK).
+- **Pytest count grew from 338 (original AC) to 450, all green.** The growth is downstream MTF work that piggy-backed test additions onto unrelated PRs; the original AC's count is a snapshot from #1110 filing time and is harmless to be different at close time.
+- **SVG `--check` reports 19 stale entries on `main` but only 2 are real content drift.** Filter via `git diff --ignore-all-space` after regen: 17 are CRLF noise (#1186 class), 2 are real (viltrox 2px shift, samyang-85 untracked). Filed as #1318, not bundled into the #1110 close — sink-side byte-identity is independent of SVG render staleness.
+
+#### Key changes
+
+- None to source code. Memory pointer `session_next_theme` rewritten at wrap. Probe script `probe_byte_identity.py` written and deleted in-session per probe-script rule. Diagnostic bundle artifacts (`ttartisan-af-35mm-f1-8/diagnostic*/`) cleaned at wrap — gitignored, but removed to keep the working tree minimal between sessions.
+
+#### Verification
+
+- `py -m pytest mtfdigitizer/` from `tools/`: **450 passed in 332s**.
+- `py -m mtfdigitizer.diagnose ttartisan-af-35mm-f1-8`: 2 bundles written (max + stopped), 14 artifacts each + `manifest.json`. Layout matches ADR-050 AC.
+- Byte-identity probe on both apertures: `dataclasses.asdict()` equal across sink-off and sink-on calls. `ALL OK`.
+- `py -m mtfdigitizer.svg --check` on `main` and `chore/s191-close-1110`: identical 19-entry "would write" list (drift is pre-existing).
+- `git diff --ignore-all-space` after regen: 1 real-content diff (viltrox) + 1 untracked (samyang). All other 17 reverted cleanly via `git checkout --` — CRLF-only.
+
+#### Key decisions (this session)
+
+- **File SVG drift as a separate issue, close #1110 cleanly.** Three options: (a) file and close (chosen), (b) fix the 2 real diffs in-session before closing #1110, (c) close #1110 silently with a note. Picked (a). (b) bundles unrelated concerns per `base/workflow/scope.md` — and the cause of the viltrox 2px shift needs root-cause analysis (which PR advanced the renderer?), not a blind regen-and-commit. (c) drops the signal — without an issue, the drift gets forgotten and re-discovered next sweep.
+- **Verify before relying on the S190 pointer.** First action after status was `gh issue view` on each candidate, not branching. Found 5 of 6 closed; the memory pointer was stale. Cost: ~2 minutes; alternative cost: branching to work on already-shipped #1201 then discovering it mid-implementation. Reinforces `feedback_verify_mount` generalised to "verify any inherited count or list before scoping work on it."
+- **Pushback overruled the recommendation.** Initial pick was #1201/#1202 (graded P1 visible bug). User asked "but the overlay is good for af-35" — re-checked the actual rendered overlay against source chart, confirmed they match, then found `b1f1a25` in git log shipping `#1201` fix in PR #1203 on 2026-06-18. Verified `gh issue view 1201` returns `state=CLOSED`. Lesson: a user "wait, what about X" against a confident plan is a high-leverage probe — the user often has a current-state signal the agent doesn't.
+- **Delete the empty branch rather than ship an empty PR.** S191 work produced no source code change. `chore/s191-close-1110` had zero commits at wrap. Deleted via `git branch -D` after switching to main. The investigation findings live in the #1110 close comment and #1318 body, not in a PR.
+
+#### Process patterns observed this session
+
+- **The memory pointer needs its own wrap-up integrity check.** Current wrap-up step 5 is "rewrite the `session_next_theme` memory file to the current state" — it captures the wrap-time snapshot but doesn't validate the candidates list against the issue tracker before writing. S190's pointer was correct on `state shipped` but wrong on `concrete next priority`. The list of issues should be confirmed open via `gh issue view` at write time, not just remembered from the session. Worth a feedback memory if the pattern recurs.
+- **`gh issue list --milestone` gives a better read on "what's actually next" than the memory pointer.** Surveyed v0.8.0 = 22 open, Expedite = 1 open. The 22 v0.8.0 are mostly P3 brand-by-brand digitization tasks gated on extractor reliability per `feedback_playbook_before_research`. The single Expedite was #1110, easy to verify-and-close. Bigger v0.8.0 work (#950 plot-box auto-detect, #791 Zeiss start) wants design discussion not just code.
+
+#### Follow-ups for next session (S192)
+
+- **#1318 SVG drift on main**: regen viltrox + samyang-85, commit, then root-cause WHY the 2px viltrox shift exists (which PR advanced the renderer?). Tracker has the analysis.
+- **v0.8.0 remaining**: #950 plot-box auto-detect (P2, research-heavy), #791 Carl Zeiss 3-chart digitization (P3, blocked on extractor confirmation per `feedback_playbook_before_research`). 22 open v0.8.0 issues total, mostly P3 brand digitization.
+- **#1134 confidence badge**: still Backlog (P1) — per `feedback_current_milestone_focus`, do not surface unprompted. Pick up if user explicitly raises it.
+- **#1201 + #1202**: confirmed CLOSED in this session — drop from S190 carry-forward list. The S190 entry's mention can stay as historical.
+- **Wrap-up checklist gap noted but not fixed**: step 5 (memory pointer rewrite) should validate candidates against `gh issue view` before listing — currently it can list closed issues. Filed as a process observation here; not a code change.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired, p95 |d| 0.0458, max |d| 0.1217, in-band 96.1%** (unchanged — no extractor source touched).
+- **450 mtfdigitizer pytest pass** (unchanged from S190; 720 tools-wide collected).
+- **73 ADRs** (unchanged — no new ADR; #1318 root-cause may produce one in S192).
+- 8 declared MTF profiles (unchanged).
+- **v0.8.0 open: 22 issues** (mostly P3 brand digitization).
+- **Expedite open: 0** (#1110 closed this session; #1318 just filed lives in Expedite).
+- **0 open PRs** at wrap-up.
+- **Pre-existing SVG drift**: 2 real (viltrox, samyang-85) + 17 CRLF-noise. Tracked in #1318.
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **0**.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` at `ba2843d` (unchanged from S189).
+- **Upstream contributions filed in S189 still open:** 4 (#615, #616, #617, #618 on braboj/solid-ai-templates).
