@@ -11214,3 +11214,96 @@ Theme: pick the cheapest item off the S191 candidate list and close it. The S190
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` at `ba2843d` (unchanged from S189).
 - **Upstream contributions filed in S189 still open:** 4 (#615, #616, #617, #618 on braboj/solid-ai-templates).
+
+---
+
+### Session 192 — Fix svg.py multi-view bug + ship #1318
+
+Date: 2026-06-26 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1318 (SVG drift on `main`, filed S191) and fix it. The original framing was "regen 2 stale SVGs" but the probe revealed the drift was a symptom of a deeper bug — `svg.py._emit_chart` never iterated `chart.views`, so all ADR-063 per-view-aperture charts (Samyang) and ADR-043 per-frequency charts (Fujifilm) silently emitted wrong-named single-aperture files. Fix: refactor `_emit_chart` to mirror `extract.py._artifact_stem` logic and iterate primary + `additional_views`. One PR merged; #1318 closed.
+
+#### PRs
+
+- **#1320 merged** (`fix(mtfdigitizer): svg.py iterates chart.views for ADR-063 per-view-aperture and ADR-043 per-frequency charts`) — squash `585141d`. 7 files, +249/-60: svg.py refactor + 3 modified SVGs (viltrox + samyang-85-max + samyang-85-stopped) + 3 new Fuji per-frequency SVGs (gf-23 -20lp, gf-23 -40lp, xf-23 -45lp). CI 7/7 effective gates green; pytest ran (tools touched) in 1m46s.
+
+#### Issues opened / closed
+
+- **#1318 closed** via PR body `Closes #1318`. Auto-closed at merge time.
+- None opened.
+
+#### Key technical findings
+
+- **The svg.py bug was documented as a known limitation but never fixed.** `aperture_passes_for_view` docstring at `aperture_passes.py:84-87` lists svg.py (alongside autotriage, diagnose, log, review) as "callers that only operate on the primary chart raster." So the fan-out gap was acknowledged but not blocking work — until the calibration-set SVGs (consumed by review.html pages) drifted enough to matter.
+- **Two distinct sources of drift on `main`.** viltrox 2px shift = PR #1293 (S183, ADR-072 center-anchor uses freq{lo}{D}) advanced the extractor without a global SVG re-emit. samyang-85-max 68-line diff = post-S180 extractor advances (ADR-069 coincident-top anchor, ADR-072 center anchor) accumulating since the last SVG commit (#1278). Both were corrections, not regressions — old SVGs were stale relative to the better extractor.
+- **Production extract --check confirmed the bug is calibration-set-only.** Pre-fix run of `py -m mtfdigitizer.extract --check` flagged only 2 stale logs (samyang-10mm, samyang-12mm fisheye — both unrelated to viltrox/samyang-85). Production extractor has its own view-iterating orchestrator (`_run_all_views` → `chart.views`); it was never affected. The bug was confined to `svg.py`'s separate calibration-set emit path.
+- **Scope of charts affected was bounded by `runnable = c.plot_box and c.ground_truth`.** 16 of 121 reference charts have ground truth (Tier 1 anchors). 4 of those 16 have `additional_views` (samyang-85, samyang-300, fuji-gf-23, fuji-xf-23). The bug's blast radius was small but real — those 4 charts' review.html pages showed stale dots when maintainers opened them to eye-glance.
+- **samyang-85-max M10 right-edge correction is the most visible improvement.** Old SVG had cy=46.1 (MTF~0.64) at x=304; new SVG has cy=23.8 (MTF~0.85). Source chart shows pink-dashed M10 staying near ~0.93 at the right edge — old extractor undershot by ~0.30 MTF; current extractor matches the source. Visual verification done before commit (read source PNG + overlay PNG + new SVG content).
+
+#### Key changes
+
+- **`tools/mtfdigitizer/svg.py` refactored**:
+  - `_emit_chart` iterates `chart.views` instead of operating only on the primary view.
+  - Per-view: resolves `view.chart_path` → `view_image_path`, builds `plot_box` from `view.plot_box`, calls `aperture_passes_for_view(chart, view_image_path, view)` (with the `view` arg this time).
+  - New local `_artifact_stem(chart, view, aperture, image_path)` helper that mirrors `extract.py._artifact_stem` exactly (multi-aperture-per-chart and per-view-aperture overrides both get `-{aperture}` suffix; everything else uses the source raster stem).
+  - Imports: added `family_profile.profile_for_chart` + `referenceset.charts.ChartView`.
+- **6 calibration-set SVGs regenerated**:
+  - **viltrox-af-75mm-f1-2-pro-mtf.svg** (4-line diff, real content).
+  - **samyang-85mm-f1-4-as-if-umc-mtf-max.svg** (68-line diff, large M10 right-edge correction).
+  - **samyang-85mm-f1-4-as-if-umc-mtf-stopped.svg** (6-line diff, 2-position S30 jitter within source noise).
+  - **fujifilm-gf-23mm-f4-r-lm-wr-20lp.svg** (new — per-frequency view).
+  - **fujifilm-gf-23mm-f4-r-lm-wr-40lp.svg** (new — per-frequency view).
+  - **fujifilm-xf-23mm-f1-4-r-lm-wr-45lp.svg** (new — per-frequency view).
+
+#### Verification
+
+- `npm run validate` clean: 462 pages built, all internal links checked, lint/format/check/build green.
+- `py -m pytest mtfdigitizer/`: 450 passed (no count change). Pre-fix and post-fix counts identical — refactor is pure dispatch reshape with no test-observable behaviour change.
+- `py -m mtfdigitizer.svg --check` post-commit: clean (would-write list shrank from 19 pre-fix to 0 after regen).
+- `py -m mtfdigitizer.extract --check` pre-fix and post-fix: unchanged (2 unrelated samyang stale logs both runs — production was never affected by the calibration-set bug).
+- Visually inspected all 3 modified SVGs against source charts: viltrox 2px center dot matches MTF=0.99 in `mtf-readings.ts`; samyang-85-max M10 right-edge correction tracks source pink-dashed curve; samyang-85-stopped 2-position jitter within source noise. samyang-300 and Fuji charts had no real-content changes (only new emissions).
+- **CI on #1320**: 7/7 effective green. CodeQL 2s, gate 3s, pytest 1m46s, analyze 1m19s, changes 8s, gitleaks 7s, links 26s. build + lighthouse correctly skipping per path filter (no public source/dist changes).
+- `gh issue view 1318` post-merge: `state=CLOSED`.
+
+#### Key decisions (this session)
+
+- **Probe before regen.** Initial impulse was "regen 2 SVGs, commit, done" per #1318 fix plan. Instead probed git log on svg.py (last touched #1192 CRLF fix — couldn't be the source) and discovered the drift was caused by extractor advances elsewhere (#1293, #1278). Then probed `aperture_passes_for_view` and found the documented "primary view only" limitation — which explained why samyang-85 was producing a wrong-named single-aperture SVG. Two probes (~15 min total) reframed the work from "blind regen" to "fix the bug that produced the drift framing." Applied `feedback_probe_before_acting` at the diagnostic-vs-implementation boundary, not just at spike intake.
+- **Refactor `_emit_chart` instead of inlining a single-purpose patch.** Three options at decision time: (a) iterate `chart.views` only (minimum patch, still inlines a divergent stem-naming rule from extract.py — DRY violation in the making); (b) fix \_emit_chart to mirror extract.py's `_artifact_stem` exactly (chosen — keeps the naming rule in one logical place via mirroring, even though the helper is copied as a second concrete copy); (c) extract `_artifact_stem` to `aperture_passes.py` for actual sharing (best long-term but a bigger refactor that drags extract.py into #1318's diff). Picked (b). Per `base/quality.md` DRY rule, "third copy is a bug" — there are now 2 copies (extract.py + svg.py). If a third caller emerges (e.g. a future renderer for a different output format), extract to aperture_passes.py at that point.
+- **Verified samyang-85-max correction by reading source + overlay + new SVG, not by trusting the diff stat.** The 68-line diff with cy values shifting 20+ pixels could be either an improvement or a regression. Resolved by reading the source PNG (pink-dashed M10 stays at ~0.93 at right edge), reading the production overlay PNG (which renders extractor output on the chart), and confirming the new SVG cy=23.8 maps to MTF~0.85 — matching source within rendering noise. Applied `base/git.md` "Verifying regenerated artifacts" rule on binary artifacts ("open each in a viewer and confirm it tracks its source data").
+- **Bundle the 3 new Fuji SVGs with the fix, not deferred.** The fix made `_emit_chart` correctly enumerate `chart.views`, which means 3 Fuji per-frequency views that were silently skipped before now emit SVGs. Bundling them with the fix is cleaner than filing a follow-up "3 SVGs missing" issue — the fix IS the production of those artifacts.
+
+#### Process patterns observed this session
+
+- **A "known limitation" comment that names a bug is a bug, not a comment.** `aperture_passes.py:84-87` explicitly listed svg.py as a caller "that only operates on the primary chart raster (autotriage, diagnose, log, review, svg — all pre-multi-view orchestration)." That comment is load-bearing because it tells maintainers "this is documented behaviour" — and that's exactly why the bug survived S188-S190. The first instinct on reading such a comment should be "is the limitation still acceptable?" — for svg.py the answer was no (calibration-set SVGs are consumed by review.html), but no one had revisited the question. Pattern: "documented as known" is a deferral, not an absolution.
+- **The extractor's --check gate caught the bug indirectly.** `svg --check` reported 19 "would write" lines (16 charts), but the bug shape only became clear after running `svg --regen` and inspecting `git diff --ignore-all-space` to filter CRLF noise from real content drift. The 2-stage diagnostic (check reports the list, regen + filter reveals the cohort) is generalizable — when a `--check` mode produces too many false-positive-shaped entries, regenerate-and-filter is the disambiguation step. Worth a feedback memory if pattern recurs across different `--check` gates in this codebase.
+
+#### Follow-ups for next session (S193)
+
+- **#950 plot-box auto-detect** (P2, v0.8.0) — research-heavy, likely needs an ADR. Cited in S191/S192 follow-ups as the next non-brand-digitization v0.8.0 item.
+- **#791 Carl Zeiss 3-chart digitization** (P3, v0.8.0) — first-new-brand in epic #790. Gated on extractor reliability confirmation per `feedback_playbook_before_research`.
+- **19 other P3 brand digitization tasks in v0.8.0** — same gating as #791.
+- **Possible refactor** (carried from S187/S190/S191): `_splice_entries` duplicated in Fuji + TTartisan emit scripts. With S192 adding `_artifact_stem` as a second copy alongside extract.py's, the "third copy is a bug" rule is now closer to firing. Worth checking whether the splice + stem pair together justify an aperture_passes.py expansion at the next opportunity.
+- **`feedback_probe_before_acting` extended scope**: applied this session at the diagnostic-vs-implementation boundary (not just spike intake). Worth a memory update if pattern recurs.
+- **`scope.md` step 5 candidate validation** (carried from S191 upstream #638): still pending uptake on solid-ai-templates. S192 candidates pre-validated against tracker before listing — pattern is holding internally; if it recurs cleanly for 2-3 more sessions, S192 lesson is "the rule works, await upstream."
+- **Carry-forward from S189**: 4 upstream issues open at braboj/solid-ai-templates (#615, #616, #617, #618). Plus S191's #638. Total **5 upstream open**.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired**, median |d| 0.0071, **p95 |d| 0.0458**, max |d| 0.1217, **in-band 96.1%** (unchanged — `_emit_chart` refactor doesn't touch the extractor or any code path calibrate exercises).
+- **720 tools pytest collected, 450 mtfdigitizer subset pass + 0 xfailed** (unchanged). **224 vitest pass**.
+- **73 ADRs** (unchanged — no new ADR; the fix is a bug repair, not a decision).
+- 8 declared MTF profiles.
+- **v0.8.0 open: 22 issues** (unchanged — #1318 was Expedite, not v0.8.0).
+- **Expedite open: 0** (#1318 closed this session; no new Expedite filed).
+- **0 open PRs** at wrap-up.
+- **Pre-existing SVG drift on main**: 0 (#1318 cleanup landed).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **2** (samyang-10mm, samyang-12mm fisheye — flagged by `extract --check` pre-fix and post-fix; not in this session's scope).
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
+- **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
