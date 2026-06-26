@@ -328,9 +328,16 @@ describe("docs/optical-specs ↔ mtf-readings coverage", () => {
 // Eye-read overrides applied directly in mtf-readings.ts when the
 // extractor disagrees with maintainer-verified truth. Each entry locks
 // a single cell so a future `emit_*` re-run cannot silently revert it
-// (#1202). When the underlying extractor is fixed (e.g. the af-35
-// ridge-tracker right-corner line-loss tracked from #1201 / S162),
-// remove the corresponding entry here in the same PR.
+// (#1202). When the underlying extractor is fixed, remove the
+// corresponding entry here in the same PR.
+//
+// The af-35 entry is declared PERMANENT by ADR-073 (spike #1224 dead
+// end). The right-corner M30 reading is the maintainer's eye-read
+// extrapolation of the curve's last visible value past the chart's
+// fade region; anchor-signal repair was evaluated and ruled out as a
+// lever (band-overlap geometry is independent of seed quality). The
+// extractor will not produce 0.58 on its own at this cell — the
+// override carries the shipped reading.
 const EYE_READ_OVERRIDES = [
   {
     slug: "ttartisan-af-35mm-f1-8",
@@ -339,7 +346,7 @@ const EYE_READ_OVERRIDES = [
     frequency: 30,
     field: "M" as const,
     expected: 0.58,
-    issue: "#1201 / #1202",
+    issue: "#1201 / #1202 / ADR-073 (permanent)",
   },
 ];
 
