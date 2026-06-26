@@ -205,10 +205,13 @@ _SAMYANG_85_GT: GroundTruthCurves = {
         "freq10S": (0.91, 0.92, 0.93, 0.94, 0.94, 0.94, 0.94, 0.93, 0.91, 0.86, 0.78),
         # Pink — 10M — similar to 10S but holds at edge
         "freq10M": (0.91, 0.92, 0.93, 0.93, 0.94, 0.94, 0.94, 0.94, 0.94, 0.93, 0.93),
-        # Dark grey — 30S — gradual drop with a slight uptick at edge
-        "freq30S": (0.70, 0.68, 0.66, 0.63, 0.62, 0.60, 0.58, 0.57, 0.57, 0.54, 0.52),
-        # Light grey — 30M — near-linear drop
-        "freq30M": (0.70, 0.67, 0.66, 0.64, 0.62, 0.61, 0.60, 0.59, 0.58, 0.57, 0.57),
+        # Dark grey — 30S — high plateau (~0.69) then dip-and-partial-recovery
+        # (0.56 at frac 0.7, peak 0.58 at frac 0.8) before dropping to 0.50
+        # at the edge. Re-read via per-column pixel scan of the chart PNG.
+        "freq30S": (0.69, 0.70, 0.70, 0.68, 0.65, 0.60, 0.57, 0.56, 0.58, 0.56, 0.50),
+        # Light grey — 30M — smooth monotonic decline; clearly above 30S in
+        # the 11-22mm region (frac 0.5-1.0). Same re-read pass.
+        "freq30M": (0.69, 0.68, 0.67, 0.66, 0.65, 0.63, 0.62, 0.61, 0.58, 0.57, 0.57),
     },
     "stopped": {
         # Dark red — 10S — flat at ~1.0 across, slight dip at far edge
