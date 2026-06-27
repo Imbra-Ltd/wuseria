@@ -11589,3 +11589,113 @@ Theme: pivot from planned S195 candidates (#791 Zeiss design ADR, Tier-1-anchor 
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
 - **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
+
+---
+
+### Session 196 — #791 N-frequency RIDGE_TRACKING + Zeiss Touit family (ADR-075)
+
+Date: 2026-06-27 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up the long-deferred #791 (3rd carry across S194/S195) and ship the structural pipeline change. Scoping probe found the 2-frequency lockin was confined to one function (`ridge_tracks_to_fields`), not a pipeline-wide assumption — the front-end `MtfReading` schema already supports arbitrary frequency tuples (Fujifilm GF runs at {15,20,40} today via ADR-043). Generalized RIDGE_TRACKING to N frequencies, declared `ZEISS_TOUIT_BW_3FREQ`, registered all 3 Touit charts. Path A per #791: ship pipeline first, eye-read GT deferred to follow-up #1332.
+
+#### PRs
+
+- **#1331** — feat(mtfdigitizer): N-frequency RIDGE_TRACKING + Zeiss Touit family (#791). Merged 2026-06-27.
+
+#### Issues opened / closed
+
+- **#1332** opened — task: eye-read Tier 1 GT for the 3 Touit charts (~396 cells). Follow-up to #1331; carries the spike's outstanding acceptance criteria.
+- **#791** auto-closed by PR #1331's "Closes #791" keyword, then **reopened** with a comment pointing at #1332 — the spike's acceptance criteria still need eye-read GT.
+
+#### Key technical findings
+
+- **The 2-freq lockin was one function deep.** `ridge.py` hardcoded `n=4` in `_select_top_n_tracks` and `upper_freq`/`lower_freq` as positional parameters in `ridge_tracks_to_fields`. Everything downstream — sampling, per-frequency emit, frontend storage, calibration — already handles arbitrary frequency tuples. The ridge.py docstring even named the limit explicitly ("Not handling >2 frequencies. A 6-curve Zeiss-style 3-frequency chart needs a different track-identification step").
+- **The S196 probe `probe_zeiss_touit_ridges.py` (deleted)** ran Touit 32mm through `_extract_ridge_points` + `_cluster_into_tracks` with the existing 2-freq function. **The greedy clusterer happily produced 6 distinct tracks on the wide-aperture panel** — only the final step (top-N selection + upper/lower y-split) collapsed them back to 4. Confirmed the generalization is mechanically straightforward: extend `n` to `2*N` and split kept tracks into `N` y-bands instead of 2 halves.
+- **Wide-aperture panel resolves cleanly into 3 y-bands.** k=1.8 panel for 32mm: 6 tracks, 2 per band, y-band split into freq10 (mean_y 491-522), freq20 (560-572), freq40 (644-667). Each band's lower mean_y track = S, higher = M. Probe values matched eye-read shape (10S~85%, 20S~70%, 40S~35% at the chart's wide-aperture row 1).
+- **Stopped-panel coincidence is the real limitation.** On the k=4 panel, the upper-band curves (10S/10M/20S/20M) all sit within ~30 rows because the lens stops down and curves bundle near MTF=0.95. The greedy clusterer collapsed one pair, recovering only 5 of 6 expected tracks. This is the same failure mode Viltrox hits at its stopped panel (which the project deliberately did not declare). Path A scopes the deliverable to wide-aperture extraction; stopped-panel work is gated by future Tier 1 calibration in #1332.
+- **The reference-set entry was already there.** Touit 32mm had been in `REFERENCE_CHARTS` since #933 as a deliberately out-of-band fail-loud case. Promoting it from "must reject" to "extract via 3-freq pipeline" required only flipping `family_profile.PROFILE_BY_STYLE`, plus adding 12mm and 50mm Macro entries alongside.
+
+#### Key changes
+
+- **`docs/decisions/075-n-frequency-ridge-tracking.md`** — new ADR. Decision rationale + inline ASCII diagram of the y-band split, alternatives table (5 rejected paths), consequences list including the stopped-panel coincidence known limitation.
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — added `ridge_tracks_to_fields_multifreq(mask, plot_box, frequencies_lpmm, dashed_is_sagittal)`. Calls `_select_top_n_tracks(n=2*N)`, splits kept tracks into N equal-size y-bands by mean_y, the last band absorbing the remainder when kept < 2N. Retired the 2-freq "Not handling >2 frequencies" audit comment, replaced with the working description. `ridge_tracks_to_fields(upper_freq, lower_freq, ...)` becomes a delegating 2-freq wrapper — Viltrox callers untouched.
+- **`tools/mtfdigitizer/pipeline/dispatch.py`** — `RIDGE_TRACKING` branch now passes `profile.frequencies_lpmm` directly to `ridge_tracks_to_fields_multifreq`. No more positional unpacking of `[0], [1]`.
+- **`tools/mtfdigitizer/profiles/declared.py`** — added `ZEISS_TOUIT_BW_3FREQ` profile (neutral hue S<=60 V<=110, `frequencies_lpmm=(10,20,40)`, `style_axis=SPLIT_BY_DASH`, `hue_meaning=RIDGE_TRACKING`, `auto_suggestable=False`). HSV box measured from the 32mm top panel (V median 0, S median 0; matches Viltrox's neutral cap exactly).
+- **`tools/mtfdigitizer/profiles/__init__.py`** — re-export `ZEISS_TOUIT_BW_3FREQ`.
+- **`tools/mtfdigitizer/family_profile.py`** — wire `"multifreq-press-kit": ZEISS_TOUIT_BW_3FREQ` in `PROFILE_BY_STYLE`. Updated header comment: only `soft-multicurve-promo` remains as a deliberately absent fail-loud family.
+- **`tools/mtfdigitizer/referenceset/charts.py`** — updated existing 32mm entry with plot_box + additional_views (max + stopped panels). Added zeiss-touit-12mm-f2-8 and zeiss-touit-50mm-f2-8-macro entries with the same shape. Plot boxes located via column-density scan (Y-axis runs at column x=257/256 on 32mm, x=279 on 12mm, x=277 on 50mm).
+- **`tools/mtfdigitizer/referenceset/REFERENCE_SET.md`** + **`referenceset/calibration.md`** — prose updated to reflect Touit being extracted now, not rejected.
+- **`tools/mtfdigitizer/tests/test_profiles.py`** — added `"zeiss-touit-bw-3freq"` to the in-band profiles set.
+
+#### Verification
+
+- **#1331**: `py -m pytest mtfdigitizer/` 455 passed (unchanged count — the new profile has no per-function tests in this PR; ridge generalization is byte-equivalent for Viltrox and verified by the 61 existing ridge/Viltrox tests). `npm run check` 0 errors 0 warnings. CI green on all 9 required checks (pytest, CodeQL, analyze, links, gate, gitleaks, changes; build + lighthouse correctly skipped per path filter).
+- **Aggregate calibration unchanged:** 900 paired, p95 |d| 0.0452, in-band 96.1%. Touit charts have no per-lens GT yet, so they do not contribute to the aggregate (entry without `ground_truth` is skipped by `calibrate.py`).
+
+#### Key decisions (this session)
+
+- **Probe before generalizing.** The architectural framing — "do we need a 3-freq pipeline?" — initially looked like multi-session work (new HueMeaning literal, schema migration, downstream cascades). The scoping probe in `extract.py`/`pipeline.py`/`per_frequency.py` showed only ONE function locked the assumption. Probe-before-design saved an entire architectural rewrite that was never needed. Per `quality-calibration` "Diagnose before tuning."
+- **Path A (ship pipeline without GT) over Path B (ship pipeline + fix coincidence + GT in one).** Two failure modes (3-freq dispatch vs coincident-curve clustering) deserve two ADRs. Bundling them would have shipped a multi-X change disguised as a single-X change. The coincidence failure is a known Viltrox-shape limitation; tackling it should be its own scope, not absorbed into #791's structural work. Per `git.md` "Bulk operations — split into two stacked PRs."
+- **Treat #791 acceptance criteria honestly.** GitHub auto-closed #791 on the "Closes #791" keyword, but the spike's three acceptance criteria (extraction run, validation against eye-read, structured storage) all depend on the eye-read GT that did NOT land in this PR. Reopened with a clear pointer to #1332. Per `ai-workflow.md` "Keep the backlog honest — close issues when done."
+- **Reuse `multifreq-press-kit` family name** instead of coining `bw-3freq-press-kit`. The existing family name was accurate; only its wiring changed (rejection-case → extracted). Avoided gratuitous renaming. Per `quality.md` "Consistent naming across modules."
+- **Bigger-than-needed PR scope avoided.** ADR + profile + ridge.py generalization + 3 chart registrations + family wiring + 3 doc updates landed as one cohesive change because they all served the same single decision (N-freq RIDGE_TRACKING).
+
+#### Process patterns observed this session
+
+- **A 5-minute probe re-shapes a 2-session project.** The framing entering S196 was "Option A (build 3-freq) vs Option B (mark Zeiss out-of-band)." After 10 minutes of probing the actual code surface, the answer became "Option A is one ADR + one new function + a profile, not a multi-session rewrite." Probe-first investigation turned a feared architectural cost into a routine PR.
+- **In-source audit comments paid off.** The ridge.py docstring explicitly named the 2-freq limit AND named "Zeiss-style 3-frequency chart" as the trigger case for the eventual extension. The author of #994 wrote that comment knowing it would inform a later session — and it did, directly. Per `ai-workflow.md` "Read in-source audit comments at the edit site."
+- **Path A naming made deferral honest.** Saying "Path A ships pipeline first" rather than "we'll do GT later" forced explicit recording of what's done vs deferred in the ADR's Consequences. The follow-up issue (#1332) carried the exact same scope language. Naming the path means the deferred work doesn't quietly evaporate.
+- **CI parity post-merge for the wuseria gate.** `build` + `lighthouse` correctly skipped on a tools/ + docs/ PR via the path filter; the aggregator `gate` job still passed correctly. The skip-vs-pass distinction added in earlier work held up cleanly under a real path-filtered PR.
+
+#### Calibration impact (S196)
+
+| Metric                       | S195 close                             | S196 close                                                     |
+| ---------------------------- | -------------------------------------- | -------------------------------------------------------------- |
+| Aggregate paired             | 900                                    | **900** (unchanged — Touit has no GT yet)                      |
+| Aggregate p95 \|d\|          | 0.0452                                 | **0.0452** (unchanged)                                         |
+| Aggregate max \|d\|          | 0.1217                                 | **0.1217** (unchanged)                                         |
+| Aggregate median \|d\|       | 0.0065                                 | **0.0065** (unchanged)                                         |
+| Aggregate in-band (±0.05)    | 96.1%                                  | **96.1%** (unchanged)                                          |
+| mtfdigitizer pytest          | 455                                    | **455** (unchanged — 2-freq wrapper byte-equivalent)           |
+| vitest                       | 224                                    | **224** (unchanged)                                            |
+| `REFERENCE_CHARTS` entries   | 121                                    | **123** (+2 Touit 12mm + 50mm)                                 |
+| Epic #790 brand-digitization | 5/24                                   | **5/24** (unchanged — #791 reopened, pipeline-only ship)       |
+| ADRs                         | 74                                     | **75** (+1 ADR-075)                                            |
+| Declared profiles            | 8                                      | **9** (+1 ZEISS_TOUIT_BW_3FREQ)                                |
+| Open PRs                     | 0                                      | **0**                                                          |
+| Backlog spikes               | 1 (#791)                               | **1** (#791 reopened — still in spike state until #1332 lands) |
+| Open v0.8.0 issues           | 21                                     | **23** (+1 #1332 follow-up, +1 #791 reopened)                  |
+| Open Expedite issues         | 0                                      | **0**                                                          |
+| Stale production logs        | 2 (samyang-10mm, samyang-12mm fisheye) | **2** (unchanged)                                              |
+
+#### Follow-ups for next session (S197)
+
+- **#1332 — eye-read Tier 1 GT for 3 Touit charts (396 cells).** Maintainer time, not agent time. Once GT lands, #791's acceptance criteria can close.
+- **Stopped-panel ridge-cluster collapse architecture** (potential new spike). The 5-of-6-tracks failure on Touit 32mm k=4 affects Viltrox stopped + Touit stopped; deserves its own ADR if/when a calibration target needs stopped-panel readings.
+- **Tier-1-anchor GT audit sweep** (carried from S194/S195 — still reinforced). 4 untouched Tier 1 anchors (Sigma 56, Samyang 300 reflex, 7Artisans 50, Tokina 23, Viltrox 75) deserve a once-over given S194/S195's pattern of GT-or-EX surprises.
+- **#950 plot-box auto-detect** (carried).
+- **Stale production log refresh** (carried — samyang-10mm + samyang-12mm fisheye).
+- **`not_suspiciously_flat` prior false-positive on legitimately flat curves** (carried from S195).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (Carl Zeiss pipeline shipped, GT pending #1332).
+- `REFERENCE_CHARTS` = **123 entries** (+2 Touit 12mm + 50mm).
+- **5 Tier 1 anchors** (unchanged — Touit charts registered but no GT yet).
+- Aggregate calibration: **900 paired, median |d| 0.0065, p95 |d| 0.0452, max |d| 0.1217, in-band 96.1%** (unchanged — Touit has no per-lens GT yet).
+- **725 tools pytest collected, 455 mtfdigitizer subset pass + 0 xfailed**. **224 vitest pass**.
+- **75 ADRs** (+1 ADR-075).
+- **9 declared MTF profiles** (+1 ZEISS_TOUIT_BW_3FREQ).
+- **v0.8.0 open: 23 issues** (+1 #1332 follow-up, +1 #791 reopened).
+- **Backlog spikes: 1** (#791 reopened — still pending GT).
+- **Expedite open: 0**.
+- **0 open PRs** at wrap-up.
+- Pre-existing SVG drift on main: 0.
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **2** (samyang-10mm, samyang-12mm fisheye — carry-forward).
+- Stale `-mtf-max-overlay.png` / `-mtf-stopped-overlay.png` orphans: **2** for Samyang 300 (idealized-flat GT, byte-identical to regen).
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
+- **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
