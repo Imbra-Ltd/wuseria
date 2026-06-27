@@ -11478,3 +11478,114 @@ Theme: pivot from planned S194 candidates (#791 design ADR, #950 plot-box, stale
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
 - **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
+
+---
+
+### Session 195 — Samyang 20mm F8 10S below-top spurious-CC filter (ADR-074)
+
+Date: 2026-06-27 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pivot from planned S195 candidates (#791 Zeiss design ADR, Tier-1-anchor GT audit sweep, #950 plot-box, stale logs) to a maintainer-spotted defect on the Samyang 20mm f/1.8 stopped overlay — the gold solid (extracted 10S) was dipping toward the gold dashed (10M) at ~11mm and ~17mm in the F8 panel. Probe-first investigation per `quality-calibration` revealed an extractor failure mode the existing halo path could not reach. Designed and shipped a complementary fix as ADR-074.
+
+#### PRs
+
+- **#1329** — fix(mtfdigitizer): drop below-top spurious CCs from 10S-red on Samyang (#1328). Merged 2026-06-27.
+
+#### Issues opened / closed
+
+- **#1328** opened+closed — bug: Samyang 20mm F8 10S extractor dips at pink/30S crossings (curve-crossing blend). Closed by #1329.
+
+#### Key technical findings
+
+- **The chart's real 10S sits flat at MTF ≈ 0.99 across the entire F8 panel.** Pixel-verified at every suspect column. Recorded freq10S dips at frac 0.5 (0.94), 0.6 (0.96), 0.8 (0.96) were extractor-introduced, not GT-introduced. Inverse of S194's Samyang 85 mode (where GT was wrong and EX was right): here both the human eye and the chart say flat-at-1.00; only the extractor was wrong.
+- **The `10S-red` raw mask had 125 spurious pixels** at y≈600 (MTF ≈ 0.93) where the pink 10M curve passes through a darker shade that lands inside the `10S-red` HSV box (`h 168-179, s_min=140, v_min=60`). These form 2 small CCs (95 + 30 pixels) sitting ~22-26 rows below the legitimate 10S ridge (1292 pixels at y=578-580).
+- **The sampler's median-y rule converts two ridges into a wrong middle.** With skeleton ys=[579, 600] in the bracket window, `sample_skeleton_at_fraction` takes the median (589.5). Snap-to-raw misses (real ink at y=578-580 is outside the ±8 snap window from 589.5), so it returns MTF ≈ 0.94 / 0.96 instead of 0.99.
+- **ADR-059's halo subtraction cannot reach this.** The spurious red at frac 0.5 sits at columns where the pink raw mask has 0 pixels in the same column. The halo path dilates a contaminator vertically by ±5 rows; with no contaminator present in the column neighbourhood, there is nothing to dilate. The geometry is also inverted: this is contamination caused by the contaminated hue's own crossing geometry, not the contaminator's halo.
+- **The failure is highly localized.** Survey across all 19 Samyang `mainstream-4color-all-solid` anchors × 2 panels (38 readings) showed only Samyang 20mm stopped triggers the bug. Other charts have small secondary CCs but their y-centroids sit close to the dominant CC, so the median-y is approximately the right value anyway.
+
+#### Key changes
+
+- **`docs/decisions/074-below-top-cc-filter.md`** — new ADR. Records the failure mode, why ADR-059's halo path cannot reach it, the chosen mechanism (CC-area filter gated by y-delta from dominant CC), and the thresholds' data-fit origin.
+- **`tools/mtfdigitizer/profiles/types.py`** — added `MtfProfile.small_below_top_cc_filters: tuple[tuple[str, int, int], ...] = ()`. Each tuple declares `(curve_name, min_area, max_y_delta)`. Default empty so every existing profile is unaffected.
+- **`tools/mtfdigitizer/pipeline/dispatch.py`** — added `_apply_small_below_top_cc_filter()`. Drops every CC whose y-centroid is more than `max_y_delta` rows below the dominant CC's y-centroid AND whose area is less than `min_area`. Both conditions must hold.
+- **`tools/mtfdigitizer/pipeline/pipeline.py`** — wired the filter into the presence-mask path (`extract_chart`) so sister-fill presence sees the same cleaned masks.
+- **`tools/mtfdigitizer/profiles/declared.py`** — Samyang declares `small_below_top_cc_filters=(("10S-red", 200, 10),)` with explanatory comment.
+- **`tools/mtfdigitizer/tests/test_pipeline.py`** — 5 new unit tests on the filter function (drops/preserves-near-top/preserves-large-far/no-op-empty/ignores-unknown).
+- **Regenerated artifacts**: Samyang 20mm stopped `digitization-log.md`, `-mtf-stopped-overlay.png`, `-mtf-stopped.svg` (the fix). Samyang 100mm-macro stopped log refresh (1-line IoU drift 0.581 → 0.589, downstream effect of the smaller 10S-red mask on the render-match scorer; 10S extraction itself byte-identical).
+
+#### Verification
+
+- **#1329**: `py -m pytest mtfdigitizer/tests/` 455 passed (450 pre-existing + 5 new). `py -m mtfdigitizer.calibrate` aggregate unchanged: 900 paired, p95 0.0452, in-band 96.1% (Samyang 20mm is a Tier 2 production lens with no per-lens GT, so it does not contribute to the aggregate). `py -m mtfdigitizer.extract --check` clean. `npm run validate` passed end-to-end.
+- **Survey verification**: 37 of 38 Samyang `mainstream-4color-all-solid` panel readings byte-identical 10S extraction before/after the filter. Only Samyang 20mm stopped (the bug case) changes.
+- **Visual check**: regenerated overlay shows gold solid 10S sitting flat at the top of the F8 panel, tracking the source chart's flat red 10S line cleanly.
+- CI green on all required checks (pytest, CodeQL, analyze, links, gate, gitleaks, changes).
+
+#### Key decisions (this session)
+
+- **Probe before designing the fix.** When the obvious `("10M-pink", "10S-red")` halo pair attempt did NOT clear the dip in frac 0.5 / 0.8, paused and probed the actual mask geometry. Discovered the spurious red at frac 0.5 sits at columns with 0 pink raw pixels — the halo model could not work no matter how the dilation kernel was tuned. Avoided implementing-and-iterating on a wrong premise.
+- **Survey breadth across the family before choosing thresholds.** Ran CC-size + y-centroid analysis across all 19 Samyang `mainstream-4color-all-solid` anchors. The Samyang 85 stopped has a legitimate 222-px secondary CC at y-delta 13; setting `min_area = 200` preserves it. The Samyang 8mm-f3-5 stopped has a 482-px CC ABOVE the dominant CC; the `y > top_y + max_y_delta` gate preserves it. Thresholds chosen from the actual distribution, not first principles. Per `quality.md` "size numeric thresholds from the actual distribution."
+- **Scope the filter to `10S-red` only.** Other curves (10M-pink, 30S-dark-grey, 30M-light-grey) have legitimate fragmented masks because pink/grey curves cross each other in the middle of the panel. Applying the same filter to them would destroy real signal. The single-dominant-CC property holds only for `10S-red` because the curve sits at the very top of every Samyang panel and never crosses another curve in this family.
+- **Complement ADR-059, do not replace it.** ADR-059's halo path handles "halo of a present contaminator"; this ADR handles "spurious mass with no co-located contaminator." Neither overlaps the other. ADR-059 already named this case in its "Alternatives considered" section as a complementary cleanup — this ADR adopts that alternative.
+- **Revert pre-existing carry-forward stale refreshes** (samyang-10mm, samyang-12mm-fisheye) **from the PR.** Per `scope.md` "tooling-produced scope creep is silent — revert and file": those refreshes were tooling-produced and not caused by this fix. Keeping them would have shipped a 13-file PR framed as a 10-file fix. Samyang 100mm-macro log was kept because its IoU change is a direct downstream effect of the filter.
+
+#### Process patterns observed this session
+
+- **Two consecutive Samyang Tier 2 defects from maintainer eye-reads.** S194 caught a Samyang 85 GT mis-read; S195 caught a Samyang 20mm extractor bug. Same investigation pattern in both: maintainer reports overlay-vs-chart visual disagreement → probe the chart pixels → identify whether EX or EYE is wrong → apply the smaller fix. Probe-first response is now a clear high-ROI pattern for "the gate says green but my eye says wrong."
+- **A failed first fix attempt is a useful negative result, not wasted work.** Trying the obvious halo pair AND verifying it did not clear the bug ruled out a whole class of solutions in ~5 minutes. The probe data from the failed attempt directly informed the eventual fix choice. Per `ai-workflow.md` "Iterate vs revert" — falsifying the "same fix applies" hypothesis cheaply IS information.
+- **ADR-059's "Open" section paid off.** It explicitly named the CC-area filter as a complementary mechanism for "non-halo contamination." When S195's case arrived, the design space was already partially explored. Worth recording rejected-but-noted alternatives in ADR "Open" sections — they become the next ADR's starting point.
+
+#### Calibration impact (S195)
+
+| Metric                             | S194 close                                 | S195 close                                                              |
+| ---------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------- |
+| Aggregate paired                   | 900                                        | **900** (unchanged)                                                     |
+| Aggregate p95 \|d\|                | 0.0452                                     | **0.0452** (unchanged — Samyang 20mm has no GT, does not contribute)    |
+| Aggregate max \|d\|                | 0.1217                                     | **0.1217** (unchanged)                                                  |
+| Aggregate median \|d\|             | 0.0065                                     | **0.0065** (unchanged)                                                  |
+| Aggregate in-band (±0.05)          | 96.1%                                      | **96.1%** (unchanged)                                                   |
+| tools pytest collected             | 720                                        | **725** (+5 new unit tests)                                             |
+| mtfdigitizer subset pytest         | 450                                        | **455** (+5 new unit tests)                                             |
+| vitest                             | 224                                        | **224** (unchanged)                                                     |
+| `REFERENCE_CHARTS` entries         | 121                                        | **121** (unchanged)                                                     |
+| Epic #790 brand-digitization       | 5/24                                       | **5/24** (unchanged)                                                    |
+| ADRs                               | 73                                         | **74** (+1 ADR-074)                                                     |
+| Declared profiles                  | 8                                          | **8** (unchanged — same profile family, added a field)                  |
+| Open PRs                           | 0                                          | **0**                                                                   |
+| Backlog spikes                     | 1 (#791)                                   | **1** (#791 unchanged)                                                  |
+| Open v0.8.0 issues                 | 22                                         | **21** (closed #1328)                                                   |
+| Open Expedite issues               | 0                                          | **0** (unchanged)                                                       |
+| Stale production logs              | 2 (samyang-10mm, samyang-12mm fisheye)     | **2** (same — reverted from this PR per scope.md, carry-forward intact) |
+| Samyang 20mm F8 freq10S extraction | dips at 0.94/0.96/0.96 at frac 0.5/0.6/0.8 | **flat at 0.99 across all 11 fracs** (bug fixed)                        |
+| Samyang 20mm stopped render-match  | precision 0.691, IoU 0.434                 | **precision 0.777, IoU 0.571** (both improved)                          |
+
+#### Follow-ups for next session (S196)
+
+- **#791 design ADR + profile** (carried forward — third session in a row this is the top remaining continuity item) — Zeiss Touit 3-frequency monochrome dispatch.
+- **Tier-1-anchor GT audit sweep** (carried from S194). S195 reinforces the case: S194 caught a Tier 1 GT bug (Samyang 85), S195 caught a Tier 2 extractor bug surfaced via maintainer eye. Both were silent against the existing gates. Sweep the 4 other Tier 1 anchors for similar surprises.
+- **#950 plot-box auto-detect** (carried).
+- **Stale production log refresh** (carried — samyang-10mm + samyang-12mm fisheye, intentionally kept out of #1329's scope).
+- **`not_suspiciously_flat` prior false-positive on legitimately flat curves.** Post-fix Samyang 20mm freq10S trips this prior (mean 0.990, stdev 0.003) because the curve really IS flat at 0.99. Same false-positive as Samyang 300mm reflex idealized-flat. Worth scoping a per-profile or per-lens allowlist; affects the `LOW` verdict reasoning even when extraction is correct.
+- **`_splice_entries` + `_artifact_stem` extraction** (carried). Still defer per `quality.md` "three copies is a bug but extracting now would couple unrelated files."
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged — Zeiss anchor deferred to S196+).
+- Aggregate calibration: **900 paired, median |d| 0.0065, p95 |d| 0.0452, max |d| 0.1217, in-band 96.1%** (unchanged — Samyang 20mm has no per-lens GT, so the fix does not flow through to aggregate).
+- **725 tools pytest collected, 455 mtfdigitizer subset pass + 0 xfailed** (+5 new unit tests). **224 vitest pass**.
+- **74 ADRs** (+1 ADR-074).
+- 8 declared MTF profiles (unchanged).
+- **v0.8.0 open: 21 issues** (closed 1 this session).
+- **Backlog spikes: 1** (#791 unchanged).
+- **Expedite open: 0**.
+- **0 open PRs** at wrap-up.
+- Pre-existing SVG drift on main: 0.
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **2** (samyang-10mm, samyang-12mm fisheye — carry-forward kept intact per scope.md).
+- Stale `-mtf-max-overlay.png` / `-mtf-stopped-overlay.png` orphans: **2** for Samyang 300 (idealized-flat GT, byte-identical to regen).
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
+- **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
