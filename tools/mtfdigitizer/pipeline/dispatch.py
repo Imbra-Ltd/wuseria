@@ -362,6 +362,56 @@ def _apply_declared_halo_pairs(
     return out
 
 
+def _apply_small_below_top_cc_filter(
+    curve_masks: dict[str, np.ndarray],
+    filters: tuple[tuple[str, int, int], ...],
+) -> dict[str, np.ndarray]:
+    """Drop spurious below-top connected components from declared curve masks.
+
+    For each `(curve_name, min_area, max_y_delta)` rule, compute the
+    8-connected components of `curve_masks[curve_name]`. Identify the
+    dominant CC (largest area). Zero out every other CC whose y-centroid
+    is more than `max_y_delta` rows below the dominant CC's y-centroid
+    AND whose area is less than `min_area` pixels — both conditions must
+    hold for a CC to be dropped.
+
+    Complements `_apply_declared_halo_pairs` (ADR-074). The halo path
+    targets contamination co-located with a contaminator's curve; this
+    filter targets contamination that exists without a co-located
+    contaminator (the Samyang 20mm stopped case where the 10S-red mask
+    catches darkened pink pixels at columns where the pink raw mask is
+    empty). Returns a new dict; the input is not mutated. Unknown curve
+    names are silently ignored — the profile author may filter `hues`
+    per aperture (ADR-044) so a rule naming a curve absent from the
+    current run is not an error.
+    """
+    if not filters:
+        return curve_masks
+    out = dict(curve_masks)
+    for curve_name, min_area, max_y_delta in filters:
+        mask = out.get(curve_name)
+        if mask is None:
+            continue
+        mask_u8 = mask.astype(np.uint8)
+        n_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(
+            mask_u8, connectivity=8
+        )
+        if n_labels <= 2:
+            continue  # only background + at most one CC
+        ccs = [
+            (int(stats[i, cv2.CC_STAT_AREA]), float(centroids[i, 1]), i)
+            for i in range(1, n_labels)
+        ]
+        ccs.sort(key=lambda r: -r[0])
+        top_y = ccs[0][1]
+        filtered = mask.copy()
+        for area, y, label in ccs[1:]:
+            if y > top_y + max_y_delta and area < min_area:
+                filtered[labels == label] = False
+        out[curve_name] = filtered
+    return out
+
+
 def _build_halo_exclusion_map(
     curve_masks: dict[str, np.ndarray],
     freq_by_color: dict[str, int],
@@ -440,6 +490,12 @@ def field_skeletons(
     # default; Samyang opts in for the `10S-red` → `10M-pink` AA gradient.
     # Runs before any dispatch branch, so every codepath benefits.
     curve_masks = _apply_declared_halo_pairs(curve_masks, profile.halo_pairs)
+    # Profile-declared below-top spurious-CC filter (#1328, ADR-074).
+    # Empty by default; Samyang opts in for `10S-red` to drop pink/30S
+    # crossing-blend pixels that the halo path cannot reach.
+    curve_masks = _apply_small_below_top_cc_filter(
+        curve_masks, profile.small_below_top_cc_filters
+    )
 
     out: dict[str, np.ndarray] = {}
 

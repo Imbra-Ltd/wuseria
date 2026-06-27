@@ -84,6 +84,21 @@ SAMYANG_4COLOR_ALL_SOLID: MtfProfile = MtfProfile(
         ("10S-red", "10M-pink"),
         ("30S-dark-grey", "30M-light-grey"),
     ),
+    # Below-top spurious-CC filter (#1328, ADR-074). On Samyang 20mm
+    # stopped, the pink 10M curve passes through a darker shade at
+    # frac 0.5 / 0.8 that lands in the `10S-red` HSV box at columns
+    # where the pink raw mask itself is empty. These pixels form 95-
+    # and 30-pixel CCs sitting ~22-26 rows below the legitimate 10S
+    # ridge. The halo_pairs ring-subtraction cannot reach them because
+    # there is no co-located contaminator. The filter drops any
+    # `10S-red` CC that sits >10 rows below the dominant CC AND has
+    # <200 pixels. Thresholds sized from the actual CC distribution
+    # across all 19 Samyang `mainstream-4color-all-solid` anchors;
+    # 37 of 38 panel readings byte-identical before/after the filter,
+    # only Samyang 20mm stopped freq10S changes (the bug case).
+    small_below_top_cc_filters=(
+        ("10S-red", 200, 10),
+    ),
     notes="Samyang product page MTF; each curve identified by (hue, saturation, brightness)",
 )
 

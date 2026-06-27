@@ -1411,3 +1411,101 @@ def test_strip_plot_box_borders_noop_when_border_outside_plot_box() -> None:
         "No-op case wrongly stripped low-density tail; threshold should "
         "ignore real-curve density."
     )
+
+
+def test_apply_small_below_top_cc_filter_drops_below_top_small_ccs() -> None:
+    """ADR-074: a small CC sitting >max_y_delta rows below the dominant
+    CC's y-centroid AND below min_area pixels is dropped."""
+    import numpy as np
+    from mtfdigitizer.pipeline.dispatch import _apply_small_below_top_cc_filter
+
+    mask = np.zeros((100, 200), dtype=bool)
+    # Dominant CC: long horizontal ridge at y=5 (centroid y=5).
+    mask[5, 10:190] = True  # 180 pixels
+    # Spurious small CC well below the top.
+    mask[60, 50:60] = True  # 10 pixels at centroid y=60
+
+    filters = (("curve", 50, 10),)
+    out = _apply_small_below_top_cc_filter({"curve": mask}, filters)
+
+    assert out["curve"][5, 100], "dominant ridge wrongly stripped"
+    assert not out["curve"][60, 55], (
+        "small below-top CC not stripped — should be dropped "
+        "(area=10 < min_area=50, y_delta=55 > max_y_delta=10)."
+    )
+
+
+def test_apply_small_below_top_cc_filter_preserves_legit_near_top_cc() -> None:
+    """ADR-074: a CC near the dominant CC's y-centroid is preserved even
+    when small (Samyang 85 stopped 10S/10M near-overlap case)."""
+    import numpy as np
+    from mtfdigitizer.pipeline.dispatch import _apply_small_below_top_cc_filter
+
+    mask = np.zeros((100, 200), dtype=bool)
+    mask[5, 10:190] = True  # dominant
+    # Small CC just 3 rows below — legitimate near-overlap (S/M curves
+    # both at MTF≈1.0 sit within a few px of each other).
+    mask[8, 50:70] = True  # 20 pixels at y=8, delta=3
+
+    filters = (("curve", 50, 10),)
+    out = _apply_small_below_top_cc_filter({"curve": mask}, filters)
+
+    assert out["curve"][8, 60], (
+        "near-top small CC wrongly stripped — y_delta=3 should be "
+        "within max_y_delta=10 guard, preserving legit near-overlap."
+    )
+
+
+def test_apply_small_below_top_cc_filter_preserves_below_top_large_cc() -> None:
+    """ADR-074: a CC far below the dominant CC is preserved when its
+    area meets the min_area threshold — a large fragment is signal, not
+    noise."""
+    import numpy as np
+    from mtfdigitizer.pipeline.dispatch import _apply_small_below_top_cc_filter
+
+    mask = np.zeros((100, 200), dtype=bool)
+    mask[5, 10:190] = True  # dominant
+    # Large CC well below — area exceeds threshold so kept.
+    mask[60:65, 50:100] = True  # 250 pixels
+
+    filters = (("curve", 200, 10),)
+    out = _apply_small_below_top_cc_filter({"curve": mask}, filters)
+
+    assert out["curve"][62, 70], (
+        "large below-top CC wrongly stripped — area=250 should be "
+        "above min_area=200 guard."
+    )
+
+
+def test_apply_small_below_top_cc_filter_noop_on_empty_rules() -> None:
+    """ADR-074: empty rule tuple means the function is a pass-through."""
+    import numpy as np
+    from mtfdigitizer.pipeline.dispatch import _apply_small_below_top_cc_filter
+
+    mask = np.zeros((100, 200), dtype=bool)
+    mask[5, 10:190] = True
+    mask[60, 50:60] = True
+
+    out = _apply_small_below_top_cc_filter({"curve": mask}, ())
+
+    assert (out["curve"] == mask).all(), (
+        "empty rule tuple should be a pure pass-through."
+    )
+
+
+def test_apply_small_below_top_cc_filter_ignores_unknown_curve_names() -> None:
+    """ADR-074: a rule naming a curve absent from the masks dict is
+    silently ignored (matches the halo_pairs convention for per-aperture
+    hue filtering, ADR-044)."""
+    import numpy as np
+    from mtfdigitizer.pipeline.dispatch import _apply_small_below_top_cc_filter
+
+    mask = np.zeros((100, 200), dtype=bool)
+    mask[5, 10:190] = True
+
+    filters = (("does-not-exist", 50, 10),)
+    out = _apply_small_below_top_cc_filter({"curve": mask}, filters)
+
+    assert (out["curve"] == mask).all(), (
+        "unknown curve name should not affect existing curves."
+    )

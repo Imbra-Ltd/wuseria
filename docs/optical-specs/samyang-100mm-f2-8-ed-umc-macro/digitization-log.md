@@ -251,7 +251,7 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
 | precision | 0.648 |      0.80 |   no |
-| IoU       | 0.581 |      0.20 |  yes |
+| IoU       | 0.589 |      0.20 |  yes |
 
 #### Plausibility priors
 

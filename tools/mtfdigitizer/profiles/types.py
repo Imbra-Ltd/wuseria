@@ -241,6 +241,20 @@ class MtfProfile:
     # this field declares pairs explicitly and applies to any dispatch
     # branch that honours it. Default empty.
     halo_pairs: tuple[tuple[str, str], ...] = ()
+    # Profile-declared spurious-CC filter for masks that should consist of
+    # one dominant connected component near the top of the panel (ADR-074).
+    # Each tuple is `(curve_name, min_area, max_y_delta)`. The pipeline
+    # drops any CC in `curve_masks[curve_name]` whose y-centroid is more
+    # than `max_y_delta` rows below the dominant CC's y-centroid AND whose
+    # area is less than `min_area` pixels. Both conditions must hold.
+    # Distinct from `halo_pairs`: that subtracts a contaminator's AA ring
+    # from a contaminated mask, requiring the contaminator to be present
+    # in the same row neighbourhood. This filter targets the orthogonal
+    # case where the contaminated mass exists without a co-located
+    # contaminator (e.g. Samyang 20mm stopped 10S, where pink crosses
+    # through a darker shade that lands in the 10S-red HSV box at a
+    # column where pink itself has no mask pixels). Default empty.
+    small_below_top_cc_filters: tuple[tuple[str, int, int], ...] = ()
 
     @property
     def hue_count(self) -> int:

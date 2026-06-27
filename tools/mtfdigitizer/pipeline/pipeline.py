@@ -34,6 +34,7 @@ from ..loader import load_chart_bgr
 from ..profiles.types import MtfProfile
 from .dispatch import (
     _apply_declared_halo_pairs,
+    _apply_small_below_top_cc_filter,
     _hue_clip,
     curve_field,
     field_skeletons,
@@ -679,6 +680,9 @@ def _hue_masks_for_presence(
         }
         curve_masks = strip_plot_box_borders(curve_masks, plot_box)
     curve_masks = _apply_declared_halo_pairs(curve_masks, profile.halo_pairs)
+    curve_masks = _apply_small_below_top_cc_filter(
+        curve_masks, profile.small_below_top_cc_filters
+    )
     # Map per-hue raw mask to the two fields that share that hue.
     # The mapping depends on the profile; we read it from the hue
     # name convention ("S-red" → contrast10S + resolution30S, etc).

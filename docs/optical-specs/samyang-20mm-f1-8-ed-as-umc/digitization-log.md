@@ -171,10 +171,10 @@ No reasons — both confidence signals cleared.
 | 0.2 | 1.00 |
 | 0.3 | 0.99 |
 | 0.4 | 0.99 |
-| 0.5 | 0.94 |
-| 0.6 | 0.96 |
+| 0.5 | 0.99 |
+| 0.6 | 0.99 |
 | 0.7 | 0.99 |
-| 0.8 | 0.96 |
+| 0.8 | 0.99 |
 | 0.9 | 0.99 |
 | 1.0 | 0.99 |
 
@@ -250,12 +250,14 @@ No reasons — both confidence signals cleared.
 
 | metric    | value | threshold | pass |
 | --------- | ----- | --------- | ---- |
-| precision | 0.691 |      0.80 |   no |
-| IoU       | 0.434 |      0.20 |  yes |
+| precision | 0.777 |      0.80 |   no |
+| IoU       | 0.571 |      0.20 |  yes |
 
 #### Plausibility priors
 
-All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_flat`, `in_range`).
+| prior | field | position | detail |
+| ----- | ----- | -------- | ------ |
+| `not_suspiciously_flat` | `freq10S` | — | mean 0.990 >= 0.95 and stdev 0.003 <= 0.01 (11/11 defined) — idealized/placeholder? |
 
 ### Gate
 
@@ -263,3 +265,4 @@ All four priors held (`center_ge_edge`, `low_freq_ge_high`, `not_suspiciously_fl
 
 **Reasons:**
 - `precision_below_threshold`
+- `prior_failed_not_suspiciously_flat`
