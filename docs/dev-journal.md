@@ -11392,3 +11392,89 @@ Theme: pick up #791 (Carl Zeiss 3-chart digitization), originally labeled `task 
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
 - **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
+
+---
+
+### Session 194 — Samyang 85 GT correction + review.py multi-view fix
+
+Date: 2026-06-27 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pivot from planned S194 candidates (#791 design ADR, #950 plot-box, stale log refresh) to a user-spotted defect on the Samyang 85 max-aperture overlay — the 30M trace was tracking the wrong line. Probe-first investigation per `quality-calibration` revealed the GT was wrong, not the extractor. Fix landed (#1324). Discovered review.py had the same #1318-class multi-view bug that S192 fixed for svg.py; second fix landed (#1326).
+
+#### PRs
+
+- **#1324** — fix(mtfdigitizer): re-read Samyang 85mm max-aperture 30S/30M GT from chart. Merged 2026-06-26.
+- **#1326** — fix(mtfdigitizer): review.py iterates chart.views for ADR-063 and ADR-043. Merged 2026-06-27.
+
+#### Issues opened / closed
+
+- **#1323** opened+closed — bug: Samyang 85 max-aperture 30S/30M GT mis-read. Closed by #1324.
+- **#1325** opened+closed — bug: review.py does not iterate chart.views (mirror of #1318 svg.py bug). Closed by #1326.
+
+#### Key technical findings
+
+- **GT for `_SAMYANG_85_GT['max']` had 30S and 30M roles understated/swapped in the mid-field.** Recorded values had both rows near-monotonic with 30M _below_ 30S past frac 0.5; the chart actually shows wavy dark-grey 30S (dip 0.56 at frac 0.7, recovery to 0.58 at 0.8) with smooth light-grey 30M sitting visibly above (0.62 at frac 0.5, 0.57 at edge). Pixel probe of the source PNG confirmed the maintainer eye-read direction.
+- **The extractor was tracking the correct lines all along.** Post-fix Δs collapsed ~5× (freq30S med 0.016→0.003, freq30M med 0.012→0.003) because the EX (extractor) output already matched the chart; only the EYE reference was wrong. Textbook `quality-calibration` "ground truth comes from raw artifacts, not suspect data" failure mode.
+- **review.py had the same #1318 bug as svg.py.** `_emit_chart` called `aperture_passes_for_view(chart, image_path)` with no `view` arg, so for Samyang two-panel ADR-063 charts and Fujifilm per-frequency ADR-043 charts it only emitted artifacts for the primary view. The tracked `-mtf-max-overlay.png` and `-mtf-stopped-overlay.png` files in the reference tree were stale orphans — no current tool regenerated them.
+- **PNG encoder non-determinism causes byte-noise on every `review --all` run.** Single-panel charts (Sigma diffraction, Tokina, TTartisan) produce different bytes for content-identical overlays. Reverted these from both PRs as tooling-produced scope creep per `scope.md`.
+- **Samyang 85 GT fix improved aggregate calibration.** 900 paired, p95 0.0499→**0.0452**, max 0.1745→**0.1217**, in-band ±0.05 94.9%→**96.1%**. Tier 1 anchor for `samyang-4color-all-solid` (ADR-041); the GT correction shifts the family's calibration anchor.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/referenceset/charts.py`** — re-read `_SAMYANG_85_GT['max']['freq30S']` and `freq30M` via per-column pixel scan. Comments document the trace shape (dark-grey wavy vs light-grey smooth) and the OQ value at notable fractions.
+- **`tools/mtfdigitizer/review.py`** — added `_artifact_stem(chart, view, aperture, image_path)` mirroring `extract.py._artifact_stem` and `svg.py._artifact_stem`. Refactored `_emit_chart` to iterate `chart.views`, pass view into `aperture_passes_for_view`, and use the view's plot_box + chart_path.
+- **Regenerated artifacts**: `samyang-85mm-...-mtf-max-overlay.png` (now reflects corrected GT extraction), `samyang-85mm-...-mtf-stopped-overlay.png` (first real regeneration since orphan creation), `samyang-85mm-...-mtf-max-review.html` (CRLF→LF).
+- **New artifacts**: 6 Fujifilm per-frequency files — `fujifilm-gf-23mm-f4-r-lm-wr-{20lp,40lp}-{overlay.png,review.html}` and `fujifilm-xf-23mm-f1-4-r-lm-wr-45lp-{overlay.png,review.html}`. Same pattern svg.py added in #1320.
+- **Digitization log refreshed** for samyang-85 to reflect new GT (med |Δ| collapsed 5×).
+
+#### Verification
+
+- **#1324**: `py -m pytest mtfdigitizer/tests/` 450 passed; `py -m mtfdigitizer.log --check` clean; `py -m mtfdigitizer.calibrate` aggregate improved (table above). Visual diff of regenerated overlay against source chart — 30M sits above 30S in 11-22mm region as expected.
+- **#1326**: `py -m pytest mtfdigitizer/tests/` 450 passed; `py -m mtfdigitizer.review` confirmed Samyang 85 emits both `-max` and `-stopped`; Samyang 300 emits both; Fuji GF emits 15/20/40lp; Fuji XF emits 15/45lp. Visually inspected new Samyang 85 max overlay.
+- Both PRs CI green on all required checks (pytest, CodeQL, analyze, links, gate, gitleaks, changes); build/lighthouse correctly skipped (lockfile-unaffected paths).
+
+#### Key decisions (this session)
+
+- **Probe before applying a maintainer-proposed correction.** Maintainer reported the overlay was wrong with proposed correct values (30M=0.65 at 13mm, 0.60 at edge). Per `ai-workflow.md` "probe the artifact, not your reading of it," wrote `probe_samyang85_grey.py` to scan pixel columns and compute OTF per trace. Probe confirmed the eye-read direction but with slightly different values (30M=0.62 at 13mm, 0.57 at edge); applied probe values to GT. Avoided the "agent over-corrects in the maintainer's stated direction" failure mode.
+- **Fix the GT, not the extractor.** Per `quality-calibration` ordering: verify measurement before tuning threshold. Measurement (EX) and reference (EYE) disagreed; probe verified EX was correct; the disagreement source was a bad EYE, not a broken EX. Applied to GT, calibration metrics improved aggregate-wide.
+- **File the second bug (#1325) instead of bundling.** When debugging why the regenerated overlay did not appear, discovered review.py was emitting to the wrong filename. Per `scope.md` "tooling-produced scope creep is silent — revert and file": kept the GT PR scoped, filed #1325 for the review.py multi-view fix as separate work. Avoided a 10-file PR disguised as a 2-file GT correction.
+- **Mirror svg.py's S192 fix exactly in review.py.** Same `_artifact_stem` helper signature and behaviour, same `chart.views` iteration pattern, same multi-aperture-or-per-view-aperture stem-suffix rule. Three callers (extract.py, svg.py, review.py) now share the pattern — third caller threshold per `quality.md` is met but the helper duplication is intentional (three small in-file helpers, not a new shared module — extracting now would couple unrelated files for one helper each).
+- **Revert byte-noise PNG drift from both PRs.** Single-panel charts (Sigma, Tokina, TTartisan) produce non-deterministic PNG bytes on every `review --all` invocation. Including them in the PR would ship "12-file change" framed as "2-file fix." Per `scope.md` revert-and-file, kept PRs scoped; the byte-noise will refresh naturally on next intentional bulk run.
+
+#### Process patterns observed this session
+
+- **Maintainer-spotted defects on Tier 1 anchors warrant probe-first response.** GT mis-read on a Tier 1 anchor for `samyang-4color-all-solid` was silent: extractor matched it, all gates passed, no test caught it. Only an eye on the rendered overlay surfaced the bug. The probe was 30 lines of throwaway Python; the calibration improvement was 1.2pp in-band gain across 900 paired comparisons. Probe ROI is very high for "the gate says green but my eye says wrong."
+- **#1318-class bugs spread across emitters.** The "does not iterate chart.views" bug existed in svg.py (fixed S192/#1320) AND review.py (fixed today/#1326). Any future multi-view emitter authored before the pattern was codified is suspect. Worth a quick grep for `aperture_passes_for_view(chart, image_path)` (no `view` arg) calls across the codebase.
+- **Two-PR pivot worked well.** Started with "investigate maintainer-reported overlay issue," shipped two narrow PRs (#1324 data fix, #1326 tool fix) rather than one tangled mega-PR. The data fix landed first because it did not depend on the tool fix; the tool fix used the data fix's regenerated overlay as a verification target. Stacking-then-merging serially worked cleanly because both PRs touched disjoint files.
+
+#### Follow-ups for next session (S195)
+
+- **#791 design ADR + profile** (carried from S193, still the highest-priority continuity item) — Zeiss Touit 3-frequency monochrome dispatch.
+- **#950 plot-box auto-detect** (carried from S193 candidate list).
+- **Stale production log refresh** (carried from S192 — samyang-10mm + samyang-12mm fisheye flagged by `extract --check`).
+- **Quick audit pass on other Tier 1 anchors' GT.** This session's discovery (Samyang 85 GT roles wrong) suggests a verification sweep of the other 4 Tier 1 anchors' GT against their source charts may catch similar silent errors. Cheap probe (30 lines × 4 lenses); high value if even one anchor has a similar bug.
+- **`_splice_entries` + `_artifact_stem` extraction** (carried from S187/S190/S191/S192). With today's `_artifact_stem` added to review.py, it now has 3 callers (extract.py, svg.py, review.py). Threshold met per `quality.md` "third copy is a bug." Worth extracting if any of the three diverge in future. Currently identical → defer until divergence appears.
+- **Carry-forward**: 5 upstream issues open (#615, #616, #617, #618 from S189 + #638 from S191).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **121 entries** (unchanged).
+- **5 Tier 1 anchors** (unchanged).
+- Aggregate calibration: **900 paired, median |d| 0.0065, p95 |d| 0.0452, max |d| 0.1217, in-band 96.1%** (improved this session via #1324: was 0.0499 / 0.1745 / 94.9%).
+- **720 tools pytest collected, 450 mtfdigitizer subset pass + 0 xfailed** (unchanged). **224 vitest pass**.
+- **73 ADRs** (unchanged — neither fix needed a new ADR; both mirror existing ones).
+- 8 declared MTF profiles (unchanged).
+- **v0.8.0 open: 22 issues** (closed 2 from session work; other backlog shifted).
+- **Backlog spikes: 1** (#791 — unchanged from S193).
+- **Expedite open: 0**.
+- **0 open PRs** at wrap-up.
+- Pre-existing SVG drift on main: 0.
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **2** (samyang-10mm, samyang-12mm fisheye — carry-forward from S192).
+- Stale `-mtf-max-overlay.png` / `-mtf-stopped-overlay.png` orphans: **0** for Samyang 85; **2** for Samyang 300 (idealized-flat GT, byte-identical to regen — no diff to commit, will refresh next run).
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
+- **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
