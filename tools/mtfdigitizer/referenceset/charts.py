@@ -4,12 +4,11 @@ Eight eye-verified charts spanning the chart-style families found in
 `docs/optical-specs/`. Used to calibrate the render-match threshold and
 offset tolerance band of the digitizer (ADR-038 §4).
 
-Six of the eight charts carry ground-truth values + a hand-measured
-plot box — the subset `extract_chart()` can run today (the five declared
-profiles in `profiles/declared.py`: Sigma, Samyang, 7Artisans, Tokina,
-Viltrox). The two remaining (the 7Artisans 35mm soft promo and the
-Zeiss Touit press kit) are tracked for fail-loud shape coverage; both
-are deliberately out-of-band and must be refused by the profile gate.
+Seven of the eight original charts carry ground-truth values + a hand-
+measured plot box. The 7Artisans 35mm soft promo is the one remaining
+deliberately out-of-band fail-loud shape; the Zeiss Touit press kit was
+promoted to an extracted family by #791 / ADR-075 via the N-frequency
+RIDGE_TRACKING pipeline (`ridge_tracks_to_fields_multifreq`).
 
 Field semantics:
 
@@ -1196,14 +1195,69 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
             ),
         ),
     ),
+    # Zeiss Touit press kit family (3 lenses). Each PNG stacks two
+    # panels: wide-aperture on top, stopped-aperture below. Panel
+    # plot boxes were located by the same Y-axis-run detector used
+    # for Samyang (#791 / ADR-075); the Samyang stacked-panel
+    # additional_views pattern (ADR-063) carries one logical lens
+    # entry with two views. Aperture role labels follow ADR-065.
+    #
+    # Stopped panels hit the ridge-tracker coincidence failure mode
+    # described in `pipeline/ridge.py`: when curves bundle within
+    # ~15 px (10S/10M/20S/20M near MTF=0.95 at the stopped aperture
+    # on Touit), the greedy clusterer can collapse a pair into one
+    # track. Path A (#791) ships max-aperture extraction first;
+    # stopped-panel coverage is gated by Tier 1 eye-read calibration.
+    ReferenceChart(
+        slug="zeiss-touit-12mm-f2-8",
+        chart_path="docs/optical-specs/zeiss-touit-12mm-f2-8/zeiss-touit-12mm-f2-8-mtf.png",
+        style_family="multifreq-press-kit",
+        apertures=("max", "stopped"),
+        frequencies_lpmm=(10, 20, 40),
+        image_height_mm=15.0,
+        notes="Zeiss Touit press kit; B&W solid=S, dashed=T; 3 frequencies (10/20/40); stacked panels k=2.8 (max) + k=5.6 (stopped).",
+        plot_box=PlotBoxCoords(x_left=279, x_right=851, y_top=455, y_bottom=873),
+        additional_views=(
+            ChartView(
+                chart_path="docs/optical-specs/zeiss-touit-12mm-f2-8/zeiss-touit-12mm-f2-8-mtf.png",
+                plot_box=PlotBoxCoords(x_left=279, x_right=851, y_top=1068, y_bottom=1490),
+                aperture="stopped",
+            ),
+        ),
+    ),
     ReferenceChart(
         slug="zeiss-touit-32mm-f1-8",
         chart_path="docs/optical-specs/zeiss-touit-32mm-f1-8/zeiss-touit-32mm-f1-8-mtf.png",
         style_family="multifreq-press-kit",
-        apertures=("k=1.8", "k=4"),
+        apertures=("max", "stopped"),
         frequencies_lpmm=(10, 20, 40),
         image_height_mm=15.0,
-        notes="German press kit; B&W solid=S, dashed=T; THREE frequencies — must reject as out-of-band for 2-freq profiles",
+        notes="Zeiss Touit press kit; B&W solid=S, dashed=T; 3 frequencies (10/20/40); stacked panels k=1.8 (max) + k=4 (stopped). Original reference set anchor (#791 / ADR-075).",
+        plot_box=PlotBoxCoords(x_left=257, x_right=737, y_top=441, y_bottom=791),
+        additional_views=(
+            ChartView(
+                chart_path="docs/optical-specs/zeiss-touit-32mm-f1-8/zeiss-touit-32mm-f1-8-mtf.png",
+                plot_box=PlotBoxCoords(x_left=256, x_right=738, y_top=974, y_bottom=1324),
+                aperture="stopped",
+            ),
+        ),
+    ),
+    ReferenceChart(
+        slug="zeiss-touit-50mm-f2-8-macro",
+        chart_path="docs/optical-specs/zeiss-touit-50mm-f2-8-macro/zeiss-touit-50mm-f2-8-macro-mtf.png",
+        style_family="multifreq-press-kit",
+        apertures=("max", "stopped"),
+        frequencies_lpmm=(10, 20, 40),
+        image_height_mm=15.0,
+        notes="Zeiss Touit press kit; B&W solid=S, dotted=T (lighter ink than dashed siblings); 3 frequencies (10/20/40); stacked panels k=2.8 (max) + k=5.6 (stopped). Larger canvas (1786x2526) than 12/32mm siblings (1636x1770).",
+        plot_box=PlotBoxCoords(x_left=277, x_right=880, y_top=684, y_bottom=1071),
+        additional_views=(
+            ChartView(
+                chart_path="docs/optical-specs/zeiss-touit-50mm-f2-8-macro/zeiss-touit-50mm-f2-8-macro-mtf.png",
+                plot_box=PlotBoxCoords(x_left=277, x_right=880, y_top=1237, y_bottom=1624),
+                aperture="stopped",
+            ),
+        ),
     ),
 )
 

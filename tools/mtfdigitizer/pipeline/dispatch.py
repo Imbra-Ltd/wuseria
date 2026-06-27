@@ -85,6 +85,7 @@ from .ridge import (
     ridge_tracks_for_hue,
     ridge_tracks_for_hue_freq_split,
     ridge_tracks_to_fields,
+    ridge_tracks_to_fields_multifreq,
 )
 from .skeleton import close_and_skeletonize
 from .split import split_sm_by_cc_width
@@ -778,15 +779,10 @@ def field_skeletons(
         if plot_box is None:
             raise ValueError("RIDGE_TRACKING requires plot_box")
         single_mask = next(iter(curve_masks.values()))
-        upper_freq, lower_freq = (
-            profile.frequencies_lpmm[0],
-            profile.frequencies_lpmm[1],
-        )
-        out = ridge_tracks_to_fields(
+        out = ridge_tracks_to_fields_multifreq(
             single_mask,
             plot_box,
-            upper_freq=upper_freq,
-            lower_freq=lower_freq,
+            frequencies_lpmm=profile.frequencies_lpmm,
             dashed_is_sagittal=profile.dashed_is_sagittal,
         )
     elif (

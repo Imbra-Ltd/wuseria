@@ -375,6 +375,50 @@ TTARTISAN_4COLOR_DUAL_APERTURE: MtfProfile = MtfProfile(
 )
 
 
+# Zeiss Touit B&W 3-frequency press kit (#791, ADR-075). German press kit
+# PDFs publish three spatial frequencies (10/20/40 cycles/mm) on a single
+# B&W chart, S/M split by line dash. Each lens has a wide-aperture panel
+# stacked above a stopped-aperture panel, both sharing one PNG — the
+# Samyang stacked-panel pattern (ADR-063) with one extra frequency band.
+#
+# Measured HSV inside the 32mm top panel (y=441..791, x=257..737, 7808
+# dark pixels): V median 0, S median 0; max V on curve pixels 99, max
+# S 26. The neutral hue cap (S<=60, V<=110) matches Viltrox's; the two
+# brands share the "no informative hue" property.
+#
+# Dispatch uses RIDGE_TRACKING extended to N frequencies (`ridge_tracks_
+# to_fields_multifreq`) — 6 tracks expected, clustered into 3 y-bands.
+# `frequencies_lpmm=(10, 20, 40)` lists them in upper→lower screen order,
+# which by Zeiss's chart convention is also low→high lp/mm.
+#
+# Stopped panels (k=4 on 12mm, k=4 on 32mm, k=5.6 on 50mm) hit the
+# coincident-curve failure mode described in ridge.py — when curves
+# bundle within ~15 px (10S/10M/20S/20M all near MTF=0.95 at the
+# stopped aperture), the greedy clusterer collapses pairs into single
+# tracks. The 32mm probe (S196) recovered only 5 of 6 expected tracks
+# on the k=4 panel. Path A (#791): ship max-aperture extraction first;
+# stopped-panel coincidence is a known limitation, gated by Tier 1
+# eye-read calibration.
+ZEISS_TOUIT_BW_3FREQ: MtfProfile = MtfProfile(
+    name="zeiss-touit-bw-3freq",
+    hues=(
+        HueRange(name="neutral", h_lo=0, h_hi=179, s_min=0, s_max=60, v_min=0, v_max=110),
+    ),
+    style_axis="SPLIT_BY_DASH",
+    hue_meaning="RIDGE_TRACKING",
+    frequencies_lpmm=(10, 20, 40),
+    # Same hazard as Viltrox: the neutral hue range matches text and
+    # gridlines on every chart, so it would poison auto-suggest.
+    auto_suggestable=False,
+    notes=(
+        "Zeiss Touit press kit: B&W, solid=S dashed=T, 3 frequencies "
+        "(10/20/40 lp/mm) separated by y-band; dual-aperture stacked "
+        "panels per ADR-063. RIDGE_TRACKING dispatched through "
+        "`ridge_tracks_to_fields_multifreq` (#791)."
+    ),
+)
+
+
 DECLARED_PROFILES: tuple[MtfProfile, ...] = (
     SIGMA_2COLOR_SOLID_DASHED,
     SAMYANG_4COLOR_ALL_SOLID,
@@ -384,4 +428,5 @@ DECLARED_PROFILES: tuple[MtfProfile, ...] = (
     VILTROX_BW_DASHED_F12,
     FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED,
     TTARTISAN_4COLOR_DUAL_APERTURE,
+    ZEISS_TOUIT_BW_3FREQ,
 )
