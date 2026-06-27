@@ -24,9 +24,12 @@ declared profile in `profiles/declared.py`.
 | tokina-atx-m-23mm-f1-4-x                  | 2color-frequency                | TOKINA_2COLOR_FREQUENCY               |
 | viltrox-af-75mm-f1-2-pro (f/1.2)          | bw-dashed-promo                 | VILTROX_BW_DASHED_F12                 |
 
-The 2 remaining charts (7Artisans 35mm soft promo, Zeiss Touit press
-kit) are deliberately out-of-band fail-loud cases and intentionally
-have no profile.
+The 1 remaining chart (7Artisans 35mm soft promo) is a deliberately
+out-of-band fail-loud case and intentionally has no profile. The
+Zeiss Touit press kit was promoted from rejection-case to an extracted
+family by #791 / ADR-075 via the N-frequency RIDGE_TRACKING pipeline
+(`ridge_tracks_to_fields_multifreq`); it joins the table once it
+ships eye-read ground truth.
 
 ## How to reproduce
 

@@ -72,9 +72,13 @@ line (it sat at ~OTF 1.0 ≈ ground truth 10S, masking the real failure).
 - **Not sub-pixel-accurate beyond ~0.5 px.** The chart raster itself
   is the precision floor; a Gaussian-fit refinement on top of run
   centroids would buy <0.02 OTF on a 235px-tall plot. Skipped.
-- **Not handling >2 frequencies.** The clustering assumes a 4-curve
-  layout (2 frequencies × S/M). A 6-curve Zeiss-style 3-frequency
-  chart needs a different track-identification step.
+- **N-frequency layout** (>2 frequencies). The track-identification
+  step generalizes to `2 * len(frequencies_lpmm)` tracks split into
+  `len(frequencies_lpmm)` y-bands. `ridge_tracks_to_fields_multifreq`
+  drives this; `ridge_tracks_to_fields` is a 2-freq convenience
+  wrapper kept for Viltrox callers. Zeiss Touit's 3-frequency
+  (10/20/40 lp/mm) wide-aperture panels extract cleanly; tightly
+  bundled stopped panels still hit the coincidence failure mode below.
 
 ## Failure modes
 
@@ -1826,36 +1830,44 @@ def ridge_tracks_for_hue_freq_split(
     return out
 
 
-def ridge_tracks_to_fields(
+def ridge_tracks_to_fields_multifreq(
     mask: np.ndarray,
     plot_box: PlotBox,
-    upper_freq: int,
-    lower_freq: int,
+    frequencies_lpmm: tuple[int, ...],
     dashed_is_sagittal: bool,
 ) -> dict[str, np.ndarray]:
-    """Ridge-track a single-hue mask and return per-field skeleton masks.
+    """Ridge-track a single-hue mask and return per-field skeleton masks
+    for an N-frequency chart.
 
-    The 4-curve layout: top two tracks (by mean y) are `upper_freq`, the
-    bottom two are `lower_freq`. Within each pair, the higher-coverage
-    track is solid (S by default; M if `dashed_is_sagittal`). Fields
-    without a qualifying track are simply absent from the result; the
-    sampler treats them as missing data (B2).
+    The 2N-curve layout: the kept tracks (by mean y) split into N
+    equal-sized y-bands. Each band maps to one frequency in upper→lower
+    order. Within each band the top track (smaller mean_y) is sagittal
+    (S), the next is meridional (M). Fields without a qualifying track
+    are absent from the result; the sampler treats them as missing
+    data (B2 contract).
+
+    `frequencies_lpmm` MUST be passed in upper→lower screen order,
+    which by convention is also low→high lp/mm (a 3-freq Zeiss
+    Touit chart prints 10 on top, 20 in the middle, 40 at the bottom).
     """
     from .dispatch import curve_field  # imported here to avoid module cycle
+
+    if not frequencies_lpmm:
+        raise ValueError("ridge_tracks_to_fields_multifreq: empty frequencies_lpmm")
+
+    n_freqs = len(frequencies_lpmm)
+    expected_tracks = 2 * n_freqs
 
     cleaned = _strip_chrome(mask, plot_box)
     points = _extract_ridge_points(cleaned, plot_box)
     tracks = _cluster_into_tracks(points)
-    kept = _select_top_n_tracks(tracks, n=4, plot_width=plot_box.width + 1)
+    kept = _select_top_n_tracks(
+        tracks, n=expected_tracks, plot_width=plot_box.width + 1
+    )
 
     if not kept:
         return {}
 
-    kept_sorted = sorted(kept, key=lambda t: t.mean_y)
-    upper_tracks = kept_sorted[: max(1, len(kept_sorted) // 2)]
-    lower_tracks = kept_sorted[max(1, len(kept_sorted) // 2) :]
-
-    out: dict[str, np.ndarray] = {}
     # Within a frequency pair, the sagittal (S) curve is always above
     # the meridional (M) curve in OTF (physics: edge MTF degrades faster
     # on the meridional axis). In image coordinates that means S has the
@@ -1864,14 +1876,49 @@ def ridge_tracks_to_fields(
     # which doesn't apply to Viltrox where all four curves are dashed.
     del dashed_is_sagittal  # unused for ridge tracking
 
-    for freq, cluster in ((upper_freq, upper_tracks), (lower_freq, lower_tracks)):
-        if not cluster:
+    kept_sorted = sorted(kept, key=lambda t: t.mean_y)
+
+    # Split kept tracks into N equal-size y-bands. When the kept count is
+    # below 2N (e.g. coincident curves collapse a stopped panel from 6
+    # to 5 tracks on Zeiss Touit k=4), the last band absorbs the
+    # remainder so the highest frequency reports what data exists rather
+    # than silently dropping it.
+    base = len(kept_sorted) // n_freqs
+    remainder = len(kept_sorted) - base * (n_freqs - 1)
+
+    out: dict[str, np.ndarray] = {}
+    cursor = 0
+    for band_index, freq in enumerate(frequencies_lpmm):
+        is_last = band_index == n_freqs - 1
+        take = remainder if is_last else base
+        if take <= 0:
             continue
-        by_y = sorted(cluster, key=lambda t: t.mean_y)
-        sagittal_track = by_y[0]
-        out[curve_field(freq, "S")] = _rasterize(sagittal_track, mask.shape)
+        band = kept_sorted[cursor : cursor + take]
+        cursor += take
+        by_y = sorted(band, key=lambda t: t.mean_y)
+        out[curve_field(freq, "S")] = _rasterize(by_y[0], mask.shape)
         if len(by_y) > 1:
-            meridional_track = by_y[1]
-            out[curve_field(freq, "M")] = _rasterize(meridional_track, mask.shape)
+            out[curve_field(freq, "M")] = _rasterize(by_y[1], mask.shape)
 
     return out
+
+
+def ridge_tracks_to_fields(
+    mask: np.ndarray,
+    plot_box: PlotBox,
+    upper_freq: int,
+    lower_freq: int,
+    dashed_is_sagittal: bool,
+) -> dict[str, np.ndarray]:
+    """Two-frequency wrapper around `ridge_tracks_to_fields_multifreq`.
+
+    Preserved for the Viltrox dispatch site and its tests. New callers
+    SHOULD use `ridge_tracks_to_fields_multifreq` with an explicit
+    frequency tuple.
+    """
+    return ridge_tracks_to_fields_multifreq(
+        mask,
+        plot_box,
+        frequencies_lpmm=(upper_freq, lower_freq),
+        dashed_is_sagittal=dashed_is_sagittal,
+    )

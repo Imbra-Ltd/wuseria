@@ -24,7 +24,8 @@ Public surface:
   `SEVENARTISANS_2COLOR_SAMECOLOR_DASHED`, `TOKINA_2COLOR_FREQUENCY`,
   `TOKINA_2COLOR_FREQUENCY_CC_RANK`, `VILTROX_BW_DASHED_F12`,
   `FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED`,
-  `TTARTISAN_4COLOR_DUAL_APERTURE` — declared profiles
+  `TTARTISAN_4COLOR_DUAL_APERTURE`,
+  `ZEISS_TOUIT_BW_3FREQ` — declared profiles
 - `DECLARED_PROFILES` — tuple of all currently-declared profiles
 """
 
@@ -46,6 +47,7 @@ from .declared import (
     TOKINA_2COLOR_FREQUENCY_CC_RANK,
     TTARTISAN_4COLOR_DUAL_APERTURE,
     VILTROX_BW_DASHED_F12,
+    ZEISS_TOUIT_BW_3FREQ,
 )
 from .suggest import resolve, suggest_profile
 
@@ -65,6 +67,7 @@ __all__ = [
     "TOKINA_2COLOR_FREQUENCY_CC_RANK",
     "TTARTISAN_4COLOR_DUAL_APERTURE",
     "VILTROX_BW_DASHED_F12",
+    "ZEISS_TOUIT_BW_3FREQ",
     "resolve",
     "suggest_profile",
 ]

@@ -24,7 +24,7 @@ the set inside #933's 6–10-chart target with full coverage.
 | 5 | `7artisans-35mm-f1-2-mark-ii`         | soft-multicurve-promo              | Out-of-band: tests profile fail-loud (B1)          |
 | 6 | `tokina-atx-m-23mm-f1-4-x`            | 2color-frequency                   | Colors carry frequency not S/M — different dialect |
 | 7 | `viltrox-af-75mm-f1-2-pro`            | bw-dashed-promo                    | All-dashed, B&W, two apertures, tiny legend        |
-| 8 | `zeiss-touit-32mm-f1-8`               | multifreq-press-kit                | Three frequencies (10/20/40) — out-of-band         |
+| 8 | `zeiss-touit-32mm-f1-8`               | multifreq-press-kit                | Three frequencies (10/20/40) — extracted via N-freq RIDGE_TRACKING (#791, ADR-075) |
 | 9 | `ttartisan-7-5mm-f2-0-fisheye`        | ttartisan-4color-dual-aperture     | Second anchor (ADR-041); fisheye edge-crash stress |
 |10 | `ttartisan-af-35mm-f1-8`              | ttartisan-4color-dual-aperture     | Third anchor (ADR-041); right-edge S/M swap (#1199)|
 
@@ -91,7 +91,7 @@ here.
 - German Zeiss press kit; B&W, solid = Sagittal, dashed = Tangential, **three frequencies** (10/20/40 cycles/mm — top, middle, bottom).
 - **k=1.8 panel**: 10 ~85→55%, 20 ~70→45%, 40 dips to ~30% around 11mm then recovers slightly.
 - **k=4 panel**: 10 ~95→85%, 20 ~85→78%, 40 ~75 with a dip to ~50% at 11mm.
-- Diagnostic: out-of-band for any profile that declares 2 frequencies. Must refuse, not silently drop the 20 lp/mm middle row.
+- Diagnostic: extracted via the N-frequency RIDGE_TRACKING dispatch (#791, ADR-075). The wide-aperture k=1.8 panel resolves 6 distinct tracks cleanly into 3 y-bands (10/20/40); the stopped k=4 panel hits the ridge-tracker coincidence failure mode where the upper-band curves bundle within ~15 px and the clusterer collapses one pair (S196 probe recovered 5 of 6 tracks). Path A (#791) ships the wide-aperture extraction; stopped panels are gated by Tier 1 eye-read calibration.
 
 ### 9. ttartisan-7-5mm-f2-0-fisheye — second TTartisan 4-color anchor
 

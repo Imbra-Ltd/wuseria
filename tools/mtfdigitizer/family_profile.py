@@ -28,6 +28,7 @@ from .profiles import (
     TOKINA_2COLOR_FREQUENCY_CC_RANK,
     TTARTISAN_4COLOR_DUAL_APERTURE,
     VILTROX_BW_DASHED_F12,
+    ZEISS_TOUIT_BW_3FREQ,
 )
 from .profiles.types import MtfProfile
 
@@ -35,10 +36,13 @@ if TYPE_CHECKING:
     from .referenceset.charts import ReferenceChart
 
 
-# Six declared profiles wired today. The two absent style families
-# (`soft-multicurve-promo`, `multifreq-press-kit`) are deliberately
-# out-of-band fail-loud cases (7Artisans 35mm promo, Zeiss Touit
-# press kit) and have no profile.
+# The remaining absent style family (`soft-multicurve-promo`) is the
+# 7Artisans 35mm promo chart — deliberately out-of-band as a fail-loud
+# anchor for the suggest scorer, no profile declared.
+#
+# `multifreq-press-kit` (Zeiss Touit) was previously absent; ADR-075 /
+# #791 promoted it to an extracted family via the N-frequency
+# RIDGE_TRACKING pipeline.
 PROFILE_BY_STYLE: dict[str, MtfProfile] = {
     "mainstream-2color-solid-dashed": SIGMA_2COLOR_SOLID_DASHED,
     "mainstream-4color-all-solid": SAMYANG_4COLOR_ALL_SOLID,
@@ -57,6 +61,11 @@ PROFILE_BY_STYLE: dict[str, MtfProfile] = {
     # profile's hues are filtered by name prefix (`max-` vs `stopped-`)
     # on each pass.
     "ttartisan-4color-dual-aperture": TTARTISAN_4COLOR_DUAL_APERTURE,
+    # Zeiss Touit: B&W, 3 frequencies (10/20/40 lp/mm) separated by
+    # y-band, S/M split by dash; dual-aperture stacked panels (Samyang
+    # style). Routed via the N-frequency RIDGE_TRACKING pipeline
+    # (`ridge_tracks_to_fields_multifreq`). See ADR-075.
+    "multifreq-press-kit": ZEISS_TOUIT_BW_3FREQ,
 }
 
 
