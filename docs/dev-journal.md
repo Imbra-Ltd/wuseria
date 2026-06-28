@@ -11807,3 +11807,105 @@ Theme: pick up #1332 (Tier 1 eye-read GT for 3 Touit charts, ~396 cells) and mak
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
 - **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
+
+---
+
+### Session 198 — PR triage drain: ship #1335 carryover + #1336 + #1334
+
+Date: 2026-06-28 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: drain the 2 open PRs carried from S197 (#1335 awaiting merge permission, #1334 Dependabot setup-python) plus the one-line `.prettierignore` fix for #1336 surfaced last session. Three quick wins; no new feature work.
+
+#### PRs
+
+- **#1335** — feat(mtfdigitizer): scaffold Zeiss Touit eye-read helpers (#1332). Merged. S197 carryover; squash to main at `a48f311` (14 files / +632 lines).
+- **#1337** — fix: exclude eye-read.md from prettier (#1336). Merged. One-line `.prettierignore` add, squashed to main at `0182da3`.
+- **#1334** — chore(deps): bump actions/setup-python from 5 to 6. Merged. Dependabot, squashed to main at `fd1c13f`.
+
+#### Issues opened / closed
+
+- **#1336** auto-closed via PR #1337.
+- No new issues opened.
+
+#### Key technical findings
+
+- **`mergeStateStatus: UNKNOWN` after a recent same-branch merge is GitHub catching up, not a real block.** PR #1334's check rollup was all SUCCESS but `mergeable: UNKNOWN` immediately after #1337 merged; a single re-query 5s later returned `CLEAN`. No probe of the underlying cause needed — the mergeability compute is async after a base bump.
+- **The `.prettierignore` fix is scope-tight; the 6 existing eye-read.md files on main stay drift-state.** Re-emitting them via `--write` would bundle a separate concern (mechanical re-emit risk: edge cases in `!`/`?` preservation logic). Future eye-read.md edits no longer drift; existing drift waits on a follow-up when CI wires `--check` as a staleness gate.
+- **CI path filters held up cleanly under a `.prettierignore`-only PR.** `build`, `lighthouse`, `pytest` all `skipping` per their path filters; `gate` aggregator still SUCCESS. Same skip-vs-pass shape as S196/S197 confirms the `quality-gates-scope-agreement` rule's pattern is robust across PR shapes.
+
+#### Key changes
+
+- **`.prettierignore`** — one line added: `docs/optical-specs/**/eye-read.md`, mirroring the existing `digitization-log.md` exclusion. The scaffolder (`mtfdigitizer.scripts.scaffold_anchor_helpers`) owns the table formatting; prettier touching it produces silent staleness that surfaces as a `--check` failure on a clean checkout.
+- **`.github/workflows/ci.yml`** — `actions/setup-python@v5` → `@v6` (Dependabot, no behavior change).
+- **All S197 carryover changes from #1335** (scaffolder dispatch + 3 eye-read.md skeletons + 6 readhelper PNGs + journal entry) landed via squash.
+
+#### Verification
+
+- **#1335**: CI green on merge (changes, analyze, gitleaks, links, pytest, gate; build + lighthouse correctly skipped). Local main fast-forwarded to `a48f311`.
+- **#1337**: Reproduced bug first (`scaffold_anchor_helpers fujifilm-gf-23mm-f4-r-lm-wr --check` reports `differ` on main), applied the one-line fix, confirmed `npx prettier --check` reports clean. CI green on all required checks. Local main fast-forwarded to `0182da3`.
+- **#1334**: All checks SUCCESS from the Dependabot run on 2026-06-27 (build, pytest, lighthouse, gate, analyze, gitleaks, links). `mergeStateStatus` flipped CLEAN after a brief async window post-#1337 base-bump. Local main fast-forwarded to `fd1c13f`.
+- Final state: 0 open PRs, working tree clean, main synced.
+
+#### Key decisions (this session)
+
+- **Scope-tight #1336**: ship the one-line `.prettierignore` add only; defer re-emitting the 6 existing drift-state eye-read.md files. Per `git.md` "Bulk operations split into stacked PRs" — the ignore line prevents future drift; the historical drift is a separate mechanical concern that could surprise (`!`/`?` preservation edge cases). Documented the deferral in the PR body.
+- **Wait for `mergeStateStatus` rather than retry-or-bypass.** A 5s poll on #1334's UNKNOWN state resolved cleanly; no need to surface the async gap as a failure.
+
+#### Process patterns observed this session
+
+- **Triage drain sessions need no spike or ADR overhead.** Three quick merges, each with its own one-question check (scope, then CI, then mergeability), accumulated to a clean main in under an hour. No probe needed; no architectural decisions. The wrap-up is the heaviest single step.
+- **`mergeStateStatus: UNKNOWN` is a known post-merge transient; a single retry beats a probe.** Per `ai-workflow.md` "Probe before acting on a hypothesis" — but UNKNOWN is well-documented GitHub behavior, not a hypothesis worth probing. The cheapest path is one `sleep 5 && gh pr view` re-query.
+
+#### Calibration impact (S198)
+
+| Metric                       | S197 close                             | S198 close                                          |
+| ---------------------------- | -------------------------------------- | --------------------------------------------------- |
+| Aggregate paired             | 1157                                   | **1157** (unchanged — no eye-read this session)     |
+| Aggregate p95 \|d\|          | 0.0396                                 | **0.0396** (unchanged)                              |
+| Aggregate median \|d\|       | 0.0043                                 | **0.0043** (unchanged)                              |
+| Aggregate in-band (±0.05)    | 97.0%                                  | **97.0%** (unchanged)                               |
+| mtfdigitizer pytest          | 455                                    | **455** (unchanged)                                 |
+| vitest                       | 224                                    | **224** (unchanged)                                 |
+| `REFERENCE_CHARTS` entries   | 123                                    | **123** (unchanged)                                 |
+| Epic #790 brand-digitization | 5/24                                   | **5/24** (unchanged — Zeiss still pending eye-read) |
+| ADRs                         | 75                                     | **75** (unchanged)                                  |
+| Declared profiles            | 9                                      | **9** (unchanged)                                   |
+| Open PRs                     | 2                                      | **0** (drained both carryovers + #1337)             |
+| Backlog spikes               | 1 (#791)                               | **1** (#791 unchanged)                              |
+| Open v0.8.0 issues           | 24                                     | **23** (-1 — #1336 closed)                          |
+| Open Expedite issues         | 0                                      | **0**                                               |
+| Stale production logs        | 2 (samyang-10mm, samyang-12mm fisheye) | **2** (unchanged)                                   |
+
+#### Follow-ups for next session (S199)
+
+- **#1332 — maintainer eye-read 396 Touit cells** on the 3 readhelper PNGs. Largest single signal-flip available; all scaffolding in place from S197.
+- **Re-emit the 6 existing drift-state eye-read.md files** as a one-shot follow-up to #1336, then wire `scaffold_anchor_helpers --check` into CI as a staleness gate. Quick PR.
+- **Stopped-panel ridge-cluster collapse architecture spike** (carried).
+- **Tier-1-anchor GT audit sweep** (carried).
+- **#950 plot-box auto-detect** (carried).
+- **Stale production log refresh** (carried — samyang-10mm + samyang-12mm fisheye).
+- **`not_suspiciously_flat` prior false-positive on legitimately flat curves** (carried from S195).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (Carl Zeiss scaffolder shipped, eye-read GT pending #1332).
+- `REFERENCE_CHARTS` = **123 entries** (unchanged).
+- **5 Tier 1 anchors** with real maintainer GT (unchanged — Touit GT still extractor predictions until maintainer eye-read flips them).
+- Aggregate calibration: **1157 paired, median |d| 0.0043, p95 |d| 0.0396, max |d| 0.1217, in-band 97.0%** (unchanged — Touit cells still self-confirming).
+- **725 tools pytest collected, 455 mtfdigitizer subset pass + 0 xfailed**. **224 vitest pass**.
+- **75 ADRs** (unchanged).
+- **9 declared MTF profiles** (unchanged).
+- **v0.8.0 open: 23 issues** (-1 #1336 closed).
+- **Backlog spikes: 1** (#791 unchanged).
+- **Expedite open: 0**.
+- **0 open PRs** at wrap-up.
+- Pre-existing SVG drift on main: 0.
+- **Pre-existing eye-read.md prettier drift on main: 6** (carried — re-emit follow-up to #1336 deferred to S199).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **2** (samyang-10mm, samyang-12mm fisheye — carry-forward).
+- Stale `-mtf-max-overlay.png` / `-mtf-stopped-overlay.png` orphans: **2** for Samyang 300.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` bumped to **`cb6e26c`** at session tail (64 commits ahead of `ba2843d`). All 5 wuseria-filed upstream issues (#615, #616, #617, #618 from S189 + #638 from S191) landed in the bump. Substantial structural reshuffling upstream: ADR-016 (examples are agent-generated), ADR-017 (canonical stack-template structure), ADR-018 (audit storage lock to docs/audits), ADR-019 (redundancy gate). Stack removals (java, terraform, rust, fullstack, mobile, SPA, hugo, celery). All 19 templates wuseria's CLAUDE.md references still exist and were re-verified.
+- **Upstream contributions filed still open:** 1 (S198 #704 — formatter-vs-generator escalation against `base/workflow/quality-gates.md`).
