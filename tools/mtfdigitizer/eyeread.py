@@ -350,6 +350,13 @@ def gt_var_for_chart(chart) -> str:
             return f"_TTARTISAN_{variant}_{focal}_GT"
         focal = parts[1].replace("mm", "")
         return f"_TTARTISAN_{focal}_GT"
+    if style == "multifreq-press-kit":
+        # Zeiss Touit slug shape: `zeiss-touit-<focal>mm-f<ap>-...`
+        # (e.g. `zeiss-touit-12mm-f2-8`, `zeiss-touit-50mm-f2-8-macro`).
+        # Focal at parts[2] — strip trailing `mm`. Must match
+        # `scaffold_anchor_helpers._zeiss_touit_gt_var`.
+        focal = parts[2].replace("mm", "")
+        return f"_ZEISS_TOUIT_{focal}_GT"
     raise ValueError(
         f"{chart.slug}: style_family {style!r} not supported by eyeread"
     )

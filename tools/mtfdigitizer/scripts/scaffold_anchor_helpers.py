@@ -123,6 +123,8 @@ def _resolve_helper_views(chart: ReferenceChart) -> list[HelperView]:
         return _fuji_permfreq_views(chart)
     if chart.style_family == "ttartisan-4color-dual-aperture":
         return _ttartisan_dual_aperture_views(chart)
+    if chart.style_family == "multifreq-press-kit":
+        return _multifreq_press_kit_views(chart)
     raise ValueError(
         f"{chart.slug}: style_family {chart.style_family!r} not "
         f"supported by scaffold_anchor_helpers. Add a new "
@@ -197,6 +199,54 @@ def _ttartisan_dual_aperture_views(chart: ReferenceChart) -> list[HelperView]:
                 # the primary chart for every view, filtered by aperture.
                 extractor_chart_path=source_path,
                 aperture_label=ap_label,
+            )
+        )
+    return views
+
+
+def _multifreq_press_kit_views(chart: ReferenceChart) -> list[HelperView]:
+    """Zeiss Touit press-kit: B&W chart with N spatial frequencies stacked
+    in one plot panel, two apertures split across two plot panels of one
+    PNG (ADR-063 per-view aperture override, ADR-075 N-frequency
+    RIDGE_TRACKING).
+
+    Differs from TTartisan dual-aperture in two ways: (1) panels are
+    split by plot-box y-coordinates, not by color hue — no hue filtering
+    needed; (2) frequencies span the chart's column set (3 freqs × {S,M}
+    = 6 columns per panel), where TTartisan uses 2 freqs × {S,M} = 4.
+    """
+    assert chart.plot_box is not None
+    source_path = REPO_ROOT / chart.chart_path
+    source_stem = source_path.stem
+    freqs = chart.frequencies_lpmm
+
+    views: list[HelperView] = []
+    for chart_view, f_number in zip(chart.views, chart.apertures):
+        assert chart_view.plot_box is not None
+        ap_label = chart_view.aperture
+        assert ap_label is not None, (
+            f"{chart.slug}: multifreq-press-kit view {chart_view.chart_path!r} "
+            f"has no aperture role label (ADR-063); expected one of "
+            f"{chart.apertures}"
+        )
+        views.append(
+            HelperView(
+                title=f"{f_number} ({ap_label})",
+                base_image_path=source_path,
+                readhelper_filename=f"{source_stem}-{ap_label}-readhelper.png",
+                field_columns=tuple(
+                    f"freq{f}{sm}" for f in freqs for sm in ("S", "M")
+                ),
+                column_headers=tuple(
+                    f"{f}{sm}" for f in freqs for sm in ("S", "M")
+                ),
+                plot_box=_to_plotbox(chart_view.plot_box),
+                # Both panels live on one PNG — extractor uses the shared
+                # raster with each view's plot_box. No hue/aperture
+                # profile transformation needed (panels are positionally
+                # separated, unlike TTartisan's color encoding).
+                extractor_chart_path=source_path,
+                aperture_label=None,
             )
         )
     return views
@@ -399,6 +449,8 @@ def _extras_for(chart: ReferenceChart) -> StyleFamilyExtras:
         return _fuji_permfreq_extras(chart)
     if chart.style_family == "ttartisan-4color-dual-aperture":
         return _ttartisan_dual_aperture_extras(chart)
+    if chart.style_family == "multifreq-press-kit":
+        return _multifreq_press_kit_extras(chart)
     return StyleFamilyExtras(
         sample_line_warning=None, mtf_axis_legend=(), gt_snippet="",
     )
@@ -554,6 +606,85 @@ def _ttartisan_dual_aperture_extras(chart: ReferenceChart) -> StyleFamilyExtras:
         readhelper_extra_otf=(0.05, 0.15, 0.25, 0.35, 0.45,
                               0.55, 0.65, 0.75, 0.85, 0.95),
     )
+
+
+def _multifreq_press_kit_extras(chart: ReferenceChart) -> StyleFamilyExtras:
+    """Curated wording for the Zeiss Touit press-kit template:
+    monochrome, solid=S dashed=T (dotted on 50mm macro), 3 frequencies
+    stacked vertically per panel (10 lp/mm highest, 40 lp/mm lowest at
+    center), two apertures across two stacked panels of one PNG.
+    """
+    f_max, f_stopped = chart.apertures[0], chart.apertures[1]
+    sample_line_warning = (
+        f"**Important:** both apertures are packed into one chart as "
+        f"two stacked panels — top panel is the max-aperture pass "
+        f"({f_max}), bottom panel is the stopped-aperture pass "
+        f"({f_stopped}). All curves are monochrome black; solid lines "
+        f"are sagittal (S), dashed (or dotted, on the 50mm macro) are "
+        f"tangential (M). Within each panel the three frequencies stack "
+        f"vertically: 10 lp/mm highest, 20 lp/mm middle, 40 lp/mm "
+        f"lowest at the optical centre. Per ADR-046 the helper PNG "
+        f"shows the **clean source chart** (no extractor overlay) so "
+        f"the eye-read is unbiased. The green sample lines span the "
+        f"full plot regardless of panel."
+    )
+
+    mtf_axis_legend = (
+        "Top of plot area → MTF 1.0",
+        "Each printed gridline below it → 0.8, 0.6, 0.4, 0.2",
+        "Bottom gridline → MTF 0.0",
+        "Orange dashed lines fill in every 0.05 between the printed gridlines",
+    )
+
+    # GT-snippet for Zeiss Touit: aperture KEYS are profile role labels
+    # ("max"/"stopped") per ADR-063 — calibrate.py keys results on the
+    # view's aperture role, not the f-number.
+    field_lines_per_aperture = "\n        ".join(
+        f'"freq{f}{sm}": (...11 values from the {f}{sm} column...),'
+        for f in chart.frequencies_lpmm for sm in ("S", "M")
+    )
+    ap_blocks = []
+    for ap_label, f_number in zip(("max", "stopped"), chart.apertures):
+        ap_blocks.append(
+            f'    "{ap_label}": {{  # {f_number}\n'
+            f"        {field_lines_per_aperture}\n"
+            f"    }},"
+        )
+    gt_var = _zeiss_touit_gt_var(chart)
+    gt_snippet = (
+        f"```python\n"
+        f"{gt_var}: GroundTruthCurves = {{\n"
+        + "\n".join(ap_blocks) + "\n"
+        f"}}\n"
+        f"```"
+    )
+
+    return StyleFamilyExtras(
+        sample_line_warning=sample_line_warning,
+        mtf_axis_legend=mtf_axis_legend,
+        gt_snippet=gt_snippet,
+        # Zeiss prints every 0.20 OTF natively (same as Fuji); add lines
+        # at every 0.05 in between so the maintainer can eye-read at
+        # ±0.02 precision against a uniform 0.05 grid.
+        readhelper_extra_otf=tuple(
+            round(0.05 * i, 2)
+            for i in range(1, 20)
+            if round(0.05 * i, 2) not in (0.2, 0.4, 0.6, 0.8)
+        ),
+    )
+
+
+def _zeiss_touit_gt_var(chart: ReferenceChart) -> str:
+    """Return the `_ZEISS_TOUIT_<FOCAL>_GT` variable name for a Zeiss
+    Touit anchor. Must match `eyeread.gt_var_for_chart`.
+
+    Slug shape: `zeiss-touit-<focal>mm-f<ap>-...` (e.g.
+    `zeiss-touit-12mm-f2-8`, `zeiss-touit-50mm-f2-8-macro`). Focal
+    lives at parts[2] — strip the trailing `mm`.
+    """
+    parts = chart.slug.split("-")
+    focal = parts[2].replace("mm", "")
+    return f"_ZEISS_TOUIT_{focal}_GT"
 
 
 # --- Markdown renderers --------------------------------------------------
