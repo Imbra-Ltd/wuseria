@@ -652,6 +652,84 @@ _FUJI_XF_23_GT: GroundTruthCurves = {
     },
 }
 
+# Zeiss Touit press kit (12mm / 32mm / 50mm macro) — Tier 1 anchors for
+# the `multifreq-press-kit` style family (ADR-075). Each chart packs two
+# stacked panels (max + stopped per ADR-063) and 3 frequencies
+# (10/20/40 lp/mm) per panel; 2 apertures × 3 freqs × {S,M} × 11
+# fractions = 132 cells per chart, 396 cells across the family.
+#
+# Ground truth lives in `docs/optical-specs/<slug>/eye-read.md` per
+# ADR-048; tuples below are auto-transcribed by
+# `py -m mtfdigitizer.eyeread <slug> --apply` — do not hand-edit.
+# Stubs ship as all-None placeholders until the maintainer eye-reads
+# each cell (#1332); the scaffolder fills the eye-read.md tables with
+# extractor predictions on first run for the maintainer to verify or
+# correct. Per `feedback_agent_no_gt_eye_read` the agent does NOT
+# propose cell values.
+_ZEISS_TOUIT_STUB_TUPLE: tuple[float | None, ...] = (None,) * 11
+_ZEISS_TOUIT_STUB_PANEL: dict[str, tuple[float | None, ...]] = {
+    "freq10S": _ZEISS_TOUIT_STUB_TUPLE,
+    "freq10M": _ZEISS_TOUIT_STUB_TUPLE,
+    "freq20S": _ZEISS_TOUIT_STUB_TUPLE,
+    "freq20M": _ZEISS_TOUIT_STUB_TUPLE,
+    "freq40S": _ZEISS_TOUIT_STUB_TUPLE,
+    "freq40M": _ZEISS_TOUIT_STUB_TUPLE,
+}
+_ZEISS_TOUIT_12_GT: GroundTruthCurves = {
+    "max": {
+        "freq10S": (0.96, 0.96, 0.96, 0.96, 0.96, 0.95, 0.94, 0.94, 0.91, 0.85, None),
+        "freq10M": (0.96, None, None, None, None, None, 0.94, 0.90, 0.83, None, None),
+        "freq20S": (0.91, 0.90, 0.89, 0.89, 0.90, 0.88, 0.85, 0.83, None, None, None),
+        "freq20M": (0.91, 0.80, 0.79, 0.76, 0.73, 0.70, 0.66, None, None, None, None),
+        "freq40S": (0.91, None, None, None, None, None, 0.83, 0.76, 0.64, 0.50, None),
+        "freq40M": (0.91, None, 0.77, 0.74, 0.69, None, 0.63, 0.61, 0.53, None, None),
+    },
+    "stopped": {
+        "freq10S": (0.95, 0.95, 0.94, 0.94, 0.93, 0.93, 0.93, 0.94, None, None, None),
+        "freq10M": (0.95, None, None, None, None, None, None, 0.93, 0.92, 0.90, None),
+        "freq20S": (0.91, 0.90, 0.89, 0.88, 0.86, 0.85, 0.86, 0.86, 0.86, 0.81, None),
+        "freq20M": (0.91, None, None, None, None, None, None, 0.84, None, None, None),
+        "freq40S": (0.84, 0.82, 0.80, 0.77, 0.73, 0.71, 0.72, 0.74, 0.75, 0.65, None),
+        "freq40M": (0.84, 0.81, 0.78, 0.74, 0.68, 0.64, None, 0.63, None, None, None),
+    },
+}
+_ZEISS_TOUIT_32_GT: GroundTruthCurves = {
+    "max": {
+        "freq10S": (0.86, 0.88, 0.89, 0.89, None, 0.87, 0.85, 0.84, 0.81, 0.80, None),
+        "freq10M": (0.86, 0.85, 0.85, 0.83, 0.81, 0.79, 0.76, 0.73, 0.68, 0.63, None),
+        "freq20S": (0.72, 0.73, 0.73, 0.72, None, None, 0.64, 0.61, 0.57, 0.55, None),
+        "freq20M": (0.72, 0.71, 0.70, 0.69, 0.67, 0.64, 0.61, 0.58, 0.54, 0.50, None),
+        "freq40S": (0.53, 0.51, 0.50, 0.47, None, None, 0.37, 0.35, 0.32, 0.35, None),
+        "freq40M": (0.53, None, 0.49, 0.45, 0.39, 0.35, 0.31, 0.29, 0.30, 0.31, None),
+    },
+    "stopped": {
+        "freq10S": (0.95, 0.95, 0.94, 0.94, 0.93, 0.93, 0.92, 0.92, 0.92, 0.92, None),
+        "freq10M": (None, None, None, None, None, None, None, None, None, None, None),
+        "freq20S": (0.90, 0.90, 0.89, 0.88, 0.86, 0.84, 0.82, 0.81, 0.81, 0.82, None),
+        "freq20M": (None, None, None, None, None, None, None, None, None, None, None),
+        "freq40S": (0.84, None, 0.88, 0.86, None, 0.82, 0.81, 0.79, 0.79, 0.80, None),
+        "freq40M": (0.84, 0.83, 0.83, 0.78, 0.72, 0.66, 0.61, 0.57, 0.57, 0.64, None),
+    },
+}
+_ZEISS_TOUIT_50_GT: GroundTruthCurves = {
+    "max": {
+        "freq10S": (0.95, 0.94, 0.94, 0.93, 0.92, 0.92, 0.91, 0.90, 0.90, 0.90, None),
+        "freq10M": (0.95, 0.89, 0.87, 0.86, 0.84, 0.82, 0.80, 0.79, 0.80, 0.80, None),
+        "freq20S": (0.80, None, 0.86, 0.84, None, 0.79, 0.78, 0.77, 0.78, 0.78, None),
+        "freq20M": (0.80, 0.77, 0.72, 0.68, 0.63, None, None, None, None, None, None),
+        "freq40S": (0.80, None, None, None, 0.62, 0.58, 0.57, 0.56, 0.54, 0.59, None),
+        "freq40M": (0.80, None, None, None, None, None, 0.53, 0.50, 0.53, 0.54, None),
+    },
+    "stopped": {
+        "freq10S": (0.93, 0.93, 0.93, 0.93, 0.93, 0.92, 0.92, 0.91, 0.91, 0.91, None),
+        "freq10M": (None, None, None, None, None, None, None, None, None, None, None),
+        "freq20S": (0.88, 0.89, 0.89, 0.89, 0.88, 0.87, 0.86, 0.85, 0.85, 0.84, None),
+        "freq20M": (None, None, None, None, None, None, None, None, None, None, None),
+        "freq40S": (0.82, 0.88, None, 0.86, 0.86, 0.84, 0.82, 0.80, 0.80, None, None),
+        "freq40M": (0.82, 0.82, 0.82, 0.80, 0.78, 0.75, 0.73, 0.71, 0.70, 0.71, None),
+    },
+}
+
 
 REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ReferenceChart(
@@ -1217,6 +1295,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         image_height_mm=15.0,
         notes="Zeiss Touit press kit; B&W solid=S, dashed=T; 3 frequencies (10/20/40); stacked panels k=2.8 (max) + k=5.6 (stopped).",
         plot_box=PlotBoxCoords(x_left=279, x_right=851, y_top=455, y_bottom=873),
+        ground_truth=_ZEISS_TOUIT_12_GT,
         additional_views=(
             ChartView(
                 chart_path="docs/optical-specs/zeiss-touit-12mm-f2-8/zeiss-touit-12mm-f2-8-mtf.png",
@@ -1234,6 +1313,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         image_height_mm=15.0,
         notes="Zeiss Touit press kit; B&W solid=S, dashed=T; 3 frequencies (10/20/40); stacked panels k=1.8 (max) + k=4 (stopped). Original reference set anchor (#791 / ADR-075).",
         plot_box=PlotBoxCoords(x_left=257, x_right=737, y_top=441, y_bottom=791),
+        ground_truth=_ZEISS_TOUIT_32_GT,
         additional_views=(
             ChartView(
                 chart_path="docs/optical-specs/zeiss-touit-32mm-f1-8/zeiss-touit-32mm-f1-8-mtf.png",
@@ -1251,6 +1331,7 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
         image_height_mm=15.0,
         notes="Zeiss Touit press kit; B&W solid=S, dotted=T (lighter ink than dashed siblings); 3 frequencies (10/20/40); stacked panels k=2.8 (max) + k=5.6 (stopped). Larger canvas (1786x2526) than 12/32mm siblings (1636x1770).",
         plot_box=PlotBoxCoords(x_left=277, x_right=880, y_top=684, y_bottom=1071),
+        ground_truth=_ZEISS_TOUIT_50_GT,
         additional_views=(
             ChartView(
                 chart_path="docs/optical-specs/zeiss-touit-50mm-f2-8-macro/zeiss-touit-50mm-f2-8-macro-mtf.png",

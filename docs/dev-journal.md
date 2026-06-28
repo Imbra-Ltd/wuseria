@@ -11699,3 +11699,111 @@ Theme: pick up the long-deferred #791 (3rd carry across S194/S195) and ship the 
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
 - **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).
+
+---
+
+### Session 197 — Zeiss Touit eye-read scaffolder (#1332 agent-side, #1335)
+
+Date: 2026-06-28 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: pick up #1332 (Tier 1 eye-read GT for 3 Touit charts, ~396 cells) and make the maintainer's eye-read as friction-free as possible. The actual 132-cell-per-chart reading is maintainer time per [[feedback_agent_no_gt_eye_read]] — the agent-side work is adding `multifreq-press-kit` support to the existing ADR-048 scaffolder so the maintainer gets the same readhelper-PNG + auto-refresh-on-rerun flow Fuji and TTartisan anchors enjoy.
+
+#### PRs
+
+- **#1335** — feat(mtfdigitizer): scaffold Zeiss Touit eye-read helpers (#1332). OPEN at wrap-up, all 9 checks green, awaiting merge per [[feedback_merge_workflow]].
+
+#### Issues opened / closed
+
+- **#1336** opened — bug: prettier reformats committed `eye-read.md` files, breaking `scaffold_anchor_helpers --check`. Pre-existing condition (affects Fuji/TTartisan eye-read.md files in main too), not introduced by #1335. P3 / minor / v0.8.0. Fix is one `.prettierignore` line.
+- **#1332** stays OPEN — agent-side scaffolding shipped, 396-cell eye-read is maintainer-only. Closes once maintainer reads + applies + calibration confirms.
+
+#### Key technical findings
+
+- **The scaffolder dispatches on `chart.style_family`; `multifreq-press-kit` was missing from three functions.** `_resolve_helper_views`, `_extras_for`, and `eyeread.gt_var_for_chart` all had `if fuji_permfreq / elif ttartisan_4color`-shaped switches with no Zeiss branch. Adding the third arm followed the existing pattern exactly — no architectural change.
+- **Panel-positional aperture split needs no profile transformation.** TTartisan's dual-aperture branch hue-filters the profile per aperture (`_hue_filtered_profile`); Zeiss's stacked-panel split (ADR-063) just changes the plot_box per `ChartView`. The existing `_extractor_readings_for_view` fallthrough (`else: profile = base_profile`) handles this correctly — `aperture_label=None` on the HelperView avoids the hue-filter path entirely.
+- **GT-var convention extends cleanly.** Zeiss slug shape (`zeiss-touit-{focal}mm-f{ap}-...`) maps to `_ZEISS_TOUIT_{FOCAL}_GT` by parsing `parts[2].replace("mm","")`. Mirror in both `scaffold_anchor_helpers._zeiss_touit_gt_var` and `eyeread.gt_var_for_chart` per the established cross-module pattern.
+- **Prettier-vs-scaffolder drift is pre-existing.** `py -m mtfdigitizer.scripts.scaffold_anchor_helpers fujifilm-gf-23mm-f4-r-lm-wr --check` reports `differ` on main — the lint-staged prettier pass reformats eye-read.md tables on commit, so the next scaffolder `--check` sees a stale file. Affects every existing anchor; #1336 tracks the one-line fix.
+- **Bootstrap consistency: `--apply` once, even on un-edited eye-read.md, to seed all 3 GT blocks with extractor predictions.** Matches TTartisan AF-35 transient state ("predictions; maintainer review pending"). Calibration deltas are then ~0.003 (self-confirming) until the maintainer reads; that's the expected baseline, not a positive signal.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/scripts/scaffold_anchor_helpers.py`** — added `_multifreq_press_kit_views` (one HelperView per `chart.views` entry, 6 columns each: 3 freqs × {S,M}), `_multifreq_press_kit_extras` (B&W solid/dashed legend, GT snippet, Fuji-style 0.05 extra gridlines because Zeiss prints every 0.20 OTF), `_zeiss_touit_gt_var` (`_ZEISS_TOUIT_{FOCAL}_GT` from slug). Both dispatch tables now switch on three families.
+- **`tools/mtfdigitizer/eyeread.py`** — added `multifreq-press-kit` branch to `gt_var_for_chart` mirroring the scaffolder's GT-var convention. Cross-reference comment links the two so future renames stay paired.
+- **`tools/mtfdigitizer/referenceset/charts.py`** — added `_ZEISS_TOUIT_STUB_TUPLE` + `_ZEISS_TOUIT_STUB_PANEL` helpers and 3 GT blocks (`_ZEISS_TOUIT_{12,32,50}_GT`), wired `ground_truth=` field onto all 3 Zeiss `ReferenceChart` entries. After `--apply` the stubs hold extractor predictions for the maintainer to verify or correct.
+- **`docs/optical-specs/zeiss-touit-12mm-f2-8/`, `zeiss-touit-32mm-f1-8/`, `zeiss-touit-50mm-f2-8-macro/`** — 9 new artifacts: 3 `eye-read.md` skeletons (132 cells each = 396 total) + 6 `*-{max,stopped}-readhelper.png` files (3x upscale, 11 green vertical sample lines per panel, orange 0.05-step gridlines filling between Zeiss's 0.20 native ticks).
+
+#### Verification
+
+- **#1335**: `py -m pytest mtfdigitizer/tests/` 455 passed. `npm run check` 0 errors 0 warnings. `py -m mtfdigitizer.calibrate` aggregate 1157 paired (up from 900 with the 3 Touits seeded), p95 |d| 0.0396, in-band 97.0% — the Touit cells are self-confirming until eye-read lands. CI green on all 9 required checks (pytest, CodeQL, analyze, links, gate, gitleaks, changes; build + lighthouse correctly skipped per path filter).
+- **Round-trip confirmed:** `py -m mtfdigitizer.eyeread zeiss-touit-32mm-f1-8 --apply` reports "132 cells / 0 corrected (!), 92 silently verified, 40 unknown (?)" and rewrites `_ZEISS_TOUIT_32_GT` in place. 50mm and 12mm same pattern.
+- **Visual spot-check of readhelper PNGs:** opened `zeiss-touit-32mm-f1-8-mtf-max-readhelper.png` and `-stopped-readhelper.png`; green sample lines land on the correct panel each time, orange gridlines fill the 0.05/0.10/0.15 gaps between Zeiss's printed 0.20-step labels.
+
+#### Key decisions (this session)
+
+- **Full scaffolder build-out over hand-author or readhelper-only.** Three options surfaced; full scaffolder is most up-front engineering this session but lowest maintainer-time per-cell across 396 cells, matches the established ADR-048 flow, and gets the `--apply` round-trip + `!`/`?`-preservation-on-rerun for free. Per [[feedback_specslog_first]] sensibility — pay the engineering cost once so the data-entry path stays cheap.
+- **Stub GT blocks with `(None,) * 11` placeholders, then `--apply` to bootstrap predictions for all 3 charts** rather than leaving 32mm as predictions and the other two as all-None. Consistency across the family matches TTartisan AF-35 precedent and avoids a maintainer asking "why is one chart different?".
+- **No fix for #1336 in this PR.** The prettier-vs-scaffolder drift affects every existing eye-read.md (Fuji + TTartisan + now Zeiss) — fixing it in the Zeiss PR would absorb a separate concern. Filed #1336 explicitly per `git.md` "Bulk operations split into stacked PRs" spirit.
+- **Reuse `multifreq-press-kit` family name** that was already on the Zeiss charts since #1331 — only its scaffolder dispatch was missing. No renaming.
+
+#### Process patterns observed this session
+
+- **Probe-before-implement saved choosing the wrong path.** Three options for "where does the GT come from?" — full scaffolder, readhelpers only, hand-author Samyang-style. The question would have looked like an opinion call without first reading the actual scaffolder dispatch and confirming the Zeiss panel-positional split needs no profile transformation. Per `ai-workflow.md` "Probe before acting on a hypothesis."
+- **`--apply` round-trip is the right end-to-end smoke test.** The agent-side AC isn't "scaffolder runs"; it's "scaffolder → maintainer edit → apply → calibrate" works end-to-end. Running `--apply` on the un-edited file (132 silent verifications) confirmed the parser handles em-dashed unknowns and the GT block rewrite hits the right lines. Cheap end-to-end test of the whole new dispatch.
+- **CI for a docs+tools PR correctly skips frontend gates.** `build` and `lighthouse` skipped per path filter; `gate` aggregator still passed. The skip-vs-pass distinction held up cleanly under another tools/+docs/ PR shape, just like S196.
+- **Calibration deltas reveal self-confirming when GT=predictions.** Touit per-field median |d| of 0.002–0.005 looks great until you remember the GT IS the extractor output — exactly the calibration-aids self-confirming trap from `quality-calibration`. Maintainer eye-read flips this from cosmetic to actionable signal. Noted in the PR body so reviewers don't read the green numbers as victory.
+
+#### Calibration impact (S197)
+
+| Metric                       | S196 close                             | S197 close                                                            |
+| ---------------------------- | -------------------------------------- | --------------------------------------------------------------------- |
+| Aggregate paired             | 900                                    | **1157** (+257 — 3 Touits × 2 panels × 6 fields × ~7 cells/field avg) |
+| Aggregate p95 \|d\|          | 0.0452                                 | **0.0396** (self-confirming Touit cells; not a real improvement)      |
+| Aggregate median \|d\|       | 0.0065                                 | **0.0043** (self-confirming; flips after maintainer eye-read)         |
+| Aggregate max \|d\|          | 0.1217                                 | **0.1217** (unchanged — pre-existing outlier)                         |
+| Aggregate in-band (±0.05)    | 96.1%                                  | **97.0%** (self-confirming inflation)                                 |
+| mtfdigitizer pytest          | 455                                    | **455** (unchanged)                                                   |
+| vitest                       | 224                                    | **224** (unchanged)                                                   |
+| `REFERENCE_CHARTS` entries   | 123                                    | **123** (unchanged — same 3 Touit entries, GT wired)                  |
+| Epic #790 brand-digitization | 5/24                                   | **5/24** (unchanged — Zeiss still pending eye-read)                   |
+| ADRs                         | 75                                     | **75** (unchanged)                                                    |
+| Declared profiles            | 9                                      | **9** (unchanged)                                                     |
+| Open PRs                     | 0                                      | **2** (#1334 Dependabot setup-python 5→6, #1335 this session)         |
+| Backlog spikes               | 1 (#791)                               | **1** (#791 unchanged — still pending #1332 GT)                       |
+| Open v0.8.0 issues           | 23                                     | **24** (+1 #1336 prettier drift)                                      |
+| Open Expedite issues         | 0                                      | **0**                                                                 |
+| Stale production logs        | 2 (samyang-10mm, samyang-12mm fisheye) | **2** (unchanged)                                                     |
+
+#### Follow-ups for next session (S198)
+
+- **#1332 — eye-read 396 cells on the 3 Touit readhelper PNGs.** Maintainer time. The scaffolder loop is now ready; pick whichever chart's design is most familiar first.
+- **#1336 — one-line `.prettierignore` add for `docs/optical-specs/**/eye-read.md`.** Quick PR; unblocks future `scaffold_anchor_helpers --check` CI wiring.
+- **#1334 — Dependabot setup-python 5→6.** Trivial CI bump, drain.
+- **Stopped-panel ridge-cluster collapse architecture spike** (carried from S196 — separate concern, waits on calibration target).
+- **Tier-1-anchor GT audit sweep** (carried — 5 untouched anchors deserve a once-over).
+- **#950 plot-box auto-detect** (carried).
+- **Stale production log refresh** (carried — samyang-10mm + samyang-12mm fisheye).
+- **`not_suspiciously_flat` prior false-positive on legitimately flat curves** (carried from S195).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (Carl Zeiss scaffolder shipped, eye-read GT pending #1332).
+- `REFERENCE_CHARTS` = **123 entries** (unchanged — Zeiss GT-stub wiring is in-place edits).
+- **5 Tier 1 anchors** with real maintainer GT (unchanged — Touit GT is extractor predictions until maintainer eye-read flips them).
+- Aggregate calibration: **1157 paired, median |d| 0.0043, p95 |d| 0.0396, max |d| 0.1217, in-band 97.0%** — Touit cells self-confirming; numbers will move after maintainer eye-read.
+- **725 tools pytest collected, 455 mtfdigitizer subset pass + 0 xfailed**. **224 vitest pass**.
+- **75 ADRs** (unchanged).
+- **9 declared MTF profiles** (unchanged).
+- **v0.8.0 open: 24 issues** (+1 #1336 prettier drift).
+- **Backlog spikes: 1** (#791 unchanged).
+- **Expedite open: 0**.
+- **2 open PRs** at wrap-up (#1334 Dependabot, #1335 this session).
+- Pre-existing SVG drift on main: 0.
+- **Pre-existing eye-read.md prettier drift on main: 6** (#1336) — all existing Fuji/TTartisan anchors.
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **2** (samyang-10mm, samyang-12mm fisheye — carry-forward).
+- Stale `-mtf-max-overlay.png` / `-mtf-stopped-overlay.png` orphans: **2** for Samyang 300.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` at **`ba2843d`** — unchanged from S189.
+- **Upstream contributions filed still open:** 5 (#615, #616, #617, #618 from S189 + #638 from S191).

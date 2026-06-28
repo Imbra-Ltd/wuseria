@@ -519,6 +519,20 @@ Style-family dispatch:
     `_TTARTISAN_AF_NN_GT` / `_TTARTISAN_TILT_NN_GT` (kept in sync
     between `eyeread.gt_var_for_chart` and
     `scaffold_anchor_helpers._gt_var_for_chart`).
+- `multifreq-press-kit` — one readhelper per panel
+  (`<stem>-max-readhelper.png`, `<stem>-stopped-readhelper.png`),
+  same naming as TTartisan dual-aperture but the apertures split
+  positionally (two stacked plot panels with different `plot_box`,
+  not by hue). Helper base = the clean source chart PNG; each
+  readhelper draws the 11 green sample lines over its panel only.
+  Orange dashed gridlines added at every 0.05 OTF except the
+  chart's printed 0.2-step lines (Zeiss prints every 0.20
+  natively). Six columns per panel (3 freqs × {S,M}). GT-snippet
+  skeleton uses `_ZEISS_TOUIT_<FL>_GT` with `"max"` / `"stopped"`
+  aperture buckets (ADR-063 per-view aperture role labels, NOT
+  f-numbers). No hue-filtered profile transformation — the
+  extractor runs on each panel's `plot_box` with the unchanged
+  profile (`aperture_label=None` on the HelperView).
 
 Workflow for promoting a lens to Tier 1: (1) add a `ReferenceChart`
 entry to `REFERENCE_CHARTS` in `charts.py` with `_<LENS>_GT` of
