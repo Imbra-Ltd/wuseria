@@ -2,7 +2,6 @@ import type { MtfData } from "../types/mtf";
 
 const mtfReadings: Record<string, MtfData> = {
   "sigma-12mm-f1-4-dc-dn-c": {
-    source: "https://www.sigma-global.com/en/lenses/c025_12_14/",
     mtfType: "computed",
     charts: [
       {
@@ -91,7 +90,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-15mm-f1-4-dc-dn-c": {
-    source: "https://www.sigma-global.com/en/lenses/c026_15_14/",
     mtfType: "computed",
     charts: [
       {
@@ -180,7 +178,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-16mm-f1-4-dc-dn-c": {
-    source: "https://www.sigma-global.com/en/lenses/c017_16_14/",
     mtfType: "computed",
     charts: [
       {
@@ -241,7 +238,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-23mm-f1-4-dc-dn-c": {
-    source: "https://www.sigma-global.com/en/lenses/c023_23_14/",
     mtfType: "computed",
     charts: [
       {
@@ -330,7 +326,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-56mm-f1-4-dc-dn-c": {
-    source: "https://www.sigma-global.com/en/lenses/c018_56_14/",
     mtfType: "computed",
     charts: [
       {
@@ -391,7 +386,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-10-18mm-f2-8-dc-dn-c": {
-    source: "https://www.sigma-global.com/en/lenses/c023_10_18_28/",
     mtfType: "computed",
     charts: [
       {
@@ -565,7 +559,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-16-300mm-f3-5-6-7-dc-os-c": {
-    source: "https://www.sigma-global.com/en/lenses/c025_16_300_35_67/",
     mtfType: "computed",
     charts: [
       {
@@ -739,7 +732,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-17-40mm-f1-8-dc-art": {
-    source: "https://www.sigma-global.com/en/lenses/a025_17_40_18/",
     mtfType: "computed",
     charts: [
       {
@@ -913,7 +905,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-18-50mm-f2-8-dc-dn-c": {
-    source: "https://www.sigma-global.com/en/lenses/c021_18_50_28/",
     mtfType: "computed",
     charts: [
       {
@@ -1087,7 +1078,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-100-400mm-f5-6-3-dg-dn-os-c": {
-    source: "https://www.sigma-global.com/en/lenses/c020_100_400_5_63/",
     mtfType: "computed",
     charts: [
       {
@@ -1262,7 +1252,6 @@ const mtfReadings: Record<string, MtfData> = {
   },
 
   "samyang-100mm-f2-8-ed-umc-macro": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=154",
     mtfType: "computed",
     charts: [
       {
@@ -1350,7 +1339,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-10mm-f2-8-ed-as-ncs-cs": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=343",
     mtfType: "computed",
     charts: [
       {
@@ -1480,7 +1468,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-12mm-f2-0-ncs-cs": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=351",
     mtfType: "computed",
     charts: [
       {
@@ -1610,7 +1597,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-12mm-f2-8-ed-as-ncs-fish-eye": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=190",
     mtfType: "computed",
     charts: [
       {
@@ -1698,7 +1684,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-135mm-f2-0-ed-umc": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=167",
     mtfType: "computed",
     charts: [
       {
@@ -1786,7 +1771,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-14mm-f2-8-ed-as-if-umc": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=148",
     mtfType: "computed",
     charts: [
       {
@@ -1874,7 +1858,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-16mm-f2-0-ed-as-umc-cs": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=354",
     mtfType: "computed",
     charts: [
       {
@@ -2004,7 +1987,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-20mm-f1-8-ed-as-umc": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=161",
     mtfType: "computed",
     charts: [
       {
@@ -2092,7 +2074,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-21mm-f1-4-ed-as-umc-cs": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=378",
     mtfType: "computed",
     charts: [
       {
@@ -2222,7 +2203,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-300mm-f6-3-ed-umc-cs-reflex": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=170",
     mtfType: "computed",
     charts: [
       {
@@ -2352,7 +2332,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-35mm-f1-2-ed-as-umc-cs": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=381",
     mtfType: "computed",
     charts: [
       {
@@ -2482,7 +2461,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-35mm-f1-4-as-umc": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=159",
     mtfType: "computed",
     charts: [
       {
@@ -2570,7 +2548,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-50mm-f1-2-as-umc-cs": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=384",
     mtfType: "computed",
     charts: [
       {
@@ -2700,7 +2677,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-50mm-f1-4-as-umc": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=155",
     mtfType: "computed",
     charts: [
       {
@@ -2788,7 +2764,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-85mm-f1-4-as-if-umc": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=149",
     mtfType: "computed",
     charts: [
       {
@@ -2876,7 +2851,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-8mm-f2-8-ed-as-if-umc-fisheye": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=339",
     mtfType: "computed",
     charts: [
       {
@@ -3006,7 +2980,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-8mm-f3-5-aspherical-if-mc-fish-eye": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=335",
     mtfType: "computed",
     charts: [
       {
@@ -3136,7 +3109,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-af-12mm-f2-0": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=466",
     mtfType: "computed",
     charts: [
       {
@@ -3238,7 +3210,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-af-75mm-f1-8": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=470",
     mtfType: "computed",
     charts: [
       {
@@ -3340,7 +3311,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "samyang-tiltshift-24mm-f3-5-ed-as-umc": {
-    source: "https://www.lksamyang.com/en/product/product-view.php?seq=162",
     mtfType: "computed",
     charts: [
       {
@@ -3428,7 +3398,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "tokina-atx-m-11-18mm-f2-8-x": {
-    source: "https://tokinalens.com/product/atx_m_11_18mm_f2_8_x/",
     mtfType: "measured",
     charts: [
       {
@@ -3600,7 +3569,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "tokina-atx-m-33mm-f1-4-x": {
-    source: "https://tokinalens.com/product/atx_m_33mm_f1_4_x/",
     mtfType: "measured",
     charts: [
       {
@@ -3689,7 +3657,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "tokina-atx-m-56mm-f1-4-x": {
-    source: "https://tokinalens.com/product/atx_m_56mm_f1_4_x/",
     mtfType: "measured",
     charts: [
       {
@@ -3778,7 +3745,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "viltrox-af-75mm-f1-2-pro": {
-    source: "https://viltrox.com/products/75mm-f12-xf-lens",
     mtfType: "measured",
     charts: [
       {
@@ -3867,8 +3833,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-100-200mm-f5-6-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/en-us/products/lenses/gf100-200mmf56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4064,7 +4028,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-110mm-f2-0-r-lm-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf110mmf2-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4164,7 +4127,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-110mm-f5-6-ts-macro": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf110mmf56-ts-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -4264,8 +4226,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-120mm-f4-r-lm-ois-wr-macro": {
-    source:
-      "https://fujifilm-x.com/en-us/products/lenses/gf120mmf4-r-lm-ois-wr-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -4365,7 +4325,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-20-35mm-f4-r-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf20-35mmf4-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4561,8 +4520,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-250mm-f4-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/en-us/products/lenses/gf250mmf4-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4662,7 +4619,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-30mm-f3-5-r-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf30mmf35-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -4751,7 +4707,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-30mm-f5-6-ts": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf30mmf56-ts/",
     mtfType: "computed",
     charts: [
       {
@@ -4851,7 +4806,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-32-64mm-f4-r-lm-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf32-64mmf4-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5047,7 +5001,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-35-70mm-f4-5-5-6-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf35-70mmf45-56-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5243,8 +5196,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-45-100mm-f4-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/en-us/products/lenses/gf45-100mmf4-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5440,7 +5391,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-45mm-f2-8-r-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf45mmf28-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5540,8 +5490,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-500mm-f5-6-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/en-us/products/lenses/gf500mmf56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5641,7 +5589,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-50mm-f3-5-r-lm-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf50mmf35-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5741,7 +5688,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-55mm-f1-7-r-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf55mmf17-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5847,7 +5793,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-63mm-f2-8-r-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf63mmf28-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -5947,7 +5892,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-80mm-f1-7-r-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf80mmf17-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -6047,8 +5991,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xc-13-33mm-f3-5-6-3-ois": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xc13-33mmf35-63-ois/",
     mtfType: "computed",
     charts: [
       {
@@ -6222,7 +6164,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xc-35mm-f2-0": {
-    source: "https://fujifilm-x.com/global/products/lenses/xc35mmf2/",
     mtfType: "computed",
     charts: [
       {
@@ -6311,8 +6252,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xc-50-230mm-f4-5-6-7-ois-ii": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xc50-230mmf45-67-ois-ii/",
     mtfType: "computed",
     charts: [
       {
@@ -6486,7 +6425,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-10-24mm-f4-r-ois": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf10-24mmf4-r-ois/",
     mtfType: "computed",
     charts: [
       {
@@ -6660,8 +6598,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-10-24mm-f4-r-ois-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf10-24mmf4-r-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -6835,8 +6771,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-100-400mm-f4-5-5-6-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf100-400mmf45-56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7010,7 +6944,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-14mm-f2-8-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf14mmf28-r/",
     mtfType: "computed",
     charts: [
       {
@@ -7099,8 +7032,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-150-600mm-f5-6-8-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf150-600mmf56-8-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7274,8 +7205,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16-50mm-f2-8-4-8-r-lm-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf16-50mmf28-48-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7449,8 +7378,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16-55mm-f2-8-r-lm-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf16-55mmf28-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7624,8 +7551,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16-55mm-f2-8-r-lm-wr-ii": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf16-55mmf28-r-lm-wr-ii/",
     mtfType: "computed",
     charts: [
       {
@@ -7799,8 +7724,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16-80mm-f4-r-ois-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf16-80mmf4-r-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -7967,7 +7890,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16mm-f1-4-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf16mmf14-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8056,7 +7978,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-16mm-f2-8-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf16mmf28-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8145,8 +8066,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-18-120mm-f4-lm-pz-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf18-120mmf4-lm-pz-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8320,8 +8239,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-18-135mm-f3-5-5-6-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf18-135mmf35-56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8495,8 +8412,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-18-55mm-f2-8-4-0-r-lm-ois": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf18-55mmf28-4-r-lm-ois/",
     mtfType: "computed",
     charts: [
       {
@@ -8670,7 +8585,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-18mm-f1-4-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf18mmf14-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8759,7 +8673,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-18mm-f2-0-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf18mmf2-r/",
     mtfType: "computed",
     charts: [
       {
@@ -8848,8 +8761,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-200mm-f2-0-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf200mmf2-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -8938,7 +8849,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-23mm-f1-4-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf14-r/",
     mtfType: "computed",
     charts: [
       {
@@ -9027,7 +8937,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-23mm-f2-0-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf2-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9116,7 +9025,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-23mm-f2-8-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf28-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9182,7 +9090,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-27mm-f2-8-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf27mmf28/",
     mtfType: "computed",
     charts: [
       {
@@ -9271,7 +9178,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-27mm-f2-8-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf27mmf28-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9360,8 +9266,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-30mm-f2-8-r-lm-wr-macro": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf30mmf28-r-lm-wr-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -9450,7 +9354,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-33mm-f1-4-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf33mmf14-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9539,7 +9442,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-35mm-f1-4-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf35mmf14-r/",
     mtfType: "computed",
     charts: [
       {
@@ -9628,7 +9530,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-35mm-f2-0-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf35mmf2-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9717,8 +9618,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-50-140mm-f2-8-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf50-140mmf28-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9892,8 +9791,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-500mm-f5-6-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf500mmf56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -9982,7 +9879,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-50mm-f1-0-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf50mmf1-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -10071,7 +9967,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-50mm-f2-0-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf50mmf2-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -10160,8 +10055,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-55-200mm-f3-5-4-8-r-lm-ois": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf55-200mmf35-48-r-lm-ois/",
     mtfType: "computed",
     charts: [
       {
@@ -10335,7 +10228,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-56mm-f1-2-r": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r/",
     mtfType: "computed",
     charts: [
       {
@@ -10424,7 +10316,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-56mm-f1-2-r-apd": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r-apd/",
     mtfType: "computed",
     charts: [
       {
@@ -10513,7 +10404,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-56mm-f1-2-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf56mmf12-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -10602,7 +10492,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-60mm-f2-4-r-macro": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf60mmf24-r-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -10691,8 +10580,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-70-300mm-f4-5-6-r-lm-ois-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf70-300mmf4-56-r-lm-ois-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -10866,8 +10753,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-8-16mm-f2-8-r-lm-wr": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf8-16mmf28-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -11041,8 +10926,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-80mm-f2-8-r-lm-ois-wr-macro": {
-    source:
-      "https://fujifilm-x.com/global/products/lenses/xf80mmf28-r-lm-ois-wr-macro/",
     mtfType: "computed",
     charts: [
       {
@@ -11131,7 +11014,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-8mm-f3-5-r-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf8mmf35-r-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -11167,7 +11049,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-90mm-f2-0-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf90mmf2-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -11256,7 +11137,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-gf-23mm-f4-r-lm-wr": {
-    source: "https://fujifilm-x.com/en-us/products/lenses/gf23mmf4-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -11356,7 +11236,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "fujifilm-xf-23mm-f1-4-r-lm-wr": {
-    source: "https://fujifilm-x.com/global/products/lenses/xf23mmf14-r-lm-wr/",
     mtfType: "computed",
     charts: [
       {
@@ -11445,7 +11324,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-11mm-f2-8-fisheye-gfx": {
-    source: "https://www.ttartisan.com/?full-frame-lenses/62.html",
     mtfType: "computed",
     charts: [
       {
@@ -11617,7 +11495,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-23mm-f1-4": {
-    source: "https://www.ttartisan.com/?aps-c-lenses/76.html",
     mtfType: "computed",
     charts: [
       {
@@ -11790,7 +11667,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-25mm-f2-0": {
-    source: "https://www.ttartisan.com/?aps-c-lenses/78.html",
     mtfType: "computed",
     charts: [
       {
@@ -11963,7 +11839,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-35mm-f1-4": {
-    source: "https://www.ttartisan.com/?aps-c-lenses/71.html",
     mtfType: "computed",
     charts: [
       {
@@ -12135,7 +12010,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-40mm-f2-8-macro": {
-    source: "https://www.ttartisan.com/?aps-c-lenses/75.html",
     mtfType: "computed",
     charts: [
       {
@@ -12307,7 +12181,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-500mm-f6-3": {
-    source: "https://www.ttartisan.com/?full-frame-lenses/500-F6-3.html",
     mtfType: "computed",
     charts: [
       {
@@ -12479,7 +12352,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-500mm-f6-3-gfx": {
-    source: "https://www.ttartisan.com/?full-frame-lenses/500-F6-3.html",
     mtfType: "computed",
     charts: [
       {
@@ -12651,7 +12523,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-50mm-f1-2": {
-    source: "https://www.ttartisan.com/?aps-c-lenses/73.html",
     mtfType: "computed",
     charts: [
       {
@@ -12824,7 +12695,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-50mm-f2-0": {
-    source: "https://www.ttartisan.com/?full-frame-lenses/TTArtisan-50-F2.html",
     mtfType: "computed",
     charts: [
       {
@@ -12996,7 +12866,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-7-5mm-f2-0-fisheye": {
-    source: "https://www.ttartisan.com/?aps-c-lenses/72.html",
     mtfType: "computed",
     charts: [
       {
@@ -13168,7 +13037,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-90mm-f1-25-gfx": {
-    source: "https://www.ttartisan.com/?full-frame-lenses/56.html",
     mtfType: "computed",
     charts: [
       {
@@ -13341,7 +13209,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-af-27mm-f2-8": {
-    source: "https://www.ttartisan.com/?af-lens/38.html",
     mtfType: "computed",
     charts: [
       {
@@ -13514,7 +13381,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-af-35mm-f1-8": {
-    source: "https://www.ttartisan.com/?af-lens/AF-35-II.html",
     mtfType: "computed",
     charts: [
       {
@@ -13694,7 +13560,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-af-56mm-f1-8": {
-    source: "https://www.ttartisan.com/?af-lens/AF-56.html",
     mtfType: "computed",
     charts: [
       {
@@ -13866,7 +13731,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-af-75mm-f2-0": {
-    source: "https://www.ttartisan.com/?af-lens/FF-AF75.html",
     mtfType: "computed",
     charts: [
       {
@@ -14038,7 +13902,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-tilt-35mm-f1-4": {
-    source: "https://www.ttartisan.com/?aps-c-lenses/Tilt-C-35.html",
     mtfType: "computed",
     charts: [
       {
@@ -14210,7 +14073,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-tilt-50mm-f1-4": {
-    source: "https://www.ttartisan.com/?full-frame-lenses/60.html",
     mtfType: "computed",
     charts: [
       {
@@ -14382,7 +14244,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-100mm-f2-8-macro-2x-gfx": {
-    source: "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
     mtfType: "computed",
     charts: [
       {
@@ -14554,7 +14415,6 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "ttartisan-100mm-f2-8-macro-2x": {
-    source: "https://www.ttartisan.com/?full-frame-lenses/TS-100-Macro.html",
     mtfType: "computed",
     charts: [
       {
