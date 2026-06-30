@@ -23,44 +23,44 @@ The green vertical lines are spaced by image-height fraction, not by the chart's
 
 Sample positions (mm, image_height_mm = 15.0): 0.0, 1.5, 3.0, 4.5, 6.0, 7.5, 9.0, 10.5, 12.0, 13.5, 15.0.
 
-Read each cell at the intersection of the green vertical sample line and the curve, against the printed horizontal gridlines. Eye precision is ±0.02 (half a gridline tick). Read to two decimals. Use `?` only when the curve genuinely does not extend to that x position.
+Read each cell at the intersection of the green vertical sample line and the curve, against the printed horizontal gridlines. Eye precision is ±0.005 (half a gridline tick). Read to two decimals. Use `?` only when the curve genuinely does not extend to that x position.
 
 - Top of plot area → MTF 1.0
 - Each printed gridline below it → 0.8, 0.6, 0.4, 0.2
 - Bottom gridline → MTF 0.0
-- Orange dashed lines fill in every 0.05 between the printed gridlines
+- Orange dashed lines fill in every 0.01 between the printed gridlines
 
 ## max (max)
 
-| Position (mm) | 10S  | 10M  | 20S  | 20M  | 40S  | 40M  |
-| ------------- | ---- | ---- | ---- | ---- | ---- | ---- |
-| 0.0           | 0.86 | 0.86 | 0.72 | 0.72 | 0.53 | 0.53 |
-| 1.5           | 0.88 | 0.85 | 0.73 | 0.71 | 0.51 | —    |
-| 3.0           | 0.89 | 0.85 | 0.73 | 0.70 | 0.50 | 0.49 |
-| 4.5           | 0.89 | 0.83 | 0.72 | 0.69 | 0.47 | 0.45 |
-| 6.0           | —    | 0.81 | —    | 0.67 | —    | 0.39 |
-| 7.5           | 0.87 | 0.79 | —    | 0.64 | —    | 0.35 |
-| 9.0           | 0.85 | 0.76 | 0.64 | 0.61 | 0.37 | 0.31 |
-| 10.5          | 0.84 | 0.73 | 0.61 | 0.58 | 0.35 | 0.29 |
-| 12.0          | 0.81 | 0.68 | 0.57 | 0.54 | 0.32 | 0.30 |
-| 13.5          | 0.80 | 0.63 | 0.55 | 0.50 | 0.35 | 0.31 |
-| 15.0          | —    | —    | —    | —    | —    | —    |
+| Position (mm) | 10S   | 10M   | 20S   | 20M   | 40S   | 40M   |
+| ------------- | ----- | ----- | ----- | ----- | ----- | ----- |
+| 0.0           | 0.86  | 0.86  | 0.72  | 0.72  | 0.53  | 0.53  |
+| 1.5           | 0.88  | 0.85  | 0.73  | 0.71  | 0.51  | —     |
+| 3.0           | 0.89  | 0.85  | 0.73  | 0.70  | 0.50  | 0.49  |
+| 4.5           | 0.89  | 0.83  | 0.72  | 0.69  | 0.47  | 0.45  |
+| 6.0           | —     | 0.81  | —     | 0.67  | —     | 0.39  |
+| 7.5           | 0.87  | 0.79  | —     | 0.64  | —     | 0.35  |
+| 9.0           | 0.85  | 0.76  | 0.64  | 0.61  | 0.37  | 0.31  |
+| 10.5          | 0.84  | 0.73  | 0.61  | 0.58  | 0.35  | 0.29  |
+| 12.0          | 0.81  | 0.68  | 0.57  | 0.54  | 0.32  | 0.30  |
+| 13.5          | 0.80  | 0.63  | 0.55  | 0.50  | 0.35  | 0.31  |
+| 15.0          | —     | —     | —     | —     | —     | —     |
 
 ## stopped (stopped)
 
-| Position (mm) | 10S  | 10M | 20S  | 20M | 40S  | 40M  |
-| ------------- | ---- | --- | ---- | --- | ---- | ---- |
-| 0.0           | 0.95 | —   | 0.90 | —   | 0.84 | 0.84 |
-| 1.5           | 0.95 | —   | 0.90 | —   | —    | 0.83 |
-| 3.0           | 0.94 | —   | 0.89 | —   | 0.88 | 0.83 |
-| 4.5           | 0.94 | —   | 0.88 | —   | 0.86 | 0.78 |
-| 6.0           | 0.93 | —   | 0.86 | —   | —    | 0.72 |
-| 7.5           | 0.93 | —   | 0.84 | —   | 0.82 | 0.66 |
-| 9.0           | 0.92 | —   | 0.82 | —   | 0.81 | 0.61 |
-| 10.5          | 0.92 | —   | 0.81 | —   | 0.79 | 0.57 |
-| 12.0          | 0.92 | —   | 0.81 | —   | 0.79 | 0.57 |
-| 13.5          | 0.92 | —   | 0.82 | —   | 0.80 | 0.64 |
-| 15.0          | —    | —   | —    | —   | —    | —    |
+| Position (mm) | 10S   | 10M   | 20S   | 20M   | 40S   | 40M   |
+| ------------- | ----- | ----- | ----- | ----- | ----- | ----- |
+| 0.0           | 0.95  | —     | 0.90  | —     | 0.84  | 0.84  |
+| 1.5           | 0.95  | —     | 0.90  | —     | —     | 0.83  |
+| 3.0           | 0.94  | —     | 0.89  | —     | 0.88  | 0.83  |
+| 4.5           | 0.94  | —     | 0.88  | —     | 0.86  | 0.78  |
+| 6.0           | 0.93  | —     | 0.86  | —     | —     | 0.72  |
+| 7.5           | 0.93  | —     | 0.84  | —     | 0.82  | 0.66  |
+| 9.0           | 0.92  | —     | 0.82  | —     | 0.81  | 0.61  |
+| 10.5          | 0.92  | —     | 0.81  | —     | 0.79  | 0.57  |
+| 12.0          | 0.92  | —     | 0.81  | —     | 0.79  | 0.57  |
+| 13.5          | 0.92  | —     | 0.82  | —     | 0.80  | 0.64  |
+| 15.0          | —     | —     | —     | —     | —     | —     |
 
 ## Transcribing to GT
 

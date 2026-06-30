@@ -322,9 +322,16 @@ def _render_readhelper(
     target_label_h = max(8, min(plot_width_up // 60, 40))
     font = _load_label_font(target_label_h)
 
-    # Extra horizontal gridlines (filling the 0.05 grid the source
-    # chart doesn't print natively). Drawn FIRST so the green sample
-    # lines render on top of them.
+    # Extra horizontal gridlines (filling out the source chart's
+    # native grid). Drawn FIRST so the green sample lines render on
+    # top of them. Labels are emitted only for entries in
+    # `readhelper_label_otf` (when empty, every line is labelled —
+    # historical default for the 0.05-grid families).
+    labelled = (
+        set(extras.readhelper_label_otf)
+        if extras.readhelper_label_otf
+        else set(extras.readhelper_extra_otf)
+    )
     for otf in extras.readhelper_extra_otf:
         y = int(plot_bottom_up - otf * plot_height_up)
         _draw_dashed_hline(
@@ -336,6 +343,8 @@ def _render_readhelper(
             width=HALF_STEP_LINE_WIDTH_PX,
             dash_len=HALF_STEP_DASH_LEN_PX * UPSCALE_FACTOR,
         )
+        if otf not in labelled:
+            continue
         # Label the OTF value just right of the plot. Use 2 decimals so
         # 0.05 / 0.15 / 0.25 / ... show their hundredths digit cleanly.
         label = f"{otf:.2f}"
@@ -394,6 +403,7 @@ def _draw_dashed_hline(
         x = x_end + dash_len
 
 
+
 def _load_label_font(target_pixel_height: int) -> ImageFont.ImageFont:
     """Best-effort load of a legible truetype font at the target size;
     fall back to PIL's default if no system font is reachable.
@@ -435,13 +445,23 @@ class StyleFamilyExtras:
     gt_snippet: str
     # OTF fractions (0..1) at which to draw an orange dashed horizontal
     # gridline on the readhelper PNG, on top of the chart's own printed
-    # gridlines. The eye-read target is a uniform 0.05 grid: every
-    # family supplies the fractions its source chart does NOT already
-    # print at 0.05 spacing. Fuji (prints every 0.2) supplies
-    # 0.05, 0.10, 0.15, ..., 0.95; TTartisan (prints every 0.1) supplies
-    # 0.05, 0.15, ..., 0.95. Empty tuple = no extra gridlines (no
-    # current family qualifies, but the option stays open).
+    # gridlines. The eye-read target grid is family-specific: Fuji and
+    # TTartisan use a 0.05 grid (Fuji prints every 0.2, TTartisan every
+    # 0.1, so each fills the gap to 0.05); Zeiss Touit uses a 0.01 grid
+    # for higher-precision reads. Empty tuple = no extra gridlines.
     readhelper_extra_otf: tuple[float, ...] = ()
+    # OTF fractions in `readhelper_extra_otf` that should be labelled
+    # with their value next to the plot. Empty tuple = label every
+    # line (default — fine when the grid is coarse). Used when the
+    # grid is denser than the label column can fit readably: lines
+    # are still drawn at every entry in `readhelper_extra_otf`, but
+    # only entries in this tuple get a text label.
+    readhelper_label_otf: tuple[float, ...] = ()
+    # Sentence stating the maintainer's read precision against the
+    # rendered grid. Half a tick spacing on `readhelper_extra_otf`:
+    # 0.05 grid → ±0.02, 0.01 grid → ±0.005. Default reads ±0.02 to
+    # match the historical default for 0.05-grid families.
+    eye_precision_text: str = "±0.02 (half a gridline tick)"
 
 
 def _extras_for(chart: ReferenceChart) -> StyleFamilyExtras:
@@ -633,7 +653,7 @@ def _multifreq_press_kit_extras(chart: ReferenceChart) -> StyleFamilyExtras:
         "Top of plot area → MTF 1.0",
         "Each printed gridline below it → 0.8, 0.6, 0.4, 0.2",
         "Bottom gridline → MTF 0.0",
-        "Orange dashed lines fill in every 0.05 between the printed gridlines",
+        "Orange dashed lines fill in every 0.01 between the printed gridlines",
     )
 
     # GT-snippet for Zeiss Touit: aperture KEYS are profile role labels
@@ -663,14 +683,27 @@ def _multifreq_press_kit_extras(chart: ReferenceChart) -> StyleFamilyExtras:
         sample_line_warning=sample_line_warning,
         mtf_axis_legend=mtf_axis_legend,
         gt_snippet=gt_snippet,
-        # Zeiss prints every 0.20 OTF natively (same as Fuji); add lines
-        # at every 0.05 in between so the maintainer can eye-read at
-        # ±0.02 precision against a uniform 0.05 grid.
+        # Zeiss prints every 0.20 OTF natively; add lines at every 0.01
+        # in between so the maintainer can eye-read at ±0.005 precision
+        # against a uniform 0.01 grid. Touit gets the dense grid because
+        # the 3-frequency stopped-panel calibration (#1332, ADR-075)
+        # needs sub-0.02 resolution to distinguish ridge-cluster
+        # coincidence regressions from true measurement error.
         readhelper_extra_otf=tuple(
+            round(0.01 * i, 2)
+            for i in range(1, 100)
+            if round(0.01 * i, 2) not in (0.2, 0.4, 0.6, 0.8)
+        ),
+        # 99 lines is too many to label individually next to the plot.
+        # Label only the major 0.05 ticks (0.05, 0.10, ..., 0.95) so
+        # the right margin stays readable; minor 0.01 lines are still
+        # drawn for the read.
+        readhelper_label_otf=tuple(
             round(0.05 * i, 2)
             for i in range(1, 20)
             if round(0.05 * i, 2) not in (0.2, 0.4, 0.6, 0.8)
         ),
+        eye_precision_text="±0.005 (half a gridline tick)",
     )
 
 
@@ -769,7 +802,7 @@ def _render_eye_read(
     lines.append(
         "Read each cell at the intersection of the green vertical "
         "sample line and the curve, against the printed horizontal "
-        "gridlines. Eye precision is ±0.02 (half a gridline tick). "
+        f"gridlines. Eye precision is {extras.eye_precision_text}. "
         "Read to two decimals. Use `?` only when the curve genuinely "
         "does not extend to that x position."
     )
