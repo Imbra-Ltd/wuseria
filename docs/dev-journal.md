@@ -11909,3 +11909,108 @@ Theme: drain the 2 open PRs carried from S197 (#1335 awaiting merge permission, 
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` bumped to **`cb6e26c`** at session tail (64 commits ahead of `ba2843d`). All 5 wuseria-filed upstream issues (#615, #616, #617, #618 from S189 + #638 from S191) landed in the bump. Substantial structural reshuffling upstream: ADR-016 (examples are agent-generated), ADR-017 (canonical stack-template structure), ADR-018 (audit storage lock to docs/audits), ADR-019 (redundancy gate). Stack removals (java, terraform, rust, fullstack, mobile, SPA, hugo, celery). All 19 templates wuseria's CLAUDE.md references still exist and were re-verified.
 - **Upstream contributions filed still open:** 1 (S198 #704 — formatter-vs-generator escalation against `base/workflow/quality-gates.md`).
+
+---
+
+### Session 199 — Sigma URL drift + structural elimination of MtfData.source
+
+Date: 2026-06-30 · Tool: Claude Code (Opus 4.7, 1M context)
+
+Theme: investigate the scheduled External Link Check failure that surfaced on `main` between sessions, ship the tactical fix, then eliminate the drift class at its root so the next manufacturer slug rewrite can't reproduce it.
+
+#### PRs
+
+- **#1340** — fix(data): refresh 5 Sigma MTF source URLs after slug rename (#1339). Merged. Tactical 5-line `source:` update in `src/data/mtf-readings.ts`; squashed to main at `a3ac1eb`.
+- **#1342** — refactor(data): derive MTF attribution URL from lenses.ts officialUrl (#1341). Merged. Dropped `MtfData.source` (115 entries stripped), render reads `lens.officialUrl`, 2 now-moot test blocks removed; squashed to main at `ddb5dd8`. +10 / -160 LOC.
+
+#### Issues opened / closed
+
+- **#1339** — opened (bug, P2, Expedite). Sigma MTF URL drift; auto-closed via #1340.
+- **#1341** — opened (task, P2, Expedite). Architectural follow-up; auto-closed via #1342.
+
+#### Key technical findings
+
+- **Sigma rewrote lens URL slugs to embed the aperture suffix** between S198 and S199 (e.g. `a025_17_40` → `a025_17_40_18`, `c020_100_400` → `c020_100_400_5_63`). All 5 affected URLs returned a genuine 404 (verified with curl, not bot-block); the `sigma-global.com/en/lenses/` index itself returned 200. Same drift class as #1062 (Fujifilm region-segment rewrite, 60 URLs in S122).
+- **`lenses.ts.officialUrl` was already correct for every affected lens** — the duplicates in `mtf-readings.ts.source` were the rot. Probed by grepping both files: every broken `source:` had a matching `officialUrl` 2 path-segments deeper. CLAUDE.md §2.6 already mandated single-source via #1062's lesson; the data model just hadn't been brought into alignment.
+- **The slug-coverage assertion at `mtf-readings.test.ts:257` is the structural guarantee that `lens.officialUrl` is always in scope at the render site.** No fallback or null-check needed in the page template — every `mtfReadings[slug]` maps 1:1 to a `lenses.ts` entry by construction.
+- **Probe-script discipline:** stripping 115 `source:` lines from a 5800-line data file needed handling two layouts (single-line `source: "..."` and prettier-wrapped 2-line form). A 25-line `node` probe script with two regexes did it deterministically; deleted before the commit per CLAUDE.md probe rule (`probe_strip_source.mjs`), with the audit trail being the diff itself.
+
+#### Key changes
+
+- **`src/types/mtf.ts`** — dropped `source: string` from `MtfData`.
+- **`src/data/mtf-readings.ts`** — stripped 115 `source:` lines (one per lens entry, both layout forms).
+- **`src/pages/lenses/[slug].astro`** — `<a href={mtf.source}>` → `<a href={lens.officialUrl}>` in the MTF attribution block. `lens` was already in scope (line 30) from `Astro.props`; no new import.
+- **`src/data/mtf-readings.test.ts`** — removed two now-moot blocks (`every entry has a source URL`, `every entry's source URL parses`); updated the historical comment that referenced #1062 to note #1339/#1341 closed the drift class structurally.
+- (Pre-#1342) **5 Sigma `source:` URL refreshes** in `src/data/mtf-readings.ts` via #1340 — tactical bridge before the architectural delete.
+
+#### Verification
+
+- **#1340**: All 5 new URLs returned 200 (curl with `Mozilla/5.0` UA); `npm run validate` passed; CI all green (build, lighthouse, analyze, links, gitleaks, gate; pytest skipped per path filter). Local main fast-forwarded to `a3ac1eb`.
+- **#1342**: `npm run validate` passed; manual spot-check on `dist/lenses/sigma-17-40mm-f1-8-dc-art/index.html` confirmed the rendered HTML carries `<a href="https://www.sigma-global.com/en/lenses/a025_17_40_18/">` (live URL via `officialUrl`); CI all green; local main fast-forwarded to `ddb5dd8`.
+- Final state: 0 open PRs, working tree clean, main synced.
+
+#### Key decisions (this session)
+
+- **Tactical-then-architectural sequencing.** Per `base/workflow/quality-gates.md` "Probe before acting on a hypothesis" — but the scheduled CI failure was already actionable evidence, not a hypothesis. Filed the bug, shipped the 5-line URL refresh (#1340), THEN opened the refactor (#1341 → #1342) to eliminate the class. Two surgical PRs beat one mixed-scope PR; tactical unblocks CI immediately, architectural ships against an unbroken main.
+- **Drop the field rather than wrap it.** Three refactor shapes were on the table (drop / compute-from-lookup / mark-optional). Dropping is the only one where the type system itself prevents reintroduction. The slug-coverage test already guarantees the lookup is total, so there's no asymmetry to preserve.
+- **Honest count over carry-forward.** S198's closing block reported "Backlog spikes: 1 (#791)"; the actual `gh issue list --milestone Backlog --label spike --state open` returned 34. Reporting the real count this session rather than perpetuating the stale number — per CLAUDE.md "Verify before relying on a claim" and the wrap-up checklist's "Counts in handoff notes decay fast" rule.
+
+#### Process patterns observed this session
+
+- **Same-day tactical + architectural is the right scope split for a drift-class bug.** PR #1340 is what an on-call would do; PR #1342 is what a code review would demand. Filing them as one bundle would have mixed two reviewer concerns (is the immediate fix right, AND is the architectural shape right) and slowed both. Per `git.md` "Bulk operations": split into two stacked-scope PRs, even when the second one is small.
+- **The drift-class delete justifies its own follow-up issue, not a PR appended to the tactical fix.** A separate issue (#1341) carries the rationale ("eliminate, not just patch") into the tracker and into the PR description that closes it — a maintainer 6 months from now sees both `#1339 → #1340 (5 URLs refreshed)` and `#1341 → #1342 (field dropped)` and understands why the second PR exists.
+
+#### Calibration impact (S199)
+
+| Metric                       | S198 close                             | S199 close                                                |
+| ---------------------------- | -------------------------------------- | --------------------------------------------------------- |
+| Aggregate paired             | 1157                                   | **1157** (unchanged — no extractor changes)               |
+| Aggregate p95 \|d\|          | 0.0396                                 | **0.0396** (unchanged)                                    |
+| Aggregate median \|d\|       | 0.0043                                 | **0.0043** (unchanged)                                    |
+| Aggregate in-band (±0.05)    | 97.0%                                  | **97.0%** (unchanged)                                     |
+| mtfdigitizer pytest          | 455                                    | **455** (unchanged)                                       |
+| vitest                       | 224                                    | **222** (-2 — removed `source` URL test blocks)           |
+| `REFERENCE_CHARTS` entries   | 123                                    | **123** (unchanged)                                       |
+| Epic #790 brand-digitization | 5/24                                   | **5/24** (unchanged)                                      |
+| ADRs                         | 75                                     | **75** (unchanged — drift-class refactor did not warrant) |
+| Declared profiles            | 9                                      | **9** (unchanged)                                         |
+| Open PRs                     | 0                                      | **0**                                                     |
+| Backlog spikes               | 1 (#791) [reported]                    | **34** (true count; S198 figure was wrong)                |
+| Open v0.8.0 issues           | 23                                     | **23** (unchanged — fixes landed in Expedite)             |
+| Open Expedite issues         | 0                                      | **0** (#1339, #1341 both closed same session)             |
+| Stale production logs        | 2 (samyang-10mm, samyang-12mm fisheye) | **2** (unchanged)                                         |
+
+#### Follow-ups for next session (S200)
+
+- **Re-emit the 6 existing drift-state eye-read.md files** as a one-shot follow-up to #1336, then wire `scaffold_anchor_helpers --check` into CI as a staleness gate. Carried from S198 — still the cheapest staleness-gate win.
+- **#1332 — maintainer eye-read 396 Touit cells** on the 3 readhelper PNGs. Carried; largest single signal-flip available.
+- **Stopped-panel ridge-cluster collapse architecture spike** (carried).
+- **Tier-1-anchor GT audit sweep** (carried).
+- **#950 plot-box auto-detect** (carried).
+- **Stale production log refresh** (carried — samyang-10mm + samyang-12mm fisheye).
+- **`not_suspiciously_flat` prior false-positive on legitimately flat curves** (carried from S195).
+- **Audit other downstream `source`/`url` duplicates of `lenses.ts.officialUrl`** — `#1062`/`#1339`/`#1341` was MTF-only; other emit scripts in `tools/<brand>/` may carry the same pattern. Spike before sweeping.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24 done** (unchanged).
+- `REFERENCE_CHARTS` = **123 entries** (unchanged).
+- **5 Tier 1 anchors** with real maintainer GT (unchanged).
+- Aggregate calibration: **1157 paired, median |d| 0.0043, p95 |d| 0.0396, max |d| 0.1217, in-band 97.0%** (unchanged).
+- **725 tools pytest collected, 455 mtfdigitizer subset pass + 0 xfailed**. **222 vitest pass** (-2 from S198 — removed `source` URL test blocks).
+- **75 ADRs** (unchanged).
+- **9 declared MTF profiles** (unchanged).
+- **v0.8.0 open: 23 issues** (unchanged).
+- **Backlog spikes: 34** (S198 reported 1; true count corrected this session).
+- **Expedite open: 0** (#1339, #1341 closed same session).
+- **0 open PRs** at wrap-up.
+- Pre-existing SVG drift on main: 0.
+- **Pre-existing eye-read.md prettier drift on main: 6** (carried — re-emit follow-up to #1336 still deferred).
+- Stale eye-read digitization logs: **0**.
+- Stale production digitization logs: **2** (samyang-10mm, samyang-12mm fisheye — carry-forward).
+- Stale `-mtf-max-overlay.png` / `-mtf-stopped-overlay.png` orphans: **2** for Samyang 300.
+- Gitleaks CI: pass.
+- `delete_branch_on_merge: true` on the repo.
+- Submodule: `docs/solid-ai-templates` at **`cb6e26c`** — unchanged from S198 tail.
+- **Upstream contributions filed still open:** 1 (S198 #704 — formatter-vs-generator escalation against `base/workflow/quality-gates.md`).
