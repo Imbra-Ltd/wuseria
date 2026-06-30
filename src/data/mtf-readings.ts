@@ -391,7 +391,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-10-18mm-f2-8-dc-dn-c": {
-    source: "https://www.sigma-global.com/en/lenses/c023_10_28/",
+    source: "https://www.sigma-global.com/en/lenses/c023_10_18_28/",
     mtfType: "computed",
     charts: [
       {
@@ -565,7 +565,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-16-300mm-f3-5-6-7-dc-os-c": {
-    source: "https://www.sigma-global.com/en/lenses/c025_16_300/",
+    source: "https://www.sigma-global.com/en/lenses/c025_16_300_35_67/",
     mtfType: "computed",
     charts: [
       {
@@ -739,7 +739,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-17-40mm-f1-8-dc-art": {
-    source: "https://www.sigma-global.com/en/lenses/a025_17_40/",
+    source: "https://www.sigma-global.com/en/lenses/a025_17_40_18/",
     mtfType: "computed",
     charts: [
       {
@@ -913,7 +913,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-18-50mm-f2-8-dc-dn-c": {
-    source: "https://www.sigma-global.com/en/lenses/c021_18_50/",
+    source: "https://www.sigma-global.com/en/lenses/c021_18_50_28/",
     mtfType: "computed",
     charts: [
       {
@@ -1087,7 +1087,7 @@ const mtfReadings: Record<string, MtfData> = {
     ],
   },
   "sigma-100-400mm-f5-6-3-dg-dn-os-c": {
-    source: "https://www.sigma-global.com/en/lenses/c020_100_400/",
+    source: "https://www.sigma-global.com/en/lenses/c020_100_400_5_63/",
     mtfType: "computed",
     charts: [
       {
