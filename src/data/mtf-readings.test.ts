@@ -32,12 +32,6 @@ describe("mtf-readings data integrity", () => {
     }
   });
 
-  it("every entry has a source URL", () => {
-    for (const [slug, data] of entries) {
-      expect(data.source, `${slug}: missing source`).toMatch(/^https?:\/\//);
-    }
-  });
-
   it("every entry has at least one chart", () => {
     for (const [slug, data] of entries) {
       expect(data.charts.length, `${slug}: no charts`).toBeGreaterThan(0);
@@ -245,9 +239,11 @@ describe("mtf-readings data integrity", () => {
 
 // Coverage assertions (#1068). Catch key drift between `lenses.ts`,
 // `mtf-readings.ts`, and the on-disk `docs/optical-specs/` charts at
-// commit time — three bugs that landed in S122 (#1060 t-s vs ts slug,
-// #1061 anchor lenses with disk data but no readings entry, #1062 60
-// auto-derived 404 source URLs) would have been caught here.
+// commit time — bugs in S122 (#1060 t-s vs ts slug, #1061 anchor lenses
+// with disk data but no readings entry) would have been caught here.
+// The #1062/#1339 drift class is now eliminated structurally: the
+// attribution URL derives from `lenses.ts.officialUrl` instead of a
+// duplicated field (#1341).
 describe("mtf-readings ↔ lenses.ts coverage", () => {
   const lensSlugs = new Set(
     lenses.map((l) => toSlug(`${dirBrand(l.brand)} ${l.model}`)),
@@ -260,15 +256,6 @@ describe("mtf-readings ↔ lenses.ts coverage", () => {
       orphans,
       `mtfReadings keys with no matching lens (slug drift?): ${orphans.join(", ")}`,
     ).toEqual([]);
-  });
-
-  it("every mtfReadings entry's source URL parses", () => {
-    for (const [slug, data] of Object.entries(mtfReadings)) {
-      expect(
-        () => new URL(data.source),
-        `${slug}: source URL does not parse: ${data.source}`,
-      ).not.toThrow();
-    }
   });
 });
 

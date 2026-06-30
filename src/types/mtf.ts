@@ -44,7 +44,6 @@ interface MtfChart {
 type MtfType = "computed" | "measured";
 
 interface MtfData {
-  source: string; // attribution URL
   mtfType: MtfType;
   charts: MtfChart[];
 }
