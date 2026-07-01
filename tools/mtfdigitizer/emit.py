@@ -200,28 +200,8 @@ ChartPanel = tuple[
 ]
 
 
-def format_source_line(source: str) -> str:
-    """Render the `    source: "<url>",` line for a top-level entry.
-
-    Matches Prettier's default printWidth=80 wrap: single line when the
-    full `    source: "<url>",` fits in 80 chars, otherwise wrapped as
-
-        source:
-          "<url>",
-
-    Without this, the bulk-emit output drifts under lint-staged's
-    Prettier pass and the --check gate (#1296/#1299) reports false
-    positives on every long-URL entry.
-    """
-    single = f'    source: "{source}",'
-    if len(single) <= 80:
-        return single + "\n"
-    return f'    source:\n      "{source}",\n'
-
-
 def _format_entry(
     slug: str,
-    source: str,
     mtf_type: str,
     panels: tuple[ChartPanel, ...],
 ) -> str:
@@ -237,7 +217,6 @@ def _format_entry(
     )
     return (
         f"  \"{slug}\": {{\n"
-        f"{format_source_line(source)}"
         f"    mtfType: \"{mtf_type}\",\n"
         "    charts: [\n"
         f"{chart_blocks}\n"
@@ -282,7 +261,6 @@ def _verdict_for_panel(
 
 def emit_lens(
     chart: ReferenceChart,
-    source_url: str,
     mtf_type: str = "measured",
     aperture: str | None = None,
     focal_lengths: tuple[int, ...] | None = None,
@@ -290,8 +268,6 @@ def emit_lens(
 ) -> EmitResult:
     """Extract one reference chart and serialize to a TS object literal.
 
-    `source_url` becomes the `source` field on the emitted entry — the
-    canonical attribution URL that the lens page renders below the chart.
     `mtf_type` becomes the `mtfType` field — "computed" for manufacturer
     charts derived from optical design (Sigma, Fujifilm, Nikon), "measured"
     for review-lab charts from a tested sample (LensTip, Optical Limits).
@@ -303,6 +279,11 @@ def emit_lens(
     focal length), omitted for primes. When supplied, its length must
     match `chart.views`; values are zipped in primary-then-additional
     order.
+
+    Attribution URL: the lens page renders the URL below the chart from
+    `lens.officialUrl` at render time (see
+    `src/pages/lenses/[slug].astro`). No `source` field is emitted here
+    (removed in #1342 to eliminate the URL-duplication drift class).
     """
     if chart.plot_box is None:
         raise ValueError(
@@ -371,76 +352,12 @@ def emit_lens(
         slug=chart.slug,
         ts_literal=_format_entry(
             slug=chart.slug,
-            source=source_url,
             mtf_type=mtf_type,
             panels=tuple(panels),
         ),
         positions_emitted=total_positions,
         null_counts=null_counts,
     )
-
-
-# Mapping from reference chart slug to the source URL the lens page
-# should cite. Kept here rather than on ReferenceChart because
-# attribution is an emit-step concern, not a calibration concern.
-_DEFAULT_SOURCES: dict[str, str] = {
-    "sigma-12mm-f1-4-dc-dn-c": (
-        "https://www.sigma-global.com/en/lenses/c025_12_14/"
-    ),
-    "sigma-15mm-f1-4-dc-dn-c": (
-        "https://www.sigma-global.com/en/lenses/c026_15_14/"
-    ),
-    "sigma-23mm-f1-4-dc-dn-c": (
-        "https://www.sigma-global.com/en/lenses/c023_23_14/"
-    ),
-    "sigma-56mm-f1-4-dc-dn-c": (
-        "https://www.sigma-global.com/en/lenses/c018_56_14/"
-    ),
-    "samyang-85mm-f1-4-as-if-umc": (
-        "https://www.lksamyang.com/en/product/product-view.php?seq=311"
-    ),
-    "samyang-300mm-f6-3-ed-umc-cs-reflex": (
-        "https://www.lksamyang.com/en/product/product-view.php?seq=355"
-    ),
-    "viltrox-af-75mm-f1-2-pro": (
-        "https://viltrox.com/products/75mm-f12-xf-lens"
-    ),
-    "tokina-atx-m-23mm-f1-4-x": (
-        "https://www.lenstip.com/665.1-Lens_review-Tokina_atx-m_23_mm_f_1.4_X-Introduction.html"
-    ),
-    "tokina-atx-m-33mm-f1-4-x": (
-        "https://tokinalens.com/product/atx_m_33mm_f1_4_x/"
-    ),
-    "tokina-atx-m-56mm-f1-4-x": (
-        "https://tokinalens.com/product/atx_m_56mm_f1_4_x/"
-    ),
-    "tokina-atx-m-11-18mm-f2-8-x-at-11mm": (
-        "https://tokinalens.com/product/atx_m_11_18mm_f2_8_x/"
-    ),
-    "tokina-atx-m-11-18mm-f2-8-x-at-18mm": (
-        "https://tokinalens.com/product/atx_m_11_18mm_f2_8_x/"
-    ),
-    "7artisans-50mm-f1-2-mark-ii": (
-        "https://7artisans.store/products/7artisans-50mm-f-1-2-mark-ii-prime-lens"
-    ),
-    # Sigma zooms — #793. Two-panel diffraction MTF (wide + tele) per
-    # ADR-033; see _DEFAULT_FOCAL_LENGTHS below for the mm values.
-    "sigma-10-18mm-f2-8-dc-dn-c": (
-        "https://www.sigma-global.com/en/lenses/c023_10_28/"
-    ),
-    "sigma-16-300mm-f3-5-6-7-dc-os-c": (
-        "https://www.sigma-global.com/en/lenses/c025_16_300/"
-    ),
-    "sigma-17-40mm-f1-8-dc-art": (
-        "https://www.sigma-global.com/en/lenses/a025_17_40/"
-    ),
-    "sigma-18-50mm-f2-8-dc-dn-c": (
-        "https://www.sigma-global.com/en/lenses/c021_18_50/"
-    ),
-    "sigma-100-400mm-f5-6-3-dg-dn-os-c": (
-        "https://www.sigma-global.com/en/lenses/c020_100_400/"
-    ),
-}
 
 
 # Focal length (mm) per emitted panel, in primary-then-additional view
@@ -482,14 +399,6 @@ def main(argv: list[str] | None = None) -> int:
         if chart is None:
             print(f"ERROR: unknown slug {slug!r}", file=sys.stderr)
             return 1
-        source = _DEFAULT_SOURCES.get(slug)
-        if source is None:
-            print(
-                f"ERROR: no default source URL for {slug!r}; "
-                f"add to _DEFAULT_SOURCES",
-                file=sys.stderr,
-            )
-            return 1
         focal_lengths = _DEFAULT_FOCAL_LENGTHS.get(slug)
         if len(chart.views) > 1 and focal_lengths is None:
             print(
@@ -501,7 +410,6 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         result = emit_lens(
             chart,
-            source_url=source,
             mtf_type=args.mtf_type,
             focal_lengths=focal_lengths,
         )

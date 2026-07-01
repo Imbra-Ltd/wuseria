@@ -1,24 +1,18 @@
 """Unit tests for `emit_ttartisan_tier2` (ADR-044 emit pipeline).
 
 Targets the pure formatting helpers — string emission, lens-tuple
-shape, slug-to-URL resolution. The end-to-end extractor pipeline
-(extract_chart → SampledReading) is exercised by the live runner;
-this module verifies that the TS-literal output shape is correct.
+shape. The end-to-end extractor pipeline (extract_chart →
+SampledReading) is exercised by the live runner; this module verifies
+that the TS-literal output shape is correct.
 """
 
 from __future__ import annotations
-
-import re
-
-import pytest
 
 from mtfdigitizer.pipeline.types import SampledReading
 from mtfdigitizer.scripts.emit_ttartisan_tier2 import (
     _format_chart_block,
     _format_reading,
     _format_value,
-    _source_url,
-    _to_slug,
     _ttartisan_lenses,
 )
 
@@ -133,20 +127,6 @@ def test_format_chart_block_drops_intermediate_all_null_rows():
     assert "position: 0," in out
     assert "position: 14," in out
     assert "position: 5," not in out
-
-
-def test_to_slug_matches_typescript_port():
-    """Port of src/utils/slug.ts:toSlug must be byte-equivalent."""
-    assert _to_slug("TTartisan 50mm f/1.2") == "ttartisan-50mm-f1-2"
-    assert _to_slug("TTartisan 11mm f/2.8 Fisheye GFX") == "ttartisan-11mm-f2-8-fisheye-gfx"
-    assert _to_slug("TTartisan AF 75mm f/2") == "ttartisan-af-75mm-f2"
-
-
-def test_source_url_fails_loud_on_missing_official_url():
-    """A slug not in the lenses.ts officialUrl mapping is a fail-loud
-    event — masks a missing field otherwise (per #1062)."""
-    with pytest.raises(KeyError, match="officialUrl"):
-        _source_url("ttartisan-nonexistent-1mm-f0", {})
 
 
 def test_ttartisan_lenses_returns_19_entries():

@@ -21,9 +21,9 @@ script appends each entry to `src/data/mtf-readings.ts` at the
 sentinel position just before the closing `};` of the `mtfReadings`
 record. Entries already present (matching slug) are replaced in place.
 
-`source` URL is derived from the lens slug:
-`https://fujifilm-x.com/global/products/lenses/<slug-without-fujifilm->/`.
-The maintainer can adjust per-lens after the bulk emission.
+Attribution URL: the lens page reads the chart's source URL from
+`lens.officialUrl` at render time (see `src/pages/lenses/[slug].astro`).
+No `source` field is emitted here (removed in #1342).
 """
 
 from __future__ import annotations
@@ -35,7 +35,6 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from mtfdigitizer.emit import format_source_line
 from mtfdigitizer.family_profile import profile_for_chart
 from mtfdigitizer.per_frequency import parse_filename_frequency
 from mtfdigitizer.pipeline import extract_chart
@@ -51,19 +50,9 @@ from mtfdigitizer.scripts._emit_overrides import overlay_committed_overrides
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 MTF_READINGS_PATH = REPO_ROOT / "src" / "data" / "mtf-readings.ts"
-LENSES_PATH = REPO_ROOT / "src" / "data" / "lenses.ts"
 
 
 _VIEW_INFIX_RE = re.compile(r"-(?P<view>wide|tele)-\d+lp\.png$", re.IGNORECASE)
-
-# Match a single top-level lens entry: from `^  {` to the matching `^  },`.
-_LENS_BLOCK_RE = re.compile(r"^  \{$.*?^  \},?$", re.DOTALL | re.MULTILINE)
-_BRAND_RE = re.compile(r'^\s*brand:\s*"([^"]+)"', re.MULTILINE)
-_MODEL_RE = re.compile(r'^\s*model:\s*"([^"]+)"', re.MULTILINE)
-# `officialUrl:` may have the value on the same line or wrapped to the next.
-_OFFICIAL_URL_RE = re.compile(
-    r'^\s*officialUrl:\s*(?:\n\s*)?"([^"]+)"', re.MULTILINE
-)
 
 
 def _to_plotbox(
@@ -254,57 +243,7 @@ def _format_chart_block(
     )
 
 
-_NON_ALNUM_RE = re.compile(r"[^a-z0-9]+")
-
-
-def _to_slug(brand_model: str) -> str:
-    """Port of src/utils/slug.ts:toSlug — must stay byte-equivalent.
-
-    "Fujifilm GF 23mm f/4 R LM WR" → "fujifilm-gf-23mm-f4-r-lm-wr"
-    """
-    lowered = brand_model.lower().replace("/", "")
-    return _NON_ALNUM_RE.sub("-", lowered).strip("-")
-
-
-def _load_official_urls() -> dict[str, str]:
-    """Parse `src/data/lenses.ts` into a slug → officialUrl mapping.
-
-    Lenses without an officialUrl field are omitted; the caller decides
-    what to do (we fail loud in `_source_url` rather than emit a 404).
-    """
-    text = LENSES_PATH.read_text(encoding="utf-8")
-    mapping: dict[str, str] = {}
-    for block_match in _LENS_BLOCK_RE.finditer(text):
-        block = block_match.group(0)
-        brand_match = _BRAND_RE.search(block)
-        model_match = _MODEL_RE.search(block)
-        url_match = _OFFICIAL_URL_RE.search(block)
-        if not (brand_match and model_match and url_match):
-            continue
-        slug = _to_slug(f"{brand_match.group(1)} {model_match.group(1)}")
-        mapping[slug] = url_match.group(1)
-    return mapping
-
-
-def _source_url(slug: str, official_urls: dict[str, str]) -> str:
-    """Return the verified Fujifilm product URL for `slug`.
-
-    Reads from `lenses.ts`'s `officialUrl` field rather than deriving
-    from the slug — Fujifilm's URL pattern uses a region segment
-    (`/en-us/`) and hyphenated suffixes that simple slug-mangling
-    cannot reconstruct. See issue #1062.
-    """
-    if slug not in official_urls:
-        raise KeyError(
-            f"No officialUrl found in lenses.ts for {slug!r}. Add the "
-            f"field to the lens entry before re-running this script."
-        )
-    return official_urls[slug]
-
-
-def _emit_one_lens(
-    chart: ReferenceChart, official_urls: dict[str, str]
-) -> tuple[str, int, int]:
+def _emit_one_lens(chart: ReferenceChart) -> tuple[str, int, int]:
     """Build the TS object literal for one Fuji lens.
 
     Returns (literal, panel_count, total_positions). Lenses with zoom
@@ -359,10 +298,8 @@ def _emit_one_lens(
         total_positions += len(merged)
 
     chart_blocks = "\n".join(blocks)
-    source_url = _source_url(chart.slug, official_urls)
     literal = (
         f'  "{chart.slug}": {{\n'
-        f"{format_source_line(source_url)}"
         '    mtfType: "computed",\n'
         "    charts: [\n"
         f"{chart_blocks}\n"
@@ -481,12 +418,11 @@ def main(argv: list[str] | None = None) -> int:
         print("No Fujifilm Tier 2 lenses found.", file=sys.stderr)
         return 1
 
-    official_urls = _load_official_urls()
     entries: dict[str, str] = {}
     total_positions = 0
     total_panels = 0
     for chart in lenses:
-        literal, panels, positions = _emit_one_lens(chart, official_urls)
+        literal, panels, positions = _emit_one_lens(chart)
         entries[chart.slug] = literal
         total_panels += panels
         total_positions += positions

@@ -21,9 +21,9 @@ Without `--write` the literals print to stdout for review. With it, the
 script splices each entry into `src/data/mtf-readings.ts` using the
 same shape as `emit_fuji_tier2._splice_entries`.
 
-`source` URL comes from each lens's `officialUrl` field in
-`src/data/lenses.ts` — never re-derived from the slug (per #1062 the
-TTartisan brand URL pattern is not slug-mangle-recoverable).
+Attribution URL: the lens page reads the chart's source URL from
+`lens.officialUrl` at render time (see `src/pages/lenses/[slug].astro`).
+No `source` field is emitted here (removed in #1342).
 """
 
 from __future__ import annotations
@@ -34,7 +34,6 @@ import sys
 from pathlib import Path
 
 from mtfdigitizer.autotriage import _run_pipeline
-from mtfdigitizer.emit import format_source_line
 from mtfdigitizer.pipeline.types import SampledReading
 from mtfdigitizer.referenceset.charts import REFERENCE_CHARTS, ReferenceChart
 from mtfdigitizer.scripts._emit_overrides import overlay_committed_overrides
@@ -42,16 +41,6 @@ from mtfdigitizer.scripts._emit_overrides import overlay_committed_overrides
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 MTF_READINGS_PATH = REPO_ROOT / "src" / "data" / "mtf-readings.ts"
-LENSES_PATH = REPO_ROOT / "src" / "data" / "lenses.ts"
-
-
-# Match a single top-level lens entry: from `^  {` to the matching `^  },`.
-_LENS_BLOCK_RE = re.compile(r"^  \{$.*?^  \},?$", re.DOTALL | re.MULTILINE)
-_BRAND_RE = re.compile(r'^\s*brand:\s*"([^"]+)"', re.MULTILINE)
-_MODEL_RE = re.compile(r'^\s*model:\s*"([^"]+)"', re.MULTILINE)
-_OFFICIAL_URL_RE = re.compile(
-    r'^\s*officialUrl:\s*(?:\n\s*)?"([^"]+)"', re.MULTILINE
-)
 
 
 def _format_value(v: float | None) -> str:
@@ -127,49 +116,7 @@ def _format_chart_block(
     )
 
 
-_NON_ALNUM_RE = re.compile(r"[^a-z0-9]+")
-
-
-def _to_slug(brand_model: str) -> str:
-    """Port of src/utils/slug.ts:toSlug — must stay byte-equivalent."""
-    lowered = brand_model.lower().replace("/", "")
-    return _NON_ALNUM_RE.sub("-", lowered).strip("-")
-
-
-def _load_official_urls() -> dict[str, str]:
-    """Parse `src/data/lenses.ts` into a slug → officialUrl mapping."""
-    text = LENSES_PATH.read_text(encoding="utf-8")
-    mapping: dict[str, str] = {}
-    for block_match in _LENS_BLOCK_RE.finditer(text):
-        block = block_match.group(0)
-        brand_match = _BRAND_RE.search(block)
-        model_match = _MODEL_RE.search(block)
-        url_match = _OFFICIAL_URL_RE.search(block)
-        if not (brand_match and model_match and url_match):
-            continue
-        slug = _to_slug(f"{brand_match.group(1)} {model_match.group(1)}")
-        mapping[slug] = url_match.group(1)
-    return mapping
-
-
-def _source_url(slug: str, official_urls: dict[str, str]) -> str:
-    """Return the verified TTartisan product URL for `slug`.
-
-    Reads from `lenses.ts`'s `officialUrl` field rather than deriving
-    from the slug — TTartisan's URL pattern is not slug-mangle-
-    recoverable (different paths for AF / Tilt / GFX product lines).
-    """
-    if slug not in official_urls:
-        raise KeyError(
-            f"No officialUrl found in lenses.ts for {slug!r}. Add the "
-            f"field to the lens entry before re-running this script."
-        )
-    return official_urls[slug]
-
-
-def _emit_one_lens(
-    chart: ReferenceChart, official_urls: dict[str, str]
-) -> tuple[str, int, int]:
+def _emit_one_lens(chart: ReferenceChart) -> tuple[str, int, int]:
     """Build the TS object literal for one TTartisan lens.
 
     Returns ``(literal, panel_count, total_positions)``. Every TTartisan
@@ -224,10 +171,8 @@ def _emit_one_lens(
         total_positions += len(pass_result.extracted.readings)
 
     chart_blocks = "\n".join(blocks)
-    source_url = _source_url(chart.slug, official_urls)
     literal = (
         f'  "{chart.slug}": {{\n'
-        f"{format_source_line(source_url)}"
         '    mtfType: "computed",\n'
         "    charts: [\n"
         f"{chart_blocks}\n"
@@ -331,12 +276,11 @@ def main(argv: list[str] | None = None) -> int:
         print("No TTartisan multi-aperture lenses found.", file=sys.stderr)
         return 1
 
-    official_urls = _load_official_urls()
     entries: dict[str, str] = {}
     total_positions = 0
     total_panels = 0
     for chart in lenses:
-        literal, panels, positions = _emit_one_lens(chart, official_urls)
+        literal, panels, positions = _emit_one_lens(chart)
         entries[chart.slug] = literal
         total_panels += panels
         total_positions += positions
