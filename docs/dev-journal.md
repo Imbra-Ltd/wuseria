@@ -12171,3 +12171,72 @@ Re-measured post-fix: **1153 paired, median |d| 0.0052, p95 |d| 0.0416, max |d| 
 - **#1347 open** (bug, P2, v0.8.0) — mis-assignment fixed; M-curve recovery remaining.
 - `mtfdigitizer` pytest: **450 pass, 1 xfail** (this session's run).
 - **Upstream contributions filed still open:** 1 (S198 #704 — formatter-vs-generator escalation against `base/workflow/quality-gates.md`).
+
+---
+
+### Session 202 — CI format gate mirrors the deploy; unblock the red main deploy
+
+Date: 2026-07-04 · Tool: Claude Code (Opus 4.8, 1M context)
+
+Theme: CI gate hardening. Surfaced by the section 6.1 startup deploy-health check — the `main` deploy was red — and resolved into closing the structural gate gap that let it break, not just the instance.
+
+#### PRs
+
+- **#1361** — fix(journal): escape stray underscores in the S201 entry to unblock deploy. Created + merged. Squashed at `8db0bf0`. One line: backtick-wrapped `plot_width` / `mean_y` and dropped a stray `_global_` emphasis on the S201 findings line so `prettier --check .` stops parsing the underscores as Markdown emphasis.
+- **#1363** — fix(ci): add always-run `format` job so the PR gate mirrors the deploy. Created + merged. Squashed at `5e76285`. +147 LOC (`ci.yml` + ADR-076). Closes #1362.
+
+#### Issues opened / closed
+
+- **#1362** — opened (bug, P1, Expedite) and auto-closed by #1363. The PR `build` job's `code` paths-filter omits `docs/**`, so docs-only PRs skipped `prettier --check` entirely while `deploy.yml` runs it unconditionally on `main` — the deploy was the first line of defense for formatting.
+- No other issues touched. 8 Dependabot PRs (#1351–#1358) left open for a dedicated triage session.
+
+#### Key technical findings
+
+- **The deploy was the first formatter.** `deploy.yml` runs `npm run validate` (→ `prettier --check .`) unconditionally on push to `main`; `ci.yml`'s `build` job runs the same behind the `code` filter (`src/**`, `public/**`, config, `.github/workflows/**`), which omits `docs/**`. A journal-only PR skips `build`, and a skipped `build` reports `skipped` (not `failure`), so `gate` passes green. First surfacing of a docs format error is post-merge, on `main`.
+- **How #1360 broke it.** The S201 entry left `plot_width`, `_global_`, `mean_y` unescaped; Markdown pairs the underscores into emphasis spans; `prettier --check` wanted to normalize them (it prefers `_emphasis_`, which is exactly why the stray underscores paired up). Never ran on #1360's PR.
+- **The follow-on deploy failure was infra, not diff.** After #1361 made `validate` pass, the deploy still failed once at `actions/deploy-pages@v5` ("Deployment failed, try again later") — a transient GitHub Pages backend error. A single re-run went green; no code change. Per `review.md` CI-signals: separate infra failure from diff failure.
+- **A path filter can never be exhaustive.** Any new top-level Prettier-covered path the `code` filter omits reopens the gap. An always-run job removes the enumeration burden entirely.
+
+#### Key changes
+
+- **`.github/workflows/ci.yml`** — new `format` job: checkout + setup-node + `npm ci` + `npm run format`, with no `needs`/`if` (always runs; no submodule checkout since `.prettierignore` excludes it). Added `format` to `gate.needs` and its failure condition. `build` / `lighthouse` / `pytest` keep their path filters.
+- **`docs/decisions/076-pr-gate-mirrors-deploy-format.md`** — new ADR (the mirror rule; always-run job vs broadened filter vs unconditional build vs pre-commit-only).
+- **`docs/dev-journal.md`** — the #1361 one-line format fix to the S201 entry.
+
+#### Verification
+
+- **Local `npm run validate`** — green (lint, format, check, test, build 462 pages, link check) before shipping #1361; `npm run format` green repo-wide before shipping #1363.
+- **The gate has teeth (proven, not assumed).** ADR-076 itself failed `npm run format` on first write (emphasis-marker + table-alignment normalization); fixed with `prettier --write`, re-checked green — a live demonstration that the new job catches exactly this class.
+- **#1363 CI** — the new `format` job ran as a distinct check (pass, 39s) and `gate` gated on it; all 10 checks green.
+- **`main` deploy green** after both merges — the #1361 deploy needed one infra re-run; the #1363 deploy passed first try (1m45s).
+
+#### Key decisions (this session)
+
+- **Always-run `format` job, not a broadened `code` filter.** A filter must enumerate every Prettier-covered path; the next omitted path reopens the same gap. The always-run job is enumeration-free and mirrors the deploy's format step exactly. ADR-076; applies `quality-gates-scope-agreement` ("PR gate MUST mirror the deploy gate", "Skipped is not passed").
+- **Scope the mirror to format only, not the whole `validate` chain.** lint / type / test / build only read paths the `code` / `tools` filters already cover; format is the one cross-cutting step. Complements ADR-039's Lighthouse skip rather than reversing it.
+- **Wrote ADR-076 rather than a CLAUDE.md line.** A CI gate-topology decision with alternatives weighed → ADR (precedent: ADR-039). Not an every-turn rule, so no CLAUDE.md change.
+
+#### Process patterns observed this session
+
+- **The startup deploy-health check earned its keep.** Section 6.1 step 4 ("flag if latest deploy is not success") caught a red `main` before any new work; the incident would otherwise have sat unnoticed.
+- **Fix the instance, then close the class.** #1361 unblocked `main` (the instance); #1363 removed the gap that produced it (the class). The hotfix is not the fix.
+- **Make the prevention self-demonstrating.** The new gate's first catch was its own ADR — the strongest available evidence it works, captured in Verification.
+
+#### Follow-ups for next session (S203)
+
+- **#1347 M-curve recovery** (bug, P2, v0.8.0) — carried from S201; the planned digitizer priority. Dashed 10M/20M on the 12mm max still floor-cut. Decide keep-#1347 vs split into a dedicated issue.
+- **32/50 Touit GT re-read** (#1332, task, P2, v0.8.0) — unblocked by #1359. Fold in the closed-#1344 0.01-grid scaffolder change before eye-reading.
+- **Dependabot triage** — 8 open PRs (#1351–#1358), incl. majors astro 6→7 (#1358), @astrojs/react 5→6 (#1354), eslint-plugin-unicorn 68→70 (#1355). Expect a lockfile-conflict cascade.
+- **Submodule** `docs/solid-ai-templates` is 2 commits behind upstream — bump the pointer in its own PR (carried).
+- (carried) Scaffolder text sync; re-emit drift eye-read.md + wire `scaffold_anchor_helpers --check` into CI; stale production log refresh.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24** (unchanged).
+- **76 ADRs** (+1: ADR-076, the PR-gate format mirror).
+- **CI:** the PR gate now has an always-run `format` job wired into `gate`; the `main` deploy is healthy (green).
+- Submodule `docs/solid-ai-templates` at **`cb6e26c`** — unchanged this session, still 2 commits behind upstream (follow-up).
+- **Open PRs at wrap-up: 8** — all Dependabot (#1351–#1358), untouched.
+- **#1347 open** (bug, P2, v0.8.0) — mis-assignment fixed in S201; M-curve recovery remaining.
+- **Upstream contributions filed still open:** 1 (S198 #704 — formatter-vs-generator escalation against `base/workflow/quality-gates.md`); a second candidate evaluated this session (see below).
