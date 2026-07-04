@@ -12317,3 +12317,73 @@ Re-measured post-fix: **1197 paired, median |d| 0.0059, p95 |d| 0.0448, max |d| 
 - **#1347 closed** — M-curve recovery landed; **#1366 open** (deploy retry).
 - `mtfdigitizer` pytest: **451 pass** (this session's run).
 - **Upstream contributions filed still open:** 1 (S198 #704).
+
+---
+
+### Session 204 — Dependabot weekly triage + Astro 7 upgrade
+
+Date: 2026-07-04 · Tool: Claude Code (Opus 4.8, 1M context)
+
+Theme: clear the weekly Dependabot queue (8 open PRs) and land the Astro 6->7 major, which needed a real migration rather than a merge.
+
+#### PRs
+
+- **#1351/#1352/#1353/#1356/#1357** — dev-dep minor/patch bumps (`@types/node`, `globals`, `lint-staged`, `typescript-eslint`, `eslint`). Merged directly on green CI.
+- **#1354** — `@astrojs/react` 5->6 (major). Merged. Peer-deps only on react (no astro constraint), green on astro 6, so safe to land ahead of the astro major.
+- **#1355** — `eslint-plugin-unicorn` 68->70 (major). Lost the lockfile-cascade race, `@dependabot rebase` -> green -> merged.
+- **#1368** — chore(deps): upgrade to Astro 7 (vite 8 + vitest react plugin). Created + merged, closing #1358. Squashed at the astro-7 commit. 3 files: `package.json`, `package-lock.json`, `vitest.config.ts`.
+
+#### Issues opened / closed
+
+- **#1358** — closed as superseded by #1368 (Dependabot's bare astro-7 bump could not carry the migration).
+- No new issues (the S203 follow-up #1366 deploy-retry stays open).
+
+#### Key technical findings
+
+- **A Dependabot framework-major that fails CI can need a source migration, not a rebase.** #1358 (`astro build` failed) was not a stale-lockfile problem: `astro@7.0.6` declares `vite: ^8.0.13`, but the project's `overrides.vite: "^7"` (scaffold-time boilerplate from the first commit, no rationale on record) starved it, so the island SSR build failed with `rollupOptions.input should not be an html file when building for SSR`. `npm view astro@7.0.6 dependencies.vite` named the mismatch in one command.
+- **Vite 8 ships Rolldown, which transforms with oxc, not esbuild.** The `esbuild.jsx: "automatic"` shorthand in `vitest.config.ts` was silently ignored, so the three React `.test.tsx` files failed to parse (`Unexpected JSX expression`). `@vitejs/plugin-react` applies the React JSX transform independent of the bundler and fixed all three.
+- **The two failures were sequential, not parallel.** Fixing the vite override got the build green but exposed the vitest parse failure underneath; only running the full `validate` (not just `build`) surfaced it. The build-only probe would have declared victory early.
+
+#### Key changes
+
+- **`package.json`** — `astro` `^6.4.8` -> `^7.0.6`; `overrides.vite` `^7` -> `^8`; added `@vitejs/plugin-react` dev dep.
+- **`vitest.config.ts`** — replaced the ignored `esbuild.jsx` shorthand with `plugins: [react()]` from `@vitejs/plugin-react`; comment records the vite-8/Rolldown cause.
+
+#### Verification
+
+- **Reproduced locally before fixing.** Checked out the astro-7 branch, `npm ci`, `npm run build` -> the real `rollupOptions.input` error (CI logs only showed the stack). `astro.config.mjs` was clean, so the cause was the dep chain, not project config.
+- **Full `npm run validate` exit 0** on a clean `chore/astro-7-upgrade` branch off main: prettier pass, `astro check` 0 errors, **222 tests pass** (13 files — the 3 JSX files recovered from 180), build **462 pages**, link check 462 HTML files.
+- **Bundle within budget:** 84.9 KB gzipped total JS (budget 200 KB); largest chunk is the React client runtime. No astro-7 / Rolldown bloat.
+- **`main` deploy green** on astro 7 first try.
+
+#### Key decisions (this session)
+
+- **Merge `@astrojs/react` 6 (#1354) ahead of astro 7.** Its peer-deps are only on react, and it is green on astro 6, so it is not interlocked with the astro major and lands safely first. Confirmed via `npm view @astrojs/react@6.0.1 peerDependencies`.
+- **Land astro 7 as a dedicated PR (#1368), not a push onto Dependabot's branch.** The migration needs source changes beyond the version bump; a fresh `chore/astro-7-upgrade` branch keeps the framing honest and avoids Dependabot force-pushing over the fix. `git.md` close-and-resubmit. #1358 closed as superseded.
+- **Hold nothing else.** All 7 non-astro bumps were verified by the gate (CI green), not the changelog, and merged. The lockfile-conflict cascade played out as expected (one race-loser, rebased).
+- **No ADR.** A dependency upgrade with migration mechanics (override bump, test-config plugin) documented fully in the #1368 PR; no weighed architectural alternative or moved content.
+
+#### Process patterns observed this session
+
+- **`npm view <pkg>@<version> dependencies` root-causes a failing major in one call.** The astro/vite mismatch was invisible in the CI log's viteBuild stack but obvious from the declared dep range.
+- **Run the full gate, not the fast subset, on a framework major.** Build-green is necessary, not sufficient — the vitest Rolldown break only appeared under `validate`.
+- **Verify the build output, not just the exit code, on a framework major.** Bundle-size + page-count checks confirm no silent bloat when the bundler changes (Rollup -> Rolldown); Lighthouse was path-skipped (ADR-039), so the manual bundle check is the residual guard.
+
+#### Follow-ups for next session (S205)
+
+- **#1332 Touit 32/50 GT re-read** (task, P2, v0.8.0) — top priority; unblocked by #1359 + #1365.
+- **#1366 deploy retry** (bug, P2, Expedite) — retry the `deploy-pages` step so a transient GitHub Pages failure stops leaving `main` red.
+- **Submodule** `docs/solid-ai-templates` is 2 commits behind upstream — bump in its own PR (carried).
+- (carried) Scaffolder text sync; re-emit drift eye-read.md + wire `scaffold_anchor_helpers --check` into CI.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24** (unchanged).
+- **76 ADRs** (unchanged — dependency upgrade, no new decision record).
+- **Stack:** now on **Astro 7 + Vite 8 + @astrojs/react 6**; vitest uses `@vitejs/plugin-react`. CI has the S202 always-run `format` job; `main` deploy healthy (green).
+- Submodule `docs/solid-ai-templates` at **`cb6e26c`** — unchanged, still 2 commits behind upstream (follow-up).
+- **Open PRs at wrap-up: 0** — the full Dependabot queue is cleared.
+- **#1366 open** (deploy retry); **#1358 closed** (superseded by #1368).
+- `mtfdigitizer` pytest: **451 pass**; front-end **222 tests pass**.
+- **Upstream contributions filed still open:** 1 (S198 #704); one more filed this day (braboj/solid-ai-templates#720, S202).
