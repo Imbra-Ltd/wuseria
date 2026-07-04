@@ -223,11 +223,11 @@ def test_readings_for_aperture_handles_dict_and_single(multi_aperture_chart):
 #     Spike attempt 1 (#1347, global gap-based band split) regressed
 #     exactly these (stopped freq20S 0.005 -> 0.118; freq20M/freq40M
 #     dropped to 0/11); this guard is what catches that class.
-#   * `test_touit_12mm_max_panel_m_curves_recovered` -- xfail(strict)
-#     on the broken max-panel cells (dashed M curves dropped, 20 lp/mm
-#     mis-filed under freq40). The interior-anchoring fix flips this to
-#     xpass; the strict marker then fails the run -- the signal to drop
-#     the marker and keep the body as a hard assertion.
+#   * `test_touit_12mm_max_panel_m_curves_recovered` -- a hard assertion
+#     that the dashed 10M/20M curves are recovered (paired >= 6 at low
+#     median). Was xfail(strict) while the M curves were floor-cut; the
+#     split-mask sister presence fix (#1347, `dashed_split_presence`)
+#     recovered them, so the marker was dropped and the body kept.
 # ---------------------------------------------------------------------------
 
 _TOUIT_12_SLUG = "zeiss-touit-12mm-f2-8"
@@ -312,9 +312,12 @@ def test_touit_12mm_stopped_panel_stays_calibrated(touit_12mm_deltas) -> None:
             fd.median_abs_delta is not None and fd.median_abs_delta <= max_med
         ), f"stopped/{field} med |d| {fd.median_abs_delta}"
 
-    # stopped panel: the sparse dashed M curves must still pair some
-    # cells and read low where they do (attempt 1 dropped these to 0/11).
-    for field, min_paired in (("freq10M", 3), ("freq20M", 4), ("freq40M", 8)):
+    # stopped panel: the dashed M curves. Attempt 1 dropped these to
+    # 0/11; the #1347 split-mask sister presence recovered them to
+    # 10/11/11 (freq10M/20M/40M) at med <= 0.005, so the floors are
+    # bumped from the S200 3/4/8 to lock that gain against a silent
+    # regression.
+    for field, min_paired in (("freq10M", 8), ("freq20M", 8), ("freq40M", 8)):
         fd = _cell(d, "stopped", field)
         assert fd.paired_count >= min_paired, f"stopped/{field} paired {fd.paired_count}"
         assert (
@@ -322,28 +325,31 @@ def test_touit_12mm_stopped_panel_stays_calibrated(touit_12mm_deltas) -> None:
         ), f"stopped/{field} med |d| {fd.median_abs_delta}"
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="#1347: the freq mis-assignment is fixed (locked by the guard "
-    "test), but the dashed 10M/20M curves on the 12mm max panel are still "
-    "lost to the coverage floor -- they merge into their S sibling in the "
-    "interior and only fragment out sub-floor at the corner, so band "
-    "assignment cannot recover them. Recovering them needs an M-detection "
-    "/ sister-fallback change. When that lands this xpasses; drop the "
-    "marker and keep the body as a hard assertion.",
-)
 def test_touit_12mm_max_panel_m_curves_recovered(touit_12mm_deltas) -> None:
-    """Remaining target: the 12mm max panel recovers its dashed M curves.
+    """The 12mm max panel recovers its dashed 10M / 20M curves (#1347).
 
-    The interior-anchored fix (#1347) corrected the frequency
-    assignment -- freq20S/freq40S now read their own curve, locked by
-    `test_touit_12mm_stopped_panel_stays_calibrated`. But the dashed 10M
-    and 20M curves are still floor-cut: 10M merges into 10S across the
-    interior and both only fragment out sub-floor near the corner. This
-    pins the recovery target against the #1348 GT: both paired >= 6
-    (today freq10M 0/11, freq20M 3/11 partial from the corner fragment).
+    The dashed M curves merge into their solid S sibling across the
+    interior and drop below the coverage floor at the corner, producing
+    no track of their own (freq10M was 0/11, freq20M 3/11). Split-mask
+    sister presence (`dashed_split_presence`) gives the M<-S fallback the
+    signal it needs to recover each M curve from its solid sibling where
+    they coincide (the interior), while the diverging corner stays
+    honest-None because the sibling's own sample is None there.
+
+    Pins paired-count (recovery: the curve is present at >= 6 of 11
+    positions) AND median |d| (accuracy: the interior fills track the GT,
+    not a wrong lower-freq copy). Calibrated post-fix: freq10M 9/11 at
+    med 0.006, freq20M 10/11 at med 0.018 -- the 20M corner fragments
+    lift p95 to ~0.10 but not the median. If a legitimate extractor
+    change moves these, re-run `py -m mtfdigitizer.calibrate` and update
+    to the new floor; do not loosen to paper over a wrong-fill regression
+    (a garbage sister-fill pushes the median past 0.15, not nudges it).
     """
     d = touit_12mm_deltas
 
-    assert _cell(d, "max", "freq10M").paired_count >= 6
-    assert _cell(d, "max", "freq20M").paired_count >= 6
+    for field in ("freq10M", "freq20M"):
+        fd = _cell(d, "max", field)
+        assert fd.paired_count >= 6, f"max/{field} paired {fd.paired_count}"
+        assert (
+            fd.median_abs_delta is not None and fd.median_abs_delta <= 0.03
+        ), f"max/{field} med |d| {fd.median_abs_delta}"
