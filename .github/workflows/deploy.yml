@@ -46,8 +46,24 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      # Report whichever attempt published the deployment (ADR-077)
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment-retry.outputs.page_url }}
     steps:
-      # Deploy the uploaded artifact to GitHub Pages
+      # Deploy the uploaded artifact to GitHub Pages.
+      # deploy-pages intermittently fails with a transient backend error
+      # ("Deployment failed, try again later") even on a good build, so the
+      # first attempt tolerates failure and a single retry follows (ADR-077).
       - id: deployment
+        uses: actions/deploy-pages@v5
+        continue-on-error: true
+
+      # Back off before retrying to let the Pages backend recover
+      - if: steps.deployment.outcome == 'failure'
+        run: sleep 30
+
+      # Single retry — a manual re-run reliably succeeds, so one suffices.
+      # Not continue-on-error: a double failure is a real backend problem
+      # and MUST fail the job loud.
+      - id: deployment-retry
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v5
