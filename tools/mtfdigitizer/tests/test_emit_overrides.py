@@ -18,12 +18,13 @@ from mtfdigitizer.scripts._emit_overrides import (
 )
 
 
-# Shape mirrors the af-35 entry as it lives in mtf-readings.ts today
-# (lines 13510–13601). One override at position 12.6 on freq 30; every
-# other cell is plain extractor output.
+# Shape mirrors the af-35 entry as it lives in mtf-readings.ts today.
+# One override at position 12.6 on freq 30; every other cell is plain
+# extractor output. The `source:` field was removed from MtfData in
+# #1342 (the lens page reads officialUrl at render time), so this
+# fixture matches the current entry shape.
 AF35_ENTRY = textwrap.dedent('''\
       "ttartisan-af-35mm-f1-8": {
-        source: "https://www.ttartisan.com/?af-lens/AF-35-II.html",
         mtfType: "computed",
         charts: [
           {
