@@ -12091,3 +12091,83 @@ Not re-measured this session. The extractor spike was reverted (no extractor cha
 - Eye-read GT policy relaxed (extractor fills, user confirms) — `feedback_agent_no_gt_eye_read` memory updated.
 - `mtfdigitizer` pytest: **449 pass** (this session's run).
 - **Upstream contributions filed still open:** 1 (S198 #704 — formatter-vs-generator escalation against `base/workflow/quality-gates.md`).
+
+---
+
+### Session 201 — Interior-anchored band assignment fixes the Touit 12mm max mis-assign
+
+Date: 2026-07-04 · Tool: Claude Code (Opus 4.8, 1M context)
+
+Theme: land the #1347 extractor fix teed up by S200 — promote the 12mm to a gated calibrate assertion, then build the interior-anchored track assignment against it. Executes the S200 follow-up "#1347 interior-anchoring separator fix".
+
+#### PRs
+
+- **#1350** — test(mtfdigitizer): gate the Touit 12mm calibration panel. Created + merged. Squashed at `e9ec588`. +131 LOC, test-only: runs the real extractor on the real 12mm chart (both panels) via `_calibrate_chart`, splits the signal into a hard regression guard (stopped panel + max freq10S) and an `xfail(strict)` target (the broken max cells). "Promote a resistant case to a gated tier" (`quality-gates.md`).
+- **#1359** — fix(mtfdigitizer): interior-anchored band assignment for Touit 12mm max. Created + merged. Squashed at `56b851c`. +224 / −30 LOC across `ridge.py`, `dispatch.py`, `pipeline.py`, `profiles/types.py`, `profiles/declared.py`, `test_calibrate.py`.
+
+#### Issues opened / closed
+
+- **#1344** — closed (feat, pre-existing, open at session start). The 0.01-grid Touit read-helper scaffolder change fully collided (9/9 files) with S200's #1348 Touit regen; the red CI was pure staleness, not a defect. Closed and folded into #1332 with a pointer comment rather than merged stale.
+- **#1347** — moved Backlog→v0.8.0 (it blocks the digitizer epic #932). Stays open: the frequency mis-assignment is fixed, but the dashed 10M/20M curves are still dropped (the literal title), tracked by the `xfail` target test.
+- No issues auto-closed (both PRs used `Refs #1347`, not `Closes`).
+
+#### Key technical findings
+
+- **The 12mm max bug is the equal-split, not just selection.** Stage probe: the f/2.8 corner crash fragments the dashed M curves below the coverage floor (0.10 × plot_width), so only **5 of 6** tracks survive `_select_top_n_tracks`. The equal-size band split then collapses to 1/1/3 and, because the corner crash reorders tracks by _global_ mean_y (t1/t2 swap), files the real 20S curve under freq40. When all 6 survive, the equal split (2/2/2) is already correct.
+- **The true band population differs per panel, anchored by field-0 physics.** At the optical centre S and M coincide (B4), so a frequency's track count = how many of its curves survived. The 12mm max is **1/2/2** (10S / 20S,20M / 40S,40M); the flat 32mm/50mm stopped panels are **1/1/3** (10S / 20S / 40S,40M,extra). Neither a fixed equal split nor a min-variance k-means is correct for both — the crux that sank attempt-1 and the unconditional-interior variant.
+- **Optimal 1-D k-means (Jenks) beats "N-1 largest gaps."** Gap-splitting mis-groups when an S/M pair spreads wider than the frequency spacing (flat panels); the min-variance objective keeps tight pairs together. k-means gives 1/2/2 on the 12mm max and 2/2/2 on the 12mm stopped — but forces 1/2/2 onto the 1/1/3 stopped panels, so it can't be applied unconditionally.
+- **The order-swap signal isolates the fix to exactly one panel.** Interior anchoring fires only when a curve was lost (`kept < 2N`) AND the corner reordered the survivors (interior y-order ≠ global mean-y order). Probed across all 6 Touit panels: only the 12mm max swaps. The other five stay byte-identical to baseline.
+- **Latent `_apply_center_symmetry` KeyError.** It read the lower-frequency `freq{lo}S/M` anchors without a presence check; crashes once a band legitimately produces a single curve (B2 contract), which the fix makes more common. Guarded with `.get`.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — `_interior_mean_y`, `_interior_order_differs`, `_segment_sse`, `_optimal_1d_kmeans_bounds` (DP), `_assign_interior_anchored_bands`; new `interior_anchored` param on `ridge_tracks_to_fields_multifreq` with the narrow `kept < 2N ∧ order-swap` gate.
+- **`tools/mtfdigitizer/profiles/types.py` + `declared.py`** — opt-in `interior_anchored_bands` flag on `MtfProfile`, set only on `ZEISS_TOUIT_BW_3FREQ`; threaded through `dispatch.py:782`. Viltrox (2-freq) untouched.
+- **`tools/mtfdigitizer/pipeline/pipeline.py`** — `_apply_center_symmetry` reads lo-freq anchors via `.get`.
+- **`tools/mtfdigitizer/tests/test_calibrate.py`** — #1350 gate + #1359 reconciliation: the now-fixed max freq20S/freq40S/freq40M cells moved into the hard guard; the `xfail(strict)` target narrowed to the still-unrecovered 10M/20M.
+
+#### Verification
+
+- **`py -m mtfdigitizer.calibrate` before/after**: only the 12mm max panel changed — freq20S med |d| 0.151→**0.005** (paired 2→9), freq40S 0.157→**0.003**, freq40M 0.031→**0.004**, freq20M 0/11→3/11. The other five Touit panels and every non-Touit chart are byte-identical. Confirmed by stashing the diff and diffing the baseline run.
+- **Full `mtfdigitizer` pytest: 450 pass, 1 xfail** (the M-recovery target) — no Viltrox/TTartisan/Sigma regression from the shared `ridge_tracks_to_fields_multifreq` + `_apply_center_symmetry` changes.
+- Both PRs: CI all green (CodeQL, gate, pytest, gitleaks, links; build/lighthouse skipped — tools-only). Deleted branches, synced main.
+
+#### Key decisions (this session)
+
+- **Close #1344, don't merge it stale.** It collided 9/9 with S200 and its only keeper (the 0.01-grid scaffolder code) belongs in the #1332 eye-read pass, which regenerates those files anyway. Re-cutting it now would regenerate the artifacts twice. `git.md` close-and-resubmit.
+- **Ship the gate (#1350) before the fix (#1359).** Middle-scope split: the promotion is a clean, reviewable, zero-risk unit that puts the regression target in place; the fix then lands against a real metric and flips the xfail. Merged #1350 first so #1359 was not a stacked branch.
+- **Gate interior anchoring on `kept < 2N ∧ order-swap`, per-profile opt-in.** Not a global auto-detect: the flag limits blast radius to the Touit family and the order-swap condition is a principled correctness signal (equal-split's global sort is only unreliable when the corner reorders tracks). `quality.md` "per-config opt-in over global auto-detect." No ADR — an implementation detail fully documented in code + the #1359 PR/issue, no new directory or moved content.
+- **Do NOT regenerate the 12mm eye-read.md.** The scaffolder flips a bare cell (`1.4/40M` 0.80→absent), but bare cells ARE the maintainer-verified GT (ADR-048), so regenerating would desync eye-read.md from `charts.py`'s `_ZEISS_TOUIT_12_GT` and silently drop a GT value — a maintainer call per `feedback_agent_no_gt_eye_read`, deferred to #1332. No CI gate covers it; Touit is not emitted to the site.
+- **#1347 stays open for M-recovery.** The mis-assignment (the reported symptom) is fixed; the dashed 10M/20M drop (the literal title) is a separate M-detection problem. Left the split-vs-keep call to the owner.
+
+#### Process patterns observed this session
+
+- **Promote-then-fix converts a silent failure into a measured target.** The S200 spike reverted blind; this session the gate landed first (#1350) so attempt-2 had a pass/fail signal AND a delta metric the whole way. The xfail-strict marker doubles as the "you're done" bell.
+- **Probe the population before choosing the method.** Two throwaway probes (kept-count per panel, then interior-y + k-means bounds per panel) turned "k-means regresses the stopped panels" from a mystery into "the true band population is 1/1/3, not 1/2/2" — which named the exact gate condition. Probes deleted before commit.
+- **Verify every call site of a shared path.** The fix touches `ridge_tracks_to_fields_multifreq` (shared with Viltrox via the 2-freq wrapper) and `_apply_center_symmetry` (every chart). The full-suite + full-calibrate before/after — not just the 12mm — is what caught the center-symmetry KeyError and proved the five other Touit panels unchanged.
+- **A derived-artifact regen can be GT-entangled.** "Regenerate derived artifacts in the same PR" does not apply when the artifact doubles as the ground-truth source — reverted the eye-read.md regen rather than desync it.
+
+#### Calibration impact (S201)
+
+Re-measured post-fix: **1153 paired, median |d| 0.0052, p95 |d| 0.0416, max |d| 0.1791, in-band 96.6%**. Not directly comparable to S199's 1157/0.0043/97.0% — the paired count and aggregate shifted with the S200 Touit 14mm geometry + 12mm GT re-read and this session's 12mm-max reassignment (more max-panel cells now pair correctly at the steep corner, which legitimately widens the tail). 32/50 GT still stale-pending (#1332).
+
+#### Follow-ups for next session (S202)
+
+- **#1347 M-curve recovery** — the dashed 10M/20M on the 12mm max are still floor-cut (merge into S in the interior, fragment sub-floor at the corner). Needs an M-detection / sister-fallback change (wire `(SPLIT_BY_DASH, RIDGE_TRACKING)` into `_hue_masks_for_presence`), not band assignment. Tracked by the xfail target; decide keep-#1347 vs split into a dedicated issue.
+- **32/50 Touit GT re-read** (#1332) — now unblocked by the #1359 fix (Option B). Fold in the closed-#1344 0.01-grid scaffolder change before eye-reading.
+- **Scaffolder text** (carried from S200) — update the eye-read.md header + `scaffold_anchor_helpers.py` docstring "the agent does NOT propose values" wording to match the relaxed policy.
+- **Submodule** `docs/solid-ai-templates` is **2 commits behind** origin/main — bump the pointer in its own PR.
+- (carried) Re-emit drift-state eye-read.md + wire `scaffold_anchor_helpers --check` into CI as a staleness gate.
+- (carried) Stale production log refresh (samyang-10mm, samyang-12mm fisheye); audit other downstream `source`/`url` duplicates of `lenses.ts.officialUrl`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24** (unchanged).
+- **5 Tier 1 anchors**; the Zeiss Touit 12mm max panel now extracts the 10/20/40 frequencies to their correct fields (freq20S/40S corrected).
+- **75 ADRs** (unchanged — the fix applies existing quality patterns, no new decision record).
+- Submodule `docs/solid-ai-templates` at **`cb6e26c`** — unchanged this session, now 2 commits behind upstream (follow-up).
+- **Open PRs at wrap-up: 0.**
+- **#1347 open** (bug, P2, v0.8.0) — mis-assignment fixed; M-curve recovery remaining.
+- `mtfdigitizer` pytest: **450 pass, 1 xfail** (this session's run).
+- **Upstream contributions filed still open:** 1 (S198 #704 — formatter-vs-generator escalation against `base/workflow/quality-gates.md`).
