@@ -552,8 +552,13 @@ def _apply_center_symmetry(
         if s_val is None and m_val is None:
             freq_str = s_field[4:-1]
             lo_freq = _closest_lower(int(freq_str)) if freq_str.isdigit() else None
-            lo_s = out[f"freq{lo_freq}S"][0] if lo_freq is not None else None
-            lo_m = out[f"freq{lo_freq}M"][0] if lo_freq is not None else None
+            # The lower-frequency S/M fields may be absent when a band
+            # produced a single curve (B2 contract) -- read via .get so a
+            # missing anchor falls through the chain instead of raising.
+            lo_s_vals = out.get(f"freq{lo_freq}S") if lo_freq is not None else None
+            lo_m_vals = out.get(f"freq{lo_freq}M") if lo_freq is not None else None
+            lo_s = lo_s_vals[0] if lo_s_vals is not None else None
+            lo_m = lo_m_vals[0] if lo_m_vals is not None else None
             # Fallback chain per direction: same-direction lo -> cross-
             # direction lo (S=M at the axis by B4) -> 1.0 physical
             # constant. The ordering is order-independent across freq

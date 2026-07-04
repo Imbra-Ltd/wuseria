@@ -410,6 +410,12 @@ ZEISS_TOUIT_BW_3FREQ: MtfProfile = MtfProfile(
     # Same hazard as Viltrox: the neutral hue range matches text and
     # gridlines on every chart, so it would poison auto-suggest.
     auto_suggestable=False,
+    # #1347: the f/2.8 corner crash on these panels drops sparse dashed
+    # M curves below the coverage floor, and the global-mean-y equal
+    # split then mis-files the middle frequency under the highest.
+    # Cluster the surviving tracks by their interior y-position instead,
+    # where the frequency bands still separate cleanly.
+    interior_anchored_bands=True,
     notes=(
         "Zeiss Touit press kit: B&W, solid=S dashed=T, 3 frequencies "
         "(10/20/40 lp/mm) separated by y-band; dual-aperture stacked "

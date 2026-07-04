@@ -1830,11 +1830,137 @@ def ridge_tracks_for_hue_freq_split(
     return out
 
 
+# #1347: fraction of plot width (from the left) treated as the "interior"
+# field region when `interior_anchored` band assignment is on. On the
+# multifreq-press-kit panels the wide-aperture curves crash and converge
+# past the APS-C image-circle corner (field > ~10mm of a 14mm axis); the
+# left 60% (field 0..~8.4mm) is where the 2N curves still separate into
+# clean frequency bands, so a track's mean y THERE is a robust band
+# anchor even when its global mean y is pulled down by the corner dive.
+_INTERIOR_FIELD_FRACTION: float = 0.6
+
+
+def _interior_mean_y(track: Track, plot_box: PlotBox) -> float:
+    """Mean y of a track over the interior (left) field region.
+
+    Falls back to the track's global `mean_y` when the track has no
+    points in the interior (e.g. a fragment that exists only near the
+    corner) so every track still gets a comparable band anchor.
+    """
+    x_cut = plot_box.x_left + _INTERIOR_FIELD_FRACTION * plot_box.width
+    interior_ys = [y for x, y in track.points if x <= x_cut]
+    if not interior_ys:
+        return track.mean_y
+    return float(np.mean(interior_ys))
+
+
+def _interior_order_differs(kept: list[Track], plot_box: PlotBox) -> bool:
+    """True when ordering the kept tracks by interior y differs from
+    ordering them by global mean y.
+
+    This is the signature of a curve crossing another near the corner:
+    a track sitting above a sibling in the interior can dive past it as
+    the wide-aperture curves crash toward the APS-C corner, so its global
+    mean y overtakes the sibling's while its interior y does not. When
+    the two orderings agree, the corner did not reorder the tracks and
+    the global-mean-y equal split is reliable; only when they differ is
+    the middle frequency at risk of being mis-filed, so only then is
+    interior anchoring worth its cost -- and applying it unconditionally
+    regresses flat panels whose true band populations are unbalanced
+    (32mm/50mm stopped are 1/1/3, which k-means wrongly rebalances to
+    1/2/2). See #1347.
+    """
+    by_interior = sorted(kept, key=lambda t: _interior_mean_y(t, plot_box))
+    by_global = sorted(kept, key=lambda t: t.mean_y)
+    return by_interior != by_global
+
+
+def _segment_sse(values: list[float], lo: int, hi: int) -> float:
+    """Sum of squared deviations of `values[lo:hi]` about their mean."""
+    segment = values[lo:hi]
+    mean = sum(segment) / len(segment)
+    return sum((v - mean) ** 2 for v in segment)
+
+
+def _optimal_1d_kmeans_bounds(values: list[float], k: int) -> list[tuple[int, int]]:
+    """Partition ascending `values` into `k` contiguous groups that
+    minimize total within-group SSE (optimal 1-D k-means / Jenks
+    natural breaks via dynamic programming).
+
+    Returns `k` `(lo, hi)` index slices covering `values` in order.
+    Requires `1 <= k <= len(values)`; each returned group is non-empty.
+
+    Unlike an "N-1 largest gaps" split, the min-variance objective does
+    not break when the largest gap falls *within* a band -- on flat or
+    converged panels an S/M pair can spread wider than the frequency
+    spacing, and gap-splitting then mis-groups them (the reason spike
+    attempt 1 for #1347 was rejected). k-means keeps the tight pair
+    together.
+    """
+    n = len(values)
+    inf = float("inf")
+    # dp[j][i] = min total SSE partitioning the first i values into j groups.
+    dp = [[inf] * (n + 1) for _ in range(k + 1)]
+    split_at = [[0] * (n + 1) for _ in range(k + 1)]
+    dp[0][0] = 0.0
+    for j in range(1, k + 1):
+        for i in range(j, n + 1):
+            for p in range(j - 1, i):
+                cost = dp[j - 1][p] + _segment_sse(values, p, i)
+                if cost < dp[j][i]:
+                    dp[j][i] = cost
+                    split_at[j][i] = p
+    bounds: list[tuple[int, int]] = []
+    i = n
+    for j in range(k, 0, -1):
+        p = split_at[j][i]
+        bounds.append((p, i))
+        i = p
+    bounds.reverse()
+    return bounds
+
+
+def _assign_interior_anchored_bands(
+    kept: list[Track],
+    frequencies_lpmm: tuple[int, ...],
+    plot_box: PlotBox,
+    mask_shape: tuple[int, int],
+) -> dict[str, np.ndarray]:
+    """Assign kept tracks to (frequency, S/M) fields by interior y-band.
+
+    Sorts tracks by interior mean y, clusters them into
+    `len(frequencies_lpmm)` bands via optimal 1-D k-means, maps the
+    bands top->bottom onto the (upper->lower) frequency order, and
+    within each band takes S (upper) and M (lower). When a band caught
+    more than the two real curves (a halo or corner fragment), the two
+    highest-coverage tracks win. A band with one track reports S only;
+    the sampler treats the absent field as missing data (B2 contract).
+    """
+    from .dispatch import curve_field  # imported here to avoid module cycle
+
+    n_freqs = len(frequencies_lpmm)
+    ordered = sorted(kept, key=lambda t: _interior_mean_y(t, plot_box))
+    interior_ys = [_interior_mean_y(t, plot_box) for t in ordered]
+    bounds = _optimal_1d_kmeans_bounds(interior_ys, n_freqs)
+
+    out: dict[str, np.ndarray] = {}
+    for (lo, hi), freq in zip(bounds, frequencies_lpmm):
+        band = ordered[lo:hi]
+        if len(band) > 2:
+            band = sorted(band, key=lambda t: t.coverage, reverse=True)[:2]
+        by_y = sorted(band, key=lambda t: _interior_mean_y(t, plot_box))
+        out[curve_field(freq, "S")] = _rasterize(by_y[0], mask_shape)
+        if len(by_y) > 1:
+            out[curve_field(freq, "M")] = _rasterize(by_y[1], mask_shape)
+    return out
+
+
 def ridge_tracks_to_fields_multifreq(
     mask: np.ndarray,
     plot_box: PlotBox,
     frequencies_lpmm: tuple[int, ...],
     dashed_is_sagittal: bool,
+    interior_anchored: bool = False,
 ) -> dict[str, np.ndarray]:
     """Ridge-track a single-hue mask and return per-field skeleton masks
     for an N-frequency chart.
@@ -1849,6 +1975,16 @@ def ridge_tracks_to_fields_multifreq(
     `frequencies_lpmm` MUST be passed in upper→lower screen order,
     which by convention is also low→high lp/mm (a 3-freq Zeiss
     Touit chart prints 10 on top, 20 in the middle, 40 at the bottom).
+
+    When `interior_anchored` is set (multifreq-press-kit profiles,
+    #1347), the kept tracks are assigned to frequency bands by
+    clustering their INTERIOR y-position rather than by the
+    global-mean-y equal-size split. The equal split collapses to 1/1/3
+    when a sparse dashed curve is lost to the coverage floor and then
+    mis-files the middle frequency under the highest; interior
+    clustering keeps the assignment correct because the frequency
+    bands still separate cleanly in the interior even after the curves
+    crash and converge near the corner.
     """
     from .dispatch import curve_field  # imported here to avoid module cycle
 
@@ -1875,6 +2011,23 @@ def ridge_tracks_to_fields_multifreq(
     # affects only the *Sigma/7Artisans* solid-vs-dashed discrimination,
     # which doesn't apply to Viltrox where all four curves are dashed.
     del dashed_is_sagittal  # unused for ridge tracking
+
+    # Interior-anchored band assignment (#1347). Fires only for the
+    # narrow case it fixes: a curve was lost to the coverage floor
+    # (len(kept) < 2N, so the equal split below would collapse the bands)
+    # AND the corner crash reordered the survivors. Needs at least
+    # n_freqs tracks to fill the bands. When the survivors keep their
+    # order, the equal split is reliable and k-means would wrongly force
+    # balanced bands onto an unbalanced structure -- the flat-panel
+    # regression `_interior_order_differs` guards against.
+    if (
+        interior_anchored
+        and n_freqs <= len(kept) < expected_tracks
+        and _interior_order_differs(kept, plot_box)
+    ):
+        return _assign_interior_anchored_bands(
+            kept, frequencies_lpmm, plot_box, mask.shape
+        )
 
     kept_sorted = sorted(kept, key=lambda t: t.mean_y)
 
