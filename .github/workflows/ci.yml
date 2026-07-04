@@ -47,6 +47,24 @@ jobs:
               - 'tools/**'
               - '.github/workflows/**'
 
+  # Prettier checks ALL tracked files, so a format violation in any
+  # Prettier-covered path (docs/**, root Markdown) must fail the PR — not
+  # only the deploy. The `build` job below is path-filtered and skips
+  # docs-only PRs, so this always-run job mirrors the deploy's format step
+  # without an enumeration-fragile path filter. See ADR-076, #1362.
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run format
+
   build:
     runs-on: ubuntu-latest
     needs: changes
@@ -111,12 +129,12 @@ jobs:
 
   gate:
     runs-on: ubuntu-latest
-    needs: [build, lighthouse, pytest]
+    needs: [format, build, lighthouse, pytest]
     if: always()
     steps:
       - name: Check results
         run: |
-          if [[ "${{ needs.build.result }}" == "failure" || "${{ needs.lighthouse.result }}" == "failure" || "${{ needs.pytest.result }}" == "failure" ]]; then
+          if [[ "${{ needs.format.result }}" == "failure" || "${{ needs.build.result }}" == "failure" || "${{ needs.lighthouse.result }}" == "failure" || "${{ needs.pytest.result }}" == "failure" ]]; then
             echo "CI failed"
             exit 1
           fi
