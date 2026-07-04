@@ -12240,3 +12240,80 @@ Theme: CI gate hardening. Surfaced by the section 6.1 startup deploy-health chec
 - **Open PRs at wrap-up: 8** — all Dependabot (#1351–#1358), untouched.
 - **#1347 open** (bug, P2, v0.8.0) — mis-assignment fixed in S201; M-curve recovery remaining.
 - **Upstream contributions filed still open:** 1 (S198 #704 — formatter-vs-generator escalation against `base/workflow/quality-gates.md`); a second candidate evaluated this session (see below).
+
+---
+
+### Session 203 — Touit dashed M-curve recovery via split-mask sister presence
+
+Date: 2026-07-04 · Tool: Claude Code (Opus 4.8, 1M context)
+
+Theme: land the #1347 remainder carried from S201 — recover the dashed `10M`/`20M` curves on the Touit 12mm max panel that the S201 interior-anchoring fix left floor-cut. Executes the S202 handoff's named next priority.
+
+#### PRs
+
+- **#1365** — fix(mtfdigitizer): recover Touit dashed M curves via split-mask sister presence. Created + merged. Squashed at `ccdcd8c`. +103 / −30 LOC across `pipeline.py`, `profiles/types.py`, `profiles/declared.py`, `test_calibrate.py`. Closes #1347.
+
+#### Issues opened / closed
+
+- **#1347** — closed (bug, P2, v0.8.0). The dashed `10M`/`20M` recovery (the literal title) is done; auto-closed via `Closes #1347`.
+- **#1366** — opened (bug, P2, Expedite). `actions/deploy-pages@v5` returned a transient "Deployment failed, try again later" twice this day (deploys of #1361 and #1365), each cleared by one re-run; the deploy step has no retry. Scoped fix: retry the `deploy-pages` step only, never the deterministic `build`.
+
+#### Key technical findings
+
+- **The dashed M curves are never separately readable on the 12mm max panel.** `10M` merges into `10S` across the interior (coincident ink) and both only fragment sub-floor at the corner, so band assignment produces no `10M` track at all (`10M` 0/11, `20M` 3/11 from a corner fragment). Recovery cannot come from detection — it must come from the `M<-S` sister fallback.
+- **The sister fallback got no presence signal for the Touit dialect.** `_hue_masks_for_presence` had branches for `GEODESIC_DP` (color-per-frequency) and the `HUE_IS_CURVE` dialects, but `(SPLIT_BY_DASH, RIDGE_TRACKING)` fell through to "no presence info", so both fallback triggers were dead. The Touit is B&W — one neutral hue, curves separated only by y-band + solid/dashed — so the color-keyed `GEODESIC_DP` branch could not be reused.
+- **Feasibility was confirmed from the GT before any code.** On the 12mm max GT, `|10S-10M|` <= 0.02 at positions 0-7 (8 interior cells) and `|20S-20M|` <= 0.03 at positions 0-6 (7 cells); the corner diverges up to 0.20. So interior sister-fill reaches paired >= 6 correctly while the corner must stay honest-None — a fill there would be wrong by 0.20 ("honest absence beats a recovered wrong value").
+- **A fully floor-cut field is invisible to the sister fallback.** `_apply_sister_fallback` only visits fields already in `samples_per_field`, which is built from `skeletons`. `10M` had no skeleton, so presence alone did nothing until an all-None row was seeded for it.
+- **The coincident-top anchor mis-fired once `10M` became present.** `_apply_coincident_top_anchor` (#1269) overwrote the good `20M` sister-fill (0.90) with the lower frequency `10M` (0.96): with both sister-filled there were no clean cells to veto the pair, so it fired fail-open. The Touit's frequency bands are never coincident at the top (10/20/40 sit ~0.06-0.14 MTF apart on every panel), so the anchor's merged-stroke assumption never holds for it.
+
+#### Key changes
+
+- **`pipeline.py` `_hue_masks_for_presence`** — new branch gated on `profile.dashed_split_presence`: split the single neutral mask into solid (S) / dashed (M) sub-skeletons and broadcast each across every frequency (coarse per-column presence; the fill value still comes from the correctly band-assigned per-field sample).
+- **`pipeline.py` `extract_chart`** — seed an all-None row for any field with a presence mask but no skeleton (scoped to `dashed_split_presence`), so a floor-cut curve is visible to the fallback; skip `_apply_coincident_top_anchor` for `dashed_split_presence` profiles.
+- **`profiles/types.py` + `declared.py`** — new opt-in `dashed_split_presence` flag, set only on `ZEISS_TOUIT_BW_3FREQ`. Viltrox (`SPLIT_BY_DASH` + `RIDGE_TRACKING`, flag default False) stays byte-identical.
+- **`tests/test_calibrate.py`** — dropped the `xfail(strict)` marker on `test_touit_12mm_max_panel_m_curves_recovered`, kept + strengthened the body (paired >= 6 AND median <= 0.03); bumped the guard's stopped-M floors 3/4/8 -> 8/8/8 to lock the bonus gain.
+
+#### Verification
+
+- **Probe-driven on the real raster.** A throwaway `probe_touit_m.py` dumped per-position `10M`/`20M`/`10S`/`20S` samples vs GT before and after each change; the production `calibrate` harness (per-cell `FieldDelta`) was the authoritative signal. Probe deleted before commit.
+- **12mm max GT (#1348):** `freq10M` 0/11 -> **9/11** med 0.006, `freq20M` 3/11 -> **10/11** med 0.018; diverging corner cells stay honest-None. Stopped panel `10M`/`20M` 3/4 -> **10/11** at med <= 0.005.
+- **Full `mtfdigitizer` pytest: 451 pass** (was 450 pass + 1 xfail) — includes the Viltrox end-to-end and both samyang coincident-anchor tests (the anchor still fires for them; only skipped for the Touit).
+- **Full `py -m mtfdigitizer.calibrate`:** 1153 -> **1197 paired** (+44 recovered M cells), median |d| 0.0052 -> 0.0059 (flat — purely additive), p95 0.042 -> 0.045, 96.2% within +/-0.05.
+
+#### Key decisions (this session)
+
+- **Recover via sister fallback, not M-detection.** The M curves are physically unreadable on this panel (coincident then sub-floor); the only correct source is the same-frequency S sibling where they coincide. `quality.md` "honest absence beats a recovered wrong value" — the diverging corner stays None rather than copying S.
+- **Per-config opt-in, not a global heuristic.** `dashed_split_presence` scopes all three changes (presence branch, field seeding, anchor skip) to the Touit; Viltrox and every other profile are byte-identical. `quality.md` "per-config opt-in over global auto-detect", mirroring the sibling `interior_anchored_bands` (#1359).
+- **Gate the coincident-top anchor off for the Touit rather than making it smarter.** First attempt made the anchor require positive coincidence evidence globally — it broke a documented ADR-068 unit test (`test_coincident_anchor_fires_on_sister_filled_when_lo_above_threshold`). Reverted; the Touit's curves are never coincident, so skipping the anchor for the profile class is the correct, lower-risk fix.
+- **No ADR.** Implementation detail applying existing patterns (sister fallback, split-by-dash presence, per-config opt-in), no new directory or moved content — consistent with the #1359 sibling. Documented in code + the #1365 PR/issue.
+
+#### Process patterns observed this session
+
+- **Probe-before-code paid off twice.** Reading the GT first proved feasibility (8/7 interior cells) before writing anything; the per-position probe then caught that the presence fix alone left `10M` at 0/11 (no skeleton to fill) and later that the anchor overwrote `20M`.
+- **The harness caught the regression the reasoning missed.** The full pytest (`-x`) surfaced the coincident-anchor unit-test break the moment the global anchor change landed — the signal to revert the over-broad fix and scope it. "Verify every call site of a shared path."
+- **A revert is information, not waste.** The global anchor change falsified "make the anchor evidence-gated" cheaply; the code comment now records why the Touit skips the anchor entirely.
+
+#### Calibration impact (S203)
+
+Re-measured post-fix: **1197 paired, median |d| 0.0059, p95 |d| 0.0448, max |d| 0.1958, within +/-0.05 96.2%**. Versus S201's 1153/0.0052/96.6%: the +44 paired are the recovered Touit M cells (12mm both panels + stopped 32/50 where GT exists); the median is flat and the small p95 / in-band shift is the newly-paired corner cells, not a regression of existing cells (guard test + full suite lock those). 32/50 GT still stale-pending (#1332).
+
+#### Follow-ups for next session (S204)
+
+- **#1332 Touit 32/50 GT re-read** (task, P2, v0.8.0) — now the top priority; unblocked by #1359 + #1365. Fold in the closed-#1344 0.01-grid scaffolder change before eye-reading. See [[feedback_agent_no_gt_eye_read]].
+- **#1366 deploy retry** (bug, P2, Expedite) — retry the `deploy-pages` step so a transient GitHub Pages failure stops leaving `main` red and costing a manual re-run.
+- **Dependabot triage** — 8 open PRs (#1351–#1358), incl. majors astro 6->7 (#1358), @astrojs/react 5->6 (#1354), eslint-plugin-unicorn 68->70 (#1355). Expect a lockfile-conflict cascade.
+- **Submodule** `docs/solid-ai-templates` is 2 commits behind upstream — bump in its own PR (carried).
+- (carried) Scaffolder text sync; re-emit drift eye-read.md + wire `scaffold_anchor_helpers --check` into CI; stale production log refresh.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24** (unchanged).
+- **76 ADRs** (unchanged — the fix applies existing patterns, no new decision record).
+- **5 Tier 1 anchors**; the Zeiss Touit 12mm max panel now recovers its dashed `10M`/`20M` curves (9/11 and 10/11 paired) in addition to the S201 frequency-assignment fix.
+- **CI:** PR gate has the S202 always-run `format` job; `main` deploy healthy (green after one `deploy-pages` re-run, tracked by #1366).
+- Submodule `docs/solid-ai-templates` at **`cb6e26c`** — unchanged this session, still 2 commits behind upstream (follow-up).
+- **Open PRs at wrap-up: 8** — all Dependabot (#1351–#1358), untouched.
+- **#1347 closed** — M-curve recovery landed; **#1366 open** (deploy retry).
+- `mtfdigitizer` pytest: **451 pass** (this session's run).
+- **Upstream contributions filed still open:** 1 (S198 #704).
