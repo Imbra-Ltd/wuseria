@@ -269,6 +269,21 @@ class MtfProfile:
     # equal-split path unchanged. Default False.
     interior_anchored_bands: bool = False
 
+    # When True, build sister-fallback presence masks for this
+    # SPLIT_BY_DASH + RIDGE_TRACKING profile by splitting its single
+    # neutral mask into solid (S) and dashed (M) sub-skeletons and
+    # broadcasting each across every frequency. The dialect otherwise
+    # falls through to "no presence info", so the M<-S sister fallback
+    # never fires; a dashed curve that merges into its solid sibling in
+    # the interior and is lost to the coverage floor then reads all-None.
+    # With presence wired the fallback recovers it from the solid sibling
+    # where they coincide (the interior) and leaves an honest None at the
+    # diverging corner, where the sibling's own sample is also None so no
+    # wrong value is copied (#1347). Opt-in: only the multifreq-press-kit
+    # Touit family sets it; 2-freq RIDGE_TRACKING (Viltrox) stays on the
+    # legacy no-presence path. Default False.
+    dashed_split_presence: bool = False
+
     @property
     def hue_count(self) -> int:
         """How many distinct colors the profile expects in the chart.

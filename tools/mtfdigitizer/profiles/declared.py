@@ -416,6 +416,12 @@ ZEISS_TOUIT_BW_3FREQ: MtfProfile = MtfProfile(
     # Cluster the surviving tracks by their interior y-position instead,
     # where the frequency bands still separate cleanly.
     interior_anchored_bands=True,
+    # #1347: the dashed M curves merge into their solid S sibling in the
+    # interior and drop below the coverage floor, reading all-None. Wire
+    # the split-mask sister presence so the M<-S fallback recovers them
+    # from S where they coincide (interior) and stays honest-None at the
+    # diverging corner.
+    dashed_split_presence=True,
     notes=(
         "Zeiss Touit press kit: B&W, solid=S dashed=T, 3 frequencies "
         "(10/20/40 lp/mm) separated by y-band; dual-aperture stacked "

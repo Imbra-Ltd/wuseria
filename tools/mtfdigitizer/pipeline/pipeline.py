@@ -720,6 +720,31 @@ def _hue_masks_for_presence(
                 (dashed_sm, cv2.dilate(split.meridional.astype(np.uint8), bridge)),
             ):
                 out[curve_field(freq, sm)] = sub
+    elif profile.style_axis == "SPLIT_BY_DASH" and profile.dashed_split_presence:
+        # Single-hue B&W multifreq chart (Zeiss Touit): one neutral mask
+        # holds all 2N curves, separated only by y-band (frequency) and
+        # solid/dashed (S/M). There is no per-frequency hue to key on as
+        # in the GEODESIC_DP branch above, so split the whole neutral mask
+        # once into its solid (S) and dashed (M) sub-skeletons and
+        # broadcast each across every frequency. This is a coarse
+        # per-column presence signal — presence[freqNS] reads True where
+        # ANY solid curve has ink at that column — but the sister fallback
+        # fill VALUE still comes from the correctly band-assigned per-field
+        # sample, so a dashed curve that merges into its solid sibling in
+        # the interior is recovered from that sibling, while a diverging
+        # corner (sibling sample None) copies nothing. See #1347.
+        solid_sm, dashed_sm = ("M", "S") if profile.dashed_is_sagittal else ("S", "M")
+        bridge = cv2.getStructuringElement(
+            cv2.MORPH_RECT, (_DASH_PRESENCE_BRIDGE_W, 3)
+        )
+        for mask in curve_masks.values():  # one neutral hue
+            split = split_sm_by_cc_width(close_and_skeletonize(mask))
+            for sm, sub in (
+                (solid_sm, split.sagittal),
+                (dashed_sm, cv2.dilate(split.meridional.astype(np.uint8), bridge)),
+            ):
+                for freq in profile.frequencies_lpmm:
+                    out[curve_field(freq, sm)] = sub
     elif profile.style_axis == "HUE_IS_CURVE" and profile.hue_meaning == "CURVE_IDENTITY":
         # Each hue identifies one specific (frequency, S/M) curve via its
         # name (e.g. `10S-red`, `10M-pink`, `30S-dark-grey`,
@@ -800,6 +825,17 @@ def extract_chart(
         field: _sample_curve(skel, plot_box, raw_mask=presence_masks.get(field))
         for field, skel in skeletons.items()
     }
+    # Seed an all-None row for any field that has a presence mask but no
+    # skeleton (#1347). A dashed curve that merges into its solid sibling
+    # and is lost to the coverage floor produces no track, so it is absent
+    # from `skeletons` entirely — and sister fallback only visits fields
+    # present in `samples_per_field`. Seeding it here (scoped to the
+    # split-presence profiles) lets the M<-S fallback fill it from the
+    # solid sibling. Harmless for other profiles: their presence keys map
+    # 1:1 to skeletons, so nothing is seeded.
+    if profile.dashed_split_presence:
+        for field in presence_masks:
+            samples_per_field.setdefault(field, (None,) * len(SAMPLE_FRACTIONS))
     samples_before_fallback = {f: v for f, v in samples_per_field.items()}
 
     # Sister fallback: replace samples where the raw ink is absent
@@ -854,8 +890,18 @@ def extract_chart(
     # two near-1.0 strokes into one visible line, and the sister-fill
     # from the diverging M curve underestimates the true high-freq S
     # by a large margin.
+    #
+    # Skipped for `dashed_split_presence` profiles (#1347): the Touit's
+    # frequency bands are drawn as separate y-bands, never coincident at
+    # the top (10/20/40 sit ~0.06-0.14 MTF apart on every panel), so the
+    # anchor's merged-stroke assumption never holds. With split-mask
+    # sister presence now filling the dashed M curves from their correct
+    # same-frequency S sibling, letting the anchor run would wrongly
+    # overwrite a good same-freq fill (e.g. 20M 0.90) with the lower
+    # frequency (10M 0.96) whenever both are sister-filled and no clean
+    # cell exists to veto the pair.
     coincident_anchor_count: dict[str, int] = {}
-    if sister_filled:
+    if sister_filled and not profile.dashed_split_presence:
         samples_per_field, coincident_anchor_count = (
             _apply_coincident_top_anchor(samples_per_field, sister_filled)
         )
