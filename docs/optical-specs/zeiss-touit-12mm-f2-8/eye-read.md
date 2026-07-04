@@ -17,11 +17,11 @@ A helper rendering for each view with the 11 sample-position lines overlaid:
 - `zeiss-touit-12mm-f2-8-mtf-max-readhelper.png` — max (max)
 - `zeiss-touit-12mm-f2-8-mtf-stopped-readhelper.png` — stopped (stopped)
 
-The green vertical lines are spaced by image-height fraction, not by the chart's printed x-tick labels. Each line is labelled with its image-height mm value (image_height_mm = 15.0).
+The green vertical lines are spaced by image-height fraction, not by the chart's printed x-tick labels. Each line is labelled with its image-height mm value (image_height_mm = 14.0).
 
 **Important:** both apertures are packed into one chart as two stacked panels — top panel is the max-aperture pass (max), bottom panel is the stopped-aperture pass (stopped). All curves are monochrome black; solid lines are sagittal (S), dashed (or dotted, on the 50mm macro) are tangential (M). Within each panel the three frequencies stack vertically: 10 lp/mm highest, 20 lp/mm middle, 40 lp/mm lowest at the optical centre. Per ADR-046 the helper PNG shows the **clean source chart** (no extractor overlay) so the eye-read is unbiased. The green sample lines span the full plot regardless of panel.
 
-Sample positions (mm, image_height_mm = 15.0): 0.0, 1.5, 3.0, 4.5, 6.0, 7.5, 9.0, 10.5, 12.0, 13.5, 15.0.
+Sample positions (mm, image_height_mm = 14.0): 0.0, 1.4, 2.8, 4.2, 5.6, 7.0, 8.4, 9.8, 11.2, 12.6, 14.0.
 
 Read each cell at the intersection of the green vertical sample line and the curve, against the printed horizontal gridlines. Eye precision is ±0.02 (half a gridline tick). Read to two decimals. Use `?` only when the curve genuinely does not extend to that x position.
 
@@ -32,35 +32,35 @@ Read each cell at the intersection of the green vertical sample line and the cur
 
 ## max (max)
 
-| Position (mm) | 10S  | 10M  | 20S  | 20M  | 40S  | 40M  |
-| ------------- | ---- | ---- | ---- | ---- | ---- | ---- |
-| 0.0           | 0.96 | 0.96 | 0.91 | 0.91 | 0.91 | 0.91 |
-| 1.5           | 0.96 | —    | 0.90 | 0.80 | —    | —    |
-| 3.0           | 0.96 | —    | 0.89 | 0.79 | —    | 0.77 |
-| 4.5           | 0.96 | —    | 0.89 | 0.76 | —    | 0.74 |
-| 6.0           | 0.96 | —    | 0.90 | 0.73 | —    | 0.69 |
-| 7.5           | 0.95 | —    | 0.88 | 0.70 | —    | —    |
-| 9.0           | 0.94 | 0.94 | 0.85 | 0.66 | 0.83 | 0.63 |
-| 10.5          | 0.94 | 0.90 | 0.83 | —    | 0.76 | 0.61 |
-| 12.0          | 0.91 | 0.83 | —    | —    | 0.64 | 0.53 |
-| 13.5          | 0.85 | —    | —    | —    | 0.50 | —    |
-| 15.0          | —    | —    | —    | —    | —    | —    |
+| Position (mm) | 10S   | 10M   | 20S   | 20M   | 40S   | 40M   |
+| ------------- | ----- | ----- | ----- | ----- | ----- | ----- |
+| 0.0           | 0.96  | 0.96! | 0.90! | 0.90! | 0.82! | 0.82! |
+| 1.4           | 0.96  | 0.96! | 0.90! | 0.90! | 0.80! | 0.80  |
+| 2.8           | 0.96  | 0.95! | 0.89! | 0.89! | 0.78! | 0.77! |
+| 4.2           | 0.96  | 0.95! | 0.89! | 0.89! | 0.76! | 0.74! |
+| 5.6           | 0.96  | 0.95! | 0.90! | 0.87! | 0.74! | 0.70! |
+| 7.0           | 0.95  | 0.95! | 0.89! | 0.86! | 0.71! | 0.66! |
+| 8.4           | 0.94  | 0.95! | 0.85! | 0.85! | 0.67! | 0.64! |
+| 9.8           | 0.92! | 0.94! | 0.79! | 0.84! | 0.63! | 0.62! |
+| 11.2          | 0.87! | 0.93! | 0.71! | 0.81! | 0.57! | 0.57! |
+| 12.6          | 0.77! | 0.89! | 0.59! | 0.72! | 0.48! | 0.48! |
+| 14.0          | 0.62! | 0.82! | 0.45! | 0.58! | 0.35! | 0.31! |
 
 ## stopped (stopped)
 
-| Position (mm) | 10S  | 10M  | 20S  | 20M  | 40S  | 40M  |
-| ------------- | ---- | ---- | ---- | ---- | ---- | ---- |
-| 0.0           | 0.95 | 0.95 | 0.91 | 0.91 | 0.84 | 0.84 |
-| 1.5           | 0.95 | —    | 0.90 | —    | 0.82 | 0.81 |
-| 3.0           | 0.94 | —    | 0.89 | —    | 0.80 | 0.78 |
-| 4.5           | 0.94 | —    | 0.88 | —    | 0.77 | 0.74 |
-| 6.0           | 0.93 | —    | 0.86 | —    | 0.73 | 0.68 |
-| 7.5           | 0.93 | —    | 0.85 | —    | 0.71 | 0.64 |
-| 9.0           | 0.93 | —    | 0.86 | —    | 0.72 | —    |
-| 10.5          | 0.94 | 0.93 | 0.86 | 0.84 | 0.74 | 0.63 |
-| 12.0          | —    | 0.92 | 0.86 | —    | 0.75 | —    |
-| 13.5          | —    | 0.90 | 0.81 | —    | 0.65 | —    |
-| 15.0          | —    | —    | —    | —    | —    | —    |
+| Position (mm) | 10S   | 10M   | 20S   | 20M   | 40S   | 40M   |
+| ------------- | ----- | ----- | ----- | ----- | ----- | ----- |
+| 0.0           | 0.95  | 0.95  | 0.90! | 0.90! | 0.84  | 0.84  |
+| 1.4           | 0.95  | 0.95! | 0.90  | 0.90! | 0.82  | 0.81  |
+| 2.8           | 0.94! | 0.94! | 0.89  | 0.89! | 0.80  | 0.78  |
+| 4.2           | 0.94  | 0.94! | 0.87! | 0.87! | 0.77! | 0.75  |
+| 5.6           | 0.93  | 0.93! | 0.86  | 0.86! | 0.74  | 0.70! |
+| 7.0           | 0.93  | 0.93! | 0.85  | 0.85! | 0.70! | 0.65  |
+| 8.4           | 0.93  | 0.93! | 0.86! | 0.85! | 0.72  | 0.64  |
+| 9.8           | 0.93! | 0.94! | 0.87! | 0.84  | 0.74  | 0.64  |
+| 11.2          | 0.93! | 0.94! | 0.87! | 0.83! | 0.75  | 0.63  |
+| 12.6          | 0.91! | 0.91  | 0.84  | 0.78! | 0.72  | 0.57! |
+| 14.0          | 0.89! | 0.85! | 0.79! | 0.66! | 0.60! | 0.42! |
 
 ## Transcribing to GT
 
