@@ -12387,3 +12387,69 @@ Theme: clear the weekly Dependabot queue (8 open PRs) and land the Astro 6->7 ma
 - **#1366 open** (deploy retry); **#1358 closed** (superseded by #1368).
 - `mtfdigitizer` pytest: **451 pass**; front-end **222 tests pass**.
 - **Upstream contributions filed still open:** 1 (S198 #704); one more filed this day (braboj/solid-ai-templates#720, S202).
+
+---
+
+### Session 205 — Deploy-pages transient retry, verified against a live Pages outage
+
+Date: 2026-07-04 · Tool: Claude Code (Opus 4.8, 1M context)
+
+Theme: fix #1366 so a transient GitHub Pages backend failure stops leaving `main` red — retry the `deploy-pages` step only, never the deterministic `build`.
+
+#### PRs
+
+- **#1370** — fix(deploy): retry transient deploy-pages step once with backoff. Squash-merged, branch deleted. Adds `continue-on-error` first attempt + 30s backoff + one retry to the `deploy` job; ADR-077. Closed #1366.
+
+#### Issues opened / closed
+
+- **#1366** — closed (completed), auto-closed by #1370.
+- No new issues.
+
+#### Key technical findings
+
+- **`actions/deploy-pages` is a JS action and cannot be wrapped by `nick-fields/retry`**, which only retries a shell `command`. The idiomatic retry for a `uses:` step is `continue-on-error: true` on the first attempt plus a conditional second attempt gated on `steps.<id>.outcome == 'failure'`. `continue-on-error` flips the step's _conclusion_ to success but leaves _outcome_ = failure — that outcome is the signal the backoff and retry gate on.
+- **The merge's own deploy hit a sustained Pages backend outage.** 4 `deploy-pages` calls across 2 runs over ~10 min all returned `Deployment failed, try again later.` while githubstatus.com reported Pages "operational" (the status page lags). The deployment API confirmed real `failure` states; the `github-pages` environment had no stuck deployment; last success was S204.
+- **A failed Pages deployment does not replace the live one.** wuseria.com stayed HTTP 200 throughout — `main`-red was cosmetic (workflow status), zero user impact.
+
+#### Key changes
+
+- **`.github/workflows/deploy.yml`** — `deploy` job: attempt 1 `continue-on-error`, `sleep 30` gated on first-attempt failure, then one retry `actions/deploy-pages@v5` (NOT `continue-on-error`, so a double failure fails the job loud). `environment.url` reads `deployment.outputs.page_url || deployment-retry.outputs.page_url`.
+- **`docs/decisions/077-deploy-pages-retry.md`** — new ADR (deploy topology change).
+
+#### Verification
+
+- **`npm run validate` exit 0** — lint + format + check + test + build 462 pages + link check.
+- **Both gate paths exercised end-to-end on real runs.** The outage run showed attempt -> sleep -> retry all _ran_ (both attempts failed, fail-loud confirmed); the recovery run showed attempt = success with sleep + retry _skipped_ (no waste). Conditional gating verified in both directions — coverage no local test could give.
+- **`main` deploy green** after the backend recovered (~19:57 UTC, first monitored re-run); wuseria.com HTTP 200.
+
+#### Key decisions (this session)
+
+- **`continue-on-error` + conditional-retry over `nick-fields/retry`.** The issue suggested the latter, but it cannot wrap a JS action step and would add a third-party action to SHA-pin. Recorded in ADR-077.
+- **One retry (two attempts), not 2-3.** Every observed flake recovered on a single manual re-run; a 3rd attempt is speculative (YAGNI). ADR-077 records the revisit trigger.
+- **Did NOT re-widen after the outage.** The revisit trigger fired literally (both attempts failed), but the failure was a sustained ~15-20 min incident where even 4 attempts failed — a short-backoff loop wouldn't cover it, so widening would over-react to an outage as if it were flake. Surfaced honestly rather than retry-until-green (`base/review.md` CI signals).
+- **Monitored recovery + re-ran to clear `main`-red** (user opted in), rather than deferring to next session.
+
+#### Process patterns observed this session
+
+- **Separate infra failure from diff failure before acting.** 4 failures in 10 min + status-page lag + a clean environment = platform episode, not a bad diff — so the response is wait-and-rerun, not another code change.
+- **Verify a conditional workflow in both branches.** The happy path (retry skipped) and the failure path (retry runs) are distinct code paths; the two real runs happened to exercise both.
+- **A red `main` deploy is not always a broken site.** Check the live URL (HTTP 200) before treating `main`-red as an outage — GitHub Pages serves the last good deployment.
+
+#### Follow-ups for next session (S206)
+
+- **#1332 Touit 32/50 GT re-read** (task, P2, v0.8.0) — top priority (carried).
+- **Submodule** `docs/solid-ai-templates` 2 commits behind upstream (`cb6e26c` -> `3328ed8`) — bump in its own PR (carried).
+- (carried) Scaffolder text sync; re-emit drift eye-read.md + wire `scaffold_anchor_helpers --check` into CI.
+- **Watch:** if a future deploy shows both automated attempts failing during a _flake_ (not a sustained outage), widen ADR-077's retry to a bounded 3-attempt loop per its revisit trigger.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24** (unchanged).
+- **77 ADRs** (+1: ADR-077 deploy-pages retry).
+- **Stack:** Astro 7 + Vite 8 + @astrojs/react 6 (unchanged). CI has the S202 always-run `format` job; the `deploy` job now self-retries a transient Pages failure (ADR-077); `main` deploy healthy (green).
+- Submodule `docs/solid-ai-templates` at **`cb6e26c`** — unchanged, still 2 commits behind upstream (follow-up).
+- **Open PRs at wrap-up: 0** (after the S205 journal PR merges).
+- **#1366 closed** (deploy retry).
+- `mtfdigitizer` pytest: **451 pass**; front-end **222 tests pass** (unchanged — no source touched).
+- **Upstream contributions filed still open:** braboj/solid-ai-templates #704 (S198), #720 (S202), and **#721** filed this session (retry a transient JS `uses:` action step via continue-on-error + conditional retry, for `platform/github.md`).
