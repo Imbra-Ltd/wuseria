@@ -21,7 +21,11 @@ import pytest
 from mtfdigitizer import calibrate as calibrate_mod
 from mtfdigitizer.pipeline.types import ExtractedChart, PlotBox, SampledReading
 from mtfdigitizer.profiles.types import HueRange, MtfProfile
-from mtfdigitizer.referenceset.charts import PlotBoxCoords, ReferenceChart
+from mtfdigitizer.referenceset.charts import (
+    REFERENCE_CHARTS,
+    PlotBoxCoords,
+    ReferenceChart,
+)
 
 
 @pytest.fixture
@@ -201,3 +205,129 @@ def test_readings_for_aperture_handles_dict_and_single(multi_aperture_chart):
     }
     assert calibrate_mod._readings_for_aperture(by_ap, "max") is by_ap["max"].readings
     assert calibrate_mod._readings_for_aperture(by_ap, "stopped") is by_ap["stopped"].readings
+
+
+# ---------------------------------------------------------------------------
+# Real-chart calibration gate -- Zeiss Touit 12mm f/2.8 (#1347)
+#
+# Promotes the 12mm press-kit panel (both apertures) from the print-only
+# `calibrate.py` runner to a gated pytest tier, per quality-gates
+# "promote a resistant case to a gated tier". The 12mm ground truth
+# (both panels, all 11 positions) was maintainer-eye-read and applied in
+# #1348, so it is a sound anchor to gate against. Unlike the dispatch
+# tests above, these run the real extractor on the real chart raster.
+#
+# Two tests split the signal:
+#   * `test_touit_12mm_stopped_panel_stays_calibrated` -- a hard
+#     regression guard on the panels/fields that already extract well.
+#     Spike attempt 1 (#1347, global gap-based band split) regressed
+#     exactly these (stopped freq20S 0.005 -> 0.118; freq20M/freq40M
+#     dropped to 0/11); this guard is what catches that class.
+#   * `test_touit_12mm_max_panel_m_curves_recovered` -- xfail(strict)
+#     on the broken max-panel cells (dashed M curves dropped, 20 lp/mm
+#     mis-filed under freq40). The interior-anchoring fix flips this to
+#     xpass; the strict marker then fails the run -- the signal to drop
+#     the marker and keep the body as a hard assertion.
+# ---------------------------------------------------------------------------
+
+_TOUIT_12_SLUG = "zeiss-touit-12mm-f2-8"
+
+
+@pytest.fixture(scope="module")
+def touit_12mm_deltas() -> dict[tuple[str, str], calibrate_mod.FieldDelta]:
+    """Run the real extractor on the 12mm reference chart (both panels).
+
+    Returns a ``{(aperture, field): FieldDelta}`` lookup so the two gate
+    tests can assert per-cell without re-running the real-raster
+    extraction twice.
+    """
+    chart = next(c for c in REFERENCE_CHARTS if c.slug == _TOUIT_12_SLUG)
+    field_deltas, _ = calibrate_mod._calibrate_chart(chart)
+    return {(fd.aperture, fd.field): fd for fd in field_deltas}
+
+
+def _cell(
+    deltas: dict[tuple[str, str], calibrate_mod.FieldDelta],
+    aperture: str,
+    field: str,
+) -> calibrate_mod.FieldDelta:
+    fd = deltas.get((aperture, field))
+    assert fd is not None, f"no FieldDelta for {aperture}/{field}"
+    return fd
+
+
+def test_touit_12mm_stopped_panel_stays_calibrated(touit_12mm_deltas) -> None:
+    """Hard regression guard: the 12mm stopped panel and the max-panel
+    freq10S extract within tolerance and MUST stay there.
+
+    Pins: on the maintainer-verified 12mm GT (#1348), RIDGE_TRACKING
+    keeps the stopped-panel S curves paired 11/11 at med |d| <= 0.02 and
+    the sparse stopped M curves paired >= their S200 floor. Calibrated
+    against the S200 baseline (stopped S med |d| 0.003-0.005). Spike
+    attempt 1 (#1347) regressed freq20S to 0.118 and dropped
+    freq20M/freq40M to 0/11 -- this guard catches that class.
+
+    If a legitimate extractor improvement moves these, re-run
+    `py -m mtfdigitizer.calibrate` and update the thresholds to the new
+    floor; do not loosen them to paper over a regression.
+    """
+    d = touit_12mm_deltas
+
+    # max panel: freq10S is the one max-panel curve that already reads
+    # correctly (the f/2.8 corner crash inflates p95 but not the median).
+    s10 = _cell(d, "max", "freq10S")
+    assert s10.paired_count >= 9
+    assert s10.median_abs_delta is not None and s10.median_abs_delta <= 0.02
+
+    # stopped panel: all three S curves paired 11/11 at a low median.
+    for field, min_paired, max_med in (
+        ("freq10S", 9, 0.02),
+        ("freq20S", 11, 0.02),
+        ("freq40S", 11, 0.03),
+    ):
+        fd = _cell(d, "stopped", field)
+        assert fd.paired_count >= min_paired, f"stopped/{field} paired {fd.paired_count}"
+        assert (
+            fd.median_abs_delta is not None and fd.median_abs_delta <= max_med
+        ), f"stopped/{field} med |d| {fd.median_abs_delta}"
+
+    # stopped panel: the sparse dashed M curves must still pair some
+    # cells and read low where they do (attempt 1 dropped these to 0/11).
+    for field, min_paired in (("freq10M", 3), ("freq20M", 4), ("freq40M", 8)):
+        fd = _cell(d, "stopped", field)
+        assert fd.paired_count >= min_paired, f"stopped/{field} paired {fd.paired_count}"
+        assert (
+            fd.median_abs_delta is not None and fd.median_abs_delta <= 0.03
+        ), f"stopped/{field} med |d| {fd.median_abs_delta}"
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="#1347: interior-anchoring fix not yet built -- the 12mm max "
+    "panel drops the dashed M curves (freq10M/freq20M 0/11) and files the "
+    "20 lp/mm curve under freq40. When the fix lands this xpasses; drop "
+    "the marker and keep the body as a hard assertion.",
+)
+def test_touit_12mm_max_panel_m_curves_recovered(touit_12mm_deltas) -> None:
+    """Target gate: the 12mm max panel recovers its dashed M curves and
+    assigns 20/40 lp/mm correctly.
+
+    Pins the fixed state against the #1348 GT: freq20S paired >= 9 at
+    med |d| <= 0.03 (today 2/11 at 0.151 -- the 20-curve is mis-filed
+    under freq40), the dashed M curves detected (freq10M >= 6, freq20M
+    >= 4; today both 0/11), and freq40S reading its own curve at med |d|
+    <= 0.05 (today 0.157 -- it carries the 20-curve). See #1347 for the
+    interior-anchoring approach and the rejected attempt 1.
+    """
+    d = touit_12mm_deltas
+
+    s20 = _cell(d, "max", "freq20S")
+    assert s20.paired_count >= 9
+    assert s20.median_abs_delta is not None and s20.median_abs_delta <= 0.03
+
+    assert _cell(d, "max", "freq10M").paired_count >= 6
+    assert _cell(d, "max", "freq20M").paired_count >= 4
+
+    s40 = _cell(d, "max", "freq40S")
+    assert s40.paired_count >= 9
+    assert s40.median_abs_delta is not None and s40.median_abs_delta <= 0.05
