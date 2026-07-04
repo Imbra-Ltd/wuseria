@@ -257,15 +257,20 @@ def _cell(
 
 
 def test_touit_12mm_stopped_panel_stays_calibrated(touit_12mm_deltas) -> None:
-    """Hard regression guard: the 12mm stopped panel and the max-panel
-    freq10S extract within tolerance and MUST stay there.
+    """Hard regression guard: the 12mm stopped panel, the max-panel
+    freq10S, and the max-panel freq mis-assignment fixed in #1347 extract
+    within tolerance and MUST stay there.
 
     Pins: on the maintainer-verified 12mm GT (#1348), RIDGE_TRACKING
     keeps the stopped-panel S curves paired 11/11 at med |d| <= 0.02 and
-    the sparse stopped M curves paired >= their S200 floor. Calibrated
-    against the S200 baseline (stopped S med |d| 0.003-0.005). Spike
-    attempt 1 (#1347) regressed freq20S to 0.118 and dropped
-    freq20M/freq40M to 0/11 -- this guard catches that class.
+    the sparse stopped M curves paired >= their S200 floor. After the
+    #1347 interior-anchored band assignment, the max-panel freq20S and
+    freq40S read their own curve (was: the 20-curve filed under freq40).
+    Calibrated against the S200 baseline (stopped S med |d| 0.003-0.005;
+    max freq20S/freq40S med |d| 0.003-0.005 post-fix). Spike attempt 1
+    (#1347) regressed the stopped panel (freq20S 0.118, freq20M/freq40M
+    0/11); applying interior anchoring unconditionally regressed the
+    32mm/50mm stopped panels -- this guard catches both classes.
 
     If a legitimate extractor improvement moves these, re-run
     `py -m mtfdigitizer.calibrate` and update the thresholds to the new
@@ -278,6 +283,22 @@ def test_touit_12mm_stopped_panel_stays_calibrated(touit_12mm_deltas) -> None:
     s10 = _cell(d, "max", "freq10S")
     assert s10.paired_count >= 9
     assert s10.median_abs_delta is not None and s10.median_abs_delta <= 0.02
+
+    # max panel: the freq mis-assignment fixed by the interior-anchored
+    # band assignment (#1347). freq20S was 2/11 at 0.151 (the 20-curve
+    # filed under freq40) and freq40S was 9/11 at 0.157 (carrying it);
+    # both now read their own curve. freq40M improved 0.031 -> 0.004.
+    # Locked here so the fix cannot silently regress.
+    for field, min_paired, max_med in (
+        ("freq20S", 9, 0.03),
+        ("freq40S", 8, 0.05),
+        ("freq40M", 8, 0.02),
+    ):
+        fd = _cell(d, "max", field)
+        assert fd.paired_count >= min_paired, f"max/{field} paired {fd.paired_count}"
+        assert (
+            fd.median_abs_delta is not None and fd.median_abs_delta <= max_med
+        ), f"max/{field} med |d| {fd.median_abs_delta}"
 
     # stopped panel: all three S curves paired 11/11 at a low median.
     for field, min_paired, max_med in (
@@ -303,31 +324,26 @@ def test_touit_12mm_stopped_panel_stays_calibrated(touit_12mm_deltas) -> None:
 
 @pytest.mark.xfail(
     strict=True,
-    reason="#1347: interior-anchoring fix not yet built -- the 12mm max "
-    "panel drops the dashed M curves (freq10M/freq20M 0/11) and files the "
-    "20 lp/mm curve under freq40. When the fix lands this xpasses; drop "
-    "the marker and keep the body as a hard assertion.",
+    reason="#1347: the freq mis-assignment is fixed (locked by the guard "
+    "test), but the dashed 10M/20M curves on the 12mm max panel are still "
+    "lost to the coverage floor -- they merge into their S sibling in the "
+    "interior and only fragment out sub-floor at the corner, so band "
+    "assignment cannot recover them. Recovering them needs an M-detection "
+    "/ sister-fallback change. When that lands this xpasses; drop the "
+    "marker and keep the body as a hard assertion.",
 )
 def test_touit_12mm_max_panel_m_curves_recovered(touit_12mm_deltas) -> None:
-    """Target gate: the 12mm max panel recovers its dashed M curves and
-    assigns 20/40 lp/mm correctly.
+    """Remaining target: the 12mm max panel recovers its dashed M curves.
 
-    Pins the fixed state against the #1348 GT: freq20S paired >= 9 at
-    med |d| <= 0.03 (today 2/11 at 0.151 -- the 20-curve is mis-filed
-    under freq40), the dashed M curves detected (freq10M >= 6, freq20M
-    >= 4; today both 0/11), and freq40S reading its own curve at med |d|
-    <= 0.05 (today 0.157 -- it carries the 20-curve). See #1347 for the
-    interior-anchoring approach and the rejected attempt 1.
+    The interior-anchored fix (#1347) corrected the frequency
+    assignment -- freq20S/freq40S now read their own curve, locked by
+    `test_touit_12mm_stopped_panel_stays_calibrated`. But the dashed 10M
+    and 20M curves are still floor-cut: 10M merges into 10S across the
+    interior and both only fragment out sub-floor near the corner. This
+    pins the recovery target against the #1348 GT: both paired >= 6
+    (today freq10M 0/11, freq20M 3/11 partial from the corner fragment).
     """
     d = touit_12mm_deltas
 
-    s20 = _cell(d, "max", "freq20S")
-    assert s20.paired_count >= 9
-    assert s20.median_abs_delta is not None and s20.median_abs_delta <= 0.03
-
     assert _cell(d, "max", "freq10M").paired_count >= 6
-    assert _cell(d, "max", "freq20M").paired_count >= 4
-
-    s40 = _cell(d, "max", "freq40S")
-    assert s40.paired_count >= 9
-    assert s40.median_abs_delta is not None and s40.median_abs_delta <= 0.05
+    assert _cell(d, "max", "freq20M").paired_count >= 6

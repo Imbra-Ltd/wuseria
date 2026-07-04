@@ -255,6 +255,19 @@ class MtfProfile:
     # through a darker shade that lands in the 10S-red HSV box at a
     # column where pink itself has no mask pixels). Default empty.
     small_below_top_cc_filters: tuple[tuple[str, int, int], ...] = ()
+    # When True, `ridge_tracks_to_fields_multifreq` assigns the kept
+    # tracks to frequency bands by clustering their INTERIOR y-position
+    # (an optimal 1-D k-means over the left field region) instead of the
+    # global-mean-y equal-size split (#1347). The equal split collapses
+    # to 1/1/3 when a sparse dashed curve is lost to the coverage floor
+    # and mis-files the middle frequency under the highest; on
+    # press-kit panels whose curves crash and converge near the APS-C
+    # corner, the interior region is where the frequency bands still
+    # separate cleanly, so clustering there recovers the correct
+    # frequency assignment. Opt-in per ADR: only the multifreq-press-kit
+    # Touit family sets it; 2-freq RIDGE_TRACKING (Viltrox) keeps the
+    # equal-split path unchanged. Default False.
+    interior_anchored_bands: bool = False
 
     @property
     def hue_count(self) -> int:
