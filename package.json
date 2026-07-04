@@ -52,7 +52,7 @@
     "lint-staged": "^17.0.7",
     "prettier-plugin-astro": "^0.14.1",
     "typescript": "~6.0.3",
-    "typescript-eslint": "^8.61.1",
+    "typescript-eslint": "^8.62.1",
     "vitest": "^4.1.9"
   },
   "lint-staged": {
