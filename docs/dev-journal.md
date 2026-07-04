@@ -12014,3 +12014,80 @@ Theme: investigate the scheduled External Link Check failure that surfaced on `m
 - `delete_branch_on_merge: true` on the repo.
 - Submodule: `docs/solid-ai-templates` at **`cb6e26c`** — unchanged from S198 tail.
 - **Upstream contributions filed still open:** 1 (S198 #704 — formatter-vs-generator escalation against `base/workflow/quality-gates.md`).
+
+---
+
+### Session 200 — Touit MTF sampled to the APS-C corner + extractor-separation spike
+
+Date: 2026-07-04 · Tool: Claude Code (Opus 4.8, 1M context)
+
+Theme: fix the Zeiss Touit MTF sampling so the last of the 11 positions lands on real curve data (the APS-C image-circle corner), re-read the 12mm ground truth against the new grid, then spike the extractor defect that fix exposed. Advances S199 follow-ups "#1332 maintainer eye-read" and "stopped-panel ridge-cluster collapse spike".
+
+#### PRs
+
+- **#1346** — fix(mtfdigitizer): drop emit-side `source` field after #1342 removed it. Merged (carryover; open at session start). Squashed to main at `2c344f7`. −301 / +26 LOC across `emit.py` + the two tier2 emit scripts + tests.
+- **#1348** — fix(mtfdigitizer): sample Zeiss Touit MTF to the 14mm APS-C corner. Created + merged this session. Squashed at `741cd37`. `image_height_mm` 15→14 + `plot_box.x_right` moved on all 3 Touits (both panels) + 12mm GT re-read + regenerated scaffolds. +108 / −108 LOC.
+
+#### Issues opened / closed
+
+- **#1347** — opened (bug; P3→P2 mid-session; Backlog). "RIDGE_TRACKING drops sparse dashed M curves on multifreq press-kit panels." Fully diagnosed; attempt-1 rejected-and-documented. Stays open — queued spike gating the 32/50 GT fills.
+- No issues closed this session (the PRs are not tied to closing issues).
+
+#### Key technical findings
+
+- **The Touit MTF x-axis prints 0–15mm, but the curves end at the ~14mm APS-C image-circle corner** — the 14–15mm strip is empty. With `image_height_mm=15.0` and `plot_box.x_right` at the 15mm gridline, the last of the 11 sample positions fell in the empty strip (all-`None` corner row on every panel). Every other APS-C chart in the set already uses `image_height_mm=14.0` measured to the data edge; the Touit entries were the anomaly.
+- **`image_height_mm` only _labels_ the sample positions; `plot_box` drives the pixel sampling** (`sampling.sample_positions_mm` vs `sample_skeleton_at_fraction`). So moving the last sample onto the corner required moving `plot_box.x_right` to the 14mm pixel (linear-interp from the encoded 0mm/15mm calibration), not merely relabeling — a relabel-only change would have mis-attributed every position against the printed chart.
+- **The median-|Δ| calibrate metric is lenient**: it scores only the cells the extractor filled, hiding coverage holes. The 12mm stopped panel read "clean" (median 0.003–0.007) while the extractor missed most 10M/20M cells (4/11 paired). Direct confirmation of `quality-gates.md` "Lenient gates need a human residual check."
+- **Root-caused the extractor M-curve failure via a stage probe.** The dashed meridional (M) curves _are_ detected (2207 ridge points) but low-coverage, so `_select_top_n_tracks`'s top-2N-by-coverage drops them: the 12mm max kept only **5 tracks** → the equal-size band split collapsed to 1/1/3 → the 20-curve landed under freq40. The #1347 original symptom (12mm-max 20↔40 mis-assign) is one instance of the general sparse-M-drop defect, not a corner-only bug.
+- **Sister fallback (M←S) is not wired for `(SPLIT_BY_DASH, RIDGE_TRACKING)`** in `_hue_masks_for_presence` — a missing safety net — though it is only a good approximation in the interior (at the 12mm max corner 10S dives to 0.62 while 10M holds 0.82).
+
+#### Key changes
+
+- **`tools/mtfdigitizer/referenceset/charts.py`** — 3 Zeiss Touit entries: `image_height_mm` 15.0→14.0, `plot_box.x_right` to the 14mm pixel on both the max panel and the stopped `additional_view` (12mm 851→813, 32mm 737→705 / 738→706, 50mm 880→840), plus a rationale note on each. `_ZEISS_TOUIT_12_GT` re-transcribed from the maintainer eye-read.
+- **`docs/optical-specs/zeiss-touit-{12,32,50}mm*/eye-read.md` + 6 readhelper PNGs** — regenerated on the 0–14mm grid via `scaffold_anchor_helpers --write`. 12mm cells filled by maintainer eye-read (94 corrected `!` / 38 silently verified, both panels, 0 unknown).
+- **(Reverted, not landed)** `pipeline/ridge.py` — gap-based band-assignment attempt for `ridge_tracks_to_fields_multifreq`.
+
+#### Verification
+
+- **#1346**: CI green (CodeQL, gate, pytest, gitleaks, links; build/lighthouse skipped — tools-only). Squash at `2c344f7`.
+- **#1348**: full `mtfdigitizer` pytest **449 pass**; `test_reference_set` (11-value tuples, ranges) + `test_calibrate` pass; readhelper PNG visually confirmed — the last green sample line sits on the curve end at ~14mm, not in the empty strip; Prettier (pre-commit) preserved all values/marks and the file re-transcribed to the identical GT; CI all green; deploy `completed/success`. Squash at `741cd37`.
+- **Extractor attempt-1** measured against the 12mm GT + ridge/pipeline unit tests: helped max 40S (0.157→**0.014**) but regressed stopped 20S (0.005→0.118), lost stopped 20M/40M, and broke `test_pipeline::test_ridge_tracking_dispatch_end_to_end_with_viltrox_chart` (`assert 4 >= 6`) → reverted.
+
+#### Key decisions (this session)
+
+- **Sample to the APS-C corner (14mm), not the printed axis max (15mm).** Brings the Touit family in line with the reference-set's data-edge `image_height_mm` convention; the empty-strip corner sample was pure waste. Applied to all three Touits per maintainer choice. No ADR — this applies the existing convention, it does not introduce one.
+- **Relaxed the `feedback_agent_no_gt_eye_read` policy (owner call).** Eye-read GT is now FILLED by the extractor (tuned step by step against a confirmed hand-read anchor); the user only corrects; acceptance is obligatory before values are final. Crucially the filler stays the _mechanical extractor_, not LLM vision — so calibration integrity (human read independent of machine vision) holds. Captured in the `feedback_agent_no_gt_eye_read` memory; the scaffolder's rendered "agent does NOT propose" text is a follow-up.
+- **Option B sequencing for 32/50 GT.** Hold the 32mm/50mm re-reads until the #1347 extractor fix lands, so the M-curve cells are corrected once (post-fix) rather than twice.
+- **Revert the gap-based band-assignment spike.** Falsified against the calibrate + Viltrox metrics on the first measurement; the real fix needs interior-anchoring, not global mean_y gaps. Documented inline on #1347 as attempt-1-rejected.
+
+#### Process patterns observed this session
+
+- **Probe inverts the framing — twice.** (1) The "extractor is clean on 32/50" claim collapsed once coverage holes were _counted_ rather than read off median |Δ|. (2) The "fix the extractor then fill" plan decoupled once the probe showed the extractor is broken only on the one 12mm-max case the maintainer had already hand-read — so fixing it does not unblock the 32/50 fills; it is worthwhile for M-curve coverage instead.
+- **A geometry change can invalidate an extractor's calibrated assumptions.** Narrowing `x_right` to the 14mm corner pushed the max panel into the steep-crash region, inverting which panel the extractor handles well — the ridge.py docstring's "wide-aperture panels extract cleanly" was true only at the old 15mm geometry. Surfaced and re-decided with the user rather than absorbed silently.
+- **Revert-when-approach-wrong, measured.** The first extractor heuristic was reverted on its first metric, and the rejection was recorded — falsifying "gap-based band split" is information the next attempt builds on, per `ai-workflow.md` "When to revert vs when to iterate."
+
+#### Calibration impact (S200)
+
+Not re-measured this session. The extractor spike was reverted (no extractor change), but the Touit geometry + 12mm GT changed and the 32/50 GT is stale-pending re-read, so a fresh aggregate would be misleading until 32/50 are done. Last measured value (S199, NOT re-verified this session): 1157 paired, median |d| 0.0043, p95 |d| 0.0396, in-band 97.0%.
+
+#### Follow-ups for next session (S201)
+
+- **#1347 — interior-anchoring separator fix.** Promote the 12mm (both panels) to a gated calibrate assertion (`quality-gates` "promote a resistant case to a gated tier"), build the interior-anchored track assignment against it, run full `py -m mtfdigitizer.calibrate` before/after to catch cross-lens regressions, then fill 32/50 (Option B).
+- **Scaffolder text** — update the eye-read.md header + `scaffold_anchor_helpers.py` docstring "the agent does NOT propose values" wording to match the relaxed policy.
+- **32/50 Touit GT re-read** — blocked on #1347.
+- (carried) Re-emit the 6 drift-state eye-read.md + wire `scaffold_anchor_helpers --check` into CI as a staleness gate.
+- (carried) Stale production log refresh (samyang-10mm, samyang-12mm fisheye).
+- (carried) Audit other downstream `source`/`url` duplicates of `lenses.ts.officialUrl`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone).
+- Epic #790 (digitize all brands): **5/24** (unchanged).
+- **5 Tier 1 anchors**; the Zeiss Touit 12mm is now re-read on the 0–14mm APS-C grid (both panels, maintainer-confirmed 94/38/0).
+- **75 ADRs** (unchanged — the geometry fix applied the existing data-edge convention).
+- Submodule `docs/solid-ai-templates` at **`cb6e26c`** — unchanged from S199.
+- **Open PRs at wrap-up: 1** — #1344 (feat, pre-existing, `--check` gate red; not this session's, flagged at start).
+- **#1347 open** (bug, P2, Backlog) — extractor separation spike, fully teed up (diagnosis + rejected approach + direction + gating strategy on the issue).
+- Eye-read GT policy relaxed (extractor fills, user confirms) — `feedback_agent_no_gt_eye_read` memory updated.
+- `mtfdigitizer` pytest: **449 pass** (this session's run).
+- **Upstream contributions filed still open:** 1 (S198 #704 — formatter-vs-generator escalation against `base/workflow/quality-gates.md`).
