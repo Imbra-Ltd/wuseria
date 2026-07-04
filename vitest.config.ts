@@ -1,10 +1,12 @@
 import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
 
+// vite 8 bundles Rolldown (oxc transforms), so the legacy `esbuild.jsx`
+// shorthand is ignored and `.tsx` tests fail to parse ("Unexpected JSX
+// expression"). `@vitejs/plugin-react` applies the React JSX transform
+// independent of the underlying bundler. See #1358 (astro 6->7).
 export default defineConfig({
-  esbuild: {
-    jsx: "automatic",
-    jsxImportSource: "react",
-  },
+  plugins: [react()],
   test: {
     globals: true,
     environment: "jsdom",
