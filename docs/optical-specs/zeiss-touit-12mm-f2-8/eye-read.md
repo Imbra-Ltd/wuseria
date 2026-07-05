@@ -23,24 +23,24 @@ The green vertical lines are spaced by image-height fraction, not by the chart's
 
 Sample positions (mm, image_height_mm = 14.0): 0.0, 1.4, 2.8, 4.2, 5.6, 7.0, 8.4, 9.8, 11.2, 12.6, 14.0.
 
-Read each cell at the intersection of the green vertical sample line and the curve, against the printed horizontal gridlines. Eye precision is ±0.02 (half a gridline tick). Read to two decimals. Use `?` only when the curve genuinely does not extend to that x position.
+Read each cell at the intersection of the green vertical sample line and the curve, against the printed horizontal gridlines. Eye precision is ±0.005 (half a gridline tick). Read to two decimals. Use `?` only when the curve genuinely does not extend to that x position.
 
 - Top of plot area → MTF 1.0
 - Each printed gridline below it → 0.8, 0.6, 0.4, 0.2
 - Bottom gridline → MTF 0.0
-- Orange dashed lines fill in every 0.05 between the printed gridlines
+- Orange dashed lines fill in every 0.01 between the printed gridlines
 
 ## max (max)
 
 | Position (mm) | 10S   | 10M   | 20S   | 20M   | 40S   | 40M   |
 | ------------- | ----- | ----- | ----- | ----- | ----- | ----- |
 | 0.0           | 0.96  | 0.96! | 0.90! | 0.90! | 0.82! | 0.82! |
-| 1.4           | 0.96  | 0.96! | 0.90! | 0.90! | 0.80! | 0.80  |
+| 1.4           | 0.96  | 0.96! | 0.90! | 0.90! | 0.80! | 0.81  |
 | 2.8           | 0.96  | 0.95! | 0.89! | 0.89! | 0.78! | 0.77! |
 | 4.2           | 0.96  | 0.95! | 0.89! | 0.89! | 0.76! | 0.74! |
 | 5.6           | 0.96  | 0.95! | 0.90! | 0.87! | 0.74! | 0.70! |
-| 7.0           | 0.95  | 0.95! | 0.89! | 0.86! | 0.71! | 0.66! |
-| 8.4           | 0.94  | 0.95! | 0.85! | 0.85! | 0.67! | 0.64! |
+| 7.0           | 0.96  | 0.95! | 0.89! | 0.86! | 0.71! | 0.66! |
+| 8.4           | 0.95  | 0.95! | 0.85! | 0.85! | 0.67! | 0.64! |
 | 9.8           | 0.92! | 0.94! | 0.79! | 0.84! | 0.63! | 0.62! |
 | 11.2          | 0.87! | 0.93! | 0.71! | 0.81! | 0.57! | 0.57! |
 | 12.6          | 0.77! | 0.89! | 0.59! | 0.72! | 0.48! | 0.48! |
@@ -51,14 +51,14 @@ Read each cell at the intersection of the green vertical sample line and the cur
 | Position (mm) | 10S   | 10M   | 20S   | 20M   | 40S   | 40M   |
 | ------------- | ----- | ----- | ----- | ----- | ----- | ----- |
 | 0.0           | 0.95  | 0.95  | 0.90! | 0.90! | 0.84  | 0.84  |
-| 1.4           | 0.95  | 0.95! | 0.90  | 0.90! | 0.82  | 0.81  |
-| 2.8           | 0.94! | 0.94! | 0.89  | 0.89! | 0.80  | 0.78  |
+| 1.4           | 0.95  | 0.95! | 0.90  | 0.90! | 0.82  | 0.80  |
+| 2.8           | 0.94! | 0.94! | 0.89  | 0.89! | 0.81  | 0.78  |
 | 4.2           | 0.94  | 0.94! | 0.87! | 0.87! | 0.77! | 0.75  |
-| 5.6           | 0.93  | 0.93! | 0.86  | 0.86! | 0.74  | 0.70! |
+| 5.6           | 0.94  | 0.93! | 0.87  | 0.86! | 0.74  | 0.70! |
 | 7.0           | 0.93  | 0.93! | 0.85  | 0.85! | 0.70! | 0.65  |
-| 8.4           | 0.93  | 0.93! | 0.86! | 0.85! | 0.72  | 0.64  |
+| 8.4           | 0.93  | 0.93! | 0.86! | 0.85! | 0.72  | 0.65  |
 | 9.8           | 0.93! | 0.94! | 0.87! | 0.84  | 0.74  | 0.64  |
-| 11.2          | 0.93! | 0.94! | 0.87! | 0.83! | 0.75  | 0.63  |
+| 11.2          | 0.93! | 0.94! | 0.87! | 0.83! | 0.76  | 0.63  |
 | 12.6          | 0.91! | 0.91  | 0.84  | 0.78! | 0.72  | 0.57! |
 | 14.0          | 0.89! | 0.85! | 0.79! | 0.66! | 0.60! | 0.42! |
 
