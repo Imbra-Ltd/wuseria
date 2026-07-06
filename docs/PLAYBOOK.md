@@ -488,12 +488,29 @@ For a Tier 1 anchor `<slug>` (i.e. a `ReferenceChart` whose
 artifacts in the lens's `docs/optical-specs/<slug>/` folder:
 per-view readhelper PNGs (3x upscale with green sample-position
 lines + mm labels at top, plus orange dashed gridlines filling in
-every 0.05 OTF the source chart does not print natively — ±0.02
-eye-precision against a uniform 0.05 grid), and `eye-read.md`
-(legend + tables pre-populated with the extractor's predictions —
-ADR-048's cell-level marking convention: bare = silent verification,
+the OTF steps the source chart does not print natively — the grid
+density and eye-precision are family-specific: 0.05 grid / ±0.02
+for Fuji and TTartisan, 0.01 grid / ±0.005 with grey major anchors
+at every 0.1 for Zeiss Touit), and `eye-read.md` (legend + tables
+pre-populated with the extractor's predictions — ADR-048's
+cell-level marking convention: bare = silent verification,
 `!` = corrected, `?` = unknown / will become None). On re-run the
 scaffolder PRESERVES `!`/`?` marks and refreshes unmarked cells.
+
+**Transcribing a marked-up eye-read to ground truth (ADR-048):**
+
+```bash
+cd tools && py -m mtfdigitizer.eyeread <slug>          # parse + report counts
+cd tools && py -m mtfdigitizer.eyeread <slug> --apply  # rewrite _<LENS>_GT in charts.py
+cd tools && py -m mtfdigitizer.calibrate               # score extractor vs new GT
+```
+
+After `--apply`, re-run the scaffolder `--write` on the slug to
+canonicalize the maintainer's table formatting (marks preserved),
+verify `--check` is clean, and record the calibration run in
+`tools/mtfdigitizer/referenceset/calibration.md` (dated run section
+with per-chart block, per-panel in-band %, and aggregate) plus the
+anchor's verified-shapes summary in `REFERENCE_SET.md`.
 
 Style-family dispatch:
 
