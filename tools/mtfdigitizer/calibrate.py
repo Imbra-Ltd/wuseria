@@ -395,7 +395,6 @@ def _write_readings_log(chart: ReferenceChart, result, field_deltas: list[FieldD
     """
     READINGS_DIR.mkdir(parents=True, exist_ok=True)
     path = READINGS_DIR / f"{chart.slug}.md"
-    fields = ("freq10S", "freq10M", "freq30S", "freq30M")
     lines: list[str] = []
     lines.append(f"# {chart.slug}")
     lines.append("")
@@ -436,7 +435,12 @@ def _write_readings_log(chart: ReferenceChart, result, field_deltas: list[FieldD
             )
         lines.append("")
 
-        # Grid: rows = sample fractions, columns = (GT, EX, Δ) per field
+        # Grid: rows = sample fractions, columns = (GT, EX, Δ) per
+        # field. Fields come from the aperture's GT dict (insertion
+        # order) — field names vary per style family (freq10/20/40,
+        # freq15/45, contrast10/resolution30), so a fixed list would
+        # render dead columns and silently omit the chart's real ones.
+        fields = tuple(gt_by_field.keys())
         header_parts = ["frac"]
         for f in fields:
             header_parts.extend([f"{f} GT", f"{f} EX", f"{f} Δ"])

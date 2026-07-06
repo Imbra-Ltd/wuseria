@@ -28,8 +28,9 @@ The 1 remaining chart (7Artisans 35mm soft promo) is a deliberately
 out-of-band fail-loud case and intentionally has no profile. The
 Zeiss Touit press kit was promoted from rejection-case to an extracted
 family by #791 / ADR-075 via the N-frequency RIDGE_TRACKING pipeline
-(`ridge_tracks_to_fields_multifreq`); it joins the table once it
-ships eye-read ground truth.
+(`ridge_tracks_to_fields_multifreq`); it joined the table when it
+shipped eye-read ground truth (12mm via #1348; 32mm maintainer-verified
+in Run 6, #1332; 50mm still extractor-seeded).
 
 ## How to reproduce
 
@@ -42,6 +43,81 @@ Reads the in-source ground truth from `referenceset/charts.py` and runs
 `extract_chart()` for each chart with both `plot_box` and `ground_truth`
 populated. Output: per-chart `|d|` (absolute offset) median + p95 per
 field, then an aggregate.
+
+## Run 6 (after Touit 32mm maintainer eye-read GT, #1332)
+
+First run where `zeiss-touit-32mm-f1-8` scores against maintainer-read
+ground truth instead of extractor-seeded predictions: 132/132 cells
+eye-read at ±0.005 on the 0.01-grid readhelpers (86 corrected, 46
+silently verified, 0 unknown). The GT flip converts two known-suspect
+behaviours from invisible (circular seeded GT) to measured:
+
+1. **Max-panel S/M label swap.** On the k=1.8 panel the dashed T (M)
+   curves run ABOVE solid S from ~3 mm outward at 10 and 20 lp/mm.
+   `_assign_interior_anchored_bands` assigns S to the upper track of
+   each frequency band by construction, so the extractor mirrors GT
+   with the labels exchanged — EX freq10S matches GT freq10M within
+   read precision cell-for-cell (e.g. frac 1.0: EX 0.79 vs GT-M 0.79,
+   EX-M 0.61 vs GT-S 0.61). Med |d| 0.073/0.070 on freq10S/M, ~0.02-
+   0.03 at 20 (curves closer), ~0.01-0.02 at 40 (curves touch).
+   Tracked as its own defect (see #1374) — distinct from the stopped
+   collapse below.
+2. **Stopped-panel 40-band cluster collapse (#791 known limitation,
+   now quantified).** At k=4 the real 10S/10M pair genuinely coincides
+   (GT delta <= 0.006 across the field — the collapsed pair at 10 is
+   correct), 20M runs 0.01-0.02 below 20S, but 40S/40M separate widely
+   mid-field (GT 40S dips to 0.56 at 11.2 mm, 40M to 0.47). The
+   extracted 40S instead rides the 20-band: med |d| 0.164, p95 0.261,
+   max 0.254; 40M absorbs part of the same collapse at med 0.080.
+
+Also in this run: `_write_readings_log` derives grid columns from the
+aperture's GT fields instead of a hardcoded `freq10/freq30` tuple —
+the old grid rendered dead `freq30` columns and silently omitted the
+Touit 20/40 fields (and Fuji's 15/45), which would have hidden exactly
+the stopped-panel failures this run exists to record. All committed
+readings regenerate with their real columns.
+
+### Per-chart (Touit block; panels labelled)
+
+```
+zeiss-touit-32mm-f1-8 (multifreq-press-kit)  [max / k=1.8]
+  freq10S         med |d| 0.073  p95 |d| 0.191  paired 11/11  ext-None  0
+  freq10M         med |d| 0.070  p95 |d| 0.190  paired 11/11  ext-None  0
+  freq20S         med |d| 0.030  p95 |d| 0.056  paired 11/11  ext-None  0
+  freq20M         med |d| 0.020  p95 |d| 0.058  paired 11/11  ext-None  0
+  freq40S         med |d| 0.009  p95 |d| 0.066  paired 11/11  ext-None  0
+  freq40M         med |d| 0.021  p95 |d| 0.073  paired 11/11  ext-None  0
+zeiss-touit-32mm-f1-8 (multifreq-press-kit)  [stopped / k=4]
+  freq10S         med |d| 0.001  p95 |d| 0.006  paired 11/11  ext-None  0
+  freq10M         med |d| 0.001  p95 |d| 0.006  paired 11/11  ext-None  0
+  freq20S         med |d| 0.002  p95 |d| 0.004  paired 11/11  ext-None  0
+  freq20M         med |d| 0.016  p95 |d| 0.025  paired 11/11  ext-None  0
+  freq40S         med |d| 0.164  p95 |d| 0.261  paired 11/11  ext-None  0
+  freq40M         med |d| 0.080  p95 |d| 0.137  paired 11/11  ext-None  0
+```
+
+Per-panel in-band (|d| <= 0.05, from
+`readings/zeiss-touit-32mm-f1-8.md`): max 45/66 (68.2%), stopped
+48/66 (72.7%). Both panels fail the 93%+ norm of the verified anchors
+— deliberately documented, not silenced (#1332 AC).
+
+### Aggregate
+
+```
+before GT flip (seeded 32mm GT):        after (maintainer GT):
+  paired comparisons:    1197             paired comparisons:    1237
+  median |d|:           0.0059             median |d|:           0.0060
+  p95 |d|:              0.0448             p95 |d|:              0.0641
+  max |d|:              0.1958             max |d|:              0.2538
+  within +/-0.05: 1152/1197 (96.2%)        within +/-0.05: 1152/1237 (93.1%)
+```
+
+The 3.1-point in-band drop is the honest cost of de-circularizing the
+32mm GT: 40 previously-None cells now pair, and the corrected cells
+score the extractor against reality instead of against itself. The
+aggregate recovers when #1374 (S/M swap) and the #791 Path B collapse
+work land — freq10S/M max-panel and freq40S/M stopped-panel are the
+metrics to watch.
 
 ## Run 5 (after Viltrox ridge-tracking dispatch, #994)
 
