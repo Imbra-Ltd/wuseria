@@ -12453,3 +12453,77 @@ Theme: fix #1366 so a transient GitHub Pages backend failure stops leaving `main
 - **#1366 closed** (deploy retry).
 - `mtfdigitizer` pytest: **451 pass**; front-end **222 tests pass** (unchanged — no source touched).
 - **Upstream contributions filed still open:** braboj/solid-ai-templates #704 (S198), #720 (S202), and **#721** filed this session (retry a transient JS `uses:` action step via continue-on-error + conditional retry, for `platform/github.md`).
+
+---
+
+### Session 206 — Touit 32mm eye-read GT lands; read-helper precision ships
+
+Date: 2026-07-06 · Tool: Claude Code (Fable 5)
+
+Theme: #1332 Touit eye-read ground truth — clear the 32/50 hold (re-apply the stale #1344 read-helper change on the post-#1347 extractor), then transcribe the maintainer's 32mm read into GT and calibrate.
+
+#### PRs
+
+- **#1372** — feat(mtfdigitizer): Touit read-helpers ship a 0.01 OTF grid. Squash-merged, branch deleted. Re-applies closed #1344 (collided 9/9 with S200 files) on current `main`; regenerates the 9 Touit artifacts with the post-#1347 extractor. 32mm predictions fully populated (0 empty cells; stopped 10M/20M were all missing pre-fix); 12mm kept all 95 maintainer marks through the ADR-048 refresh.
+- **#1373** — feat(mtfdigitizer): grey 0.1 major anchors on dense readhelper grids. Squash-merged, branch deleted. Maintainer usability feedback mid-session: 99 uniform orange 0.01 lines gave the eye no mid-weight anchor. New `readhelper_major_otf` tier draws grey lines + labels at 0.1/0.3/0.5/0.7/0.9; label color matches line color.
+- **#1375** — feat(mtfdigitizer): Touit 32mm maintainer eye-read GT + calibration Run 6. Squash-merged, branch deleted. 132/132 cells (86 corrected / 46 verified / 0 unknown) into `_ZEISS_TOUIT_32_GT`; calibration.md Run 6; REFERENCE_SET.md §8 verified-shapes summary; `_write_readings_log` column fix.
+
+#### Issues opened / closed
+
+- **#1374** — opened (bug, P2, v0.8.0): multifreq S/M assignment mislabels panels where T runs above S. Evidence from the 32mm max panel: EX freq10S ≡ GT freq10M cell-for-cell.
+- **#1376** — opened (task, P2, Expedite): widen deploy-pages retry to a bounded 3-attempt loop — ADR-077's revisit trigger fired (see findings).
+- **#1332** — stays open: 2 of 3 lenses done (12mm S200, 32mm today); 50mm eye-read remains.
+
+#### Key technical findings
+
+- **The maintainer's 32mm read exposed a textbook S/M label swap on the max panel.** The extractor's ridge tracks are correct but `_assign_interior_anchored_bands` assigns S to the upper track of each band by construction — and on the k=1.8 panel the dashed T runs ABOVE solid S from ~3 mm at 10/20 lp/mm. Med |Δ| 0.073/0.070 on freq10S/M is pure label exchange (#1374). Same failure class as the #1199 TTartisan corner swap: no dashedness signal consulted.
+- **The stopped-panel 10 lp/mm coincidence is REAL** (GT S/M Δ ≤ 0.006 across the field) — a collapsed pair there is correct extraction, not a defect. The #791 collapse is at 40: extracted 40S rides the 20-band (med |Δ| 0.164, p95 0.261), 40M absorbs med 0.080. Per-panel in-band: max 45/66 (68.2%), stopped 48/66 (72.7%).
+- **De-circularizing GT costs aggregate honestly:** 96.2% → 93.1% in-band (1197 → 1237 paired) once seeded predictions stop grading themselves. Baseline measured by stash-reverting the GT and re-running calibrate.
+- **`_write_readings_log` hardcoded `freq10/freq30` grid columns** — dead columns rendered for every non-2-freq family and the chart's real fields (Touit 20/40, Fuji 15/45) silently omitted, hiding exactly the failures #1332 exists to record. Fixed by deriving columns from the aperture's GT dict; all committed readings regenerated with real columns.
+- **ADR-077's revisit trigger fired for real.** The #1375 merge deploy failed both automated attempts 30s apart (`Deployment failed, try again later.` — the S205 backend transient), `build` green, site HTTP 200; a manual re-run at +4 min succeeded in 15s. That is the _flake_ (not sustained-outage) profile the trigger names — two attempts spanning ~30s cannot bridge a multi-minute flake; filed #1376 rather than widening mid-theme.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/scripts/scaffold_anchor_helpers.py`** — `StyleFamilyExtras` grows `readhelper_label_otf` (label only major ticks on dense grids), `eye_precision_text` (per-family precision prose), `readhelper_major_otf` (grey major tier); Touit family configured for 0.01 grid / ±0.005 / grey 0.1 anchors.
+- **`tools/mtfdigitizer/calibrate.py`** — readings grid columns derive from GT fields.
+- **`tools/mtfdigitizer/referenceset/charts.py`** — `_ZEISS_TOUIT_32_GT` maintainer-verified.
+- **`tools/mtfdigitizer/referenceset/calibration.md`** — Run 6 (restores the per-run findings convention that lapsed after Run 5); **`REFERENCE_SET.md`** §8 verified-shapes summary with metric-to-watch lines.
+- 9 Touit artifacts regenerated twice (0.01 grid, then grey tier); 8 readings files regenerated/created.
+
+#### Verification
+
+- `py -m pytest mtfdigitizer` **451 pass** ×3 (once per PR); `npm run format` clean each time; `scaffold_anchor_helpers --check` clean on all 3 slugs after every regeneration.
+- All regenerated readhelper PNGs opened and visually verified, including a native-resolution crop confirming the grey tier reads clearly against the orange minors.
+- 12mm marks invariant checked before/after both refreshes (95 = 94 corrected + 1 legend example — the same accounting explains S200's count).
+- Both merge deploys green (the second after one manual re-run; see findings).
+
+#### Key decisions (this session)
+
+- **Re-apply, not reopen, the stale #1344** — its artifacts were 9/9 collided; fresh regeneration on current `main` also picked up the #1347 dashed-M recovery, which was the point of the sequencing.
+- **Grey major tier as per-family opt-in** (`readhelper_major_otf`, empty = no tier) — parameter-level change documented in code and REFERENCE_SET.md; no ADR (no new directory, no topology change).
+- **Readings-writer fix bundled into #1375** — the defect silenced the exact failures that PR documents; regenerating all readings in the same PR follows the derived-artifacts rule. The initial samyang/viltrox drift was first reverted as tooling scope-creep, then legitimately re-included as a consequence of the code fix.
+- **Filed #1376 instead of implementing the ADR-077 widening mid-theme** — scope guard; the ADR amendment belongs to that task.
+
+#### Process patterns observed this session
+
+- **A recorded revisit trigger converts an incident into a filed decision.** ADR-077 named its trigger; when it fired, the response was mechanical (file with evidence) instead of re-litigating the retry design.
+- **The pwd-on-negative rule fired in practice:** a `grep -c` returning 0 from `tools/` with a repo-relative path briefly looked like data loss; re-running from the repo root showed 95 marks intact.
+- **User edits + agent branch switching need a recovery dance:** the maintainer marked up eye-read.md while the agent's merge was mid-flight; scratchpad backup → stash → checkout → pull → pop preserved the 132-cell read losslessly.
+- **Silence is not documentation:** two different artifacts (the readings grid, the seeded GT) both looked complete while omitting the failures that mattered; both needed explicit fixes to make absence visible.
+
+#### Follow-ups for next session (S207)
+
+- **#1332 50mm eye-read** (maintainer) → transcribe → calibrate → REFERENCE_SET.md prose → close #1332 (task, P2, v0.8.0 — verified open).
+- **#1376** deploy-pages 3-attempt retry + ADR-077 amendment (task, P2, Expedite — verified open).
+- **#1374** multifreq S/M dashedness discrimination (bug, P2, v0.8.0 — verified open); pairs with #791 Path B.
+- **Submodule** `docs/solid-ai-templates` now **14 commits behind** (was 2 at S205 wrap; upstream merged #704/#720/#721) — bump in its own PR (carried).
+- (carried) Wire `scaffold_anchor_helpers --check` into CI.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone). Epic #790: **5/24** (Zeiss line advances when #1332 closes).
+- **77 ADRs** (no new; ADR-077 amendment deferred to #1376).
+- **Tier 1 anchors:** Touit 12mm + 32mm now maintainer-verified; 50mm extractor-seeded. Calibration aggregate 93.1% in-band (post-de-circularization).
+- `mtfdigitizer` pytest: **451 pass**; front-end **222 tests pass** (untouched).
+- **Open PRs at wrap-up: 0** (after the S206 journal PR merges). `main` deploy green.
+- **Upstream contributions:** #704/#720/#721 all merged upstream; **braboj/solid-ai-templates#741** filed this session (generators derive enumerations from the data schema — from the `_write_readings_log` dead-columns defect).
