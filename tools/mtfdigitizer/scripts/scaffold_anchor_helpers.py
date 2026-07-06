@@ -82,6 +82,10 @@ LABEL_FILL_RGB = (0, 120, 0)
 HALF_STEP_LINE_RGB = (240, 130, 0)
 HALF_STEP_LINE_WIDTH_PX = 1
 HALF_STEP_DASH_LEN_PX = 6
+# Grey dashed major gridlines — mid-weight anchors between the chart's
+# printed lines on dense grids (e.g. Touit's 0.01 grid gets grey lines
+# at every 0.1) so the eye can localize without counting orange lines.
+MAJOR_STEP_LINE_RGB = (110, 110, 110)
 
 
 @dataclass(frozen=True)
@@ -332,27 +336,30 @@ def _render_readhelper(
         if extras.readhelper_label_otf
         else set(extras.readhelper_extra_otf)
     )
+    major = set(extras.readhelper_major_otf)
     for otf in extras.readhelper_extra_otf:
         y = int(plot_bottom_up - otf * plot_height_up)
+        line_rgb = MAJOR_STEP_LINE_RGB if otf in major else HALF_STEP_LINE_RGB
         _draw_dashed_hline(
             draw,
             x_left=plot_left_up,
             x_right=plot_right_up,
             y=y,
-            color=HALF_STEP_LINE_RGB,
+            color=line_rgb,
             width=HALF_STEP_LINE_WIDTH_PX,
             dash_len=HALF_STEP_DASH_LEN_PX * UPSCALE_FACTOR,
         )
         if otf not in labelled:
             continue
-        # Label the OTF value just right of the plot. Use 2 decimals so
-        # 0.05 / 0.15 / 0.25 / ... show their hundredths digit cleanly.
+        # Label the OTF value just right of the plot, in the line's own
+        # color. Use 2 decimals so 0.05 / 0.15 / 0.25 / ... show their
+        # hundredths digit cleanly.
         label = f"{otf:.2f}"
         bbox = draw.textbbox((0, 0), label, font=font)
         draw.text(
             (plot_right_up + 4 * UPSCALE_FACTOR, y - (bbox[3] - bbox[1]) // 2),
             label,
-            fill=HALF_STEP_LINE_RGB,
+            fill=line_rgb,
             font=font,
         )
 
@@ -456,6 +463,13 @@ class StyleFamilyExtras:
     # are still drawn at every entry in `readhelper_extra_otf`, but
     # only entries in this tuple get a text label.
     readhelper_label_otf: tuple[float, ...] = ()
+    # OTF fractions in `readhelper_extra_otf` to draw as grey MAJOR
+    # anchors instead of orange minors. On dense grids the eye needs a
+    # mid-weight tier between the chart's printed lines and the minor
+    # fill — e.g. Touit draws grey at every 0.1 the chart does not
+    # print, so no read starts more than 0.05 from a grey or printed
+    # line. Empty tuple = no major tier (all lines orange).
+    readhelper_major_otf: tuple[float, ...] = ()
     # Sentence stating the maintainer's read precision against the
     # rendered grid. Half a tick spacing on `readhelper_extra_otf`:
     # 0.05 grid → ±0.02, 0.01 grid → ±0.005. Default reads ±0.02 to
@@ -652,7 +666,8 @@ def _multifreq_press_kit_extras(chart: ReferenceChart) -> StyleFamilyExtras:
         "Top of plot area → MTF 1.0",
         "Each printed gridline below it → 0.8, 0.6, 0.4, 0.2",
         "Bottom gridline → MTF 0.0",
-        "Orange dashed lines fill in every 0.01 between the printed gridlines",
+        "Grey dashed lines anchor every 0.1 between the printed gridlines",
+        "Orange dashed lines fill in every 0.01 between them",
     )
 
     # GT-snippet for Zeiss Touit: aperture KEYS are profile role labels
@@ -701,6 +716,14 @@ def _multifreq_press_kit_extras(chart: ReferenceChart) -> StyleFamilyExtras:
             round(0.05 * i, 2)
             for i in range(1, 20)
             if round(0.05 * i, 2) not in (0.2, 0.4, 0.6, 0.8)
+        ),
+        # Grey major anchors at every 0.1 the chart does not print
+        # (0.1, 0.3, 0.5, 0.7, 0.9) — with the printed 0.2-step lines
+        # this gives the eye a strong line at every 0.1.
+        readhelper_major_otf=tuple(
+            round(0.1 * i, 2)
+            for i in range(1, 10)
+            if round(0.1 * i, 2) not in (0.2, 0.4, 0.6, 0.8)
         ),
         eye_precision_text="±0.005 (half a gridline tick)",
     )
