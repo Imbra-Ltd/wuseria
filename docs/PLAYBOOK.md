@@ -496,6 +496,11 @@ pre-populated with the extractor's predictions — ADR-048's
 cell-level marking convention: bare = silent verification,
 `!` = corrected, `?` = unknown / will become None). On re-run the
 scaffolder PRESERVES `!`/`?` marks and refreshes unmarked cells.
+Caveat: a bare (unmarked) value entered where the extractor
+predicts nothing (`—`) counts as an unmarked cell and is clobbered
+back to `—` on the next `--write` — always mark corrections at
+extractor-empty cells with `!` (S207 incident; warning tracked in
+#1379).
 
 **Transcribing a marked-up eye-read to ground truth (ADR-048):**
 

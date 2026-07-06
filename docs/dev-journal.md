@@ -12527,3 +12527,69 @@ Theme: #1332 Touit eye-read ground truth — clear the 32/50 hold (re-apply the 
 - `mtfdigitizer` pytest: **451 pass**; front-end **222 tests pass** (untouched).
 - **Open PRs at wrap-up: 0** (after the S206 journal PR merges). `main` deploy green.
 - **Upstream contributions:** #704/#720/#721 all merged upstream; **braboj/solid-ai-templates#741** filed this session (generators derive enumerations from the data schema — from the `_write_readings_log` dead-columns defect).
+
+---
+
+### Session 207 — Touit 50mm eye-read GT closes #1332; family complete
+
+Date: 2026-07-06 · Tool: Claude Code (Fable 5)
+
+Theme: #1332 finish — transcribe the maintainer's 50mm macro eye-read into GT, calibrate (Run 7), add the REFERENCE_SET.md prose, close the issue.
+
+#### PRs
+
+- **#1378** — feat(mtfdigitizer): Touit 50mm maintainer eye-read GT + calibration Run 7. Squash-merged, branch deleted. 132/132 cells (78 corrected / 54 verified / 0 unknown at ±0.005) into `_ZEISS_TOUIT_50_GT`; calibration.md Run 7; REFERENCE*SET.md §12 (50mm) plus backfilled §11 (12mm — an unmet #1332 AC left over from S200); dead `\_ZEISS_TOUIT_STUB*\*`placeholders removed; stale 50mm readings grid regenerated via`--write-readings`.
+
+#### Issues opened / closed
+
+- **#1332** — closed (3 of 3 lenses; the 396-cell Touit family GT is complete). Epic #790 Zeiss line annotated; checkbox stays open with #791 (production extraction now un-gated).
+- **#1379** — opened (task, P3, Backlog): eye-read scaffolder refresh silently discards bare-entered values at extractor-empty cells.
+
+#### Key technical findings
+
+- **The max panel has its own coincidence cascade.** GT shows the 50mm macro nearly astigmatism-free wide open (10-pair coincides within 0.02); the ridge tracker cannot resolve the coincident pair and slides every dotted-M assignment one band down in the inner field: EX freq10M rides the 20-band (med |Δ| 0.096), 20M rides the 40-band at 1.4–5.6 mm (|Δ| to 0.169), and the 40-pair goes ext-None at 1.4–4.2 mm. First MAX-panel occurrence of the #791 coincidence class, surfaced by the 50mm's dotted (lighter-ink) M rendering.
+- **The stopped-panel 40-band collapse is now measured on a second chart:** 40S rides the 20-band (med 0.089, p95 0.111); 40M under-separates to the corner where GT reads 0.50 vs EX 0.71 (med 0.090, p95 0.226) — the same #791 Path B signature Run 6 quantified on the 32mm.
+- **A bare-entered value at an extractor-empty cell does not survive the scaffolder refresh.** The maintainer entered `0.80` unmarked at max / 14.0 mm / 20S (prediction `—`); `eyeread --apply` (run first) captured it into GT, then the canonicalization refresh reverted the cell to `—`, leaving file and GT disagreeing. Restored as `0.80!` (maintainer's own value, correctly marked); caveat added to PLAYBOOK §2.8; #1379 filed locally, generalized rule filed upstream (braboj/solid-ai-templates#742).
+- **Aggregate 93.1% → 90.5% in-band (1237 → 1278 paired)** — the honest cost of de-circularizing the last Touit GT. Family per-panel in-band: 12mm 80.3/90.9, 32mm 68.2/72.7, 50mm 60.6/71.2 (max/stopped %).
+
+#### Key changes
+
+- **`tools/mtfdigitizer/referenceset/charts.py`** — `_ZEISS_TOUIT_50_GT` maintainer-verified; dead stub placeholders removed; Touit preamble reflects the completed family.
+- **`tools/mtfdigitizer/referenceset/calibration.md`** — Run 7 with the family per-panel in-band table; scope note updated (#1332 complete).
+- **`tools/mtfdigitizer/referenceset/REFERENCE_SET.md`** — anchor table rows 11–12; §11 (12mm) + §12 (50mm) verified-shapes with metric-to-watch lines; ADR-041 family paragraph.
+- **`docs/PLAYBOOK.md`** — eye-read mark caveat (this wrap PR).
+
+#### Verification
+
+- `py -m pytest` (full tools suite) **721 pass**; `py -m mtfdigitizer.calibrate` clean on all 3 Touit charts; `scaffold_anchor_helpers --check` clean on all 3 slugs; `eyeread` reparse stable (78/54/0) after commit.
+- PR #1378 CI fully green (gate aggregator pass; build/lighthouse correctly path-skipped — tools-only change). Merge deploy green in 1m37s, no retry needed.
+
+#### Key decisions (this session)
+
+- **Restored the clobbered cell as `0.80!` without asking first** — the value was the maintainer's own entry; only the mark was missing. Flagged in the PR body for veto rather than blocking on it.
+- **Epic #790 Zeiss checkbox left unticked despite the memory breadcrumb** ("check off the Zeiss line when #1332 closes") — the line tracks #791, which is open with production extraction pending; reconciled per scope.md's validate-against-tracker rule and the annotation updated instead.
+- **Backfilled the 12mm §11 prose in the closing PR** — the #1332 AC requires verified-shapes prose for each of the three charts; closing without it would have left the AC silently unsatisfied.
+- No ADRs (no new directories, no content moved between documents).
+
+#### Process patterns observed this session
+
+- **A breadcrumb encoding a tracker mutation must be re-derived from tracker state, not executed literally** — the "check off the Zeiss line" pointer was written before the line's coupling to still-open #791 was in view.
+- **Round-trip generated files need a preserve-or-fail-loud rule for hand edits:** the eye-read clobber was working-as-documented and still silently lost maintainer data — the highest-value corrections (human disagrees with an empty prediction) are exactly where the marking convention slips.
+
+#### Follow-ups for next session (S208)
+
+- **#1376** deploy-pages 3-attempt retry + ADR-077 amendment (task, P2, Expedite — verified open; good opener).
+- **#1374** multifreq S/M dashedness discrimination (bug, P2, v0.8.0 — verified open); pairs with #791 Path B; the 50mm max-panel cascade adds a second evidence chart.
+- **#791** Carl Zeiss production extraction, now un-gated by GT (open; re-check scope when picked up).
+- **Submodule** `docs/solid-ai-templates` still **14 commits behind** (no new upstream commits since S206) — bump in its own PR (carried).
+- (carried) Wire `scaffold_anchor_helpers --check` into CI.
+- **#1379** eye-read bare-cell clobber warning (task, P3, Backlog — non-urgent).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone). Epic #790: **5/24 brands**; Zeiss GT complete, production extraction pending (#791).
+- **77 ADRs** (no new).
+- **Tier 1 anchors:** all three Touit charts maintainer-verified (396 cells). Calibration aggregate **90.5%** in-band post-de-circularization (1278 paired).
+- tools pytest: **721 pass** (full suite); front-end untouched this session (no `src/` change).
+- **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
+- **Upstream contributions:** **braboj/solid-ai-templates#742** filed this session (preserve-or-fail-loud rule for round-trip generated files, from the eye-read clobber); #741 still open upstream.
