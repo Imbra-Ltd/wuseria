@@ -661,20 +661,10 @@ _FUJI_XF_23_GT: GroundTruthCurves = {
 # Ground truth lives in `docs/optical-specs/<slug>/eye-read.md` per
 # ADR-048; tuples below are auto-transcribed by
 # `py -m mtfdigitizer.eyeread <slug> --apply` — do not hand-edit.
-# Stubs ship as all-None placeholders until the maintainer eye-reads
-# each cell (#1332); the scaffolder fills the eye-read.md tables with
-# extractor predictions on first run for the maintainer to verify or
-# correct. Per `feedback_agent_no_gt_eye_read` the agent does NOT
-# propose cell values.
-_ZEISS_TOUIT_STUB_TUPLE: tuple[float | None, ...] = (None,) * 11
-_ZEISS_TOUIT_STUB_PANEL: dict[str, tuple[float | None, ...]] = {
-    "freq10S": _ZEISS_TOUIT_STUB_TUPLE,
-    "freq10M": _ZEISS_TOUIT_STUB_TUPLE,
-    "freq20S": _ZEISS_TOUIT_STUB_TUPLE,
-    "freq20M": _ZEISS_TOUIT_STUB_TUPLE,
-    "freq40S": _ZEISS_TOUIT_STUB_TUPLE,
-    "freq40M": _ZEISS_TOUIT_STUB_TUPLE,
-}
+# All three charts are maintainer eye-read (#1332): 12mm on the 14mm
+# APS-C-corner grid at ±0.02 (#1348), 32mm and 50mm at ±0.005 on the
+# 0.01-grid readhelpers. Per `feedback_agent_no_gt_eye_read` the
+# agent does NOT propose cell values.
 _ZEISS_TOUIT_12_GT: GroundTruthCurves = {
     "max": {
         "freq10S": (0.96, 0.96, 0.96, 0.96, 0.96, 0.95, 0.94, 0.92, 0.87, 0.77, 0.62),
@@ -713,20 +703,20 @@ _ZEISS_TOUIT_32_GT: GroundTruthCurves = {
 }
 _ZEISS_TOUIT_50_GT: GroundTruthCurves = {
     "max": {
-        "freq10S": (0.95, 0.94, 0.94, 0.93, 0.92, 0.92, 0.91, 0.90, 0.90, 0.90, None),
-        "freq10M": (0.95, 0.89, 0.87, 0.86, 0.84, 0.82, 0.80, 0.79, 0.80, 0.80, None),
-        "freq20S": (0.80, None, 0.86, 0.84, None, 0.79, 0.78, 0.77, 0.78, 0.78, None),
-        "freq20M": (0.80, 0.77, 0.72, 0.68, 0.63, None, None, None, None, None, None),
-        "freq40S": (0.80, None, None, None, 0.62, 0.58, 0.57, 0.56, 0.54, 0.59, None),
-        "freq40M": (0.80, None, None, None, None, None, 0.53, 0.50, 0.53, 0.54, None),
+        "freq10S": (0.95, 0.94, 0.94, 0.93, 0.92, 0.92, 0.91, 0.91, 0.90, 0.90, 0.90),
+        "freq10M": (0.95, 0.94, 0.93, 0.92, 0.91, 0.91, 0.90, 0.89, 0.90, 0.90, 0.90),
+        "freq20S": (0.91, 0.89, 0.88, 0.87, 0.85, 0.83, 0.80, 0.79, 0.79, 0.80, 0.80),
+        "freq20M": (0.91, 0.89, 0.87, 0.84, 0.81, 0.79, 0.78, 0.77, 0.78, 0.78, 0.78),
+        "freq40S": (0.81, 0.78, 0.73, 0.69, 0.64, 0.59, 0.55, 0.50, 0.52, 0.56, 0.61),
+        "freq40M": (0.80, 0.78, 0.73, 0.69, 0.62, 0.59, 0.57, 0.55, 0.54, 0.53, 0.53),
     },
     "stopped": {
-        "freq10S": (0.93, 0.93, 0.93, 0.93, 0.93, 0.92, 0.92, 0.91, 0.91, 0.91, None),
-        "freq10M": (None, None, None, None, None, None, None, None, None, None, None),
-        "freq20S": (0.88, 0.89, 0.89, 0.89, 0.88, 0.87, 0.86, 0.85, 0.85, 0.84, None),
-        "freq20M": (None, None, None, None, None, None, None, None, None, None, None),
-        "freq40S": (0.82, 0.88, None, 0.86, 0.86, 0.84, 0.82, 0.80, 0.80, None, None),
-        "freq40M": (0.82, 0.82, 0.82, 0.80, 0.78, 0.75, 0.73, 0.71, 0.70, 0.71, None),
+        "freq10S": (0.93, 0.93, 0.93, 0.93, 0.93, 0.93, 0.92, 0.91, 0.91, 0.91, 0.91),
+        "freq10M": (0.93, 0.93, 0.93, 0.93, 0.93, 0.93, 0.92, 0.92, 0.92, 0.91, 0.90),
+        "freq20S": (0.89, 0.89, 0.89, 0.89, 0.88, 0.87, 0.86, 0.85, 0.85, 0.85, 0.85),
+        "freq20M": (0.89, 0.88, 0.87, 0.87, 0.87, 0.86, 0.83, 0.81, 0.80, 0.79, 0.77),
+        "freq40S": (0.82, 0.82, 0.81, 0.80, 0.78, 0.76, 0.74, 0.72, 0.70, 0.71, 0.72),
+        "freq40M": (0.82, 0.79, 0.76, 0.73, 0.70, 0.67, 0.63, 0.59, 0.56, 0.53, 0.50),
     },
 }
 

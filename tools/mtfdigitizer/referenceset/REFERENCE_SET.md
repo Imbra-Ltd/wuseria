@@ -1,6 +1,6 @@
 # MTF reference set
 
-Eight eye-verified MTF charts that calibrate the unified digitizer
+The eye-verified MTF charts that calibrate the unified digitizer
 (ADR-038). Each chart was opened, the curve shapes read by eye, and the
 verified shape recorded here as the ground truth the extractor must match.
 
@@ -27,6 +27,8 @@ the set inside #933's 6–10-chart target with full coverage.
 | 8 | `zeiss-touit-32mm-f1-8`               | multifreq-press-kit                | Three frequencies (10/20/40) — extracted via N-freq RIDGE_TRACKING (#791, ADR-075) |
 | 9 | `ttartisan-7-5mm-f2-0-fisheye`        | ttartisan-4color-dual-aperture     | Second anchor (ADR-041); fisheye edge-crash stress |
 |10 | `ttartisan-af-35mm-f1-8`              | ttartisan-4color-dual-aperture     | Third anchor (ADR-041); right-edge S/M swap (#1199)|
+|11 | `zeiss-touit-12mm-f2-8`               | multifreq-press-kit                | Second Touit anchor (ADR-041); corner crowding — edge cells crowd and fade |
+|12 | `zeiss-touit-50mm-f2-8-macro`         | multifreq-press-kit                | Third Touit anchor (ADR-041); dotted M + max-panel 10-pair coincidence |
 
 The base set was eight; #9 was added when the TTartisan 4-color
 dual-aperture family was introduced. ADR-041 allows multiple Tier 1
@@ -38,7 +40,12 @@ and the af-35 is the third (stressing right-edge S/M crossings where
 the solid curve's complex shape fragments its DP path while the
 dashed curve looks "solid" by every CV metric — #1199 / S160). The
 primary 50/1.2 entry is documented inline in `charts.py` rather than
-here.
+here. The Zeiss Touit family (`multifreq-press-kit`) likewise carries
+three anchors per ADR-041: the 32mm is the primary (#8); the 12mm
+(#11) and 50mm macro (#12) completed the family's 396-cell ground
+truth via #1332 — together the three cover both M-curve renderings
+(dashed on 12/32mm, dotted on the 50mm) and both coincidence failure
+modes (stopped-panel 40-band collapse, max-panel 10-pair cascade).
 
 ## Verified shapes
 
@@ -110,6 +117,24 @@ here.
 - **f/5.6 stopped panel — diagnostic**: the orange pair crosses at the right edge (mm 11–12) where the solid S30 dives steeply to 0.49 while the dashed M30 stays high at 0.63. The current extractor swaps these labels: per-column ridge DP tracks both physical curves correctly, but the S/M discriminator picks the wrong path as solid because (a) the solid S30 dive-recover-dive shape fragments its DP path (coverage=299, on-ridge runs=41), while (b) the dashed M30 is so smooth the DP locks every centroid (coverage=501, on-ridge runs=4). Neither `Track.coverage` nor `_path_mask_continuity` resolves this — both signals look at the post-DP track, not at the underlying mask's solid-vs-dashed character.
 - An extractor that puts the stopped 30S corner at ~0.49 and 30M corner at ~0.63 has resolved #1199. The calibration metric to watch is p95 |Δ| on `ttartisan-af-35mm-f1-8` stopped freq30S and freq30M (currently 0.193 / 0.194 — driven by the single corner sample being swapped).
 - The other 86 cells of this anchor extract very cleanly (median |Δ| 0.002–0.003), so this anchor is calibration-net-positive on the aggregate (median 0.0079 → 0.0061 and in-band 94.1% → 94.5% from S159 baseline).
+
+### 11. zeiss-touit-12mm-f2-8 — second Touit anchor, corner crowding
+
+- Same German press-kit template as the 32mm (#8): B&W, solid = Sagittal, dashed = Tangential, three frequencies (10/20/40), stacked panels k=2.8 (max) + k=5.6 (stopped). Sampled to 14 mm — the APS-C image-circle corner where the curves end (#1348); the printed axis runs to 15 mm but 14–15 mm is empty.
+- Ground truth lives in `docs/optical-specs/zeiss-touit-12mm-f2-8/eye-read.md` (ADR-048); maintainer-verified (S200, #1348) at ±0.02 on the pre-#1372 read-helpers: 132/132 cells read — 94 corrected, 38 silently verified, 0 unknown.
+- **Verified shapes, k=2.8 (max) panel**: 10S holds 0.96 through ~6 mm then dives to 0.62 at the corner while 10M stays at 0.82 — S falls BELOW M at the edge; 20S drops to 0.45 vs 20M 0.58; the 40 pair descends together (0.82 → 0.35/0.31, never more than 0.05 apart).
+- **Verified shapes, k=5.6 (stopped) panel**: 10S/10M track together to 0.89/0.85 at the corner; 20S has a dip-and-recover (0.85 at 7 mm, back to 0.87 at 9.8–11.2 mm, then 0.79) while 20M keeps falling to 0.66; 40S dips to 0.70 at 7 mm and recovers to 0.75 at 11.2 mm before the 0.60 corner, while 40M falls monotonically to 0.42 — the corner S/M splits are the extractor stress.
+- Extractor signature (calibration Runs 6–7): the crowded corner defeats the tracker — all six fields go ext-None at 14 mm on the max panel (the 10-pair also at 11.2 mm, and at 14 mm on the stopped panel), and the outer-field cells that do pair drift 0.08–0.18 (max 20S p95 0.218, 10S p95 0.168). On the stopped panel 20M/40M under-separate at the corner (EX rides the S track: 40M GT 0.42 vs EX 0.62, p95 0.215). Metric to watch: stopped freq20M/freq40M p95 |Δ| (currently 0.163/0.215) and recovery of the max-panel 14 mm ext-None cells.
+- Per-panel in-band (±0.05): max 53/66 (80.3%), stopped 60/66 (90.9%) — see `calibration.md` Run 7.
+
+### 12. zeiss-touit-50mm-f2-8-macro — third Touit anchor, dotted M
+
+- Same press-kit template, but the T (M) curves print DOTTED in lighter ink (the 12/32mm siblings use dashes) and the canvas is larger (1786x2526 vs 1636x1770). Stacked panels k=2.8 (max) + k=5.6 (stopped); sampled to 14 mm per the family convention.
+- Ground truth lives in `docs/optical-specs/zeiss-touit-50mm-f2-8-macro/eye-read.md` (ADR-048); maintainer-verified 2026-07-06 at ±0.005 on the 0.01-grid readhelpers (#1332): 132/132 cells read — 78 corrected, 54 silently verified, 0 unknown.
+- **Verified shapes, k=2.8 (max) panel**: the macro is nearly astigmatism-free wide open — the 10-pair coincides within 0.02 (0.95 centre → 0.90 edge, no corner dive); 20M sits 0.01–0.04 under 20S (0.91 → 0.78/0.80), widest mid-field; 40S dips to 0.50 at 9.8 mm then recovers to 0.61 at the corner while 40M declines gently to 0.53 — the pair crosses twice (~5.6 mm and ~12 mm).
+- **Verified shapes, k=5.6 (stopped) panel**: 10 and 20 S-curves go nearly flat (0.93 → 0.91, 0.89 → 0.85); 20M separates from ~8.4 mm to 0.77 at the corner; 40S holds 0.82 → 0.70 with a mild corner recovery to 0.72, while 40M falls steadily to 0.50 — at 0.22 the widest stopped-panel S/M split in the family.
+- Extractor signature (calibration Run 7): the max-panel 10-pair coincidence cascades the dotted-M assignments one band down in the inner field — EX freq10M rides the 20-band (med |Δ| 0.096), 20M rides the 40-band at 1.4–5.6 mm (|Δ| up to 0.169), and the 40-pair goes ext-None at 1.4–4.2 mm; assignments recover from mid-field. The stopped panel repeats the 32mm #791 Path B collapse: 40S rides the 20-band (med 0.089) and 40M under-separates at the corner (GT 0.50 vs EX 0.71; med 0.090, p95 0.226). Metrics to watch: max freq10M med |Δ| (under ~0.01 resolves the dotted-M cascade) and stopped freq40S/freq40M med |Δ| (under ~0.02 resolves the collapse).
+- Per-panel in-band (±0.05): max 40/66 (60.6%), stopped 47/66 (71.2%) — see `calibration.md` Run 7.
 
 ## Proposed thresholds
 

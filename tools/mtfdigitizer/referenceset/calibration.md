@@ -30,7 +30,7 @@ Zeiss Touit press kit was promoted from rejection-case to an extracted
 family by #791 / ADR-075 via the N-frequency RIDGE_TRACKING pipeline
 (`ridge_tracks_to_fields_multifreq`); it joined the table when it
 shipped eye-read ground truth (12mm via #1348; 32mm maintainer-verified
-in Run 6, #1332; 50mm still extractor-seeded).
+in Run 6, 50mm in Run 7 — #1332 complete).
 
 ## How to reproduce
 
@@ -43,6 +43,90 @@ Reads the in-source ground truth from `referenceset/charts.py` and runs
 `extract_chart()` for each chart with both `plot_box` and `ground_truth`
 populated. Output: per-chart `|d|` (absolute offset) median + p95 per
 field, then an aggregate.
+
+## Run 7 (after Touit 50mm maintainer eye-read GT — #1332 complete)
+
+First run where `zeiss-touit-50mm-f2-8-macro` scores against
+maintainer-read ground truth instead of extractor-seeded predictions:
+132/132 cells eye-read at ±0.005 on the 0.01-grid readhelpers (78
+corrected, 54 silently verified, 0 unknown). This completes the
+396-cell Touit family GT — all three `multifreq-press-kit` anchors
+are now maintainer-verified. Two behaviours the seeded GT hid are now
+measured:
+
+1. **Max-panel dotted-M coincidence cascade.** GT confirms the dotted
+   T (M) curves hug solid S wide open — the 10-pair coincides within
+   0.02 across the field (the macro is nearly astigmatism-free at
+   k=2.8). The ridge tracker does not resolve the coincident pair, so
+   every M assignment slides one band down in the inner field: EX
+   freq10M rides the 20-band (med |d| 0.096, p95 0.123), EX freq20M
+   rides the 40-band at 1.4–5.6 mm (|d| up to 0.169), and the 40-band
+   pair goes ext-None at 1.4–4.2 mm (no track left to assign).
+   Assignments recover from mid-field where the bands separate. Same
+   coincidence-collapse root as the #791 stopped-panel limitation,
+   surfacing on a MAX panel for the first time via the 50mm's dotted
+   (lighter-ink) M rendering.
+2. **Stopped-panel 40-band collapse, second chart.** The k=5.6
+   10-pair coincidence is real (GT delta <= 0.01 — the collapsed pair
+   at 10 is correct), but EX freq40S rides the 20-band across
+   2.8–11.2 mm (med |d| 0.089, p95 0.111) and freq40M under-separates
+   toward the corner where GT drops to 0.50 vs EX 0.71 (med 0.090,
+   p95 0.226); 20M is also under-separated at the outer field (|d|
+   0.055–0.075 from 12.6 mm). Matches the 32mm Run 6 signature — the
+   #791 Path B failure mode is now quantified on two charts.
+
+### Per-chart (Touit block; panels labelled)
+
+```
+zeiss-touit-50mm-f2-8-macro (multifreq-press-kit)  [max / k=2.8]
+  freq10S         med |d| 0.003  p95 |d| 0.004  paired 11/11  ext-None  0
+  freq10M         med |d| 0.096  p95 |d| 0.123  paired 11/11  ext-None  0
+  freq20S         med |d| 0.013  p95 |d| 0.120  paired 10/11  ext-None  1
+  freq20M         med |d| 0.065  p95 |d| 0.177  paired 10/11  ext-None  1
+  freq40S         med |d| 0.004  p95 |d| 0.076  paired  8/11  ext-None  3
+  freq40M         med |d| 0.011  p95 |d| 0.050  paired  8/11  ext-None  3
+zeiss-touit-50mm-f2-8-macro (multifreq-press-kit)  [stopped / k=5.6]
+  freq10S         med |d| 0.005  p95 |d| 0.005  paired 11/11  ext-None  0
+  freq10M         med |d| 0.005  p95 |d| 0.009  paired 11/11  ext-None  0
+  freq20S         med |d| 0.002  p95 |d| 0.005  paired 11/11  ext-None  0
+  freq20M         med |d| 0.021  p95 |d| 0.084  paired 11/11  ext-None  0
+  freq40S         med |d| 0.089  p95 |d| 0.111  paired 11/11  ext-None  0
+  freq40M         med |d| 0.090  p95 |d| 0.226  paired 11/11  ext-None  0
+```
+
+Per-panel in-band (|d| <= 0.05, from
+`readings/zeiss-touit-50mm-f2-8-macro.md`): max 40/66 (60.6%) — 40 of
+58 paired cells in-band plus 8 GT cells the extractor returned no
+reading for (counted as misses); stopped 47/66 (71.2%), all 66
+paired. Both panels fail the 93%+ norm of the verified anchors —
+deliberately documented, not silenced (#1332 AC).
+
+Family reference — per-panel in-band across the three Touit anchors
+(#1332 AC "in-band % per panel"; 12mm from
+`readings/zeiss-touit-12mm-f2-8.md`, unchanged this run):
+
+```
+zeiss-touit-12mm-f2-8          max 53/66 (80.3%)   stopped 60/66 (90.9%)
+zeiss-touit-32mm-f1-8          max 45/66 (68.2%)   stopped 48/66 (72.7%)
+zeiss-touit-50mm-f2-8-macro    max 40/66 (60.6%)   stopped 47/66 (71.2%)
+```
+
+### Aggregate
+
+```
+before GT flip (seeded 50mm GT):        after (maintainer GT):
+  paired comparisons:    1237             paired comparisons:    1278
+  median |d|:           0.0060             median |d|:           0.0062
+  p95 |d|:              0.0641             p95 |d|:              0.0831
+  max |d|:              0.2538             max |d|:              0.2538
+  within +/-0.05: 1152/1237 (93.1%)        within +/-0.05: 1156/1278 (90.5%)
+```
+
+The 2.6-point in-band drop is the honest cost of de-circularizing the
+last Touit GT. The 50mm adds two metrics to watch alongside Run 6's:
+max-panel freq10M med |d| (0.096 — the dotted-M cascade) and stopped
+freq40S/freq40M med |d| (0.089/0.090 — the #791 Path B collapse).
+Recovery is tracked via #1374 and the #791 Path B work.
 
 ## Run 6 (after Touit 32mm maintainer eye-read GT, #1332)
 
