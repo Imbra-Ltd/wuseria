@@ -46,24 +46,33 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      # Report whichever attempt published the deployment (ADR-077)
-      url: ${{ steps.deployment.outputs.page_url || steps.deployment-retry.outputs.page_url }}
+      # Report whichever attempt published the deployment (ADR-078)
+      url: ${{ steps.deployment.outputs.page_url || steps.deployment-retry.outputs.page_url || steps.deployment-final.outputs.page_url }}
     steps:
       # Deploy the uploaded artifact to GitHub Pages.
       # deploy-pages intermittently fails with a transient backend error
-      # ("Deployment failed, try again later") even on a good build, so the
-      # first attempt tolerates failure and a single retry follows (ADR-077).
+      # ("Deployment failed, try again later") even on a good build. Three
+      # bounded attempts with growing backoff (30s, then 90s) bridge the
+      # multi-minute flakes a single 30s retry could not (ADR-078).
       - id: deployment
         uses: actions/deploy-pages@v5
         continue-on-error: true
 
-      # Back off before retrying to let the Pages backend recover
+      # First backoff — let the Pages backend recover
       - if: steps.deployment.outcome == 'failure'
         run: sleep 30
 
-      # Single retry — a manual re-run reliably succeeds, so one suffices.
-      # Not continue-on-error: a double failure is a real backend problem
-      # and MUST fail the job loud.
       - id: deployment-retry
         if: steps.deployment.outcome == 'failure'
+        uses: actions/deploy-pages@v5
+        continue-on-error: true
+
+      # Second, longer backoff — observed flakes recover within minutes
+      - if: steps.deployment.outcome == 'failure' && steps.deployment-retry.outcome == 'failure'
+        run: sleep 90
+
+      # Final attempt — NOT continue-on-error: a triple failure spanning
+      # ~2.5 minutes is a real backend outage and MUST fail the job loud.
+      - id: deployment-final
+        if: steps.deployment.outcome == 'failure' && steps.deployment-retry.outcome == 'failure'
         uses: actions/deploy-pages@v5

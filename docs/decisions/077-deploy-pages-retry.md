@@ -1,6 +1,6 @@
 # ADR-077: Retry the transient deploy-pages step once with backoff
 
-**Status:** Accepted
+**Status:** Superseded by ADR-078
 **Date:** 2026-07-04
 
 ## Context
