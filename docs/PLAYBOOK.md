@@ -1690,11 +1690,11 @@ the tag.
 Deployment is automated via GitHub Actions on push to `main`. No manual steps
 required.
 
-The `deploy` job self-retries one transient `actions/deploy-pages` failure
-(`Deployment failed, try again later.`) with a 30s backoff before failing
-(ADR-077). If a deploy still goes red, it is either a real `build`/`validate`
-failure (fix the diff) or a sustained GitHub Pages backend outage that
-outlived the retry. To tell them apart: check the `deploy` job — if `build`
+The `deploy` job self-retries transient `actions/deploy-pages` failures
+(`Deployment failed, try again later.`) up to three attempts with growing
+backoff (30s, then 90s) before failing (ADR-078). If a deploy still goes
+red, it is either a real `build`/`validate` failure (fix the diff) or a
+sustained GitHub Pages backend outage that outlived the retries. To tell them apart: check the `deploy` job — if `build`
 is green and only `deploy` failed at `actions/deploy-pages`, it is the
 backend. The live site is unaffected (Pages keeps serving the last good
 deployment — confirm with `curl -I https://wuseria.com/`); once the backend
