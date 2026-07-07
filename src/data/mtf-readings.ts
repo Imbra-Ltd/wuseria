@@ -14585,6 +14585,583 @@ const mtfReadings: Record<string, MtfData> = {
       },
     ],
   },
+  "zeiss-touit-12mm-f2-8": {
+    mtfType: "measured",
+    charts: [
+      {
+        aperture: "f/2.8",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              20: { S: 0.91, M: 0.91 },
+              40: { S: 0.82, M: 0.82 },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              20: { S: 0.9, M: 0.9 },
+              40: { S: 0.81, M: 0.81 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              20: { S: 0.89, M: 0.89 },
+              40: { S: 0.79, M: 0.77 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              20: { S: 0.89, M: 0.89 },
+              40: { S: 0.77, M: 0.74 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              20: { S: 0.9, M: 0.9 },
+              40: { S: 0.74, M: 0.71 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.96, M: 0.96 },
+              20: { S: 0.89, M: 0.89 },
+              40: { S: 0.71, M: 0.67 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              20: { S: 0.85, M: 0.85 },
+              40: { S: 0.68, M: 0.64 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              20: { S: 0.84, M: 0.93 },
+              40: { S: 0.63, M: 0.63 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: null, M: null },
+              20: { S: 0.8, M: 0.89 },
+              40: { S: 0.58, M: 0.58 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.88, M: 0.88 },
+              20: { S: 0.77, M: 0.77 },
+              40: { S: 0.48, M: 0.48 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/5.6",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              20: { S: 0.91, M: 0.91 },
+              40: { S: 0.84, M: 0.84 },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              20: { S: 0.9, M: 0.9 },
+              40: { S: 0.82, M: 0.8 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              20: { S: 0.89, M: 0.89 },
+              40: { S: 0.81, M: 0.78 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              20: { S: 0.88, M: 0.88 },
+              40: { S: 0.78, M: 0.75 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              20: { S: 0.87, M: 0.87 },
+              40: { S: 0.74, M: 0.69 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.85, M: 0.85 },
+              40: { S: 0.71, M: 0.65 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.85, M: 0.85 },
+              40: { S: 0.72, M: 0.65 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.93, M: 0.94 },
+              20: { S: 0.86, M: 0.84 },
+              40: { S: 0.74, M: 0.64 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.93, M: 0.94 },
+              20: { S: 0.86, M: 0.83 },
+              40: { S: 0.76, M: 0.63 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.91, M: 0.91 },
+              20: { S: 0.84, M: 0.84 },
+              40: { S: 0.72, M: 0.72 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: null, M: null },
+              20: { S: 0.79, M: 0.79 },
+              40: { S: 0.62, M: 0.62 },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "zeiss-touit-32mm-f1-8": {
+    mtfType: "measured",
+    charts: [
+      {
+        aperture: "f/1.8",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.88, M: 0.88 },
+              20: { S: 0.73, M: 0.73 },
+              40: { S: 0.53, M: 0.53 },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.86, M: 0.88 },
+              20: { S: 0.71, M: 0.73 },
+              40: { S: 0.51, M: 0.51 },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.85, M: 0.88 },
+              20: { S: 0.7, M: 0.73 },
+              40: { S: 0.49, M: 0.48 },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.84, M: 0.89 },
+              20: { S: 0.69, M: 0.72 },
+              40: { S: 0.46, M: 0.46 },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.82, M: 0.88 },
+              20: { S: 0.67, M: 0.71 },
+              40: { S: 0.45, M: 0.42 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.8, M: 0.87 },
+              20: { S: 0.65, M: 0.68 },
+              40: { S: 0.42, M: 0.38 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.77, M: 0.86 },
+              20: { S: 0.63, M: 0.65 },
+              40: { S: 0.39, M: 0.34 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.74, M: 0.84 },
+              20: { S: 0.6, M: 0.62 },
+              40: { S: 0.35, M: 0.29 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.71, M: 0.83 },
+              20: { S: 0.57, M: 0.59 },
+              40: { S: 0.33, M: 0.28 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.66, M: 0.81 },
+              20: { S: 0.53, M: 0.56 },
+              40: { S: 0.31, M: 0.32 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: 0.61, M: 0.8 },
+              20: { S: 0.49, M: 0.55 },
+              40: { S: 0.36, M: 0.31 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/4",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              20: { S: 0.9, M: 0.9 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              20: { S: 0.9, M: 0.9 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.95, M: 0.95 },
+              20: { S: 0.89, M: 0.89 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.94, M: 0.94 },
+              20: { S: 0.88, M: 0.88 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.86, M: 0.86 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.85, M: 0.85 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.83, M: 0.83 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              20: { S: 0.82, M: 0.82 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              20: { S: 0.81, M: 0.81 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              20: { S: 0.81, M: 0.81 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              20: { S: 0.82, M: 0.82 },
+              40: { S: null, M: null },
+            },
+          },
+        ],
+      },
+    ],
+  },
+  "zeiss-touit-50mm-f2-8-macro": {
+    mtfType: "measured",
+    charts: [
+      {
+        aperture: "f/2.8",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.95, M: null },
+              20: { S: 0.8, M: null },
+              40: { S: 0.8, M: 0.8 },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.94, M: null },
+              20: { S: 0.77, M: null },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.94, M: null },
+              20: { S: 0.88, M: null },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.93, M: null },
+              20: { S: 0.85, M: null },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.92, M: null },
+              20: { S: 0.82, M: null },
+              40: { S: 0.64, M: 0.64 },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.92, M: null },
+              20: { S: 0.8, M: null },
+              40: { S: 0.6, M: 0.6 },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.91, M: null },
+              20: { S: 0.8, M: null },
+              40: { S: 0.55, M: 0.56 },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.91, M: null },
+              20: { S: 0.79, M: null },
+              40: { S: 0.56, M: 0.51 },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.9, M: null },
+              20: { S: 0.79, M: null },
+              40: { S: 0.56, M: 0.52 },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.9, M: null },
+              20: { S: 0.8, M: null },
+              40: { S: 0.56, M: 0.54 },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: 0.9, M: null },
+              20: { S: null, M: null },
+              40: { S: 0.61, M: 0.54 },
+            },
+          },
+        ],
+      },
+      {
+        aperture: "f/5.6",
+        confidence: "LOW",
+        confidenceReason: "precision_below_threshold",
+        readings: [
+          {
+            position: 0,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.89, M: 0.89 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 1.4,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.89, M: 0.89 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 2.8,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.89, M: 0.89 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 4.2,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.89, M: 0.89 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 5.6,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.88, M: 0.88 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 7,
+            samples: {
+              10: { S: 0.93, M: 0.93 },
+              20: { S: 0.87, M: 0.87 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 8.4,
+            samples: {
+              10: { S: 0.92, M: 0.92 },
+              20: { S: 0.86, M: 0.86 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 9.8,
+            samples: {
+              10: { S: 0.91, M: 0.91 },
+              20: { S: 0.85, M: 0.85 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 11.2,
+            samples: {
+              10: { S: 0.91, M: 0.91 },
+              20: { S: 0.85, M: 0.85 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 12.6,
+            samples: {
+              10: { S: 0.91, M: 0.91 },
+              20: { S: 0.84, M: 0.84 },
+              40: { S: null, M: null },
+            },
+          },
+          {
+            position: 14,
+            samples: {
+              10: { S: 0.91, M: 0.91 },
+              20: { S: 0.85, M: 0.85 },
+              40: { S: null, M: null },
+            },
+          },
+        ],
+      },
+    ],
+  },
 };
 
 export { mtfReadings };

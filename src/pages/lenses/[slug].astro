@@ -4,7 +4,7 @@ import Base from "../../layouts/Base.astro";
 import { lenses } from "../../data/lenses";
 import { mtfReadings } from "../../data/mtf-readings";
 import { reviewSourceDirectory } from "../../data/reviews";
-import { toSlug } from "../../utils/slug";
+import { toSlug, toDataSlug } from "../../utils/slug";
 import MtfChart from "../../components/static/MtfChart.astro";
 import { formatFL } from "../../utils/formatting";
 import { opticalFieldCount, OPTICAL_FIELDS } from "../../utils/scoring";
@@ -32,7 +32,9 @@ const { lens } = Astro.props as Props;
 const slug = toSlug(`${lens.brand} ${lens.model}`);
 const canonicalUrl = new URL(`/lenses/${slug}/`, Astro.site);
 const content = generateLensContent(lens, lenses);
-const mtf = mtfReadings[slug];
+// Data slug, not page slug: mtfReadings keys follow the ADR-056
+// brandkit convention ("Carl Zeiss" data lives under "zeiss-*").
+const mtf = mtfReadings[toDataSlug(lens.brand, lens.model)];
 
 const DASH = "\u2014";
 

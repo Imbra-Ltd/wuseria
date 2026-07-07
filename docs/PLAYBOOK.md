@@ -783,10 +783,11 @@ for manufacturer optical-design charts (Sigma, Fujifilm), `measured` for
 review-lab charts from a tested sample (LensTip, Optical Limits). Default:
 `measured` (matches the campaign's majority case).
 
-The slug must be in `referenceset/charts.py` with a populated `plot_box`,
-and the source URL must be in `_DEFAULT_SOURCES` (in `emit.py`). For
-zooms (multi-view charts via `additional_views`), the slug must also be
-in `_DEFAULT_FOCAL_LENGTHS` with one mm value per view in primary-then-
+The slug must be in `referenceset/charts.py` with a populated `plot_box`;
+the attribution URL is rendered from `lenses.ts:officialUrl` at page
+render time (#1342 — no source field is emitted). For zooms (multi-view
+charts via `additional_views`), the slug must also be in
+`_DEFAULT_FOCAL_LENGTHS` with one mm value per view in primary-then-
 additional order — emit raises a clear error if missing. Per ADR-033 every
 published focal-length panel becomes its own `MtfChart` entry with
 `focalLength` set; the detail page labels each block "f/X.X @ Nmm".
@@ -794,6 +795,18 @@ Per ADR-041 production-tier charts can emit with `ground_truth=None`.
 Rows with all four fields null are dropped; `MtfReading` fields are
 `number | null` (since the lens-page MTF rendering work) so the B2 None
 contract flows through.
+
+Stacked-aperture primes (Zeiss Touit family) declare ADR-065 role
+labels ("max"/"stopped") in `ReferenceChart.apertures`, so the display
+f-number per panel comes from `_DEFAULT_APERTURES` in `emit.py` (one
+f-number per view, eye-read from the chart legend) — emit raises a
+clear error when a multi-view chart has neither table entry. Fields a
+Tier 1 calibration proves systematically wrong (med |Δ| > 0.05 vs GT)
+are nulled at emit by the `_SUPPRESSED_FIELDS` skip-list (ADR-079);
+each entry cites its tracking issue and every suppression is reported
+on stderr. Remove the entry and re-emit when the fix lands — the
+digitization log and provenance SVG intentionally keep showing the
+extractor's real output for those fields.
 
 **Audit spec field coverage per brand:**
 

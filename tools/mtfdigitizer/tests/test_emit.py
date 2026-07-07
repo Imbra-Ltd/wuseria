@@ -188,3 +188,98 @@ def test_format_entry_emits_low_confidence_with_reason() -> None:
     )
     assert 'confidence: "LOW",' in out
     assert 'confidenceReason: "prior_failed_center_ge_edge",' in out
+
+
+# --- _apply_suppression (ADR-079) ----------------------------------------
+
+
+def test_apply_suppression_nulls_declared_fields_only() -> None:
+    from mtfdigitizer.emit import _apply_suppression
+
+    readings = (_r(pos=0.0), _r(pos=1.4))
+    log: list[tuple[str, str]] = []
+    # zeiss-touit-32mm stopped panel suppresses freq40S/freq40M; the
+    # synthetic reading carries freq10/freq30 keys, so only a matching
+    # key would be nulled. Use the 50mm max entry (freq10M) against a
+    # reading that has freq10M populated.
+    out = _apply_suppression(
+        "zeiss-touit-50mm-f2-8-macro", "max", readings, log
+    )
+    for row in out:
+        assert row.samples["freq10M"] is None, "suppressed field must be null"
+        assert row.samples["freq10S"] == 0.9, "sibling field must survive"
+        assert row.samples["freq30S"] == 0.7, "unrelated field must survive"
+    assert ("max", "freq10M") in log
+    assert ("max", "freq20M") in log
+
+
+def test_apply_suppression_noop_without_entry() -> None:
+    from mtfdigitizer.emit import _apply_suppression
+
+    readings = (_r(pos=0.0),)
+    log: list[tuple[str, str]] = []
+    out = _apply_suppression("sigma-56mm-f1-4-dc-dn-c", "max", readings, log)
+    assert out is readings, "no entry -> readings returned unchanged"
+    assert log == []
+
+
+def test_apply_suppression_keyed_by_panel_role() -> None:
+    from mtfdigitizer.emit import _apply_suppression
+
+    readings = (_r(pos=0.0),)
+    log: list[tuple[str, str]] = []
+    # The 32mm entry suppresses only the STOPPED panel — the max panel
+    # of the same slug must pass through untouched.
+    out = _apply_suppression("zeiss-touit-32mm-f1-8", "max", readings, log)
+    assert out is readings
+    assert log == []
+
+
+# --- suppression / aperture tables reference real charts ------------------
+
+
+def test_suppressed_fields_entries_match_reference_set() -> None:
+    """Every skip-list entry must name a real chart, a declared panel
+    role, and fields the chart's frequency tuple actually publishes —
+    a renamed slug or role would otherwise turn the suppression into a
+    silent no-op and ship the GT-refuted curve (ADR-079)."""
+    from mtfdigitizer.emit import _SUPPRESSED_FIELDS
+    from mtfdigitizer.pipeline.dispatch import parse_field_name
+    from mtfdigitizer.referenceset.charts import REFERENCE_CHARTS
+
+    charts = {c.slug: c for c in REFERENCE_CHARTS}
+    for (slug, role), fields in _SUPPRESSED_FIELDS.items():
+        chart = charts.get(slug)
+        assert chart is not None, f"unknown slug in _SUPPRESSED_FIELDS: {slug}"
+        assert role in chart.apertures, (
+            f"{slug}: role {role!r} not in declared apertures "
+            f"{chart.apertures}"
+        )
+        for field in fields:
+            freq, _sm = parse_field_name(field)
+            assert freq in chart.frequencies_lpmm, (
+                f"{slug}: suppressed field {field} names frequency {freq} "
+                f"the chart does not publish {chart.frequencies_lpmm}"
+            )
+
+
+def test_default_apertures_entries_match_reference_set() -> None:
+    """Every display-aperture entry must name a real chart and carry
+    one f-number string per view, primary first (ADR-079)."""
+    import re
+
+    from mtfdigitizer.emit import _DEFAULT_APERTURES
+    from mtfdigitizer.referenceset.charts import REFERENCE_CHARTS
+
+    charts = {c.slug: c for c in REFERENCE_CHARTS}
+    for slug, apertures in _DEFAULT_APERTURES.items():
+        chart = charts.get(slug)
+        assert chart is not None, f"unknown slug in _DEFAULT_APERTURES: {slug}"
+        assert len(apertures) == len(chart.views), (
+            f"{slug}: {len(apertures)} apertures for {len(chart.views)} views"
+        )
+        for aperture in apertures:
+            assert re.match(r"^f/\d", aperture), (
+                f"{slug}: {aperture!r} is not an f-number string — the site "
+                f"schema requires an f/N prefix (mtf-readings.test.ts)"
+            )
