@@ -269,6 +269,20 @@ class MtfProfile:
     # equal-split path unchanged. Default False.
     interior_anchored_bands: bool = False
 
+    # When True, `ridge_tracks_to_fields_multifreq` assigns S/M within
+    # each 2-track frequency band by ridge-coverage dashedness (the
+    # solid curve has ink at nearly every ridge column; a dashed curve
+    # leaves gaps) instead of y-order, honoring `dashed_is_sagittal`
+    # (#1374). The default top-track-is-S assumption is refuted on the
+    # Zeiss Touit 32mm f/1.8 panel, where the maintainer eye-read GT
+    # (#1332) shows the dashed M running ABOVE solid S from ~3 mm
+    # outward at 10/20 lp/mm. Coverage falls back to y-order when the
+    # two tracks' coverages sit within the calibrated margin (coincident
+    # pairs, #791 cluster-collapse bands). Opt-in: only families whose
+    # S/M axis is solid-vs-dashed can use it — all-dashed families
+    # (Viltrox) carry no coverage signal. Default False.
+    band_sm_by_coverage: bool = False
+
     # When True, build sister-fallback presence masks for this
     # SPLIT_BY_DASH + RIDGE_TRACKING profile by splitting its single
     # neutral mask into solid (S) and dashed (M) sub-skeletons and

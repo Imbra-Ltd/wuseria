@@ -785,6 +785,7 @@ def field_skeletons(
             frequencies_lpmm=profile.frequencies_lpmm,
             dashed_is_sagittal=profile.dashed_is_sagittal,
             interior_anchored=profile.interior_anchored_bands,
+            sm_by_coverage=profile.band_sm_by_coverage,
         )
     elif (
         profile.style_axis == "SPLIT_BY_DASH"

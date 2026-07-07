@@ -416,6 +416,11 @@ ZEISS_TOUIT_BW_3FREQ: MtfProfile = MtfProfile(
     # Cluster the surviving tracks by their interior y-position instead,
     # where the frequency bands still separate cleanly.
     interior_anchored_bands=True,
+    # #1374: the 32mm f/1.8 panel refutes the top-track-is-S assumption
+    # (dashed M above solid S from ~3 mm outward at 10/20 lp/mm per the
+    # #1332 GT), so assign S/M within each 2-track band by ridge-coverage
+    # dashedness; solid=S on this family (dashed_is_sagittal=False).
+    band_sm_by_coverage=True,
     # #1347: the dashed M curves merge into their solid S sibling in the
     # interior and drop below the coverage floor, reading all-None. Wire
     # the split-mask sister presence so the M<-S fallback recovers them

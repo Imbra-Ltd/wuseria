@@ -1920,21 +1920,63 @@ def _optimal_1d_kmeans_bounds(values: list[float], k: int) -> list[tuple[int, in
     return bounds
 
 
+# #1374: relative coverage margin for the within-band dashedness
+# discriminator. Calibrated against the six Touit reference panels
+# (probe, S208): genuine solid/dashed pairs contrast at >= 1.39x ridge
+# coverage (e.g. 425/299, 418/300, 533/89), while coincident or
+# same-style pairs sit at <= 1.03x (342/333 on the 32mm max 40-band,
+# 562/560 on the 50mm max 10-band). 1.15 sits in the gap with room on
+# both sides; below it the y-order fallback preserves prior behavior.
+_BAND_SM_COVERAGE_MARGIN: float = 1.15
+
+
+def _order_band_sm(
+    by_y: list[Track],
+    sm_by_coverage: bool,
+    dashed_is_sagittal: bool,
+) -> tuple[Track, Track | None]:
+    """Order a frequency band's y-sorted tracks into (S, M).
+
+    Default: the upper track (smaller y) is S, the next is M — the
+    family-typical layout. When `sm_by_coverage` is set and the band
+    holds exactly two tracks whose ridge coverage differs by at least
+    `_BAND_SM_COVERAGE_MARGIN`, the higher-coverage track is the solid
+    curve instead (dashes leave ridge columns empty), labeled per
+    `dashed_is_sagittal`. Zeiss Touit 32mm f/1.8 GT (#1332) refutes the
+    y-order assumption: the dashed M runs ABOVE solid S from ~3 mm
+    outward at 10/20 lp/mm (#1374). Under the margin (coincident pairs,
+    the #791 cluster-collapse bands) the y-order fallback keeps prior
+    behavior. Bands with three or more tracks always use y-order — the
+    extra track is a cluster-collapse symptom, out of scope here.
+    """
+    if len(by_y) == 1:
+        return by_y[0], None
+    if sm_by_coverage and len(by_y) == 2:
+        hi, lo = sorted(by_y, key=lambda t: t.coverage, reverse=True)
+        if hi.coverage >= _BAND_SM_COVERAGE_MARGIN * max(lo.coverage, 1):
+            return (lo, hi) if dashed_is_sagittal else (hi, lo)
+    return by_y[0], by_y[1]
+
+
 def _assign_interior_anchored_bands(
     kept: list[Track],
     frequencies_lpmm: tuple[int, ...],
     plot_box: PlotBox,
     mask_shape: tuple[int, int],
+    sm_by_coverage: bool,
+    dashed_is_sagittal: bool,
 ) -> dict[str, np.ndarray]:
     """Assign kept tracks to (frequency, S/M) fields by interior y-band.
 
     Sorts tracks by interior mean y, clusters them into
     `len(frequencies_lpmm)` bands via optimal 1-D k-means, maps the
     bands top->bottom onto the (upper->lower) frequency order, and
-    within each band takes S (upper) and M (lower). When a band caught
-    more than the two real curves (a halo or corner fragment), the two
-    highest-coverage tracks win. A band with one track reports S only;
-    the sampler treats the absent field as missing data (B2 contract).
+    within each band assigns S/M via `_order_band_sm` (y-order, or
+    coverage dashedness when the profile opts in, #1374). When a band
+    caught more than the two real curves (a halo or corner fragment),
+    the two highest-coverage tracks win. A band with one track reports
+    S only; the sampler treats the absent field as missing data (B2
+    contract).
     """
     from .dispatch import curve_field  # imported here to avoid module cycle
 
@@ -1949,9 +1991,10 @@ def _assign_interior_anchored_bands(
         if len(band) > 2:
             band = sorted(band, key=lambda t: t.coverage, reverse=True)[:2]
         by_y = sorted(band, key=lambda t: _interior_mean_y(t, plot_box))
-        out[curve_field(freq, "S")] = _rasterize(by_y[0], mask_shape)
-        if len(by_y) > 1:
-            out[curve_field(freq, "M")] = _rasterize(by_y[1], mask_shape)
+        s_track, m_track = _order_band_sm(by_y, sm_by_coverage, dashed_is_sagittal)
+        out[curve_field(freq, "S")] = _rasterize(s_track, mask_shape)
+        if m_track is not None:
+            out[curve_field(freq, "M")] = _rasterize(m_track, mask_shape)
     return out
 
 
@@ -1961,16 +2004,18 @@ def ridge_tracks_to_fields_multifreq(
     frequencies_lpmm: tuple[int, ...],
     dashed_is_sagittal: bool,
     interior_anchored: bool = False,
+    sm_by_coverage: bool = False,
 ) -> dict[str, np.ndarray]:
     """Ridge-track a single-hue mask and return per-field skeleton masks
     for an N-frequency chart.
 
     The 2N-curve layout: the kept tracks (by mean y) split into N
     equal-sized y-bands. Each band maps to one frequency in upper→lower
-    order. Within each band the top track (smaller mean_y) is sagittal
-    (S), the next is meridional (M). Fields without a qualifying track
-    are absent from the result; the sampler treats them as missing
-    data (B2 contract).
+    order. Within each band S/M is assigned by `_order_band_sm`: y-order
+    by default (top track is S), or coverage dashedness when the
+    profile opts in via `sm_by_coverage` (#1374). Fields without a
+    qualifying track are absent from the result; the sampler treats
+    them as missing data (B2 contract).
 
     `frequencies_lpmm` MUST be passed in upper→lower screen order,
     which by convention is also low→high lp/mm (a 3-freq Zeiss
@@ -2004,13 +2049,13 @@ def ridge_tracks_to_fields_multifreq(
     if not kept:
         return {}
 
-    # Within a frequency pair, the sagittal (S) curve is always above
-    # the meridional (M) curve in OTF (physics: edge MTF degrades faster
-    # on the meridional axis). In image coordinates that means S has the
-    # smaller mean_y. This is profile-independent — `dashed_is_sagittal`
-    # affects only the *Sigma/7Artisans* solid-vs-dashed discrimination,
-    # which doesn't apply to Viltrox where all four curves are dashed.
-    del dashed_is_sagittal  # unused for ridge tracking
+    # Within a frequency pair the S curve typically runs above M
+    # (edge MTF degrades faster on the meridional axis), so y-order is
+    # the default S/M assignment. It is NOT universal physics: the
+    # Zeiss Touit 32mm f/1.8 GT (#1332) shows dashed M above solid S
+    # from ~3 mm outward, so `sm_by_coverage` profiles discriminate by
+    # ridge coverage instead (#1374). For all-dashed families (Viltrox)
+    # coverage carries no solid/dashed signal — they keep the default.
 
     # Interior-anchored band assignment (#1347). Fires only for the
     # narrow case it fixes: a curve was lost to the coverage floor
@@ -2026,7 +2071,12 @@ def ridge_tracks_to_fields_multifreq(
         and _interior_order_differs(kept, plot_box)
     ):
         return _assign_interior_anchored_bands(
-            kept, frequencies_lpmm, plot_box, mask.shape
+            kept,
+            frequencies_lpmm,
+            plot_box,
+            mask.shape,
+            sm_by_coverage,
+            dashed_is_sagittal,
         )
 
     kept_sorted = sorted(kept, key=lambda t: t.mean_y)
@@ -2049,9 +2099,10 @@ def ridge_tracks_to_fields_multifreq(
         band = kept_sorted[cursor : cursor + take]
         cursor += take
         by_y = sorted(band, key=lambda t: t.mean_y)
-        out[curve_field(freq, "S")] = _rasterize(by_y[0], mask.shape)
-        if len(by_y) > 1:
-            out[curve_field(freq, "M")] = _rasterize(by_y[1], mask.shape)
+        s_track, m_track = _order_band_sm(by_y, sm_by_coverage, dashed_is_sagittal)
+        out[curve_field(freq, "S")] = _rasterize(s_track, mask.shape)
+        if m_track is not None:
+            out[curve_field(freq, "M")] = _rasterize(m_track, mask.shape)
 
     return out
 

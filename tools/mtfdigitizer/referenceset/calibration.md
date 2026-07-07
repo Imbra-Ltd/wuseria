@@ -44,6 +44,79 @@ Reads the in-source ground truth from `referenceset/charts.py` and runs
 populated. Output: per-chart `|d|` (absolute offset) median + p95 per
 field, then an aggregate.
 
+## Run 8 (after the per-band coverage-dashedness S/M discriminator — #1374)
+
+First run after `ridge_tracks_to_fields_multifreq` stopped assuming the
+top track of a frequency band is S. The Touit 32mm max panel refuted
+that y-order assumption (dashed M above solid S from ~3 mm outward at
+10/20 lp/mm per the #1332 GT), so `multifreq-press-kit` profiles now
+opt into a coverage-dashedness discriminator (`band_sm_by_coverage`):
+within a 2-track band, the track with ≥1.15x more ridge columns is the
+solid curve. The margin is calibrated from this run's six Touit panels
+— genuine solid/dashed pairs contrast at ≥1.39x coverage (425/299,
+418/300, 533/89), coincident or ambiguous pairs at ≤1.03x (342/333,
+562/560) — so coincident bands and the #791 cluster-collapse cases
+keep the y-order fallback, and all-dashed families (Viltrox) stay on
+the default entirely.
+
+1. **32mm max panel recovered.** The exchanged labels flip back at 10
+   and 20 lp/mm: freq10S/freq10M med |d| 0.073/0.070 → 0.002/0.004,
+   freq20S/M → 0.004/0.006 — under the ~0.01 bar REFERENCE_SET.md §8
+   set for resolving #1374. The 40-band pair (342 vs 333 columns) sits
+   under the margin and keeps y-order, which the GT confirms correct
+   to mid-field; its far-edge crossing residual is unchanged (p95
+   0.066/0.073).
+2. **Everything else byte-identical.** `--write-readings` touches only
+   `readings/zeiss-touit-32mm-f1-8.md` (the max-panel S/M columns).
+   The 50mm dotted-M cascade and both stopped-panel Path B collapses
+   are untouched — their bands are either coincident (under margin) or
+   3-track (always y-order), exactly the #791 scope boundary.
+
+### Per-chart (32mm block; panels labelled)
+
+```
+zeiss-touit-32mm-f1-8 (multifreq-press-kit)  [max / k=1.8]
+  freq10S         med |d| 0.002  p95 |d| 0.020  paired 11/11  ext-None  0
+  freq10M         med |d| 0.004  p95 |d| 0.019  paired 11/11  ext-None  0
+  freq20S         med |d| 0.004  p95 |d| 0.012  paired 11/11  ext-None  0
+  freq20M         med |d| 0.006  p95 |d| 0.012  paired 11/11  ext-None  0
+  freq40S         med |d| 0.009  p95 |d| 0.066  paired 11/11  ext-None  0
+  freq40M         med |d| 0.021  p95 |d| 0.073  paired 11/11  ext-None  0
+zeiss-touit-32mm-f1-8 (multifreq-press-kit)  [stopped / k=4]
+  freq10S         med |d| 0.001  p95 |d| 0.006  paired 11/11  ext-None  0
+  freq10M         med |d| 0.001  p95 |d| 0.006  paired 11/11  ext-None  0
+  freq20S         med |d| 0.002  p95 |d| 0.004  paired 11/11  ext-None  0
+  freq20M         med |d| 0.016  p95 |d| 0.025  paired 11/11  ext-None  0
+  freq40S         med |d| 0.164  p95 |d| 0.261  paired 11/11  ext-None  0
+  freq40M         med |d| 0.080  p95 |d| 0.137  paired 11/11  ext-None  0
+```
+
+Family reference — per-panel in-band across the three Touit anchors
+(12mm and 50mm unchanged this run):
+
+```
+zeiss-touit-12mm-f2-8          max 53/66 (80.3%)   stopped 60/66 (90.9%)
+zeiss-touit-32mm-f1-8          max 61/66 (92.4%)   stopped 48/66 (72.7%)
+zeiss-touit-50mm-f2-8-macro    max 40/66 (60.6%)   stopped 47/66 (71.2%)
+```
+
+### Aggregate
+
+```
+Run 7 (y-order S/M):                     Run 8 (coverage dashedness):
+  paired comparisons:    1278             paired comparisons:    1278
+  median |d|:           0.0062             median |d|:           0.0057
+  p95 |d|:              0.0831             p95 |d|:              0.0755
+  max |d|:              0.2538             max |d|:              0.2538
+  within +/-0.05: 1156/1278 (90.5%)        within +/-0.05: 1173/1278 (91.8%)
+```
+
+Same 1278 pairings — the fix relabels, it does not re-pair. The two
+remaining Touit metrics to watch are unchanged from Run 7: max-panel
+freq10M med |d| on the 50mm (0.096, dotted-M cascade) and stopped
+freq40S/freq40M med |d| (0.164/0.080 on the 32mm, 0.089/0.090 on the
+50mm) — both #791 Path B territory.
+
 ## Run 7 (after Touit 50mm maintainer eye-read GT — #1332 complete)
 
 First run where `zeiss-touit-50mm-f2-8-macro` scores against
