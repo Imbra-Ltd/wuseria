@@ -12593,3 +12593,71 @@ Theme: #1332 finish — transcribe the maintainer's 50mm macro eye-read into GT,
 - tools pytest: **721 pass** (full suite); front-end untouched this session (no `src/` change).
 - **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
 - **Upstream contributions:** **braboj/solid-ai-templates#742** filed this session (preserve-or-fail-loud rule for round-trip generated files, from the eye-read clobber); #741 still open upstream.
+
+---
+
+### Session 208 — Deploy retry widens per ADR-077 trigger; multifreq S/M dashedness fix
+
+Date: 2026-07-07 · Tool: Claude Code (Fable 5)
+
+Theme: execute the S207 handoff — #1376 deploy-retry widening (Expedite opener), #1374 multifreq S/M mislabel (main theme), submodule bump (carried).
+
+#### PRs
+
+- **#1381** — fix(deploy): widen deploy-pages retry to bounded 3-attempt loop. Squash-merged, branch deleted. ADR-077's revisit trigger fired on run 28769781777 (both attempts failed ~30s apart on a multi-minute Pages flake; manual rerun at +4 min succeeded in 15s); attempts now land at ~+0s/+45s/+2.5 min with growing backoff (30s, 90s), final attempt fail-loud; ADR-078 supersedes ADR-077; PLAYBOOK §5.2 updated.
+- **#1382** — fix(mtfdigitizer): assign multifreq band S/M by coverage dashedness. Squash-merged, branch deleted. New `_order_band_sm` helper + `_BAND_SM_COVERAGE_MARGIN` (1.15); opt-in `band_sm_by_coverage` profile flag set only on `ZEISS_TOUIT_BW_3FREQ`; calibration Run 8; readings grid regenerated in-PR; 7 new tests.
+- **#1383** — chore: bump solid-ai-templates submodule to v2.30 head (14 commits; includes upstream's generalization of this project's ADR-077 retry pattern, their #721).
+
+#### Issues opened / closed
+
+- **#1376** — closed (auto-close verified; happy path proven on three real merge deploys, retries correctly skipped).
+- **#1374** — closed (auto-close verified; 32mm max panel in-band 45/66 → 61/66).
+- **braboj/solid-ai-templates#743** — filed (task, P3): refine the platform-github retry guidance with the multi-minute-flake class and its bounded escalation (the ADR-078 evidence contradicts the current "not more attempts" bullet).
+
+#### Key technical findings
+
+- **The probe falsified the issue's mechanism attribution.** #1374 named `_assign_interior_anchored_bands` as the mislabeling site; env-gated instrumentation through the production calibrate harness showed the 32mm max panel actually takes the equal-split path — the anchored branch fires only on the 12mm max panel. Both paths shared the y-order assumption; both now route through one shared helper. A fix scoped to the issue's named function would have missed the actual path entirely.
+- **Ridge coverage is bimodal on solid-vs-dashed and flat on everything else.** Across the six Touit panels: genuine solid/dashed pairs contrast at ≥1.39x coverage (425/299, 418/300, 533/89); coincident or ambiguous pairs at ≤1.03x (342/333 on the 32mm max 40-band, 562/560 on the 50mm max 10-band). The 1.15 margin sits in the gap; under it the y-order fallback keeps coincident pairs and the #791 collapse bands untouched, and all-dashed Viltrox (77 vs 82 at freq30) stays off the discriminator entirely via the per-profile opt-in.
+- **32mm max panel recovered to anchor-grade:** freq10S/M med |Δ| 0.073/0.070 → 0.002/0.004, freq20S/M → 0.004/0.006; panel in-band 68.2% → 92.4%; aggregate 90.5% → 91.8% (1173/1278, same pairings) with every other chart byte-identical.
+- **The Kipon 75mm 504 (scheduled link check, 2026-07-06) was transient** — the product page fetches cleanly via pagefetch; no data change, no issue filed.
+
+#### Key changes
+
+- **`.github/workflows/deploy.yml`** — third `deploy-pages` attempt + 90s second backoff; `environment.url` coalesces across three attempts.
+- **`docs/decisions/078-deploy-pages-retry-three-attempts.md`** — supersedes ADR-077; records the fired trigger, the re-rejected composite-action extraction, and its own revisit trigger (all-three-fail on a flake → reclassify, don't add a fourth attempt).
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — `_order_band_sm` + margin constant; both multifreq band paths route through it; the refuted S-above-M physics comment rewritten.
+- **`tools/mtfdigitizer/profiles/{types,declared}.py`**, **`pipeline/dispatch.py`** — `band_sm_by_coverage` flag, plumbed and set on the Touit profile.
+- **`tools/mtfdigitizer/referenceset/`** — calibration.md Run 8 (margin provenance + per-chart block); REFERENCE_SET.md §8 metric-to-watch closed out (resolution recorded, residuals named); 32mm readings grid regenerated.
+
+#### Verification
+
+- `py -m pytest` **728 pass** (721 + 7 new); `npm run validate` green on #1381; `py -m mtfdigitizer.calibrate --write-readings` touches only the 32mm grid; per-panel in-band recomputed from the grids (12mm and 50mm reproduce Run 7 exactly — parser self-check).
+- All three PR gates green; three merge deploys green (first-attempt success — retry steps correctly skipped, the #1376 happy-path AC on real runs).
+
+#### Key decisions (this session)
+
+- **ADR-078 supersedes ADR-077** (three attempts, growing backoff). Composite-action extraction reconsidered per ADR-077's open item and re-rejected: one call site, and literal steps keep per-attempt outcomes visible in the run UI.
+- **Per-profile opt-in over auto-detect** for the dashedness discriminator — matches the `interior_anchored_bands`/`dashed_split_presence` precedent (#1347); no new ADR (pipeline architecture ADR-075 unchanged; flag documented at declaration site, margin provenance in calibration.md Run 8).
+- **Margin 1.15 sized from the probe distribution**, not first principles — calibration.md Run 8 is the findings record.
+- No new directories, no content moved between documents.
+
+#### Process patterns observed this session
+
+- **A well-researched issue body can still misattribute the mechanism** — the reproduce steps were perfect, the named function was wrong. The cheap instrumented probe (env-gated prints through the production harness, deleted before commit) redirected the fix before any code was written.
+- **A revisit trigger written into an ADR fires cleanly**: ADR-077 named its widening condition precisely enough that the S208 issue was pre-scoped — no re-litigation, straight to implementation. Wrote ADR-078's trigger with the same discipline (including the "don't add a fourth attempt" stop condition).
+
+#### Follow-ups for next session (S209)
+
+- **#791** Carl Zeiss production extraction (spike, P2, v0.8.0 — verified open): now un-gated by GT AND running on corrected S/M labels; generates the per-frequency SVGs, digitization-log, and specs-log the Touit folders still lack (maintainer asked after these this session). Remaining Touit gaps are its Path B scope (stopped-panel 40-band collapse, 50mm dotted-M cascade).
+- **#1379** eye-read bare-cell clobber warning (task, P3, Backlog — non-urgent, carried).
+- (carried) Wire `scaffold_anchor_helpers --check` into CI.
+- Submodule freshly bumped (a6d7747); nothing pending upstream-side.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone). Epic #790: **5/24 brands**; Zeiss GT complete + S/M labels corrected, production extraction pending (#791).
+- **78 ADRs** (ADR-078 new; ADR-077 superseded).
+- **Calibration aggregate 91.8%** in-band (1173/1278); Touit per-panel: 12mm 80.3/90.9, 32mm **92.4**/72.7, 50mm 60.6/71.2 (max/stopped %).
+- tools pytest: **728 pass**; front-end untouched this session (no `src/` change).
+- **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green; deploy now self-heals multi-minute Pages flakes.
+- **Upstream contributions:** **braboj/solid-ai-templates#743** filed this session (multi-minute-flake retry escalation, from ADR-078); #741 and #742 still open upstream.
