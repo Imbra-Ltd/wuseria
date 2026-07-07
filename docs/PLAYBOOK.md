@@ -800,13 +800,14 @@ Stacked-aperture primes (Zeiss Touit family) declare ADR-065 role
 labels ("max"/"stopped") in `ReferenceChart.apertures`, so the display
 f-number per panel comes from `_DEFAULT_APERTURES` in `emit.py` (one
 f-number per view, eye-read from the chart legend) — emit raises a
-clear error when a multi-view chart has neither table entry. Fields a
-Tier 1 calibration proves systematically wrong (med |Δ| > 0.05 vs GT)
-are nulled at emit by the `_SUPPRESSED_FIELDS` skip-list (ADR-079);
-each entry cites its tracking issue and every suppression is reported
-on stderr. Remove the entry and re-emit when the fix lands — the
+clear error when a multi-view chart has neither table entry. Tier 1
+anchors emit through the per-cell GT gate (ADR-079): any cell whose
+extracted value misses the maintainer's eye-read ground truth by more
+than the ±0.05 calibration tolerance is nulled, with every gated cell
+reported on stderr. Un-suppression is automatic — an extractor fix
+that brings cells in-band ships them on the next emit. The
 digitization log and provenance SVG intentionally keep showing the
-extractor's real output for those fields.
+extractor's real output for gated cells.
 
 **Audit spec field coverage per brand:**
 

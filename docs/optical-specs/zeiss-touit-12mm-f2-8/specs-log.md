@@ -25,10 +25,13 @@
 - Tier 1 anchor: 132-cell maintainer eye-read GT (#1332, via #1348);
   calibration provenance in
   `tools/mtfdigitizer/referenceset/calibration.md`.
-- Emit suppression (ADR-079, #1385): none — every field on both panels
-  is in-band by median (max 80.3% / stopped 90.9% of cells within
-  ±0.05; residuals are edge-region crossing cells, documented in
-  REFERENCE_SET.md §11).
+- Emit GT gate (ADR-079): 9 of 132 cells are withheld from
+  `src/data/mtf-readings.ts` (|EX − GT| > 0.05) — edge-region crossing
+  cells at 9.8–14 mm (max 10S/20S/20M, stopped 20M/40M corners; also
+  documented in REFERENCE_SET.md §11). Per-cell provenance:
+  `tools/mtfdigitizer/referenceset/readings/zeiss-touit-12mm-f2-8.md`.
+  The digitization log and SVG/overlay in this folder show the
+  extractor's actual output including gated cells.
 
 ## Caveats
 

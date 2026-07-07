@@ -27,13 +27,16 @@
 - Tier 1 anchor: 132-cell maintainer eye-read GT (#1332, PR #1378);
   calibration provenance in
   `tools/mtfdigitizer/referenceset/calibration.md` Run 7.
-- Emit suppression (ADR-079, #1385): max-panel `freq10M`/`freq20M`
-  (dotted-M coincidence cascade, med |Δ| 0.096/0.065 vs GT) and
-  stopped-panel `freq40S`/`freq40M` (ridge-cluster collapse, med |Δ|
-  0.089/0.090) are withheld from `src/data/mtf-readings.ts`. The
-  digitization log and SVG/overlay in this folder show the extractor's
-  actual output including those fields — the intentional discrepancy
-  resolves when #1385 lands.
+- Emit GT gate (ADR-079): 37 of 132 cells are withheld from
+  `src/data/mtf-readings.ts` (|EX − GT| > 0.05) — the max-panel
+  dotted-M coincidence cascade (`freq10M` from 1.4 mm outward,
+  `freq20M` inner field, #1385), the stopped-panel 40-band collapse
+  from 2.8 mm outward, and scattered crossing/corner cells (20S inner,
+  20M corner). Per-cell provenance:
+  `tools/mtfdigitizer/referenceset/readings/zeiss-touit-50mm-f2-8-macro.md`.
+  The digitization log and SVG/overlay in this folder show the
+  extractor's actual output including gated cells — the intentional
+  discrepancy resolves when #1385 lands.
 
 ## Caveats
 

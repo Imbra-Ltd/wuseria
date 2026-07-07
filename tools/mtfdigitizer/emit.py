@@ -83,10 +83,11 @@ class EmitResult:
     ts_literal: str
     positions_emitted: int
     null_counts: dict[str, int]
-    # (panel role label, field) pairs nulled by `_SUPPRESSED_FIELDS`
-    # (ADR-079) — reported to the operator so suppression is never
-    # silent. Empty for lenses with no suppression entry.
-    suppressed: tuple[tuple[str, str], ...] = ()
+    # (panel role label, field, position_mm) triples nulled by the
+    # Tier 1 GT gate (ADR-079) — reported to the operator so
+    # suppression is never silent. Empty for Tier 2 charts and for
+    # anchors whose extraction is fully in-band.
+    suppressed: tuple[tuple[str, str, float], ...] = ()
 
 
 # Backwards-compat: the canonical-frequency field set, kept for tests
@@ -327,7 +328,7 @@ def emit_lens(
     panels: list[ChartPanel] = []
     total_positions = 0
     null_counts: dict[str, int] = {}
-    suppressed_log: list[tuple[str, str]] = []
+    suppressed_log: list[tuple[str, str, float]] = []
 
     for index, view in enumerate(views):
         if view.plot_box is None:
@@ -368,8 +369,18 @@ def emit_lens(
             chart.image_height_mm,
             extracted,
         )
-        readings = _apply_suppression(
-            chart.slug, role, extracted.readings, suppressed_log
+        gt_fields = (chart.ground_truth or {}).get(role)
+        if chart.ground_truth is not None and gt_fields is None:
+            raise ValueError(
+                f"{chart.slug!r} has ground_truth but no {role!r} bucket — "
+                f"GT aperture labels must match the view's pass role"
+            )
+        readings = (
+            _suppress_gt_refuted_cells(
+                role, extracted.readings, gt_fields, suppressed_log
+            )
+            if gt_fields is not None
+            else extracted.readings
         )
         rows = tuple(r for r in readings if _has_any_data(r))
         focal = focal_lengths[index] if focal_lengths is not None else None
@@ -425,56 +436,61 @@ _DEFAULT_APERTURES: dict[str, tuple[str, ...]] = {
 }
 
 
-# Tier 1 GT-refuted fields withheld from the site until the tracked fix
-# lands (ADR-079): keyed by (slug, panel role label), values are the
-# `freq{N}{S|M}` field names nulled in the emitted samples. Criterion:
-# field med |Δ| > 0.05 against maintainer eye-read ground truth — see
-# `referenceset/calibration.md` (Runs 6-8) for the per-field numbers.
-# An honest absence beats a confidently wrong curve: the autotriage
-# gate cannot see these failures (a collapsed track rides a
-# neighbouring band's real ink, so render-match stays high). Remove an
-# entry and re-emit when its issue's fix brings the field in-band;
-# provenance artifacts (digitization-log.md, SVG, overlay) are NOT
-# suppressed — they stay the extractor's diagnostic record.
-_SUPPRESSED_FIELDS: dict[tuple[str, str], tuple[str, ...]] = {
-    # #1385: stopped-panel 40-band ridge-cluster collapse (40S rides
-    # the 20-band; med |Δ| 0.164/0.080 on the 32mm, 0.089/0.090 on
-    # the 50mm).
-    ("zeiss-touit-32mm-f1-8", "stopped"): ("freq40S", "freq40M"),
-    ("zeiss-touit-50mm-f2-8-macro", "stopped"): ("freq40S", "freq40M"),
-    # #1385: max-panel dotted-M coincidence cascade (every M
-    # assignment slides one band down inner-field; med |Δ| 0.096 at
-    # 10, 0.065 at 20).
-    ("zeiss-touit-50mm-f2-8-macro", "max"): ("freq10M", "freq20M"),
-}
+# Tier 1 emit gate tolerance (ADR-079): the calibration in-band band
+# (`referenceset/calibration.md` scores |EX - GT| <= 0.05 as in-band).
+# A cell whose extracted value misses the maintainer's eye-read GT by
+# more than this MUST NOT ship to the site.
+_GT_CELL_TOLERANCE = 0.05
 
 
-def _apply_suppression(
-    slug: str,
+def _suppress_gt_refuted_cells(
     role: str,
     readings: tuple[SampledReading, ...],
-    suppressed_log: list[tuple[str, str]],
+    gt_fields: dict[str, tuple[float | None, ...]],
+    suppressed_log: list[tuple[str, str, float]],
 ) -> tuple[SampledReading, ...]:
-    """Null `_SUPPRESSED_FIELDS` entries for this (slug, panel role).
+    """Null emitted cells that contradict maintainer GT beyond tolerance.
 
-    Returns the readings unchanged when no suppression entry exists.
-    Appends one (role, field) pair per suppressed field to
-    `suppressed_log` so the caller can report the suppression — a
-    silent cap would read as "extractor found nothing here."
+    ADR-079: for Tier 1 anchors the eye-read ground truth is the
+    strongest verification any emitted value has — stronger than the
+    render-match gate, which cannot see a collapsed track riding a
+    neighbouring band's real ink. Any cell whose extracted value misses
+    GT by more than `_GT_CELL_TOLERANCE` is nulled; the site renderer
+    shows an honest gap (B2 contract) instead of a confidently wrong
+    value. Cells where GT is None (unreadable `?` cells) pass through
+    unverified; extractor Nones stay None. Provenance artifacts
+    (digitization-log.md, SVG, overlay) are NOT gated — they stay the
+    extractor's diagnostic record.
+
+    Pairing is positional: extraction samples the same fractions the GT
+    tuples encode, so row index i pairs with GT index i (fail-loud on a
+    length mismatch — a silent mispair would gate the wrong cells).
+
+    Appends one (role, field, position_mm) triple per nulled cell to
+    `suppressed_log` so the caller reports every suppression — a silent
+    cap would read as "extractor found nothing here."
     """
-    fields = _SUPPRESSED_FIELDS.get((slug, role), ())
-    if not fields:
-        return readings
-    suppressed_log.extend((role, field) for field in fields)
-    return tuple(
-        replace(
-            r,
-            samples={
-                k: (None if k in fields else v) for k, v in r.samples.items()
-            },
+    gt_len = max(len(v) for v in gt_fields.values())
+    if len(readings) != gt_len:
+        raise ValueError(
+            f"GT/extraction row mismatch on the {role} panel: "
+            f"{len(readings)} sampled rows vs {gt_len} GT positions"
         )
-        for r in readings
-    )
+    out: list[SampledReading] = []
+    for index, reading in enumerate(readings):
+        samples = dict(reading.samples)
+        for field, value in reading.samples.items():
+            gt_curve = gt_fields.get(field)
+            gt_value = gt_curve[index] if gt_curve is not None else None
+            if value is None or gt_value is None:
+                continue
+            # round to the calibration grid's 3-dp delta precision so a
+            # float artifact at exactly 0.05 stays in-band
+            if round(abs(value - gt_value), 3) > _GT_CELL_TOLERANCE:
+                samples[field] = None
+                suppressed_log.append((role, field, reading.position_mm))
+        out.append(replace(reading, samples=samples))
+    return tuple(out)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -534,11 +550,15 @@ def main(argv: list[str] | None = None) -> int:
             f"nulls per field: {nulls}",
             file=sys.stderr,
         )
-        for role, field in result.suppressed:
+        by_panel_field: dict[tuple[str, str], list[float]] = {}
+        for role, field, position_mm in result.suppressed:
+            by_panel_field.setdefault((role, field), []).append(position_mm)
+        for (role, field), positions in by_panel_field.items():
+            pos_text = ", ".join(f"{p:g}" for p in positions)
             print(
-                f"# {slug}: SUPPRESSED {field} on the {role} panel "
-                f"(ADR-079 skip-list, see _SUPPRESSED_FIELDS for the "
-                f"tracking issue)",
+                f"# {slug}: SUPPRESSED {len(positions)} {field} cell(s) "
+                f"on the {role} panel at {pos_text} mm — |EX - GT| > "
+                f"{_GT_CELL_TOLERANCE} (ADR-079 Tier 1 GT gate)",
                 file=sys.stderr,
             )
 

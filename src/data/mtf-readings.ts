@@ -14653,7 +14653,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 9.8,
             samples: {
               10: { S: 0.92, M: 0.92 },
-              20: { S: 0.84, M: 0.93 },
+              20: { S: 0.84, M: null },
               40: { S: 0.63, M: 0.63 },
             },
           },
@@ -14661,15 +14661,15 @@ const mtfReadings: Record<string, MtfData> = {
             position: 11.2,
             samples: {
               10: { S: null, M: null },
-              20: { S: 0.8, M: 0.89 },
+              20: { S: null, M: null },
               40: { S: 0.58, M: 0.58 },
             },
           },
           {
             position: 12.6,
             samples: {
-              10: { S: 0.88, M: 0.88 },
-              20: { S: 0.77, M: 0.77 },
+              10: { S: null, M: 0.88 },
+              20: { S: null, M: 0.77 },
               40: { S: 0.48, M: 0.48 },
             },
           },
@@ -14756,16 +14756,16 @@ const mtfReadings: Record<string, MtfData> = {
             position: 12.6,
             samples: {
               10: { S: 0.91, M: 0.91 },
-              20: { S: 0.84, M: 0.84 },
-              40: { S: 0.72, M: 0.72 },
+              20: { S: 0.84, M: null },
+              40: { S: 0.72, M: null },
             },
           },
           {
             position: 14,
             samples: {
               10: { S: null, M: null },
-              20: { S: 0.79, M: 0.79 },
-              40: { S: 0.62, M: 0.62 },
+              20: { S: 0.79, M: null },
+              40: { S: 0.62, M: null },
             },
           },
         ],
@@ -14825,7 +14825,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.8, M: 0.87 },
               20: { S: 0.65, M: 0.68 },
-              40: { S: 0.42, M: 0.38 },
+              40: { S: null, M: 0.38 },
             },
           },
           {
@@ -14833,7 +14833,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.77, M: 0.86 },
               20: { S: 0.63, M: 0.65 },
-              40: { S: 0.39, M: 0.34 },
+              40: { S: null, M: 0.34 },
             },
           },
           {
@@ -14841,7 +14841,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.74, M: 0.84 },
               20: { S: 0.6, M: 0.62 },
-              40: { S: 0.35, M: 0.29 },
+              40: { S: null, M: null },
             },
           },
           {
@@ -14849,7 +14849,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.71, M: 0.83 },
               20: { S: 0.57, M: 0.59 },
-              40: { S: 0.33, M: 0.28 },
+              40: { S: null, M: 0.28 },
             },
           },
           {
@@ -14880,7 +14880,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.95, M: 0.95 },
               20: { S: 0.9, M: 0.9 },
-              40: { S: null, M: null },
+              40: { S: 0.82, M: 0.82 },
             },
           },
           {
@@ -14888,7 +14888,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.95, M: 0.95 },
               20: { S: 0.9, M: 0.9 },
-              40: { S: null, M: null },
+              40: { S: 0.82, M: 0.82 },
             },
           },
           {
@@ -14978,8 +14978,8 @@ const mtfReadings: Record<string, MtfData> = {
           {
             position: 0,
             samples: {
-              10: { S: 0.95, M: null },
-              20: { S: 0.8, M: null },
+              10: { S: 0.95, M: 0.95 },
+              20: { S: null, M: null },
               40: { S: 0.8, M: 0.8 },
             },
           },
@@ -14987,7 +14987,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 1.4,
             samples: {
               10: { S: 0.94, M: null },
-              20: { S: 0.77, M: null },
+              20: { S: null, M: null },
               40: { S: null, M: null },
             },
           },
@@ -15019,7 +15019,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 7,
             samples: {
               10: { S: 0.92, M: null },
-              20: { S: 0.8, M: null },
+              20: { S: 0.8, M: 0.8 },
               40: { S: 0.6, M: 0.6 },
             },
           },
@@ -15027,7 +15027,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 8.4,
             samples: {
               10: { S: 0.91, M: null },
-              20: { S: 0.8, M: null },
+              20: { S: 0.8, M: 0.8 },
               40: { S: 0.55, M: 0.56 },
             },
           },
@@ -15035,15 +15035,15 @@ const mtfReadings: Record<string, MtfData> = {
             position: 9.8,
             samples: {
               10: { S: 0.91, M: null },
-              20: { S: 0.79, M: null },
-              40: { S: 0.56, M: 0.51 },
+              20: { S: 0.79, M: 0.79 },
+              40: { S: null, M: 0.51 },
             },
           },
           {
             position: 11.2,
             samples: {
               10: { S: 0.9, M: null },
-              20: { S: 0.79, M: null },
+              20: { S: 0.79, M: 0.79 },
               40: { S: 0.56, M: 0.52 },
             },
           },
@@ -15051,7 +15051,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 12.6,
             samples: {
               10: { S: 0.9, M: null },
-              20: { S: 0.8, M: null },
+              20: { S: 0.8, M: 0.8 },
               40: { S: 0.56, M: 0.54 },
             },
           },
@@ -15075,7 +15075,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.93, M: 0.93 },
               20: { S: 0.89, M: 0.89 },
-              40: { S: null, M: null },
+              40: { S: 0.82, M: 0.82 },
             },
           },
           {
@@ -15083,7 +15083,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.93, M: 0.93 },
               20: { S: 0.89, M: 0.89 },
-              40: { S: null, M: null },
+              40: { S: 0.82, M: 0.82 },
             },
           },
           {
@@ -15091,7 +15091,7 @@ const mtfReadings: Record<string, MtfData> = {
             samples: {
               10: { S: 0.93, M: 0.93 },
               20: { S: 0.89, M: 0.89 },
-              40: { S: null, M: null },
+              40: { S: null, M: 0.81 },
             },
           },
           {
@@ -15146,7 +15146,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 12.6,
             samples: {
               10: { S: 0.91, M: 0.91 },
-              20: { S: 0.84, M: 0.84 },
+              20: { S: 0.84, M: null },
               40: { S: null, M: null },
             },
           },
@@ -15154,7 +15154,7 @@ const mtfReadings: Record<string, MtfData> = {
             position: 14,
             samples: {
               10: { S: 0.91, M: 0.91 },
-              20: { S: 0.85, M: 0.85 },
+              20: { S: 0.85, M: null },
               40: { S: null, M: null },
             },
           },

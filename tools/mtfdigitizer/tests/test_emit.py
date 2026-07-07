@@ -190,77 +190,83 @@ def test_format_entry_emits_low_confidence_with_reason() -> None:
     assert 'confidenceReason: "prior_failed_center_ge_edge",' in out
 
 
-# --- _apply_suppression (ADR-079) ----------------------------------------
+# --- _suppress_gt_refuted_cells (ADR-079 Tier 1 GT gate) ------------------
 
 
-def test_apply_suppression_nulls_declared_fields_only() -> None:
-    from mtfdigitizer.emit import _apply_suppression
+def test_gt_gate_nulls_cells_beyond_tolerance() -> None:
+    from mtfdigitizer.emit import _suppress_gt_refuted_cells
 
-    readings = (_r(pos=0.0), _r(pos=1.4))
-    log: list[tuple[str, str]] = []
-    # zeiss-touit-32mm stopped panel suppresses freq40S/freq40M; the
-    # synthetic reading carries freq10/freq30 keys, so only a matching
-    # key would be nulled. Use the 50mm max entry (freq10M) against a
-    # reading that has freq10M populated.
-    out = _apply_suppression(
-        "zeiss-touit-50mm-f2-8-macro", "max", readings, log
-    )
-    for row in out:
-        assert row.samples["freq10M"] is None, "suppressed field must be null"
-        assert row.samples["freq10S"] == 0.9, "sibling field must survive"
-        assert row.samples["freq30S"] == 0.7, "unrelated field must survive"
-    assert ("max", "freq10M") in log
-    assert ("max", "freq20M") in log
+    readings = (_r(pos=0.0, c10s=0.90, c10m=0.90), _r(pos=1.4, c10s=0.72, c10m=0.90))
+    gt = {
+        "freq10S": (0.90, 0.90),  # row 1 EX 0.72 misses GT 0.90 by 0.18
+        "freq10M": (0.90, 0.90),
+        "freq30S": (0.70, 0.70),  # EX 0.70 within tolerance
+        "freq30M": (0.70, 0.70),
+    }
+    log: list[tuple[str, str, float]] = []
+    out = _suppress_gt_refuted_cells("max", readings, gt, log)
+    assert out[0].samples["freq10S"] == 0.90, "in-band cell must survive"
+    assert out[1].samples["freq10S"] is None, "out-of-band cell must be null"
+    assert out[1].samples["freq10M"] == 0.90, "sibling in-band cell survives"
+    assert log == [("max", "freq10S", 1.4)]
 
 
-def test_apply_suppression_noop_without_entry() -> None:
-    from mtfdigitizer.emit import _apply_suppression
+def test_gt_gate_skips_gt_none_and_ex_none_cells() -> None:
+    from mtfdigitizer.emit import _suppress_gt_refuted_cells
 
-    readings = (_r(pos=0.0),)
-    log: list[tuple[str, str]] = []
-    out = _apply_suppression("sigma-56mm-f1-4-dc-dn-c", "max", readings, log)
-    assert out is readings, "no entry -> readings returned unchanged"
+    readings = (_r(pos=0.0, c10s=0.20, c10m=None),)
+    gt = {
+        "freq10S": (None,),  # unreadable GT cell: EX ships unverified
+        "freq10M": (0.90,),  # EX None stays None, no log entry
+        "freq30S": (0.70,),
+        "freq30M": (0.70,),
+    }
+    log: list[tuple[str, str, float]] = []
+    out = _suppress_gt_refuted_cells("max", readings, gt, log)
+    assert out[0].samples["freq10S"] == 0.20, "GT-None cell passes through"
+    assert out[0].samples["freq10M"] is None
     assert log == []
 
 
-def test_apply_suppression_keyed_by_panel_role() -> None:
-    from mtfdigitizer.emit import _apply_suppression
+def test_gt_gate_exact_tolerance_boundary_ships() -> None:
+    from mtfdigitizer.emit import _suppress_gt_refuted_cells
+
+    # |EX - GT| == 0.05 is IN band (calibration scores <= 0.05 as
+    # in-band); only strictly-greater misses are nulled.
+    readings = (_r(pos=0.0, c10s=0.85),)
+    gt = {"freq10S": (0.90,), "freq10M": (0.90,), "freq30S": (0.70,), "freq30M": (0.70,)}
+    log: list[tuple[str, str, float]] = []
+    out = _suppress_gt_refuted_cells("max", readings, gt, log)
+    assert out[0].samples["freq10S"] == 0.85
+    assert log == []
+
+
+def test_gt_gate_fails_loud_on_row_mismatch() -> None:
+    import pytest
+
+    from mtfdigitizer.emit import _suppress_gt_refuted_cells
 
     readings = (_r(pos=0.0),)
-    log: list[tuple[str, str]] = []
-    # The 32mm entry suppresses only the STOPPED panel — the max panel
-    # of the same slug must pass through untouched.
-    out = _apply_suppression("zeiss-touit-32mm-f1-8", "max", readings, log)
-    assert out is readings
+    gt = {"freq10S": (0.9, 0.9), "freq10M": (0.9, 0.9)}
+    with pytest.raises(ValueError, match="row mismatch"):
+        _suppress_gt_refuted_cells("max", readings, gt, [])
+
+
+def test_gt_gate_ignores_fields_absent_from_gt() -> None:
+    from mtfdigitizer.emit import _suppress_gt_refuted_cells
+
+    # A field the GT does not carry (e.g. a chart publishing more
+    # frequencies than were eye-read) ships unverified rather than
+    # being nulled or crashing.
+    readings = (_r(pos=0.0, c10s=0.90),)
+    gt = {"freq10S": (0.90,)}
+    log: list[tuple[str, str, float]] = []
+    out = _suppress_gt_refuted_cells("max", readings, gt, log)
+    assert out[0].samples["freq30S"] == 0.7
     assert log == []
 
 
 # --- suppression / aperture tables reference real charts ------------------
-
-
-def test_suppressed_fields_entries_match_reference_set() -> None:
-    """Every skip-list entry must name a real chart, a declared panel
-    role, and fields the chart's frequency tuple actually publishes —
-    a renamed slug or role would otherwise turn the suppression into a
-    silent no-op and ship the GT-refuted curve (ADR-079)."""
-    from mtfdigitizer.emit import _SUPPRESSED_FIELDS
-    from mtfdigitizer.pipeline.dispatch import parse_field_name
-    from mtfdigitizer.referenceset.charts import REFERENCE_CHARTS
-
-    charts = {c.slug: c for c in REFERENCE_CHARTS}
-    for (slug, role), fields in _SUPPRESSED_FIELDS.items():
-        chart = charts.get(slug)
-        assert chart is not None, f"unknown slug in _SUPPRESSED_FIELDS: {slug}"
-        assert role in chart.apertures, (
-            f"{slug}: role {role!r} not in declared apertures "
-            f"{chart.apertures}"
-        )
-        for field in fields:
-            freq, _sm = parse_field_name(field)
-            assert freq in chart.frequencies_lpmm, (
-                f"{slug}: suppressed field {field} names frequency {freq} "
-                f"the chart does not publish {chart.frequencies_lpmm}"
-            )
 
 
 def test_default_apertures_entries_match_reference_set() -> None:

@@ -26,11 +26,15 @@
 - Tier 1 anchor: 132-cell maintainer eye-read GT (#1332); calibration
   provenance in `tools/mtfdigitizer/referenceset/calibration.md` Runs
   6 and 8.
-- Emit suppression (ADR-079, #1385): stopped-panel `freq40S`/`freq40M`
-  are withheld from `src/data/mtf-readings.ts` (ridge-cluster collapse,
-  med |Δ| 0.164/0.080 vs GT). The digitization log and SVG/overlay in
-  this folder show the extractor's actual output including those
-  fields — the intentional discrepancy resolves when #1385 lands.
+- Emit GT gate (ADR-079): 23 of 132 cells are withheld from
+  `src/data/mtf-readings.ts` (|EX − GT| > 0.05) — the stopped-panel
+  40-band collapse from 2.8 mm outward (#1385, 9 cells per
+  orientation) and 5 max-panel 40-band crossing-region cells at
+  7–11.2 mm. Per-cell provenance:
+  `tools/mtfdigitizer/referenceset/readings/zeiss-touit-32mm-f1-8.md`.
+  The digitization log and SVG/overlay in this folder show the
+  extractor's actual output including gated cells — the intentional
+  discrepancy resolves when #1385 lands.
 
 ## Caveats
 
