@@ -15,6 +15,7 @@ from mtfdigitizer.pipeline.ridge import (
     _extract_ridge_points,
     _filter_isolated_ridge_points,
     _merge_near_duplicate_tracks,
+    _order_band_sm,
     _path_mask_continuity,
     _path_to_track,
     _ridge_dp_one_pass,
@@ -24,6 +25,7 @@ from mtfdigitizer.pipeline.ridge import (
     _strip_chrome,
     ridge_tracks_for_hue_freq_split,
     ridge_tracks_to_fields,
+    ridge_tracks_to_fields_multifreq,
 )
 from mtfdigitizer.pipeline.types import PlotBox
 
@@ -298,6 +300,102 @@ def test_ridge_tracks_to_fields_returns_empty_when_mask_blank() -> None:
         dashed_is_sagittal=False,
     )
     assert out == {}
+
+
+# --- _order_band_sm (#1374) -----------------------------------------------
+
+
+def test_order_band_sm_defaults_to_y_order() -> None:
+    """Flag off: the upper track is S even when the lower has decisively
+    more coverage — the pre-#1374 behavior every non-opted profile keeps."""
+    upper = Track(points=tuple((x, 20.0) for x in range(0, 40)))
+    lower = Track(points=tuple((x, 40.0) for x in range(0, 80)))
+    s, m = _order_band_sm(
+        [upper, lower], sm_by_coverage=False, dashed_is_sagittal=False
+    )
+    assert s is upper
+    assert m is lower
+
+
+def test_order_band_sm_assigns_solid_to_higher_coverage_when_enabled() -> None:
+    """Zeiss Touit 32mm max-panel regression (#1374): the dashed M runs
+    ABOVE solid S, so y-order exchanges the labels. With `sm_by_coverage`
+    the denser (solid) track is S regardless of y."""
+    dashed_above = Track(points=tuple((x, 20.0) for x in range(0, 80, 2)))
+    solid_below = Track(points=tuple((x, 40.0) for x in range(0, 80)))
+    s, m = _order_band_sm(
+        [dashed_above, solid_below], sm_by_coverage=True, dashed_is_sagittal=False
+    )
+    assert s is solid_below
+    assert m is dashed_above
+
+
+def test_order_band_sm_falls_back_to_y_order_under_margin() -> None:
+    """Coverage within the 1.15x margin carries no dashedness signal (the
+    32mm max 40-band reads 342 vs 333 columns) — keep y-order so
+    coincident pairs and the #791 collapse bands stay untouched."""
+    upper = Track(points=tuple((x, 20.0) for x in range(0, 75)))
+    lower = Track(points=tuple((x, 40.0) for x in range(0, 80)))  # 1.07x
+    s, m = _order_band_sm(
+        [upper, lower], sm_by_coverage=True, dashed_is_sagittal=False
+    )
+    assert s is upper
+    assert m is lower
+
+
+def test_order_band_sm_honors_dashed_is_sagittal() -> None:
+    """7Artisans/TTartisan convention: dashed = S, so the sparse track
+    takes the S slot when the discriminator fires."""
+    solid = Track(points=tuple((x, 20.0) for x in range(0, 80)))
+    dashed = Track(points=tuple((x, 40.0) for x in range(0, 80, 2)))
+    s, m = _order_band_sm(
+        [solid, dashed], sm_by_coverage=True, dashed_is_sagittal=True
+    )
+    assert s is dashed
+    assert m is solid
+
+
+def test_order_band_sm_single_track_reports_s_only() -> None:
+    only = Track(points=tuple((x, 20.0) for x in range(0, 80)))
+    s, m = _order_band_sm([only], sm_by_coverage=True, dashed_is_sagittal=False)
+    assert s is only
+    assert m is None
+
+
+def test_order_band_sm_three_track_band_keeps_y_order() -> None:
+    """A band with three or more tracks is a cluster-collapse symptom
+    (#791) — the dashedness discriminator stays out; the first two by y
+    win as before."""
+    sparse_top = Track(points=tuple((x, 20.0) for x in range(0, 30)))
+    dense_mid = Track(points=tuple((x, 40.0) for x in range(0, 80)))
+    dense_low = Track(points=tuple((x, 60.0) for x in range(0, 80)))
+    s, m = _order_band_sm(
+        [sparse_top, dense_mid, dense_low],
+        sm_by_coverage=True,
+        dashed_is_sagittal=False,
+    )
+    assert s is sparse_top
+    assert m is dense_mid
+
+
+def test_ridge_tracks_to_fields_multifreq_sm_by_coverage_flips_dashed_above_solid() -> None:
+    """End-to-end multifreq regression for #1374: dashed curve at y=20
+    ABOVE solid curve at y=40 in one frequency band. Default y-order
+    would call the dashed track S; `sm_by_coverage` labels the solid
+    one S."""
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    for x in range(5, 85, 12):
+        mask[20, x : x + 6] = 1  # dashed (M) above
+    mask[40, 5:85] = 1  # solid (S) below
+    out = ridge_tracks_to_fields_multifreq(
+        mask,
+        _box(),
+        frequencies_lpmm=(10,),
+        dashed_is_sagittal=False,
+        sm_by_coverage=True,
+    )
+    assert np.nonzero(out["freq10S"])[0].mean() == 40
+    assert np.nonzero(out["freq10M"])[0].mean() == 20
 
 
 # --- ridge_tracks_for_hue_freq_split (TTartisan dispatch) ----------------
