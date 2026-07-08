@@ -12661,3 +12661,73 @@ Theme: execute the S207 handoff — #1376 deploy-retry widening (Expedite opener
 - tools pytest: **728 pass**; front-end untouched this session (no `src/` change).
 - **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green; deploy now self-heals multi-minute Pages flakes.
 - **Upstream contributions:** **braboj/solid-ai-templates#743** filed this session (multi-minute-flake retry escalation, from ADR-078); #741 and #742 still open upstream.
+
+---
+
+### Session 209 — Touit production extraction ships; ridge coincidence collapse fixed
+
+Date: 2026-07-08 · Tool: Claude Code (Fable 5)
+
+Theme: two segments on one day. Morning segment: #791 Touit production extraction + ADR-079 emit gate (PR #1387) — that segment's wrap was interrupted before journaling (/clear mid-checklist), so its record here is reconstructed from the PR body, ADR-079, and issue trail. Main segment: #1385 ridge-cluster coincidence collapse (the "#791 Path B" work).
+
+#### PRs
+
+- **#1387** — feat(mtfdigitizer): Zeiss Touit production extraction + ADR-079 emit suppression. Squash-merged (morning segment), closed #791. Per-lens emit for the three Touit lenses into `mtf-readings.ts`; ADR-079 per-cell GT gate (|EX − GT| > 0.05 → null at the emit boundary, 69/396 cells withheld); `_DEFAULT_APERTURES` role-label → f-number mapping; production logs/SVGs/overlays for all three folders.
+- **#1389** — fix(mtfdigitizer): anchor multifreq bands at left plot edge. Squash-merged, branch deleted. `_assign_left_anchored_bands` replaces both the equal-count y-band split and the #1347 interior k-means for `interior_anchored_bands` profiles; ADR-080; calibration Run 9; Touit entries re-emitted (56 gated cells recover, gate 69 → 13); readings grids, digitization logs, SVGs/overlays refreshed in-PR; 3 new regression tests.
+
+#### Issues opened / closed
+
+- **#791** — closed by #1387 (morning segment; auto-close verified at this session's start-of-session check).
+- **#1385** — closed (auto-close verified). All six target fields med |Δ| ≤ 0.006 against unchanged GT.
+- **#1388** — filed (bug, P3, Backlog): digitization-log writer hardcodes the `freq10/freq30` field tuple at three sites in `log.py`, silently omitting Touit 20/40 and Fuji 15/45 fields — same defect class as the readings-grid fix in #1332 Run 6, surfaced when the 32mm log stayed byte-identical while its 40-band recovered from med 0.164 to 0.005.
+
+#### Key technical findings
+
+- **The tracker was never the problem — the band assignment was.** A kept-track composition probe (S209 probe, deleted) across all six Touit panels showed every resolvable curve is tracked correctly; only the track-to-band slicing misfiles them. True band populations: 1/2/2 on both stopped panels (the 10-pair prints genuinely coincident, GT Δ ≤ 0.01), 1/2/3 on the 50mm max (fused 10-pair + fragmented 40-band) — despite a full 2N kept set, so a kept-count trigger cannot detect it.
+- **The #1347 guard comment was calibrated against circular data.** `_interior_order_differs` encoded "32mm/50mm stopped are true 1/1/3 populations, which k-means wrongly rebalances to 1/2/2" — written when GT was extractor-seeded; the maintainer GT (Runs 6–7) proves 1/2/2 is correct. The de-circularization flip (S206/S207) silently invalidated a load-bearing reasoning comment two files away from the GT.
+- **Interior k-means fails when a band's S/M spread exceeds the band gap:** on the 50mm stopped panel the min-SSE partition groups {10, 20S, 20M} (SSE 326 vs 344.5 for the true split). Left-edge anchoring sidesteps the objective entirely: at u' = 0 sagittal ≡ meridional leaves exactly one anchor per frequency, and frequency bands never cross, so mid-field entrants resolve by nearest-band-at-entry-column.
+- **Post-fix per-panel in-band:** 32mm stopped 48/66 → **66/66**, 50mm stopped 47/66 → **66/66** (the family's first 100% panels), 50mm max 40/66 → 62/66, 12mm max 53/66 → 56/66; 12mm stopped and 32mm max unchanged; every non-Touit anchor byte-identical. Aggregate **91.8% → 96.3%** (1236/1284), p95 0.0755 → 0.0448 — above the seeded-GT-era 96.2%, now against fully de-circularized GT.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/pipeline/ridge.py`** — `_assign_left_anchored_bands` + `_LEFT_ANCHOR_WINDOW_FRACTION`/`_ENTRY_PROBE_COLUMNS` (sized from the probe, tolerance envelope in the comments); `_interior_mean_y`, `_interior_order_differs`, `_assign_interior_anchored_bands` deleted (left-anchor subsumes the #1347 case; 12mm max improves).
+- **`docs/decisions/080-left-edge-anchored-band-assignment.md`** — the physics invariants, the algorithm, five rejected alternatives (incl. solid-count anchoring, refuted on the fragmented 50mm max), and the ADR-079 gate interaction.
+- **`src/data/mtf-readings.ts`** — three Touit entries re-emitted; 56 previously-nulled cells now ship (gate withholds 13: 12mm 6, 32mm 5, 50mm 2 — all crossing/corner residuals).
+- **`tools/mtfdigitizer/referenceset/`** — calibration.md Run 9; REFERENCE_SET.md §8/§11/§12 metric-to-watch lines closed out with residuals named; all three readings grids regenerated.
+- **`docs/optical-specs/zeiss-touit-*/`** — specs-logs updated to the new gated counts; digitization logs, provenance SVGs, overlay PNGs refreshed (overlays visually verified: blue 40-band tracks the separating pair, cascade gone).
+
+#### Verification
+
+- `py -m pytest -n auto` **737 pass** (734 + 3 new); `npm run validate` green (incl. 462-page build); `py -m mtfdigitizer.calibrate --write-readings` touches only the three Touit grids — Viltrox and all 2-frequency families byte-identical by flag-gating.
+- Six target fields verified per-cell against unchanged GT; two 50mm-max corner cells moved out-of-band (40M at 14 mm, 40S at 9.8 mm honest-absence) vs ~22 recovered on that panel — both withheld by the ADR-079 gate.
+- All 8 PR checks green; merge deploy green.
+
+#### Key decisions (this session)
+
+- **ADR-080: left-edge anchored band assignment** — supersedes the #1347 interior k-means mechanism and amends ADR-075's equal-split rule for `interior_anchored_bands` profiles; the flag's name now denotes left-edge anchoring. Equal split retained for 2-frequency families.
+- **Within-band fragment merging rejected for now** (ADR-080 alternatives): remaining 50mm-max residuals are crossing cells (#1174/#1175 territory), not fragment losses; revisit trigger recorded.
+- No new directories, no content moved between documents.
+
+#### Process patterns observed this session
+
+- **An interrupted wrap is a silent continuity gap**: the morning segment shipped #1387 but never journaled or refreshed the memory pointer, so this session started against a "next: #791" pointer for work already merged. The start-of-session tracker check (not the pointer) caught it; this entry reconstructs the missing segment from the PR/ADR record.
+- **De-circularizing ground truth invalidates distant reasoning comments.** The stale "true 1/1/3" guard claim survived two GT flips because nothing re-audits comments citing superseded data. When a GT source flips from seeded to verified, grep for guards and comments whose rationale cites the old values.
+- **Probe the composition before designing the fix**: two research agents (prior-art trail, code architecture) plus one kept-track probe settled mechanism, fix shape, and regression surface before any code changed; the hand-validated design then passed calibration on the first run.
+
+#### Follow-ups for next session (S210)
+
+- **#950** auto-detect plot box for the MTF digitizer (task, P2, v0.8.0 — verified open): the highest-priority open v0.8.0 item now that Path B is done.
+- **#1386** two Samyang production digitization logs stale against current extractor (bug, P3, v0.8.0 — verified open).
+- Per-brand digitization tasks #804–#814 (P3, v0.8.0) under epic #932 resume with the collapse handling now in place.
+- **#1388** log-writer field tuple (bug, P3, Backlog — filed this session, non-urgent).
+- Touit crossing-region residuals stay parked with #1174/#1175 (spikes, P4, Backlog) — 13 gated cells document them.
+- (carried) Wire `scaffold_anchor_helpers --check` into CI; #1379 eye-read bare-cell warning (P3, Backlog).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone). Epic #790: **6/24 brands** (Zeiss complete end-to-end: GT, production emit, collapse fixed).
+- **80 ADRs** (ADR-079 morning segment, ADR-080 new).
+- **Calibration aggregate 96.3%** in-band (1236/1284) — family best; Touit per-panel: 12mm 84.8/90.9, 32mm 92.4/**100**, 50mm 93.9/**100** (max/stopped %).
+- tools pytest: **737 pass**; `npm run validate` green (Touit readings now live on the site with 13 honest-absence cells).
+- **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
+- **Upstream contributions:** none filed this session (candidates evaluated — the comment-rot and calibration-trap lessons are instances of existing upstream rules); #741/#742/#743 still open upstream.
