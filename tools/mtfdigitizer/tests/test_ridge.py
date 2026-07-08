@@ -398,6 +398,86 @@ def test_ridge_tracks_to_fields_multifreq_sm_by_coverage_flips_dashed_above_soli
     assert np.nonzero(out["freq10M"])[0].mean() == 20
 
 
+# --- _assign_left_anchored_bands (#1385) ----------------------------------
+
+
+def test_multifreq_left_anchor_coincident_pair_keeps_bands_aligned() -> None:
+    """#1385 stopped-panel regression: a coincident top pair leaves five
+    tracks for three frequencies (true populations 1/2/2). The equal
+    split slices 1/1/3 — the dashed 20M lands in freq40S and the real
+    40M is dropped; left anchoring keeps every band on its own ink."""
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    mask[10, 5:85] = 1  # coincident 10S/10M pair prints as one curve
+    mask[30, 5:85] = 1  # 20S solid — reaches the left window
+    for x in range(20, 85, 12):
+        mask[38, x : x + 6] = 1  # 20M dashed, enters mid-field
+    mask[60, 5:85] = 1  # 40S solid
+    for x in range(20, 85, 12):
+        mask[75, x : x + 6] = 1  # 40M dashed, enters mid-field
+    out = ridge_tracks_to_fields_multifreq(
+        mask,
+        _box(),
+        frequencies_lpmm=(10, 20, 40),
+        dashed_is_sagittal=False,
+        interior_anchored=True,
+        sm_by_coverage=True,
+    )
+    assert np.nonzero(out["freq10S"])[0].mean() == 10
+    assert "freq10M" not in out  # coincident pair reports S only (B2)
+    assert np.nonzero(out["freq20S"])[0].mean() == 30
+    assert np.nonzero(out["freq20M"])[0].mean() == 38
+    assert np.nonzero(out["freq40S"])[0].mean() == 60
+    assert np.nonzero(out["freq40M"])[0].mean() == 75
+
+
+def test_multifreq_left_anchor_full_track_count_can_be_unbalanced() -> None:
+    """#1385 max-panel regression: a full 2N kept set does not imply
+    balanced bands. A coincident top pair plus a fragmented bottom
+    curve is 1/2/3; the equal split shifts every band down one track."""
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    mask[10, 5:85] = 1  # coincident 10 pair
+    mask[30, 5:85] = 1  # 20S solid
+    for x in range(20, 85, 12):
+        mask[36, x : x + 6] = 1  # 20M dashed
+    mask[60, 5:85] = 1  # 40S solid
+    mask[70, 16:36] = 1  # 40M inner fragment
+    mask[72, 80:96] = 1  # 40M outer fragment (x-gap > 40 stays separate)
+    out = ridge_tracks_to_fields_multifreq(
+        mask,
+        _box(),
+        frequencies_lpmm=(10, 20, 40),
+        dashed_is_sagittal=False,
+        interior_anchored=True,
+        sm_by_coverage=True,
+    )
+    assert np.nonzero(out["freq10S"])[0].mean() == 10
+    assert "freq10M" not in out
+    assert np.nonzero(out["freq20S"])[0].mean() == 30
+    assert np.nonzero(out["freq20M"])[0].mean() == 36
+    assert np.nonzero(out["freq40S"])[0].mean() == 60
+    assert np.nonzero(out["freq40M"])[0].mean() == 70
+
+
+def test_multifreq_left_anchor_falls_back_when_no_left_window_tracks() -> None:
+    """Curves all entering past the left window leave no band anchors;
+    the assignment falls back to the equal split instead of guessing."""
+    mask = np.zeros((100, 100), dtype=np.uint8)
+    mask[20, 30:85] = 1
+    mask[50, 30:85] = 1
+    mask[80, 30:85] = 1
+    out = ridge_tracks_to_fields_multifreq(
+        mask,
+        _box(),
+        frequencies_lpmm=(10, 20, 40),
+        dashed_is_sagittal=False,
+        interior_anchored=True,
+        sm_by_coverage=True,
+    )
+    assert np.nonzero(out["freq10S"])[0].mean() == 20
+    assert np.nonzero(out["freq20S"])[0].mean() == 50
+    assert np.nonzero(out["freq40S"])[0].mean() == 80
+
+
 # --- ridge_tracks_for_hue_freq_split (TTartisan dispatch) ----------------
 
 

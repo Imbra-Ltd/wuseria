@@ -44,6 +44,96 @@ Reads the in-source ground truth from `referenceset/charts.py` and runs
 populated. Output: per-chart `|d|` (absolute offset) median + p95 per
 field, then an aggregate.
 
+## Run 9 (after the left-edge anchored band assignment — #1385 / ADR-080)
+
+First run after `ridge_tracks_to_fields_multifreq` stopped slicing kept
+tracks into equal-count y-bands for `interior_anchored` profiles. The
+S209 kept-track probe showed the Touit band populations are genuinely
+unbalanced — 1/2/2 on both stopped panels (the 10-pair prints
+coincident, so five tracks carry six curves) and 1/2/3 on the 50mm max
+panel (fused 10-pair plus a fragmented 40-band) — which the equal split
+cannot represent and interior-mean-y k-means partitions wrongly when a
+band's S/M spread exceeds the band gap. `_assign_left_anchored_bands`
+anchors the bands at the left plot edge (u' = 0, where S ≡ M leaves
+exactly one anchor per frequency) and files mid-field entrants to the
+nearest band at their entry column. Closes both Run 8 metrics to watch.
+
+1. **Both stopped-panel Path B collapses resolved.** 32mm k=4:
+   freq40S/freq40M med |d| 0.164/0.080 → 0.005/0.004 (freq20M
+   0.016 → 0.004); 50mm k=5.6: freq40S/freq40M 0.089/0.090 →
+   0.002/0.003. Both panels are now 66/66 in-band — the first 100%
+   panels in the family. The genuinely coincident 10-pairs keep the
+   single-track band → sister-fill path and stay at med ≤ 0.005.
+2. **50mm max dotted-M cascade resolved.** freq10M med |d|
+   0.096 → 0.006, freq20M 0.065 → 0.006, freq20S 0.013 → 0.003; the
+   40-pair recovers two ext-None positions (8/11 → 10/11 paired).
+   Residuals sit at the double-crossing corner region: 40S 0.061 at
+   9.8 mm plus an ext-None at 11.2 mm, 40M 0.080 at 14 mm — the
+   ADR-079 gate withholds 2 cells (was 37).
+3. **12mm max crossing region picks up three cells** (53/66 → 56/66):
+   freq20M 0.092 → 0.003 at 9.8 mm, 10S/10M recover their 11.2 mm
+   ext-Nones. The corner crowding signature (Runs 6–7) otherwise
+   stands — stopped freq20M/freq40M p95 0.163/0.215 and the 14 mm
+   ext-Nones remain the §11 metrics to watch.
+4. **Everything non-Touit byte-identical.** The left-anchor path is
+   gated on `interior_anchored_bands`, so Viltrox and the 2-frequency
+   ridge families keep the equal split; `--write-readings` touches
+   only the three Touit grids.
+
+### Per-chart (Touit blocks; panels labelled)
+
+```
+zeiss-touit-32mm-f1-8 (multifreq-press-kit)  [stopped / k=4]
+  freq10S         med |d| 0.001  p95 |d| 0.006  paired 11/11  ext-None  0
+  freq10M         med |d| 0.001  p95 |d| 0.006  paired 11/11  ext-None  0
+  freq20S         med |d| 0.002  p95 |d| 0.004  paired 11/11  ext-None  0
+  freq20M         med |d| 0.004  p95 |d| 0.013  paired 11/11  ext-None  0
+  freq40S         med |d| 0.005  p95 |d| 0.010  paired 11/11  ext-None  0
+  freq40M         med |d| 0.004  p95 |d| 0.029  paired 11/11  ext-None  0
+zeiss-touit-50mm-f2-8-macro (multifreq-press-kit)  [max / k=2.8]
+  freq10S         med |d| 0.003  p95 |d| 0.004  paired 11/11  ext-None  0
+  freq10M         med |d| 0.006  p95 |d| 0.018  paired 11/11  ext-None  0
+  freq20S         med |d| 0.003  p95 |d| 0.012  paired 11/11  ext-None  0
+  freq20M         med |d| 0.006  p95 |d| 0.028  paired 11/11  ext-None  0
+  freq40S         med |d| 0.005  p95 |d| 0.081  paired 10/11  ext-None  1
+  freq40M         med |d| 0.006  p95 |d| 0.109  paired 10/11  ext-None  1
+zeiss-touit-50mm-f2-8-macro (multifreq-press-kit)  [stopped / k=5.6]
+  freq10S         med |d| 0.005  p95 |d| 0.005  paired 11/11  ext-None  0
+  freq10M         med |d| 0.005  p95 |d| 0.009  paired 11/11  ext-None  0
+  freq20S         med |d| 0.002  p95 |d| 0.005  paired 11/11  ext-None  0
+  freq20M         med |d| 0.004  p95 |d| 0.013  paired 11/11  ext-None  0
+  freq40S         med |d| 0.002  p95 |d| 0.007  paired 11/11  ext-None  0
+  freq40M         med |d| 0.003  p95 |d| 0.009  paired 11/11  ext-None  0
+```
+
+Family reference — per-panel in-band across the three Touit anchors
+(32mm max and 12mm stopped unchanged this run):
+
+```
+zeiss-touit-12mm-f2-8          max 56/66 (84.8%)   stopped 60/66 (90.9%)
+zeiss-touit-32mm-f1-8          max 61/66 (92.4%)   stopped 66/66 (100%)
+zeiss-touit-50mm-f2-8-macro    max 62/66 (93.9%)   stopped 66/66 (100%)
+```
+
+### Aggregate
+
+```
+Run 8 (equal split):                     Run 9 (left-edge anchoring):
+  paired comparisons:    1278             paired comparisons:    1284
+  median |d|:           0.0057             median |d|:           0.0049
+  p95 |d|:              0.0755             p95 |d|:              0.0448
+  max |d|:              0.2538             max |d|:              0.1958
+  within +/-0.05: 1173/1278 (91.8%)        within +/-0.05: 1236/1284 (96.3%)
+```
+
+The +6 pairings are the recovered ext-None cells on the 50mm max and
+12mm max panels. 96.3% is the family's first aggregate above the
+seeded-GT-era 96.2% — reached against fully de-circularized maintainer
+GT. The ADR-079 emit gate now withholds 13 cells family-wide (was 69):
+12mm 6, 32mm 5, 50mm 2, all crossing/corner-region residuals
+(#1174/#1175 territory), documented per anchor in REFERENCE_SET.md
+§8/§11/§12.
+
 ## Run 8 (after the per-band coverage-dashedness S/M discriminator — #1374)
 
 First run after `ridge_tracks_to_fields_multifreq` stopped assuming the

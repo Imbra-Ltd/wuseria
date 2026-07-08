@@ -25,16 +25,14 @@
   `zeiss-touit-32mm-f1-8-mtf.png`.
 - Tier 1 anchor: 132-cell maintainer eye-read GT (#1332); calibration
   provenance in `tools/mtfdigitizer/referenceset/calibration.md` Runs
-  6 and 8.
-- Emit GT gate (ADR-079): 23 of 132 cells are withheld from
-  `src/data/mtf-readings.ts` (|EX − GT| > 0.05) — the stopped-panel
-  40-band collapse from 2.8 mm outward (#1385, 9 cells per
-  orientation) and 5 max-panel 40-band crossing-region cells at
-  7–11.2 mm. Per-cell provenance:
+  6, 8 and 9.
+- Emit GT gate (ADR-079): 5 of 132 cells are withheld from
+  `src/data/mtf-readings.ts` (|EX − GT| > 0.05) — max-panel 40-band
+  crossing-region cells at 7–11.2 mm. The stopped-panel 40-band
+  collapse (#1385, 18 cells) is resolved by the left-edge anchored
+  band assignment (ADR-080, calibration Run 9); the stopped panel now
+  emits 66/66 in-band. Per-cell provenance:
   `tools/mtfdigitizer/referenceset/readings/zeiss-touit-32mm-f1-8.md`.
-  The digitization log and SVG/overlay in this folder show the
-  extractor's actual output including gated cells — the intentional
-  discrepancy resolves when #1385 lands.
 
 ## Caveats
 

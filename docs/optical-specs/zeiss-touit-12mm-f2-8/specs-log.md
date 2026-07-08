@@ -25,10 +25,12 @@
 - Tier 1 anchor: 132-cell maintainer eye-read GT (#1332, via #1348);
   calibration provenance in
   `tools/mtfdigitizer/referenceset/calibration.md`.
-- Emit GT gate (ADR-079): 9 of 132 cells are withheld from
+- Emit GT gate (ADR-079): 6 of 132 cells are withheld from
   `src/data/mtf-readings.ts` (|EX − GT| > 0.05) — edge-region crossing
-  cells at 9.8–14 mm (max 10S/20S/20M, stopped 20M/40M corners; also
-  documented in REFERENCE_SET.md §11). Per-cell provenance:
+  cells at 12.6–14 mm (max 10S/20S, stopped 20M/40M corners; also
+  documented in REFERENCE_SET.md §11). The left-edge anchored band
+  assignment (ADR-080, calibration Run 9) recovered three max-panel
+  crossing-region cells at 9.8–11.2 mm. Per-cell provenance:
   `tools/mtfdigitizer/referenceset/readings/zeiss-touit-12mm-f2-8.md`.
   The digitization log and SVG/overlay in this folder show the
   extractor's actual output including gated cells.
