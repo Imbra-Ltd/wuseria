@@ -12730,4 +12730,4 @@ Theme: two segments on one day. Morning segment: #791 Touit production extractio
 - **Calibration aggregate 96.3%** in-band (1236/1284) — family best; Touit per-panel: 12mm 84.8/90.9, 32mm 92.4/**100**, 50mm 93.9/**100** (max/stopped %).
 - tools pytest: **737 pass**; `npm run validate` green (Touit readings now live on the site with 13 honest-absence cells).
 - **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
-- **Upstream contributions:** none filed this session (candidates evaluated — the comment-rot and calibration-trap lessons are instances of existing upstream rules); #741/#742/#743 still open upstream.
+- **Upstream contributions:** **braboj/solid-ai-templates#744** filed at wrap (de-circularization sweep rule for quality.md calibration discipline, from the stale "true 1/1/3" guard); #741/#742/#743 still open upstream.
