@@ -39,10 +39,10 @@ from __future__ import annotations
 
 import argparse
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
-from .family_profile import profile_for_chart
+from .aperture_passes import aperture_passes_for_view
 from .per_frequency import (
     PER_FREQUENCY_STYLE_FAMILIES,
     extract_per_frequency_chart,
@@ -83,6 +83,11 @@ class EmitResult:
     ts_literal: str
     positions_emitted: int
     null_counts: dict[str, int]
+    # (panel role label, field, position_mm) triples nulled by the
+    # Tier 1 GT gate (ADR-079) — reported to the operator so
+    # suppression is never silent. Empty for Tier 2 charts and for
+    # anchors whose extraction is fully in-band.
+    suppressed: tuple[tuple[str, str, float], ...] = ()
 
 
 # Backwards-compat: the canonical-frequency field set, kept for tests
@@ -273,7 +278,10 @@ def emit_lens(
     for review-lab charts from a tested sample (LensTip, Optical Limits).
     `aperture` overrides the chart's first declared aperture (useful when
     the reference chart declares multiple panels but only the first is
-    extracted by the current pipeline).
+    extracted by the current pipeline). Ignored when the slug has a
+    `_DEFAULT_APERTURES` entry — that table supplies one display
+    f-number per view (stacked-aperture primes whose declared
+    `apertures` are ADR-065 role labels, not f-numbers).
     `focal_lengths` supplies the mm value to stamp on each emitted chart
     panel — required for zooms (ADR-033 mandates one panel per published
     focal length), omitted for primes. When supplied, its length must
@@ -300,19 +308,27 @@ def emit_lens(
             f"focal_lengths length {len(focal_lengths)} does not match "
             f"view count {len(views)} for {chart.slug!r}"
         )
-    if len(views) > 1 and focal_lengths is None:
+    display_apertures = _DEFAULT_APERTURES.get(chart.slug)
+    if display_apertures is not None and len(display_apertures) != len(views):
+        raise ValueError(
+            f"_DEFAULT_APERTURES entry for {chart.slug!r} has "
+            f"{len(display_apertures)} apertures but the chart has "
+            f"{len(views)} views — one f-number per view, primary first"
+        )
+    if len(views) > 1 and focal_lengths is None and display_apertures is None:
         raise ValueError(
             f"reference chart {chart.slug!r} has {len(views)} views — "
-            f"focal_lengths is required to disambiguate panels per ADR-033"
+            f"panels need focal_lengths (zoom, ADR-033) or a "
+            f"_DEFAULT_APERTURES entry (stacked-aperture prime, ADR-079) "
+            f"to disambiguate"
         )
-    profile = profile_for_chart(chart)
 
     root = repo_root or Path(__file__).resolve().parents[2]
-    aperture_string = aperture or chart.apertures[0]
 
     panels: list[ChartPanel] = []
     total_positions = 0
     null_counts: dict[str, int] = {}
+    suppressed_log: list[tuple[str, str, float]] = []
 
     for index, view in enumerate(views):
         if view.plot_box is None:
@@ -322,30 +338,63 @@ def emit_lens(
             )
         view_plot_box = _to_plotbox(view.plot_box, view.y_top_insets)
         view_image_path = root / view.chart_path
+        # Per-view aperture-pass resolution (#1107) — the same profile
+        # and role label the production extractor and the calibration
+        # runner use, so emitted values match the calibrated ones
+        # (ADR-063 per-view aperture overrides, per-lens S/M swaps).
+        passes = aperture_passes_for_view(chart, view_image_path, view)
+        if len(passes) != 1:
+            raise ValueError(
+                f"view {index} of {chart.slug!r} resolves to "
+                f"{len(passes)} aperture passes — multi-aperture-by-hue "
+                f"charts emit via their brand script "
+                f"(emit_ttartisan_tier2), not the generic emitter"
+            )
+        role, view_profile = passes[0]
         extracted = extract_chart(
             view_image_path,
-            profile,
+            view_profile,
             view_plot_box,
             image_height_mm=chart.image_height_mm,
         )
         # ADR-053 + #1134: per-pass confidence verdict. emit shares the
         # autotriage gate (ADR-052) — same render-match + priors as
-        # `autotriage._run_pipeline`, no new thresholds.
+        # `autotriage._run_pipeline`, no new thresholds. The verdict
+        # runs on the raw extraction, BEFORE suppression (ADR-079):
+        # suppression is publication policy downstream of the gate.
         confidence, reason = _verdict_for_panel(
             view_image_path,
-            profile,
+            view_profile,
             view_plot_box,
             chart.image_height_mm,
             extracted,
         )
-        rows = tuple(r for r in extracted.readings if _has_any_data(r))
+        gt_fields = (chart.ground_truth or {}).get(role)
+        if chart.ground_truth is not None and gt_fields is None:
+            raise ValueError(
+                f"{chart.slug!r} has ground_truth but no {role!r} bucket — "
+                f"GT aperture labels must match the view's pass role"
+            )
+        readings = (
+            _suppress_gt_refuted_cells(
+                role, extracted.readings, gt_fields, suppressed_log
+            )
+            if gt_fields is not None
+            else extracted.readings
+        )
+        rows = tuple(r for r in readings if _has_any_data(r))
         focal = focal_lengths[index] if focal_lengths is not None else None
-        panels.append((aperture_string, focal, rows, confidence, reason))
+        panel_aperture = (
+            display_apertures[index]
+            if display_apertures is not None
+            else (aperture or chart.apertures[0])
+        )
+        panels.append((panel_aperture, focal, rows, confidence, reason))
         total_positions += len(rows)
-        for field in fields_in(extracted.readings):
+        for field in fields_in(readings):
             null_counts.setdefault(field, 0)
             null_counts[field] += sum(
-                1 for r in extracted.readings if r.samples.get(field) is None
+                1 for r in readings if r.samples.get(field) is None
             )
 
     return EmitResult(
@@ -357,6 +406,7 @@ def emit_lens(
         ),
         positions_emitted=total_positions,
         null_counts=null_counts,
+        suppressed=tuple(suppressed_log),
     )
 
 
@@ -371,6 +421,76 @@ _DEFAULT_FOCAL_LENGTHS: dict[str, tuple[int, ...]] = {
     "sigma-18-50mm-f2-8-dc-dn-c": (18, 50),
     "sigma-100-400mm-f5-6-3-dg-dn-os-c": (100, 400),
 }
+
+
+# Display aperture (f-number string) per emitted panel, in
+# primary-then-additional view order, for stacked-aperture primes whose
+# `ReferenceChart.apertures` carry ADR-065 role labels ("max"/"stopped")
+# rather than f-numbers. The site schema requires f-number strings
+# (`mtf-readings.test.ts` asserts /^f\/\d/). Values eye-read from each
+# chart's printed panel legend ("Blendenzahl: k = <n> / f-number = <n>").
+_DEFAULT_APERTURES: dict[str, tuple[str, ...]] = {
+    "zeiss-touit-12mm-f2-8": ("f/2.8", "f/5.6"),
+    "zeiss-touit-32mm-f1-8": ("f/1.8", "f/4"),
+    "zeiss-touit-50mm-f2-8-macro": ("f/2.8", "f/5.6"),
+}
+
+
+# Tier 1 emit gate tolerance (ADR-079): the calibration in-band band
+# (`referenceset/calibration.md` scores |EX - GT| <= 0.05 as in-band).
+# A cell whose extracted value misses the maintainer's eye-read GT by
+# more than this MUST NOT ship to the site.
+_GT_CELL_TOLERANCE = 0.05
+
+
+def _suppress_gt_refuted_cells(
+    role: str,
+    readings: tuple[SampledReading, ...],
+    gt_fields: dict[str, tuple[float | None, ...]],
+    suppressed_log: list[tuple[str, str, float]],
+) -> tuple[SampledReading, ...]:
+    """Null emitted cells that contradict maintainer GT beyond tolerance.
+
+    ADR-079: for Tier 1 anchors the eye-read ground truth is the
+    strongest verification any emitted value has — stronger than the
+    render-match gate, which cannot see a collapsed track riding a
+    neighbouring band's real ink. Any cell whose extracted value misses
+    GT by more than `_GT_CELL_TOLERANCE` is nulled; the site renderer
+    shows an honest gap (B2 contract) instead of a confidently wrong
+    value. Cells where GT is None (unreadable `?` cells) pass through
+    unverified; extractor Nones stay None. Provenance artifacts
+    (digitization-log.md, SVG, overlay) are NOT gated — they stay the
+    extractor's diagnostic record.
+
+    Pairing is positional: extraction samples the same fractions the GT
+    tuples encode, so row index i pairs with GT index i (fail-loud on a
+    length mismatch — a silent mispair would gate the wrong cells).
+
+    Appends one (role, field, position_mm) triple per nulled cell to
+    `suppressed_log` so the caller reports every suppression — a silent
+    cap would read as "extractor found nothing here."
+    """
+    gt_len = max(len(v) for v in gt_fields.values())
+    if len(readings) != gt_len:
+        raise ValueError(
+            f"GT/extraction row mismatch on the {role} panel: "
+            f"{len(readings)} sampled rows vs {gt_len} GT positions"
+        )
+    out: list[SampledReading] = []
+    for index, reading in enumerate(readings):
+        samples = dict(reading.samples)
+        for field, value in reading.samples.items():
+            gt_curve = gt_fields.get(field)
+            gt_value = gt_curve[index] if gt_curve is not None else None
+            if value is None or gt_value is None:
+                continue
+            # round to the calibration grid's 3-dp delta precision so a
+            # float artifact at exactly 0.05 stays in-band
+            if round(abs(value - gt_value), 3) > _GT_CELL_TOLERANCE:
+                samples[field] = None
+                suppressed_log.append((role, field, reading.position_mm))
+        out.append(replace(reading, samples=samples))
+    return tuple(out)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -400,11 +520,16 @@ def main(argv: list[str] | None = None) -> int:
             print(f"ERROR: unknown slug {slug!r}", file=sys.stderr)
             return 1
         focal_lengths = _DEFAULT_FOCAL_LENGTHS.get(slug)
-        if len(chart.views) > 1 and focal_lengths is None:
+        if (
+            len(chart.views) > 1
+            and focal_lengths is None
+            and slug not in _DEFAULT_APERTURES
+        ):
             print(
-                f"ERROR: {slug!r} has {len(chart.views)} views but no "
-                f"_DEFAULT_FOCAL_LENGTHS entry; add one (mm per panel, "
-                f"primary first)",
+                f"ERROR: {slug!r} has {len(chart.views)} views but neither "
+                f"a _DEFAULT_FOCAL_LENGTHS entry (zoom: mm per panel, "
+                f"primary first) nor a _DEFAULT_APERTURES entry "
+                f"(stacked-aperture prime: f-number per panel)",
                 file=sys.stderr,
             )
             return 1
@@ -425,6 +550,17 @@ def main(argv: list[str] | None = None) -> int:
             f"nulls per field: {nulls}",
             file=sys.stderr,
         )
+        by_panel_field: dict[tuple[str, str], list[float]] = {}
+        for role, field, position_mm in result.suppressed:
+            by_panel_field.setdefault((role, field), []).append(position_mm)
+        for (role, field), positions in by_panel_field.items():
+            pos_text = ", ".join(f"{p:g}" for p in positions)
+            print(
+                f"# {slug}: SUPPRESSED {len(positions)} {field} cell(s) "
+                f"on the {role} panel at {pos_text} mm — |EX - GT| > "
+                f"{_GT_CELL_TOLERANCE} (ADR-079 Tier 1 GT gate)",
+                file=sys.stderr,
+            )
 
     return 0
 

@@ -5,19 +5,12 @@ import { describe, it, expect } from "vitest";
 import { lenses } from "./lenses";
 import accessories from "./accessories";
 import { mtfReadings } from "./mtf-readings";
-import { toSlug } from "../utils/slug";
+import { toDataSlug } from "../utils/slug";
 
-// Mirror of brandkit's `slug_prefix` overrides (see ADR-056). Most brands
-// slug as `toSlug(brand)`, but a few diverge: brandkit's Python tooling
-// writes `docs/optical-specs/<slug>` paths using these prefixes, and the
-// TS invariant must agree. Only divergences belong here.
-const BRAND_SLUG_OVERRIDE: Record<string, string> = {
-  "Carl Zeiss": "Zeiss",
-};
-
-function dirBrand(brand: string): string {
-  return BRAND_SLUG_OVERRIDE[brand] ?? brand;
-}
+// The brandkit `slug_prefix` override map (ADR-056) lives in
+// `src/utils/slug.ts` (`toDataSlug`) — shared with the lens page's
+// mtfReadings lookup so the invariant here and the render path can
+// never disagree on a brand's data slug.
 
 describe("mtf-readings data integrity", () => {
   const entries = Object.entries(mtfReadings);
@@ -245,12 +238,10 @@ describe("mtf-readings data integrity", () => {
 // attribution URL derives from `lenses.ts.officialUrl` instead of a
 // duplicated field (#1341).
 describe("mtf-readings ↔ lenses.ts coverage", () => {
-  const lensSlugs = new Set(
-    lenses.map((l) => toSlug(`${dirBrand(l.brand)} ${l.model}`)),
-  );
+  const lensSlugs = new Set(lenses.map((l) => toDataSlug(l.brand, l.model)));
   const readingSlugs = Object.keys(mtfReadings);
 
-  it("every mtfReadings key matches a lens via toSlug(brand model)", () => {
+  it("every mtfReadings key matches a lens via toDataSlug(brand, model)", () => {
     const orphans = readingSlugs.filter((slug) => !lensSlugs.has(slug));
     expect(
       orphans,
@@ -372,11 +363,11 @@ describe("mtf-readings eye-read overrides", () => {
 // handled via BRAND_SLUG_OVERRIDE — see ADR-056.
 describe("docs/optical-specs directory-name invariant", () => {
   const lensSlugs = new Set([
-    ...lenses.map((l) => toSlug(`${dirBrand(l.brand)} ${l.model}`)),
-    ...accessories.map((a) => toSlug(`${dirBrand(a.brand)} ${a.model}`)),
+    ...lenses.map((l) => toDataSlug(l.brand, l.model)),
+    ...accessories.map((a) => toDataSlug(a.brand, a.model)),
   ]);
 
-  it("every optical-specs directory matches a lens via toSlug", () => {
+  it("every optical-specs directory matches a lens via toDataSlug", () => {
     const orphans = lensSpecDirs.filter((dir) => !lensSlugs.has(dir));
     expect(
       orphans,
@@ -414,7 +405,7 @@ describe("same-product MTF chart invariant", () => {
   const groupsByUrl = new Map<string, string[]>();
   for (const lens of lenses) {
     if (!lens.officialUrl) continue;
-    const slug = toSlug(`${dirBrand(lens.brand)} ${lens.model}`);
+    const slug = toDataSlug(lens.brand, lens.model);
     const list = groupsByUrl.get(lens.officialUrl) ?? [];
     list.push(slug);
     groupsByUrl.set(lens.officialUrl, list);

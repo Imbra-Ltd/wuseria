@@ -188,3 +188,104 @@ def test_format_entry_emits_low_confidence_with_reason() -> None:
     )
     assert 'confidence: "LOW",' in out
     assert 'confidenceReason: "prior_failed_center_ge_edge",' in out
+
+
+# --- _suppress_gt_refuted_cells (ADR-079 Tier 1 GT gate) ------------------
+
+
+def test_gt_gate_nulls_cells_beyond_tolerance() -> None:
+    from mtfdigitizer.emit import _suppress_gt_refuted_cells
+
+    readings = (_r(pos=0.0, c10s=0.90, c10m=0.90), _r(pos=1.4, c10s=0.72, c10m=0.90))
+    gt = {
+        "freq10S": (0.90, 0.90),  # row 1 EX 0.72 misses GT 0.90 by 0.18
+        "freq10M": (0.90, 0.90),
+        "freq30S": (0.70, 0.70),  # EX 0.70 within tolerance
+        "freq30M": (0.70, 0.70),
+    }
+    log: list[tuple[str, str, float]] = []
+    out = _suppress_gt_refuted_cells("max", readings, gt, log)
+    assert out[0].samples["freq10S"] == 0.90, "in-band cell must survive"
+    assert out[1].samples["freq10S"] is None, "out-of-band cell must be null"
+    assert out[1].samples["freq10M"] == 0.90, "sibling in-band cell survives"
+    assert log == [("max", "freq10S", 1.4)]
+
+
+def test_gt_gate_skips_gt_none_and_ex_none_cells() -> None:
+    from mtfdigitizer.emit import _suppress_gt_refuted_cells
+
+    readings = (_r(pos=0.0, c10s=0.20, c10m=None),)
+    gt = {
+        "freq10S": (None,),  # unreadable GT cell: EX ships unverified
+        "freq10M": (0.90,),  # EX None stays None, no log entry
+        "freq30S": (0.70,),
+        "freq30M": (0.70,),
+    }
+    log: list[tuple[str, str, float]] = []
+    out = _suppress_gt_refuted_cells("max", readings, gt, log)
+    assert out[0].samples["freq10S"] == 0.20, "GT-None cell passes through"
+    assert out[0].samples["freq10M"] is None
+    assert log == []
+
+
+def test_gt_gate_exact_tolerance_boundary_ships() -> None:
+    from mtfdigitizer.emit import _suppress_gt_refuted_cells
+
+    # |EX - GT| == 0.05 is IN band (calibration scores <= 0.05 as
+    # in-band); only strictly-greater misses are nulled.
+    readings = (_r(pos=0.0, c10s=0.85),)
+    gt = {"freq10S": (0.90,), "freq10M": (0.90,), "freq30S": (0.70,), "freq30M": (0.70,)}
+    log: list[tuple[str, str, float]] = []
+    out = _suppress_gt_refuted_cells("max", readings, gt, log)
+    assert out[0].samples["freq10S"] == 0.85
+    assert log == []
+
+
+def test_gt_gate_fails_loud_on_row_mismatch() -> None:
+    import pytest
+
+    from mtfdigitizer.emit import _suppress_gt_refuted_cells
+
+    readings = (_r(pos=0.0),)
+    gt = {"freq10S": (0.9, 0.9), "freq10M": (0.9, 0.9)}
+    with pytest.raises(ValueError, match="row mismatch"):
+        _suppress_gt_refuted_cells("max", readings, gt, [])
+
+
+def test_gt_gate_ignores_fields_absent_from_gt() -> None:
+    from mtfdigitizer.emit import _suppress_gt_refuted_cells
+
+    # A field the GT does not carry (e.g. a chart publishing more
+    # frequencies than were eye-read) ships unverified rather than
+    # being nulled or crashing.
+    readings = (_r(pos=0.0, c10s=0.90),)
+    gt = {"freq10S": (0.90,)}
+    log: list[tuple[str, str, float]] = []
+    out = _suppress_gt_refuted_cells("max", readings, gt, log)
+    assert out[0].samples["freq30S"] == 0.7
+    assert log == []
+
+
+# --- suppression / aperture tables reference real charts ------------------
+
+
+def test_default_apertures_entries_match_reference_set() -> None:
+    """Every display-aperture entry must name a real chart and carry
+    one f-number string per view, primary first (ADR-079)."""
+    import re
+
+    from mtfdigitizer.emit import _DEFAULT_APERTURES
+    from mtfdigitizer.referenceset.charts import REFERENCE_CHARTS
+
+    charts = {c.slug: c for c in REFERENCE_CHARTS}
+    for slug, apertures in _DEFAULT_APERTURES.items():
+        chart = charts.get(slug)
+        assert chart is not None, f"unknown slug in _DEFAULT_APERTURES: {slug}"
+        assert len(apertures) == len(chart.views), (
+            f"{slug}: {len(apertures)} apertures for {len(chart.views)} views"
+        )
+        for aperture in apertures:
+            assert re.match(r"^f/\d", aperture), (
+                f"{slug}: {aperture!r} is not an f-number string — the site "
+                f"schema requires an f/N prefix (mtf-readings.test.ts)"
+            )
