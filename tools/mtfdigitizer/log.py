@@ -146,14 +146,37 @@ def _field_stats(extracted: ExtractedChart, field: str, ground_truth: tuple) -> 
     }
 
 
+_FIELD_RE = re.compile(r"freq(\d+)([SM])")
+
+
+def _ordered_fields(gt_by_field: dict) -> tuple[str, ...]:
+    """Ground-truth fields sorted by frequency ascending, sagittal before
+    meridional.
+
+    Reproduces the legacy hardcoded (freq10S, freq10M, freq30S, freq30M)
+    order for standard charts while generalizing to any frequency set —
+    multifreq press-kit (10/20/40) and Fujifilm (15/45) — so the writer
+    renders every band the chart actually carries instead of a fixed
+    freq10/freq30 tuple (#1388). Keys off the field name, so the order is
+    stable regardless of the dict insertion order in charts.py (e.g.
+    7artisans stores M before S).
+    """
+
+    def sort_key(field: str) -> tuple[int, int]:
+        m = _FIELD_RE.fullmatch(field)
+        return (int(m.group(1)), 0 if m.group(2) == "S" else 1)
+
+    return tuple(sorted(gt_by_field, key=sort_key))
+
+
 def _render_readings_grid(
     extracted_by_aperture: dict[str, ExtractedChart], ground_truth: dict
 ) -> list[str]:
     """One markdown table per (aperture, field) summary + one wide grid table."""
     lines: list[str] = []
-    fields = ("freq10S", "freq10M", "freq30S", "freq30M")
     for aperture, gt_by_field in ground_truth.items():
         extracted = extracted_by_aperture[aperture]
+        fields = _ordered_fields(gt_by_field)
         if len(ground_truth) > 1:
             lines.append(f"#### Aperture {aperture}")
             lines.append("")
@@ -165,8 +188,6 @@ def _render_readings_grid(
             "| -------------- | ------ | --------- | --------- | ----------- |"
         )
         for f in fields:
-            if f not in gt_by_field:
-                continue
             stats = _field_stats(extracted, f, gt_by_field[f])
             med = f"{stats['median']:.3f}" if stats["median"] is not None else "—"
             p95 = f"{stats['p95']:.3f}" if stats["p95"] is not None else "—"
@@ -182,8 +203,6 @@ def _render_readings_grid(
         # height — useful when the overlay PNG is hard to see.
         lines.append("```")
         for f in fields:
-            if f not in gt_by_field:
-                continue
             ex_values = tuple(r.samples.get(f) for r in extracted.readings)
             gt_values = gt_by_field[f]
             ex_endpoints = (
@@ -202,8 +221,6 @@ def _render_readings_grid(
         # EX, Δ. One table per field keeps each table to 4 columns so it
         # fits a phone screen; the wide 13-column grid is split.
         for f in fields:
-            if f not in gt_by_field:
-                continue
             lines.append(f"**{f}**")
             lines.append("")
             lines.append("| frac | EYE | EX | Δ |")
@@ -225,9 +242,9 @@ def _render_center_edge_summary(
 ) -> list[str]:
     """One block per aperture showing center (frac 0.0) and edge (frac 0.9, 1.0) values."""
     lines: list[str] = []
-    fields = ("freq10S", "freq10M", "freq30S", "freq30M")
-    for aperture in ground_truth:
+    for aperture, gt_by_field in ground_truth.items():
         extracted = extracted_by_aperture[aperture]
+        fields = _ordered_fields(gt_by_field)
         if len(ground_truth) > 1:
             lines.append(f"#### Aperture {aperture}")
             lines.append("")
@@ -250,9 +267,9 @@ def _render_shape_metrics(
 ) -> list[str]:
     """Per-field peak position and half-falloff position."""
     lines: list[str] = []
-    fields = ("freq10S", "freq10M", "freq30S", "freq30M")
-    for aperture in ground_truth:
+    for aperture, gt_by_field in ground_truth.items():
         extracted = extracted_by_aperture[aperture]
+        fields = _ordered_fields(gt_by_field)
         if len(ground_truth) > 1:
             lines.append(f"#### Aperture {aperture}")
             lines.append("")
