@@ -12802,3 +12802,66 @@ Theme: finalize the Touit series. Opened as "there are problems"; four parallel 
 - tools pytest: **742 pass**; `npm run validate` green.
 - **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy: #1392 success, #1393 in progress.
 - **Upstream contributions:** **braboj/solid-ai-templates#747** filed at wrap (provenance-doc backfill as data-audit rule); #741–744 still open upstream.
+
+---
+
+### Session 211 — Touit corner outer-field: probe, bounded prototype, scope-as-spike
+
+Date: 2026-07-09 · Tool: Claude Code (Opus 4.8)
+
+Theme: "Touit suite, problems with overlay" → fix the extractor's outer-field. Probed the 12mm max corner failure, prototyped a bounded first-half fix, found it necessary-not-sufficient, reverted, and scoped the complete two-part fix as spike #1395. No code shipped.
+
+#### PRs
+
+- **#1394** — docs(journal): S210 entry. Squash-merged this session. Its aggregator `gate` job had been cancelled by a GitHub runner-queue flake (15-min timeout, zero steps run) while every real check passed; re-ran the failed job and merged on green. Session-start hygiene, not new work.
+- No fix PR — the prototype was reverted (see Key decisions). The S211 journal PR carries this wrap.
+
+#### Issues opened / closed
+
+- **#1395** — opened (spike, P3, Backlog): "Recover Touit corner outer-field dives: mean_y false-merge + coincidence-diverge S/M labeling". Carries the full S211 diagnosis + probe data as its durable record.
+- No issues closed.
+
+#### Key technical findings
+
+- **The overlays are by-design diagnostic; the site data is clean.** ADR-079's emit gate nulls every GT-refuted cell → honest gaps + LOW badge. The overlay/log/SVG deliberately render the raw extractor output (including the corner miss), so an overlay "looking wrong" is not a data bug.
+- **The 12mm max corner failure is track-loss, and it is recoverable.** GT at the corner has the solid S diving _below_ the dashed M (20S 0.45 vs 20M 0.58; 10S 0.62 vs 10M 0.82). The raw neutral mask carries the diving-S ink continuously to the corner — the loss is downstream of ink.
+- **Mechanism 1 (clustering bug, proven).** `_merge_near_duplicate_tracks` dedups by _global mean_y_ within 4 px with no x-overlap or pointwise check. The diving-20S cluster (cov 302, dives to the correct 0.45) is dropped as a "halo duplicate" of the unrelated 40-band-upper fragment (cov 384) because both average MTF 0.74. Probe metrics for the dropped pair: x-overlap 0.51, **pointwise y-agreement 0.00** (real anti-alias halo scores ≈1.0). Prototype (pointwise-agreement test, thresholds sized from the probe) recovers the track with **zero calibration regressions across the entire real control cohort**.
+- **Mechanism 2 (deep, unsolved).** With the track recovered, `_order_band_sm` labels S/M by coverage; the fragmented diving-solid-S (cov 302) has _lower_ coverage than the flat dashed-M (cov 413, ratio 1.37 ≥ the 1.15 margin), so it labels them backwards → S/M swap at frac 0.7–0.9. Clean recovery needs coincidence-then-diverge handling — genuinely #1175 per-column solid-vs-dashed territory.
+- **Corrected a mis-filed attribution.** REFERENCE_SET §11/§12 call these residuals "#1174/#1175 territory," but the agent code-map shows #1174's DP two-path tracker (`_ridge_dp_two_paths`) does not run on the Touit path at all (Touit uses the greedy `_cluster_into_tracks` + `_assign_left_anchored_bands`). The real failure is Mechanism 1 + 2, a distinct class. #1395 owns the correction.
+
+#### Key changes
+
+- None shipped. `tools/mtfdigitizer/pipeline/ridge.py` prototype (pointwise `_is_halo_duplicate`) reverted; throwaway `probe_touit_corner.py` and the gitignored diagnostic bundle deleted. Only change on `main`: this journal entry.
+
+#### Verification
+
+- Baseline vs prototype `calibrate` (full reference set): prototype recovered 12mm max freq20S corner (EX 0.46 ≈ GT 0.45), **zero regressions on ttartisan / viltrox / 7artisans / sigma / samyang / tokina / Touit 32+50mm** (byte-identical); but 12mm max freq20M regressed (p95 0.058 → 0.132) via the S/M swap, so net site impact is neutral.
+- Full `py -m pytest mtfdigitizer/tests`: **470 pass, 2 fail** under the prototype — one synthetic (`test_multifreq_left_anchor_full_track_count_can_be_unbalanced`: new behavior fuses two disjoint 40M fragments, arguably more correct) and one staleness (`test_committed_digitization_logs_are_fresh`: the 12mm log would change). Both confirm the change reaches beyond the corner. Reverted; `py -m mtfdigitizer.log --check` clean; tree clean on `main`.
+
+#### Key decisions (this session)
+
+- **Revert + scope, not ship-partial (per agreed plan).** The bounded fix cleared the control-cohort zero-regression bar but is necessary-not-sufficient: it exposes Mechanism 2 (deep) and changes fragment-merge outcomes + a committed log. Shipping it alone ships an S/M swap for a net-neutral site. The two fixes belong together — filed #1395 rather than a half-fix PR. No ADR (no decision landed; the ADR is a #1395 acceptance criterion).
+- **Corrects S210's memory conclusion.** S210 recorded the 13 gated Touit cells as "#1174/#1175 probe-refuted at S151, stay P4." S211 found a _distinct_ mechanism (mean_y false-merge) with a proven partial recovery — the residual is not simply "probe-refuted crossing," and #1395 (P3) is more actionable than the P4 predecessors.
+- No new directories, no content moved between documents.
+
+#### Process patterns observed this session
+
+- **Probe the artifact, not your reading of it.** The ADR-050 per-stage `diagnose` bundle plus a monkeypatched cluster-dump probe located the exact death point (the mean_y merge) in minutes, and measured overlap/agreement to size the fix from data — far faster than reasoning about the rendered overlay.
+- **A "bounded fix" can reveal it is not bounded.** The prototype passed the control-cohort bar yet tripped a synthetic test + a staleness gate and exposed a second mechanism. That breadth of effect is itself the signal to scope-as-spike, not ship.
+- **Read prior-art close-outs and the code map first.** ADR-055/080 + #1174/#1175 avoided re-deriving rejected paths, and the code map corrected the long-standing #1174/#1175 mislabel (the DP does not run on the Touit path).
+
+#### Follow-ups for next session (S212)
+
+- **#1395** — the two-part Touit corner fix (proven pointwise near-dup clustering fix + the deep coincidence-diverge S/M labeling). Spike, P3, Backlog.
+- **#950** auto-detect plot box for the MTF digitizer (task, P2, v0.8.0 — still the highest-priority open v0.8.0 item; carried from S209/S210).
+- **#1386** two Samyang production digitization logs stale (bug, P3, v0.8.0); per-brand digitization tasks #804–#814 (P3, v0.8.0, epic #932).
+- (carried) Wire `scaffold_anchor_helpers --check` into CI; #1379 eye-read bare-cell warning (P3, Backlog); optional confidence-field retirement (unfiled).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone). Epic #790: 6/24 brands (Zeiss complete end-to-end).
+- **80 ADRs** (no new ADR this session).
+- Calibration aggregate **96.3%** in-band (1236/1284) — unchanged; no code shipped.
+- tools pytest: **742 pass** (unchanged; no code shipped — the mtfdigitizer subset is 472); `npm run validate` not run (no `src/` change).
+- **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
+- **Upstream contributions:** none new this session; braboj/solid-ai-templates #741–744, #747 still open upstream.
