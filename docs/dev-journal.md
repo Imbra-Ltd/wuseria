@@ -12731,3 +12731,74 @@ Theme: two segments on one day. Morning segment: #791 Touit production extractio
 - tools pytest: **737 pass**; `npm run validate` green (Touit readings now live on the site with 13 honest-absence cells).
 - **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
 - **Upstream contributions:** **braboj/solid-ai-templates#744** filed at wrap (de-circularization sweep rule for quality.md calibration discipline, from the stale "true 1/1/3" guard); #741/#742/#743 still open upstream.
+
+---
+
+### Session 210 — Touit series finalized: log field enumeration, data completion, provenance docs
+
+Date: 2026-07-09 · Tool: Claude Code (Opus 4.8)
+
+Theme: finalize the Touit series. Opened as "there are problems"; four parallel investigations scoped four candidate workstreams (broken digitization logs, 13 gated cells, LOW-confidence badge, missing analysis/scoring-log docs), two of which collapsed to "no action" before any code. Shipped two PRs.
+
+#### PRs
+
+- **#1392** — fix(mtfdigitizer): render all frequency bands in digitization logs. Squash-merged, closed #1388. `_ordered_fields` (frequency-asc, sagittal-first canonical sort) replaces the hardcoded `(freq10S, freq10M, freq30S, freq30M)` tuple at three sites in `log.py`; 5 logs regenerated (3 Touit now show 10/20/40, 2 Fujifilm show 15/20/40 and 15/45); the other 13 logs byte-identical; `_check_logs` staleness gate wired into the pytest suite.
+- **#1393** — data(touit): complete optical scoring gaps + backfill provenance docs. Squash-merged, refs #1015. Data completion (`lenses.ts`) plus the six new provenance docs — see Key changes.
+
+#### Issues opened / closed
+
+- **#1388** — closed by #1392 (auto-close verified).
+- **#1134** — closed wontdo (per-pass confidence-badge UI: no lens-page UI will be built; the ADR-054 schema stays data-only).
+- **braboj/solid-ai-templates#747** — filed upstream (see Upstream contributions).
+- No project issues opened; the confidence-field-retirement follow-up was offered but left unfiled.
+
+#### Key technical findings
+
+- **The staleness `--check` was structurally blind to #1388.** The writer emitted the truncated freq10/freq30 output deterministically, so `log --check` compared identical bytes and passed — and `--check` was never in CI. Both fixed: real-field enumeration + a pytest that calls `_check_logs`.
+- **A hardcoded enumeration hides an ordering assumption.** The obvious fix (`tuple(gt_by_field.keys())`) would have flipped the 7artisans log to M,S — its GT dict stores keys M,S, but the old hardcode forced S,M. A canonical sort (frequency-asc, S-before-M) reproduces the legacy order for all 13 unaffected charts while generalizing to multifreq/Fuji. `--all --check` confirmed exactly 5 stale, 13 byte-identical.
+- **The provenance backfill was a data audit in disguise.** Cross-checking the cited LensTip reviews against `lenses.ts` while writing the scoring-logs surfaced six optical fields left unpopulated despite LensTip testing them (12mm LoCA+bokeh; 32mm/50mm bokeh+flare), plus a scoring inconsistency: 12mm astigmatism was scored off its 10% wide-open value while 32mm/50mm used the LensTip average — 12mm's 4.7% average is <5% → 2.0, not 1.5.
+- **genreMarks are primary-floor-capped, so the field additions barely moved them.** Regenerating via `computeAllGenreMarks`: each lens newly qualifies for portrait (bokeh is portrait's primary field, previously absent), all at mark 3; no existing mark changed — the added secondaries and the astigmatism bump are absorbed by the min-of-primaries floor.
+
+#### Key changes
+
+- **`tools/mtfdigitizer/log.py`** — `_ordered_fields` + `_FIELD_RE`; three hardcoded field tuples removed; three now-redundant `if f not in gt_by_field` guards deleted; center/edge and shape-metrics loops unpack `gt_by_field`.
+- **`tools/mtfdigitizer/tests/test_log.py`** — 5 new tests: sort contract, multifreq + Fujifilm band enumeration, sagittal-first order regression, `_check_logs` staleness gate.
+- **5 digitization logs regenerated** — 3 Touit + fujifilm-gf-23mm-f4-r-lm-wr + fujifilm-xf-23mm-f1-4-r-lm-wr.
+- **`src/data/lenses.ts`** — 12mm +longitudinalCA 2.0 +bokeh 1.0, astigmatism 1.5→2.0; 32mm +bokeh 1.5 +flareResistance 1.0; 50mm +bokeh 1.0 +flareResistance 1.0; portrait:3 added to all three genreMarks.
+- **6 new provenance docs** — analysis.md + scoring-log.md for all three Touit folders (new ADR-033 reference-the-log format — first fully-authored pilot, ahead of the intended Tokina pilot).
+
+#### Verification
+
+- `py -m pytest -n auto` **742 pass** (737 + 5 new); `py -m mtfdigitizer.log --all --check` clean (18 logs).
+- `npm run validate` green on both PRs (incl. the genreMarks stored==computed invariant, 462-page build, link check); genreMarks recomputed with the real scoring engine via a throwaway probe (deleted), not by hand.
+- Both PRs all CI green (build/lighthouse ran on #1393 since `src/` changed); gate green; merge deploys triggered (#1392 success, #1393 in progress at wrap).
+
+#### Key decisions (this session)
+
+- **No confidence-badge UI (#1134 wontdo).** The per-pass `confidence`/`confidenceReason` schema (ADR-054) stays as data-only provenance — no lens-page UI, no migration. No superseding ADR written: ADR-054's schema decision stands (only the never-built UI follow-up is dropped) and ADRs are immutable. The LOW-on-B&W render-match precision is a metric artifact (color-calibrated metric on single-ink charts), moot without a UI; shipped accuracy is guarded by the ADR-079 GT gate.
+- **13 gated Touit cells stay as documented honest-absence.** Investigation confirmed all 13 are within-band S/M-identity failures at crossings/corners, and both backup mechanisms (#1174 slope prior, #1175 raw-mask density) were probe-refuted at S151 on this exact failure class. No recovery attempted; already recorded in ADR-079/080 + REFERENCE_SET §8/§11/§12; #1174/#1175 stay P4.
+- **Data completion pulled into the docs PR (approved).** Filling the six fields + the astigmatism fix changes site-visible scored data; kept with its provenance scoring-logs in one PR since the docs are the justification.
+- No new directories, no content moved between documents.
+
+#### Process patterns observed this session
+
+- **A provenance-doc backfill is a data-audit opportunity.** Writing "field = X because source says Y" is the moment to cross-check X against Y; six data gaps and one inconsistency surfaced here that a docs-only pass would have papered over with false "not tested" markers. Flagged upstream (#747).
+- **Falsify the obvious generator fix before shipping it.** `keys()` looked right and passed the failing case; only checking the _unaffected_ outputs' key order (7artisans M,S) caught that it would churn 13 logs. The staleness `--all --check` was the cheap oracle — exactly-5-stale confirmed the canonical sort preserved everything else.
+- **Scope investigations before planning, not after.** Four agents mapped each candidate workstream (fix feasibility, gated-cell recovery, LOW root cause, doc scope); two collapsed to "no action" (badge wontdo, cells already documented), reshaping the plan before any code changed.
+
+#### Follow-ups for next session (S211)
+
+- **#950** auto-detect plot box for the MTF digitizer (task, P2, v0.8.0 — highest-priority open v0.8.0 item; carried from S209).
+- **#1386** two Samyang production digitization logs stale against current extractor (bug, P3, v0.8.0).
+- Per-brand digitization tasks #804–#814 (P3, v0.8.0) under epic #932.
+- (carried) Wire `scaffold_anchor_helpers --check` into CI; #1379 eye-read bare-cell warning (P3, Backlog).
+- Optional: confidence-field retirement — with #1134 wontdo and no consumer, whether the `confidence`/`confidenceReason` field stays as machine-readable provenance or is retired is an open dead-data question (unfiled).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active milestone). Epic #790: 6/24 brands (Zeiss complete end-to-end: GT, production emit, collapse fixed, logs correct, provenance docs complete).
+- **80 ADRs** (no new ADR this session).
+- Touit optical data now complete — all 14 fields populated on all three lenses; portrait genre now shown; digitization logs render all frequency bands.
+- tools pytest: **742 pass**; `npm run validate` green.
+- **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy: #1392 success, #1393 in progress.
+- **Upstream contributions:** **braboj/solid-ai-templates#747** filed at wrap (provenance-doc backfill as data-audit rule); #741–744 still open upstream.
