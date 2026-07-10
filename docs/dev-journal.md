@@ -12865,3 +12865,72 @@ Theme: "Touit suite, problems with overlay" → fix the extractor's outer-field.
 - tools pytest: **742 pass** (unchanged; no code shipped — the mtfdigitizer subset is 472); `npm run validate` not run (no `src/` change).
 - **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
 - **Upstream contributions:** none new this session; braboj/solid-ai-templates #741–744, #747 still open upstream.
+
+---
+
+### Session 212 — Backlog honesty: close #950 and #932, Touit 12mm gating analysis
+
+Date: 2026-07-10 · Tool: Claude Code (Opus 4.8)
+
+Theme: work the top of v0.8.0 — but two of the three P2 items turned out already-done, so the session became backlog honesty (verify → test/close) plus a Touit overlay analysis. Two P2s closed, one code PR (detector tests), one doc-correction PR. No `src/` change.
+
+#### PRs
+
+- **#1397** — test: gate Samyang and TTartisan plot-box detectors (#950). Squash-merged. Adds `test_samyang_plotbox.py` + `test_ttartisan_plotbox.py` (43 tests); both detectors were production-used by the Tier 2 scaffolds but ungated. CI `pytest` green; `build`/`lighthouse` skipped (no `src/` change).
+- **#1399** — docs(refset): correct Touit 50mm §12 attribution to #1395. Squash-merged. Removed the stale "#1174/#1175 crossing territory" credit; §11 was corrected at S211, this brings §12 in line.
+
+#### Issues opened / closed
+
+- **#950** (task, P2, v0.8.0) — **closed completed**. Detection had shipped incrementally (Sigma #1036, Fujifilm #1058, Samyang/TTartisan detectors) but the issue was never updated. AC4 (tests on the reference charts) was the only real gap; #1397 closes it. Documented deviation: per-brand detectors dispatched by declared style family, not the literal `detect_plot_box(image)` auto-classifier (per the "per-config opt-in over global auto-detect" rule).
+- **#932** (epic, P2, v0.8.0) — **closed completed**. Goal + DoD met and verified (9 profiles, two-signal auto-triage, SVG/review emitters, legacy extractors retired; mtfdigitizer 515 pass; autotriage harness clean; production Tier 2 scaffolds + lens-page SVGs). Only stretch item unbuilt: the optional Real-ESRGAN + CLAHE fallback.
+- **#1398** (task, P3, Backlog) — **opened**: the deferred Real-ESRGAN + CLAHE fallback, with named trigger conditions (a soft/JPEG chart tail that ridge-tracking + CLAHE cannot rescue). No demonstrated need today — the LOW cases are dashed-line bridging, not softness.
+- **#1395** — commented (scope + gating): confirmed both 12mm panels are null-gated; recorded that the stopped panel is a distinct mechanism (dashed-M rides solid-S via sister-fill) the spike's max-only Mechanisms 1/2 do not address.
+
+#### Key technical findings
+
+- **Two P2s were already done.** #950's four detectors and #932's whole pipeline had shipped across prior sessions; both issues were stale. The session's value was verifying that (515 pass, autotriage clean, emitted data checked) and closing honestly — not building.
+- **Samyang/TTartisan detectors were production-used but ungated.** They ran only inside the Tier 2 scaffold scripts; a regression would rot silently. Only the two Samyang Tier 1 anchors (85mm, 300mm) are independent eye-read ground truth — the rest (and all TTartisan boxes) are detector-derived, so the new tests split correctness (anchors) from consistency (cohort) per the calibration-discipline rules.
+- **Touit 12mm: both panels have real residuals, both fully gated.** Verified in `src/data/mtf-readings.ts` — both apertures ship `confidence: LOW` with every GT-refuted outer cell `null`. Max = diving-solid-S dropped + S/M swap (#1395). Stopped = diving-dashed-M sister-filled from its solid-S sibling → reads high (freq40M GT 0.42 vs EX 0.62, p95 0.215; freq20M p95 0.163). REFERENCE_SET §11 already documented both accurately.
+- **§12 carried a stale attribution.** The 50mm corner residual was still credited to #1174/#1175; the code map confirms #1174's `_ridge_dp_two_paths` is only reachable from the FREQUENCY_PER_HUE_RIDGE branch, never from the Touit `ridge_tracks_to_fields_multifreq`. #1399 corrects it.
+
+#### Key changes
+
+- `tools/mtfdigitizer/tests/test_samyang_plotbox.py`, `test_ttartisan_plotbox.py` — new (43 tests).
+- `tools/mtfdigitizer/referenceset/REFERENCE_SET.md` §12 — one-line attribution correction.
+- No `src/` change; no extractor code change.
+
+#### Verification
+
+- `py -m pytest mtfdigitizer/` — **515 pass** (472 + 43 new); the two new files pass standalone and in the full suite. CI `pytest` job green on both PRs.
+- Emitted `mtf-readings.ts` inspected for touit-12mm: all wrong outer-field cells null, both apertures LOW — confirming the overlay residuals do not ship.
+- Probe side effects reverted: the `autotriage` verification runs wrote 45 overlay/review artifacts across `docs/optical-specs/`; reverted via `git checkout` + `git clean` before any commit (tree clean).
+
+#### Key decisions (this session)
+
+- **Close, don't rebuild.** Both #950 and #932 were verified done; closing with documented deviations (per-brand detectors; epic goal-met-with-stretch-deferred) beats building redundant or speculative code. Real-ESRGAN deferred to #1398 with a trigger rather than built (YAGNI — no soft-chart tail exists; PyTorch is a 2 GB+ optional dependency).
+- **Don't duplicate docs.** REFERENCE_SET §11 already carried the both-panel Touit findings, so the "documentation pass" became a single #1395 comment + the §12 correction, not a §11 rewrite (DRY).
+- No new ADR — no architectural decision landed; the deviations are covered by existing ADR-038 + the quality rules, and #1398 is the deferral's home.
+- No new directories, no content moved between documents.
+
+#### Process patterns observed this session
+
+- **Verify-before-build closed two P2s in one session.** Reading the code + running the harness (not the issue bodies) revealed both were done; the stale issue text would have sent a naive session building what already exists.
+- **Tooling-produced scope creep is silent.** The autotriage probe wrote 45 artifacts that looked like normal output; caught them at `git status` and reverted per the scope rule rather than letting them ride into an unrelated commit.
+- **A stale issue-number citation is a defect even when the code works.** §12's #1174/#1175 credit pointed at a dead thread; the fix is a one-line doc PR, and the code-map check grounded it.
+
+#### Follow-ups for next session (S213)
+
+- **#790** — per-brand digitization campaign (epic, the only P2 left in v0.8.0; it _uses_ the now-complete #932 tool). Epic at 6/24 brands.
+- **#1386** — two Samyang production digitization logs stale (bug, P3, v0.8.0).
+- **#1395** — two-part Touit corner fix (spike, P3, Backlog); proven first-half fix ready; stopped-panel is a separate mechanism (recorded this session).
+- **#1398** — Real-ESRGAN + CLAHE fallback (task, P3, Backlog) — do not pick up before its trigger fires.
+- (carried) Wire `scaffold_anchor_helpers --check` into CI; #1379 eye-read bare-cell warning (P3, Backlog); audit for other stale #1174/#1175 citations if #1395 is picked up.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active). #950 + #932 closed this session → **v0.8.0 at 20 open / 153 closed**; only P2 left is epic #790 (per-brand runs).
+- Epic #790: 6/24 brands (Zeiss complete end-to-end).
+- **80 ADRs** (no new ADR this session).
+- mtfdigitizer pytest: **515 pass** (was 472; +43 detector tests); `npm run validate` not run (no `src/` change).
+- **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
+- **Upstream contributions:** none new this session; braboj/solid-ai-templates #741–744, #747 still open upstream. Submodule unchanged (a6d7747).
