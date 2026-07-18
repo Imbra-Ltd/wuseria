@@ -13133,3 +13133,73 @@ Theme: clear the stale Dependabot queue (11 open at start — 9 from 2026-07-11 
 - mtfdigitizer pytest: **517 pass** (unchanged; no code change). CI green; `main` deploy green.
 - **Open PRs at wrap-up: 0** (was 11 — 9 merged, #1407 deferred/closed, #1408/#1401/#1405/#1409 closed by Dependabot).
 - **Upstream contributions:** filed 1 new template-feedback issue — braboj/solid-ai-templates **#831** (blocked-upstream major bump -> ignore + deferred-work issue, a recipe missing from platform/github.md Dependency management). #830, #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
+
+---
+
+### Session 216 — Fix two stale Samyang logs (#1386) + CI staleness gate (#1427)
+
+Date: 2026-07-18 · Tool: Claude Code (Opus 4.8)
+
+Theme: two related MTF-digitizer quality items — regenerate the two Samyang production logs that drifted against the current extractor, then close the gate-by-omission that let them drift by wiring `extract --check` into CI. Opened by shipping the leftover S215 journal PR (#1425).
+
+#### PRs
+
+- **#1425** (S215 journal) — merged first as the leftover S215 wrap (committed and pushed last session, never merged).
+- **#1426** (closes #1386) — regenerate the stopped-panel logs + SVG/overlay artifacts for `samyang-10mm-f2-8-ed-as-ncs-cs` and `samyang-12mm-f2-8-ed-as-ncs-fish-eye`. Data-only (6 files); `--accept`-gated LOW verdicts, overlay-verified.
+- **#1428** (closes #1427) — add the `staleness` CI job running `extract --check`, wired to the `gate` aggregator. ADR-082.
+- All three squash-merged with branch delete; each green — including the new `staleness` job on #1428, which touched `.github/workflows/**` so the full suite ran.
+
+#### Issues opened / closed
+
+- **#1386** (bug, P3, v0.8.0) — **closed** via #1426. Two Samyang logs stale against `--check` since 2026-06-24 (#1275).
+- **#1427** (task, P2, v0.8.0) — **opened and closed** same session. Wire `extract --check` into CI; found while fixing #1386, fixed by #1428.
+
+#### Key technical findings
+
+- **The Samyang drift was intentional pipeline evolution, not a regression.** Confirmed three ways: git archaeology (the causing PRs #1382/#1385/#1293/#1392 all landed after the logs last regenerated on 2026-06-24), overlay eye-check (traces faithful, center genuinely ~0.99), and mechanism. The forced B4 center anchor (frac=0.0 -> MTF=1.0, #1267) fired before only because the center reading was _missing_; the multifreq band improvements now recover a real 0.99 there, so the honest value replaces the synthesized 1.00 (freq30S/M; coincident-anchor 2/11 -> 3/11). Honest recovered value beats forced anchor (base/core/quality.md calibration discipline).
+- **Every LOW verdict on the regenerations is benign.** All five prior violations across both lenses/views are `not_suspiciously_flat` false-positives on genuinely flat sagittal curves (10S wide-open; both S at f/8); the precision dips (0.72–0.88) are the documented near-1.0 bunching sensitivity. The overlay glance is the arbiter — ADR-041 `--accept` path.
+- **The staleness `--check` ran only manually.** No CI job invoked it over the committed tree; the lone pytest guard checks one tmp-dir slug. That gate-by-omission is what let the two logs reach `main` stale — the pipeline PRs that caused the drift did run pytest, but nothing re-checked the real logs.
+- **`extract --check`'s inputs are three path classes**, not just the generator: pipeline code (`tools/**`), source chart PNGs, and the committed logs (`docs/optical-specs/**`). The CI filter must enumerate all three or a source-chart / log edit skips the gate.
+
+#### Key changes
+
+- `docs/optical-specs/samyang-{10mm,12mm}.../` — regenerated stopped-panel `digitization-log.md` + `-mtf-stopped.svg` + `-mtf-stopped-overlay.png` (6 files). No `tools/` or `src/` code change for #1386.
+- `.github/workflows/ci.yml` — new `staleness` job + `staleness` path filter (`tools/**` + `docs/optical-specs/**` + workflows), added to `gate.needs` and the failure check.
+- `docs/decisions/082-ci-production-log-staleness-gate.md` — new ADR.
+- `docs/PLAYBOOK.md` §2.6 — note that `--check` is now CI-enforced by the `staleness` job.
+
+#### Verification
+
+- `py -m mtfdigitizer.extract --check` -> `OK: 103 production log(s) up to date.` (before commit and after — pre-commit Prettier left the logs untouched; they are in `.prettierignore`).
+- Full `tools/` pytest: **787 pass** (mtfdigitizer subset unchanged at 517 — no code change).
+- Overlays eye-checked against source charts for both lenses, both views: traces faithful, S/M identity preserved.
+- Staleness gate teeth proven locally: a perturbed log made `--check` report STALE and exit 1; reverted clean. End-to-end on #1428: the new `staleness` job ran `--check` on the clean tree and passed (3m17s).
+
+#### Key decisions (this session)
+
+- **Accept the LOW-verdict regenerations via the overlay glance** rather than treat the drift as a regression — ADR-041 production-tier acceptance, backed by the fidelity eye-check. The 1.00 -> 0.99 shift is the honest value, not a loss.
+- **Enforce staleness with a dedicated CI job on an inputs-enumerated filter** — ADR-082. Rejected a pytest test (tools-only filter, serial) and a tools-only filter (misses source-chart / log edits).
+- **Filed #1427 as a separate issue rather than expanding #1426** — the CI gap is the systemic prevention, out of scope for the one-off log fix (scope guard).
+
+#### Process patterns observed this session
+
+- **Probe before acting on the hypothesis.** The issue proposed candidate causes; git archaeology plus a throwaway probe (printing the exact prior violations) confirmed the mechanism before any `--accept`.
+- **Lenient gate needs a human residual check** (quality-gates-verdict-reading). The render-match / prior gate is `--accept`-overridable; the overlay glance is what makes the override safe — read both overlays for both lenses before writing.
+- **Fix a gate gap, don't scale the manual check.** #1386 was found by a manual `--check`; the durable fix is wiring that check into CI (#1427), not remembering to run it.
+- **Enumerate a check's inputs when path-filtering it** (quality-gates-scope-agreement) — the committed artifact is itself an input, not only the generator source.
+
+#### Follow-ups for next session (S217)
+
+- **#1413** / **#1414** — plot-box auto-detect beyond Sigma / output-neutral extractor cleanup (P3, epic #1415), the named next feature work.
+- **#790** — per-brand digitization is the v0.8.0 grind (6/24); #1415 exists to make it cheaper.
+- **#1198** legend-swatch auto-suggest (the other per-brand setup bottleneck).
+- (carried) wire `scaffold_anchor_helpers --check` into CI; **#1379** eye-read bare-cell warning (P3, Backlog); **#1424** TS 7 — do not pick up before `@astrojs/check` peers `typescript ^7`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active). **v0.8.0 at 22 open** (#1386 closed; #1427 opened and closed same session).
+- Epic #790: 6/24 brands (unchanged). Epic #1415: 1/4 (#1412 done).
+- **82 ADRs** (+1: ADR-082 CI staleness gate).
+- mtfdigitizer pytest **517 pass** (unchanged, no code change); full `tools/` suite **787 pass** (verified this session). CI green; `main` deploy green.
+- **Open PRs at wrap-up: 0.**
+- **Upstream contributions:** filed 1 new template-feedback issue — braboj/solid-ai-templates **#832** (quality-gates-staleness: the CI filter must enumerate committed-artifact + source-asset paths, not just the generator). #831, #830, #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
