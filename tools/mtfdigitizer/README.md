@@ -120,7 +120,7 @@ Per-profile dispatch in `dispatch.py`:
   and split at the largest y-gap instead of a fixed band
 - `(SPLIT_BY_DASH, RIDGE_TRACKING)` → Viltrox AF 75mm f/1.2 variant:
   per-column ridge centroids clustered into 4 tracks for charts where
-  even raw masks fuse all four curves into one CC. See `pipeline/ridge.py`
+  even raw masks fuse all four curves into one CC. See `pipeline/ridge/`
 
 Other combinations raise `NotImplementedError` (fail loud, per B1).
 
@@ -164,8 +164,8 @@ fix; subsequent code that touches the same surface must uphold it.
 | Contract | Concern | Rule |
 | --- | --- | --- |
 | **B1** | Profile mismatch | An unknown or mismatched chart profile MUST be refused (fail loud), not silently defaulted to the most common path. Implementation: `profiles/suggest.py::resolve()` raises `ProfileMismatch`; `pipeline/dispatch.py` raises `NotImplementedError` for `(style_axis, hue_meaning)` combinations without a wired branch. |
-| **B2** | Missing samples | Under the legacy dispatches (`ridge.py`, `SPLIT_BY_DASH + FREQUENCY`), the sampler MUST return `None` at any sample column where no skeleton pixel exists in the bracket window — never extrapolate, never interpolate across, never copy from a neighbour. Under the DP dispatch (`GEODESIC_DP`), the DP smoothness prior IS the interpolation: each path is a single continuous curve, and its y at every column is that curve's value. Two curves of the same hue can converge to one ink stripe and both still report the shared value — which is the optical reality. `None` only ever appears when a curve has no DP path at all (e.g. hue mask is empty). `pipeline/types.py::SampledReading` and `src/types/mtf.ts::MtfReading` keep every per-field value nullable; `pipeline/rendermatch.py`, `svg.py`, `review.py` break polylines at `None`; `emit.py` passes `None` through as TypeScript `null`. |
-| **B3** | Curve aggregation | Per-column aggregation MUST be order-independent and lossless. The legacy running-average + 5px cap is replaced by an unweighted per-column mean. Implementation: `pipeline/sampling.py` and `pipeline/ridge.py` aggregate by mean / median over column runs, not running averages. |
+| **B2** | Missing samples | Under the legacy dispatches (`ridge/`, `SPLIT_BY_DASH + FREQUENCY`), the sampler MUST return `None` at any sample column where no skeleton pixel exists in the bracket window — never extrapolate, never interpolate across, never copy from a neighbour. Under the DP dispatch (`GEODESIC_DP`), the DP smoothness prior IS the interpolation: each path is a single continuous curve, and its y at every column is that curve's value. Two curves of the same hue can converge to one ink stripe and both still report the shared value — which is the optical reality. `None` only ever appears when a curve has no DP path at all (e.g. hue mask is empty). `pipeline/types.py::SampledReading` and `src/types/mtf.ts::MtfReading` keep every per-field value nullable; `pipeline/rendermatch.py`, `svg.py`, `review.py` break polylines at `None`; `emit.py` passes `None` through as TypeScript `null`. |
+| **B3** | Curve aggregation | Per-column aggregation MUST be order-independent and lossless. The legacy running-average + 5px cap is replaced by an unweighted per-column mean. Implementation: `pipeline/sampling.py` and `pipeline/ridge/` aggregate by mean / median over column runs, not running averages. |
 | **B4** | Center astigmatism | At the optical axis (position 0), sagittal and meridional MTF are equal by physics. The extractor MUST NOT fabricate divergence at center. Implementation: no caller manufactures an S/M gap at position 0; readings come from the chart pixels at the center column or are `None`. |
 
 The "B2 contract" is the most-referenced of the four because
