@@ -52,7 +52,7 @@ from .sampling import (
 from .types import ExtractedChart, PlotBox, SampledReading
 
 if TYPE_CHECKING:
-    from ..diagnostic import DiagnosticSink, FileDiagnosticSink
+    from ..diagnostic import DiagnosticSink
 
 
 SAMPLE_POINTS: tuple[float, ...] = SAMPLE_FRACTIONS  # re-export

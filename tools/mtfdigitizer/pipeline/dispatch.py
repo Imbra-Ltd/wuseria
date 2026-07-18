@@ -66,7 +66,6 @@ from .dp_extract import (
 from .masks import masks_by_curve_name, strip_plot_box_borders
 from .ridge import (
     ridge_tracks_for_hue_freq_split,
-    ridge_tracks_to_fields,
     ridge_tracks_to_fields_multifreq,
 )
 from .skeleton import close_and_skeletonize
