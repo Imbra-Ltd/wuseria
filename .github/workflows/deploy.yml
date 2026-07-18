@@ -27,7 +27,7 @@ jobs:
           submodules: true
 
       # Set up Node.js with npm cache for faster installs
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
