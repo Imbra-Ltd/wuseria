@@ -274,6 +274,11 @@ posture — HIGH verdict alone does not auto-commit; maintainer glances at the
 overlay PNG and re-runs with `--accept`. See ADR-041 for the two-tier
 rationale and `tools/mtfdigitizer/extract.py` for the gate knob.
 
+`--check` is enforced in CI by the `staleness` job (ADR-082): a PR
+touching `tools/**` or `docs/optical-specs/**` fails if any committed
+`digitization-log.md` drifts from a fresh render. Run it locally before
+committing any change that affects extractor output.
+
 **Multi-view lenses (zooms).** A lens with `additional_views` set on its
 `ReferenceChart` (today: the 5 Sigma zooms with wide + tele charts) emits
 one set of inspection artifacts per view, file-named by chart stem so
