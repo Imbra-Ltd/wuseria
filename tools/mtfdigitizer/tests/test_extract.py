@@ -14,6 +14,7 @@ Three layers:
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -449,6 +450,70 @@ def test_extract_check_passes_after_fresh_write(tmp_path, monkeypatch):
 
     assert extract_lens(_SIGMA_16_SLUG, accept_override=True) == 0
     assert check_logs() == 0
+
+
+# --- Diagnostic bundle via extract --debug (#1412, ADR-050) ---------------
+
+
+def _copy_sigma16_into(tmp_path) -> Path:
+    """Copy the real sigma-16mm chart into a tmp lens dir and return the
+    tmp lens directory. Shared setup for the --debug tests."""
+    chart = next(c for c in REFERENCE_CHARTS if c.slug == _SIGMA_16_SLUG)
+    src_png = REPO_ROOT / chart.chart_path
+    dst_png = tmp_path / chart.chart_path
+    dst_png.parent.mkdir(parents=True, exist_ok=True)
+    dst_png.write_bytes(src_png.read_bytes())
+    return tmp_path / "docs" / "optical-specs" / _SIGMA_16_SLUG
+
+
+@pytest.mark.skipif(not _sigma_16_present(), reason="sigma-16mm not in reference set")
+def test_extract_debug_writes_per_stage_bundle(tmp_path, monkeypatch):
+    """`extract_lens(..., debug=True)` writes the ADR-050 per-stage bundle
+    under `<lens-dir>/diagnostic/`. Sigma-16mm is single-aperture, so the
+    bundle lands flat (no per-pass subdirectory)."""
+    lens_dir = _copy_sigma16_into(tmp_path)
+    monkeypatch.setattr(extract, "REPO_ROOT", tmp_path)
+
+    rc = extract_lens(_SIGMA_16_SLUG, accept_override=True, debug=True)
+    assert rc == 0
+
+    diag = lens_dir / "diagnostic"
+    assert diag.is_dir(), "debug run must create the diagnostic/ bundle dir"
+    # Anchor stages present regardless of which corrections fired.
+    for name in ("01-source.png", "02-plotbox.png", "06-sampling.png", "09-emit.svg"):
+        assert (diag / name).exists(), f"missing diagnostic stage {name}"
+    assert (diag / "manifest.json").exists()
+    # Per-field skeleton/presence PNGs are written for at least one field.
+    assert list(diag.glob("04-skeleton-*.png")), "no per-field skeleton stage"
+
+    manifest = json.loads((diag / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["slug"] == _SIGMA_16_SLUG
+    # The production manifest carries the gate verdict, unlike diagnose's.
+    assert "gate_verdict" in manifest
+    assert "samples" in manifest
+
+
+@pytest.mark.skipif(not _sigma_16_present(), reason="sigma-16mm not in reference set")
+def test_extract_debug_does_not_change_readings(tmp_path, monkeypatch):
+    """ADR-050 contract on the production path: the extracted readings are
+    byte-identical with and without `--debug`. The diagnostic sink is a
+    side-effect-only observer — it must never alter the values that get
+    committed to mtf-readings.ts."""
+    _copy_sigma16_into(tmp_path)
+    monkeypatch.setattr(extract, "REPO_ROOT", tmp_path)
+
+    chart = next(c for c in REFERENCE_CHARTS if c.slug == _SIGMA_16_SLUG)
+    plain = extract._run_all_views(chart, debug=False)
+    debugged = extract._run_all_views(chart, debug=True)
+
+    assert len(plain) == len(debugged)
+    for a, b in zip(plain, debugged):
+        plain_rows = [r.samples for r in a.extracted.readings]
+        debug_rows = [r.samples for r in b.extracted.readings]
+        assert plain_rows == debug_rows, (
+            "diagnostic sink changed the extracted readings — violates the "
+            "ADR-050 diagnostic-only contract"
+        )
 
 
 # --- Tier 1 anchor artifact regeneration (#1252) --------------------------
