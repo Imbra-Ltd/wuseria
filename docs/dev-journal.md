@@ -13003,3 +13003,68 @@ Theme: the user flagged v0.8.0 (MTF digitization) as too slow and the digitizer 
 - mtfdigitizer pytest: 515 pass (unchanged; no code change). `npm run validate` green on the ADR PR.
 - **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
 - **Upstream contributions:** filed 1 new template-feedback issue this session — braboj/solid-ai-templates #829 (strictest-visible-consumer acceptance-bar rule); #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
+
+---
+
+### Session 214 — extract --debug per-stage diagnostic bundle (#1412), reframed from an ADR-050 duplicate
+
+Date: 2026-07-18 · Tool: Claude Code (Opus 4.8)
+
+Theme: pick up #1412 (per-stage diagnostics, the S213-recommended first pickup under epic #1415). An intake probe found the capability already shipped in ADR-050 (the `diagnose` bundle), so #1412 was reframed from build-from-scratch to wiring that same sink into the production `extract` CLI, where it debugs the exact path production ships. One code PR merged.
+
+#### PRs
+
+- **#1417** — feat(mtfdigitizer): add `extract --debug` per-stage diagnostic bundle. Squash-merged. tools/ + docs only: `pytest` green (2m42s), `gate`/CodeQL/`format`/`links`/`gitleaks`/`changes` pass, `build`/`lighthouse` correctly skipped (path filter). Full mtfdigitizer suite 517 pass locally before push.
+
+#### Issues opened / closed
+
+- **#1412** (task, P2, v0.8.0) — **closed (completed)** via #1417. Reframed at intake (scope-correction comment) once the ADR-050 duplication was found.
+- Epic **#1415** — checked off #1412.
+- No issues opened.
+
+#### Key technical findings
+
+- **#1412 was ~90% already built (ADR-050, June).** `diagnostic.py` (`FileDiagnosticSink`, 9 stage artifacts + manifest), the `diagnose` CLI, and `extract_chart(diagnostic_sink=)` already produce the per-stage overlay bundle; PLAYBOOK documents it; ~10 `diagnostic/` bundles already on disk (gitignored). The S213 spike that filed #1412 — and ADR-081 §3, which lists "add per-stage diagnostics" as a to-do — both missed it.
+- **The genuine residual is a correctness gap, not just discoverability.** `diagnose.py` calls `aperture_passes_for_view(chart, image_path)` _without the view_, so on ADR-063 per-view aperture-override lenses (Samyang multi-panel) it debugs a different profile than `extract` ships. `extract --debug` routes through extract's own view/aperture orchestration — what you debug is what you commit.
+- **sigma-16mm LOW is a stage-04 artifact, not a value error.** The live demo: precision 0.659 (LOW) traces to `04-skeleton-freq30M.png` — the dashed-M skeleton is a stair-stepped sparse trace (the documented sparse-polyline vs dense-skeleton asymmetry). The freq30M values (0.81→0.56) are fine; the bundle localizes the metric cause in one glance.
+
+#### Key changes
+
+- `tools/mtfdigitizer/extract.py` — `--debug` flag; thread `FileDiagnosticSink` through `_run_view_passes`→`extract_chart`; add `_write_debug_bundle` (emit SVG + manifest with gate verdict); split `_artifact_stem` into a component-based `_stem_for`.
+- `tools/mtfdigitizer/tests/test_extract.py` — +2 regression tests (bundle shape; readings byte-identical with/without `--debug`).
+- `docs/PLAYBOOK.md` — both diagnostic entry points + the "scan stages in order, find first divergence" triage workflow with the stage→symptom map.
+- `tools/mtfdigitizer/README.md` — `--debug` flag.
+- No `src/` change.
+
+#### Verification
+
+- mtfdigitizer pytest: **517 pass** (was 515; +2). CI green on #1417; `gate` (required aggregator) pass.
+- Live end-to-end: `py -m mtfdigitizer.extract sigma-16mm-f1-4-dc-dn-c --debug` — bundle written, LOW held, stage-04 skeleton read visually to confirm localization.
+- Diagnostic bundles gitignored; working tree carried only the 4 intended files. The demo's regenerated SVG/overlay/review were byte-identical (deterministic) — no committed-artifact drift.
+
+#### Key decisions (this session)
+
+- **Reframe over rebuild.** Caught the ADR-050 duplication at intake and reframed #1412 rather than close-as-dup-and-move-on — the residual (production-faithful debug path + triage-workflow doc) was real and small. No new ADR: `extract --debug` extends ADR-050, it does not decide anything new. No new directory; no content moved between documents.
+
+#### Process patterns observed this session
+
+- **Read the prior spike's close-out / verify before relying on a claim.** The whole session pivoted on an intake probe (grep PLAYBOOK, on-disk bundles, `.gitignore`) that falsified the issue's build-from-scratch framing before any code — textbook "probe before acting on a hypothesis."
+- **What-you-debug-is-what-you-ship.** A diagnostic view must route through the production entry point or it diverges silently (the diagnose/extract view-arg gap). Filed upstream (below).
+- **pwd-on-negative.** A false `ls` negative on the bundle dir was the persisted `cd tools` cwd, not a missing bundle — verified with pwd + an absolute path, per the rule.
+
+#### Follow-ups for next session (S215)
+
+- **#1413** / **#1414** — plot-box auto-detect / output-neutral refactor (P3, under epic #1415).
+- **#790** — per-brand digitization is still the v0.8.0 grind (6/24); #1415 exists to make it cheaper.
+- **#1386** — two stale Samyang logs (bug, P3) — quick green-gate win.
+- **Dependabot queue: 9 open PRs** from 2026-07-11, all dev-dep bumps except an astro patch (#1401); one major TypeScript 6→7 (#1407) needs a gate check. Clear the queue (lockfile-cascade: merge in small batches, `@dependabot rebase` the race-losers).
+- (carried) #1198 legend-swatch; wire `scaffold_anchor_helpers --check` into CI; #1379 eye-read bare-cell warning (P3, Backlog).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active). #1412 closed via #1417. **v0.8.0 at 23 open** (was 24; #1412 closed).
+- Epic #790: 6/24 brands (unchanged).
+- **81 ADRs** (none added; #1412 extends ADR-050).
+- mtfdigitizer pytest: **517 pass** (+2). CI green; `main` deploy green.
+- **Open PRs at wrap-up: 9** — all Dependabot dev-dep bumps (2026-07-11), untouched this session.
+- **Upstream contributions:** filed 1 new template-feedback issue — braboj/solid-ai-templates **#830** (what-you-debug-is-what-you-ship: a diagnostic view must route through the production entry point). #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
