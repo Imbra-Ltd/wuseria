@@ -126,11 +126,16 @@ Other combinations raise `NotImplementedError` (fail loud, per B1).
 
 ### Known limits, deferred
 
-- **Plot box is caller-supplied.** Auto-detection across the chart-style
-  zoo (multi-panel stacks, mixed backgrounds, transparency) is genuinely
-  hard and out of scope for #935. Test fixtures hardcode the reference
-  charts' boxes; production callers will need a detector or per-chart
-  hand entry until that task lands.
+- **Plot box resolution.** `extract_chart()` still takes the plot box as
+  an argument. Resolving it is handled by per-family detectors
+  (`pipeline.plotbox.detect_sigma_plot_box` for Sigma;
+  `samyang_plotbox` / `ttartisan_plotbox` / `fuji_plotbox` for the rest,
+  ADR-064) behind one dispatch, `plotbox_detect.detect_plot_box(chart)`
+  (ADR-084): it routes on `style_family`, falls back to the chart's
+  hand-measured box when no detector covers the family, and raises
+  rather than guess when neither is available. Residual limit: the
+  Tokina, Viltrox, Zeiss, and 7Artisans families still rely on the
+  hand-measured box — the fallback path, not a detector.
 - **Plot-box convention is data-edge, not axis-line.** Corners are the
   first/last column with skeleton pixels, not the printed y-axis or
   legend lines. On many charts these coincide (Samyang); on others the
