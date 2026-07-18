@@ -77,35 +77,13 @@ StyleAxis = Literal["SPLIT_BY_DASH", "HUE_IS_CURVE"]
 #                             frequency; within each pair the higher-
 #                             coverage track is solid (S by default).
 #                             See `pipeline/ridge.py`.
-# - `PER_COLUMN_RIDGE`      — per-hue variant of `RIDGE_TRACKING`. Each
-#                             hue carries S or M (named "S-*"/"M-*"),
-#                             and within the hue the two curves at
-#                             different y-positions are separated by
-#                             ridge tracking per-column. Upper track =
-#                             upper frequency, lower track = lower
-#                             frequency. Per-column ridge fragmented
-#                             curves at coincidence points; superseded
-#                             by `SKELETON_CONTINUOUS_PICK` for the
-#                             Tokina wide-zoom case.
-# - `SKELETON_CONTINUOUS_PICK` — per-hue variant using the legacy
-#                             skeleton + greedy y-continuity walk
-#                             (ported from the retired mtf-extract-
-#                             skeleton.py). Each hue carries S or M;
-#                             skeletonization + CC-split by mean-y
-#                             separates the two frequencies; then a
-#                             greedy y-continuity walk per CC produces
-#                             one continuous curve per (freq, sm).
-#                             Robust to dashed-line fragments and
-#                             curve coincidence. See
-#                             `pipeline/continuous_pick.py`.
 # - `GEODESIC_DP`           — per-hue Viterbi shortest path through the
 #                             dilated mask. The smoothness prior bridges
 #                             dash gaps without skeletonization staircase
 #                             artefacts and refuses to switch to a
 #                             parallel curve at near-touching regions.
-#                             Same per-hue convention as
-#                             `SKELETON_CONTINUOUS_PICK`. See
-#                             `pipeline/dp_extract.py`.
+#                             Each hue carries S or M (named "S-*"/"M-*").
+#                             See `pipeline/dp_extract.py`.
 HueMeaning = Literal[
     "FREQUENCY",
     "FREQUENCY_PER_HUE_RIDGE",
@@ -115,8 +93,6 @@ HueMeaning = Literal[
     "Y_BAND_IS_FREQUENCY",
     "CC_RANK_BY_MEAN_Y",
     "RIDGE_TRACKING",
-    "PER_COLUMN_RIDGE",
-    "SKELETON_CONTINUOUS_PICK",
     "GEODESIC_DP",
 ]
 

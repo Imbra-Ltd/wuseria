@@ -757,7 +757,7 @@ def _hue_masks_for_presence(
             out[curve_field(freq, sm)] = mask
     elif profile.style_axis == "HUE_IS_CURVE" and profile.hue_meaning in (
         "SAGITTAL_MERIDIONAL", "SAGITTAL_MERIDIONAL_SINGLE_FREQ",
-        "PER_COLUMN_RIDGE", "SKELETON_CONTINUOUS_PICK", "GEODESIC_DP",
+        "GEODESIC_DP",
     ):
         # Each hue carries one S or M label (e.g. "S-red", "M-blue"); the
         # same hue feeds every frequency this profile declares. Write the
