@@ -1434,6 +1434,24 @@ Three resolution paths, in order of preference:
    ```
    Then add the `groups:` entry per (1) so it doesn't recur.
 
+**Blocked-upstream major bumps.** A major bump can fail `npm ci` with
+ERESOLVE because a peer dependency has not widened its range to accept
+the new major (e.g. TS 6->7 #1407: `@astrojs/check` peers
+`typescript@"^5.0.0 || ^6.0.0"`, no published version accepts 7). This
+is an upstream block, not our source — do not force it with
+`--legacy-peer-deps`. Defer it:
+
+1. Confirm the block is upstream: the failing job's log shows `npm error
+code ERESOLVE` naming a peer range that excludes the new major, not a
+   compile error in our code.
+2. Comment the block reason on the PR, referencing the tracking issue.
+3. `gh pr comment <N> --body "@dependabot ignore this major version"` —
+   Dependabot closes the PR and stops re-proposing that major until you
+   `@dependabot unignore`.
+4. File a Backlog issue with the trigger condition (the blocking peer
+   publishes a version whose range includes the new major), per the
+   deferred-work format.
+
 ### 3.12 Analytics verification (Umami)
 
 Umami Cloud tracks page views with zero cookies and no consent banner.

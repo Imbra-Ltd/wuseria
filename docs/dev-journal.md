@@ -13068,3 +13068,68 @@ Theme: pick up #1412 (per-stage diagnostics, the S213-recommended first pickup u
 - mtfdigitizer pytest: **517 pass** (+2). CI green; `main` deploy green.
 - **Open PRs at wrap-up: 9** — all Dependabot dev-dep bumps (2026-07-11), untouched this session.
 - **Upstream contributions:** filed 1 new template-feedback issue — braboj/solid-ai-templates **#830** (what-you-debug-is-what-you-ship: a diagnostic view must route through the production entry point). #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
+
+---
+
+### Session 215 — Clear the Dependabot queue: 9 merged, TS 7 deferred (#1424)
+
+Date: 2026-07-18 · Tool: Claude Code (Opus 4.8)
+
+Theme: clear the stale Dependabot queue (11 open at start — 9 from 2026-07-11 plus 2 opened that morning). No product code touched; pure dependency hygiene. Nine bumps merged and verified green on main; one blocked major deferred; the rest closed by Dependabot as superseded or no-longer-needed.
+
+#### PRs
+
+- **Merged (9), all green on main:** #1420 eslint-plugin-sonarjs 4.2.0 · #1402 vitest 4.1.10 · #1406 @vitest/ui 4.1.10 · #1404 @types/node 26.1.1 · #1419 actions/setup-node v7 (GitHub Actions ecosystem, no lockfile) · #1403 eslint 10.7.0 · #1421 astro 7.1.1 (framework minor) · #1422 typescript-eslint 8.64.0 · #1423 eslint-plugin-unicorn 72.0.0 (two-major jump; lints clean on rebased head).
+- All squash-merged with branch delete. Lockfile-cascade played out as documented: merging #1402+#1406 conflicted the third vitest PR and eslint; merging #1421+#1422 conflicted #1423 — each loser `@dependabot rebase`d and merged on fresh CI.
+
+#### Issues opened / closed
+
+- **#1424** (task, P4, Backlog) — **opened.** Adopt TypeScript 7 once `@astrojs/check` supports it; carries the ERESOLVE evidence and trigger conditions.
+- **#1407** (Dependabot, TS 6->7) — **closed** via `@dependabot ignore this major version` after the upstream block was confirmed.
+- **#1408, #1401, #1405, #1409** — closed by Dependabot: #1408 (@vitest/coverage-v8) as no-longer-needed; #1401/#1405/#1409 superseded by the newer versions merged (#1421/#1423/#1422).
+- No feature issues touched (queue-clear only).
+
+#### Key technical findings
+
+- **`strict: false` on main branch protection, single required check `gate`.** Week-stale-but-green PRs merge directly — GitHub accepts the old passing `gate`, and main's post-merge Deploy runs `validate` (with `npm ci`) as the lockfile-consistency backstop. This is why rebasing every stale PR for freshness was unnecessary.
+- **#1407 (TS 7) is blocked upstream, not by our source.** `npm ci` fails with ERESOLVE: `@astrojs/check@0.9.9` (powers `astro check`, our type + content-schema gate) peers `typescript@"^5.0.0 || ^6.0.0"`. A registry query confirmed no published `@astrojs/check` version accepts TS 7. Forcing with `--legacy-peer-deps` would risk the validation gate.
+- **The morning Dependabot run superseded 3 stale PRs mid-session.** #1401 (astro 7.0.7)->#1421 (astro 7.1.1), #1405 (unicorn 71.1)->#1423 (unicorn 72.0.0), #1409 (tsel 8.63)->#1422 (8.64.0) — merged the newer versions, not the superseded ones.
+- **vitest trio stays consistent via caret overlap.** Landed vitest + @vitest/ui at 4.1.10; #1408 (@vitest/coverage-v8) auto-closed because its floor `^4.1.9` already permits 4.1.10, so `npm ci` resolves all three to 4.1.10. The declared floor lags cosmetically; the lockfile pins are consistent (green deploy proves it).
+
+#### Key changes
+
+- No `src/` or `tools/` change — nine dependency version bumps on main (astro 7.1.1, typescript-eslint 8.64, eslint 10.7, sonarjs 4.2, unicorn 72, vitest/@vitest-ui 4.1.10, @types/node 26.1.1, setup-node v7). TS held at ~6.0.3.
+- `docs/PLAYBOOK.md` §3.11 — added the "Blocked-upstream major bumps" recipe (confirm ERESOLVE is upstream -> comment -> `@dependabot ignore this major version` -> file Backlog issue with trigger).
+
+#### Verification
+
+- Every merge's Deploy on main is `completed/success`, including astro 7.1.1 (framework minor) and the final #1423 deploy — `validate` (npm ci + lint + format + check + test + build) green on the cumulative state, confirming the auto-merged lockfile is internally consistent.
+- Open Dependabot PRs: **0** (was 11). Queue empty.
+
+#### Key decisions (this session)
+
+- **Defer TS 7 rather than force it.** Close + ignore-major + Backlog #1424 with named triggers, per the deferred-work format — the block is upstream (`@astrojs/check`), and `--legacy-peer-deps` would jeopardize the astro-check gate. No ADR: routine dependency hygiene tracked in an issue, no directory or content move.
+- **Leave the @vitest/coverage-v8 floor lag as-is.** Harmless caret overlap; Dependabot realigns it on the next coverage-v8 release. A manual one-line PR would just add queue churn.
+
+#### Process patterns observed this session
+
+- **Verify-before-relying.** Re-checked branch protection (`strict: false`) and each PR's live mergeable state instead of assuming the cascade would block everything — that is what made direct-merge of stale-but-green PRs safe.
+- **Verify external state before a visible action.** Queried the npm registry to confirm no `@astrojs/check` version supports TS 7 before ignoring the major — the defer decision rests on data, not the changelog.
+- **The deploy gate is the lockfile backstop.** `npm ci` inside `validate` fails on an inconsistent auto-merged lockfile; leaned on it rather than rebasing every PR to reproduce a fresh-merge result.
+
+#### Follow-ups for next session (S216)
+
+- **#1413** / **#1414** — plot-box auto-detect / output-neutral refactor (P3, under epic #1415), the named next feature work.
+- **#790** — per-brand digitization is still the v0.8.0 grind (6/24); #1415 exists to make it cheaper.
+- **#1386** — two stale Samyang logs (bug, P3) — quick green-gate win.
+- **#1424** — TS 7: do not pick up before `@astrojs/check` peers `typescript ^7`.
+- (carried) #1198 legend-swatch; wire `scaffold_anchor_helpers --check` into CI; #1379 eye-read bare-cell warning (P3, Backlog).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active). No feature issues touched this session. **v0.8.0 at 23 open** (unchanged; #1424 is Backlog).
+- Epic #790: 6/24 brands (unchanged).
+- **81 ADRs** (none added).
+- mtfdigitizer pytest: **517 pass** (unchanged; no code change). CI green; `main` deploy green.
+- **Open PRs at wrap-up: 0** (was 11 — 9 merged, #1407 deferred/closed, #1408/#1401/#1405/#1409 closed by Dependabot).
+- **Upstream contributions:** filed 1 new template-feedback issue — braboj/solid-ai-templates **#831** (blocked-upstream major bump -> ignore + deferred-work issue, a recipe missing from platform/github.md Dependency management). #830, #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
