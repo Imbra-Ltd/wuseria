@@ -50,6 +50,7 @@ from .aperture_passes import (
     _parse_filename_frequency,
     aperture_passes_for_view as _aperture_passes_for_view,
 )
+from .diagnostic import FileDiagnosticSink
 from .family_profile import profile_for_chart
 from .pipeline import PlotBox, extract_chart, score_chart
 from .pipeline.rendermatch import DEFAULT_DILATION_RADIUS_PX
@@ -182,13 +183,26 @@ def _profile_for_view(chart: ReferenceChart, image_path: Path) -> MtfProfile:
 
 
 def _run_view_passes(
-    chart: ReferenceChart, view: ChartView
+    chart: ReferenceChart,
+    view: ChartView,
+    *,
+    debug_dir: Path | None = None,
+    debug_multi: bool = False,
 ) -> list[ExtractRun]:
     """Run one chart view through one or more extract → score → priors → triage
     passes (one per aperture). Returns one ExtractRun per pass.
 
     No I/O beyond reading the chart raster — even for multi-aperture
     profiles, the raster is read once and reused across passes.
+
+    When `debug_dir` is set, each pass also drives an ADR-050
+    `FileDiagnosticSink`, writing the per-stage diagnostic bundle for the
+    exact profile/plot-box/image this pass extracts. The sink is
+    side-effect-only: `ExtractedChart` is byte-identical with or without
+    it (ADR-050 contract). `debug_multi` puts each pass in its own
+    `<stem>/` subdirectory so multi-aperture / multi-view passes do not
+    overwrite each other; a single-pass lens writes the bundle flat under
+    `debug_dir` (mirrors `diagnose`'s layout).
     """
     assert view.plot_box is not None, (
         f"chart {chart.slug!r} view {view.chart_path!r} has no plot_box — "
@@ -200,8 +214,17 @@ def _run_view_passes(
 
     runs: list[ExtractRun] = []
     for aperture, profile in passes:
+        sink: FileDiagnosticSink | None = None
+        if debug_dir is not None:
+            stem = _stem_for(chart, view, image_path, aperture)
+            out_dir = debug_dir / stem if debug_multi else debug_dir
+            sink = FileDiagnosticSink(out_dir=out_dir)
         extracted = extract_chart(
-            image_path, profile, plot_box, image_height_mm=chart.image_height_mm
+            image_path,
+            profile,
+            plot_box,
+            image_height_mm=chart.image_height_mm,
+            diagnostic_sink=sink,
         )
         score = score_chart(
             image_path,
@@ -213,26 +236,48 @@ def _run_view_passes(
         )
         violations = check_all(extracted.readings)
         verdict = triage(score, violations)
-        runs.append(
-            ExtractRun(
-                chart=chart,
-                view=view,
-                image_path=image_path,
-                plot_box=plot_box,
-                extracted=extracted,
-                verdict=verdict,
-                aperture=aperture,
-            )
+        run = ExtractRun(
+            chart=chart,
+            view=view,
+            image_path=image_path,
+            plot_box=plot_box,
+            extracted=extracted,
+            verdict=verdict,
+            aperture=aperture,
         )
+        if sink is not None:
+            _write_debug_bundle(sink, run, profile.name)
+        runs.append(run)
     return runs
 
 
-def _run_all_views(chart: ReferenceChart) -> list[ExtractRun]:
+def _run_all_views(
+    chart: ReferenceChart, *, debug: bool = False
+) -> list[ExtractRun]:
     """Run every view this lens publishes. Each view contributes one or
     more panels to the lens's single digitization-log.md — one panel per
     aperture pass per view (single-aperture charts: one panel per view).
+
+    When `debug` is set, each pass also writes its ADR-050 per-stage
+    diagnostic bundle under `<lens-dir>/diagnostic/`. Whether the bundle
+    lands flat or in a per-pass subdirectory is decided once here from
+    the lens's total pass count so every pass agrees.
     """
-    return [run for view in chart.views for run in _run_view_passes(chart, view)]
+    if not debug:
+        return [run for view in chart.views for run in _run_view_passes(chart, view)]
+    debug_dir = _lens_dir_for(chart) / "diagnostic"
+    total_passes = sum(
+        len(_aperture_passes_for_view(chart, _resolve_view_image(chart, v), v))
+        for v in chart.views
+    )
+    debug_multi = total_passes > 1
+    return [
+        run
+        for view in chart.views
+        for run in _run_view_passes(
+            chart, view, debug_dir=debug_dir, debug_multi=debug_multi
+        )
+    ]
 
 
 # --- Acceptance decision --------------------------------------------------
@@ -271,8 +316,10 @@ def _lens_dir_for(chart: ReferenceChart) -> Path:
     return (REPO_ROOT / chart.chart_path).parent
 
 
-def _artifact_stem(run: ExtractRun) -> str:
-    """Stem for one ExtractRun's inspection artifacts.
+def _stem_for(
+    chart: ReferenceChart, view: ChartView, image_path: Path, aperture: str
+) -> str:
+    """Artifact stem for one extraction pass, from its components.
 
     Single-aperture charts use the source raster's stem unchanged —
     every Sigma / 7Artisans / Tokina / Viltrox / Fujifilm lens keeps
@@ -290,13 +337,67 @@ def _artifact_stem(run: ExtractRun) -> str:
     (``"max"`` / ``"stopped"``), not an f-number — keeps the filename
     short and cohort-stable across lenses. The f-stop literal lives in
     ``src/data/mtf-readings.ts`` as the display label.
+
+    Split from `_artifact_stem` so the diagnostic-bundle path (#1412)
+    can derive a pass's subdirectory before extraction produces the
+    full `ExtractRun`.
     """
-    profile = profile_for_chart(run.chart)
+    profile = profile_for_chart(chart)
     if profile.apertures_per_chart is not None:
-        return f"{run.image_path.stem}-{run.aperture}"
-    if run.view.aperture is not None:
-        return f"{run.image_path.stem}-{run.aperture}"
-    return run.image_path.stem
+        return f"{image_path.stem}-{aperture}"
+    if view.aperture is not None:
+        return f"{image_path.stem}-{aperture}"
+    return image_path.stem
+
+
+def _artifact_stem(run: ExtractRun) -> str:
+    """Stem for one ExtractRun's inspection artifacts (see `_stem_for`)."""
+    return _stem_for(run.chart, run.view, run.image_path, run.aperture)
+
+
+def _write_debug_bundle(
+    sink: FileDiagnosticSink, run: ExtractRun, profile_name: str
+) -> None:
+    """Finish one pass's ADR-050 diagnostic bundle: the per-stage PNGs are
+    written by the sink during `extract_chart`; here we add the emit SVG
+    (stage 09) and the scalar `manifest.json`.
+
+    The manifest mirrors `diagnose.py`'s chart-centric fields and adds the
+    production gate verdict — the diagnostic bundle for a production lens
+    should record why the gate held it, not just the extracted samples.
+    """
+    sink.record_emit(render_svg(run.extracted))
+    verdict = run.verdict
+    sink.record_manifest(
+        {
+            "slug": run.chart.slug,
+            "chart_path": str(run.image_path.relative_to(REPO_ROOT))
+            if run.image_path.is_relative_to(REPO_ROOT)
+            else str(run.image_path),
+            "aperture": run.aperture,
+            "profile": profile_name,
+            "style_family": run.chart.style_family,
+            "plot_box": {
+                "x_left": run.plot_box.x_left,
+                "x_right": run.plot_box.x_right,
+                "y_top": run.plot_box.y_top,
+                "y_bottom": run.plot_box.y_bottom,
+            },
+            "image_height_mm": run.chart.image_height_mm,
+            "frequencies_lpmm": list(run.chart.frequencies_lpmm),
+            "sister_fallback_count": run.extracted.sister_fallback_count,
+            "gate_verdict": verdict.verdict,
+            "render_match_precision": verdict.render_match_precision,
+            "render_match_iou": verdict.render_match_iou,
+            "prior_violations": len(verdict.prior_violations),
+            "samples": {
+                field: [r.samples.get(field) for r in run.extracted.readings]
+                for field in sorted(
+                    {f for r in run.extracted.readings for f in r.samples}
+                )
+            },
+        }
+    )
 
 
 def _write_inspection_artifacts(run: ExtractRun) -> tuple[Path, Path, Path]:
@@ -364,12 +465,17 @@ def _log_path_for(chart: ReferenceChart) -> Path:
 # --- Top-level commands ---------------------------------------------------
 
 
-def extract_lens(slug: str, *, accept_override: bool) -> int:
+def extract_lens(slug: str, *, accept_override: bool, debug: bool = False) -> int:
     """Extract one lens. Returns 0 on success, non-zero on error.
 
     A lens with N views produces N × (SVG + overlay + review.html) plus
     one digitization-log.md with N panels. The gate aggregates verdicts
     across views — a single LOW holds the entire lens.
+
+    When `debug` is set, each pass also writes its ADR-050 per-stage
+    diagnostic bundle under `<lens-dir>/diagnostic/` (gitignored) — the
+    bundle is written regardless of the gate decision, since it is
+    precisely the failing/held lens a maintainer wants to inspect.
     """
     chart = _chart_by_slug(slug)
     if chart is None:
@@ -388,7 +494,7 @@ def extract_lens(slug: str, *, accept_override: bool) -> int:
     n_views = len(chart.views)
     suffix = "" if n_views == 1 else f" — {n_views} views"
     print(f"Extracting {slug} ({chart.style_family}){suffix}...")
-    runs = _run_all_views(chart)
+    runs = _run_all_views(chart, debug=debug)
 
     rel = lambda p: p.relative_to(REPO_ROOT)
     for run in runs:
@@ -408,6 +514,10 @@ def extract_lens(slug: str, *, accept_override: bool) -> int:
             f"prior_violations={len(run.verdict.prior_violations)})"
         )
 
+    if debug:
+        rel_diag = rel(_lens_dir_for(chart) / "diagnostic")
+        print(f"  wrote per-stage diagnostic bundle under {rel_diag}/ (ADR-050)")
+
     write, reason = _should_write_log(
         [r.verdict for r in runs], accept_override=accept_override
     )
@@ -424,7 +534,7 @@ def extract_lens(slug: str, *, accept_override: bool) -> int:
     return 0
 
 
-def extract_anchor_artifacts(slug: str) -> int:
+def extract_anchor_artifacts(slug: str, *, debug: bool = False) -> int:
     """Regenerate inspection artifacts for a Tier 1 anchor lens.
 
     Tier 1 anchors carry maintainer-eye-read ground truth in
@@ -467,7 +577,7 @@ def extract_anchor_artifacts(slug: str) -> int:
     n_views = len(chart.views)
     suffix = "" if n_views == 1 else f" - {n_views} views"
     print(f"Extracting Tier 1 anchor {slug} ({chart.style_family}){suffix}...")
-    runs = _run_all_views(chart)
+    runs = _run_all_views(chart, debug=debug)
 
     rel = lambda p: p.relative_to(REPO_ROOT)
     for run in runs:
@@ -485,6 +595,10 @@ def extract_anchor_artifacts(slug: str) -> int:
             f"(precision={p_str}, IoU={i_str}, "
             f"prior_violations={len(run.verdict.prior_violations)})"
         )
+
+    if debug:
+        rel_diag = rel(_lens_dir_for(chart) / "diagnostic")
+        print(f"  wrote per-stage diagnostic bundle under {rel_diag}/ (ADR-050)")
 
     print(
         f"  Tier 1 anchor: skipped production log write "
@@ -593,6 +707,14 @@ def main(argv: list[str] | None = None) -> int:
         "calibration log. Requires a slug; mutually exclusive with "
         "--accept (Tier 1 has no production log to accept).",
     )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="also write the ADR-050 per-stage diagnostic bundle for "
+        "this lens under <lens-dir>/diagnostic/ (gitignored). Routes the "
+        "bundle through the same view/aperture orchestration extract "
+        "ships, so what you debug is what you commit. Requires a slug.",
+    )
     args = parser.parse_args(argv)
 
     mode_count = sum([bool(args.slug), args.all, args.check])
@@ -605,14 +727,19 @@ def main(argv: list[str] | None = None) -> int:
             "--anchor-artifacts is incompatible with --all, --check, "
             "and --accept"
         )
+    if args.debug and (args.all or args.check):
+        parser.error(
+            "--debug operates on a single lens; it is incompatible with "
+            "--all and --check"
+        )
 
     if args.check:
         return check_logs()
     if args.all:
         return extract_all(accept_override=args.accept)
     if args.anchor_artifacts:
-        return extract_anchor_artifacts(args.slug)
-    return extract_lens(args.slug, accept_override=args.accept)
+        return extract_anchor_artifacts(args.slug, debug=args.debug)
+    return extract_lens(args.slug, accept_override=args.accept, debug=args.debug)
 
 
 if __name__ == "__main__":

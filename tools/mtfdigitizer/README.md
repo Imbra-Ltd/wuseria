@@ -43,7 +43,10 @@ library entry point. Two CLIs sit on top:
   per ADR-041. `--accept` bypasses the gate after an overlay glance;
   `--all` runs every pending Tier 2 lens, stopping on the first HOLD;
   `--check` re-renders every committed production log and fails on
-  staleness.
+  staleness; `--debug` also writes the ADR-050 per-stage diagnostic
+  bundle for the lens (gitignored) through extract's own view/aperture
+  orchestration — the production-faithful counterpart to
+  `py -m mtfdigitizer.diagnose`.
 
 ## Layout
 

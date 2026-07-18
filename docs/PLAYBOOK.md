@@ -286,23 +286,54 @@ as supplementary data on the same log. (#1037)
 
 **Write a per-stage diagnostic bundle for one chart (ADR-050):**
 
+Two entry points produce the same bundle:
+
 ```bash
+# Production-faithful path — routes through extract's own view/aperture
+# orchestration, so what you debug is byte-identical to what extract ships.
+cd tools && py -m mtfdigitizer.extract <lens-slug> --debug                  # one Tier 2 lens
+cd tools && py -m mtfdigitizer.extract <slug> --anchor-artifacts --debug    # one Tier 1 anchor
+
+# Reference-set path — also takes cohort / corpus batches.
 cd tools && py -m mtfdigitizer.diagnose <lens-slug>             # one chart
 cd tools && py -m mtfdigitizer.diagnose --brand <prefix>        # whole brand cohort (e.g. `ttartisan`)
 cd tools && py -m mtfdigitizer.diagnose --all                   # whole corpus (slow)
 ```
 
-Runs `extract_chart` with a `DiagnosticSink` that writes one named PNG
-per pipeline stage (source, plotbox, hue masks, skeletons, presence
+Both run `extract_chart` with a `DiagnosticSink` that writes one named
+PNG per pipeline stage (source, plotbox, hue masks, skeletons, presence
 masks, sampling overlay, fallback diff, symmetry diff, emit) plus a
-`manifest.json` into `docs/optical-specs/<slug>/diagnostic/`. Multi-
-aperture charts get one subdirectory per aperture (`max/`, `stopped/`).
-The bundle is gitignored — regenerate on demand when a chart looks
-wrong. Use the stage-to-symptom mapping in ADR-050 to jump from a
-maintainer's failure description ("30lpmm completely wrong", "missing
-segments", "edge too low") to the first PNG to inspect. Extraction
-values are byte-identical with or without the sink — `py -m
-mtfdigitizer.svg --check` MUST pass after every diagnose run.
+`manifest.json` into `docs/optical-specs/<slug>/diagnostic/`. Multi-pass
+charts get one subdirectory per pass. The bundle is gitignored —
+regenerate on demand. Prefer `extract --debug` for a lens you are
+digitizing: it uses the exact profile `extract` commits, including
+ADR-063 per-view aperture overrides that `diagnose` cannot see (it omits
+the view). Use `diagnose` for cohort sweeps or Tier 1 reference charts.
+Extraction values are byte-identical with or without the sink — `py -m
+mtfdigitizer.svg --check` MUST pass after any run.
+
+**Triage a wrong-looking chart — scan the stages in order, find the first divergence:**
+
+1. Regenerate the bundle for the lens: `py -m mtfdigitizer.extract <slug> --debug`.
+2. Open `diagnostic/` and scan the numbered PNGs in pipeline order (01
+   → 09). The first stage whose overlay diverges from the printed curves
+   is the culprit; every later stage inherits its error, so stop at the
+   first divergence rather than chasing the wrong output at stage 09.
+3. Jump straight to the likely stage using the failure-description map
+   (from ADR-050):
+
+   | Symptom                   | First stage to inspect | Then                                         |
+   | ------------------------- | ---------------------- | -------------------------------------------- |
+   | "missing segments"        | 03 (hue mask)          | 04 (skeleton)                                |
+   | "30lpmm completely wrong" | 03 (hue mask)          | 04 (skeleton, freq-split dispatch)           |
+   | "edge too low"            | 04 (skeleton)          | 06 (sampling at fraction 1.0)                |
+   | "corner crossing swapped" | 04 (skeleton)          | 07 (sister fallback flipped labels)          |
+   | "max wrong stopped ok"    | 03 (per-aperture mask) | 04 (skeleton with stopped curves masked out) |
+   | "overlay not refreshed"   | 09 (emit)              | provenance only — committed SVG vs bundle    |
+
+4. Fix that stage, re-run `--debug`, and confirm the divergence is gone
+   at that stage's PNG. The bundle identifies which stage broke; it does
+   not fix it (ADR-050 "What this does not do").
 
 **Refresh per-lens calibration-tier digitization logs (Tier 1 per ADR-041):**
 
