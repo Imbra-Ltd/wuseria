@@ -13203,3 +13203,76 @@ Theme: two related MTF-digitizer quality items — regenerate the two Samyang pr
 - mtfdigitizer pytest **517 pass** (unchanged, no code change); full `tools/` suite **787 pass** (verified this session). CI green; `main` deploy green.
 - **Open PRs at wrap-up: 0.**
 - **Upstream contributions:** filed 1 new template-feedback issue — braboj/solid-ai-templates **#832** (quality-gates-staleness: the CI filter must enumerate committed-artifact + source-asset paths, not just the generator). #831, #830, #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
+
+---
+
+### Session 217 — Complete #1414: fidelity-neutral extractor refactor (3 PRs)
+
+Date: 2026-07-18 · Tool: Claude Code (Opus 4.8)
+
+Theme: finish epic-task #1414 (ADR-081 output-neutral extractor cleanup) end to end — delete the dead extraction dialects, resolve the "constant registry" sub-task, and decompose the oversized `pipeline/ridge.py`. Opened by merging the leftover S216 journal PR (#1429). Every change gated on the calibrate-and-diff harness: zero GT delta is the pass condition.
+
+#### PRs
+
+- **#1429** (S216 journal) — merged first as the leftover S216 wrap (committed and pushed last session, never merged).
+- **#1430** (part of #1414, sub-task 1) — delete the superseded `PER_COLUMN_RIDGE` / `SKELETON_CONTINUOUS_PICK` dialects: both dispatch branches, the orphaned `ridge_tracks_for_hue` helper (only the dead branch called it), and the fully-dead `continuous_pick.py` module + its test. −509 lines.
+- **#1433** (part of #1414, sub-task 2) — remove the 3 dead imports flagged in #1430; the "central constant registry" resolves to a documented finding, not a refactor (see below).
+- **#1434** (closes #1414, sub-task 3) — decompose the 2104-line `ridge.py` into a `pipeline/ridge/` package (`foundation`, `dp`, `hue`, `fields`, `__init__`). ADR-083.
+- All squash-merged with branch delete; each green — including the `staleness` and `pytest` jobs on every PR (all touched `tools/**`).
+
+#### Issues opened / closed
+
+- **#1414** (task, P2, v0.8.0) — **closed** via #1434 (all three sub-tasks done). Epic #1415 checklist updated (2/4).
+- **#1431** (task, P3, Backlog) — **opened**. Package-wide unused-import backlog (~10 in `emit`/`extract`/`log`/`masks`/`sampling`) surfaced by pyflakes during sub-task 2; out of scope for the dialect cleanup.
+- **#1432** (bug, P4, Backlog) — **opened**. `scaffold_anchor_helpers.py:751` annotates `existing_marks` with undefined name `Cell` (F821); no runtime crash (`from __future__ import annotations`), the local import aliases it `ParsedCell`.
+
+#### Key technical findings
+
+- **The "four entry points" was three.** #1414's framing counted `ridge_tracks_for_hue`, but that function was the dead `PER_COLUMN_RIDGE` helper — deleted in sub-task 1 before sub-task 3 ran. Sub-tasks compound: #1430 shrank the ridge.py decomposition surface by a whole entry point.
+- **The constant-registry premise did not survive a probe.** The tuned constants are already grouped by concern with provenance comments next to the code they tune; a central `constants.py` would orphan the rationale and fight high-cohesion. The one apparent cross-module duplicate — ridge `_RIDGE_DP_ALPHA` vs dp_extract `_ALPHA` (both 0.30) — is NOT single-source knowledge to dedup: ridge's alpha is a calibrated pair with ridge's `_RIDGE_DP_GAMMA` (gamma's comment sizes itself against "the 0.30\*|dy| smoothness cost"). Unifying would silently couple two independent DP algorithms. Both registry and dedup rejected on the merits; sub-task 2 resolved by finding.
+- **The ridge split is output-neutral because the public import path is preserved.** `pipeline/ridge/__init__.py` re-exports the two entry points plus the 19 private helpers `test_ridge.py` imports (listed in `__all__`), so `dispatch.py` and `test_ridge.py` are untouched — the unchanged suite is the regression oracle. Dependency graph is acyclic: foundation (leaf) <- dp <- hue; foundation <- fields.
+- **pyflakes is the cheap cross-module-import oracle.** Wrote `dp`/`hue`/`fields` with no foundation imports, ran pyflakes, and it named exactly the undefined symbols to import — then re-ran to clean. Instant feedback vs the 9-min pytest.
+
+#### Key changes
+
+- `pipeline/dispatch.py`, `pipeline/pipeline.py`, `profiles/types.py`, `pipeline/dp_extract.py`, `pipeline/ridge.py` — removed the two dead dialects (enum members, dispatch branches, presence tuple, the orphaned helper, docstrings); reworded 3 stale citations to the deleted helper.
+- `pipeline/continuous_pick.py` + `tests/test_continuous_pick.py` — deleted (fully dead module + its 6 tests).
+- 3 dead imports removed: `dispatch::ridge_tracks_to_fields`, `ridge::cv2`, `pipeline::FileDiagnosticSink`.
+- `pipeline/ridge.py` (2104) -> `pipeline/ridge/{foundation,dp,hue,fields,__init__}.py`. `ridge_tracks_to_fields` (tested, production-unused wrapper) preserved.
+- `docs/decisions/083-ridge-module-decomposition.md` — new ADR. `tools/mtfdigitizer/README.md` — ridge.py -> ridge/ references.
+
+#### Verification
+
+- `py -m mtfdigitizer.calibrate` byte-identical to baseline (zero GT delta, 1284 paired comparisons) after **each** of the three PRs — the ADR-081 pass condition.
+- mtfdigitizer pytest **511 pass** (was 517; −6 are `continuous_pick`'s own tests, removed with the dead module — no live coverage lost). CI `pytest` + `staleness` green on all three PRs.
+- `py -m pyflakes mtfdigitizer/pipeline/ridge/` clean; import smoke confirmed the full 21-symbol public+tested surface resolves and `dispatch.py` imports with no cycle.
+
+#### Key decisions (this session)
+
+- **Reject the central constant registry and the alpha dedup; resolve sub-task 2 by finding.** ADR-081 listed "constant registry" as one enumerated idea; the probe refined it away without superseding the ADR. Recorded on #1414 with the rationale.
+- **Package + `__init__` re-export for the ridge split** (ADR-083) — rejected flat sibling modules (import cycles) and rewriting `test_ridge.py` (touches the regression oracle mid-restructure).
+- **4-module granularity, not 6** — foundation stays whole; low cross-import surface for an output-neutral migration, with a finer split deferred until a module grows.
+
+#### Process patterns observed this session
+
+- **A probe can invert the plan mid-execution.** Reading the `_RIDGE_DP_GAMMA` comment refuted the alpha dedup after I had already scoped it; re-surfaced the option set to the user rather than ploughing on (ai-workflow constraint-invalidates-plan).
+- **Cheap gates before the expensive one.** pyflakes + import-smoke + test-collection (all instant) caught every mechanical split error; the 9-min pytest ran once at the end. The first pytest still caught a real gap — see next.
+- **Grep filters hide symbols.** A lowercase-only grep of `test_ridge.py`'s import list dropped the capitalized `Track`, so `__init__` missed re-exporting it and the first pytest failed at collection. Verify an import surface against the raw list, not a filtered one.
+- **Delete-what-only-the-dead-thing-used.** Removing a dialect meant also removing its sole-caller helper and its exclusively-imported module — traced each callee's other call sites first to confirm nothing else was orphaned.
+
+#### Follow-ups for next session (S218)
+
+- **#1413** — generalize MTF plot-box auto-detection beyond Sigma (task, P3, v0.8.0, epic #1415). The named next feature; the other per-brand setup bottleneck alongside #1198.
+- **#1198** — legend-swatch auto-suggest spike (epic #1415).
+- **#790** — per-brand digitization is the v0.8.0 grind (6/24); #1415 exists to make it cheaper.
+- **#1431** pyflakes backlog (task, P3, Backlog); **#1432** `Cell` F821 (bug, P4, Backlog) — both small, absorbable into a future `tools/` hygiene pass.
+- (carried) **#1379** eye-read bare-cell warning (P3, Backlog); **#1424** TS 7 — do not pick up before `@astrojs/check` peers `typescript ^7`.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active). **v0.8.0 at 21 open** (#1414 closed; #1431/#1432 filed to Backlog).
+- Epic #790: 6/24 brands (unchanged). Epic #1415: **2/4** (#1412, #1414 done; #1413, #1198 open).
+- **83 ADRs** (+1: ADR-083 ridge module decomposition).
+- mtfdigitizer pytest **511 pass** (was 517; −6 with the deleted `continuous_pick` tests); full `tools/` suite ~**781** (derived; only the mtfdigitizer subset changed). CI green; `main` deploy green.
+- **Open PRs at wrap-up: 0.**
+- **Upstream contributions:** none new this session (internal refactor, no reusable convention beyond what #832 already covers). #832, #831, #830, #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
