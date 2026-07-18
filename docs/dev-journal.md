@@ -12934,3 +12934,72 @@ Theme: work the top of v0.8.0 — but two of the three P2 items turned out alrea
 - mtfdigitizer pytest: **515 pass** (was 472; +43 detector tests); `npm run validate` not run (no `src/` change).
 - **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
 - **Upstream contributions:** none new this session; braboj/solid-ai-templates #741–744, #747 still open upstream. Submodule unchanged (a6d7747).
+
+---
+
+### Session 213 — MTF digitization speedup spike: ADR-081 (fidelity is the signature) + throughput epic
+
+Date: 2026-07-18 · Tool: Claude Code (Opus 4.8)
+
+Theme: the user flagged v0.8.0 (MTF digitization) as too slow and the digitizer as too complex, and asked what to improve. A diagnostic spike (three parallel history/architecture/backlog digs plus code probes) resolved to one durable decision, not code: the re-rendered chart plus the numeric S/M table is the site's signature, so the extractor's fidelity bar does not get lowered for throughput. Shipped ADR-081; filed a fidelity-preserving throughput epic. No `src/` or extractor code change.
+
+#### PRs
+
+- **#1411** — docs(adr): add ADR-081 MTF reproduction is a signature feature. Squash-merged. Docs-only; `gate` green, `build`/`lighthouse`/`pytest` skipped (no `src/` change); `format`/`links`/`gitleaks`/CodeQL pass. `npm run validate` green locally before push.
+
+#### Issues opened / closed
+
+- **#1415** (epic, P2, v0.8.0) — **opened**: Fidelity-preserving digitizer throughput (ADR-081). Children below plus existing spike #1198.
+- **#1412** (task, P2, v0.8.0) — **opened**: per-stage diagnostic bundle for the extraction pipeline (localize a chart's failure in one pass instead of re-probing across sessions).
+- **#1413** (task, P3, v0.8.0) — **opened**: generalize plot-box auto-detection beyond Sigma.
+- **#1414** (task, P3, v0.8.0) — **opened**: output-neutral extractor cleanup (dead dialects, constant registry, `ridge.py` split; zero-GT-delta gated).
+- No issues closed this session.
+
+#### Key technical findings
+
+- **v0.8.0 is labor-bound, not capability-bound.** #932 (tool) and #950 (plot-box) are closed; the 18 remaining #790 children are per-brand grind, all P3, no due date.
+- **The slowdown is setup + debug-loop cost, not a missing algorithm.** History: 6/24 brands after ~118 sessions; stuck 42 sessions at 4/24, 37 at 5/24. Two serial human bottlenecks per brand (a ~7h Tier-1 eye-read; per-brand HSV/dispatch hand-authoring) plus an open-ended per-cohort curve-tracing debug loop (7-of-7 RC issues closed wontdo). Every escape hatch was already rejected (ML ADR-057, vector ADR-057, more anchors ADR-053, anchor repair ADR-073).
+- **Accidental complexity taxes every edit:** 11 extraction dialects (~3 dead generations still wired), 5 stacked per-lens correction passes, a 2168-line `ridge.py` (4 entry points), ~135 scattered tuned constants.
+- **MTF readings have two consumers.** Display: the re-rendered SVG chart + numeric S/M table on the lens page (`[slug].astro` -> `MtfChart.astro`), where every value is user-visible. Scoring/content: ADR-014 fallback #2 + ADR-029 §3.2 — astigmatism, bokeh tendency, contrast/resolution, and the "artistic" rendering character are all already the documented home (coarse, computed-vs-measured gated). The display is the strictest consumer and subsumes the coarse one.
+- **The tempting speedup was rejected.** Coarsening the acceptance bar to score buckets, or retiring the S/M crossing-swap identity detector, holds only for the swap-invariant scoring signals — but a swapped label is visible and wrong in the rendered table. Fidelity is the differentiator.
+
+#### Key changes
+
+- `docs/decisions/081-mtf-reproduction-is-signature-feature.md` — new ADR.
+- `docs/dev-journal.md` — this entry.
+- No `src/`, no `tools/` code change.
+
+#### Verification
+
+- `npm run validate` — green (462 pages built, links check pass, lint/format/type/test clean) before the ADR PR.
+- Reconciliation grounded in code, not memory: confirmed scoring reads coarse lens fields (`GenreRowCells`/`GenreCards` read `el.lens.cornerStopped` etc.), `MtfChart.astro` is pure render, `mtf-readings.ts` is display-only today. Read the closed spikes #707/#730 (MTF -> content decided, MTF -> score rejected for computed MTF) and #783/#859 (Artistic-Quality via MTF blueprint matching, blocked by #859) before recommending, per read-the-prior-spike-closeout.
+
+#### Key decisions (this session)
+
+- **ADR-081** — the MTF chart+table reproduction is a first-class signature feature; the extractor acceptance target is display faithfulness (shape + S/M identity), not lowered for throughput; speed comes from setup automation, output-neutral refactor, and honest gaps (ADR-079). Resolves the open S210 question in favour of keeping `confidence`/`mtfType`.
+- **Discarded** a first ADR-081 draft that proposed retiring S/M identity — the user corrected the framing (the reproduction fidelity is the point). Recorded a feedback memory (`mtf-fidelity-is-signature`) so it is not retread.
+- **Filed, did not start** the throughput work — a fresh implementation theme, so epic #1415 + tasks #1412-1414, not code this session (one theme per session).
+- No new directories; no content moved between documents.
+
+#### Process patterns observed this session
+
+- **Plan-time placement is a hypothesis.** Opening ADR-029 mid-plan showed the MTF-derived contrast/resolution/artistic amendment I was about to write already existed — writing it would have been drift. Read the target before writing to it.
+- **Read the prior spike's close-out.** #707/#730/#783/#859 had already decided MTF -> content vs score and the AQ path; surfacing them kept the recommendation from re-litigating settled ground.
+- **User feedback overrides agent inference.** I inferred "display-only -> loosen the bar"; the signature framing inverted it. Corrected immediately, discarded the draft, recorded the constraint.
+
+#### Follow-ups for next session (S214)
+
+- **#1412** — per-stage diagnostic bundle (P2, the recommended first pickup under #1415).
+- **#1413** / **#1414** — plot-box auto-detect / output-neutral refactor (P3, under #1415).
+- **#790** — per-brand digitization is still the core v0.8.0 grind (6/24); #1415 exists to make it cheaper.
+- **#1386** — two stale Samyang logs (bug, P3) — quick green-gate win.
+- (carried) #1198 legend-swatch auto-suggest (the other setup bottleneck); wire `scaffold_anchor_helpers --check` into CI; #1379 eye-read bare-cell warning (P3, Backlog).
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active). One ADR added, no issues closed. **v0.8.0 at 24 open / 154 closed** (added epic #1415 + tasks #1412-1414).
+- Epic #790: 6/24 brands (unchanged this session).
+- **81 ADRs** (ADR-081 added).
+- mtfdigitizer pytest: 515 pass (unchanged; no code change). `npm run validate` green on the ADR PR.
+- **Open PRs at wrap-up: 0** (after this journal PR merges). `main` deploy green.
+- **Upstream contributions:** filed 1 new template-feedback issue this session — braboj/solid-ai-templates #829 (strictest-visible-consumer acceptance-bar rule); #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
