@@ -13276,3 +13276,66 @@ Theme: finish epic-task #1414 (ADR-081 output-neutral extractor cleanup) end to 
 - mtfdigitizer pytest **511 pass** (was 517; −6 with the deleted `continuous_pick` tests); full `tools/` suite ~**781** (derived; only the mtfdigitizer subset changed). CI green; `main` deploy green.
 - **Open PRs at wrap-up: 0.**
 - **Upstream contributions:** none new this session (internal refactor, no reusable convention beyond what #832 already covers). #832, #831, #830, #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
+
+---
+
+### Session 218 — #1413: unified plot-box detection dispatch (ADR-084)
+
+Date: 2026-07-18 · Tool: Claude Code (Opus 4.8)
+
+Theme: close epic-task #1413 (generalize MTF plot-box auto-detection), the second setup-automation lever in epic #1415 (ADR-081). The issue framed detection as "Sigma-only," but a probe of the actual code corrected the scope twice — the real deliverable was a unified detect-or-fallback router, not more detectors. One output-neutral PR.
+
+#### PRs
+
+- **#1436** (closes #1413) — add `plotbox_detect.detect_plot_box(chart)`: a `style_family` → detector dispatch over the four unchanged detectors, normalizing their divergent results into a frozen `DetectedPlotBox`, with fail-loud fallback to the hand-measured box (ADR-084). Squash-merged, branch deleted; all checks green (CI pytest 2m45s, staleness, format, links, CodeQL, gate).
+
+#### Issues opened / closed
+
+- **#1413** (task, P3, v0.8.0) — **closed** via #1436. Epic #1415 checklist updated (**3/4**). Posted a scope-correction comment on the issue first (the "Sigma-only" premise was stale).
+
+#### Key technical findings
+
+- **A probe corrected the scope twice.** #1413 said "today Sigma-only." First finding: four detectors already exist (Sigma in `pipeline/plotbox.py`; top-level `samyang`/`ttartisan`/`fuji_plotbox.py`, ADR-064). Second finding: each already carries a parametrized detected-vs-committed regression test (added in #950) — so AC1 (tolerance match on ≥2 families) and AC3 (output-neutral) were already satisfied. The one genuine gap was **AC2**: no unified entry point that tries detection and falls back. Re-scoped from "unify the four detectors" to "add the missing routing + fallback layer" and surfaced the correction to the user before coding.
+- **The four detectors diverge on every axis ADR-064 left open.** Signature (Sigma takes a BGR array; the rest a path), return type (bare `PlotBox` vs `<Brand>BoxResult`), failure mode (`ValueError` vs `<Brand>PlotBoxError` vs a None/sentinel). ADR-064 unified only _naming_; the dispatch normalizes the rest in thin adapters without touching the detectors — a common-return rewrite was rejected (fights ADR-064, risks tested code for zero output gain).
+- **`idealized-flat` shares the Samyang detector.** The 300mm reflex chart carries style_family `idealized-flat` but is structurally the Samyang two-panel template — the Samyang detector reproduces its committed box exactly, and `family_profile.PROFILE_BY_STYLE` already maps it to the Samyang profile. Mirroring that in the detector map (found via a routing-test miss, see below) is the reuse-by-style ADR-081 §5 calls for.
+- **The fallback path is real, not speculative.** Of 11 reference families: 5 route to a detector, 5 carry a box but no detector (Tokina ×2, Viltrox, Zeiss, 7Artisans) → hand-measured fallback, 1 (`soft-multicurve-promo`, no box) → fail loud. The dispatch does the right thing for all three today.
+
+#### Key changes
+
+- `tools/mtfdigitizer/plotbox_detect.py` — new. `detect_plot_box(chart)`, frozen `DetectedPlotBox`, `PlotBoxUnavailable`, `_DETECTOR_BY_STYLE` (5 families incl. `idealized-flat`→Samyang), per-detector adapters normalizing signature/return/error (Fuji's None/sentinel → raised `_DetectorFailed` so one except clause covers all four).
+- `tools/mtfdigitizer/tests/test_plotbox_dispatch.py` — new, 19 tests: per-family routing + detector label, Samyang secondary box, no-detector fallback (parametrized), fail-loud on no-box, monkeypatched detector-failure fallback + fail-loud.
+- `docs/decisions/084-unified-plot-box-detection-dispatch.md` — new ADR (extends ADR-064's naming convention with a routing convention).
+- `tools/mtfdigitizer/README.md` — corrected the stale "plot box is caller-supplied, needs a detector until that lands" limitation note.
+
+#### Verification
+
+- Full `tools/` suite **530 pass** (was 511; +19 dispatch tests). Output-neutral: no committed box changed; the four detector modules and their ADR-064 surfaces untouched.
+- Smoke-probe over one chart per family confirmed all 11 route correctly (5 detected+MATCH, 5 fallback+MATCH, 1 raise) before the test was written.
+- CI `pytest` 2m45s + `staleness`/`format`/`links`/CodeQL/`gate` green on the PR; `build`/`lighthouse` correctly skipped (non-frontend change).
+
+#### Key decisions (this session)
+
+- **Re-scope #1413 to AC2 only, detectors untouched** — common-return rewrite rejected (fights ADR-064); generic detector rejected (ADR-081 fidelity-first). ADR-084 records it.
+- **Map `idealized-flat` to the Samyang detector** — mirror `PROFILE_BY_STYLE`; validated by the detector reproducing its committed box exactly.
+
+#### Process patterns observed this session
+
+- **Probe the code before trusting the ticket.** Two rounds of reading the detectors + their tests inverted the scope from "write more detectors" to "AC1/AC3 already done in #950, only wire the router." Shipping the ticket as written would have been a redundant rewrite. (ai-workflow probe-before-acting, verify-before-relying-on-a-claim.)
+- **A routing test caught an under-mapping.** `samyang-300mm-reflex` landing in the fallback bucket flagged that `idealized-flat` should route to Samyang — the test surfaced a correctness gap in the dispatch table, not just a pass/fail.
+- **Ask once, then drive.** Surfaced the stale-premise fork to the user, got "do as recommended," and corrected the scope in-flight (recording each finding in the PR/ADR) rather than re-asking on every sub-finding.
+
+#### Follow-ups for next session (S219)
+
+- **#1198** — legend-swatch auto-suggest spike (epic #1415, **spike, P4, Backlog**) — the last open task in #1415 and the other per-brand setup bottleneck. P4/Backlog: re-check priority against v0.8.0 before picking up.
+- **#790** — per-brand digitization grind (epic, P2, v0.8.0, 6/24) — the v0.8.0 workstream #1415 exists to accelerate; a candidate now that plot-box + diagnostics automation has landed.
+- **Wire the dispatch into the scaffolders** — ADR-084's named follow-up; `detect_plot_box` is not yet consumed by `scripts/scaffold_*_tier2.py`. No issue filed (deferred until a consumer needs it — e.g. onboarding a new brand that shares a style).
+- (carried) **#1431** pyflakes backlog (P3, Backlog); **#1432** `Cell` F821 (P4, Backlog); **#1379** eye-read bare-cell warning (P3, Backlog); **#1424** TS 7 — hold for `@astrojs/check` peer.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active). **v0.8.0 at 20 open** (#1413 closed).
+- Epic #790: 6/24 brands (unchanged). Epic #1415: **3/4** (#1412, #1414, #1413 done; #1198 open).
+- **84 ADRs** (+1: ADR-084 plot-box detection dispatch).
+- mtfdigitizer pytest **530 pass** (was 511; +19 dispatch tests). CI green; `main` deploy running at wrap-up.
+- **Open PRs at wrap-up: 0.**
+- **Upstream contributions:** none new this session — the "strategy dispatch mirroring an existing profile map, with fail-loud fallback" pattern is already covered by base/core/quality.md (strategy-dispatched pipeline; fail-loud auto-derivation). #832, #831, #830, #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
