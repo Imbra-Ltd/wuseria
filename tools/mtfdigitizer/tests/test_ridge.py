@@ -555,8 +555,8 @@ def test_ridge_tracks_for_hue_freq_split_uses_coverage_over_continuity_when_disa
 
 def test_ridge_tracks_for_hue_freq_split_shares_value_at_whole_curve_coincidence() -> None:
     """When only one track survives (the two curves visually coincide
-    across the entire field), both fields share its value — same B4
-    physics generalization as `ridge_tracks_for_hue`."""
+    across the entire field), both fields share its value — the B4
+    center-astigmatism physics generalized off-center."""
     mask = np.zeros((100, 100), dtype=np.uint8)
     # Single curve at y=30; second curve is absent entirely.
     mask[30, 5:85] = 1

@@ -122,12 +122,7 @@ _FLATLINE_TRIM_RAW_DY_HALF: int = 8
 
 @dataclass(frozen=True)
 class CurvePoints:
-    """An x→y mapping for one continuous curve, ordered by x.
-
-    Identical contract to `continuous_pick.CurvePoints` — kept local so
-    this module can be removed independently if the legacy path is ever
-    retired.
-    """
+    """An x→y mapping for one continuous curve, ordered by x."""
 
     points: tuple[tuple[int, float], ...]
 

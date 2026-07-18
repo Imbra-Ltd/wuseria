@@ -884,68 +884,6 @@ def _extend_track_to_plot_edges(track: Track, plot_box: PlotBox) -> Track:
     return Track(points=tuple(extended))
 
 
-def ridge_tracks_for_hue(
-    mask: np.ndarray,
-    plot_box: PlotBox,
-    sm: str,
-    upper_freq: int,
-    lower_freq: int,
-) -> dict[str, np.ndarray]:
-    """Per-hue, 2-curve variant: returns one track per (freq, sm).
-
-    Used by the Tokina wide-zoom dispatch where each hue (red, blue)
-    encodes S or M (via the profile's hue name) and within the hue the
-    two curves at different y-positions encode the two frequencies.
-    Upper track in y → `upper_freq`; lower track → `lower_freq`. The
-    sm parameter is taken from the hue name (S-red → 'S', M-blue → 'M').
-
-    When the two curves coincide (whole-hue or per-column), the shared
-    ridge is attributed to BOTH frequencies — see `_fill_single_column_
-    gaps`. This preserves the B2 contract: the value is real chart data,
-    not fabricated; the attribution to both tracks reflects the physical
-    reality that visually-coincident curves have the same MTF.
-
-    Distinct from `ridge_tracks_to_fields` (which expects 4 curves in
-    one neutral mask and recovers both freq AND sm from track ranking).
-    """
-    from .dispatch import curve_field  # imported here to avoid module cycle
-
-    cleaned = _strip_chrome(mask, plot_box)
-    points = _extract_ridge_points(cleaned, plot_box)
-    tracks = _cluster_into_tracks(points)
-    kept = _select_top_n_tracks(tracks, n=2, plot_width=plot_box.width + 1)
-
-    out: dict[str, np.ndarray] = {}
-    if not kept:
-        return out
-    by_y = sorted(kept, key=lambda t: t.mean_y)
-    if len(by_y) == 1:
-        # Whole-hue coincidence: the two curves are indistinguishable
-        # across the entire field. Same value to both frequencies.
-        upper_track = _extend_track_to_plot_edges(
-            _densify_track(by_y[0]), plot_box
-        )
-        lower_track = upper_track
-    else:
-        # Where the original chart had only one ridge run per column
-        # (the two curves coincided), share that single track value
-        # across both fields — same physics as B4 at center.
-        column_runs = _column_run_count(cleaned, plot_box)
-        shared_upper, shared_lower = _fill_coincident_column_gaps(
-            by_y[0], by_y[1], column_runs
-        )
-        upper_track = _extend_track_to_plot_edges(
-            _densify_track(shared_upper), plot_box
-        )
-        lower_track = _extend_track_to_plot_edges(
-            _densify_track(shared_lower), plot_box
-        )
-
-    out[curve_field(upper_freq, sm)] = _rasterize(upper_track, mask.shape)
-    out[curve_field(lower_freq, sm)] = _rasterize(lower_track, mask.shape)
-    return out
-
-
 # --- Per-column ridge DP (#1100) -----------------------------------------
 #
 # Greedy clustering (`_cluster_into_tracks`) is column-walk-with-nearest-y:
@@ -1696,7 +1634,8 @@ def ridge_tracks_for_hue_freq_split(
     Higher-coverage track is solid (S by default; M when
     `dashed_is_sagittal=True`, the 7Artisans/TTartisan-T convention).
     When only one track qualifies, both fields share its value (whole-
-    curve coincidence — same physics as `ridge_tracks_for_hue`).
+    curve coincidence — a shared ridge is attributed to both curves,
+    the same B4 physics as at center).
 
     Partial-field coincidence (#1095): when the two physical curves
     coincide over part of the field (e.g. left half) and diverge over
@@ -1712,12 +1651,9 @@ def ridge_tracks_for_hue_freq_split(
     the coincidence-region values to both curves as the B4 physics
     requires.
 
-    Distinct from:
-      - `ridge_tracks_for_hue`: HUE_IS_CURVE; hue carries S or M, the
-        two tracks within the hue are two frequencies (ranked by mean_y).
-      - `ridge_tracks_to_fields`: single neutral mask carrying all four
-        curves; tracks ranked by mean_y for frequency, then by coverage
-        within each frequency pair for S/M.
+    Distinct from `ridge_tracks_to_fields`: that variant takes a single
+    neutral mask carrying all four curves; tracks ranked by mean_y for
+    frequency, then by coverage within each frequency pair for S/M.
     """
     from .dispatch import curve_field  # imported here to avoid module cycle
 
@@ -1754,7 +1690,8 @@ def ridge_tracks_for_hue_freq_split(
         return out
     if track2 is None or track2.coverage < 10:
         # Whole-hue coincidence: only one path found. Same value to
-        # both fields — same B4 physics as `ridge_tracks_for_hue`.
+        # both fields — the B4 center-astigmatism physics: a coincident
+        # ridge is shared across both curves, not fabricated.
         shared = _extend_track_to_plot_edges(_densify_track(track1), plot_box)
         out[curve_field(freq, solid_sm)] = _rasterize(shared, mask.shape)
         out[curve_field(freq, dashed_sm)] = _rasterize(shared, mask.shape)
