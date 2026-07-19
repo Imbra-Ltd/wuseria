@@ -13339,3 +13339,65 @@ Theme: close epic-task #1413 (generalize MTF plot-box auto-detection), the secon
 - mtfdigitizer pytest **530 pass** (was 511; +19 dispatch tests). CI green; `main` deploy running at wrap-up.
 - **Open PRs at wrap-up: 0.**
 - **Upstream contributions:** none new this session — the "strategy dispatch mirroring an existing profile map, with fail-loud fallback" pattern is already covered by base/core/quality.md (strategy-dispatched pipeline; fail-loud auto-derivation). #832, #831, #830, #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
+
+---
+
+### Session 219 — #1198: legend-swatch calibration measured and deferred (ADR-085); epic #1415 complete
+
+Date: 2026-07-19 · Tool: Claude Code (Opus 4.8)
+
+Theme: close the last open task of epic #1415 (ADR-081 throughput) — the legend-swatch auto-calibration spike #1198. Promoted it from P4/Backlog to P2/v0.8.0 to match its parent epic, then measured ADR-057's "highest-leverage" claim before writing any calibration code. The measurement inverted the framing: the palette is auto-derivable but is not the per-brand bottleneck. One docs-only PR; epic #1415 closed 4/4.
+
+#### PRs
+
+- **#1438** (closes #1198) — add ADR-085 (defer legend-swatch auto-calibration); mark ADR-057's next-refinement pointer partially superseded (reciprocal links). Docs-only. Squash-merged, branch deleted; `gate`/CodeQL/format/links/gitleaks green, `build`/`pytest`/`lighthouse`/`staleness` correctly skipped (path-filter, docs-only).
+
+#### Issues opened / closed
+
+- **#1198** (spike) — **promoted** P4/Backlog → P2/v0.8.0 to align with parent epic #1415, then **closed** via #1438 with an AC-completion comment (AC1–AC5 mapped to results).
+- **#1415** (epic, P2, v0.8.0) — **closed**. All four tasks done (#1412, #1413, #1414, #1198); definition of done met. Checklist updated 4/4 before close.
+
+#### Key technical findings
+
+- **A probe measured the premise instead of building on it.** ADR-057 named legend-swatch calibration "the single highest-leverage fix on the classical side." Rather than build the calibrator, a throwaway probe (deleted, never committed) drove the real extractor over committed GT. The claim did not survive contact with data.
+- **AC2 — swatch centres already reproduce the declared bands.** Geometric swatch detection (existing cv2/numpy stack, no OCR) found all 4 colour swatches on both Samyang 85mm and TTartisan 7.5 fisheye; every real swatch HSV centre lands inside exactly the correct declared `HueRange`, 1:1. The hand-tuned bands are centred on the legend colours — a derived palette confirms, not corrects.
+- **AC3 — the palette was never the expensive part.** Samyang 85mm, 88 paired positions: swapping to a legend-derived palette costs +0.005 p95 / 0 median. Stripping the non-derivable hand-tuned dispatch (`halo_pairs` ADR-059/062, below-top CC filter ADR-074) — same palette — costs +0.018 p95, _more_ than the palette swap. Tail accuracy comes from per-lens forensics the legend swatch cannot produce.
+- **AC1 — detection feasible but not turnkey.** Text-anchor (OCR) needs a new tesseract dependency; geometric needs none but the false-positive class differs by legend chrome (Samyang ruled table leaks light cell separators; TTartisan bordered box leaks dark borders) — no single width/colour filter fits both. Matches the issue's own audit: one swatch-cluster algorithm does not fit all families.
+
+#### Key changes
+
+- `docs/decisions/085-defer-legend-swatch-calibration.md` — new ADR. Defer adoption; the palette is auto-derivable at near-zero accuracy cost but is not the per-brand bottleneck (the dispatch forensics are), so automating it does not advance ADR-081 throughput. Records the single-anchor caveat and a revisit trigger (re-open if a future family's curves sit so close in HSV that hand-sampling the palette becomes the multi-session step).
+- `docs/decisions/057-reject-ml-chart-extraction.md` — added a partial-supersession marker (reciprocal with ADR-085) on the legend-swatch forward pointer; core reject-ML decision unchanged.
+
+#### Verification
+
+- `npm run validate` green (format + astro check + vitest + 462-page build + trailing-slash link check). Docs-only change; no tools code or extractor output touched.
+- The AC3 numbers are the real extractor via `calibrate._extract_per_view_aperture_chart` over the committed Samyang 85mm GT — not a recomputation. Probe kept the hand-tuned dispatch fields intact for the palette-swap configs (generous to the "adopt" case) and stripped them only for the "bare" controls to isolate palette vs dispatch.
+- CI on #1438: `gate` aggregator green; output-measuring jobs correctly skipped as docs-only (path-filter, per quality-gates skip-equivalent).
+
+#### Key decisions (this session)
+
+- **Promote #1198 to match its parent epic** — P4/Backlog → P2/v0.8.0. The memory breadcrumb flagged the priority mismatch; the epic (#1415, P2/v0.8.0) owns the task, so it inherits the epic's priority/milestone.
+- **Defer legend-swatch calibration (ADR-085)** — measured zero-to-negative accuracy delta triggers AC5 defer. Redirect classical-CV effort to the dispatch-forensics route ADR-081 already mandates, not palette derivation.
+- **Partially supersede ADR-057's forward pointer, not its core** — the reject-ML / keep-classical decision is reaffirmed by the measurement; only the "legend-swatch is highest-leverage" pointer is scoped. Reciprocal markers per the ADR-058 precedent.
+
+#### Process patterns observed this session
+
+- **Probe before drafting the ADR.** The spike body predicted "ideal case" for Samyang/TTartisan; the probe confirmed AC2 but AC3 produced the sharper, unpredicted finding — dispatch tuning outweighs the palette. Drafting the ADR from AC1/AC2 alone would have missed it. (ai-workflow probe-before-acting; survey-prior-art was already done in the issue's audit.)
+- **Report at each decision point, then drive.** Ran AC1/AC2 → reported → user chose AC3 → ran → reported → drafted. Each checkpoint let the user redirect cheaply; none was a re-litigation of settled scope.
+- **A defer is a real deliverable.** The spike shipped no calibrator, but the measured "don't build this" plus a named revisit trigger is the decision AC4/AC5 asked for — and prevents a future session re-deriving the same negative result.
+
+#### Follow-ups for next session (S220)
+
+- **#790** — per-brand digitization grind (epic, P2, v0.8.0, 6/24) — now the primary v0.8.0 workstream. The #1415 automation levers (plot-box dispatch ADR-084, per-stage diagnostics #1412) have all landed; #790 is what they were built to accelerate.
+- **Wire the dispatch into the scaffolders** — ADR-084's named follow-up; `detect_plot_box` still not consumed by `scripts/scaffold_*_tier2.py`. No issue filed (deferred until a consumer needs it — e.g. onboarding a new brand that shares a style). ADR-085 confirms the palette needs no automation, so scaffolder wiring is the remaining setup-automation lever.
+- (carried) **#1431** pyflakes backlog (P3, Backlog); **#1432** `Cell` F821 (P4, Backlog); **#1379** eye-read bare-cell warning (P3, Backlog); **#1424** TS 7 — hold for `@astrojs/check` peer.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active). **v0.8.0 at 19 open** (#1198 closed; #1415 epic closed).
+- Epic #790: 6/24 brands (unchanged). Epic **#1415: closed 4/4** (#1412, #1413, #1414, #1198 all done).
+- **85 ADRs** (+1: ADR-085 defer legend-swatch calibration; ADR-057 gains a partial-supersession marker).
+- mtfdigitizer pytest 530 pass (unchanged — no tools code touched this session). CI green; `main` deploy running at wrap-up.
+- **Open PRs at wrap-up: 0.**
+- **Upstream contributions:** none new this session — the "measure the premise before building the auto-derivation; defer when the derived value only confirms the hand-tuned one" pattern is already covered by base/core/quality.md (calibration discipline: diagnose-before-tuning, thresholds-move-not-measurement) and ai-workflow (probe-before-acting). #832, #831, #830, #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
