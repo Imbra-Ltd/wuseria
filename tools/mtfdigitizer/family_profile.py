@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING
 
 from .profiles import (
     FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED,
+    MITAKON_2COLOR_STANDM,
     SAMYANG_4COLOR_ALL_SOLID,
     SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
     SIGMA_2COLOR_SOLID_DASHED,
@@ -50,6 +51,10 @@ PROFILE_BY_STYLE: dict[str, MtfProfile] = {
     "samecolor-dashed-sm": SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
     "2color-frequency": TOKINA_2COLOR_FREQUENCY,
     "2color-frequency-cc-rank": TOKINA_2COLOR_FREQUENCY_CC_RANK,
+    # Mitakon/Zhongyi GFX house style: red=S, green=M; two curves per hue
+    # (10 lp/mm upper, 30 lp/mm lower) via per-hue Viterbi DP. Same dispatch
+    # as Tokina with green swapped for blue.
+    "mitakon-2color-standm": MITAKON_2COLOR_STANDM,
     "bw-dashed-promo": VILTROX_BW_DASHED_F12,
     # Fujifilm: one chart image per spatial frequency (ADR-043). Frequency
     # is read from the filename suffix at extraction time; the declared

@@ -62,7 +62,8 @@ def test_declared_profiles_cover_in_band_families() -> None:
     """One profile per in-band reference set family (+ the Tokina wide-zoom
     DP variant of the prime profile, + the Fujifilm per-frequency profile
     added in ADR-043, + the TTartisan dual-aperture profile added in
-    ADR-044, + the Zeiss Touit 3-frequency profile added in ADR-075)."""
+    ADR-044, + the Zeiss Touit 3-frequency profile added in ADR-075, + the
+    Mitakon GFX house-style profile added in S220)."""
     names = {p.name for p in DECLARED_PROFILES}
     assert names == {
         "sigma-2color-solid-dashed",
@@ -74,6 +75,7 @@ def test_declared_profiles_cover_in_band_families() -> None:
         "fujifilm-permfreq-2color-solid-dashed",
         "ttartisan-4color-dual-aperture",
         "zeiss-touit-bw-3freq",
+        "mitakon-2color-standm",
     }
 
 

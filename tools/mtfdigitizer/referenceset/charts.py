@@ -720,6 +720,28 @@ _ZEISS_TOUIT_50_GT: GroundTruthCurves = {
     },
 }
 
+# Mitakon Speedmaster 65mm f/1.4 GFX (mitakon-2color-standm). Eye-read
+# from mtf-f1.4.png against the 21 printed y-axis gridlines (~±0.02).
+# Positions every 2.75mm to 27.5mm (GFX image-circle corner). Red=S
+# (sagittal), green=M (tangential). Center (frac 0.0): 10S=10M and
+# 30S=30M by physics (no on-axis astigmatism, the B4 contract). The two
+# red curves (10S/30S) cross ~24.75mm — 10S dives below 30S so at the
+# corner 10S(0.29) < 30S(0.42); the extractor's y-order assignment does
+# not yet survive this crossing (see follow-up; corner Δ documented in
+# the digitization-log). source: agent (S220 eye-read), verified: user.
+_MITAKON_65_GT: GroundTruthCurves = {
+    "f/1.4": {
+        # Red 10 sagittal — flat top, steep corner dive below 30S
+        "freq10S": (0.94, 0.94, 0.94, 0.94, 0.93, 0.92, 0.89, 0.80, 0.66, 0.47, 0.29),
+        # Green 10 tangential — strongest curve, holds to 0.62 at corner
+        "freq10M": (0.94, 0.93, 0.93, 0.93, 0.93, 0.92, 0.92, 0.87, 0.81, 0.72, 0.62),
+        # Red 30 sagittal — small bump ~6-8mm, gentle decline, ends 0.42
+        "freq30S": (0.71, 0.71, 0.72, 0.73, 0.72, 0.70, 0.62, 0.55, 0.54, 0.48, 0.42),
+        # Green 30 tangential — steady decline to 0.26
+        "freq30M": (0.71, 0.71, 0.70, 0.68, 0.66, 0.63, 0.56, 0.49, 0.40, 0.33, 0.26),
+    },
+}
+
 
 REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
     ReferenceChart(
@@ -1329,6 +1351,27 @@ REFERENCE_CHARTS: tuple[ReferenceChart, ...] = (
                 aperture="stopped",
             ),
         ),
+    ),
+    # Mitakon (Zhongyi) GFX house style, Tier 1 (plot_box + eye-read GT).
+    # Red=S, green=M; two curves per hue split by y-position via
+    # GEODESIC_DP. Plot box measured from mtf-f1.4.png against the 21
+    # y-axis label centres: MTF 1.0 row 39, MTF 0 row 565 (26.3 px per
+    # 0.05). x: left axis (0mm) col 77, blue plot-bg right edge col 1246
+    # = 27.5mm (GFX image-circle corner; x-tick spacing 42.6 px/mm).
+    # Known corner limit: the two red curves cross ~24.75mm and the
+    # GEODESIC_DP y-order assignment mislabels them past the crossing
+    # (10S reads high, 10M/30S drop to None at frac 1.0). This anchor is
+    # the measurable target for the fix; tracked in #1440.
+    ReferenceChart(
+        slug="mitakon-speedmaster-65mm-f1-4-gfx",
+        chart_path="docs/optical-specs/mitakon-speedmaster-65mm-f1-4-gfx/mtf-f1.4.png",
+        style_family="mitakon-2color-standm",
+        apertures=("f/1.4",),
+        frequencies_lpmm=(10, 30),
+        image_height_mm=27.5,
+        notes="Zhongyi/Mitakon product page; red=S solid-ish (dash-dot 10, dashed 30), green=M; frequency by y-position (upper=10, lower=30); light-blue banded background",
+        plot_box=PlotBoxCoords(x_left=77, x_right=1246, y_top=39, y_bottom=565),
+        ground_truth=_MITAKON_65_GT,
     ),
 )
 

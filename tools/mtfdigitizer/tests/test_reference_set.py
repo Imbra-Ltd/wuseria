@@ -34,6 +34,7 @@ EXPECTED_FAMILIES = frozenset(
         "multifreq-press-kit",
         "idealized-flat",
         "soft-multicurve-promo",
+        "mitakon-2color-standm",
     ]
 )
 
