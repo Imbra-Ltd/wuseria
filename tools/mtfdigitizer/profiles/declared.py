@@ -436,6 +436,40 @@ ZEISS_TOUIT_BW_3FREQ: MtfProfile = MtfProfile(
 )
 
 
+# Mitakon (Zhongyi Optics) GFX house style. Standalone product-page charts
+# (Creator 28mm f/5.6, Speedmaster 65mm f/1.4) plot two colors on a
+# light-blue banded background: red = sagittal, green = tangential. Within
+# each color the 10 lp/mm curve (dash-dot) sits above the 30 lp/mm curve
+# (dashed); frequency is carried by y-position, not dash pattern, so the
+# GEODESIC_DP dispatch — per-hue Viterbi shortest path finding two curves
+# per color, upper=10 lower=30 — reads both without a dash split. Same
+# structure as the Tokina 2-color dialect with green swapped for blue.
+#
+# Measured HSV inside mitakon-speedmaster-65mm-f1-4-gfx/mtf-f1.4.png
+# (1424x624; red 3447 px, green 3002 px):
+#   red   h≈175 (wraps 0/179) S 85..234 V 148..239 → sagittal
+#   green h≈63              S 65..166 V 114..197 → tangential
+# The light-blue plot background (h≈90-115) sits outside both hue windows;
+# the green h_hi=80 cap keeps a 10-hue gap below it so bands never leak in.
+MITAKON_2COLOR_STANDM: MtfProfile = MtfProfile(
+    name="mitakon-2color-standm",
+    hues=(
+        HueRange(name="S-red", h_lo=0, h_hi=12, s_min=80, v_min=80),
+        HueRange(name="S-red", h_lo=168, h_hi=179, s_min=80, v_min=80),
+        HueRange(name="M-green", h_lo=35, h_hi=80, s_min=55, v_min=70),
+    ),
+    style_axis="HUE_IS_CURVE",
+    hue_meaning="GEODESIC_DP",
+    frequencies_lpmm=(10, 30),
+    # Not auto-suggestable: green overlaps 7Artisans' green hue and red
+    # overlaps Sigma/Tokina red, so presence-based suggest can't
+    # disambiguate. Declared explicitly via the `mitakon-2color-standm`
+    # style family.
+    auto_suggestable=False,
+    notes="Zhongyi/Mitakon GFX house style: red=S (sagittal), green=M (tangential); per-hue Viterbi DP extracts both curves of one color (upper=10 lp/mm, lower=30 lp/mm) with dash-gap bridging in the smoothness prior",
+)
+
+
 DECLARED_PROFILES: tuple[MtfProfile, ...] = (
     SIGMA_2COLOR_SOLID_DASHED,
     SAMYANG_4COLOR_ALL_SOLID,
@@ -446,4 +480,5 @@ DECLARED_PROFILES: tuple[MtfProfile, ...] = (
     FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED,
     TTARTISAN_4COLOR_DUAL_APERTURE,
     ZEISS_TOUIT_BW_3FREQ,
+    MITAKON_2COLOR_STANDM,
 )

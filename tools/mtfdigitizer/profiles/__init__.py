@@ -40,6 +40,7 @@ from .types import (
 from .declared import (
     DECLARED_PROFILES,
     FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED,
+    MITAKON_2COLOR_STANDM,
     SAMYANG_4COLOR_ALL_SOLID,
     SEVENARTISANS_2COLOR_SAMECOLOR_DASHED,
     SIGMA_2COLOR_SOLID_DASHED,
@@ -56,6 +57,7 @@ __all__ = [
     "FUJIFILM_PERMFREQ_2COLOR_SOLID_DASHED",
     "HueMeaning",
     "HueRange",
+    "MITAKON_2COLOR_STANDM",
     "MtfProfile",
     "ProfileMatch",
     "ProfileMismatch",
