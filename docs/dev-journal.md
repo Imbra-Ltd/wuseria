@@ -13401,3 +13401,78 @@ Theme: close the last open task of epic #1415 (ADR-081 throughput) — the legen
 - mtfdigitizer pytest 530 pass (unchanged — no tools code touched this session). CI green; `main` deploy running at wrap-up.
 - **Open PRs at wrap-up: 0.**
 - **Upstream contributions:** none new this session — the "measure the premise before building the auto-derivation; defer when the derived value only confirms the hand-tuned one" pattern is already covered by base/core/quality.md (calibration discipline: diagnose-before-tuning, thresholds-move-not-measurement) and ai-workflow (probe-before-acting). #832, #831, #830, #829, #741-744, #747 still open upstream. Submodule unchanged (a6d7747).
+
+### Session 220 — Mitakon MTF profile + 65mm GT anchor (#1441); deploy-gate incident (#1442, #1443)
+
+Date: 2026-07-19 · Tool: Claude Code (Opus 4.8)
+
+Theme: continue the #790 per-brand MTF digitization grind on an easy, colour-chart brand. Verified Tokina (#795) was already complete and reconciled the stale epic #790 checklist, then onboarded Mitakon: a new `mitakon-2color-standm` profile and Speedmaster 65mm f/1.4 GFX as a Tier-1 GT anchor. Bulk is faithful; a corner-crossing limit is documented and deferred. Merging the anchor broke the `main` deploy (a PR/deploy gate gap) — caught and hotfixed within the session.
+
+#### PRs
+
+- **#1441** (refs #810, #790) — `mitakon-2color-standm` profile (red=sagittal / green=tangential, reusing the Tokina GEODESIC_DP dispatch) + Speedmaster 65mm f/1.4 GFX promoted to a Tier-1 calibration anchor (measured plot box + eye-read GT + committed digitization-log). 7 files, no shared extractor code. Squash-merged; PR CI green (`build`/`lighthouse` path-skipped).
+- **#1442** (refs #810, #1440) — hotfix: add the Mitakon slug to `KNOWN_PENDING_EMIT` to restore the `main` deploy after #1441. Squash-merged; frontend validate ran green on the PR this time.
+
+#### Issues opened / closed
+
+- **#795** (Tokina) — verified genuinely complete (5 panels, GT-calibrated med |Δ| ≤ 0.038, faithful overlays); found already-closed from a prior session. **Reconciled the stale epic #790 checklist** — ticked #793 (Sigma) + #795 (Tokina), both closed weeks ago but left unchecked.
+- **#1440** (bug, P3, v0.8.0) — **opened**: GEODESIC_DP mislabels curves past a same-hue crossing (Mitakon 65mm corner). The 65mm GT anchor is its measurable target; regression-gated on Tokina/Sigma.
+- **#1443** (bug, P2, Expedite) — **opened**: PR path-filter skips frontend tests that read `docs/optical-specs` (the deploy-gate mirror gap that caused the incident).
+- **#810** (Mitakon) — stays open; commented with the remaining charts (28mm, 200mm/35mm composites, 35mm cyan/green variant).
+
+#### Key technical findings
+
+- **Mitakon's house style maps onto the Tokina dialect.** Red=sagittal, green=tangential, two curves per hue split by y-position — structurally identical to `tokina-2color-frequency` (HUE_IS_CURVE + GEODESIC_DP) with green swapped for blue. No new dispatch code; only a new profile + `style_family` registration.
+- **Bulk faithful, corner not.** Calibrated median |Δ| 0.006–0.013 across 0–19mm. The two red curves cross ~24.75mm (10S dives below 30S), breaking the DP's global y-order frequency assignment: freq10S reads 0.42 vs GT 0.29 at the corner, and freq10M/30S drop to None. The green upper tail is separately dropped by `_trim_flatlined_tail` (tuned for Tokina). Both fixes touch shared code — deferred to #1440.
+- **Plot-box calibration from raw pixels.** HSV bands and plot box measured with a throwaway probe (deleted pre-commit): 21 y-axis label centres gave MTF 1.0 = row 39, MTF 0 = row 565; x-ticks 42.6 px/mm to 27.5mm (GFX corner). An initial off-by-one-gridline error read the flat top as 0.99 instead of 0.935 until the pixel-scan corrected y_top.
+
+#### Key changes
+
+- `tools/mtfdigitizer/profiles/declared.py` — new `MITAKON_2COLOR_STANDM` (+ DECLARED_PROFILES membership); `family_profile.py`, `profiles/__init__.py` — registration/export.
+- `tools/mtfdigitizer/referenceset/charts.py` — 65mm Tier-1 anchor (measured plot_box + `_MITAKON_65_GT` eye-read GT, user-reviewed).
+- `docs/optical-specs/mitakon-speedmaster-65mm-f1-4-gfx/digitization-log.md` — committed calibration record (EYE vs EX vs Δ; corner Δ documented).
+- `tools/mtfdigitizer/tests/{test_profiles,test_reference_set}.py` — expectation-set updates for the new family.
+- `src/data/mtf-readings.test.ts` — Mitakon slug added to `KNOWN_PENDING_EMIT` (#1442).
+
+#### Verification
+
+- `py -m pytest mtfdigitizer/` → 531 pass. The full suite caught the missing digitization-log before merge — a Tier-1 anchor requires a committed log per `test_committed_digitization_logs_are_fresh`.
+- 65mm overlay + digitization-log reviewed visually; extracted polylines track the original across 0–19mm; corner divergence matches the documented limit.
+- No shared extractor code changed → Tokina/Sigma extraction provably unchanged (confirmed by the full suite re-extracting them).
+- `main` deploy at wrap: 55b75b1 = success (recovered after #1442).
+
+#### Post-mortem (incident: broken main deploy)
+
+- **Symptom:** the `main` GitHub Pages deploy failed immediately after #1441 merged. The prior good deploy stayed live, so no user-facing outage — the pipeline just could not publish an update.
+- **Root cause:** the deploy runs `npm run validate` unconditionally; its vitest test `mtf-readings.test.ts::every accepted-extraction directory has a mtfReadings entry` reads the `docs/optical-specs/` filesystem. #1441 committed a `digitization-log.md` (which marks the dir "accepted") without a frontend `mtfReadings` entry.
+- **Why missed:** the PR CI skipped the frontend validate job — its path-filter treated the change as tools-only, but the test reads `docs/optical-specs/`. The PR gate did not mirror the deploy gate for a check that reads a non-`src/` directory.
+- **Fix:** #1442 — add the anchor to `KNOWN_PENDING_EMIT` (the established deferred-emit escape hatch, matching Tokina 23mm / 7artisans / sigma-30mm). No imperfect corner data shipped to the site.
+- **Prevention:** #1443 — include `docs/optical-specs/**` in the frontend-validate path-filter, or promote the deterministic `validate` to an always-run PR job (per quality-gates "Mirror cross-cutting checks with an always-run job").
+
+#### Key decisions (this session)
+
+- **Land the anchor + defer the corner (user call).** Presented the corner-crossing tradeoff at the decision point; user chose fidelity-first (GT + fix corner), then chose to land the GT anchor + follow-up rather than sink into shared-DP tuning this session. The anchor promotes the corner failure to a measurable metric (#1440) — the promote-to-gated-tier pattern.
+- **Do not ship the imperfect corner.** Frontend emit deferred via `KNOWN_PENDING_EMIT` rather than emitting the wrong 0.42 corner value; the digitization-log honestly records the Δ.
+- **No new ADR.** The Mitakon profile applies ADR-038's existing profile system; no new directory or architectural decision.
+
+#### Process patterns observed this session
+
+- **Probe the artifact, not the reading.** Repeated eye-reads of the y-axis disagreed until a pixel-scan of the 21 label centres settled y_top — the off-by-one-gridline error (0.95 mistaken for 1.0) only surfaced against the raw dump.
+- **The full local suite is the gate the fast subset and PR path-filter aren't.** The 8-min mtfdigitizer suite caught the missing digitization-log; the frontend `docs/optical-specs` invariant then only surfaced on the deploy. Two gate gaps — one caught locally, one post-merge.
+- **Reconcile handoff counts against the tracker.** The memory said "6/24 brands" and the epic checklist showed #793/#795 unticked — both stale (both closed weeks ago). Verified before acting.
+
+#### Follow-ups for next session (S221)
+
+- **#810** (Mitakon) — continue: 28mm f/5.6 GFX is the next clean standalone (reuses the new profile; needs its own plot_box + GT). Then the 200mm/35mm composites (crop first with `tools/crop-artifact.py`) and the 35mm cyan/green "Diffraction MTF" variant (needs its own profile).
+- **#1440** — GEODESIC_DP corner-crossing fix; 65mm anchor is the target; regression-gate on Tokina/Sigma.
+- **#1443** — close the PR/deploy gate gap so a `docs/optical-specs` change runs the frontend tests that read it.
+- (carried) **Wire the dispatch into the scaffolders** (ADR-084 follow-up); **#1431/#1432/#1379** hygiene; **#1424** TS 7 hold for `@astrojs/check` peer.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active). **v0.8.0 at 20 open** (#1440 opened; #1443 is Expedite; #810 still open).
+- Epic #790: 6 brands fully digitized (unchanged); Mitakon (#810) now partially started (65mm anchor). Checklist reconciled — 7 child issues closed (#791/#792/#793/#795/#798/#799/#815).
+- **10 MTF profiles** (+1: mitakon-2color-standm). **85 ADRs** (unchanged — no new ADR).
+- mtfdigitizer pytest **531 pass**. CI green; **`main` deploy 55b75b1 = success**.
+- **Open PRs at wrap-up: 0.**
+- **Upstream contributions:** none new — the incident's lesson (PR gate must mirror the deploy gate for tests reading non-`src/` dirs) is already an upstream rule in quality-gates.md ("PR gate MUST mirror the deploy gate", "Mirror cross-cutting checks with an always-run job"); this was a project-application gap (#1443), not a new convention. Submodule unchanged (a6d7747).
