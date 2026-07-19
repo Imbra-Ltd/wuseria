@@ -76,6 +76,28 @@ jobs:
       - run: npm ci
       - run: npm run format
 
+  # The vitest data-integrity suite reads the docs/optical-specs/**
+  # filesystem (dirsWithLog, directory-name and same-product invariants),
+  # which the `code` path-filter does NOT cover. The deploy runs these
+  # tests unconditionally inside `validate`; the path-filtered `build` job
+  # below skips them on a PR that only adds docs/optical-specs files, so
+  # such a PR can go green while breaking the main deploy (#1441 -> #1442).
+  # This always-run job mirrors the deploy's test step without an
+  # enumeration-fragile path filter, exactly as `format` does for Prettier.
+  # See ADR-086 (and ADR-076 for the format precedent).
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run test
+
   build:
     runs-on: ubuntu-latest
     needs: changes
@@ -167,12 +189,12 @@ jobs:
 
   gate:
     runs-on: ubuntu-latest
-    needs: [format, build, lighthouse, pytest, staleness]
+    needs: [format, test, build, lighthouse, pytest, staleness]
     if: always()
     steps:
       - name: Check results
         run: |
-          if [[ "${{ needs.format.result }}" == "failure" || "${{ needs.build.result }}" == "failure" || "${{ needs.lighthouse.result }}" == "failure" || "${{ needs.pytest.result }}" == "failure" || "${{ needs.staleness.result }}" == "failure" ]]; then
+          if [[ "${{ needs.format.result }}" == "failure" || "${{ needs.test.result }}" == "failure" || "${{ needs.build.result }}" == "failure" || "${{ needs.lighthouse.result }}" == "failure" || "${{ needs.pytest.result }}" == "failure" || "${{ needs.staleness.result }}" == "failure" ]]; then
             echo "CI failed"
             exit 1
           fi
