@@ -13476,3 +13476,58 @@ Theme: continue the #790 per-brand MTF digitization grind on an easy, colour-cha
 - mtfdigitizer pytest **531 pass**. CI green; **`main` deploy 55b75b1 = success**.
 - **Open PRs at wrap-up: 0.**
 - **Upstream contributions:** none new — the incident's lesson (PR gate must mirror the deploy gate for tests reading non-`src/` dirs) is already an upstream rule in quality-gates.md ("PR gate MUST mirror the deploy gate", "Mirror cross-cutting checks with an always-run job"); this was a project-application gap (#1443), not a new convention. Submodule unchanged (a6d7747).
+
+### Session 221 — Close the deploy-gate mirror gap: always-run vitest job (#1443)
+
+Date: 2026-07-19 · Tool: Claude Code (Opus 4.8)
+
+Theme: close the P2 deploy-gate mirror gap (#1443) that caused S220's `main`-deploy incident — the prevention item from that post-mortem. One focused CI fix, verified end-to-end through the gate it repairs.
+
+#### PRs
+
+- **#1445** (closes #1443) — add a dedicated always-run `test` job to `ci.yml` that runs `npm run test` with no path filter, wired into the `gate` aggregator. Mirrors the deploy's vitest step the same way the `format` job (ADR-076) mirrors Prettier. Squash-merged; all 12 CI jobs green (incl. the new `test` job); `main` deploy completed/success.
+
+#### Issues opened / closed
+
+- **#1443** (bug, P2, Expedite) — **closed** by #1445. The `code` path-filter omitted `docs/optical-specs/**`, which the vitest data-integrity suite reads; an optical-specs-only PR (like #1441) skipped `build`/validate and broke the deploy post-merge.
+
+#### Key technical findings
+
+- **The gap was a partial mirror, not a missing one.** ADR-076 already added an always-run `format` job for this exact class, but scoped it to Prettier only and asserted (Neutral section) that "the other validate steps read only covered paths." That was wrong: the `test` step reads `docs/optical-specs/**`. #1443 is the second exposure ADR-076's own Open section predicted.
+- **Always-run beats widening the filter.** A path-filter must enumerate every dir the suite reads; the next test reading a new tracked dir silently reopens the gap. The always-run job is enumeration-free — the same reasoning ADR-076 used for `format`.
+
+#### Key changes
+
+- `.github/workflows/ci.yml` — new always-run `test` job (`npm run test`, no path filter); added `test` to the `gate` job's `needs` and failure check.
+- `docs/decisions/086-pr-gate-mirrors-deploy-test.md` — ADR-086 documenting the decision and correcting ADR-076's incomplete Neutral claim.
+
+#### Verification
+
+- Ran the job's exact command locally: baseline `npx vitest run src/data/mtf-readings.test.ts` → 18 pass; the #1441 repro (a stray `docs/optical-specs/<slug>/` with a `digitization-log.md` but no `mtfReadings` entry) → 2 fail (`every accepted-extraction directory has a mtfReadings entry`, `every optical-specs directory matches a lens via toDataSlug`). Repro dir removed — clean tree.
+- Because #1445 touches `.github/workflows/**`, every path-filter matched, so all jobs ran — the new `test` job registered, ran (30s), and the `gate` correctly depended on it.
+- `main` deploy after merge: `c555572` = success — the fix deploys cleanly through the very gate it repairs.
+
+#### Key decisions (this session)
+
+- **Always-run mirror job over a wider path-filter.** Follows quality-gates.md "Mirror cross-cutting checks with an always-run job"; recorded in ADR-086.
+- **Correction, not supersession, of ADR-076.** 076's `format` job is unchanged and stays Accepted; only its side-claim was incomplete. ADRs are immutable, so ADR-086 records the correction rather than editing 076.
+
+#### Process patterns observed this session
+
+- **When you mirror one step of a composite gate, audit every step in the same pass.** ADR-076 mirrored `format` and reasoned the rest were covered without checking that `test` reads `docs/optical-specs/**` — the unaudited step became a second incident. The mirror-design moment is when to enumerate all cross-cutting inputs of the aggregate command, not one incident at a time. (Filed upstream as braboj/solid-ai-templates #843.)
+- **Verify a CI fix by running the job's command on the failure it prevents.** `npm run test` on the #1441 repro fails; on the clean tree passes — proving the now-always-run check catches exactly what skipped past before.
+
+#### Follow-ups for next session (S222)
+
+- **#810** (Mitakon) — continue: 28mm f/5.6 GFX standalone (reuse `mitakon-2color-standm`; needs its own plot_box + eye-read GT), then the composites and the 35mm cyan/green "Diffraction MTF" variant.
+- **#1440** — GEODESIC_DP corner-crossing fix; 65mm anchor is the measurable target; regression-gate on Tokina/Sigma.
+- (carried) Wire the dispatch into the scaffolders (ADR-084 follow-up); #1431/#1432/#1379 hygiene; #1424 TS 7 hold for `@astrojs/check` peer.
+
+#### State of the project
+
+- v0.8.0 = MTF digitization (active). **v0.8.0 at 20 open** (#1443 was Expedite, now closed; no v0.8.0 issue opened or closed this session).
+- Epic #790: 6 brands fully digitized; Mitakon (#810) partially started (65mm anchor) — unchanged this session.
+- **10 MTF profiles** (unchanged). **86 ADRs** (+1: ADR-086 PR gate mirrors deploy test gate).
+- mtfdigitizer pytest 531 pass (unchanged — no tools code touched). Frontend CI green; **`main` deploy c555572 = success**.
+- **Open PRs at wrap-up: 0.**
+- **Upstream contributions:** filed braboj/solid-ai-templates #843 — "audit every step of a composite gate command when adding the first always-run mirror job" refines the "Mirror cross-cutting checks with an always-run job" rule (its singular framing is what led ADR-076 to a partial mirror). The base mirror rule was already upstream; the partial-mirror-causes-second-incident lesson is the new addition. Submodule unchanged (a6d7747).
