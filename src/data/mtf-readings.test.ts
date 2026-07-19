@@ -290,6 +290,10 @@ describe("docs/optical-specs ↔ mtf-readings coverage", () => {
     "7artisans-50mm-f1-2-mark-ii",
     "sigma-30mm-f1-4-dc-dn-c",
     "tokina-atx-m-23mm-f1-4-x",
+    // Tier-1 calibration anchor (#810). Frontend emit deferred until the
+    // GEODESIC_DP corner-crossing fix lands (#1440) so the imperfect corner
+    // is not shipped to the site.
+    "mitakon-speedmaster-65mm-f1-4-gfx",
   ]);
 
   it("every accepted-extraction directory has a mtfReadings entry", () => {
