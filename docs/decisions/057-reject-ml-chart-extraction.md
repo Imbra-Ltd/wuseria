@@ -1,6 +1,6 @@
 # ADR-057: Reject ML-based chart extraction for v0.8.0, pivot to legend-swatch auto-calibration
 
-**Status:** Accepted; partially superseded by [ADR-058](058-drop-chartparser-revisit-trigger.md)
+**Status:** Accepted; partially superseded by [ADR-058](058-drop-chartparser-revisit-trigger.md), [ADR-085](085-defer-legend-swatch-calibration.md)
 **Date:** 2026-06-18
 
 > **Partially superseded by ADR-058 (2026-06-18).** The ML-revisit
@@ -11,6 +11,15 @@
 > unreachable. ADR-058 drops AI-ChartParser from the trigger list;
 > LineFormer remains. The core decision (reject ML for v0.8.0, pivot
 > to legend-swatch auto-calibration) is unchanged.
+>
+> **Partially superseded by ADR-085 (2026-07-19).** The Decision names
+> legend-swatch auto-calibration as "the single highest-leverage fix on
+> the classical side." Spike #1198 measured it: the swatch centres
+> already reproduce the declared HSV bands, and swapping to a
+> legend-derived palette costs near-zero accuracy — because the per-brand
+> bottleneck is the non-derivable dispatch forensics, not the palette.
+> ADR-085 defers adoption and redirects the refinement effort. The core
+> reject-ML / keep-classical-CV decision is unchanged.
 
 ## Context
 
