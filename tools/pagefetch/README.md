@@ -9,6 +9,12 @@ sites — and caches responses on disk.
 extracted into a standalone repository or git submodule and reused
 anywhere.
 
+> **This directory is a copy.** The package is published standalone at
+> [braboj/page-fetcher](https://github.com/braboj/page-fetcher), which
+> carries the same history. Whether wuseria switches to consuming it as a
+> submodule is open — see #1456. Until that is decided, a fix made here
+> MUST be carried upstream (and vice versa), or the two copies diverge.
+
 ## Quick start
 
 ```python

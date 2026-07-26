@@ -16,6 +16,9 @@ docs/optical-specs/**/eye-read.md
 # Python tooling — own pytest suites, not part of the front-end gate
 tools/
 
-# Python caches — generated, never committed
+# Python caches — generated, never committed. mypy writes a self-ignoring
+# .gitignore inside its cache, so git skips the directory while Prettier,
+# which does not read nested ignore files, walks every entry in it.
 **/.pytest_cache/
 **/__pycache__/
+**/.mypy_cache/
